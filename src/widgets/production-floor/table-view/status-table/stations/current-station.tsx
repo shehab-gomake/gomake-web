@@ -7,12 +7,13 @@ import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStations } from "./use-stations";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { useTranslation } from "react-i18next";
 interface IProps extends ICurrentStation {
   boardMissionId: string;
   status?: any;
   textColor?: string;
+  onClickDone?: () => void;
 }
 
 const CurrentStationComponent = ({
@@ -22,9 +23,11 @@ const CurrentStationComponent = ({
   actionName,
   productType,
   id,
+  onClickDone,
 }: IProps) => {
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const { classes } = useStyle({ textColor });
+  const { t } = useTranslation();
   const {
     handleClick,
     handleClose,
@@ -52,7 +55,7 @@ const CurrentStationComponent = ({
           ...FONT_FAMILY.Lexend(500, 15),
           color: "#000000",
           lineHeight: "15px",
-          fontSize:GetProductionFontSizeFromPreferences(),
+          fontSize: GetProductionFontSizeFromPreferences(),
         }}>{machineName ? getTruncatedLabel(machineName, 25) : getTruncatedLabel(actionName, 25)}</span>
         {anchorEl ? (
           <UpArrowIcon color={"#475467"} width={14} height={14} />
@@ -81,14 +84,21 @@ const CurrentStationComponent = ({
           ?.filter((s) => s.id !== id)
           ?.map((station) => (
             <MenuItem
-                style={{fontSize:GetProductionFontSizeFromPreferences()}}
+              style={{ fontSize: GetProductionFontSizeFromPreferences() }}
               onClick={() =>
                 onUpdateCurrentStation(boardMissionId, station.id, productType)
               }
             >
               {station.actionName}
             </MenuItem>
+
           ))}
+        <MenuItem
+          style={{ fontSize: GetProductionFontSizeFromPreferences() }}
+          onClick={onClickDone}
+        >
+          {t("boardMissions.done")}
+        </MenuItem>
       </Menu>{" "}
     </Stack>
   );

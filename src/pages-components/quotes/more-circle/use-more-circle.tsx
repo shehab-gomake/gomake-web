@@ -16,7 +16,6 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
@@ -37,6 +36,10 @@ import { MailIcon } from "./icons/mail";
 import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
+import { TagIcon } from "@/icons/tag-icon";
+import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
+import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
+import { PackageIcon } from "@/icons/package-icon";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -77,6 +80,9 @@ const useMoreCircle = () => {
     onClickReopenDocument,
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
+    handleGetTaxConfirmNo,
+    onClickOpenMoveOrderToReadyModal,
+    onOpenPackagesModal
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -93,7 +99,8 @@ const useMoreCircle = () => {
 
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
-    const { alertFaultAdded, alertFaultGetData } = useSnackBar();
+    const { alertFaultAdded, alertFaultGetData, alertSuccessGetData } =
+      useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -286,7 +293,7 @@ const useMoreCircle = () => {
         name: t("sales.cart.printChecks"),
       },
       {
-        condition: !isPauseOrder && isOrder && !isCanceledOrder,
+        condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -405,6 +412,14 @@ const useMoreCircle = () => {
           : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
       },
       {
+        condition: !isPauseOrder && isOrder && !quote?.productionStatus,
+        onClick: () => onClickOpenMoveOrderToReadyModal(quote),
+        icon: (
+          <AlarmOnRoundedIcon style={{ color: "#8283BE", fontSize: "20px" }} />
+        ),
+        name: t("sales.moveToReadyAndCloseOrder"),
+      },
+      {
         condition:
           !isPauseOrder &&
           isOrder &&
@@ -446,6 +461,14 @@ const useMoreCircle = () => {
         isLink: true,
         href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
+
+      {
+        condition: isInvoice && quote?.isCanGetTaxConfirmationNumber,
+        onClick: () => handleGetTaxConfirmNo(quote?.id),
+        icon: <TagIcon />,
+        name: t("sales.quote.getTaxConfirmationNumber"),
+      },
+
       {
         condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
@@ -599,6 +622,12 @@ const useMoreCircle = () => {
         onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
         icon: <PDFIcon />,
         name: t("fileUploader.uploadFile"),
+      },
+      {
+        condition: isOrder && quote?.jobs,
+        name: t("boardMissions.printPackagingSlip"),
+        icon: <PackageIcon />,
+        onClick: () => onOpenPackagesModal(quote),
       },
     ];
   };

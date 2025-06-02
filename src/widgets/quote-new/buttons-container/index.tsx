@@ -128,6 +128,11 @@ const ButtonsContainer = ({
     isPurchaseOrder,
     CheckoutOptionModal,
     handleClickPrintChecks,
+    checkoutModalData,
+    setShowPrintJobsModal,
+    CheckoutModalOpen,
+    handleProcessCheckout,
+    router,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -169,12 +174,14 @@ const ButtonsContainer = ({
         {isNewCreation && isReceipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         )}
-        {isInvoice && quoteItemValue?.isCanClose && (
+        {(isInvoice || isPurchaseInvoice) && quoteItemValue?.isCanClose && (
           <GomakePrimaryButton
             leftIcon={<CreditCardIcon color={"#344054"} />}
             onClick={() =>
               navigate(
-                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
+                isPurchaseInvoice
+                  ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+                  : `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
               )
             }
             style={classes.btnContainer}
@@ -434,10 +441,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -563,6 +571,31 @@ const ButtonsContainer = ({
           openModal={openCloseOrderNotesModal}
           quoteItemValue={quoteItemValue}
           onClickCloseOrder={onClickCloseOrderCallback}
+        />
+        <GoMakeDeleteModal
+          modalType={ModalType.SUCCESS}
+          style={{ width: "fit-content" }}
+          title={t("sales.modals.orderCheckoutTitle")}
+          subTitle={t("sales.modals.orderCheckoutSubTitle")}
+          yesBtn={t("sales.modals.proceedToPayment")}
+          cancelBtn={t("sales.modals.proceedWithoutPayment")}
+          openModal={CheckoutModalOpen.isOpen}
+          withClose={false}
+          onClose={() => {}}
+          onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
+          onClickCancel={() => {
+            if (checkoutModalData) {
+              setShowPrintJobsModal(checkoutModalData.orderId);
+              router.push(
+                `/jobs?orderNumber=${checkoutModalData.orderNumber}`,
+                undefined,
+                {
+                  shallow: true,
+                }
+              );
+              CheckoutModalOpen.close();
+            }
+          }}
         />
       </div>
     </div>
