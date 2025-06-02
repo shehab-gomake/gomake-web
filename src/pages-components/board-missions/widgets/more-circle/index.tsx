@@ -14,6 +14,9 @@ interface IBoardMissionsProps {
   onOpenModal?: (mission?: any) => void;
   onClickPrintPackagingSlip?: (mission?: any) => void;
   onClickMarksAsDoneForProductType?: (mission?: any) => void;
+  isDoneJobs?: boolean;
+  handleClickBackToProcess?: (mission?: any) => void;
+  onOpenMarkReadyModalForHasJobs?: (mission?: any) => void;
 }
 const MoreMenuWidget = ({
   mission,
@@ -25,8 +28,11 @@ const MoreMenuWidget = ({
   onClickWorkMissionPdf,
   onClickPrintPackagingSlip,
   onOpenModal,
-  onClickMarksAsDoneForProductType }
-  : IBoardMissionsProps) => {
+  onClickMarksAsDoneForProductType,
+  isDoneJobs,
+  handleClickBackToProcess,
+  onOpenMarkReadyModalForHasJobs
+}: IBoardMissionsProps) => {
   const { classes } = useStyle();
 
   const handleClickEdit = (boardMissions) => {
@@ -43,7 +49,10 @@ const MoreMenuWidget = ({
     onClickWorkMissionPdf,
     onClickPrintPackagingSlip,
     onOpenModal,
-    handleClickEdit
+    handleClickEdit,
+    isDoneJobs,
+    handleClickBackToProcess,
+    onOpenMarkReadyModalForHasJobs
   });
 
   return (

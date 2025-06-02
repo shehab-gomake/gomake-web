@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
@@ -17,6 +17,9 @@ import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
 import { SetupSection } from "@/widgets/quick-setup";
 import { printHouseProfile } from "@/store/print-house-profile";
+import { tokenExpiredState } from "@/store/token-expired-modal";
+import { useGomakeRouter } from "@/hooks";
+
 
 const CustomerAuthLayout = ({
   children,
@@ -27,6 +30,7 @@ const CustomerAuthLayout = ({
   className,
   backgroundColor,
 }: IAuthLayout) => {
+  const { navigate } = useGomakeRouter();
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
@@ -40,6 +44,7 @@ const CustomerAuthLayout = ({
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
+  const [isTokenExpired, setIsTokenExpired] = useRecoilState(tokenExpiredState);
 
   const alertNewVersion = useModal();
   const appVersion = useRecoilValue(versionState);
@@ -125,6 +130,27 @@ const CustomerAuthLayout = ({
             yesBtn="modal.reload"
             withCancelBtn={false}
           />
+
+          {isTokenExpired && (
+            <GoMakeAlertModal
+              openModal={isTokenExpired}
+              onClose={() => setIsTokenExpired(false)}
+              onClickConfirm={() => {
+                setIsTokenExpired(false);
+                // window.open("/login", "_blank");
+                const currentPath =
+                  window.location.pathname + window.location.search;
+                const loginUrl =
+                  currentPath && currentPath !== "/"
+                    ? `/login?redirect=${encodeURIComponent(currentPath)}`
+                    : "/login";
+                navigate(loginUrl);
+              }}
+              subTitle="modal.alertTokenExpired"
+              yesBtn="login.login"
+              withCancelBtn={false}
+            />
+          )}
 
           {profile?.isShowOnBoardingMenu ? <SetupSection /> : <></>}
         </div>

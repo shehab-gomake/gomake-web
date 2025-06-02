@@ -215,6 +215,11 @@ const useStyle = () => {
         width: "max-content",
         ...adaptMarginLeft(dir, 8),
       },
+      packageLabelStyle: {
+        ...FONT_FAMILY.Lexend(550, 14),
+        color: primaryColor(400),
+        marginBottom: 7,
+      },
     };
   }, [i18next.language, t, theme]);
   return {

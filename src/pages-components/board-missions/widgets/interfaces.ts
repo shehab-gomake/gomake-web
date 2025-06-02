@@ -1,4 +1,4 @@
-import { PStatus } from "./enums";
+import { BoardMissionStatusForFilter } from "./enums";
 
 export interface BoardMissionFilters {
     signalrConnectionId?: string;
@@ -10,7 +10,7 @@ export interface BoardMissionFilters {
     fromDate?: Date;
     toDate?: Date;
     productsIds?: string[];
-    productionStatus?: PStatus;
+    productionStatus?: BoardMissionStatusForFilter;
     pageNumber: number | null; 
     pageSize: number | null;
 }

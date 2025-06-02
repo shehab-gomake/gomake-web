@@ -5,6 +5,7 @@ import { useSetRecoilState } from "recoil";
 import { companyProfileState } from "@/store/company-profile";
 import { useTranslation } from "react-i18next";
 import useTermsFlag from "@/hooks/use-terms"; // import the terms hook
+import { tokenExpiredState } from "@/store/token-expired-modal";
 
 const useGomakeLogin = () => {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ const useGomakeLogin = () => {
   const setUserProfile = useSetRecoilState(companyProfileState);
   const [state, setState] = useState<any>({});
   const { isModalOpen, setIsModalOpen, setIsTermsAccepted } = useTermsFlag();
+  const showLoginModal = useSetRecoilState(tokenExpiredState);
 
   const [errorMsg, setErrorMsg] = useState("");
   const [errors, setErrors] = useState<{ [name: string]: boolean }>({
@@ -35,7 +37,7 @@ const useGomakeLogin = () => {
       setErrors({ username: false, password: true });
       setErrorMsg(t("login.passwordIsRequired"));
     } else {
-      const offsetMinutes = (new Date().getTimezoneOffset() * -1)
+      const offsetMinutes = new Date().getTimezoneOffset() * -1;
       const offsetHours = offsetMinutes / 60;
       const result = await callApi("POST", "/v1/auth/login-customer", {
         userPrincipalName: state.username,
@@ -43,8 +45,21 @@ const useGomakeLogin = () => {
         timeZoneOffset: offsetHours,
       });
       if (result?.data?.data?.customer?.token) {
+        showLoginModal(false); //!here
         updateTokenStorage(result?.data?.data?.customer?.token);
-        result?.data?.data?.customer.isTermsAccepted ? navigate("/") : setIsModalOpen(true);
+
+        // result?.data?.data?.customer.isTermsAccepted
+        //   ? navigate("/")
+        //   : setIsModalOpen(true);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get("redirect");
+
+        if (result?.data?.data?.customer.isTermsAccepted) {
+          navigate(redirectPath || "/");
+        } else {
+          setIsModalOpen(true);
+        }
       } else {
         setErrorMsg(t("login.invalidCredentialToken"));
       }

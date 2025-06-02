@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { PStatus } from "../enums";
+import { BoardMissionStatusForFilter } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import {
@@ -26,6 +26,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { moveBoardMissionStatusToWaitingApi, tryMoveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useMoreCircle = ({
   mission,
@@ -37,7 +38,10 @@ const useMoreCircle = ({
   onClickPrintPackagingSlip,
   onOpenModal,
   handleClickEdit,
-  onClickMarksAsDoneForProductType
+  onClickMarksAsDoneForProductType,
+  isDoneJobs,
+  handleClickBackToProcess,
+  onOpenMarkReadyModalForHasJobs
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -85,7 +89,7 @@ const useMoreCircle = ({
     await addBoardMissionsToFileUploaderApi(callApi, callBack, {
       boardMissionsId: mission?.id,
       connectionId: connectionId,
-      productType:mission?.productType,
+      productType: mission?.productType,
     });
   };
 
@@ -93,14 +97,37 @@ const useMoreCircle = ({
     if (mission?.isReady) {
       onClickReturnToProduction(mission);
     } else {
-      if (mission?.productType === null || mission?.productType === "") {
-        onClickMarksAsDone(mission);
-      } else {
-        onClickMarksAsDoneForProductType(mission);
-      }
+      tryMoveBoardMissionsToDone(mission);
+      // if (mission?.productType === null || mission?.productType === "") {
+      //   onClickMarksAsDone(mission);
+      // } else {
+      //   onClickMarksAsDoneForProductType(mission);
+      // }
     }
   };
 
+  const tryMoveBoardMissionsToDone = async (boardMission) => {
+    const callBack = (res) => {
+      if (res.success) {
+        if (boardMission.productType) {
+          // moveBoardMissionToDone(boardMission);
+          onClickMarksAsDoneForProductType(mission)
+        } else {
+          if (res.data) {
+            // onClickMarksAsDone(mission)
+            onOpenMarkReadyModalForHasJobs(boardMission);
+          } else {
+            onClickMarksAsDone(mission)
+            // onOpenMarkReadyModal(boardMission.id);
+          }
+        }
+      }
+    };
+
+    await tryMoveBoardMissionToDoneApi(callApi, callBack, {
+      boardMissionId: boardMission.id,
+    });
+  };
   const printJobUsingPrintNode = async (jobId: string) => {
     const callBack = (res) => {
       if (res.success) {
@@ -127,8 +154,9 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-            }&step=stations`}
+          href={`/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
+          }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -136,7 +164,8 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
           }&step=stations`
         ),
     },
@@ -163,29 +192,34 @@ const useMoreCircle = ({
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
-        mission?.status === PStatus.IN_PROCESS && !mission?.isReady
+        mission?.status !== BoardMissionStatusForFilter.DONE && !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
     {
-      condition: true,
+      condition: true && !isDoneJobs,
       name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition:
-        mission?.status === PStatus.IN_PROCESS && isSendPaymentToClient,
+      condition: mission?.boardMissionStatus?.key === "Stuck",
+      name: t("boardMissions.backToProcess"),
+      icon: <MarkAsUnReadyIcon />,
+      onclick: () => handleClickBackToProcess(mission),
+    },
+    {
+      condition: isSendPaymentToClient,
       name: !mission?.isReady
         ? t("boardMissions.markAsReady")
         : t("boardMissions.markAsUnReady"),
@@ -196,19 +230,14 @@ const useMoreCircle = ({
       ),
       onclick: () => handleClickMarkAsReady(),
     },
-    // {
-    //   condition: mission?.status === PStatus.DONE,
-    //   name: "boardMissions.returnToProduction",
-    //   icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
-    //   onclick: () => onClickReturnToProduction(mission),
-    // },
     {
       condition: true && isSendPaymentToClient && isShowLogs,
       name: t("home.loggers"),
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
