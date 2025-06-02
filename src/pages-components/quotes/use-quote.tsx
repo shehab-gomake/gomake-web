@@ -2430,7 +2430,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, [quantityOfPackages, packageQuantities]);
 
   /* hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee */
-
   const updateCancelQuote = async (quoteStatus: number) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -3268,7 +3267,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     quantityOfPackages,
     packageInputs,
     onClosePackagesModal,
-    openPackagesModal,
+    openPackagesModal
   };
 };
 

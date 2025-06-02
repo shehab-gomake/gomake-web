@@ -59,7 +59,7 @@ const MoreMenuWidget = ({
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
-    onOpenPackagesModal,
+    onOpenPackagesModal
   });
 
   return (

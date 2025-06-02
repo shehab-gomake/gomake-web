@@ -82,7 +82,7 @@ const useMoreCircle = () => {
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
-    onOpenPackagesModal,
+    onOpenPackagesModal
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
