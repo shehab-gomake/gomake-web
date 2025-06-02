@@ -20,6 +20,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { tokenExpiredState } from "@/store/token-expired-modal";
 import { useGomakeRouter } from "@/hooks";
 
+
 const CustomerAuthLayout = ({
   children,
   permissionEnumValue,
