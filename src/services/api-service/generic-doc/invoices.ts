@@ -32,7 +32,7 @@ const getTaxConfirmationNumberApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_TAX_CONFIRMATION_NUMBER_URL,
     setState,
     { documentId },
