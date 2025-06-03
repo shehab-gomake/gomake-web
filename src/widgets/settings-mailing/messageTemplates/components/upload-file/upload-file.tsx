@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { AddNewButton } from "@/components/button/add-new-button";
 import { FileIcon } from "@/components/icons/file-icon";
 import { DeleteIcon } from "@/pages-components/quotes/more-circle/icons/delete";
-// import { DeleteIcon } from "@/components/icons/delete-icon";
 
 interface IProps {
   onUpload: boolean;
@@ -37,7 +36,7 @@ const PdfUploadComponent = ({ onUpload, fileName }: IProps) => {
 
   const handleRemove = () => {
     setIsAttachment(false);
-    setState({ ...state, fileBase64: null });
+    setState({ ...state, fileBase64: null, attachment: null });
   };
 
   return (
@@ -64,14 +63,14 @@ const PdfUploadComponent = ({ onUpload, fileName }: IProps) => {
         ref={inputRef}
       />
 
-      {onUpload && !isAttachment && (
+      {onUpload && !isAttachment && !state?.attachment && (
         <AddNewButton
           onClick={() => inputRef.current?.click()}
           label={t("mailingSettings.addNewAttachment")}
         />
       )}
 
-      {onUpload && isAttachment && (
+      {onUpload && (isAttachment || state?.attachment) && (
         <Button
           sx={classes.removeBtn}
           startIcon={<DeleteIcon color={"#f44336"} />}
