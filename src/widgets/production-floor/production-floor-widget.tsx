@@ -267,7 +267,7 @@ const ProductionFloorWidget = () => {
         </Stack>
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
-        {isScanning && isScanningFlag && (
+        {isScanning && isScanningFlag && isMobile && (
           <Box display="flex" justifyContent="center" >
             <QrReader
               delay={300}
