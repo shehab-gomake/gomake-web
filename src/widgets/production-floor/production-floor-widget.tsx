@@ -165,13 +165,14 @@ const ProductionFloorWidget = () => {
   }, [isScanningFlag]);
 
   const handleScan = async (data: { text: string } | null) => {
+    console.log("res11111", data);
     if (!data) return;
     try {
       await getBoardMissionsIdByQrCodeApi(
         callApi,
         (res) => {
-          if (res?.success && res.data?.boardMissionId) {
-            setScanResult(data.text);
+          console.log("res2222", res);
+          if (res?.success) {
             setIsOpenModal(true);
           } else {
             setScanResult("Invalid QR Code or No Board Mission Found");
