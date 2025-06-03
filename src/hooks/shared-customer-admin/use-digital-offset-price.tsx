@@ -142,10 +142,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
-  const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
-    productTemplate?.ignoreCalculatedWorkflows
-  );
+  const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false)
+  const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(
       productTemplate?.ignoreCalculatedWorkflows || false
@@ -5381,7 +5379,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const handleNextClick = () => {
     setErrorText(false);
-    let currentSection = productTemplate.sections[activeIndex].id;
+    let filteredproductTemplate = productTemplate.sections.filter((x) => !x.isHidden);
+    let currentSection = filteredproductTemplate[activeIndex].id;
     let checkParameter = validateParameters(subProducts, currentSection);
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {

@@ -1,4 +1,4 @@
-import { Breadcrumbs, ButtonGroup, Link, Stack } from "@mui/material";
+import { Breadcrumbs, ButtonGroup, Link, Stack, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
@@ -43,6 +43,23 @@ const ProductionFloorHeader = ({
   const { CheckPermission } = useUserPermission();
   const isMobileScreen = useIsMobile();
 
+  const _renderTitleComponent = () => {
+    switch (view) {
+      case EProductionFloorView.TABLE:
+        return t("productionFloor.productionFloorTable")
+      case EProductionFloorView.KANBAN:
+        return t("productionFloor.productionFloorKanban")
+      case EProductionFloorView.DASHBOARD:
+        return t("productionFloor.dashboard")
+      case EProductionFloorView.GANTT:
+        return t("productionFloor.timeline")
+      case EProductionFloorView.DONE_JOBS:
+        return t("productionFloor.archive")
+      default:
+        return t("tabs.productFloor")
+    }
+  }
+
   return (
     <Stack
       direction={"row"}
@@ -85,7 +102,7 @@ const ProductionFloorHeader = ({
             ...(isMobileScreen && { marginTop: "5px" }),
           }}
         >
-          {t("tabs.productFloor")}
+          {_renderTitleComponent()}
         </h1>
         <Breadcrumbs aria-label="breadcrumb">
           {paths.map((path, index) => (
@@ -125,55 +142,69 @@ const ProductionFloorHeader = ({
         )}
         <SelectGroup />
         <ButtonGroup dir={"ltr"}>
-          <PrimaryButton
-            style={{ width: "40px", height: "40px", padding: 0 }}
-            variant={
-              view === EProductionFloorView.DONE_JOBS ? "contained" : "outlined"
-            }
-            onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
-          >
-            <DoneJobsIcon />
-          </PrimaryButton>
-          {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
+          <Tooltip title={t("productionFloor.archive")}>
             <PrimaryButton
               style={{ width: "40px", height: "40px", padding: 0 }}
               variant={
-                view === EProductionFloorView.GANTT ? "contained" : "outlined"
+                view === EProductionFloorView.DONE_JOBS ? "contained" : "outlined"
               }
-              onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
+              onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
             >
-              <HourglassEmptyRoundedIcon />
+
+              <DoneJobsIcon />
             </PrimaryButton>
+          </Tooltip>
+
+          {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
+            <Tooltip title={t("productionFloor.timeline")}>
+              <PrimaryButton
+                style={{ width: "40px", height: "40px", padding: 0 }}
+                variant={
+                  view === EProductionFloorView.GANTT ? "contained" : "outlined"
+                }
+                onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
+              >
+                <HourglassEmptyRoundedIcon />
+              </PrimaryButton>
+            </Tooltip>
+
           )}
 
-          <PrimaryButton
-            style={{ width: "40px", height: "40px", padding: 0 }}
-            variant={
-              view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
-            }
-            onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
-          >
-            <AvTimerIcon />
-          </PrimaryButton>
+          <Tooltip title={t("productionFloor.dashboard")}>
+            <PrimaryButton
+              style={{ width: "40px", height: "40px", padding: 0 }}
+              variant={
+                view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
+              }
+              onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
+            >
+              <AvTimerIcon />
+            </PrimaryButton>
+          </Tooltip>
 
-          <PrimaryButton
-            style={{ width: "20px", height: "40px", padding: 0 }}
-            variant={
-              view === EProductionFloorView.KANBAN ? "contained" : "outlined"
-            }
-            onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
-          >
-            <GridViewIcon />
-          </PrimaryButton>
-          <PrimaryButton
-            style={{ width: "20px", height: "40px", padding: 0 }}
-            variant={
-              view === EProductionFloorView.TABLE ? "contained" : "outlined"
-            }
-            onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
-          >
-            <ViewHeadlineIcon />
-          </PrimaryButton>
+          <Tooltip title={t("productionFloor.kanban")}>
+            <PrimaryButton
+              style={{ width: "20px", height: "40px", padding: 0 }}
+              variant={
+                view === EProductionFloorView.KANBAN ? "contained" : "outlined"
+              }
+              onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
+            >
+              <GridViewIcon />
+            </PrimaryButton>
+          </Tooltip>
+
+          <Tooltip title={t("productionFloor.table")}>
+            <PrimaryButton
+              style={{ width: "20px", height: "40px", padding: 0 }}
+              variant={
+                view === EProductionFloorView.TABLE ? "contained" : "outlined"
+              }
+              onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
+            >
+              <ViewHeadlineIcon />
+            </PrimaryButton>
+          </Tooltip>
         </ButtonGroup>
       </Stack>
     </Stack>
