@@ -61,7 +61,7 @@ import {
   renderDocumentTypeForSourceDocumentNumber,
   renderURLDocumentType,
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
-import { AStatus, BoardMissionStatusForFilter, ReceiptAccountingStatus } from "../board-missions/widgets/enums";
+import { AStatus, BoardMissionStatusForFilter, PStatus, ReceiptAccountingStatus } from "../board-missions/widgets/enums";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -2076,12 +2076,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const productionStatuses = [
-    { label: t("boardMissions.waiting"), value: BoardMissionStatusForFilter.WAITING },
-    { label: t("boardMissions.urgent"), value: BoardMissionStatusForFilter.URGENT },
-    { label: t("boardMissions.inProduction"), value: BoardMissionStatusForFilter.IN_PROCESS },
-    { label: t("boardMissions.stuck"), value: BoardMissionStatusForFilter.STUCK },
-    { label: t("boardMissions.approvalRequired"), value: BoardMissionStatusForFilter.APPROVAL_REQUIRED },
-    { label: t("boardMissions.done"), value: BoardMissionStatusForFilter.DONE },
+    { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
+    { label: t("boardMissions.done"), value: PStatus.DONE },
   ];
 
   const accountingStatuses =
