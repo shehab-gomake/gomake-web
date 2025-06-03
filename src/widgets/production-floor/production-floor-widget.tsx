@@ -157,6 +157,14 @@ const ProductionFloorWidget = () => {
 
   const [scanResult, setScanResult] = useState<string | null>(null);
   console.log("scanResult", scanResult);
+  useEffect(() => {
+    if (scanResult) {
+      setTimeout(() => {
+        setScanResult(null);
+      }, 500);
+    }
+  }, [scanResult]);
+
   const handleScan = async (data: { text: string } | null) => {
     if (!data) return;
     try {
