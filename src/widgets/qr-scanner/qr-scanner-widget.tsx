@@ -35,7 +35,7 @@ const QRScannerPage = () => {
             if (res?.success && res.data?.boardMissionId) {
               setScanResult(data.text);
               navigate(
-                `/production-floor?boardMissionsId=${res.data.boardMissionId}&step=stations`
+                `/production-floor?boardMissionsId=${res.data.boardMissionId}&step=stations&isScanning=${true}`
               );
             } else {
               setScanResult("Invalid QR Code or No Board Mission Found");
