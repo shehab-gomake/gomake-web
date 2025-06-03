@@ -157,7 +157,7 @@ const ProductionFloorWidget = () => {
 
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [isScanningFlag, setIsScanningFlag] = useState(false);
-  console.log("scanResult", scanResult);
+  console.log("scanResult", { scanResult, isScanningFlag });
   useEffect(() => {
     if (!isScanningFlag) {
       handleScanAgain();
@@ -267,8 +267,8 @@ const ProductionFloorWidget = () => {
         </Stack>
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
-        {isScanning && (
-          <Box display="none" justifyContent="center" >
+        {isScanning && isScanningFlag && (
+          <Box display="flex" justifyContent="center" >
             <QrReader
               delay={300}
               facingMode="environment"
