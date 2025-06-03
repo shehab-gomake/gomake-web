@@ -1,4 +1,4 @@
-import { IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -156,14 +156,13 @@ const ProductionFloorWidget = () => {
   };
 
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const [isScanningFlag, setIsScanningFlag] = useState(false);
   console.log("scanResult", scanResult);
   useEffect(() => {
-    if (scanResult) {
-      setTimeout(() => {
-        setScanResult(null);
-      }, 500);
+    if (!isScanningFlag) {
+      handleScanAgain();
     }
-  }, [scanResult]);
+  }, [isScanningFlag]);
 
   const handleScan = async (data: { text: string } | null) => {
     if (!data) return;
@@ -187,6 +186,11 @@ const ProductionFloorWidget = () => {
   };
   const handleError = (err: any) => {
     console.error("QR Scan error:", err);
+  };
+
+  const handleScanAgain = () => {
+    setScanResult(null);
+    setIsScanningFlag(true); // Show the scanner again
   };
 
   return (
@@ -263,26 +267,28 @@ const ProductionFloorWidget = () => {
         </Stack>
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
-
-        <QrReader
-          delay={300}
-          facingMode="environment"
-          constraints={{
-            video: { facingMode: { exact: "environment" } },
-          }}
-          style={{
-            display: "none",
-            borderRadius: "20px",
-            border: "4px solid #2e3092",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-            padding: "10px",
-            height: "auto",
-            objectFit: "contain",
-            zIndex: 999999,
-          }}
-          onScan={handleScan}
-          onError={handleError}
-        />
+        {isScanning && (
+          <Box display="none" justifyContent="center" >
+            <QrReader
+              delay={300}
+              facingMode="environment"
+              constraints={{
+                video: { facingMode: { exact: "environment" } },
+              }}
+              style={{
+                width: "100%",
+                borderRadius: "20px",
+                border: "4px solid #2e3092",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                padding: "10px",
+                height: "auto",
+                objectFit: "contain",
+              }}
+              onScan={handleScan}
+              onError={handleError}
+            />
+          </Box>
+        )}
       </Drawer>
       <GoMakeDeleteModal
         hideIcon={true}
