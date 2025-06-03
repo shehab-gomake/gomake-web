@@ -292,7 +292,7 @@ const OutSourceSupplierRow = ({
             getOptionLabel={(item) => item.text}
             defaultFiltering={false}
             onChangeTextField={checkWhatRenderArray}
-            value={customer?.name}
+            value={customer?.name ?? t("sales.quote.chooseSupplier")}
             loading={isFetching}
             onChange={(e, v) => handleSupplierUpdate(v?.id, action?.id)}
             isFromCartPage={true}

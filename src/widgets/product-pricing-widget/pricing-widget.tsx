@@ -15,7 +15,11 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { calculationResultState, openModalMachineState, openModalMaterialState } from "./state";
+import {
+  calculationResultState,
+  openModalMachineState,
+  openModalMaterialState,
+} from "./state";
 import { useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -30,8 +34,6 @@ import { _renderDeliveryDate } from "@/utils/helpers";
 import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
 import { useActionUpdateValues } from "./components/action/use-action-update-values";
-
-
 
 const PricingWidget = ({
   workFlows,
@@ -81,6 +83,11 @@ const PricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
   } = usePricingWidget({
     workFlows,
     getOutSourcingSuppliers,
@@ -95,8 +102,12 @@ const PricingWidget = ({
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
 
-  const [openModalMachine, setOpenModalMachine] = useRecoilState(openModalMachineState);
-  const [openModalMaterial, setOpenModalMaterial] = useRecoilState(openModalMaterialState);
+  const [openModalMachine, setOpenModalMachine] = useRecoilState(
+    openModalMachineState
+  );
+  const [openModalMaterial, setOpenModalMaterial] = useRecoilState(
+    openModalMaterialState
+  );
   const onClickCloseModalMachine = () => {
     setOpenModalMachine(false);
   };
@@ -104,7 +115,8 @@ const PricingWidget = ({
     setOpenModalMaterial(false);
   };
 
-  const { updateWorkFlowForMachine, updateWorkFlowForMaterials } = useActionUpdateValues();
+  const { updateWorkFlowForMachine, updateWorkFlowForMaterials } =
+    useActionUpdateValues();
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
@@ -141,7 +153,7 @@ const PricingWidget = ({
                   sx={classes.button}
                   variant={
                     view === EPricingViews.OTHERS_WORKFLOWS &&
-                      selectedTab?.productType === section.productType
+                    selectedTab?.productType === section.productType
                       ? "contained"
                       : "outlined"
                   }
@@ -237,28 +249,40 @@ const PricingWidget = ({
       </Stack>
 
       {selectedWorkFlow && (
-        <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
           <div style={{ flex: 1 }}>
             <GeneralInformationComponent
               details={selectedWorkFlow?.generalInformation}
               details2={selectedWorkFlow?.generalInformationProductionFloor}
             />
           </div>
-          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-            <div style={{
-              width: "20%",
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
-              padding: "10px",
-              alignSelf: "flex-start",
-              paddingTop: "0px",
-              minWidth: 330
-            }}>
+          <PermissionCheck
+            userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}
+          >
+            <div
+              style={{
+                width: "20%",
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                padding: "10px",
+                alignSelf: "flex-start",
+                paddingTop: "0px",
+                minWidth: 330,
+              }}
+            >
               <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow} />
             </div>
           </PermissionCheck>
-
         </div>
       )}
       <Divider />
@@ -298,6 +322,11 @@ const PricingWidget = ({
                 selectedWorkFlowCalculatedIsLoaded
               }
               reOderMainActions={reOderMainActions}
+              customer={customer}
+              setCustomer={setCustomer}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              isFetching={isFetching}
             />
           )}
         </div>
