@@ -1,9 +1,9 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
-import {useStyle} from "@/widgets/product-pricing-widget/style";
-import {Collapse, Fade, IconButton, Skeleton, Tooltip} from "@mui/material";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
+import { useStyle } from "@/widgets/product-pricing-widget/style";
+import { Collapse, Fade, IconButton, Skeleton, Tooltip } from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -12,37 +12,45 @@ import {
   ParametersMapping,
   TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
-import {EWorkSource, HtmlElementType, RuleType,} from "@/widgets/product-pricing-widget/enums";
-import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
+import {
+  EWorkSource,
+  HtmlElementType,
+  RuleType,
+} from "@/widgets/product-pricing-widget/enums";
+import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import {GoMakeAutoComplate, GomakePrimaryButton,} from "@/components";
+import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
 import Button from "@mui/material/Button";
-import {useTranslation} from "react-i18next";
-import {PrintImageComponent} from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
+import { useTranslation } from "react-i18next";
+import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import {SettingsIcon} from "@/icons/settings";
-import {SettingsMenu} from "./settings-menu";
-import {PermissionCheck} from "@/components/CheckPermission";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {_renderIconLogs} from "@/utils/constants";
-import {TableOutPutComponent} from "../table-output/table-output-component";
-import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
-import {isActionEmployeeUpdatedState, permissionsState, userState,} from "@/store";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {SortIcon} from "@/icons/sort-icon";
-import {_renderDeliveryDate} from "@/utils/helpers";
-import {ReloadPriceIcon} from "@/icons/reload-price";
-import {formatValueWithUnit} from "@/utils/is-currency";
-import {ClientAutocomplete} from "@/widgets/Clients-Autocomplete/clients-list";
-import {useCustomerDropDownList} from "@/hooks";
-import {CLIENT_TYPE} from "@/pages/customers/enums";
+import { SettingsIcon } from "@/icons/settings";
+import { SettingsMenu } from "./settings-menu";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { _renderIconLogs } from "@/utils/constants";
+import { TableOutPutComponent } from "../table-output/table-output-component";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import {
+  isActionEmployeeUpdatedState,
+  permissionsState,
+  userState,
+} from "@/store";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { SortIcon } from "@/icons/sort-icon";
+import { _renderDeliveryDate } from "@/utils/helpers";
+import { ReloadPriceIcon } from "@/icons/reload-price";
+import { formatValueWithUnit } from "@/utils/is-currency";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { useCustomerDropDownList } from "@/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -70,6 +78,11 @@ interface IActionsComponentProps {
   deleteActionFromProduct?: (selectedAction: any) => void;
   updateActionsOrderInProduct?: (actions: any) => void;
   updateProductAction?: (data: any) => void;
+  customer?: any;
+  renderOptions?: () => any[];
+  checkWhatRenderArray?: (arg: any) => void;
+  setCustomer?: any;
+  isFetching?: boolean;
 }
 
 const Actions = ({
@@ -83,6 +96,11 @@ const Actions = ({
   deleteActionFromProduct,
   updateActionsOrderInProduct,
   updateProductAction,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
@@ -108,6 +126,7 @@ const Actions = ({
     }
   };
   const permissions = useRecoilValue(permissionsState);
+
   return (
     <>
       {permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ? (
@@ -149,6 +168,11 @@ const Actions = ({
                             isFromSetting={isFromSetting}
                             deleteActionFromProduct={deleteActionFromProduct}
                             updateProductAction={updateProductAction}
+                            customer={customer}
+                            setCustomer={setCustomer}
+                            renderOptions={renderOptions}
+                            checkWhatRenderArray={checkWhatRenderArray}
+                            isFetching={isFetching}
                             {...action}
                           />
                         </div>
@@ -177,6 +201,11 @@ const Actions = ({
                 isFromSetting={isFromSetting}
                 deleteActionFromProduct={deleteActionFromProduct}
                 updateProductAction={updateProductAction}
+                customer={customer}
+                setCustomer={setCustomer}
+                renderOptions={renderOptions}
+                checkWhatRenderArray={checkWhatRenderArray}
+                isFetching={isFetching}
                 {...action}
               />
             </div>
@@ -225,6 +254,11 @@ const ActionContainerComponent = ({
   updateProductAction,
   relatedActions,
   showSaveChangesButton,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -265,7 +299,7 @@ const ActionContainerComponent = ({
     materialsList,
     foldOptions,
   } = useActionUpdateValues();
-  
+
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
@@ -278,6 +312,7 @@ const ActionContainerComponent = ({
       label: s.supplierName,
     }));
   }, [suppliersState]);
+
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
   const user = useRecoilValue<any>(userState);
@@ -411,7 +446,7 @@ const ActionContainerComponent = ({
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
 
   const handleSupplierChange = (e, value) => {
-    debugger
+    setIsUpdateBusinessName(null);
     if (isFromSetting) {
       updateProductAction({
         actionId,
@@ -442,14 +477,10 @@ const ActionContainerComponent = ({
         });
       }
 
-      updateActionData(
-        id,
-        value?.id ?? null,
-        "supplierId",
-        productType
-      ).then();
+      updateActionData(id, value?.id ?? null, "supplierId", productType).then();
     }
   };
+
   const calculateProfitInMoney = () => {
     const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
     const totalCostValues = totalCostValue ? totalCostValue : 0;
@@ -461,6 +492,7 @@ const ActionContainerComponent = ({
     const totalCostValues = totalCostValue ? totalCostValue : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
   };
+
   const calculateProfitInRelaredActionsMoney = (action) => {
     const totalPriceValues = action?.totalPrice
       ? action?.totalPrice?.values[0]
@@ -470,19 +502,21 @@ const ActionContainerComponent = ({
       : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
   };
-  useEffect(()=> {
+
+  useEffect(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.value === supplierId);
       console.log("selected supplier", supplier);
-      if(supplier) {
+      if (supplier) {
         setCustomer({
-          id:supplier.value,
+          id: supplier.value,
           name: supplier.label,
         });
       }
       //return supplier;
     }
-  },[supplierId, suppliers, suppliersState])
+  }, [supplierId, suppliers, suppliersState]);
+
   useEffect(() => {
     if (foldOptionValueId) {
       const selectedFoldOptionName = foldOptions?.find(
@@ -494,9 +528,19 @@ const ActionContainerComponent = ({
     }
   }, [foldOptionValueId, foldOptions]);
   const permissions = useRecoilValue(permissionsState);
-  const {customer,
-    setCustomer, renderOptions, checkWhatRenderArray, isFetching, listClient } =
-      useCustomerDropDownList({clientType:CLIENT_TYPE.SUPPLIER});
+
+  const mappedSuppliers = renderOptions()?.map((supplier) => ({
+    text: supplier?.name,
+    id: supplier?.id,
+    ...supplier,
+  }));
+
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
+
+  const onBlurBusinessName = async () => {
+    setIsUpdateBusinessName(null);
+  };
+
   return (
     <>
       {selectedWorkFlowCalculatedIsLoaded ? (
@@ -544,36 +588,41 @@ const ActionContainerComponent = ({
                           flexItem
                           color={"#000"}
                         />
-                        <ClientAutocomplete
-                            key={customer?.id}
-                            //key={supplierId + suppliers}
-                            clientType={CLIENT_TYPE.SUPPLIER}
-                            disableClearable={true}
-                            options={renderOptions() ? renderOptions() : []}
-                            style={{ width: "200px" }}
-                            //style={classes.selectCustomerContainer}
-                            getOptionLabel={(option: any) =>
-                                option && option.name ? `${option.name}` : ""
-                            }
-                            defaultFiltering={false}
-                            onChangeTextField={checkWhatRenderArray}
-                            value={customer}
-                            loading={isFetching}
-                            onChange={handleSupplierChange}
-                            //onAddCustomer={onCustomerAddFromOption}
-                        />
-                        {/*<GoMakeAutoComplate
-                          key={supplierId + suppliers}
-                          placeholder={t("materials.sheetPaper.selectSupplier")}
-                          value={getSupplierId()}
-                          style={{ width: "200px" }}
-                          onChange={handleSupplierChange}
-                          options={suppliersState?.map((s) => ({
-                            value: s.supplierId,
-                            label: s.supplierName,
-                          }))}
+                        {/* <ClientAutocomplete
+                          key={customer?.id}
+                          clientType={CLIENT_TYPE.SUPPLIER}
                           disableClearable={true}
-                        />*/}
+                          options={renderOptions() ? renderOptions() : []}
+                          style={{ width: "200px" }}
+                          getOptionLabel={(option: any) =>
+                            option && option.name ? `${option.name}` : ""
+                          }
+                          defaultFiltering={false}
+                          onChangeTextField={checkWhatRenderArray}
+                          value={customer}
+                          loading={isFetching}
+                          onChange={handleSupplierChange}
+                        /> */}
+
+                        <ClientAutocomplete
+                          uiType="updated"
+                          key={customer?.id}
+                          clientType={CLIENT_TYPE.SUPPLIER}
+                          disableClearable={true}
+                          options={mappedSuppliers ? mappedSuppliers : []}
+                          getOptionLabel={(item) => item.text}
+                          defaultFiltering={false}
+                          onChangeTextField={checkWhatRenderArray}
+                          value={
+                            customer?.name ?? t("sales.quote.chooseSupplier")
+                          }
+                          loading={isFetching}
+                          onChange={handleSupplierChange}
+                          isFromCartPage={true}
+                          isUpdate={isUpdateBusinessName}
+                          setIsUpdate={setIsUpdateBusinessName}
+                          onBlur={onBlurBusinessName}
+                        />
                       </Stack>
                     ) : (
                       isNeedMachine && (
@@ -781,9 +830,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                    0,
-                                    20
-                                  ) + "..."
+                                      0,
+                                      20
+                                    ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -969,16 +1018,17 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${source === EWorkSource.OUT
-                              ? formatValueWithUnit(
-                                calculateOutSourceProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              : formatValueWithUnit(
-                                calculateProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              })`}
+                            {`(${
+                              source === EWorkSource.OUT
+                                ? formatValueWithUnit(
+                                    calculateOutSourceProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                                : formatValueWithUnit(
+                                    calculateProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                            })`}
                           </span>
                         </Stack>
                       )}
@@ -1357,7 +1407,6 @@ const ActionContainerComponent = ({
                 isFromSetting={isFromSetting}
                 hideRelatedActions={hideRelatedActions}
               />
-
             </Stack>
           </Fade>
         </>
