@@ -61,6 +61,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           graphicsFilePath: graphicsFilePath,
           productType:productType,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
+          hotFolderName: file?.hotFolderName,
           filesInfo: [
             {
               fileName: file?.name,
@@ -90,7 +91,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       const start = currentChunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
-      const hotFolderName = productType;
+      const hotFolderName = file?.hotFolderName;
       let response = await uploadChunk(
         chunk,
         currentChunk,
@@ -230,6 +231,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       },
       false
     );
+    console.log("resresresresresres", res);
   };
   return {
     handleFileUpload,
