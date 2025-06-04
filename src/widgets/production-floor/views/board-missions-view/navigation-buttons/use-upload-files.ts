@@ -20,12 +20,10 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
-  console.log("uploadingFiles", uploadingFiles);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const { callApi } = useGomakeAxios();
 
   const handleFileUpload = async (file, fileType) => {
-    console.log("file", file);
     const finalPath =
       fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
     setShowFileUploader(true);
