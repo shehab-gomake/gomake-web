@@ -529,11 +529,11 @@ const ActionContainerComponent = ({
   }, [foldOptionValueId, foldOptions]);
   const permissions = useRecoilValue(permissionsState);
 
-  const mappedSuppliers = renderOptions()?.map((supplier) => ({
+  const mappedSuppliers = renderOptions ? renderOptions()?.map((supplier) => ({
     text: supplier?.name,
     id: supplier?.id,
     ...supplier,
-  }));
+  })) : [];
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
 
