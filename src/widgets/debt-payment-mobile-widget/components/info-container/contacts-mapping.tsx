@@ -15,7 +15,7 @@ const ContactMapping = ({ item }: any) => {
         }
         label={t("sales.quote.contactName")}
         inputMainContainerStyle={classes.inputMainContainer}
-        speicalStyle={{ padding: "0px" }}
+        specialStyle={{ padding: "0px" }}
         isUpdate={false}
         setIsUpdate={() => {}}
       />
@@ -27,7 +27,7 @@ const ContactMapping = ({ item }: any) => {
         isUpdate={false}
         setIsUpdate={() => {}}
         inputMainContainerStyle={classes.inputMainContainer}
-        speicalStyle={{ padding: "0px" }}
+        specialStyle={{ padding: "0px" }}
       />
       <InputUpdatedValues
         value={
@@ -37,7 +37,7 @@ const ContactMapping = ({ item }: any) => {
         isUpdate={false}
         setIsUpdate={() => {}}
         inputMainContainerStyle={classes.inputMainContainer}
-        speicalStyle={{ padding: "0px" }}
+        specialStyle={{ padding: "0px" }}
       />
     </div>
   );

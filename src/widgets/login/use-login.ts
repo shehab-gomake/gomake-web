@@ -45,7 +45,7 @@ const useGomakeLogin = () => {
         timeZoneOffset: offsetHours,
       });
       if (result?.data?.data?.customer?.token) {
-        showLoginModal(false); //!here
+        showLoginModal(false);
         updateTokenStorage(result?.data?.data?.customer?.token);
 
         // result?.data?.data?.customer.isTermsAccepted

@@ -15,7 +15,7 @@ const PhoneInputUpdatedValues = ({
   isUpdate,
   setIsUpdate,
   onInputChange,
-  speicalStyle,
+  specialStyle,
   onClickFlag,
   flag,
   sign,
@@ -68,7 +68,7 @@ const PhoneInputUpdatedValues = ({
           />
         ) : (
           <div
-            style={{ ...clasess.inputTextStyle, ...speicalStyle }}
+            style={{ ...clasess.inputTextStyle, ...specialStyle }}
             className="customInput"
             onClick={handleClick}
           >

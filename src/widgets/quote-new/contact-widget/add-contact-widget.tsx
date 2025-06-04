@@ -92,13 +92,17 @@ const AddContactNewWidget = ({
       onClickAddNewContact();
     }
   };
-  const filteredContacts = clientContactsValue.filter(contact =>
-    !quoteItemValue?.documentContacts?.some(docContact => docContact.contactID === contact.id)
+  const filteredContacts = clientContactsValue.filter(
+    (contact) =>
+      !quoteItemValue?.documentContacts?.some(
+        (docContact) => docContact.contactID === contact.id
+      )
   );
   return (
     <>
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
+          value={selectedContactById}
           label={t("sales.quote.contactName")}
           options={[
             { id: "new", text: t("sales.quote.addNewContact") }, // Add New Contact option
@@ -121,6 +125,18 @@ const AddContactNewWidget = ({
             }
           }}
           onChangeTextField={(e) => setNewContactName(e.target.value)}
+          filterOptions={(options, state) => {
+            const filtered = options.filter((opt) =>
+              opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())
+            );
+
+            const addNewOption = options.find((opt) => opt.id === "new");
+            if (addNewOption && !filtered.some((opt) => opt.id === "new")) {
+              filtered.push(addNewOption);
+            }
+
+            return filtered;
+          }}
         />
         <PhoneInputUpdatedValues
           value={selectedContactById?.phone}
