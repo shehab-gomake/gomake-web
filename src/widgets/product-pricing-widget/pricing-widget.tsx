@@ -303,6 +303,11 @@ const PricingWidget = ({
             workflows={selectedWorkFlow?.subWorkFlows || []}
             reOderMainActions={reOderMainActions}
             reOderSubWorkFlows={reOderSubWorkFlows}
+            customer={customer}
+            setCustomer={setCustomer}
+            renderOptions={renderOptions}
+            checkWhatRenderArray={checkWhatRenderArray}
+            isFetching={isFetching}
           />
           {isMobileScreen ? (
             <MobileActions
@@ -344,6 +349,11 @@ const PricingWidget = ({
               selectedWorkFlowId={selectedWorkFlowId}
               setSelectedWorkFlowId={setSelectedWorkFlowId}
               widgetType={widgetType}
+              customer={customer}
+              setCustomer={setCustomer}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              isFetching={isFetching}
             />
             {pageSize < allCountSelectedTabWorkFlow && (
               <>

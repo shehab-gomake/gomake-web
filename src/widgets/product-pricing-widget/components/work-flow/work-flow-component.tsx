@@ -41,6 +41,12 @@ interface IWorksFlowsProps {
   setSelectedWorkFlowId?: any;
   widgetType: EWidgetProductType;
   isMobileScreen?: boolean;
+
+  customer?: any;
+  renderOptions?: () => any[];
+  checkWhatRenderArray?: (arg: any) => void;
+  setCustomer?: any;
+  isFetching?: boolean;
 }
 
 const WorkFlowComponent = ({
@@ -62,6 +68,12 @@ const WorkFlowComponent = ({
   isOpen,
   toggleOpen,
   widgetType,
+
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: IWorkFlowComponentProps) => {
   const { t } = useTranslation();
   // const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -180,6 +192,11 @@ const WorkFlowComponent = ({
               widgetType={widgetType}
               isEditableActions={false}
               workflows={subWorkFlows || []}
+              customer={customer}
+              setCustomer={setCustomer}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              isFetching={isFetching}
             />
           }
           {actionList.map((action) => (
@@ -209,6 +226,11 @@ const MobileWorkFlowComponent = ({
   isOpen,
   toggleOpen,
   widgetType,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: IWorkFlowComponentProps) => {
   const { t } = useTranslation();
   const { secondColor } = useGomakeTheme();
@@ -334,6 +356,11 @@ const MobileWorkFlowComponent = ({
               widgetType={widgetType}
               isEditableActions={false}
               workflows={subWorkFlows || []}
+              customer={customer}
+              setCustomer={setCustomer}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              isFetching={isFetching}
             />
           }
           {actionList.map((action) => (
@@ -353,6 +380,11 @@ const WorkFlowsComponent = ({
   setSelectedWorkFlowId,
   widgetType,
   isMobileScreen = false,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: IWorksFlowsProps) => {
   const [openWorkFlowId, setOpenWorkFlowId] = useState<string | null>(null);
   const toggleOpen = (id: string) => {
@@ -380,6 +412,11 @@ const WorkFlowsComponent = ({
             setSelectedWorkFlowId={setSelectedWorkFlowId}
             delay={index * elementDelay}
             index={index + 1}
+            customer={customer}
+            setCustomer={setCustomer}
+            renderOptions={renderOptions}
+            checkWhatRenderArray={checkWhatRenderArray}
+            isFetching={isFetching}
             {...flow}
           />
         );

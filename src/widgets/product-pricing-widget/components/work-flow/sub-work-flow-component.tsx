@@ -34,6 +34,11 @@ interface ISubWorkFlowsComponentProps {
   widgetType: EWidgetProductType;
   reOderMainActions?: (data: any) => void;
   reOderSubWorkFlows?: (data: any) => void;
+  customer?: any;
+  renderOptions?: () => any[];
+  checkWhatRenderArray?: (arg: any) => void;
+  setCustomer?: any;
+  isFetching?: boolean;
 }
 
 const SubWorkFlowComponent = ({
@@ -48,6 +53,11 @@ const SubWorkFlowComponent = ({
   totalRealProductionTime,
   widgetType,
   reOderMainActions,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: ISubWorkFlowComponentProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { classes } = useStyle();
@@ -218,6 +228,11 @@ const SubWorkFlowComponent = ({
                               widgetType={widgetType}
                               productType={productType}
                               workFlowId={id}
+                              customer={customer}
+                              setCustomer={setCustomer}
+                              renderOptions={renderOptions}
+                              checkWhatRenderArray={checkWhatRenderArray}
+                              isFetching={isFetching}
                               {...action}
                             />
                           ) : (
@@ -274,6 +289,11 @@ const SubWorkFlowComponent = ({
                     widgetType={widgetType}
                     productType={productType}
                     workFlowId={id}
+                    customer={customer}
+                    setCustomer={setCustomer}
+                    renderOptions={renderOptions}
+                    checkWhatRenderArray={checkWhatRenderArray}
+                    isFetching={isFetching}
                     {...action}
                   />
                 ) : (
@@ -294,6 +314,12 @@ const SubWorkFlowsComponent = ({
   widgetType,
   reOderMainActions,
   reOderSubWorkFlows,
+
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }: ISubWorkFlowsComponentProps) => {
   const [workflowsList, setWorkflowsList] = useState(workflows);
   const permissions = useRecoilValue(permissionsState);
@@ -351,6 +377,11 @@ const SubWorkFlowsComponent = ({
                               widgetType={widgetType}
                               isEditableActions={isEditableActions}
                               reOderMainActions={reOderMainActions}
+                              customer={customer}
+                              setCustomer={setCustomer}
+                              renderOptions={renderOptions}
+                              checkWhatRenderArray={checkWhatRenderArray}
+                              isFetching={isFetching}
                               {...flow}
                             />
                           </div>
@@ -372,6 +403,11 @@ const SubWorkFlowsComponent = ({
                 widgetType={widgetType}
                 isEditableActions={isEditableActions}
                 reOderMainActions={reOderMainActions}
+                customer={customer}
+                setCustomer={setCustomer}
+                renderOptions={renderOptions}
+                checkWhatRenderArray={checkWhatRenderArray}
+                isFetching={isFetching}
                 {...flow}
               />
             </div>
