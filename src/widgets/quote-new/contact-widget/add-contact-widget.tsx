@@ -102,7 +102,6 @@ const AddContactNewWidget = ({
     <>
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
-          value={selectedContactById}
           label={t("sales.quote.contactName")}
           options={[
             { id: "new", text: t("sales.quote.addNewContact") }, // Add New Contact option

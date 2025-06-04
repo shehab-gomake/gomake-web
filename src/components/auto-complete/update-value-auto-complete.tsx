@@ -18,7 +18,7 @@ interface IUpdateValueAutoCompleteProps {
   value?: any;
   onUpdate?: () => void;
   onCancel?: () => void;
-  // onInputChange?: (e: string) => void;
+  onInputChange?: (e: string) => void;
   clickedOut?: () => void;
   options?: any;
   onChange?: any;
@@ -28,9 +28,6 @@ interface IUpdateValueAutoCompleteProps {
   defaultFiltering?: boolean;
   renderOption?: any;
   filterOptions?: (options: any[], state: { inputValue: string }) => any[];
-
-  onInputChange?: (event: any, newInputValue: string, reason: string) => void;
-  inputValue?: string; // <-- add this
 }
 
 const UpdateValueAutoComplete = ({
@@ -44,8 +41,6 @@ const UpdateValueAutoComplete = ({
   renderOption,
   value,
   filterOptions,
-  onInputChange,
-  inputValue,
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const { t } = useTranslation();
@@ -82,8 +77,14 @@ const UpdateValueAutoComplete = ({
           <Autocomplete
             id="updateValueAutoComplete"
             options={options}
-            inputValue={inputValue}
-            onInputChange={onInputChange}
+            // !here
+            // value={
+            //   typeof value === "object"
+            //     ? value
+            //     : value
+            //     ? { id: "", value: "", text: value }
+            //     : null
+            // }
             sx={{
               ml: 1,
               flex: 1,
