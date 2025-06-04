@@ -110,6 +110,11 @@ export interface IWorkFlowAction {
   foldOptionValueId?: string;
   sectionName?: string;
   relatedActions?: any[];
+  customer?: any;
+  renderOptions?: () => any[];
+  checkWhatRenderArray?: (arg: any) => void;
+  setCustomer?: any;
+  isFetching?: boolean;
 }
 
 export interface IOutput {

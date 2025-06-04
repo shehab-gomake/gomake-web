@@ -25,9 +25,9 @@ import {
 import { GomakePrimaryButton, UpdateValueAutoComplete } from "@/components";
 import { TextAreaActionsMapping } from "../action/key-value-view";
 import { WastebasketNew2 } from "@/icons";
-import {CLIENT_TYPE} from "@/pages/customers/enums";
-import {ClientAutocomplete} from "@/widgets/Clients-Autocomplete/clients-list";
-import {useCustomerDropDownList} from "@/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { useCustomerDropDownList } from "@/hooks";
 
 interface IProps {
   value: number;
@@ -81,10 +81,10 @@ const OutSourceSuppliersRowComponent = ({
   const setSliderCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
     sliderCurrentProductItemValuePriceState
   );
- 
+
   const calculationResult = useRecoilValue(calculationResultState);
   useEffect(() => {
-    debugger
+    debugger;
     if (options?.length > 0) {
       const isEditOrDuplicate =
         widgetType === EWidgetProductType.EDIT ||
@@ -137,12 +137,12 @@ const OutSourceSuppliersRowComponent = ({
   };
 
   const handleSupplierUpdate = (supplierId, actionId) => {
-    debugger
+    debugger;
     const selectedSupp = options.find((x) => x.supplierId == supplierId);
     updateSupplierId(supplierId, actionId);
     // setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
     //setSliderCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
-     //setSupplier(selectedSupp);
+    //setSupplier(selectedSupp);
   };
 
   useEffect(() => {
@@ -166,23 +166,23 @@ const OutSourceSuppliersRowComponent = ({
           >
             {!selectedWorkFlowCalculatedIsLoaded &&
               selectedWorkFlow?.actions?.map((action, index) => {
-                return(
-                    <OutSourceSupplierRow
-                        action={action}
-                        currentProductItemValue={currentProductItemValue}
-                        selectedWorkFlow={selectedWorkFlow}
-                        options={options}
-                        handleSupplierUpdate={handleSupplierUpdate}
-                        handleDeliveryTimeUpdate={handleDeliveryTimeUpdate}
-                        handleCostUpdate={handleCostUpdate}
-                        handleProfitUpdate={handleProfitUpdate}
-                        handleUpdatePrice={handleUpdatePrice}
-                        onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
-                        t={t}
-                        secondColor={secondColor}
-                        systemCurrency={systemCurrency}
-                    />
-                )
+                return (
+                  <OutSourceSupplierRow
+                    action={action}
+                    currentProductItemValue={currentProductItemValue}
+                    selectedWorkFlow={selectedWorkFlow}
+                    options={options}
+                    handleSupplierUpdate={handleSupplierUpdate}
+                    handleDeliveryTimeUpdate={handleDeliveryTimeUpdate}
+                    handleCostUpdate={handleCostUpdate}
+                    handleProfitUpdate={handleProfitUpdate}
+                    handleUpdatePrice={handleUpdatePrice}
+                    onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
+                    t={t}
+                    secondColor={secondColor}
+                    systemCurrency={systemCurrency}
+                  />
+                );
                 //return OutSourceSupplierRow(action,currentProductItemValue,selectedWorkFlow,options,handleSupplierUpdate,handleDeliveryTimeUpdate,handleCostUpdate,handleProfitUpdate,handleUpdatePrice,onClickRemoveOutSourceAction,t,secondColor,systemCurrency);
               })}
           </Stack>
@@ -203,72 +203,105 @@ const OutSourceSuppliersRowComponent = ({
     </>
   );
 };
-const OutSourceSupplierRow = ({action,currentProductItemValue,selectedWorkFlow,options,handleSupplierUpdate,handleDeliveryTimeUpdate,handleCostUpdate,handleProfitUpdate,handleUpdatePrice,onClickRemoveOutSourceAction,t,secondColor,systemCurrency})=>{
-  const {customer,
-    setCustomer, renderOptions, checkWhatRenderArray, isFetching, listClient } =
-      useCustomerDropDownList({clientType:CLIENT_TYPE.SUPPLIER});
+const OutSourceSupplierRow = ({
+  action,
+  currentProductItemValue,
+  selectedWorkFlow,
+  options,
+  handleSupplierUpdate,
+  handleDeliveryTimeUpdate,
+  handleCostUpdate,
+  handleProfitUpdate,
+  handleUpdatePrice,
+  onClickRemoveOutSourceAction,
+  t,
+  secondColor,
+  systemCurrency,
+}) => {
+  const {
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    listClient,
+  } = useCustomerDropDownList({ clientType: CLIENT_TYPE.SUPPLIER });
   const { classes } = useStyle();
   // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
   // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
-  const foundSupplier = options.find(
-      (x) => x.supplierId == action?.supplierId
-  );
-  if((foundSupplier && customer && customer.id != foundSupplier.supplierId) || !customer){
+  const foundSupplier = options.find((x) => x.supplierId == action?.supplierId);
+  if (
+    (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
+    !customer
+  ) {
     setCustomer({
       id: foundSupplier?.supplierId,
       name: foundSupplier?.supplierName,
-    })
+    });
   }
 
   const textAreaOutputs = action?.outputs?.filter(
-      (parameter) =>
-          parameter &&
-          parameter?.propertyType === RuleType.OUTPUT &&
-          parameter?.htmlElementType === HtmlElementType.TEXT_AREA
+    (parameter) =>
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
   );
+
+  const mappedSuppliers = renderOptions()?.map((supplier) => ({
+    text: supplier?.name,
+    id: supplier?.id,
+    ...supplier,
+  }));
+
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
+
+  const onBlurBusinessName = async () => {
+    setIsUpdateBusinessName(null);
+  };
+
   return (
+    <Stack
+      direction={"row"}
+      alignItems={"center"}
+      justifyContent={"space-between"}
+      style={{ ...classes.actionContainer }}
+    >
       <Stack
-          direction={"row"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-          style={{ ...classes.actionContainer }}
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        position={"relative"}
+        style={{
+          ...classes.actionContainer,
+          padding: "10px 16px",
+        }}
       >
         <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            position={"relative"}
-            style={{
-              ...classes.actionContainer,
-              padding: "10px 16px",
-            }}
+          alignItems={"center"}
+          direction={"row"}
+          gap={"10px"}
+          flexWrap={"wrap"}
         >
-          <Stack
-              alignItems={"center"}
-              direction={"row"}
-              gap={"10px"}
-              flexWrap={"wrap"}
-          >
-            <ClientAutocomplete
-                key={customer?.id}
-                clientType={CLIENT_TYPE.SUPPLIER}
-                disableClearable={true}
-                options={renderOptions() ? renderOptions() : []}
-                style={{ width: "200px" }}
-                //style={classes.selectCustomerContainer}
-                getOptionLabel={(option: any) =>
-                    option && option.name ? `${option.name}` : ""
-                }
-                defaultFiltering={false}
-                onChangeTextField={checkWhatRenderArray}
-                value={customer}
-                loading={isFetching}
-                onChange={(e,v)=>handleSupplierUpdate(v.id, action?.id)}
-                //onAddCustomer={onCustomerAddFromOption}
-            />
-            
-            {
-              /*<EditableSelect
+          <ClientAutocomplete
+            uiType="updated"
+            key={customer?.id}
+            clientType={CLIENT_TYPE.SUPPLIER}
+            disableClearable={true}
+            options={mappedSuppliers ? mappedSuppliers : []}
+            style={{ width: "200px" }}
+            getOptionLabel={(item) => item.text}
+            defaultFiltering={false}
+            onChangeTextField={checkWhatRenderArray}
+            value={customer?.name ?? t("sales.quote.chooseSupplier")}
+            loading={isFetching}
+            onChange={(e, v) => handleSupplierUpdate(v?.id, action?.id)}
+            isFromCartPage={true}
+            isUpdate={isUpdateBusinessName}
+            setIsUpdate={setIsUpdateBusinessName}
+            onBlur={onBlurBusinessName}
+          />
+
+          {/*<EditableSelect
                 isEditable={true}
                 label={t("suppliers.supplierName")}
                 value={
@@ -281,126 +314,105 @@ const OutSourceSupplierRow = ({action,currentProductItemValue,selectedWorkFlow,o
                   handleSupplierUpdate(v, action?.id);
                 }}
                 options={options}
-            />*/
+            />*/}
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={"W.H"}
+            isEditable={
+              foundSupplier?.status === EOutsourceSupplierStatus.Manually
             }
-            <Divider orientation={"vertical"} flexItem />
-            <EditableValue
-                unit={"W.H"}
-                isEditable={
-                    foundSupplier?.status ===
-                    EOutsourceSupplierStatus.Manually
-                }
-                label={t("pricingWidget.endTime")}
-                value={
-                  Array.isArray(
-                      action?.totalProductionTime?.outSourceValues
-                  ) &&
-                  action?.totalProductionTime?.outSourceValues
-                      .length > 0
-                      ? action?.totalProductionTime?.outSourceValues[0]
-                      : 0
-                }
-                onUpdate={(v) => {
-                  handleDeliveryTimeUpdate(
-                      +v,
-                      action?.id,
-                      foundSupplier?.supplierId
-                  );
-                }}
-            />
-            <Divider orientation={"vertical"} flexItem />
-            <EditableValue
-                unit={systemCurrency}
-                isEditable={
-                    foundSupplier?.status ===
-                    EOutsourceSupplierStatus.Manually
-                }
-                label={t("pricingWidget.cost")}
-                value={
-                  Array.isArray(action?.totalCost?.outSourceValues) &&
-                  action?.totalCost?.outSourceValues.length > 0
-                      ? action?.totalCost?.outSourceValues[0]
-                      : 0
-                }
-                onUpdate={(v) => {
-                  handleCostUpdate(
-                      +v,
-                      action?.id,
-                      foundSupplier?.supplierId
-                  );
-                }}
-            />
-            <Divider orientation={"vertical"} flexItem />
-            <EditableValue
-                unit={"%"}
-                isEditable={
-                    foundSupplier?.status ===
-                    EOutsourceSupplierStatus.Manually
-                }
-                label={t("pricingWidget.profit")}
-                value={
-                  Array.isArray(action?.profit?.outSourceValues) &&
-                  action?.profit?.outSourceValues.length > 0
-                      ? action?.profit?.outSourceValues[0]
-                      : 0
-                }
-                onUpdate={(v) => {
-                  handleProfitUpdate(
-                      +v,
-                      action?.id,
-                      foundSupplier?.supplierId
-                  );
-                }}
-            />
-            <Divider orientation={"vertical"} flexItem />
-            <EditableValue
-                unit={systemCurrency}
-                isEditable={
-                    foundSupplier?.status ===
-                    EOutsourceSupplierStatus.Manually &&
-                    foundSupplier?.cost !== 0
-                }
-                valueColor={secondColor(500)}
-                label={t("pricingWidget.finalPrice")}
-                value={
-                  Array.isArray(
-                      action?.totalPrice?.outSourceValues
-                  ) && action?.totalPrice?.outSourceValues.length > 0
-                      ? action?.totalPrice?.outSourceValues[0]
-                      : 0
-                }
-                onUpdate={(v) => {
-                  handleUpdatePrice(
-                      +v,
-                      action?.id,
-                      foundSupplier?.supplierId
-                  );
-                }}
-            />
-            <Divider orientation={"vertical"} flexItem />
-            <TextAreaActionsMapping
-                parameters={textAreaOutputs}
-                actionId={action?.id}
-                currentProductItemValue={currentProductItemValue}
-                productType={action?.productType}
-                isOutSource={true}
-                supplierId={foundSupplier?.supplierId}
-            />
-          </Stack>
-          {selectedWorkFlow?.actions.length > 1 && (
-              <IconButton
-                  onClick={() => {
-                    onClickRemoveOutSourceAction(action?.id);
-                  }}
-                  style={classes.toggleActionButton}
-              >
-                <WastebasketNew2 />
-              </IconButton>
-          )}
+            label={t("pricingWidget.endTime")}
+            value={
+              Array.isArray(action?.totalProductionTime?.outSourceValues) &&
+              action?.totalProductionTime?.outSourceValues.length > 0
+                ? action?.totalProductionTime?.outSourceValues[0]
+                : 0
+            }
+            onUpdate={(v) => {
+              handleDeliveryTimeUpdate(
+                +v,
+                action?.id,
+                foundSupplier?.supplierId
+              );
+            }}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={systemCurrency}
+            isEditable={
+              foundSupplier?.status === EOutsourceSupplierStatus.Manually
+            }
+            label={t("pricingWidget.cost")}
+            value={
+              Array.isArray(action?.totalCost?.outSourceValues) &&
+              action?.totalCost?.outSourceValues.length > 0
+                ? action?.totalCost?.outSourceValues[0]
+                : 0
+            }
+            onUpdate={(v) => {
+              handleCostUpdate(+v, action?.id, foundSupplier?.supplierId);
+            }}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={"%"}
+            isEditable={
+              foundSupplier?.status === EOutsourceSupplierStatus.Manually
+            }
+            label={t("pricingWidget.profit")}
+            value={
+              Array.isArray(action?.profit?.outSourceValues) &&
+              action?.profit?.outSourceValues.length > 0
+                ? action?.profit?.outSourceValues[0]
+                : 0
+            }
+            onUpdate={(v) => {
+              handleProfitUpdate(+v, action?.id, foundSupplier?.supplierId);
+            }}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={systemCurrency}
+            isEditable={
+              foundSupplier?.status === EOutsourceSupplierStatus.Manually &&
+              foundSupplier?.cost !== 0
+            }
+            valueColor={secondColor(500)}
+            label={t("pricingWidget.finalPrice")}
+            value={
+              Array.isArray(action?.totalPrice?.outSourceValues) &&
+              action?.totalPrice?.outSourceValues.length > 0
+                ? action?.totalPrice?.outSourceValues[0]
+                : 0
+            }
+            onUpdate={(v) => {
+              handleUpdatePrice(+v, action?.id, foundSupplier?.supplierId);
+            }}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <TextAreaActionsMapping
+            parameters={textAreaOutputs}
+            actionId={action?.id}
+            currentProductItemValue={currentProductItemValue}
+            productType={action?.productType}
+            isOutSource={true}
+            supplierId={foundSupplier?.supplierId}
+          />
         </Stack>
+        {selectedWorkFlow?.actions.length > 1 && (
+          <IconButton
+            onClick={() => {
+              onClickRemoveOutSourceAction(action?.id);
+            }}
+            style={classes.toggleActionButton}
+          >
+            <WastebasketNew2 />
+          </IconButton>
+        )}
       </Stack>
+    </Stack>
   );
-}
+};
 const EditableValue = ({
   value,
   onUpdate,

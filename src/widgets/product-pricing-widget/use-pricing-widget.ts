@@ -18,7 +18,7 @@ import {
   userState,
   viewPricingTab,
 } from "@/store";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 
 import {
   calculationResultState,
@@ -35,6 +35,7 @@ import {
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const usePricingWidget = ({
   getOutSourcingSuppliers,
@@ -438,9 +439,17 @@ const usePricingWidget = ({
     });
   };
   const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0
+  const unitType = user?.printHouseProfile?.unitType || 0;
 
-
+  const {
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+  } = useCustomerDropDownList({
+    clientType: CLIENT_TYPE.SUPPLIER,
+  });
 
   return {
     view,
@@ -490,6 +499,11 @@ const usePricingWidget = ({
     reOderMainActions,
     reOderSubWorkFlows,
     unitType,
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
   };
 };
 
