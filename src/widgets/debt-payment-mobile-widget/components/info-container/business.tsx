@@ -19,14 +19,14 @@ const BusinessWidget = () => {
           label={t("sales.quote.businessName")}
           setIsUpdate={setIsConfirmation}
           inputMainContainerStyle={classes.inputMainContainer}
-          speicalStyle={{ padding: "0px" }}
+          specialStyle={{ padding: "0px" }}
         />
         {/* <InputUpdatedValues
           value={`${quoteConfirm?.client?.code}`}
           label={t("sales.quote.businessCode")}
           setIsUpdate={setIsConfirmation}
           inputMainContainerStyle={classes.inputMainContainer}
-          speicalStyle={{ padding: "0px" }}
+          specialStyle={{ padding: "0px" }}
         /> */}
       </div>
     </>

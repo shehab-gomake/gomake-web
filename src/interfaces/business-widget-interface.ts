@@ -10,7 +10,7 @@ export interface IBusinessWidget {
   onChange?: any;
   onInputChange?: any;
   setInputData?: any;
-  speicalStyle?: any;
+  specialStyle?: any;
   onChangeTextField?: any;
   onClickFlag?: any;
   flag?: any;
@@ -24,4 +24,5 @@ export interface IBusinessWidget {
   renderOption?: any;
   isRightSign?: boolean;
   showClearIcon?: boolean;
+  filterOptions?: (options: any[], state: { inputValue: string }) => any[];
 }

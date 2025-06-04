@@ -11,7 +11,7 @@ const InputUpdatedValues = ({
   isUpdate,
   setIsUpdate,
   onInputChange,
-  speicalStyle,
+  specialStyle,
   onClickFlag,
   flag,
   sign,
@@ -21,11 +21,14 @@ const InputUpdatedValues = ({
   placeholder,
   width,
 }: IBusinessWidget) => {
-  const { clasess } = useStyle({ isUnderLine });
-  const [updateValue, setUpdateValue] = useState();
+  const { classes } = useStyle({ isUnderLine });
+  const [originalValue, setOriginalValue] = useState(value);
+
   useEffect(() => {
-    setUpdateValue(value);
-  }, [value]);
+    if (isUpdate) {
+      setOriginalValue(value); // save on edit start
+    }
+  }, [isUpdate]);
 
   const handleClick = () => {
     if (flag) {
@@ -37,20 +40,23 @@ const InputUpdatedValues = ({
 
   return (
     <>
-      <div style={inputMainContainerStyle || clasess.inputMainContainer}>
-        <div style={clasess.labelStyle}>{label}</div>
+      <div style={inputMainContainerStyle || classes.inputMainContainer}>
+        <div style={classes.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValueInput
             clickedOut={() => onBlur()?.then()}
             onInputChange={onInputChange}
-            onCancel={() => setIsUpdate(null)}
+            onCancel={() => {
+              onInputChange(originalValue);
+              setIsUpdate(null);
+            }}
             onUpdate={() => onBlur()?.then()}
-            value={updateValue}
+            value={value}
             width={width ? width : "210px"}
           />
         ) : (
           <div
-            style={{ ...clasess.inputTextStyle, ...speicalStyle }}
+            style={{ ...classes.inputTextStyle, ...specialStyle }}
             className="customInput"
             onClick={handleClick}
           >

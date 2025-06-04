@@ -18,7 +18,7 @@ interface IUpdateValueAutoCompleteProps {
   value?: any;
   onUpdate?: () => void;
   onCancel?: () => void;
-  onInputChange?: (e: string) => void;
+  // onInputChange?: (e: string) => void;
   clickedOut?: () => void;
   options?: any;
   onChange?: any;
@@ -27,6 +27,10 @@ interface IUpdateValueAutoCompleteProps {
   loading?: boolean;
   defaultFiltering?: boolean;
   renderOption?: any;
+  filterOptions?: (options: any[], state: { inputValue: string }) => any[];
+
+  onInputChange?: (event: any, newInputValue: string, reason: string) => void;
+  inputValue?: string; // <-- add this
 }
 
 const UpdateValueAutoComplete = ({
@@ -38,6 +42,10 @@ const UpdateValueAutoComplete = ({
   loading = false,
   defaultFiltering = true,
   renderOption,
+  value,
+  filterOptions,
+  onInputChange,
+  inputValue,
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const { t } = useTranslation();
@@ -74,6 +82,8 @@ const UpdateValueAutoComplete = ({
           <Autocomplete
             id="updateValueAutoComplete"
             options={options}
+            inputValue={inputValue}
+            onInputChange={onInputChange}
             sx={{
               ml: 1,
               flex: 1,
@@ -140,7 +150,10 @@ const UpdateValueAutoComplete = ({
               ),
               []
             )}
-            filterOptions={defaultFiltering ? undefined : (x) => x}
+            // filterOptions={defaultFiltering ? undefined : (x) => x}
+            filterOptions={
+              filterOptions ?? (defaultFiltering ? undefined : (x) => x)
+            }
           />
         </Paper>
       </ClickOutside>

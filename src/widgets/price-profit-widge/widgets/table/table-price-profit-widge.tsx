@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, MenuItem, Divider } from '@mui/material';
-import { PlusIcon } from '@/icons';
-import { GoMakeMenu } from '@/components';
+import React, { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  MenuItem,
+  Divider,
+} from "@mui/material";
+import { PlusIcon } from "@/icons";
+import { GoMakeMenu } from "@/components";
 
-
-import { ProductsRowMappingTable } from './products-row-mapping-widge';
-import { UpdatedPriceIcon } from './icons/update-icon';
-import { ReStoreIcon } from './icons/restore-icon';
-import { ReviewIcon } from './icons/review-icon';
-import { useStyle } from './style';
-import { InputUpdatedValues } from '@/widgets/quote-new/input-updated-values';
-import { useTranslation } from 'react-i18next';
+import { ProductsRowMappingTable } from "./products-row-mapping-widge";
+import { UpdatedPriceIcon } from "./icons/update-icon";
+import { ReStoreIcon } from "./icons/restore-icon";
+import { ReviewIcon } from "./icons/review-icon";
+import { useStyle } from "./style";
+import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
+import { useTranslation } from "react-i18next";
 
 interface PriceProfitTableProps {
   headers: any[];
@@ -34,8 +42,15 @@ interface PriceProfitTableProps {
   handleQuantity: (index: number, value: string) => void;
   isUpdateQuantity: boolean;
   setIsUpdateQuantity: (value: boolean) => void;
-  updatePrintHousePrice: (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => void;
-  updateProfitProfileProductHidden: (data: any, handleClose: () => void) => void;
+  updatePrintHousePrice: (
+    data: any,
+    isNewPrice: boolean,
+    isCalculatedPrice?: boolean
+  ) => void;
+  updateProfitProfileProductHidden: (
+    data: any,
+    handleClose: () => void
+  ) => void;
   updateProfitProfileProductSelected: (data: any) => void;
 }
 
@@ -63,25 +78,48 @@ const PriceProfitTable = ({
   setIsUpdateQuantity,
   updatePrintHousePrice,
   updateProfitProfileProductHidden,
-  updateProfitProfileProductSelected
+  updateProfitProfileProductSelected,
 }: PriceProfitTableProps) => {
-  const { classes } = useStyle()
+  const { classes } = useStyle();
   const [showAllProducts, setShowAllProducts] = useState(false);
-  const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
+  const [activeCell, setActiveCell] = useState<{
+    index: number;
+    idx: number;
+  } | null>(null);
   const [isActiveQuantityCell, setIsActiveQuantityCell] = useState(null);
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
-    <TableContainer style={{ ...classes.tableContainer, overflowY: 'auto', maxHeight: "calc(100vh - 300px)" }}>
+    <TableContainer
+      style={{
+        ...classes.tableContainer,
+        overflowY: "auto",
+        maxHeight: "calc(100vh - 300px)",
+      }}
+    >
       <Table style={classes.table}>
         <TableHead>
-          <TableRow style={{ ...classes.tableHead, position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#B1B2E3' }}>
-            <TableCell sx={classes.tableHeadCell}>{t("priceProfit.quantities")}</TableCell>
+          <TableRow
+            style={{
+              ...classes.tableHead,
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              backgroundColor: "#B1B2E3",
+            }}
+          >
+            <TableCell sx={classes.tableHeadCell}>
+              {t("priceProfit.quantities")}
+            </TableCell>
             {headers?.map((header, index) => {
               const isActive = isActiveQuantityCell === index; // Check if the current cell is active
 
               return (
-                <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
+                <TableCell
+                  sx={classes.tableHeadCellValue}
+                  key={index}
+                  colSpan={header?.quantities?.length}
+                >
                   <div style={classes.tableBodyCellContent}>
                     <InputUpdatedValues
                       value={header?.quantity ?? "----"}
@@ -90,23 +128,37 @@ const PriceProfitTable = ({
                       }}
                       isUpdate={isActive && isUpdateQuantity} // Update only if the cell is active
                       setIsUpdate={() => {
-                        setIsActiveQuantityCell(index)
+                        setIsActiveQuantityCell(index);
                         setIsUpdateQuantity(!isUpdateQuantity);
                       }}
                       onInputChange={(value) => {
                         handleQuantity(index, value);
                       }}
-                      speicalStyle={{ color: "#FFF", textAlign: "center" }}
+                      specialStyle={{ color: "#FFF", textAlign: "center" }}
                     />
                   </div>
                 </TableCell>
               );
             })}
           </TableRow>
-          <TableRow style={{ ...classes.tableHeadTotal, position: 'sticky', top: '72px', zIndex: 1, backgroundColor: '#D0D5DD' }}>
-            <TableCell sx={classes.tableHeadCellValueTotal}>{t("priceProfit.total")}</TableCell>
+          <TableRow
+            style={{
+              ...classes.tableHeadTotal,
+              position: "sticky",
+              top: "72px",
+              zIndex: 1,
+              backgroundColor: "#D0D5DD",
+            }}
+          >
+            <TableCell sx={classes.tableHeadCellValueTotal}>
+              {t("priceProfit.total")}
+            </TableCell>
             {headers?.map((header, index) => (
-              <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
+              <TableCell
+                sx={classes.tableHeadCellTotalValue}
+                key={index}
+                colSpan={header?.quantities?.length}
+              >
                 {isNaN(header?.total) ? 0 : header?.total?.toFixed(3)}
               </TableCell>
             ))}
@@ -130,27 +182,34 @@ const PriceProfitTable = ({
                   setActiveCell={setActiveCell}
                   handleHideProduct={handleHideProduct}
                   updatePrintHousePrice={updatePrintHousePrice}
-                  updateProfitProfileProductHidden={updateProfitProfileProductHidden}
-                  updateProfitProfileProductSelected={updateProfitProfileProductSelected}
+                  updateProfitProfileProductHidden={
+                    updateProfitProfileProductHidden
+                  }
+                  updateProfitProfileProductSelected={
+                    updateProfitProfileProductSelected
+                  }
                   handleReviewCalculation={handleReviewCalculation}
                 />
               )
-            )
+            );
           })}
         </TableBody>
       </Table>
       <div style={classes.viewAllContainer}>
         <PlusIcon stroke="#2E3092" width={16} height={16} />
-        <span onClick={() => setShowAllProducts(!showAllProducts)}>{showAllProducts ? t("priceProfit.hideHidden") : t("priceProfit.viewAll")}</span>
+        <span onClick={() => setShowAllProducts(!showAllProducts)}>
+          {showAllProducts
+            ? t("priceProfit.hideHidden")
+            : t("priceProfit.viewAll")}
+        </span>
       </div>
       <Divider />
-      <GoMakeMenu
-        handleClose={handleClose}
-        open={open}
-        anchorEl={anchorEl}
-      >
+      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <div style={classes.menuContainer}>
-          <MenuItem onClick={() => handleRestoreOriginalPrice(selectedProduct)} style={classes.menuItem}>
+          <MenuItem
+            onClick={() => handleRestoreOriginalPrice(selectedProduct)}
+            style={classes.menuItem}
+          >
             <div style={classes.menuItemRestoreContainer}>
               <ReStoreIcon />
               <div style={classes.menuItemRestoreText}>
@@ -161,7 +220,10 @@ const PriceProfitTable = ({
               ₪ {selectedProduct?.PrintHousePrice}
             </div>
           </MenuItem>
-          <MenuItem onClick={() => handleUpdateNewPrice(selectedProduct)} style={classes.menuItem}>
+          <MenuItem
+            onClick={() => handleUpdateNewPrice(selectedProduct)}
+            style={classes.menuItem}
+          >
             <div style={classes.menuItemUpdateContainer}>
               <UpdatedPriceIcon />
               <div style={classes.menuItemUpdateText}>
@@ -175,7 +237,9 @@ const PriceProfitTable = ({
           <MenuItem onClick={() => handleReviewCalculation(selectedProduct)}>
             <div style={classes.menuItemReviewContainer}>
               <ReviewIcon />
-              <div style={classes.menuItemReviewText}>{t("priceProfit.reviewCalculation")}</div>
+              <div style={classes.menuItemReviewText}>
+                {t("priceProfit.reviewCalculation")}
+              </div>
             </div>
           </MenuItem>
         </div>

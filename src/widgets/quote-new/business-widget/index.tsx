@@ -322,7 +322,7 @@ const BusinessNewWidget = ({
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {values?.documentDeliveryAddresses?.length > 0 && (
             <InputUpdatedValues
-              speicalStyle={{ fontWeight: "500px" }}
+              specialStyle={{ fontWeight: "500px" }}
               value={
                 values?.documentDeliveryAddresses?.length > 0
                   ? (() => {

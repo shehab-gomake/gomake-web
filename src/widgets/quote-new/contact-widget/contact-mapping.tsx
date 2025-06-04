@@ -40,6 +40,8 @@ const ContactMapping = ({
     item.contactPhone
   );
 
+  const [contactEmail, setContactEmail] = useState(item.contactMail || "");
+
   const enterContactNameEditMode = () => {
     setOriginalContactName(item.contactName);
     setIsEditingContactName(true);
@@ -168,6 +170,18 @@ const ContactMapping = ({
                 setIsUpdateContactName(null);
               }
             }}
+            filterOptions={(options, state) => {
+              const filtered = options.filter((opt) =>
+                opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())
+              );
+
+              const addNewOption = options.find((opt) => opt.id === "new");
+              if (addNewOption && !filtered.some((opt) => opt.id === "new")) {
+                filtered.push(addNewOption);
+              }
+
+              return filtered;
+            }}
           />
         )}
         {!isQuoteConfirmation && canEditContacts && !isEditingContactName && (
@@ -204,33 +218,30 @@ const ContactMapping = ({
         }}
       />
       <InputUpdatedValues
-        value={item?.contactMail}
-        placeholder={
-          item?.contactMail ? item?.contactMail : t("sales.quote.noMail")
-        }
+        value={contactEmail}
+        placeholder={contactEmail || t("sales.quote.noMail")}
         label={t("sales.quote.contactEmail")}
-        onBlur={() => onBlurContactEmail(item)}
+        onBlur={() =>
+          onBlurContactEmail({ ...item, contactMail: contactEmail })
+        }
         isUpdate={canEditContacts && isUpdateContactEmail}
         setIsUpdate={(value) => {
-          if (isQuoteConfirmation) setIsUpdateContactEmail(null);
-          else {
+          if (isQuoteConfirmation) {
+            setIsUpdateContactEmail(null);
+          } else {
             if (value) {
-              // when click edit mode (value===1) we save the original value
               enterEditContactMode();
+              setContactEmail(item.contactMail || "");
             }
             if (value === null) {
-              // reset contact mail to the original value in case we click onCancel btn
+              setContactEmail(originalContactEmail); // reset locally
               changeItems(index, "contactMail", originalContactEmail);
             }
-
             setIsUpdateContactEmail(value);
           }
         }}
         onInputChange={(e: any) => {
-          if (e) {
-            // e = e.trim();
-          }
-          changeItems(index, "contactMail", e);
+          setContactEmail(e); // update local state only
         }}
       />
       {!isQuoteConfirmation && canEditContacts && (
