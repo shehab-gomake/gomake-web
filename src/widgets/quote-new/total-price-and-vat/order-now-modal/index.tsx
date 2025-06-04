@@ -27,7 +27,11 @@ const OrderNowModal = ({
 
   const confirmWithoutNotificationText = t(
     `sales.quote.${
-      isUsedStripe ? "continueWithoutCheckout" : "confirmWithoutNotification"
+      isUsedStripe
+        ? isConnectedToStripe
+          ? "continueWithoutCheckout"
+          : "continue"
+        : "confirmWithoutNotification"
     }`
   );
 
