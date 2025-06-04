@@ -10,7 +10,7 @@ export interface IBusinessWidget {
   onChange?: any;
   onInputChange?: any;
   setInputData?: any;
-  speicalStyle?: any;
+  specialStyle?: any;
   onChangeTextField?: any;
   onClickFlag?: any;
   flag?: any;
