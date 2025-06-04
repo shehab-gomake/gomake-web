@@ -8,6 +8,7 @@ export interface IUploadingFileGroup {
   filesInfo: IUploadingFile[];
   extension?: any;
   isComplexProduct?: boolean;
+  hotFolderName?: string;
 }
 
 export interface IUploadingFile {
