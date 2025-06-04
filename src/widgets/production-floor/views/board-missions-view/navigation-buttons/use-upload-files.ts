@@ -19,8 +19,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
-  const [uploadingFiles, setUploadingFiles] =
-    useRecoilState(uploadingFilesState);
+  const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
+  console.log("uploadingFiles", uploadingFiles);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const { callApi } = useGomakeAxios();
 
@@ -91,7 +91,9 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       const start = currentChunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
-      const hotFolderName = file?.hotFolderName;
+      const hotFolderName = uploadingFiles?.find(
+        (fg) => fg.orderItemId === orderItemId
+      )?.hotFolderName;
       let response = await uploadChunk(
         chunk,
         currentChunk,
@@ -231,7 +233,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       },
       false
     );
-    console.log("resresresresresres", res);
   };
   return {
     handleFileUpload,
