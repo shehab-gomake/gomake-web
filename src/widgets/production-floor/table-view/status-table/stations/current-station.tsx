@@ -77,7 +77,7 @@ const CurrentStationComponent = ({
               "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
             color: "black",
             ...FONT_FAMILY.Inter(500, 14),
-            width: "10%",
+            width: "13%",
           },
         }}
         anchorEl={anchorEl}
@@ -96,7 +96,7 @@ const CurrentStationComponent = ({
                     onUpdateCurrentStation(boardMissionId, station.id, productType)
                   }
                 >
-                  {station.actionName} {station.employeeId ? "(" + employee?.label + ")" : station?.machineId ? "(" + station?.machineName + ")" : ""}
+                  {station.employeeId ? employee?.label : station?.machineId ? station?.machineName : ""} ({station.actionName})
                 </MenuItem>
                 <Divider />
               </>
