@@ -42,7 +42,7 @@ export const ClientAutocomplete = ({
   const [customerOfAdd, setCustomerOfAdd] = useState<any>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
-  const { getAllClients } = useCustomerDropDownList({
+  const { getAllClients, getRecentClients } = useCustomerDropDownList({
     clientType,
     shouldRenderOnMount: false,
   });
@@ -129,6 +129,15 @@ export const ClientAutocomplete = ({
     return <li {...props}>{getOptionLabel(option)}</li>;
   };
 
+  const handleInputBlur = () => {
+    if (searchText === "") {
+      getRecentClients();
+    } else {
+      props.onChangeTextField?.({ target: { value: props.value } });
+    }
+    props.onBlur?.();
+  };
+
   return (
     <>
       {uiType === "updated" ? (
@@ -141,7 +150,8 @@ export const ClientAutocomplete = ({
           value={props.value}
           options={mergedOptions}
           renderOption={renderOption}
-          onBlur={props.onBlur}
+          // onBlur={props.onBlur}
+          onBlur={handleInputBlur}
           isUpdate={props.isUpdate}
           setIsUpdate={props.setIsUpdate}
           getOptionLabel={props.getOptionLabel}

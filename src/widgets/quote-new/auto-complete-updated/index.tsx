@@ -23,13 +23,32 @@ const AutoCompleteUpdatedValue = ({
   filterOptions,
 }: IBusinessWidget) => {
   const { classes } = useStyle({ isUnderLine });
-  const [updateValue, setUpdateValue] = useState();
   const { t } = useTranslation();
   const dir = t("direction");
+  const [updateValue, setUpdateValue] = useState();
+  const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
+
+  useEffect(() => {
+    if (typeof value === "object") {
+      setInputValue(value?.text ?? "");
+    } else {
+      setInputValue(value ?? "");
+    }
+  }, [value]);
+
+  const handleBlur = () => {
+    // Restore the input value from selected `value`
+    if (typeof value === "object") {
+      setInputValue(getOptionLabel?.(value) ?? "");
+    } else {
+      setInputValue(value ?? "");
+    }
+    onBlur?.();
+  };
 
   return (
     <>
@@ -37,7 +56,8 @@ const AutoCompleteUpdatedValue = ({
         <div style={classes.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValueAutoComplete
-            clickedOut={() => onBlur()}
+            clickedOut={handleBlur}
+            // clickedOut={() => onBlur()}
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur()?.then()}
             value={updateValue}
@@ -49,6 +69,12 @@ const AutoCompleteUpdatedValue = ({
             defaultFiltering={defaultFiltering}
             renderOption={renderOption}
             filterOptions={filterOptions}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue, reason) => {
+              if (reason === "input") {
+                setInputValue(newInputValue);
+              }
+            }}
           />
         ) : (
           <div style={{ display: "flex", alignItems: "center" }}>
