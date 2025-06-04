@@ -65,6 +65,12 @@ export interface ICalculatedWorkFlow {
   totalLaborCosts?: number;
   totalMaterialCosts?: number;
   totalOtherCosts?: number;
+
+  customer?: any;
+  renderOptions?: () => any[];
+  checkWhatRenderArray?: (arg: any) => void;
+  setCustomer?: any;
+  isFetching?: boolean;
 }
 
 export interface IPrintActionType {

@@ -19,8 +19,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
-  const [uploadingFiles, setUploadingFiles] =
-    useRecoilState(uploadingFilesState);
+  const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const { callApi } = useGomakeAxios();
 
@@ -60,6 +59,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           graphicsFilePath: graphicsFilePath,
           productType:productType,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
+          hotFolderName: file?.hotFolderName,
           filesInfo: [
             {
               fileName: file?.name,
@@ -89,13 +89,17 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       const start = currentChunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
+      const hotFolderName = uploadingFiles?.find(
+        (fg) => fg.orderItemId === orderItemId
+      )?.hotFolderName;
       let response = await uploadChunk(
         chunk,
         currentChunk,
         totalChunks,
         file?.name,
         fileType, 
-        productType
+        productType,
+        hotFolderName
       );
 
       if (!response || !response.success) {
@@ -168,7 +172,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     totalChunks,
     fileName,
     fileType,
-    productType
+    productType,
+    hotFolderName
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
@@ -176,6 +181,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
+    formData.append("hotFolderName", hotFolderName);
     formData.append(
       "takeScreenShot",
       chunkIndex + 1 === totalChunks ? "true" : "false"
