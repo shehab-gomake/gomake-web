@@ -70,9 +70,13 @@ const HotFolderWidget = () => {
                           >
 
                             <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-
-                              <div style={{ fontWeight: 500 }}>
-                                {`${rule.expression}`}
+                              <div>
+                                <div style={{ fontWeight: 500 }}>
+                                  {`${rule.expression}`}
+                                </div>
+                                <div style={{ fontWeight: 500 }}>
+                                  {t("products.profits.exceptions.folderName")}: {rule.hotFolderPath}
+                                </div>
                               </div>
                               <IconButton onClick={(e) => {
                                 handleClick(e)
