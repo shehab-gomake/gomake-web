@@ -20,6 +20,7 @@ const AutoCompleteUpdatedValue = ({
   defaultFiltering,
   renderOption,
   showClearIcon = false,
+  filterOptions,
 }: IBusinessWidget) => {
   const { classes } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -47,6 +48,7 @@ const AutoCompleteUpdatedValue = ({
             loading={isFetching}
             defaultFiltering={defaultFiltering}
             renderOption={renderOption}
+            filterOptions={filterOptions}
           />
         ) : (
           <div style={{ display: "flex", alignItems: "center" }}>

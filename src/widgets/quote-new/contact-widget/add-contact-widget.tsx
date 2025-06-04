@@ -124,6 +124,18 @@ const AddContactNewWidget = ({
             }
           }}
           onChangeTextField={(e) => setNewContactName(e.target.value)}
+          filterOptions={(options, state) => {
+            const filtered = options.filter((opt) =>
+              opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())
+            );
+
+            const addNewOption = options.find((opt) => opt.id === "new");
+            if (addNewOption && !filtered.some((opt) => opt.id === "new")) {
+              filtered.push(addNewOption);
+            }
+
+            return filtered;
+          }}
         />
         <PhoneInputUpdatedValues
           value={selectedContactById?.phone}

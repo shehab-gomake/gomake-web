@@ -24,4 +24,5 @@ export interface IBusinessWidget {
   renderOption?: any;
   isRightSign?: boolean;
   showClearIcon?: boolean;
+  filterOptions?: (options: any[], state: { inputValue: string }) => any[];
 }

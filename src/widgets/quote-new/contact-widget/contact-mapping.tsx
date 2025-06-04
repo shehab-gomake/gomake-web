@@ -135,7 +135,6 @@ const ContactMapping = ({
             }}
           />
         ) : (
-          // !here
           <AutoCompleteUpdatedValue
             label={t("sales.quote.contactName")}
             value={item?.contactName}
@@ -170,6 +169,18 @@ const ContactMapping = ({
                 });
                 setIsUpdateContactName(null);
               }
+            }}
+            filterOptions={(options, state) => {
+              const filtered = options.filter((opt) =>
+                opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())
+              );
+
+              const addNewOption = options.find((opt) => opt.id === "new");
+              if (addNewOption && !filtered.some((opt) => opt.id === "new")) {
+                filtered.push(addNewOption);
+              }
+
+              return filtered;
             }}
           />
         )}
@@ -206,7 +217,6 @@ const ContactMapping = ({
           changeItems(index, "contactPhone", e);
         }}
       />
-      {/* !here 1 */}
       <InputUpdatedValues
         value={contactEmail}
         placeholder={contactEmail || t("sales.quote.noMail")}
