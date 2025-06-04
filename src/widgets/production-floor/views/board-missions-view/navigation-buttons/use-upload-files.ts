@@ -25,6 +25,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const { callApi } = useGomakeAxios();
 
   const handleFileUpload = async (file, fileType) => {
+    console.log("file", file);
     const finalPath =
       fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
     setShowFileUploader(true);
@@ -89,13 +90,15 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       const start = currentChunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
+      const hotFolderName = productType;
       let response = await uploadChunk(
         chunk,
         currentChunk,
         totalChunks,
         file?.name,
         fileType, 
-        productType
+        productType,
+        hotFolderName
       );
 
       if (!response || !response.success) {
@@ -168,7 +171,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     totalChunks,
     fileName,
     fileType,
-    productType
+    productType,
+    hotFolderName
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
@@ -176,6 +180,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
+    formData.append("hotFolderName", hotFolderName);
     formData.append(
       "takeScreenShot",
       chunkIndex + 1 === totalChunks ? "true" : "false"
