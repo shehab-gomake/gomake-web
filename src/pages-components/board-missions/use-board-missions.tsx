@@ -15,7 +15,7 @@ import {
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
-  getWorkMissionPdfApi,
+  getWorkMissionPdfApi, printNodeModalCancelLog,
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
@@ -1185,7 +1185,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     await printOrderJobUsingPrintNodeApi(callApi, callBack, orderId);
   };
-
+  const cancelPrintNodeModal = async (orderId: string) => {
+    if(!orderId){
+      return;
+    }
+    const callBack = (res) => {
+      if (res.success) {
+      }
+    };
+    await printNodeModalCancelLog(callApi, callBack, {orderId: orderId});
+  };
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
   useEffect(() => {
@@ -1528,7 +1537,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     handleClickBackToProcess,
     onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
-    openMarkReadyModalForHasJobs
+    openMarkReadyModalForHasJobs,
+    cancelPrintNodeModal
   };
 };
 
