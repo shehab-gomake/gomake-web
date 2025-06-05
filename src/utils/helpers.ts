@@ -196,7 +196,7 @@ export const checkIfDieCutOrDieKissCutExists = (
   } else {
     for (const subProduct of subProducts) {
       if (subProduct.parameters) {
-        const dieCutParam = subProduct.parameters.find(
+        const dieCutParam = subProduct?.parameters?.find(
           (param) =>
             param.parameterCode === "DieCut" ||
             param.parameterCode === "DieKissCut" ||

@@ -49,7 +49,7 @@ const useQuantityTypes = ({subSection, section}) => {
       // Check if this parameter is already in the subProducts array
       const updatedSubProducts = subProducts.map((subProduct) => {
         if (subProduct.sectionId === section?.id) {
-          const existingParameter = subProduct.parameters.find(
+          const existingParameter = subProduct?.parameters?.find(
             (param) => param.parameterCode === "quantity"
           );
           if (!existingParameter) {

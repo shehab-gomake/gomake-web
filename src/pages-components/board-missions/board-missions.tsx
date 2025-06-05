@@ -170,14 +170,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }).then();
     }
 
-    setOpenPrintNodeModal(
-      !!(
-        isPrintHouseUsePrintNode &&
-        newOrderId &&
-        !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
-      )
-    );
-    setPrintNodeOrderId(newOrderId);
+    if(router.isReady){
+      setOpenPrintNodeModal(
+          !!(
+              isPrintHouseUsePrintNode &&
+              newOrderId &&
+              !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
+          )
+      );
+      setPrintNodeOrderId(newOrderId);
+    }
   }, [newOrderId]);
 
   useEffect(() => {
