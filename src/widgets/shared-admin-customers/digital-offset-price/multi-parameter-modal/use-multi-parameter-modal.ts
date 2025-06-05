@@ -38,7 +38,7 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
       if(!foundParameter){
         const subProduct = subProductsParameters.find(subProduct => settingParameters.section && subProduct.sectionId === settingParameters.section.id );
         if(subProduct && subProduct.parameters && subProduct.parameters.length > 0){
-          foundParameter = subProduct.parameters.find(
+          foundParameter = subProduct?.parameters?.find(
               (param) => param && param.valueIds && param.valueIds[0] === config.id
           );
         }

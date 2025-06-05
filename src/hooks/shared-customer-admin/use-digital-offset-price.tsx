@@ -909,7 +909,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (param) => param.id === selectedParam.parameterId
                         );
                         let existsSubProductParameter =
-                          subProduct.parameters.find(
+                          subProduct?.parameters?.find(
                             (x) =>
                               x.parameterId === param.id &&
                               x.sectionId === section.id &&
@@ -966,7 +966,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection.id,
                 });
               }
-              const isParameterExits = subProduct.parameters.find(
+              const isParameterExits = subProduct?.parameters?.find(
                 (param) =>
                   param.parameterId === parameter?.id &&
                   param.subSectionId === subSection.id &&
@@ -987,7 +987,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 ) {
                   if (parameter?.defaultValue?.length > 0) {
                     const defaultValue = parameter?.defaultValue;
-                    let existsSubProductParameter = subProduct.parameters.find(
+                    let existsSubProductParameter = subProduct?.parameters?.find(
                       (x) =>
                         x.parameterId === parameter.id &&
                         x.sectionId === section.id &&
@@ -1032,7 +1032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameter?.materialPath[0]
                       );
                     });
-                    let existsSubProductParameter = subProduct.parameters.find(
+                    let existsSubProductParameter = subProduct?.parameters?.find(
                       (x) =>
                         x.parameterId === parameter.id &&
                         x.sectionId === section.id &&
@@ -1095,7 +1095,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType !==
                       EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
                   ) {
-                    let existsSubProductParameter = subProduct.parameters.find(
+                    let existsSubProductParameter = subProduct?.parameters?.find(
                       (x) =>
                         x.parameterId === parameter.id &&
                         x.sectionId === section.id &&
@@ -1140,7 +1140,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const defValue = value.materialValueIds[0].valueId;
                     if (defValue) {
                       let existsSubProductParameter =
-                        subProduct.parameters.find(
+                        subProduct?.parameters?.find(
                           (x) =>
                             x.parameterId === parameter.id &&
                             x.sectionId === section.id &&
@@ -1188,7 +1188,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         (attr) => attr.valueId === "name"
                       )?.value;
                       let existsSubProductParameter =
-                        subProduct.parameters.find(
+                        subProduct?.parameters?.find(
                           (x) =>
                             x.parameterId === parameter.id &&
                             x.sectionId === section.id &&
@@ -1242,7 +1242,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         (attr) => attr.valueId === "name"
                       )?.value;
                       let existsSubProductParameter =
-                        subProduct.parameters.find(
+                        subProduct?.parameters?.find(
                           (x) =>
                             x.parameterId === parameter.id &&
                             x.sectionId === section.id &&
@@ -1288,7 +1288,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         (attr) => attr.valueId === "name"
                       )?.value;
                       let existsSubProductParameter =
-                        subProduct.parameters.find(
+                        subProduct?.parameters?.find(
                           (x) =>
                             x.parameterId === parameter.id &&
                             x.sectionId === section.id &&
@@ -1413,7 +1413,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const childParam = subSection.parameters.find(
                         (x) => x.id === item.id
                       );
-                      const sizeParameter = subProduct.parameters.find(
+                      const sizeParameter = subProduct?.parameters?.find(
                         (item) => item.parameterCode === "size"
                       );
                       const sizeParameterValueConfig =
@@ -1633,7 +1633,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               targetSubProduct &&
               targetSubProduct.parameters
             ) {
-              let subProductParameter = targetSubProduct.parameters.find(
+              let subProductParameter = targetsubProduct?.parameters?.find(
                 (item) =>
                   item.parameterId === relatedToParameter.id &&
                   item.sectionId === section.id &&

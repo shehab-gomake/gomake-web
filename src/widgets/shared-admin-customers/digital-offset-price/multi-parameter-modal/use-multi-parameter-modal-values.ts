@@ -20,7 +20,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
       };
       const ensureParametersExist = (subProduct, settingParameters, section, subSection) => {
         settingParameters.forEach(settingParam => {
-          const existingParam = subProduct.parameters.find(param => param.parameterId === settingParam.id);
+          const existingParam = subProduct?.parameters?.find(param => param.parameterId === settingParam.id);
           if (!existingParam) {
             subProduct.parameters.push({
               parameterId: settingParam.id,
@@ -43,9 +43,9 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         const loadParam = settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
         const layersParam = settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
     
-        const colorParamValue = subProduct.parameters.find(param => param.parameterId === colorParam.id);
-        const loadParamValue = subProduct.parameters.find(param => param.parameterId === loadParam.id);
-        const layersParamValue = subProduct.parameters.find(param => param.parameterId === layersParam.id);
+        const colorParamValue = subProduct?.parameters?.find(param => param.parameterId === colorParam.id);
+        const loadParamValue = subProduct?.parameters?.find(param => param.parameterId === loadParam.id);
+        const layersParamValue = subProduct?.parameters?.find(param => param.parameterId === layersParam.id);
     
         const index = colorParam.defaultValueArray.indexOf(value.valueId);
         if (index !== -1) {
@@ -109,9 +109,9 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
           const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
       
-          const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
-          const loadParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === loadParameter.id);
-          const layersParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === layersParameter.id);
+          const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
+          const loadParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === loadParameter.id);
+          const layersParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === layersParameter.id);
       
           if (colorParameterValue && colorParameterValue.valueIds && colorParameterValue.values) {
             const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
@@ -146,13 +146,13 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
       
           const colorParameter = settingParameters?.parameter?.settingParameters[0];
-          const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
+          const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
       
           if (colorParameterValue) {
             const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
       
             if (valueIndex !== -1) {
-              const parameterValueIndex = subProduct.parameters.findIndex(paramValue => paramValue.parameterId === parameterId);
+              const parameterValueIndex = subProduct?.parameters?.findIndex(paramValue => paramValue.parameterId === parameterId);
               if (parameterValueIndex !== -1) {
                 const parameterValue = subProduct.parameters[parameterValueIndex];
       

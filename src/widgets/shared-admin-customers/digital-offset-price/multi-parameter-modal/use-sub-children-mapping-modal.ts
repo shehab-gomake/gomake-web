@@ -37,7 +37,7 @@ const useSubChildMapping = ({
       let subProduct = subProducts?.find(sub => sub.type === subProductType);
       
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
+      return subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
     } else {
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
       const valueConfigDefault = valuesConfigs?.find((item) => item.isDefault);
@@ -157,13 +157,13 @@ const useSubChildMapping = ({
       const subProductType = subSection.type;
       let subProduct = subProductsCopy.find(sub => sub.type == subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
+      const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
   
       if (colorParameterValue) {
         const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
   
         if (valueIndex !== -1) {
-          const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === item.id);
+          const parameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === item.id);
   
           if (parameterValue && parameterValue.values && parameterValue.values.length > valueIndex) {
             return parameterValue.values[valueIndex];
@@ -250,7 +250,7 @@ const useSubChildMapping = ({
       const subProduct = subProducts.find(sub => sub.type === subProductType);
   
       if (subProduct) {
-        const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id);
+        const parameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === settingParameters.parameter.id);
         if (parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0) {
           const val = parameterValue.valueIds[0]; // Assuming this represents the relevant value ID
 
