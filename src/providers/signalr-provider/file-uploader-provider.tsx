@@ -1,15 +1,17 @@
 import React, { createContext, useContext } from "react";
-import {useFilesUploaderSignalr} from "@/hooks/signalr/use-files-uploader-signalr";
+import { useFilesUploaderSignalr } from "@/hooks/signalr/use-files-uploader-signalr";
+import { useFilesUploaderSocketIO } from "@/hooks/socket-io/use-files-uploader-socket-io";
 
 
 const FileUploaderContext = createContext<any>(null);
 
 export const FileUploaderProvider = ({ children }: { children: React.ReactNode }) => {
-    const fileUploaderSignalRState = useFilesUploaderSignalr();
-    //const messengerSignalRState = useFilesUploaderSignalr();
+    // const fileUploaderSignalRState = useFilesUploaderSignalr();
+    const fileUploaderSocketIOState = useFilesUploaderSocketIO();
+    console.log("fileUploaderSocketIOState", fileUploaderSocketIOState);
 
     return (
-        <FileUploaderContext.Provider value={fileUploaderSignalRState}>
+        <FileUploaderContext.Provider value={fileUploaderSocketIOState}>
             {children}
         </FileUploaderContext.Provider>
     );
