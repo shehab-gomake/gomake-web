@@ -1633,7 +1633,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               targetSubProduct &&
               targetSubProduct.parameters
             ) {
-              let subProductParameter = targetsubProduct?.parameters?.find(
+              let subProductParameter = targetSubProduct?.parameters?.find(
                 (item) =>
                   item.parameterId === relatedToParameter.id &&
                   item.sectionId === section.id &&
