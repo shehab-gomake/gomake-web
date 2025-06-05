@@ -20,12 +20,7 @@ const useFilesUploaderSocketIO = () => {
 
   useEffect(()=>{
     const socket = io(config.api_server);
-    console.log("connectionId", connectionId);
-
-    console.log("socket", socket);
-
     socket.on("UpdateFileUploader", (newData) => {
-      console.log("newData", newData);
       setFiles(newData);
       setData(newData);
       setShowFileUploader(newData?.length > 0);
@@ -43,7 +38,6 @@ const useFilesUploaderSocketIO = () => {
     });
   
     return () => {
-      console.log("Closing socket connection...");
       socket.disconnect();
     };
   },[])

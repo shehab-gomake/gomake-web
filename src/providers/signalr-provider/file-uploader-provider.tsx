@@ -8,7 +8,6 @@ const FileUploaderContext = createContext<any>(null);
 export const FileUploaderProvider = ({ children }: { children: React.ReactNode }) => {
     // const fileUploaderSignalRState = useFilesUploaderSignalr();
     const fileUploaderSocketIOState = useFilesUploaderSocketIO();
-    console.log("fileUploaderSocketIOState", fileUploaderSocketIOState);
 
     return (
         <FileUploaderContext.Provider value={fileUploaderSocketIOState}>
