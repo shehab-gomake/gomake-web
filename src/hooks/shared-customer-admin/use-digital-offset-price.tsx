@@ -456,7 +456,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&ignoreCalculatedWorkflows=${
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId}&ignoreCalculatedWorkflows=${
       ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
     }`;
     if (documentItemId) {
@@ -6059,7 +6059,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           //   +currentProductItemValueTotalPrice / +quantity?.values[0],
           // finalPrice: +currentProductItemValueTotalPrice,
           unitPrice:
-            +sliderCurrentProductItemValueTotalPrice / +quantity?.values[0], //!new
+            +sliderCurrentProductItemValueTotalPrice / (quantity && quantity.values &&  quantity.values.length > 0 && quantity?.values[0] ?  +quantity?.values[0] : 1), //!new
           finalPrice: +sliderCurrentProductItemValueTotalPrice, //!new
           amount:
             quantity &&
