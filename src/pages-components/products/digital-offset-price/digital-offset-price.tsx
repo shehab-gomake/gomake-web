@@ -569,7 +569,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                       if (
                         DOCUMENT_TYPE.order ===
                           Number(router.query.documentType) &&
-                        isFlowChanged
+                        isFlowChanged && missionsListForEdit && missionsListForEdit.length > 0
                       ) {
                         onClickOpenCurrentStationModal();
                       } else {
