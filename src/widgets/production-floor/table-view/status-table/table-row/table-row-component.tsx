@@ -489,6 +489,7 @@ const TableRowComponent = ({
               style={{
                 backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
                 padding: "8px",
+                maxWidth: "180px",
               }}
             >
               <ProductionFloorNote

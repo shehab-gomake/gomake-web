@@ -35,7 +35,10 @@ import {
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
-import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
+import {
+  addOrderBoardMissionsToFileUploaderApi, printNodeModalCancelLog,
+  printNodeModalShowLog
+} from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -143,6 +146,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
+    cancelPrintNodeModal
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -171,14 +175,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     }
 
     if(router.isReady){
-      setOpenPrintNodeModal(
-          !!(
-              isPrintHouseUsePrintNode &&
-              newOrderId &&
-              !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
-          )
-      );
-      setPrintNodeOrderId(newOrderId);
+      if(!!(
+          isPrintHouseUsePrintNode &&
+          newOrderId &&
+          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
+      )){
+        printNodeModalShowLog(callApi,()=>{},{orderId:newOrderId}).then();
+        setOpenPrintNodeModal(true);
+        setPrintNodeOrderId(newOrderId);
+      }
+      
     }
   }, [newOrderId]);
 
@@ -627,13 +633,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {
-          setOpenPrintNodeModal(false);
+        onClose={() => {}}
+        onClickDelete={() => {
+          printOrderJobsUsingPrintNode(printNodeOrderId).then();
           setNewOrderId("");
         }}
-        onClickDelete={() => {
-          printOrderJobsUsingPrintNode(printNodeOrderId);
+        onClickCancel={() => {
+          setOpenPrintNodeModal(false);
+          cancelPrintNodeModal(printNodeOrderId).then();
           setNewOrderId("");
+          
         }}
         cancelBtn={t("modal.cancel")}
       />

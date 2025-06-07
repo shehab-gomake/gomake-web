@@ -51,17 +51,15 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         if (index !== -1) {
             const layerValue = layersParam.defaultValueArray[index];
             const loadValue = loadParam.defaultValueArray[index];
-            // Add color value only if it doesn't exist
+            // Check if value already exists before adding
             if (!colorParamValue.valueIds.includes(value.valueId)) {
                 colorParamValue.valueIds.push(value.valueId);
-                loadParamValue.valueIds.push(loadValue);
-                layersParamValue.valueIds.push(layerValue);
                 colorParamValue.values.push(value.value);
+                loadParamValue.valueIds.push(loadValue);
                 loadParamValue.values.push(loadValue);
+                layersParamValue.valueIds.push(layerValue);
                 layersParamValue.values.push(layerValue);
-
             }
-             
         }
     
         return subProduct;
@@ -92,44 +90,95 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           console.error('SubProduct parameters not ensured.');
           return subProductsCopy;
         }
-      
+
+        // Get the color parameter and its value
+        const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
+        const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
+
+        // Remove any existing duplicates before adding new value
+        if (colorParameterValue && colorParameterValue.valueIds) {
+            // Create a Set to track unique valueIds
+            const uniqueValueIds = new Set();
+            const uniqueValues = new Set();
+            
+            // Filter out duplicates while preserving order
+            const uniqueIndices = colorParameterValue.valueIds.reduce((acc, val, idx) => {
+                if (!uniqueValueIds.has(val)) {
+                    uniqueValueIds.add(val);
+                    uniqueValues.add(colorParameterValue.values[idx]);
+                    acc.push(idx);
+                }
+                return acc;
+            }, []);
+
+            // Update arrays with unique values
+            colorParameterValue.valueIds = uniqueIndices.map(idx => colorParameterValue.valueIds[idx]);
+            colorParameterValue.values = uniqueIndices.map(idx => colorParameterValue.values[idx]);
+
+            // Also update related parameters (load and layers)
+            const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
+            const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
+            
+            const loadParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === loadParameter.id);
+            const layersParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === layersParameter.id);
+
+            if (loadParameterValue) {
+                loadParameterValue.valueIds = uniqueIndices.map(idx => loadParameterValue.valueIds[idx]);
+                loadParameterValue.values = uniqueIndices.map(idx => loadParameterValue.values[idx]);
+            }
+
+            if (layersParameterValue) {
+                layersParameterValue.valueIds = uniqueIndices.map(idx => layersParameterValue.valueIds[idx]);
+                layersParameterValue.values = uniqueIndices.map(idx => layersParameterValue.values[idx]);
+            }
+        }
         subProduct = updateValues(subProduct, value, settingParameters.parameter.settingParameters);
       
         return subProductsCopy;
       };
       const removeValueFromSubProduct = (subProducts, value) => {
         if (!isParameterSettings) {
-          const subSection = settingParameters.subSection;
-          let subProductsCopy = lodashClonedeep(subProducts);
-          const subProductType = subSection.type;
-          let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
-          subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
-      
-          const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
-          const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
-          const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
-      
-          const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
-          const loadParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === loadParameter.id);
-          const layersParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === layersParameter.id);
-      
-          if (colorParameterValue && colorParameterValue.valueIds && colorParameterValue.values) {
-            const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
-            if (valueIndex !== -1) {
-              colorParameterValue.valueIds.splice(valueIndex, 1);
-      
-              if (loadParameterValue && loadParameterValue.valueIds && loadParameterValue.values.length > valueIndex) {
-                loadParameterValue.valueIds.splice(valueIndex, 1);
-              }
-      
-              if (layersParameterValue && layersParameterValue.valueIds && layersParameterValue.values.length > valueIndex) {
-                layersParameterValue.valueIds.splice(valueIndex, 1);
-              }
+            const subSection = settingParameters.subSection;
+            let subProductsCopy = lodashClonedeep(subProducts);
+            const subProductType = subSection.type;
+            let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
+            subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
+
+            const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
+            const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
+            const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
+
+            const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);
+            const loadParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === loadParameter.id);
+            const layersParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === layersParameter.id);
+
+            if (colorParameterValue && colorParameterValue.valueIds && colorParameterValue.values) {
+                // Find all indices where the value exists
+                const indices = colorParameterValue.valueIds.reduce((acc, val, idx) => {
+                    if (val === value.valueId) acc.push(idx);
+                    return acc;
+                }, []);
+
+                // Remove values from the end to avoid index shifting issues
+                for (let i = indices.length - 1; i >= 0; i--) {
+                    const idx = indices[i];
+                    colorParameterValue.valueIds.splice(idx, 1);
+                    colorParameterValue.values.splice(idx, 1);
+
+                    if (loadParameterValue && loadParameterValue.valueIds && loadParameterValue.values.length > idx) {
+                        loadParameterValue.valueIds.splice(idx, 1);
+                        loadParameterValue.values.splice(idx, 1);
+                    }
+
+                    if (layersParameterValue && layersParameterValue.valueIds && layersParameterValue.values.length > idx) {
+                        layersParameterValue.valueIds.splice(idx, 1);
+                        layersParameterValue.values.splice(idx, 1);
+                    }
+                }
             }
-          }
-          return subProductsCopy;
+            return subProductsCopy;
         }
-        return subProducts; // Return the original subProducts if isParameterSettings is true
+        return subProducts;
       };
       const setSubProductValue = (subProducts, parameterId, value, textInputVal) => {
         if (!isParameterSettings) {
