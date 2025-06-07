@@ -456,7 +456,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&ignoreCalculatedWorkflows=${
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId}&ignoreCalculatedWorkflows=${
       ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
     }`;
     if (documentItemId) {
