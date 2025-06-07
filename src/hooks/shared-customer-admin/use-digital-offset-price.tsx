@@ -6059,7 +6059,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           //   +currentProductItemValueTotalPrice / +quantity?.values[0],
           // finalPrice: +currentProductItemValueTotalPrice,
           unitPrice:
-            +sliderCurrentProductItemValueTotalPrice / (quantity && quantity.values &&  quantity.values.length > 0 ?  +quantity?.values[0] : 1), //!new
+            +sliderCurrentProductItemValueTotalPrice / (quantity && quantity.values &&  quantity.values.length > 0 && quantity?.values[0] ?  +quantity?.values[0] : 1), //!new
           finalPrice: +sliderCurrentProductItemValueTotalPrice, //!new
           amount:
             quantity &&
