@@ -635,6 +635,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         openModal={openPrintNodeModal}
         onClose={() => {}}
         onClickDelete={() => {
+          setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
           setNewOrderId("");
         }}
