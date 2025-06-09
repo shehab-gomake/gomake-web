@@ -12,12 +12,13 @@ const GomakeLoadingWithShadow = ({ style }: { style?: React.CSSProperties }) => 
   const { primaryColor } = useGomakeTheme();
   const { classes } = useStyle();
   return (
-    <Backdrop sx={{ zIndex: 9999999999999999, ...style }} open={loading}>
+    loading ? (
+        <Backdrop sx={{ zIndex: 9999999999999999, ...style }} open={loading}>
       <div style={classes.containerStyle}>
         <CircularProgress
-          size="60px"
-          thickness={2}
-          style={{ color: primaryColor(600) }}
+            size="60px"
+            thickness={2}
+            style={{ color: primaryColor(600) }}
         />
         <Typography variant="h6" component="div" style={classes.textStyle}>
           {t("Loading")}...
@@ -29,6 +30,7 @@ const GomakeLoadingWithShadow = ({ style }: { style?: React.CSSProperties }) => 
         </div> */}
       </div>
     </Backdrop>
+    ): <div></div>
   );
 };
 
