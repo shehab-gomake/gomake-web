@@ -292,6 +292,9 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
+      }else{
+        setIsOpenAdjustmentsModal(false);
+        alertFault("reports.noData");
       }
     } else {
       alertFaultGetData();
