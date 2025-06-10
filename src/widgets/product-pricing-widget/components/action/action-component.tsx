@@ -49,7 +49,6 @@ import { _renderDeliveryDate } from "@/utils/helpers";
 import { ReloadPriceIcon } from "@/icons/reload-price";
 import { formatValueWithUnit } from "@/utils/is-currency";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { useCustomerDropDownList } from "@/hooks";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
@@ -329,7 +328,6 @@ const ActionContainerComponent = ({
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
-
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
@@ -506,7 +504,6 @@ const ActionContainerComponent = ({
   useEffect(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.value === supplierId);
-      console.log("selected supplier", supplier);
       if (supplier) {
         setCustomer({
           id: supplier.value,
@@ -830,9 +827,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                      0,
-                                      20
-                                    ) + "..."
+                                    0,
+                                    20
+                                  ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -1018,17 +1015,16 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${
-                              source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                    calculateOutSourceProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                                : formatValueWithUnit(
-                                    calculateProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                            })`}
+                            {`(${source === EWorkSource.OUT
+                              ? formatValueWithUnit(
+                                calculateOutSourceProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              : formatValueWithUnit(
+                                calculateProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              })`}
                           </span>
                         </Stack>
                       )}
@@ -1329,7 +1325,7 @@ const ActionContainerComponent = ({
                     </Stack>
                   </>
                 )}
-                {outputsParameters?.length > 0 &&
+                {(outputsParameters?.length > 0 || textAreaOutputs?.length > 0) &&
                   source === EWorkSource.INTERNAL && (
                     <>
                       <Divider />

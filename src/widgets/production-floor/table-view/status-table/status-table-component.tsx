@@ -54,6 +54,7 @@ interface IProps {
   addPrintHouseJobsStorage?: any;
   handleStorageChange?: any;
   setInputValue?: any;
+  employeesCategories?: any;
 }
 
 const StatusTableComponent = ({
@@ -68,8 +69,11 @@ const StatusTableComponent = ({
   defaultValue,
   addPrintHouseJobsStorage,
   handleStorageChange,
-  setInputValue
+  setInputValue,
+  employeesCategories
 }: IProps) => {
+
+
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
@@ -356,6 +360,7 @@ const StatusTableComponent = ({
                           isRTL={RTL}
                           isUrgentWork={hasUrgentOrApproval}
                           onUpdateJobDueDate={updateJobDueDate}
+                          employeesCategories={employeesCategories}
                         />
                       ));
                   })()}

@@ -14,6 +14,7 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useRouter } from "next/router";
+import { useEmployeeList } from "@/hooks/use-employee-list";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -47,7 +48,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
     handleStorageChange,
     setInputValue,
   } = useStorageList()
-
+  const { employeesCategories } = useEmployeeList();
   const handlePageChange = (event, value) => {
     setPageNumber(value);
     router.push({
@@ -193,6 +194,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
                   addPrintHouseJobsStorage={addPrintHouseJobsStorage}
                   handleStorageChange={handleStorageChange}
                   setInputValue={setInputValue}
+                  employeesCategories={employeesCategories}
                 />
               );
             })}

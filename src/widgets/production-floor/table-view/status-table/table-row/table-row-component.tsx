@@ -26,7 +26,6 @@ import { getTruncatedLabel } from "@/utils/get-truncated-text";
 import { CheckboxCheckedIcon } from "@/icons/checked-icon";
 import { CheckboxIcon } from "@/icons/checkbox-icon";
 import { DateTimeProductionFloorComponent } from "@/widgets/production-floor/date-comp/date-componenet";
-import { DescriptionWidget } from "@/widgets/production-floor/description-widget/descreption-widget";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
@@ -58,6 +57,7 @@ interface IProps {
   isRTL?: boolean;
   isUrgentWork?: boolean;
   onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
+  employeesCategories?: any;
 }
 
 enum EDropArea {
@@ -76,8 +76,10 @@ const TableRowComponent = ({
   isMobileScreen,
   isRTL,
   isUrgentWork,
-  onUpdateJobDueDate
+  onUpdateJobDueDate,
+  employeesCategories
 }: IProps) => {
+
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -541,6 +543,7 @@ const TableRowComponent = ({
             status={status}
             textColor={boardMission?.productionFloorJobColor}
             onClickDone={() => onClickDone(boardMission)}
+            employeesCategories={employeesCategories}
           />
         </SecondaryTableCell>
         <SecondaryTableCell
