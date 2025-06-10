@@ -2864,7 +2864,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
-        if (isOrder) return;
+        if (isOrder) {
+          onOpenPackagesModal(selectedDocument)
+          return;
+        };
         if (isSelectedCLoseAsDeliveryNote) {
           const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
           window.open(path, "_blank");
