@@ -9,6 +9,7 @@ export interface LedgerReportButtonWidgetProps {
   onClickExportAccountingReportExcel?: () => void;
   onClickExportJournalExcelReport?: () => void;
   onClickDownloadMovingFiles?: () => void;
+  onClickExportJournalPDFReport?: () => void;
   reportType: EReportType;
 }
 
@@ -20,6 +21,7 @@ const useLedgerReportHeader = ({
   onClickExportAccountingReportExcel,
   onClickExportJournalExcelReport,
   onClickDownloadMovingFiles,
+  onClickExportJournalPDFReport,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { t } = useTranslation();
@@ -68,6 +70,10 @@ const useLedgerReportHeader = ({
           {
             name: t("reports.excelReport"),
             onclick: onClickExportJournalExcelReport,
+          }, 
+          {
+             name: t("reports.printCard"),
+             onclick: onClickExportJournalPDFReport,
           },
         ]
       : []),

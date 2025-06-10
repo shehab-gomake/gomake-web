@@ -13,6 +13,7 @@ const LedgerReportButtonWidget = ({
   onClickExportAccountingReportExcel,
   onClickExportJournalExcelReport,
   onClickDownloadMovingFiles,
+  onClickExportJournalPDFReport,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { classes } = useStyle();
@@ -24,6 +25,7 @@ const LedgerReportButtonWidget = ({
     onClickExportAccountingReportExcel,
     onClickExportJournalExcelReport,
     onClickDownloadMovingFiles,
+    onClickExportJournalPDFReport,
     reportType,
   });
 
