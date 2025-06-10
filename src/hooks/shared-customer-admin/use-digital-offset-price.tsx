@@ -5212,9 +5212,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setActiveIndex(index);
       setCanCalculation(false);
     } else if (index > activeIndex) {
-      let currentSectionId = productTemplate.sections[activeIndex].id;
-      let checkParameter = validateParameters(subProducts, currentSectionId);
-      // Move to the next tab only if checkParameter is true
+      let filteredproductTemplate = productTemplate.sections.filter((x) => !x.isHidden);
+      let currentSection = filteredproductTemplate[activeIndex].id;
+      let checkParameter = validateParameters(subProducts, currentSection);
       if (checkParameter) {
         setErrorText(false);
         setCanCalculation(false);
