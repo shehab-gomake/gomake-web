@@ -36,7 +36,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
 import {
-  addOrderBoardMissionsToFileUploaderApi, printNodeModalCancelLog,
+  addOrderBoardMissionsToFileUploaderApi, getInitialOrderFoldersData, printNodeModalCancelLog,
   printNodeModalShowLog
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
@@ -46,6 +46,8 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 import { useStorageList } from "@/hooks/use-storage-list";
+import axios from "axios";
+import {getUserToken} from "@/services/storage-data";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -164,14 +166,29 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     if (
       router.isReady &&
       companyProfile.filesApiAddress &&
-      newOrderId &&
-      connectionId
+      newOrderId
     ) {
-      const callBack = (res) => {};
-      addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
-        orderId: newOrderId,
-        connectionId: connectionId,
-      }).then();
+      if(CheckPreferenceValue(EPreferences.INITIALIZE_ORDER_FOLDERS_AFTER_CREATION)){
+        const callBack = (res) => {
+          debugger
+          const url = companyProfile.filesApiAddress + "/api/Files/CreateOrderFolder";
+          axios.post(url,res.data,{
+            headers: {
+              authorization: "Bearer " + getUserToken(),
+            }
+          }).then()
+        };
+        getInitialOrderFoldersData(callApi,callBack,{orderId:newOrderId}).then()
+      }
+      
+      if(connectionId){
+        const callBack = (res) => {};
+        addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
+          orderId: newOrderId,
+          connectionId: connectionId,
+        }).then();
+      }
+     
     }
 
     if(router.isReady){
@@ -635,6 +652,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         openModal={openPrintNodeModal}
         onClose={() => {}}
         onClickDelete={() => {
+          setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
           setNewOrderId("");
         }}

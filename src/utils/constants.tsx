@@ -53,7 +53,7 @@ export const compareStrings = (string1, string2) => {
 
 export const _renderQuoteStatus = (status: number, quote: any, t: any) => {
   if (status === QUOTE_STATUSES.Create) {
-    if (quote?.agentId) {
+    if (quote?.userName === null) {
       return t("sales.quote.create");
     } else {
       return t("sales.quote.createdBy", { name: quote?.userName });
@@ -177,7 +177,7 @@ export const _renderStatus = (
         </div>
       );
     } else if (document?.statusTitleText === "Quote.Create") {
-      if (document?.agentId) {
+      if (document?.userName === null) {
         return (
           <div>
             <div style={{ fontWeight: "bold" }}>{t("sales.quote.create")}</div>
@@ -194,7 +194,8 @@ export const _renderStatus = (
           </div>
         );
       }
-    } else if (document.externalDocumentNumber) {
+    }
+    else if (document.externalDocumentNumber) {
       const externalDocument = document.externalDocumentNumber;
       let result: JSX.Element[] = [];
       if (externalDocument.length > 0) {
@@ -213,6 +214,37 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "#2e3092",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
+                document.titleDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.documentNumbers.length - 1 && ", "}
+          </span>
+        ))
+        : [];
+
+      const secondDocuments = document.secondDocumentNumbers
+        ? document.secondDocumentNumbers.map((item: any, index: number) => {
+          const isPayment = document.titleSecondDocumentNumber === "Payment";
+          const href = isPayment
+            ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
+            : `/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+            document.titleSecondDocumentNumber.slice(1)
+            }?Id=${item.documentId}`;
+
+          return (
             <span key={index}>
               <a
                 style={{
@@ -223,47 +255,14 @@ export const _renderStatus = (
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
-                href={`/${
-                  document.titleDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleDocumentNumber.slice(1)
-                }?Id=${item.documentId}`}
+                href={href}
               >
                 {item.documentNumber}
               </a>
-              {index < document.documentNumbers.length - 1 && ", "}
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
             </span>
-          ))
-        : [];
-
-      const secondDocuments = document.secondDocumentNumbers
-        ? document.secondDocumentNumbers.map((item: any, index: number) => {
-            const isPayment = document.titleSecondDocumentNumber === "Payment";
-            const href = isPayment
-              ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
-              : `/${
-                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleSecondDocumentNumber.slice(1)
-                }?Id=${item.documentId}`;
-
-            return (
-              <span key={index}>
-                <a
-                  style={{
-                    minWidth: "auto",
-                    height: "auto",
-                    padding: 0,
-                    color: "#2e3092",
-                    cursor: "pointer",
-                    textDecoration: "none",
-                  }}
-                  href={href}
-                >
-                  {item.documentNumber}
-                </a>
-                {index < document.secondDocumentNumbers.length - 1 && ", "}
-              </span>
-            );
-          })
+          );
+        })
         : [];
 
       let result: JSX.Element[] = [];
