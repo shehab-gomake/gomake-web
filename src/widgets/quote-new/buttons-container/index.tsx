@@ -57,6 +57,7 @@ const ButtonsContainer = ({
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
+
   const {
     quoteItemValue,
     openOrderNowModal,
@@ -432,10 +433,10 @@ const ButtonsContainer = ({
             )}
             <GomakePrimaryButton
               style={classes.btnOrderNowContainer}
-              onClick={
+              onClick={() =>
                 quoteItemValue?.isNeedApproval
-                  ? onClickOpenMangerApprovalModal
-                  : onClickOpenOrderNowModal
+                  ? onClickOpenMangerApprovalModal()
+                  : onClickOpenOrderNowModal(false)
               }
             >
               {t(
