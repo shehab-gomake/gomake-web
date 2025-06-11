@@ -363,7 +363,6 @@ const ButtonParameterWidget = ({
   useEffect(() => {
     if (!isCreate) {
       // if (materialData?.length > 0 || !isSelectedShape) return;
-
       const materialPath = parameter?.materialPath?.[0];
       const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
       if (!materialDataPath) return;
@@ -375,7 +374,7 @@ const ButtonParameterWidget = ({
         }
         return acc;
       }, []);
-      const selectedShapeIdWhenEdit = allDataList.find((data) => data.id === isSelectedShape?.valueId);
+      const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds[0]);
       // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
       const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
@@ -426,6 +425,7 @@ const ButtonParameterWidget = ({
     else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
       const image = selectedShape?.rowData?.image?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "image")?.value
       const name = selectedShape?.rowData?.name?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "name")?.value
+
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
           <img
