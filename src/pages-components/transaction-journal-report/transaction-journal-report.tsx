@@ -80,6 +80,7 @@ const TransactionJournalReportWidget = ({
     erpAccountsList,
     getErpAccountsList,
     onClickDownloadMovingFiles,
+    onClickExportJournalPDFReport
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -163,6 +164,7 @@ const TransactionJournalReportWidget = ({
         onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
         onClickExportJournalExcelReport={onClickExportJournalExcelReport}
         onClickDownloadMovingFiles={onClickDownloadMovingFiles}
+        onClickExportJournalPDFReport={onClickExportJournalPDFReport}
         reportType={reportType}
       />
       {isAdjustmentsReport && (

@@ -8,7 +8,7 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { DocumentsTypeReportList, EReportType } from "@/enums";
+import {DocumentsTypeReportList, EReportType, ReportsType} from "@/enums";
 import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
@@ -552,6 +552,9 @@ const useTransactionJournalReport = ({
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
+      }else{
+        setIsOpenAdjustmentsModal(false);
+        alertFault("reports.noData");
       }
     } else {
       alertFaultGetData();
@@ -678,7 +681,38 @@ const useTransactionJournalReport = ({
       endDate: formattedEndDate,
     });
   };
+  const onClickExportJournalPDFReport = async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
 
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-transaction-journal-report-pdf`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          documentsType:
+              reportType === EReportType.DailyPayments
+                  ? DocumentsTypeReportList.Payments
+                  : documentType?.id,
+          cardType: isPurchaseReport
+              ? CLIENT_TYPE.SUPPLIER
+              : CLIENT_TYPE.CUSTOMER,
+        }
+    );
+    if (res?.success) {
+      const pdfLink = res?.data?.data?.data;
+      downloadPdf(pdfLink);
+      alertSuccessGetData();
+    } else {
+      alertFaultGetData();
+    }
+  }
   return {
     t,
     handleDocumentTypeChange,
@@ -733,6 +767,7 @@ const useTransactionJournalReport = ({
     getErpAccountsList,
     onClickDownloadMovingFiles,
     onClickExportJournalExcelReport,
+    onClickExportJournalPDFReport
   };
 };
 
