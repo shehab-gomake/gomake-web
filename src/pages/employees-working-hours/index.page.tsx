@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function () {
   return (
-    <CustomerAuthLayout
+    <CustomerAuthLayout staticPageTitle={"employees working hours"}
       permissionEnumValue={Permissions.SHOW_EMPLOYEE_WORKING_HOURS}
     >
       <CalendarTable />

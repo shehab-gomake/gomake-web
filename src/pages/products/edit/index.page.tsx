@@ -4,7 +4,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 
 export default function DigitalOffsetPrice() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"edit product"}>
       <PriceListPageWidget widgetType={EWidgetProductType.EDIT} />
     </CustomerAuthLayout>
   );

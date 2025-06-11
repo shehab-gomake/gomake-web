@@ -8,6 +8,7 @@ export default function SupplierPayments() {
     <CustomerAuthLayout
       permissionEnumValue={Permissions.SHOW_SUPPLIER_PAYMENTS}
       className={`custom-scrollbar`}
+      staticPageTitle={"supplier payments"}
     >
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.supplierPayments} />
     </CustomerAuthLayout>

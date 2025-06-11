@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function PurchaseInvoiceRefund() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PURCHASE_INVOICES_REFUND}>
+    <CustomerAuthLayout staticPageTitle={"purchase invoice refund"} permissionEnumValue={Permissions.SHOW_PURCHASE_INVOICES_REFUND}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.purchaseInvoiceRefund} />
     </CustomerAuthLayout>
   );

@@ -8,6 +8,7 @@ export default function SalesReportPage() {
     <CustomerAuthLayout
       permissionEnumValue={Permissions.SHOW_SALES_REPORT}
       className={`custom-scrollbar`}
+      staticPageTitle={"sales report"}
     >
       <SalesReportWidget clientType={CLIENT_TYPE.CUSTOMER} />
     </CustomerAuthLayout>

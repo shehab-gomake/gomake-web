@@ -27,6 +27,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useStyle } from "./style";
 import { ModalType } from "@/enums";
 import { MessageGroups } from "./messageGroups/message-groups";
+import Head from "next/head";
 
 const SettingsMailingWidget = () => {
   const { t } = useTranslation();
@@ -85,6 +86,9 @@ const SettingsMailingWidget = () => {
 
   return (
     <div>
+      <Head>
+        <title>{t("settings.mailing")}</title>
+      </Head>
       <PrimaryTabsComponent tabs={tabs}>
         <AddButton
           label={t("mailingSettings.addNew")}

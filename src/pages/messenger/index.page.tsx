@@ -6,7 +6,7 @@ const MessangerWidget = dynamic(() => import('@/widgets/messenger/messenger-widg
 });
 export default function MessangerPage () {
     return(
-        <CustomerAuthLayout>
+        <CustomerAuthLayout staticPageTitle={"messenger"}>
                 <MessangerWidget/>
         </CustomerAuthLayout>
     )

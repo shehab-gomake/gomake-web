@@ -3,7 +3,7 @@ import { DeliveriesPageWidget } from "@/pages-components/deliveries/deliveries";
 
 export default function DeliveriesPage() {
   return (
-    <CustomerAuthLayout className={`custom-scrollbar`}>
+    <CustomerAuthLayout staticPageTitle={"deliveries"} className={`custom-scrollbar`}>
       <DeliveriesPageWidget />
     </CustomerAuthLayout>
   );

@@ -16,6 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { GoMakeDialog } from "@/components/dialog/dialog";
 import { RolesWidget } from "./Roles/roles-widget";
+import Head from "next/head";
 
 const SettingsUsersWidget = () => {
   const { t } = useTranslation();
@@ -81,6 +82,9 @@ const SettingsUsersWidget = () => {
 
   return (
     <div data-tour={"settingUsersWidget"}>
+      <Head>
+        <title>{t("usersSettings.users")}</title>
+      </Head>
       <PrimaryTabsComponent
         tabs={tabs}
         selectedTabIndex={value}

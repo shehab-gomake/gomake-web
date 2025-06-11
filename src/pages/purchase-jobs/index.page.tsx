@@ -4,7 +4,7 @@ import { BoardMissionsListWidget } from "@/pages-components/board-missions/board
 
 export default function PurchaseJobs() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_BOARD_MISSIONS}>
+    <CustomerAuthLayout staticPageTitle={"purchase jobs"} permissionEnumValue={Permissions.SHOW_BOARD_MISSIONS}>
       <BoardMissionsListWidget isPurchaseJobs={true} />
     </CustomerAuthLayout>
   );

@@ -7,6 +7,7 @@ export default function Home() {
 
   return (
     <CustomerAuthLayout
+      staticPageTitle={"Gomake"}
       className={`custom-scrollbar`}
       backgroundColor={"#f6f6f6"}
     >

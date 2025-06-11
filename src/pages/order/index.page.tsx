@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function Order() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"order"}>
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.order} />
     </CustomerAuthLayout>
   );

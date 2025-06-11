@@ -3,7 +3,7 @@ import { CustomerServicePageWidget } from "@/pages-components/customer-service/c
 
 export default function CustomerServicePage() {
   return (
-    <CustomerAuthLayout className={`custom-scrollbar`}>
+    <CustomerAuthLayout staticPageTitle={"customer service"} className={`custom-scrollbar`}>
       <CustomerServicePageWidget isAdmin={false} />
     </CustomerAuthLayout>
   );

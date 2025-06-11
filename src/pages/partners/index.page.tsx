@@ -3,7 +3,7 @@ import { PartnersComponent } from "@/widgets/partners/partners";
 
 export default function Home() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"partners"}>
       <PartnersComponent />
     </CustomerAuthLayout>
   );

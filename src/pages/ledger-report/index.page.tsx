@@ -6,6 +6,7 @@ import { CLIENT_TYPE } from "../customers/enums";
 export default function LedgerReportPage() {
   return (
     <CustomerAuthLayout
+      staticPageTitle={"Ledger Report"}
       permissionEnumValue={Permissions.SHOW_LEDGER_REPORT}
       className={`custom-scrollbar`}
     >

@@ -5,7 +5,7 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 
 export default function OrdersTracking() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ORDERS} >
+    <CustomerAuthLayout staticPageTitle={"order tracking"} permissionEnumValue={Permissions.SHOW_ORDERS} >
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.order} />
     </CustomerAuthLayout>
   );

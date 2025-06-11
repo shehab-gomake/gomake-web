@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function Quote() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle="quote">
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} />
     </CustomerAuthLayout>
   );

@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function Quotes() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_QUOTES} className={`custom-scrollbar`}>
+    <CustomerAuthLayout staticPageTitle={"quotes"} permissionEnumValue={Permissions.SHOW_QUOTES} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.quote} />
     </CustomerAuthLayout>
   );

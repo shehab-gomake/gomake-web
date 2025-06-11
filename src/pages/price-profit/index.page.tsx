@@ -4,7 +4,7 @@ import { PriceProfitWidge } from "@/widgets/price-profit-widge";
 
 export default function PriceProfit() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.TRANSLATION_ADMIN}>
+    <CustomerAuthLayout staticPageTitle={"pricing profile"} permissionEnumValue={Permissions.TRANSLATION_ADMIN}>
       <PriceProfitWidge />
     </CustomerAuthLayout>
   );
