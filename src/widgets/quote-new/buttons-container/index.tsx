@@ -247,7 +247,7 @@ const ButtonsContainer = ({
               {t("sales.quote.deleteDelivery")}
             </GomakePrimaryButton>
           )}
-        {(isPurchaseInvoice || isPurchaseOrder) &&
+        {((isPurchaseInvoice || isPurchaseOrder) && !isNewCreation) &&
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
