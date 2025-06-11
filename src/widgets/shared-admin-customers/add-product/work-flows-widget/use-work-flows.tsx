@@ -1,13 +1,20 @@
 import { useCallback, useEffect } from "react";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { useState } from "react";
-import { addActionToProductApi, deleteActionFromProductApi, getProductActionsApi, updateActionsOrderInProductApi, updateProductActionApi } from "@/services/api-service/products/product-endpoints";
+import {
+  addActionToProductApi,
+  deleteActionFromProductApi,
+  getProductActionsApi,
+  updateActionsOrderInProductApi,
+  updateProductActionApi,
+} from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const useWorkFlows = ({ getProductById }: any) => {
   const { callApi } = useGomakeAxios();
@@ -23,20 +30,32 @@ const useWorkFlows = ({ getProductById }: any) => {
 
   const [productActions, setProductActions] = useState([]);
   const [actionListDropDown, setActionListDropDown] = useState([]);
-  const [actionNameSelected, setActionNameSelected] = useState<any>()
+  const [actionNameSelected, setActionNameSelected] = useState<any>();
   const router = useRouter();
-  const [isAddNewAction, setIsAddNewAction] = useState(false)
-  const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
+  const [isAddNewAction, setIsAddNewAction] = useState(false);
+  const [anchorElActionsListMenu, setAnchorElActionsListMenu] =
+    useState<null | HTMLElement>(null);
   const openActionsListMenu = Boolean(anchorElActionsListMenu);
   const handleCloseActionsListMenu = () => {
     setAnchorElActionsListMenu(null);
   };
+
+  const {
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+  } = useCustomerDropDownList({
+    clientType: CLIENT_TYPE.SUPPLIER,
+  });
+
   const handleOpenActionsListMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElActionsListMenu(event.currentTarget);
   };
   const onClickAddNewAction = () => {
-    setIsAddNewAction(true)
-  }
+    setIsAddNewAction(true);
+  };
 
   const getActions = async () => {
     const callBack = (res) => {
@@ -51,60 +70,65 @@ const useWorkFlows = ({ getProductById }: any) => {
   }, []);
 
   const addActionToProduct = async (actionNameSelected: any) => {
-    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const productId = Array.isArray(router.query.id)
+      ? router.query.id[0]
+      : router.query.id;
     const callBack = (res) => {
       if (res.success) {
-        alertSuccessAdded()
-        getProductActions()
+        alertSuccessAdded();
+        getProductActions();
+      } else {
+        alertFaultAdded();
       }
-      else {
-        alertFaultAdded()
-      }
-    }
+    };
     await addActionToProductApi(callApi, callBack, {
       productId: productId,
       actionId: actionNameSelected?.id,
       // productType: "string",
       // sectionName: "string"
     });
-  }
+  };
   const deleteActionFromProduct = async (selectedAction: any) => {
-    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const productId = Array.isArray(router.query.id)
+      ? router.query.id[0]
+      : router.query.id;
     const callBack = (res) => {
       if (res.success) {
-        alertSuccessDelete()
-        getProductActions()
+        alertSuccessDelete();
+        getProductActions();
+      } else {
+        alertFaultDelete();
       }
-      else {
-        alertFaultDelete()
-      }
-    }
+    };
     await deleteActionFromProductApi(callApi, callBack, {
       productId: productId,
       actionId: selectedAction,
     });
-  }
+  };
 
   const updateActionsOrderInProduct = async (data: any) => {
-    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const productId = Array.isArray(router.query.id)
+      ? router.query.id[0]
+      : router.query.id;
     const callBack = (res) => {
       if (res.success) {
       }
-    }
+    };
     await updateActionsOrderInProductApi(callApi, callBack, {
       productId: productId,
-      data
+      data,
     });
-  }
+  };
   const updateProductAction = async (data: any) => {
-    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const productId = Array.isArray(router.query.id)
+      ? router.query.id[0]
+      : router.query.id;
     const callBack = (res) => {
       if (res.success) {
-        alertSuccessUpdate()
-        getProductActions()
-      }
-      else {
-        alertFaultUpdate()
+        alertSuccessUpdate();
+        getProductActions();
+      } else {
+        alertFaultUpdate();
       }
     };
     const requestBody: any = {
@@ -127,14 +151,19 @@ const useWorkFlows = ({ getProductById }: any) => {
   };
 
   const getProductActions = async () => {
-    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const productId = Array.isArray(router.query.id)
+      ? router.query.id[0]
+      : router.query.id;
     const callBack = (res) => {
       if (res.success) {
         setProductActions(res?.data);
       }
-    }
-    await getProductActionsApi(callApi, callBack, { productId, translateActions: true });
-  }
+    };
+    await getProductActionsApi(callApi, callBack, {
+      productId,
+      translateActions: true,
+    });
+  };
   useEffect(() => {
     getProductActions();
   }, []);
@@ -160,10 +189,10 @@ const useWorkFlows = ({ getProductById }: any) => {
       }
     );
     if (res?.success) {
-      alertSuccessUpdate()
-      getProductById()
+      alertSuccessUpdate();
+      getProductById();
     } else {
-      alertFaultUpdate()
+      alertFaultUpdate();
     }
   }, []);
   return {
@@ -179,7 +208,12 @@ const useWorkFlows = ({ getProductById }: any) => {
     deleteActionFromProduct,
     updateActionsOrderInProduct,
     updateProductAction,
-    toggleIgnoreCalculatedWorkflows
+    toggleIgnoreCalculatedWorkflows,
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
   };
 };
 

@@ -25,16 +25,22 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
     deleteActionFromProduct,
     updateActionsOrderInProduct,
     updateProductAction,
-    toggleIgnoreCalculatedWorkflows
+    toggleIgnoreCalculatedWorkflows,
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
   } = useWorkFlows({ getProductById });
-  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] = useState(false);
+  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] =
+    useState(false);
   const handleOpenCopyAnotherProductsModal = () => {
     setOpenCopyAnotherProductsModal(true);
-  }
+  };
 
   const handleCloseCopyAnotherProductsModal = () => {
     setOpenCopyAnotherProductsModal(false);
-  }
+  };
 
   return (
     <div style={clasess.mainContainer}>
@@ -48,9 +54,14 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
             {t("pricingWidget.ignoreCalculatedWorkflow")}
           </span>
         </div>
-        {productActions?.length > 0 && <GomakePrimaryButton style={clasess.copyToAnotherProductsButton} onClick={handleOpenCopyAnotherProductsModal} >
-          {t("pricingWidget.copyToAnotherProducts")}
-        </GomakePrimaryButton>}
+        {productActions?.length > 0 && (
+          <GomakePrimaryButton
+            style={clasess.copyToAnotherProductsButton}
+            onClick={handleOpenCopyAnotherProductsModal}
+          >
+            {t("pricingWidget.copyToAnotherProducts")}
+          </GomakePrimaryButton>
+        )}
 
         <div
           style={clasess.autoCompleteSelectedSectionName}
@@ -61,7 +72,6 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
           {t("pricingWidget.addAction")}
           <ArrowDropDownIcon />
         </div>
-
       </div>
       <div style={{ width: "100%" }}>
         {productActions?.length > 0 ? (
@@ -71,6 +81,11 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
             deleteActionFromProduct={deleteActionFromProduct}
             updateActionsOrderInProduct={updateActionsOrderInProduct}
             updateProductAction={updateProductAction}
+            customer={customer}
+            setCustomer={setCustomer}
+            renderOptions={renderOptions}
+            checkWhatRenderArray={checkWhatRenderArray}
+            isFetching={isFetching}
           />
         ) : (
           <div
@@ -101,7 +116,10 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
         isFromSetting={true}
         addActionToProduct={addActionToProduct}
       />
-      <CopyAnotherProductsModal openModal={openCopyAnotherProductsModal} onClose={handleCloseCopyAnotherProductsModal} />
+      <CopyAnotherProductsModal
+        openModal={openCopyAnotherProductsModal}
+        onClose={handleCloseCopyAnotherProductsModal}
+      />
     </div>
   );
 };
