@@ -7,6 +7,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useResetRecoilState } from "recoil";
 import { documentDesignState } from "./state/documents-state";
+import Head from "next/head";
 
 const SettingsDocumentingWidget = () => {
   const { t } = useTranslation();
@@ -28,7 +29,14 @@ const SettingsDocumentingWidget = () => {
     },
   ];
 
-  return <PrimaryTabsComponent tabs={tabs} onSelectTab={onSelectTab} />;
+  return (
+      <>
+        <Head>
+          <title>{t("settings.documenting")}</title>
+        </Head>
+        <PrimaryTabsComponent tabs={tabs} onSelectTab={onSelectTab} />
+      </>
+  );
 };
 
 export { SettingsDocumentingWidget };

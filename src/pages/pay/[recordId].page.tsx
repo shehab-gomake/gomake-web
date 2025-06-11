@@ -3,7 +3,7 @@ import { QuoteConfirmationPageWidget } from "@/pages-components/quote-confirmati
 
 export default function DebtPayments() {
   return (
-    <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
+    <CustomerAuthLayout staticPageTitle={"payment"} allowAnonymous={true} disableHeaderSideMenu={true}>
       <QuoteConfirmationPageWidget
         isDebtPayments={true}
         isPrePaymentPage={true}

@@ -4,6 +4,7 @@ import { HeaderTitle } from "../header-title";
 import { useStyle } from "./style";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useEffect } from "react";
+import Head from "next/head";
 
 const SettingsMyProfileWidget = () => {
   const { t } = useTranslation();
@@ -18,6 +19,9 @@ const SettingsMyProfileWidget = () => {
 
   return (
     <div style={classes.mainContainer}>
+      <Head>
+        <title>{t("profileSettings.profileTab")}</title>
+      </Head>
       <HeaderTitle marginTop={"0px"} title={t("profileSettings.profileTab")} />
       <UserProfile />
     </div>

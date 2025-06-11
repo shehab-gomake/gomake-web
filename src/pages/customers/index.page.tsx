@@ -210,6 +210,7 @@ export default function Customers() {
 
   return (
     <CustomerAuthLayout
+      staticPageTitle={"customers"}
       permissionEnumValue={Permissions.SHOW_CLIENT}
       className={`custom-scrollbar`}
     >

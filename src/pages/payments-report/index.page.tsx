@@ -7,6 +7,7 @@ import { CLIENT_TYPE } from "../customers/enums";
 export default function TransactionJournalReportPage() {
   return (
     <CustomerAuthLayout
+      staticPageTitle={"payments report"}
       permissionEnumValue={Permissions.SHOW_SUPPLIER_PAYMENT_REPORT}
       className={`custom-scrollbar`}
     >

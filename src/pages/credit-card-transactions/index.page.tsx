@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function CreditCardTransactions() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CREDIT_CARD_TRANSACTIONS} className={`custom-scrollbar`}>
+    <CustomerAuthLayout staticPageTitle={"credit card transactions"} permissionEnumValue={Permissions.SHOW_CREDIT_CARD_TRANSACTIONS} className={`custom-scrollbar`}>
       <CreditCardTransactionsWidget />
     </CustomerAuthLayout>
   );

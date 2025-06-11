@@ -85,6 +85,7 @@ import { useModal } from "@/hooks/use-modal";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
 
 export enum MessageType {
   Email = 0,
@@ -2120,53 +2121,8 @@ const useQuoteNew = ({
   //     getAllEmployees();
   //   }
   // }, [isQuoteConfirmation]);
-
-  const documentsTitles = [
-    {
-      label: t("sales.quote.quote"),
-      value: DOCUMENT_TYPE.quote,
-    },
-    {
-      label: t("sales.quote.order"),
-      value: DOCUMENT_TYPE.order,
-    },
-    {
-      label: t("sales.quote.invoice"),
-      value: DOCUMENT_TYPE.invoice,
-    },
-    {
-      label: t("sales.quote.deliveryNote"),
-      value: DOCUMENT_TYPE.deliveryNote,
-    },
-    {
-      label: t("sales.quote.receipt"),
-      value: DOCUMENT_TYPE.receipt,
-    },
-    {
-      label: t("tabs.deliveryNoteRefund"),
-      value: DOCUMENT_TYPE.deliveryNoteRefund,
-    },
-    {
-      label: t("tabs.invoiceRefund"),
-      value: DOCUMENT_TYPE.invoiceRefund,
-    },
-    {
-      label: t("tabs.purchaseOrder"),
-      value: DOCUMENT_TYPE.purchaseOrder,
-    },
-    {
-      label: t("tabs.purchaseInvoice"),
-      value: DOCUMENT_TYPE.purchaseInvoice,
-    },
-    {
-      label: t("tabs.purchaseInvoiceRefund"),
-      value: DOCUMENT_TYPE.purchaseInvoiceRefund,
-    },
-  ];
-
-  const documentTitle = isOutgoingPayments
-    ? t("supplierPayments.supplierPayment")
-    : documentsTitles.find((item) => item.value === docType).label;
+  
+  const {documentTitle} = useDocumentTitle(docType,isOutgoingPayments)
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 

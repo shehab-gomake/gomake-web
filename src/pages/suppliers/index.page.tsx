@@ -222,6 +222,7 @@ export default function Home() {
     <CustomerAuthLayout
       permissionEnumValue={Permissions.SHOW_SUPPLIER}
       className={`custom-scrollbar`}
+      staticPageTitle={"suppliers"}
     >
       <PrimaryTabsComponent
         style={{ padding: isRTL ? "0px 10px 0px 20px" : "0px 20px 0px 10px" }}

@@ -8,6 +8,7 @@ export default function AdjustmentsReportPage() {
     <CustomerAuthLayout
       permissionEnumValue={Permissions.SHOW_TRANSACTION_JOURNAL_REPORT}
       className={`custom-scrollbar`}
+      staticPageTitle="adjustments report"
     >
       <TransactionJournalReportWidget
         reportType={EReportType.AdjustmentsReport}

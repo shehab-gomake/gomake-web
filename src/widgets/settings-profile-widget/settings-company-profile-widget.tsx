@@ -9,6 +9,7 @@ import { CompanyFinancialComponent } from "./components/tabs-components/company-
 import { CompanyCommunicationComponent } from "./components/tabs-components/company-communication-component";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
+import Head from "next/head";
 
 const SettingsCompanyProfileWidget = () => {
   const { t } = useTranslation();
@@ -86,6 +87,9 @@ const SettingsCompanyProfileWidget = () => {
 
   return (
     <div data-tour="profileSettings">
+      <Head>
+        <title>{t("profileSettings.businessProfile")}</title>
+      </Head>
       <PrimaryTabsComponent
         tabs={tabs}
         selectedTabIndex={tabIndex}

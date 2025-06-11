@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function DeliveryNote() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"delivery note"}>
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.deliveryNote} />
     </CustomerAuthLayout>
   );

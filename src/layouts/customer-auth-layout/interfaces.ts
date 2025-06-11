@@ -8,4 +8,5 @@ export interface IAuthLayout {
   disableHeaderSideMenu?: boolean;
   className?: string;
   backgroundColor?: string;
+  staticPageTitle?: string;
 }

@@ -39,6 +39,8 @@ import { validateUsAddressFields } from "@/utils/helpers";
 import { useTranslation } from "react-i18next";
 import { shouldReopenOrderModalState } from "@/store/order-modal-states";
 import { useButtonsContainer } from "@/widgets/quote-new/buttons-container/use-buttons-container";
+import {navStatusState, pageTitleState} from "@/store/nav-status";
+import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
 
 const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const { callApi } = useGomakeAxios();
@@ -53,6 +55,8 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     alertFault,
   } = useSnackBar();
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const setPageTitle = useSetRecoilState(pageTitleState);
+  const {documentTitle} = useDocumentTitle(docType, router?.query?.isOutgoingPayments === "true")
   const isUsAddress = !!CheckPreferenceValue(
     EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
   );
@@ -193,6 +197,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const callBack = (res) => {
           if (res?.success) {
             const _data = res?.data || {};
+            setPageTitle(documentTitle + " " +_data.number)
             setQuoteItemValue(_data);
           } else {
             alertFaultGetData();
@@ -207,8 +212,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
         const callBack = (res) => {
           if (res?.success) {
+            
             let indexs = 0;
             const _data = res?.data || {};
+            setPageTitle(documentTitle + " " +_data.number)
             const mapData = _data?.documentItems?.map((item, index) => {
               indexs++;
               const parentIndex = indexs;

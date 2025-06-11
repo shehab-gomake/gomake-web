@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function PurchaseInvoiceRefund() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"purchase invoice refund"}>
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.purchaseInvoiceRefund} />
     </CustomerAuthLayout>
   );

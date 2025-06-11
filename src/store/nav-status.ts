@@ -6,3 +6,7 @@ export const navStatusState = atom({
     isClosed: true,
   },
 });
+export const pageTitleState = atom({
+  key: "pageTitleState",
+  default: "Gomake",
+});
