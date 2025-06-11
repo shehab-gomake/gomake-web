@@ -5,14 +5,14 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
     const getSubProduct = (subProducts, subSectionType) => {
         let subProduct = subProducts.find(sub => sub.type === subSectionType);
         if (subProduct) {
-          subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
+          subProduct.parameters = removeDuplicateParameters(subProduct?.parameters);
         }
         return subProduct;
       };
       
       const removeDuplicateParameters = (parameters) => {
         let seen = new Set();
-        return parameters.filter(param => {
+        return parameters?.filter(param => {
           const isDuplicate = seen.has(param.parameterId);
           seen.add(param.parameterId);
           return !isDuplicate;
@@ -142,7 +142,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
             let subProductsCopy = lodashClonedeep(subProducts);
             const subProductType = subSection.type;
             let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
-            subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
+            subProduct.parameters = removeDuplicateParameters(subProduct?.parameters);
 
             const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
             const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
@@ -192,7 +192,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           }
       
           // Remove duplicate parameters from the subProduct
-          subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
+          subProduct.parameters = removeDuplicateParameters(subProduct?.parameters);
       
           const colorParameter = settingParameters?.parameter?.settingParameters[0];
           const colorParameterValue = subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id);

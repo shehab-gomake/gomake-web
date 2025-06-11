@@ -52,7 +52,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
-import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
@@ -65,6 +64,8 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 import { SettingMenuIcon } from "@/icons/setting-menu ";
+import {useQuotesSocketIo} from "@/hooks/socket-io/use-quotes-socket-io";
+import {useOrdersSocketIo} from "@/hooks/socket-io/use-orders-socket-io";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -338,10 +339,10 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSignalr({ getQuote });
+    const { } = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSignalr({ getQuote });
+    const { } = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");

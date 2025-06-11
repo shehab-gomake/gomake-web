@@ -1,9 +1,7 @@
-import * as React from "react";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { Stack } from "@mui/material";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { addressInputs } from "./address-inputs";
 import { useStyle } from "./style";
 import { useAddressWidget } from "./use-address-widget";
@@ -35,6 +33,7 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
     isUsAddress,
     getAddressData,
     setAddressState,
+    setShouldReopen,
   } = useAddressWidget({ docType: documentType, addressType });
 
   const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add");
@@ -59,6 +58,7 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
       onClose={() => {
         setAddressState(getAddressData());
         setOpenModal(false);
+        setShouldReopen(false);
       }}
       modalTitle={
         isDeliveryAddress

@@ -727,7 +727,7 @@ const useQuoteNew = ({
   };
 
   const updatePurchaseNumber = async (value: string, forceUpdate = false) => {
-    if(isNewCreation){
+    if (isNewCreation) {
       setQuoteItemValue({ ...quoteItemValue, purchaseNumber: value });
       return;
     }
@@ -1155,7 +1155,7 @@ const useQuoteNew = ({
       if (res?.success) {
         const _data = res?.data?.data?.data;
         // if is request to change the currency in document in creation mode just multiple the prices with exchange rate
-        if(calculationType === 4){
+        if (calculationType === 4) {
           let exchangeRate = _data.exchangeRate;
           const updatedQuoteItemValue = {
             ...newQuoteItemValue,
@@ -1166,17 +1166,21 @@ const useQuoteNew = ({
             totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
-            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
-              return {
-                ...documentItem,
-                finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(3),
-                price: (documentItem.price * exchangeRate).toFixed(3),
-                discount: (documentItem.discount * exchangeRate).toFixed(3),
-              };
-            }),
+            documentItems: newQuoteItemValue.documentItems.map(
+              (documentItem) => {
+                return {
+                  ...documentItem,
+                  finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(
+                    3
+                  ),
+                  price: (documentItem.price * exchangeRate).toFixed(3),
+                  discount: (documentItem.discount * exchangeRate).toFixed(3),
+                };
+              }
+            ),
           };
           setQuoteItemValue(updatedQuoteItemValue);
-        }else{
+        } else {
           const updatedQuoteItemValue = {
             ...newQuoteItemValue,
             discount: _data?.document?.discount,
@@ -1186,19 +1190,21 @@ const useQuoteNew = ({
             totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
-            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
-              if (documentItem.id === quoteItem.id) {
-                return {
-                  ...documentItem,
-                  finalPrice: _data.finalPrice,
-                  price: _data.price,
-                  quantity: _data.quantity,
-                  discount: _data.discount,
-                };
-              } else {
-                return documentItem;
+            documentItems: newQuoteItemValue.documentItems.map(
+              (documentItem) => {
+                if (documentItem.id === quoteItem.id) {
+                  return {
+                    ...documentItem,
+                    finalPrice: _data.finalPrice,
+                    price: _data.price,
+                    quantity: _data.quantity,
+                    discount: _data.discount,
+                  };
+                } else {
+                  return documentItem;
+                }
               }
-            }),
+            ),
           };
           setQuoteItemValue(updatedQuoteItemValue);
         }
@@ -1754,7 +1760,6 @@ const useQuoteNew = ({
     messageType: number,
     sendWithInvoices: boolean = false
   ) => {
-    debugger;
     if (messageType === MessageType.SMS) {
       let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
         quoteItemValue?.documentContacts

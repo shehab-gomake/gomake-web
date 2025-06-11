@@ -11,11 +11,11 @@ import {
 } from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
-import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 import {useMediaQuery} from "@mui/material";
 import {useRecoilState} from "recoil";
 import {unreadMessagesCountState} from "@/store/unread-messages-count";
 import {messengerMobileViewState} from "@/widgets/messenger/state";
+import {useMessengerSocketIo} from "@/hooks/socket-io/use-messenger-socket-io";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -25,7 +25,7 @@ const useMessenger = () => {
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
-    const {updateState, setUpdateState} = useMessengerSignalr();
+    const {updateState, setUpdateState} = useMessengerSocketIo();
     const {alertFaultUpdate, alertFaultGetData, alertFaultDelete} = useSnackBar();
     const {query, pathname, push} = useRouter();
     const {dialogId, clientId} = query;
