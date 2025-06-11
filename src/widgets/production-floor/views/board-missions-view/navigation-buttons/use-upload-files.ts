@@ -12,7 +12,7 @@ import {
 } from "@/widgets/file-uploader-widget/interface";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
-import { useRouter } from "next/router";
+import { useState } from "react";
 
 const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean,productType?:string) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
@@ -21,6 +21,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+  const [fileId, setFileId] = useState<string>("");
+
   const { callApi } = useGomakeAxios();
 
   const handleFileUpload = async (file, fileType) => {
@@ -72,7 +74,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       ]);
     }
 
-    await setOrderItemFileStatus({
+    // Initial status update to get fileId
+    const initialStatusResponse = await setOrderItemFileStatus({
       orderItemId,
       filename: file?.name,
       source: finalPath,
@@ -81,6 +84,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       status: EUploadingFileStatus.UPLOADING,
       fileType,
     });
+
+    // Get the initial fileId from the response
+    const initialFileId = initialStatusResponse?.data?.data?.data;
+    if (initialFileId) {
+      setFileId(initialFileId);
+    }
 
     // File upload logic remains unchanged
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -129,6 +138,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.ERROR,
           fileType,
+          fileId: initialFileId
         });
         return;
       }
@@ -161,6 +171,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.Uploaded,
           fileType,
+          fileId: initialFileId
         });
       }
     }
@@ -189,10 +200,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     formData.append("currentPacket", chunkIndex + 1);
     formData.append("totalPackets", totalChunks);
     formData.append("signalRConnectId", connectionId);
-
-    // if (fileType !== null && fileType !== undefined) {
-    //   formData.append("fileType", fileType);
-    // }
+    formData.append("fileId", fileId);
 
     formData.append(
       "path",
@@ -228,9 +236,11 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
         boardMissionIds: uploadingFiles.map(
           (fileGroup) => fileGroup.boardMissionId
         ),
+        fileId: dto.fileId
       },
       false
     );
+    return res;
   };
   return {
     handleFileUpload,
