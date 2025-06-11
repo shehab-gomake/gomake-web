@@ -11,7 +11,7 @@ import {
   quoteConfirmationState,
   quoteItemState,
 } from "@/store";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { currencyUnitState } from "@/store/currency-units";
 import { DOCUMENT_TYPE } from "../quotes/enums";
@@ -37,6 +37,8 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
 import { validateUsAddressFields } from "@/utils/helpers";
 import { useTranslation } from "react-i18next";
+import { shouldReopenOrderModalState } from "@/store/order-modal-states";
+import { useButtonsContainer } from "@/widgets/quote-new/buttons-container/use-buttons-container";
 
 const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const { callApi } = useGomakeAxios();
@@ -119,7 +121,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     }
   };
 
-  // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx)
+  const { onClickOpenOrderNowModal } = useButtonsContainer(DOCUMENT_TYPE.quote);
+  const [shouldReopen, setShouldReopen] = useRecoilState(
+    shouldReopenOrderModalState
+  );
 
   const getQuote = useCallback(async () => {
     if (requestAbortController) {
@@ -247,6 +252,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
             });
             _data.documentItemsMapping = mapData;
             setQuoteItemValue(_data);
+            if (shouldReopen) {
+              onClickOpenOrderNowModal(true);
+              setShouldReopen(false);
+            }
           } else {
             alertFaultGetData();
           }
@@ -270,130 +279,16 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         alertFaultGetData();
       }
     }
-  }, [callApi, docType, requestAbortController, router, setQuoteItemValue]);
-
-  // const getQuote = async () => {
-  //   if (
-  //     router?.query?.isNewCreation &&
-  //     docType === DOCUMENT_TYPE.receipt &&
-  //     router?.query?.documentNumber &&
-  //     router?.query?.ClientId
-  //   ) {
-  //     return; // No need to call anything , in case we open receipt page from pay option from invoice list
-  //   }
-  //   if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
-  //     const callBack = (res) => {
-  //       if (res?.success) {
-  //         const _data = res?.data || {};
-  //         setQuoteItemValue(_data);
-  //       } else {
-  //         alertFaultGetData();
-  //       }
-  //     };
-  //     await getClientPaymentItemsApi(callApi, callBack);
-  //   } else if (router?.query?.isNewCreation) {
-  //     const requestBody: any = {
-  //       documentType: docType,
-  //     };
-  //     if (router?.query.orderId) {
-  //       requestBody.orderId = router.query.orderId;
-  //     }
-  //     if (router?.query.deliveryNoteId) {
-  //       requestBody.deliveryNoteID = router.query.deliveryNoteId;
-  //     }
-  //     if (router?.query.documentToDuplicateId) {
-  //       requestBody.documentToDuplicateId = router.query.documentToDuplicateId;
-  //     }
-  //     if (router?.query.documentId) {
-  //       requestBody.documentId = router.query.documentId;
-  //     }
-  //     if (router?.query.budgetId) {
-  //       requestBody.budgetId = router.query.budgetId;
-  //     }
-  //     const res = await callApi(
-  //       EHttpMethod.POST,
-  //       `/v1/erp-service/documents/get-new-document-data`,
-  //       requestBody
-  //     );
-
-  //     if (res?.success) {
-  //       const _data = res?.data?.data?.result || {};
-  //       setQuoteItemValue(_data);
-  //     } else {
-  //       alertFaultGetData();
-  //     }
-  //   } else if (docType === DOCUMENT_TYPE.receipt) {
-  //     const callBack = (res) => {
-  //       if (res?.success) {
-  //         const _data = res?.data || {};
-  //         setQuoteItemValue(_data);
-  //       } else {
-  //         alertFaultGetData();
-  //       }
-  //     };
-  //     await getReceiptByIdApi(callApi, callBack, {
-  //       receiptId: router?.query?.Id,
-  //     });
-  //   } else {
-  //     const callBack = (res) => {
-  //       if (res?.success) {
-  //         let indexs = 0;
-  //         const _data = res?.data || {};
-  //         const mapData = _data?.documentItems?.map(
-  //           (item: any, index: number) => {
-  //             indexs++;
-  //             const parentIndex = indexs;
-  //             const _childsDocumentItemsMapping =
-  //               item?.childsDocumentItems?.map((child: any, index2: number) => {
-  //                 indexs++;
-  //                 return {
-  //                   id: indexs,
-  //                   amount: child?.quantity,
-  //                   unitPrice: child?.price,
-  //                   discount: child?.discount,
-  //                   finalPrice: child?.finalPrice,
-  //                   quoteItemId: child?.id,
-  //                 };
-  //               });
-  //             return {
-  //               id: parentIndex,
-  //               itemName: item?.productName,
-  //               details: (
-  //                 <div
-  //                   style={
-  //                     _childsDocumentItemsMapping != null
-  //                       ? {
-  //                           height: "100%",
-  //                           overflowY: "scroll",
-  //                           paddingRight: 5,
-  //                         }
-  //                       : { height: 36, overflowY: "scroll", paddingRight: 5 }
-  //                   }
-  //                 >
-  //                   {item?.content}
-  //                 </div>
-  //               ),
-  //               amount: item?.quantity,
-  //               unitPrice: item?.price,
-  //               discount: item?.discount,
-  //               finalPrice: item?.finalPrice,
-  //               quoteItemId: item?.id,
-  //               childsDocumentItems: _childsDocumentItemsMapping,
-  //             };
-  //           }
-  //         );
-  //         _data.documentItemsMapping = mapData;
-  //         setQuoteItemValue(_data);
-  //       } else {
-  //         alertFaultGetData();
-  //       }
-  //     };
-  //     await getDocumentApi(callApi, callBack, {
-  //       documentType: docType,
-  //       Id: router?.query?.Id,
-  //     });
-  //   }
-  // };
+  }, [
+    callApi,
+    docType,
+    requestAbortController,
+    router,
+    setQuoteItemValue,
+    // executeIfNeeded,
+    shouldReopen,
+    setShouldReopen,
+  ]);
 
   const validateAddress = async (addressWithMetadata) => {
     return await validateAddressApi(callApi, () => {}, addressWithMetadata);
@@ -505,9 +400,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           (item) => item.id === res.data.data.result
         );
 
-        isUpdate
-          ? updateClientAddress(addedAddress, addressType)
-          : onClickAddAddress(addedAddress, addressType);
+        if (isUpdate) {
+          updateClientAddress(addedAddress, addressType);
+        } else {
+          onClickAddAddress(addedAddress, addressType);
+        }
       } else {
         alertFaultAdded();
       }

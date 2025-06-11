@@ -1,5 +1,4 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import {
   getAllPricingProfileSettingForDropDownListApi,
   getAllProfitProfileProductByProductIdApi,
@@ -16,6 +15,7 @@ import {
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {useDisplayProfitProfilesSocketIo} from "@/hooks/socket-io/use-display-profit-profiles-socket-io";
 
 interface PricingProfileSetting {
   id: string;
@@ -434,7 +434,7 @@ const usePriceProfit = () => {
       isSelectedProducts: isSelected,
     });
   };
-  const { } = useDisplayProfitProfilesSignalr({ setProducts });
+  const { } = useDisplayProfitProfilesSocketIo({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
     const productId = Array.isArray(router.query.productId)

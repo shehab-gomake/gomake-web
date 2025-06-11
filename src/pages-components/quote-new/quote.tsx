@@ -52,7 +52,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
-import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
@@ -65,6 +64,8 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 import { SettingMenuIcon } from "@/icons/setting-menu ";
+import {useQuotesSocketIo} from "@/hooks/socket-io/use-quotes-socket-io";
+import {useOrdersSocketIo} from "@/hooks/socket-io/use-orders-socket-io";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -338,10 +339,10 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSignalr({ getQuote });
+    const { } = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSignalr({ getQuote });
+    const { } = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -400,7 +401,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -441,7 +442,7 @@ const QuoteNewPageWidget = ({
       const isNewCreation = router.query.isNewCreation === "true";
       const isCorrectPage =
         router.pathname === "/invoice" || router.pathname === "/deliveryNote";
-      const isVATMismatch = systemVAT !== quoteState?.vat;
+      const isVATMismatch = Math.abs(systemVAT - quoteState?.vat) > 0.001;
 
       if (isNewCreation && isCorrectPage && isVATMismatch) {
         alertModal.open();
@@ -461,8 +462,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -531,7 +532,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -608,7 +609,7 @@ const QuoteNewPageWidget = ({
                           quoteItemValue?.isEditable
                         }
                         inputRef={creationDateRef}
-                      // preventOpenCondition={!quoteState.client}
+                        // preventOpenCondition={!quoteState.client}
                       />
                       {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                         (isQuote && !selectDate ? (
@@ -646,7 +647,7 @@ const QuoteNewPageWidget = ({
                           }}
                           isEditable={quoteItemValue?.isEditable}
                           inputRef={taxDateRef}
-                        // preventOpenCondition={!quoteState.client}
+                          // preventOpenCondition={!quoteState.client}
                         />
                       )}
                     </LocalizationProvider>
@@ -1054,18 +1055,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>

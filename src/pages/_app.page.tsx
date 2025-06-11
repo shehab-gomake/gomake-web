@@ -15,7 +15,6 @@ import {GomakeLoadingWithShadow} from "@/widgets/loading-with-shadow";
 import useUpdateCurrentPath from "@/pages-components/customer-service/hook/useUpdateCurrentPath";
 import EnhancedErrorBoundary from "@/components/jira-logger/ErrorBoundary";
 import 'rsuite/dist/rsuite-no-reset.min.css';
-import {FileUploaderProvider} from "@/providers/signalr-provider/file-uploader-provider";
 
 i18n
     .use(Backend)
@@ -37,25 +36,22 @@ export default function App({Component, pageProps}: AppProps) {
     return (
         <DndProvider backend={HTML5Backend}>
             <RecoilRoot>
-                <FileUploaderProvider>
-
-                    <UpdatePathWrapper>
-                        <EnhancedErrorBoundary>
-                            <ThemeProvider/>
-                            <style jsx global>{`
+                <UpdatePathWrapper>
+                    <EnhancedErrorBoundary>
+                        <ThemeProvider/>
+                        <style jsx global>{`
                                 html {
                                     direction: ${t("direction")};
                                 }
                             `}</style>
-                            <GoMakeTourProvider>
-                                <Component {...pageProps} />
-                            </GoMakeTourProvider>
-                            <GoMakeSnackBar/>
-                            <GomakeLoading/>
-                            <GomakeLoadingWithShadow/>
-                        </EnhancedErrorBoundary>
-                    </UpdatePathWrapper>
-                </FileUploaderProvider>
+                        <GoMakeTourProvider>
+                            <Component {...pageProps} />
+                        </GoMakeTourProvider>
+                        <GoMakeSnackBar/>
+                        <GomakeLoading/>
+                        <GomakeLoadingWithShadow/>
+                    </EnhancedErrorBoundary>
+                </UpdatePathWrapper>
             </RecoilRoot>
         </DndProvider>
     );
