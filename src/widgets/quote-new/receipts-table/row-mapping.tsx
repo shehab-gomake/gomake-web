@@ -90,7 +90,22 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {item.docNum}
+        {item.invoiceID ? (
+          <a
+            href={`/invoice?Id=${item.invoiceID}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "#5859A8",
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
+            {item.docNum}
+          </a>
+        ) : (
+          item.docNum
+        )}
       </PrimaryTableCell>
 
       <PrimaryTableCell
@@ -139,7 +154,7 @@ const RowMappingWidget = ({
             type="number"
             min={Math.min(0, item?.sumApplied)}
             max={item?.sumApplied > 0 ? item?.sumApplied : 0}
-          // step="0.01"
+            // step="0.01"
           />
           / {item?.sumApplied}
         </PrimaryTableCell>

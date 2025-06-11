@@ -102,9 +102,11 @@ const Actions = ({
   isFetching,
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
+
   useEffect(() => {
     setActionsList(actions);
   }, [actions]);
+
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedActions = Array.from(actionsList);
@@ -124,6 +126,7 @@ const Actions = ({
       reOderMainActions(formattedActions);
     }
   };
+
   const permissions = useRecoilValue(permissionsState);
 
   return (
@@ -304,7 +307,6 @@ const ActionContainerComponent = ({
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
     isActionEmployeeUpdatedState
   );
-  // const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -502,19 +504,6 @@ const ActionContainerComponent = ({
   };
 
   useEffect(() => {
-    if (supplierId) {
-      const supplier = suppliers?.find((sup) => sup.value === supplierId);
-      if (supplier) {
-        setCustomer({
-          id: supplier.value,
-          name: supplier.label,
-        });
-      }
-      //return supplier;
-    }
-  }, [supplierId, suppliers, suppliersState]);
-
-  useEffect(() => {
     if (foldOptionValueId) {
       const selectedFoldOptionName = foldOptions?.find(
         (option) => option.id == foldOptionValueId
@@ -526,11 +515,13 @@ const ActionContainerComponent = ({
   }, [foldOptionValueId, foldOptions]);
   const permissions = useRecoilValue(permissionsState);
 
-  const mappedSuppliers = renderOptions ? renderOptions()?.map((supplier) => ({
-    text: supplier?.name,
-    id: supplier?.id,
-    ...supplier,
-  })) : [];
+  const mappedSuppliers = renderOptions
+    ? renderOptions()?.map((supplier) => ({
+        text: supplier?.name,
+        id: supplier?.id,
+        ...supplier,
+      }))
+    : [];
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
 
@@ -585,22 +576,6 @@ const ActionContainerComponent = ({
                           flexItem
                           color={"#000"}
                         />
-                        {/* <ClientAutocomplete
-                          key={customer?.id}
-                          clientType={CLIENT_TYPE.SUPPLIER}
-                          disableClearable={true}
-                          options={renderOptions() ? renderOptions() : []}
-                          style={{ width: "200px" }}
-                          getOptionLabel={(option: any) =>
-                            option && option.name ? `${option.name}` : ""
-                          }
-                          defaultFiltering={false}
-                          onChangeTextField={checkWhatRenderArray}
-                          value={customer}
-                          loading={isFetching}
-                          onChange={handleSupplierChange}
-                        /> */}
-
                         <ClientAutocomplete
                           uiType="updated"
                           key={customer?.id}
@@ -610,8 +585,12 @@ const ActionContainerComponent = ({
                           getOptionLabel={(item) => item.text}
                           defaultFiltering={false}
                           onChangeTextField={checkWhatRenderArray}
+                          // value={
+                          //   customer?.name ?? t("sales.quote.chooseSupplier")
+                          // }
                           value={
-                            customer?.name ?? t("sales.quote.chooseSupplier")
+                            suppliers?.find((sup) => sup.value === supplierId)
+                              ?.label ?? t("sales.quote.chooseSupplier")
                           }
                           loading={isFetching}
                           onChange={handleSupplierChange}
@@ -827,9 +806,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                    0,
-                                    20
-                                  ) + "..."
+                                      0,
+                                      20
+                                    ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -1015,16 +994,17 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${source === EWorkSource.OUT
-                              ? formatValueWithUnit(
-                                calculateOutSourceProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              : formatValueWithUnit(
-                                calculateProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              })`}
+                            {`(${
+                              source === EWorkSource.OUT
+                                ? formatValueWithUnit(
+                                    calculateOutSourceProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                                : formatValueWithUnit(
+                                    calculateProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                            })`}
                           </span>
                         </Stack>
                       )}
@@ -1325,7 +1305,8 @@ const ActionContainerComponent = ({
                     </Stack>
                   </>
                 )}
-                {(outputsParameters?.length > 0 || textAreaOutputs?.length > 0) &&
+                {(outputsParameters?.length > 0 ||
+                  textAreaOutputs?.length > 0) &&
                   source === EWorkSource.INTERNAL && (
                     <>
                       <Divider />

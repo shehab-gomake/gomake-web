@@ -47,6 +47,10 @@ import {
 } from "../business-widget/address-widget/state";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
 import { createInvoiceFromOrderIdApi } from "@/services/api-service/generic-doc/invoices";
+import {
+  openOrderModalState,
+  shouldReopenOrderModalState,
+} from "@/store/order-modal-states";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -76,7 +80,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const AlertAddCustomerModal = useModal();
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
-  const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
+  const [openOrderNowModal, setOpenOrderNowModal] =
+    useRecoilState<boolean>(openOrderModalState);
+
   const CheckoutOptionModal = useModal();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
@@ -113,7 +119,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     return await validateAddressApi(callApi, () => {}, addressWithMetadata);
   };
 
-  const onClickOpenOrderNowModal = async () => {
+  const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
+
+  const onClickOpenOrderNowModal = async (addressChecked: boolean = false) => {
     if (!quoteItemValue?.isHaveCustomers && !quoteItemValue?.client) {
       AlertAddCustomerModal.open();
       return;
@@ -125,12 +133,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       return;
     }
 
-    if (
-      CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
-      quoteItemValue?.documentBillingAddresses?.length === 0
-    ) {
-      // alertFault("alerts.missingBillingAddress");
+    const isAddressRequired = CheckPreferenceValue(
+      EPreferences.ADDRESSES_REQUIRED_FOR_ORDER
+    );
+    const noBillingAddress =
+      (quoteItemValue?.documentBillingAddresses?.length ?? 0) === 0;
+
+    if (isAddressRequired && noBillingAddress && !addressChecked) {
       setSelectedAddressType(EAddressType.BILLING);
+      setShouldReopen(true);
       setTimeout(() => {
         setOpenAddressModal(true);
       }, 0);
