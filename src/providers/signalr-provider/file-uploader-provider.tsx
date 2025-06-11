@@ -1,5 +1,4 @@
 import React, { createContext, useContext } from "react";
-import { useFilesUploaderSignalr } from "@/hooks/signalr/use-files-uploader-signalr";
 import { useFilesUploaderSocketIO } from "@/hooks/socket-io/use-files-uploader-socket-io";
 
 
