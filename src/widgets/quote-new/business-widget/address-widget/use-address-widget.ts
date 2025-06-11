@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { addressModalState, EAddressType, isNewAddress } from "./state";
 import { quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
@@ -8,6 +8,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { printHouseCountryState } from "@/store/print-house-country";
+import { shouldReopenOrderModalState } from "@/store/order-modal-states";
 
 interface useAddressWidgetProps {
   docType: DOCUMENT_TYPE;
@@ -25,6 +26,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
   } = useQuoteGetData(docType);
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
+  const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
 
   const isUsAddress = !!CheckPreferenceValue(
     EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
@@ -143,6 +145,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
     updateClientAddress,
     setSelectedAddress,
     getAddressData,
+    setShouldReopen,
   };
 };
 
