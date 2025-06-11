@@ -10,10 +10,10 @@ import { useRecoilValue } from "recoil";
 import { DashboardActions } from "@/store";
 import { selectedAgentsState } from "@/store/agents-state";
 import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
-import { useDashboardSignalr } from "@/hooks/signalr/use-dashboard-signalr";
 import { Skeleton } from "@mui/material";
 import { DashboardDates } from "@/widgets/dashboard-widget/dates";
 import Stack from "@mui/material/Stack";
+import {useDashboardSocketIo} from "@/hooks/socket-io/use-dashboard-socket-io";
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
     const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines } = useGomakeMachines();
@@ -22,7 +22,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const { classes } = useStyle();
     const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
-    const { } = useDashboardSignalr(() => actions(action, dates));
+    const { } = useDashboardSocketIo(() => actions(action, dates));
 
     const {
         getBoardsMissionsByDateRange,
