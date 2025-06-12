@@ -35,8 +35,12 @@ import { formatValueWithUnit } from "@/utils/is-currency";
 
 export const roundPrice = (price) => {
   try {
+
+    if (typeof price === "string" && /[a-zA-Z]/.test(price)) {
+      return NaN;
+    }
     if (typeof price === "string") {
-      price = Number(price);
+      price = price;
     }
     if (price && !isNaN(price) && typeof price === "number") {
       let roundedPrice = price.toFixed(3);
@@ -52,6 +56,7 @@ export const roundPrice = (price) => {
     return price;
   }
 };
+
 
 const RightSideWidget = ({
   clasess,
@@ -130,7 +135,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -190,25 +195,7 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
-  const roundPrice = (price) => {
-    try {
-      if (typeof price === "string") {
-        price = Number(price);
-      }
-      if (price && !isNaN(price) && typeof price === "number") {
-        let roundedPrice = price.toFixed(3);
-        let arr = roundedPrice.split(".");
-        let decimalPart = Number(arr[1]);
-        if (!decimalPart) {
-          return arr[0];
-        }
-        return roundedPrice;
-      }
-      return price;
-    } catch (e) {
-      return price;
-    }
-  };
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -398,7 +385,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -429,19 +416,19 @@ const RightSideWidget = ({
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                      ((quantity &&
-                        quantity.values &&
-                        quantity.values.length &&
-                        quantity?.values[0]) ||
-                        1)
+                    ((quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0]) ||
+                      1)
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                        ((quantity &&
-                          quantity.values &&
-                          quantity.values.length &&
-                          quantity?.values[0]) ||
-                          1)
+                    ((quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0]) ||
+                      1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -486,7 +473,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE ? (
+          widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -771,12 +758,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${
-                            item?.exception?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exception?.exceptionKey,
-                            item?.exception?.values
-                          )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exception?.exceptionKey,
+                              item?.exception?.values
+                            )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -803,12 +789,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${
-                            item?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exceptionKey,
-                            item?.values
-                          )}${renderValues(item?.values)}`}
+                          {`${item?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exceptionKey,
+                              item?.values
+                            )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>
