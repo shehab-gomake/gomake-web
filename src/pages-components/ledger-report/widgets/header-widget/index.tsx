@@ -10,6 +10,7 @@ import {
 import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const LedgerReportHeaderWidget = ({
   customer,
@@ -57,6 +58,7 @@ const LedgerReportHeaderWidget = ({
           <DateRangePicker
             onChange={handleDateChange}
             value={fromDate && toDate ? [fromDate, toDate] : null}
+            ranges={predefinedRanges}
           />
         </div>
       </div>
