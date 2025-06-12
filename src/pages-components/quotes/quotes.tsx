@@ -243,6 +243,9 @@ const QuotesListPageWidget = ({
     packageInputs,
     onClosePackagesModal,
     openPackagesModal,
+    paymentType,
+    handlePaymentTypeChange,
+    typeOfPayments,
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -598,6 +601,22 @@ const QuotesListPageWidget = ({
                                   onChange={(e) => {
                                     setIsCanceledState(e.target.checked);
                                   }}
+                                />
+                              </div>
+                            )}
+                            {(isReceipt || isSupplierPayments) && (
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("sales.quote.paymentType")}
+                                </h3>
+                                <GoMakeAutoComplate
+                                  key={paymentType?.value}
+                                  options={typeOfPayments}
+                                  style={classes.textInputStyle}
+                                  getOptionLabel={(option: any) => option.label}
+                                  placeholder={t("sales.quote.paymentType")}
+                                  onChange={handlePaymentTypeChange}
+                                  value={paymentType}
                                 />
                               </div>
                             )}
