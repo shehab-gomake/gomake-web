@@ -9,7 +9,6 @@ import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 import { UpdateParameterModal } from "./widgets/update-parameter-modal";
 import { ExternalValuesIdModal } from "../external-ids-modal";
-import { WorkFlowsWidget } from "../work-flows-widget";
 
 const ParameterWidget = () => {
   const { classes } = useStyle();
@@ -59,6 +58,7 @@ const ParameterWidget = () => {
     onOpenExternalIdsModal,
     onCloseExternalIdsModal,
     openExternalIdsModal,
+    removeProductParamete
   } = useAddProduct({ classes });
 
   const visibleSections = template?.sections;
@@ -123,6 +123,7 @@ const ParameterWidget = () => {
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                               getProductById={getProductById}
+                              removeProductParamete={removeProductParamete}
                             />
                           );
                         } else {
@@ -149,6 +150,7 @@ const ParameterWidget = () => {
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                               getProductById={getProductById}
+                              removeProductParamete={removeProductParamete}
                             />
                           );
                         }
