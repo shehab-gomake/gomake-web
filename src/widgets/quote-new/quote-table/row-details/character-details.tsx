@@ -59,8 +59,8 @@ const CharacterDetails = ({
         style={{
           cursor: canUpdate ? "pointer" : "default",
           position: "relative",
-            textAlign: isRTL ? "right" : "left",
-            ...detailsStyle,
+          textAlign: isRTL ? "right" : "left",
+          ...detailsStyle,
         }}
       >
         <div style={{ ...classes.mainContainer }}>
