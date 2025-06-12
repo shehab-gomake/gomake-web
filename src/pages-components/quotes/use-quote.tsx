@@ -2860,7 +2860,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [router, agentsCategories]);
 
-  const moveOrderToReady = async () => {
+  const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
@@ -2883,7 +2883,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     };
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
-      isSendMessage: false,
+      isSendMessage: isSendMessage,
     });
   };
 
