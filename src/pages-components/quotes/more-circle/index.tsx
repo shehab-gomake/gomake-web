@@ -29,7 +29,7 @@ const MoreMenuWidget = ({
   onClickOpenRemoveDraftModal,
   handleGetTaxConfirmNo,
   onClickOpenMoveOrderToReadyModal,
-  onOpenPackagesModal
+  onOpenPackagesModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();

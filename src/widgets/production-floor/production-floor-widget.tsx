@@ -1,11 +1,11 @@
-import { IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
 import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
@@ -23,16 +23,21 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
-import { boardMissionsFilesState } from "./views/board-missions-view/files/state";
-import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, boardMissionsStationsState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
-import { boardMissionsDetailsState } from "./state/boards";
-import { boardMissionsActivitiesState } from "./state/board-missions-activities";
+import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums/tabs-icon-enums";
+import { getBoardMissionsIdByQrCodeApi, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useSnackBar } from "@/hooks/use-snack-bar";
+import { useTranslation } from "react-i18next";
+import QrReader from "react-qr-scanner";
+import { useGomakeRouter } from "@/hooks";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
-  const { groupsId, boardMissionsId, step, productType } = query;
+  const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
 
@@ -114,6 +119,81 @@ const ProductionFloorWidget = () => {
     };
   };
 
+  const { t } = useTranslation();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenFirstTime, setIsOpenFirstTime] = useState(false);
+
+  useEffect(() => {
+    if (isScanning && !isOpenFirstTime) {
+      setIsOpenModal(true);
+    }
+  }, [isScanning, isOpenFirstTime]);
+
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+    setIsOpenFirstTime(true);
+  }
+
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+
+  const onUpdateToNextStation = async (
+    boardMissionId: string,
+    productType: string
+  ) => {
+    await updateBoardMissionCurrentStationApi(
+      callApi,
+      (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          handleCloseModal();
+        } else {
+          alertFaultUpdate();
+        }
+      },
+      { boardId: boardMissionId, stationId: null, productType }
+    );
+  };
+
+  const [scanResult, setScanResult] = useState<string | null>(null);
+  const [isScanningFlag, setIsScanningFlag] = useState(false);
+  console.log("scanResult", { scanResult, isScanningFlag });
+  useEffect(() => {
+    if (!isScanningFlag) {
+      handleScanAgain();
+    }
+  }, [isScanningFlag]);
+
+  const handleScan = async (data: { text: string } | null) => {
+    console.log("res11111", data);
+    if (!data) return;
+    try {
+      await getBoardMissionsIdByQrCodeApi(
+        callApi,
+        (res) => {
+          console.log("res2222", res);
+          if (res?.success) {
+            setIsOpenModal(true);
+          } else {
+            setScanResult("Invalid QR Code or No Board Mission Found");
+          }
+        },
+        data.text
+      );
+
+    } catch (error) {
+      console.error("QR Scan error:", error);
+    }
+  };
+  const handleError = (err: any) => {
+    console.error("QR Scan error:", err);
+  };
+
+  const handleScanAgain = () => {
+    setScanResult(null);
+    setIsScanningFlag(true); // Show the scanner again
+  };
+
   return (
     <Stack
       padding={"0 20px"}
@@ -188,8 +268,44 @@ const ProductionFloorWidget = () => {
         </Stack>
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
+        {isScanning && isScanningFlag && isMobile && !!boardMissionsId && (
+          <Box display="flex" justifyContent="center" >
+            <QrReader
+              delay={300}
+              facingMode="environment"
+              constraints={{
+                video: { facingMode: { exact: "environment" } },
+              }}
+              style={{
+                width: "100%",
+                borderRadius: "20px",
+                border: "4px solid #2e3092",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                padding: "10px",
+                height: "auto",
+                objectFit: "contain",
+              }}
+              onScan={handleScan}
+              onError={handleError}
+            />
+          </Box>
+        )}
       </Drawer>
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("customers.modal.nextStationModalTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={isOpenModal}
+        onClose={handleCloseModal}
+        onClickDelete={() => {
+          onUpdateToNextStation(boardMissionsId?.toString(), productType?.toString());
+        }}
+      />
+
       <QRScannerFab />
+
     </Stack>
   );
 };

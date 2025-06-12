@@ -1,4 +1,4 @@
-import { EParameterTypes } from "@/enums";
+import { EParameterTypes, ModalType } from "@/enums";
 import {
   HiddenIcon,
   NotHiddenIcon,
@@ -19,10 +19,12 @@ import { useRecoilState } from "recoil";
 import { selectedUpdateTypeState } from "@/store/selected-update-type";
 import { doNotAskNextTimeState } from "@/store";
 import { EditIcon } from "../../icons/edit-icon";
-import { SecondSwitch } from "@/components";
+import { GoMakeDeleteModal, SecondSwitch } from "@/components";
 import { PlusIcon } from "@/icons";
 import { useRouter } from "next/router";
 import { AddNewParameterModal } from "./add-new-parameter-modal";
+import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
+import { useModal } from "@/hooks/use-modal";
 
 export enum UpdateTypes {
   PRODUCT_ONLY = 0,
@@ -50,7 +52,8 @@ const SectionMappingWidget = ({
   relatedParameters,
   updatedProductParameteLocked,
   updatedProductParameterShowToClient,
-  getProductById
+  getProductById,
+  removeProductParamete,
 }) => {
   const { t } = useTranslation();
   const { alertFault, alertWarning } = useSnackBar();
@@ -61,6 +64,7 @@ const SectionMappingWidget = ({
   const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
     selectedUpdateTypeState
   );
+  const { isOpen, open: openModal, close: closeModal } = useModal();
   const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
     doNotAskNextTimeState
   );
@@ -231,7 +235,6 @@ const SectionMappingWidget = ({
               parameter?.parameterType ===
               EParameterTypes.ADVERTISING_PRODUCT_NAME || parameter?.parameterType ===
               EParameterTypes.SWITCH;
-
             return (
               <div key={paramIndex}>
                 <div style={classes.parameterContainer}>
@@ -357,6 +360,17 @@ const SectionMappingWidget = ({
                     >
                       <EditIcon />
                     </div>
+                    {parameter?.isDeletable && <Tooltip title={t("modal.delete")} placement="top">
+                      <div
+                        style={classes.plusIconStyle}
+                        onClick={() => {
+                          setSelectedParameter(parameter);
+                          openModal();
+                        }}
+                      >
+                        <DeleteIcon stroke="#F135A3" width={20} height={20} />
+                      </div>
+                    </Tooltip>}
                   </div>
                   <div style={classes.renderParameterTypeContainer}>
                     {_renderParameterType(
@@ -389,6 +403,12 @@ const SectionMappingWidget = ({
         newParameterState={newParameterState}
         onChangeInputs={onChangeInputs}
         getProductById={getProductById}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={isOpen}
+        onClose={closeModal}
+        onClickDelete={() => removeProductParamete(section?.id, subSection?.id, selectedParameter, selectedUpdateType)}
       />
     </div>
   );
