@@ -8,6 +8,7 @@ import {
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { EReportType } from "@/enums";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const TransactionJournalReportHeaderWidget = ({
   handleDocumentTypeChange,
@@ -49,6 +50,7 @@ const TransactionJournalReportHeaderWidget = ({
           <DateRangePicker
             onChange={handleDateChange}
             value={fromDate && toDate ? [fromDate, toDate] : null}
+            ranges={predefinedRanges}
           />
         </div>
       </div>
