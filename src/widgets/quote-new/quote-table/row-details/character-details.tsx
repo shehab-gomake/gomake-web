@@ -54,7 +54,13 @@ const CharacterDetails = ({
 
   return (
     <>
-      <div style={{ position: "relative", ...detailsStyle }}>
+      <div
+        style={{
+          position: "relative",
+          textAlign: isRTL ? "right" : "left",
+          ...detailsStyle,
+        }}
+      >
         <div style={{ ...classes.mainContainer }}>
           {parse(truncatedDetails || "")}
           {!showAll && ".. "}
