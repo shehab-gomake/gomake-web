@@ -308,8 +308,9 @@ const ActionContainerComponent = ({
   const [suppliersState, setOutsourceSuppliers] = useRecoilState(
     outsourceSuppliersState
   );
+
   const handleAddSupplier = (newSupplier) => {
-    const supplierFormatted = {
+    const supplierFormatted: IOutSourceSupplier = {
       supplierId: newSupplier.id,
       supplierName: newSupplier.name,
     };
