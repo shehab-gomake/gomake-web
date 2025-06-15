@@ -15,6 +15,7 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { EPricingViews } from "@/widgets/product-pricing-widget/enums";
 
 const useWorkFlows = ({ getProductById }: any) => {
   const { callApi } = useGomakeAxios();
@@ -36,6 +37,19 @@ const useWorkFlows = ({ getProductById }: any) => {
   const [anchorElActionsListMenu, setAnchorElActionsListMenu] =
     useState<null | HTMLElement>(null);
   const openActionsListMenu = Boolean(anchorElActionsListMenu);
+
+  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] =
+    useState(false);
+  const handleOpenCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(true);
+  };
+
+  const handleCloseCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(false);
+  };
+
+  const [view, setView] = useState(EPricingViews.SELECTED_WORKFLOW);
+
   const handleCloseActionsListMenu = () => {
     setAnchorElActionsListMenu(null);
   };
@@ -214,6 +228,11 @@ const useWorkFlows = ({ getProductById }: any) => {
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    openCopyAnotherProductsModal,
+    handleOpenCopyAnotherProductsModal,
+    handleCloseCopyAnotherProductsModal,
+    view,
+    setView,
   };
 };
 

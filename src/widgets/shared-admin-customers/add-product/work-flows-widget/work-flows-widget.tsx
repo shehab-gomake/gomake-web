@@ -8,6 +8,8 @@ import { Typography } from "@mui/material";
 import { GomakePrimaryButton, SecondSwitch } from "@/components";
 import { CopyAnotherProductsModal } from "./copy-another-products-modal";
 import { useState } from "react";
+import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 
 const WorkFlowsWidget = ({ productState, getProductById }: any) => {
   const { clasess } = useStyle();
@@ -31,16 +33,13 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    openCopyAnotherProductsModal,
+    handleOpenCopyAnotherProductsModal,
+    handleCloseCopyAnotherProductsModal,
+    view,
+    setView,
   } = useWorkFlows({ getProductById });
-  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] =
-    useState(false);
-  const handleOpenCopyAnotherProductsModal = () => {
-    setOpenCopyAnotherProductsModal(true);
-  };
 
-  const handleCloseCopyAnotherProductsModal = () => {
-    setOpenCopyAnotherProductsModal(false);
-  };
 
   return (
     <div style={clasess.mainContainer}>
@@ -63,7 +62,7 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
           </GomakePrimaryButton>
         )}
 
-        <div
+        {view !== EPricingViews.OUTSOURCE_WORKFLOW && <div
           style={clasess.autoCompleteSelectedSectionName}
           onClick={(e) => {
             handleOpenActionsListMenu(e);
@@ -71,7 +70,28 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
         >
           {t("pricingWidget.addAction")}
           <ArrowDropDownIcon />
-        </div>
+        </div>}
+        <InOutSourceSelect
+          onChange={(v: EWorkSource) => {
+            setView(
+              v === EWorkSource.OUT
+                ? EPricingViews.OUTSOURCE_WORKFLOW
+                : EPricingViews.SELECTED_WORKFLOW
+            );
+          }}
+          // withPartially={
+          //   selectedWorkFlow?.actions?.some(
+          //     (action) => action.source === EWorkSource.OUT
+          //   ) &&
+          //   view !== EPricingViews.OUTSOURCE_WORKFLOW &&
+          //   !selectedWorkFlowCalculatedIsLoaded
+          // }
+          value={
+            view === EPricingViews.OUTSOURCE_WORKFLOW
+              ? EWorkSource.OUT
+              : EWorkSource.INTERNAL
+          }
+        />
       </div>
       <div style={{ width: "100%" }}>
         {productActions?.length > 0 ? (
