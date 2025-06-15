@@ -667,12 +667,13 @@ const updatePrintHouseMaterialStockFromJobApi: ICallAndSetData = async (
   );
 };
 
-const getAllActionsApi: ICallAndSetData = async (callApi, callBack) => {
+const getAllActionsApi: ICallAndSetData = async (callApi, callBack, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_PRINT_HOUSE_ACTIONS_URL,
-    callBack
+    callBack,
+    data
   );
 };
 

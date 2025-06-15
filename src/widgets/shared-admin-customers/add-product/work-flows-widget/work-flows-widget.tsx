@@ -79,13 +79,6 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
                 : EPricingViews.SELECTED_WORKFLOW
             );
           }}
-          // withPartially={
-          //   selectedWorkFlow?.actions?.some(
-          //     (action) => action.source === EWorkSource.OUT
-          //   ) &&
-          //   view !== EPricingViews.OUTSOURCE_WORKFLOW &&
-          //   !selectedWorkFlowCalculatedIsLoaded
-          // }
           value={
             view === EPricingViews.OUTSOURCE_WORKFLOW
               ? EWorkSource.OUT
