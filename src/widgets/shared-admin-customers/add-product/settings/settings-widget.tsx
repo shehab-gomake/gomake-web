@@ -253,7 +253,7 @@ const SettingsWidget = ({
                     onChangeStateProduct("templateId", value);
                   }
                 }}
-                //disabled={isUpdate && !query?.isSubProducts}
+              //disabled={isUpdate && !query?.isSubProducts}
               />
             )}
           </div>
@@ -301,6 +301,22 @@ const SettingsWidget = ({
                 onChangeStateProduct("externalCode", e.target.value);
               }}
               value={productState?.externalCode}
+            />
+          </div>
+        </div>
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.minimumPrice")}
+          </div>
+          <div>
+            <GomakeTextInput
+              style={clasess.textInputStyle}
+              placeholder={t("products.addProduct.admin.minimumPrice")}
+              onChange={(e: any) => {
+                onChangeStateProduct("minimumPrice", e.target.value);
+              }}
+              value={productState?.minimumPrice}
+              type="number"
             />
           </div>
         </div>
