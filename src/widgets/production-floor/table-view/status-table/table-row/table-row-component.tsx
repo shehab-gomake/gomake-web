@@ -3,7 +3,10 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { boardMissionsDetailsState, selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
+import {
+  boardMissionsDetailsState,
+  selectedBoardsMissionsState,
+} from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -58,6 +61,7 @@ interface IProps {
   isUrgentWork?: boolean;
   onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
   employeesCategories?: any;
+  visibleColumns: string[]; //!here
 }
 
 enum EDropArea {
@@ -77,9 +81,9 @@ const TableRowComponent = ({
   isRTL,
   isUrgentWork,
   onUpdateJobDueDate,
-  employeesCategories
+  employeesCategories,
+  visibleColumns,
 }: IProps) => {
-
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -125,9 +129,15 @@ const TableRowComponent = ({
               [boardMission],
               boardMission.id
             );
-          }
-          else if (boardMission.statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
-            handleOpenStuckModal(boardMission.statusId, [boardMission], boardMission.id, boardMission.productType);
+          } else if (
+            boardMission.statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614"
+          ) {
+            handleOpenStuckModal(
+              boardMission.statusId,
+              [boardMission],
+              boardMission.id,
+              boardMission.productType
+            );
           } else {
             updateStatus([item.board], boardMission.statusId).then();
           }
@@ -183,6 +193,7 @@ const TableRowComponent = ({
     onClickPrintJob,
     updateNotes,
   } = useProductionFloorData();
+
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -193,7 +204,7 @@ const TableRowComponent = ({
     handleCloseStuckModal,
     stuckReason,
     setStuckReason,
-    onUpdateStuckReason
+    onUpdateStuckReason,
   } = useSimpleApproveModal(updateStatus);
 
   const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
@@ -204,10 +215,10 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-          (selectedBoard) =>
-            selectedBoard.id !== id &&
-            selectedBoard.productType === boardMission.productType
-        )
+            (selectedBoard) =>
+              selectedBoard.id !== id &&
+              selectedBoard.productType === boardMission.productType
+          )
     );
   };
   const onClickOpenDatePicker = () => {
@@ -220,6 +231,355 @@ const TableRowComponent = ({
   const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
   const setActivities = useSetRecoilState(boardMissionsActivitiesState);
 
+  const renderCell = (key: string) => {
+    const commonStyle = {
+      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+    };
+
+    switch (key) {
+      case "checkbox":
+        return (
+          <PermissionCheck
+            userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
+          >
+            <SecondaryTableCell
+              align={"center"}
+              style={{
+                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                ...(isMobileScreen && {
+                  position: "sticky",
+                  [isRTL ? "right" : "left"]: 0,
+                  zIndex: 11,
+                }),
+              }}
+            >
+              <Checkbox
+                checked={
+                  !!selectedIds?.find(
+                    (si) =>
+                      si.id === boardMission.id &&
+                      si.productType === boardMission.productType
+                  )
+                }
+                onChange={(a) => {
+                  onSelectBoardMissions(boardMission.id, a.target.checked);
+                }}
+                icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+                checkedIcon={
+                  <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
+                }
+              />
+            </SecondaryTableCell>
+          </PermissionCheck>
+        );
+
+      case "job_order":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              cursor: "pointer",
+              ...(isMobileScreen && {
+                position: "sticky",
+                [isRTL ? "right" : "left"]: 48,
+                zIndex: 10,
+              }),
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 10,
+              }}
+              onClick={() => {
+                push(
+                  `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
+                );
+                setFiles([]);
+                setStations([]);
+                setBoardMissionsDetails(null);
+                setActivities([]);
+              }}
+            >
+              <div />
+
+              <div
+                style={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  color: "#000000",
+                  fontWeight: "bolder",
+                  fontSize: GetProductionFontSizeFromPreferences(),
+                }}
+              >
+                {boardMission?.productType
+                  ? boardMission?.sectionName
+                    ? boardMission?.sectionName + " / "
+                    : boardMission?.productType + " / "
+                  : null}
+                {`${boardMission?.boardMissionNumber}`}
+                <br />
+                {`${boardMission?.orderNumber}`}
+              </div>
+              <ExpandIcon />
+            </div>
+          </SecondaryTableCell>
+        );
+
+      case "deliveryDate":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              backgroundColor: boardMission.jobDeliveryTimeAlertColor
+                ? boardMission.jobDeliveryTimeAlertColor
+                : index % 2 === 0
+                ? "#FFFFFF"
+                : "#F9F9F9",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div />
+              <div />
+              <div onClick={onClickOpenDatePicker}>
+                <DateTimeProductionFloorComponent
+                  dateString={convertUtcToLocalIsoString(
+                    boardMission.dueDate?.toString()
+                  )}
+                />
+              </div>
+
+              <div style={{ visibility: "hidden" }}>
+                <LocalizationProvider
+                  dateAdapter={AdapterMoment}
+                  adapterLocale="en-gb"
+                >
+                  <div>
+                    <DateField
+                      label={""}
+                      date={convertUtcToLocalIsoString(
+                        boardMission.dueDate?.toString()
+                      )}
+                      handleChange={(newDate) => {
+                        onUpdateJobDueDate(boardMission.id, newDate);
+                      }}
+                      isEditable={true}
+                      withTime={true}
+                      inputWidth={"1px"}
+                      openPicker={openDatePicker}
+                      onClose={() => setOpenDatePicker(false)}
+                    />
+                  </div>
+                </LocalizationProvider>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  maxWidth: isUrgentWork ? "50px" : null,
+                  minWidth: isUrgentWork ? "50px" : null,
+                  width: isUrgentWork ? "50px" : null,
+                }}
+              >
+                {boardMission.showGraphicsApprovalAlert && (
+                  <ApprovalFileStatusComponent
+                    fileStatus={boardMission.showGraphicsApprovalAlert}
+                    t={t}
+                  />
+                )}
+
+                <div style={{ marginTop: "5px" }}>
+                  {boardMission.isUrgentWork && (
+                    <KeyboardDoubleArrowUpIcon
+                      style={{
+                        color: errorColor(500),
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              <div />
+            </div>
+          </SecondaryTableCell>
+        );
+
+      case "customer":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              width: "20px",
+              cursor: "pointer",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              fontSize: GetProductionFontSizeFromPreferences(),
+            }}
+            onClick={() => onClickClient(boardMission?.clientId)}
+          >
+            {getTruncatedLabel(boardMission?.clientName, 15)}
+          </SecondaryTableCell>
+        );
+
+      case "agent":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              width: "15px",
+              cursor: "pointer",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              fontSize: GetProductionFontSizeFromPreferences(),
+            }}
+          >
+            {getTruncatedLabel(boardMission?.agentName, 15)}
+          </SecondaryTableCell>
+        );
+
+      case "productName":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              padding: "0px 10px",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+            }}
+          >
+            <ClickableLabelComponent
+              label={getTruncatedLabel(boardMission?.productName, 18)}
+              id={boardMission.id}
+              textColor={boardMission?.productionFloorJobColor}
+              t={t}
+              key={boardMission.id}
+            />
+          </SecondaryTableCell>
+        );
+
+      case "description":
+        return (
+          <SecondaryTableCell style={commonStyle}>
+            <CharacterDetails
+              details={boardMission.description}
+              canUpdate={false}
+            />
+          </SecondaryTableCell>
+        );
+
+      case "notes":
+        return (
+          <SecondaryTableCell
+            align="center"
+            style={{ ...commonStyle, maxWidth: "180px", padding: "8px" }}
+          >
+            <ProductionFloorNote
+              key={boardMission.id}
+              value={boardMission?.noteColumn || ""}
+              onSave={(val, reset, closeEditing) =>
+                updateNotes(
+                  boardMission?.id,
+                  boardMission?.productType,
+                  val,
+                  reset,
+                  closeEditing
+                )
+              }
+            />
+          </SecondaryTableCell>
+        );
+
+      case "status":
+        return (
+          <SecondaryTableCell align="center" style={commonStyle}>
+            <BoardStatusComponent
+              statusId={boardMission.statusId}
+              id={boardMission.id}
+              onChange={(id, statusId) => {
+                if (
+                  statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+                  boardMission.isNeedExample
+                ) {
+                  handleOpenModal(statusId, [boardMission], boardMission.id);
+                } else if (
+                  statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614"
+                ) {
+                  handleOpenStuckModal(
+                    statusId,
+                    [boardMission],
+                    boardMission.id,
+                    boardMission.productType
+                  );
+                } else {
+                  updateStatus([boardMission], statusId);
+                }
+              }}
+            />
+          </SecondaryTableCell>
+        );
+
+      case "currentStation":
+        return (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              backgroundColor: boardMission?.currentStationColor
+                ? boardMission?.currentStationColor
+                : index % 2 === 0
+                ? "#FFFFFF"
+                : "#F9F9F9",
+            }}
+          >
+            <CurrentStationComponent
+              {...boardMission.currentStation}
+              boardMissionId={boardMission.id}
+              status={status}
+              textColor={boardMission?.productionFloorJobColor}
+              onClickDone={() => onClickDone(boardMission)}
+              employeesCategories={employeesCategories}
+            />
+          </SecondaryTableCell>
+        );
+
+      case "nextStation":
+        return (
+          <SecondaryTableCell align="center" style={commonStyle}>
+            <NextStationComponent
+              {...boardMission.currentStation}
+              {...boardMission.nextStation}
+              boardMissionId={boardMission.id}
+              status={status}
+              textColor={boardMission.productionFloorJobColor}
+              onClickDone={() => onClickDone(boardMission)}
+            />
+          </SecondaryTableCell>
+        );
+
+      case "more":
+        return (
+          <SecondaryTableCell align="center" style={commonStyle}>
+            <MoreMenuWidget
+              boardMission={boardMission}
+              onClickDone={onClickDone}
+              onClickPrintJob={onClickPrintJob}
+              onClickPrintDTicket={onClickPrintDTicket}
+            />
+          </SecondaryTableCell>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -241,345 +601,12 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
+
       <TableRow
         ref={ref}
         style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px" }}
       >
-        <PermissionCheck
-          userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
-        >
-          <SecondaryTableCell
-            align={"center"}
-            style={{
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              ...(isMobileScreen && {
-                position: "sticky",
-                [isRTL ? "right" : "left"]: 0,
-                zIndex: 11,
-              }),
-            }}
-          >
-            <Checkbox
-              checked={
-                !!selectedIds?.find(
-                  (si) =>
-                    si.id === boardMission.id &&
-                    si.productType === boardMission.productType
-                )
-              }
-              onChange={(a) => {
-                onSelectBoardMissions(boardMission.id, a.target.checked);
-              }}
-              icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
-              checkedIcon={
-                <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
-              }
-            />
-          </SecondaryTableCell>
-        </PermissionCheck>
-
-        <SecondaryTableCell
-          align={"center"}
-          style={{
-            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-            cursor: "pointer",
-            ...(isMobileScreen && {
-              position: "sticky",
-              [isRTL ? "right" : "left"]: 48,
-              zIndex: 10,
-            }),
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-            }}
-            onClick={() => {
-              push(
-                `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
-              );
-              setFiles([]);
-              setStations([]);
-              setBoardMissionsDetails(null);
-              setActivities([]);
-            }}
-          >
-            <div />
-
-            <div
-              style={{
-                cursor: "pointer",
-                textDecoration: "none",
-                color: "#000000",
-                fontWeight: "bolder",
-                fontSize: GetProductionFontSizeFromPreferences(),
-              }}
-            >
-              {boardMission?.productType
-                ? boardMission?.sectionName
-                  ? boardMission?.sectionName + " / "
-                  : boardMission?.productType + " / "
-                : null}
-              {`${boardMission?.boardMissionNumber}`}
-              <br />
-              {`${boardMission?.orderNumber}`}
-            </div>
-            <ExpandIcon />
-          </div>
-        </SecondaryTableCell>
-
-        <SecondaryTableCell
-          align={"center"}
-          style={{
-            backgroundColor: boardMission.jobDeliveryTimeAlertColor
-              ? boardMission.jobDeliveryTimeAlertColor
-              : index % 2 === 0
-                ? "#FFFFFF"
-                : "#F9F9F9",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div />
-            <div />
-            <div onClick={onClickOpenDatePicker}>
-              <DateTimeProductionFloorComponent
-                dateString={convertUtcToLocalIsoString(
-                  boardMission.dueDate?.toString()
-                )}
-              />
-            </div>
-            {/* {DateHourFormatterShort(
-              convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
-            )} */}
-            <div style={{ visibility: "hidden" }}>
-              <LocalizationProvider
-                dateAdapter={AdapterMoment}
-                adapterLocale="en-gb"
-              >
-                <div>
-                  <DateField
-                    label={""}
-                    date={convertUtcToLocalIsoString(
-                      boardMission.dueDate?.toString()
-                    )}
-                    handleChange={(newDate) => {
-                      //setSelectDate(newDate);
-                      //setActiveClickAway(true);
-                      onUpdateJobDueDate(boardMission.id, newDate);
-                    }}
-                    isEditable={true}
-                    withTime={true}
-                    inputWidth={"1px"}
-                    //format={"DD/MM HH:mm"}
-                    openPicker={openDatePicker}
-                    onClose={() => setOpenDatePicker(false)}
-                  />
-                </div>
-              </LocalizationProvider>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                maxWidth: isUrgentWork ? "50px" : null,
-                minWidth: isUrgentWork ? "50px" : null,
-                width: isUrgentWork ? "50px" : null,
-              }}
-            >
-              {boardMission.showGraphicsApprovalAlert && (
-                <ApprovalFileStatusComponent
-                  fileStatus={boardMission.showGraphicsApprovalAlert}
-                  t={t}
-                />
-              )}
-
-              <div style={{ marginTop: "5px" }}>
-                {boardMission.isUrgentWork && (
-                  <KeyboardDoubleArrowUpIcon
-                    style={{
-                      color: errorColor(500),
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            <div />
-          </div>
-        </SecondaryTableCell>
-
-        <SecondaryTableCell
-          align={"center"}
-          style={{
-            width: "20px",
-            cursor: "pointer",
-            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-            fontSize: GetProductionFontSizeFromPreferences(),
-          }}
-          onClick={() => onClickClient(boardMission?.clientId)}
-        >
-          {getTruncatedLabel(boardMission?.clientName, 15)}
-        </SecondaryTableCell>
-
-        {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
-          <SecondaryTableCell
-            align={"center"}
-            style={{
-              width: "15px",
-              cursor: "pointer",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              fontSize: GetProductionFontSizeFromPreferences(),
-            }}
-          >
-            {getTruncatedLabel(boardMission?.agentName, 15)}
-          </SecondaryTableCell>
-        )}
-
-        {CheckPreferenceValue(
-          EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
-        ) && (
-            <SecondaryTableCell
-              align={"center"}
-              style={{
-                padding: "0px 10px",
-                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              }}
-            >
-              <ClickableLabelComponent
-                label={getTruncatedLabel(boardMission?.productName, 18)}
-                id={boardMission.id}
-                textColor={boardMission?.productionFloorJobColor}
-                t={t}
-                key={boardMission.id}
-              />
-            </SecondaryTableCell>
-          )}
-
-        {CheckPreferenceValue(
-          EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
-        ) && (
-            <SecondaryTableCell
-              // align={"left"}
-              style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-            >
-              {/* <DescriptionWidget description={boardMission.description} /> */}
-              <CharacterDetails
-                details={boardMission.description}
-                canUpdate={false}
-
-
-              />
-            </SecondaryTableCell>
-          )}
-        {CheckPreferenceValue(
-          EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
-        ) && (
-            <SecondaryTableCell
-              align="center"
-              style={{
-                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-                padding: "8px",
-                maxWidth: "180px",
-              }}
-            >
-              <ProductionFloorNote
-                key={boardMission.id}
-                value={boardMission?.noteColumn || ""}
-                onSave={(val, reset, closeEditing) =>
-                  updateNotes(
-                    boardMission?.id,
-                    boardMission?.productType,
-                    val,
-                    reset,
-                    closeEditing
-                  )
-                }
-              />
-            </SecondaryTableCell>
-          )}
-
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <BoardStatusComponent
-            statusId={boardMission.statusId}
-            id={boardMission.id}
-            onChange={(id, statusId) => {
-              if (
-                statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
-                boardMission.isNeedExample
-              ) {
-                handleOpenModal(statusId, [boardMission], boardMission.id);
-              }
-              else if (statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
-                handleOpenStuckModal(statusId, [boardMission], boardMission.id, boardMission.productType);
-              }
-              else {
-                updateStatus([boardMission], statusId);
-              }
-            }}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: boardMission?.currentStationColor ? boardMission?.currentStationColor : index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <CurrentStationComponent
-            {...boardMission.currentStation}
-            boardMissionId={boardMission.id}
-            status={status}
-            textColor={boardMission?.productionFloorJobColor}
-            onClickDone={() => onClickDone(boardMission)}
-            employeesCategories={employeesCategories}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <NextStationComponent
-            {...boardMission.currentStation}
-            {...boardMission.nextStation}
-            boardMissionId={boardMission.id}
-            status={status}
-            textColor={boardMission?.productionFloorJobColor}
-            onClickDone={() => onClickDone(boardMission)}
-          />
-        </SecondaryTableCell>
-        {/* <SecondaryTableCell
-          align={"center"}
-          style={{ width: "20px", gap: "2px" }}
-        >
-          <Stack justifyContent={"center"} direction={"row"} flexWrap={"wrap"}>
-            {boardMission?.automatedTags?.map((tag) => (
-              <LabelComponent key={tag} label={tag} />
-            ))}
-          </Stack>
-        </SecondaryTableCell> */}
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <MoreMenuWidget
-            boardMission={boardMission}
-            onClickDone={onClickDone}
-            onClickPrintJob={onClickPrintJob}
-            onClickPrintDTicket={onClickPrintDTicket}
-          />
-        </SecondaryTableCell>
+        {visibleColumns.map((key) => renderCell(key))}
       </TableRow>
 
       <TableRow>
@@ -620,7 +647,10 @@ const TableRowComponent = ({
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
+        <AddStuckReasonWidget
+          stuckReason={stuckReason}
+          setStuckReason={setStuckReason}
+        />
       </GoMakeDeleteModal>
     </>
   );

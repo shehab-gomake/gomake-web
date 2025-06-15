@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   boardsMissionsState,
   selectedBoardsMissionsState,
@@ -13,6 +13,10 @@ import { CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import {
+  columnOrderState,
+  columnVisibilityState,
+} from "../../state/column-order";
 
 const useStatusTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -48,7 +52,7 @@ const useStatusTable = () => {
     );
   const { CheckPermission } = useUserPermission();
 
-  const tableHeaders = (statusId: string) => {
+  const tableHeadersOld = (statusId: string) => {
     return [
       CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) && (
         <Checkbox
@@ -71,7 +75,6 @@ const useStatusTable = () => {
       t("productionFloor.customer"),
       CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) &&
         t("productionFloor.agent"),
-      // t("home.headers.jobName"),
       CheckPreferenceValue(
         EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
       ) && t("sales.quote.productName"),
@@ -88,6 +91,44 @@ const useStatusTable = () => {
     ].filter(Boolean);
   };
 
+  const columnOrder = useRecoilValue(columnOrderState);
+  const columnVisibility = useRecoilValue(columnVisibilityState);
+
+  const tableHeaders = (statusId: string) => {
+    const headerMap = {
+      checkbox: (
+        <Checkbox
+          checked={status(statusId).boardMissions.every((b) =>
+            selectedBoards?.find(
+              (sb) => sb.id === b.id && sb.productType === b.productType
+            )
+          )}
+          onChange={(e, checked) => {
+            onChangeHeaderCheckBox(statusId, checked);
+          }}
+          icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+          checkedIcon={
+            <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
+          }
+        />
+      ),
+      job_order: `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
+      deliveryDate: t("sales.quote.deliveryDate"),
+      customer: t("productionFloor.customer"),
+      agent: t("productionFloor.agent"),
+      productName: t("sales.quote.productName"),
+      description: t("sales.documentDeliveries.description"),
+      notes: t("sales.quote.notes"),
+      status: t("productionFloor.status"),
+      currentStation: t("productionFloor.currentStation"),
+      nextStation: t("productionFloor.nextStation"),
+      more: " ",
+    };
+
+    return columnOrder
+      .filter((key) => columnVisibility[key])
+      .map((key) => headerMap[key]);
+  };
   return {
     isOpen,
     onClickStatus,
