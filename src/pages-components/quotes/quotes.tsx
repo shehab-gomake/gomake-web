@@ -52,6 +52,7 @@ import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/deli
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import CloseOrderNote from "./widgets/general/close-order-note";
 import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -664,6 +665,7 @@ const QuotesListPageWidget = ({
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
                                 // oneTap
+                                ranges={predefinedRanges}
                               />
                             </div>
                           </div>
