@@ -2131,9 +2131,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const accountingStatuses =
     isReceipt || isSupplierPayments
       ? [
-          { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
           {
-            label: t("sales.quote.canceled"),
+            label: t("documentStatus.Receipt.Created"),
+            value: ReceiptAccountingStatus.CREATED,
+          },
+          {
+            label: t("documentStatus.Receipt.Canceled"),
             value: ReceiptAccountingStatus.CANCELED,
           },
         ]
