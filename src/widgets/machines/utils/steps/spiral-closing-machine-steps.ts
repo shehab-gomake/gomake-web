@@ -13,14 +13,14 @@ const spiralClosingMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ?
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
             {label: 'spiralSettings', component: OtherSettingsInputsComponent},
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
             {label: 'connection', component: ConnectionComponent},

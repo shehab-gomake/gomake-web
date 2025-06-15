@@ -11,13 +11,13 @@ import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/
 
 const rollVarnishMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
     {label: 'basic', component: BasicInputsComponent},
-    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    //{label: 'machineDimensions', component: MachineDimensionsComponent},
     {label: 'media', component: MediaSettingComponent},
     {label: 'varnishSettings', component: OtherSettingsInputsComponent},
     {label: 'basicSpeed', component: SpeedComponent},
 ] : [
     {label: 'basic', component: BasicInputsComponent},
-    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    //{label: 'machineDimensions', component: MachineDimensionsComponent},
     {label: 'media', component: MediaSettingComponent},
     {label: 'varnishSettings', component: OtherSettingsInputsComponent},
     {label: 'basicSpeed', component: SpeedComponent},

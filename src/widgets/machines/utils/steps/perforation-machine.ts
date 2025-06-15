@@ -12,14 +12,14 @@ const perforationMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ?
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'perforation', component: MachineRunComponent},
             {label: 'speed', component: SpeedComponent},
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'perforation', component: MachineRunComponent},
             {label: 'connection', component: ConnectionComponent},

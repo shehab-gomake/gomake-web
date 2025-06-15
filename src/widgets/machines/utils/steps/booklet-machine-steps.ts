@@ -16,7 +16,7 @@ const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ?
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            ////{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
             {label: 'cuttingOptions', component: CuttingOptions},
@@ -27,7 +27,7 @@ const bookletMachineSteps = (isAdmin: boolean): IStep[] => {
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            ////{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'speed', component: SpeedComponent},
             {label: 'connection', component: ConnectionComponent},

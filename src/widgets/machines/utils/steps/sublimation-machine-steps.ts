@@ -10,7 +10,7 @@ import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
 
 const sublimationMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
     {label: 'colors',  component: ColorsInputsComponent},

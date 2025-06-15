@@ -12,7 +12,7 @@ import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-in
 
 const rollAnalogEnhancementMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
     {label: 'basic', component: BasicInputsComponent},
-    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    //{label: 'machineDimensions', component: MachineDimensionsComponent},
     {label: 'media', component: MediaSettingComponent},
     {label: 'foil', component: ColorsInputsComponent},
     {label: 'embossing', component: OtherSettingsInputsComponent},
@@ -20,7 +20,7 @@ const rollAnalogEnhancementMachineSteps = (isAdmin: boolean): IStep[] => isAdmin
     {label: 'basicSpeed', component: SpeedComponent},
 ] : [
     {label: 'basic', component: BasicInputsComponent},
-    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    //{label: 'machineDimensions', component: MachineDimensionsComponent},
     {label: 'media', component: MediaSettingComponent},
     {label: 'foil', component: ColorsInputsComponent},
     {label: 'embossing', component: OtherSettingsInputsComponent},

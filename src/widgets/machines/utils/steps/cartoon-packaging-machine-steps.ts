@@ -9,7 +9,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const cartoonPackagingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'packageSettings',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
 ];

@@ -15,7 +15,7 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
  return isAdmin ?
      [
          {label: 'basic',  component: BasicInputsComponent},
-         {label: 'machineDimensions',  component: MachineDimensionsComponent},
+         //{label: 'machineDimensions',  component: MachineDimensionsComponent},
          {label: 'media',  component: MediaSettingComponent},
          {label: 'speed',  component: SpeedComponent},
          {label: 'glueSettings',  component: CuttingOptions},
@@ -25,7 +25,7 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
      ] :
      [
          {label: 'basic',  component: BasicInputsComponent},
-         {label: 'machineDimensions',  component: MachineDimensionsComponent},
+         //{label: 'machineDimensions',  component: MachineDimensionsComponent},
          {label: 'media',  component: MediaSettingComponent},
          {label: 'speed',  component: SpeedComponent},
          {label: 'connection',  component: ConnectionComponent},
