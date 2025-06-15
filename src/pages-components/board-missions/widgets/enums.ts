@@ -13,16 +13,15 @@ export enum AStatus {
 export enum ReceiptAccountingStatus {
   OPEN = 0,
   CANCELED = 1,
+  CREATED = 2,
 }
 
-
-export enum BoardMissionStatusForFilter 
-{
-    WAITING = 1,
-    URGENT,
-    IN_PROCESS,
-    STUCK,
-    APPROVAL_REQUIRED,
-    DONE,
-    NotReady
+export enum BoardMissionStatusForFilter {
+  WAITING = 1,
+  URGENT,
+  IN_PROCESS,
+  STUCK,
+  APPROVAL_REQUIRED,
+  DONE,
+  NotReady,
 }

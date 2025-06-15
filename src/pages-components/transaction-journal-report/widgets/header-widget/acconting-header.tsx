@@ -5,6 +5,7 @@ import {
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { GoMakeAutoComplate } from "@/components";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const AccountingTransactionReportHeader = ({
   handleDateChange,
@@ -44,6 +45,7 @@ const AccountingTransactionReportHeader = ({
                 ? [filterState.startDate, filterState.endDate]
                 : null
             }
+            ranges={predefinedRanges}
           />
         </div>
       </div>

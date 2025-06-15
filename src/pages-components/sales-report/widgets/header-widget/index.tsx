@@ -11,6 +11,7 @@ import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const SalesReportHeaderWidget = ({
   agent,
@@ -50,6 +51,7 @@ const SalesReportHeaderWidget = ({
           <DateRangePicker
             onChange={handleDateChange}
             value={fromDate && toDate ? [fromDate, toDate] : null}
+            ranges={predefinedRanges}
           />
         </div>
       </div>

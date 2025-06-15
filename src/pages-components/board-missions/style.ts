@@ -176,6 +176,10 @@ const useStyle = () => {
       tableAtagStyle: {
         color: "inherit" as "inherit",
         textDecoration: "unset" as "unset",
+        userSelect: "text" as "text",
+        display: "block",
+        margin: "0 auto",
+        lineHeight: "1.5",
       },
       dropDownListStyle: {
         width: "100%",
@@ -191,7 +195,7 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-      }
+      },
     };
   }, [theme, isMobile]);
   return {

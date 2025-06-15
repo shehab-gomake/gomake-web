@@ -52,6 +52,7 @@ import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/deli
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import CloseOrderNote from "./widgets/general/close-order-note";
 import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -242,6 +243,9 @@ const QuotesListPageWidget = ({
     packageInputs,
     onClosePackagesModal,
     openPackagesModal,
+    paymentType,
+    handlePaymentTypeChange,
+    typeOfPayments,
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -395,8 +399,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        ? () => navigate(`/${documentPath}`)
+                        : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -418,12 +422,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -569,7 +573,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -600,6 +604,22 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
+                            {(isReceipt || isSupplierPayments) && (
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("sales.quote.paymentType")}
+                                </h3>
+                                <GoMakeAutoComplate
+                                  key={paymentType?.value}
+                                  options={typeOfPayments}
+                                  style={classes.textInputStyle}
+                                  getOptionLabel={(option: any) => option.label}
+                                  placeholder={t("sales.quote.paymentType")}
+                                  onChange={handlePaymentTypeChange}
+                                  value={paymentType}
+                                />
+                              </div>
+                            )}
                             {isOrder && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
@@ -615,7 +635,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -664,6 +684,7 @@ const QuotesListPageWidget = ({
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
                                 // oneTap
+                                ranges={predefinedRanges}
                               />
                             </div>
                           </div>
@@ -726,7 +747,7 @@ const QuotesListPageWidget = ({
                 isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : isOrder
-                  ? [
+                    ? [
                       "6%",
                       "5%",
                       "5%",
@@ -743,45 +764,45 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : isReceipt || isSupplierPayments
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : [
-                      "10%",
-                      "8%",
-                      "8%",
-                      "8%",
-                      "10%",
-                      "23%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "3%",
-                    ]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? [
+                        "7%",
+                        "15%",
+                        "10%",
+                        "13%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "5%",
+                      ]
+                      : isReceipt || isSupplierPayments
+                        ? [
+                          "7%",
+                          "15%",
+                          "10%",
+                          "13%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "5%",
+                        ]
+                        : [
+                          "10%",
+                          "8%",
+                          "8%",
+                          "8%",
+                          "10%",
+                          "23%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "3%",
+                        ]
               }
             />
           </div>
@@ -998,18 +1019,18 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={
           isMoveToReady
-            ? moveOrderToReady
+            ? () => moveOrderToReady(false)
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                } else {
-                  const path = isOrder
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+                window.open(path, "_blank");
+              } else {
+                const path = isOrder
+                  ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                window.open(path, "_blank");
               }
+            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1118,12 +1139,24 @@ const QuotesListPageWidget = ({
         onClose={onCloseOpenRemoveDraftModal}
         onClickDelete={handleRemoveDraftBtnClick}
       />
-      <GoMakeDeleteModal
+      {/* <GoMakeDeleteModal
         modalType={ModalType.EDIT}
         title={t("sales.moveToReadyAndCloseOrder")}
         openModal={MoveOrderToReady.isOpen}
         onClose={onClickCloseMoveOrderToReadyModal}
         onClickDelete={moveOrderToReady}
+      /> */}
+
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickYes={() => moveOrderToReady(true)}
+        onClickNo={() => moveOrderToReady(false)}
       />
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}

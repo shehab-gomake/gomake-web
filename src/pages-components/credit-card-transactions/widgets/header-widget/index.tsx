@@ -7,6 +7,7 @@ import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   customer,
@@ -81,6 +82,7 @@ const CreditCardTransactionsReportHeaderWidget = ({
             <DateRangePicker
               onChange={handleDateChange}
               value={fromDate && toDate ? [fromDate, toDate] : null}
+              ranges={predefinedRanges}
             />
           </div>
         </div>

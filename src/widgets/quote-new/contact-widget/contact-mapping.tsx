@@ -3,12 +3,13 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { PlusNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton, Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 import { useSnackBar } from "@/hooks";
 import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { EditUnderLineIcon } from "@/icons/edit-icon-under-line";
+
 const ContactMapping = ({
   item,
   index,
@@ -102,6 +103,10 @@ const ContactMapping = ({
     }
     setIsEditingContactName(false);
   };
+
+  useEffect(() => {
+    setContactEmail(item.contactMail || "");
+  }, [item.contactMail]);
 
   return (
     <div

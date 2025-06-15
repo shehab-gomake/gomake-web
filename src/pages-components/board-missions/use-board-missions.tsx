@@ -14,7 +14,8 @@ import {
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
-  getWorkMissionPdfApi, printNodeModalCancelLog,
+  getWorkMissionPdfApi,
+  printNodeModalCancelLog,
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
@@ -175,7 +176,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const productionStatuses = [
-    { label: t("boardMissions.NotReady"), value: BoardMissionStatusForFilter.NotReady },
+    {
+      label: t("boardMissions.NotReady"),
+      value: BoardMissionStatusForFilter.NotReady,
+    },
     {
       label: t("boardMissions.waiting"),
       value: BoardMissionStatusForFilter.WAITING,
@@ -220,9 +224,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.costFromOrderItem"),
+      t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.priceFromOrderItem"),
+      t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -396,7 +400,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       getAllData(isPurchaseJobs, false);
       setHasFetchedQuery(serializedQuery); // Mark this query as fetched
     }
-  }, [ pageSize, router]);
+  }, [pageSize, router]);
 
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
@@ -540,93 +544,97 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         const _data = res?.data;
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
-              mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
-                  ? mission?.calculatedPrice
-                  : 0;
+            mission?.calculatedPrice &&
+            mission?.calculatedPrice != mission?.price
+              ? mission?.calculatedPrice
+              : 0;
           return [
             <a
-                href={mission?.boardMissionImage}
-                target="_blank"
-                rel="noopener noreferrer"
+              href={mission?.boardMissionImage}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <img
-                  src={mission?.boardMissionImage}
-                  alt=""
-                  style={{
-                    width: "45px",
-                    height: "45px",
-                    objectFit: "contain",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
+                src={mission?.boardMissionImage}
+                alt=""
+                style={{
+                  width: "45px",
+                  height: "45px",
+                  objectFit: "contain",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
               />
             </a>,
             formatISODateTime(mission?.createdDate),
             formatISODateTime(mission?.dueDate),
             <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(mission?.customerID)}
             >
               {mission?.clientName}
             </div>,
             mission?.productType
-                ? `${mission?.number} / ${mission?.productTypeName
+              ? `${mission?.number} / ${
+                  mission?.productTypeName
                     ? mission?.productTypeName
                     : mission?.productType
                 }`
-                : mission?.number,
-            <Stack direction={"column"}>
+              : mission?.number,
+            <Stack
+              direction="column"
+              spacing={0.5}
+              width="100%"
+              sx={{ textAlign: "center" }}
+            >
               {mission?.quoteNumber && (
-                  <a
-                      style={classes.tableAtagStyle}
-                      href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
-                  >
-                    {mission?.quoteNumber}
-                  </a>
+                <a
+                  href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
+                  style={classes.tableAtagStyle}
+                >
+                  {mission?.quoteNumber}
+                </a>
               )}
               <a
-                  style={classes.tableAtagStyle}
-                  href={`/order?Id=${mission?.orderID}`}
+                href={`/order?Id=${mission?.orderID}`}
+                style={classes.tableAtagStyle}
               >
                 {mission?.orderNumber}
               </a>
             </Stack>,
             mission?.outSourceType === null
-                ? `${t("boardMissions." + EWorkSource[0])}`
-                : `${t(
-                    "boardMissions." + EWorkSource[mission?.outSourceType]
-                )}`,
+              ? `${t("boardMissions." + EWorkSource[0])}`
+              : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
             mission?.quantity,
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                ? [
+              ? [
                   isRTL
-                      ? mission?.cost +
+                    ? mission?.cost +
                       " " +
                       getCurrencyUnitText(mission?.currency)
-                      : getCurrencyUnitText(mission?.currency) +
+                    : getCurrencyUnitText(mission?.currency) +
                       " " +
                       mission?.cost,
                 ]
-                : []),
+              : []),
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                ? [
+              ? [
                   [
                     isRTL
-                        ? mission?.price +
+                      ? mission?.price +
                         (itemCalculatedPrice
-                            ? ` (${itemCalculatedPrice})`
-                            : " ") +
+                          ? ` (${itemCalculatedPrice})`
+                          : " ") +
                         getCurrencyUnitText(mission?.currency)
-                        : getCurrencyUnitText(mission?.currency) +
+                      : getCurrencyUnitText(mission?.currency) +
                         " " +
                         mission?.price +
                         (itemCalculatedPrice
-                            ? ` (${itemCalculatedPrice})`
-                            : " "),
+                          ? ` (${itemCalculatedPrice})`
+                          : " "),
                   ],
                 ]
-                : []),
+              : []),
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
@@ -634,19 +642,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               {getJobStatus(mission)}
             </div>,
             <MoreMenuWidget
-                mission={mission}
-                onClickDuplicate={onOpenDuplicateModal}
-                onOpenModal={onOpenModal}
-                onClickPrintPackagingSlip={onOpenPackagesModal}
-                onClickMarksAsDone={onOpenMarkReadyModal}
-                handleClickBackToProcess={handleClickBackToProcess}
-                onClickMarksAsDoneForProductType={
-                  onOpenMarkReadyModalForProductType
-                }
-                onClickReturnToProduction={onOpenReturnToProdModal}
-                onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-                onClickWorkMissionPdf={onClickWorkMissionPdf}
-                onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+              mission={mission}
+              onClickDuplicate={onOpenDuplicateModal}
+              onOpenModal={onOpenModal}
+              onClickPrintPackagingSlip={onOpenPackagesModal}
+              onClickMarksAsDone={onOpenMarkReadyModal}
+              handleClickBackToProcess={handleClickBackToProcess}
+              onClickMarksAsDoneForProductType={
+                onOpenMarkReadyModalForProductType
+              }
+              onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
+              onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
             />,
           ];
         });
@@ -663,10 +671,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentPageNumber = router.query.pageNumber;
     const currentProductionStatus = router.query.productionStatus;
     const currentProductsIds = Array.isArray(router.query.productsIds)
-        ? router.query.productsIds
-        : router.query.productsIds
-            ? [router.query.productsIds]
-            : productIds;
+      ? router.query.productsIds
+      : router.query.productsIds
+      ? [router.query.productsIds]
+      : productIds;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -680,66 +688,66 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentToReadyDate = router.query.toReadyDate;
 
     const currentFormattedFromDate =
-        typeof currentFromDate === "string"
-            ? GetDateFormat(new Date(currentFromDate))
-            : undefined;
+      typeof currentFromDate === "string"
+        ? GetDateFormat(new Date(currentFromDate))
+        : undefined;
 
     const currentFormattedToDate =
-        typeof currentToDate === "string"
-            ? GetDateFormat(new Date(currentToDate))
-            : undefined;
+      typeof currentToDate === "string"
+        ? GetDateFormat(new Date(currentToDate))
+        : undefined;
 
     const currentFormattedFromDueDate =
-        typeof currentFromDueDate === "string"
-            ? GetDateFormat(new Date(currentFromDueDate))
-            : undefined;
+      typeof currentFromDueDate === "string"
+        ? GetDateFormat(new Date(currentFromDueDate))
+        : undefined;
 
     const currentFormattedToDueDate =
-        typeof currentToDueDate === "string"
-            ? GetDateFormat(new Date(currentToDueDate))
-            : undefined;
+      typeof currentToDueDate === "string"
+        ? GetDateFormat(new Date(currentToDueDate))
+        : undefined;
 
     const currentFormattedFromReadyDate =
-        typeof currentFromReadyDate === "string"
-            ? GetDateFormat(new Date(currentFromReadyDate))
-            : undefined;
+      typeof currentFromReadyDate === "string"
+        ? GetDateFormat(new Date(currentFromReadyDate))
+        : undefined;
 
     const currentFormattedToReadyDate =
-        typeof currentToReadyDate === "string"
-            ? GetDateFormat(new Date(currentToReadyDate))
-            : undefined;
+      typeof currentToReadyDate === "string"
+        ? GetDateFormat(new Date(currentToReadyDate))
+        : undefined;
 
     const data = isClear
-        ? {
+      ? {
           productsIds: [],
           pageNumber: pageNumber,
           pageSize: pageSize,
         }
-        : {
+      : {
           clientId: router?.query?.clientId || customer?.id,
           agentId: router?.query?.agentId || agent?.id,
           search:
-              finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
-                  ? finalPatternSearch
-                  : currentFinalPatternSearch,
+            finalPatternSearch !== null &&
+            finalPatternSearch !== undefined &&
+            finalPatternSearch !== ""
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
           fromDate:
-              currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
           toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
           fromDueDate:
-              currentFormattedFromDueDate ||
-              (fromDueDate && GetDateFormat(fromDueDate)),
+            currentFormattedFromDueDate ||
+            (fromDueDate && GetDateFormat(fromDueDate)),
           toDueDate:
-              currentFormattedToDueDate ||
-              (toDueDate && GetDateFormat(toDueDate)),
+            currentFormattedToDueDate ||
+            (toDueDate && GetDateFormat(toDueDate)),
 
           fromReadyDate:
-              currentFormattedFromReadyDate ||
-              (fromReadyDate && GetDateFormat(fromReadyDate)),
+            currentFormattedFromReadyDate ||
+            (fromReadyDate && GetDateFormat(fromReadyDate)),
           toReadyDate:
-              currentFormattedToReadyDate ||
-              (toReadyDate && GetDateFormat(toReadyDate)),
+            currentFormattedToReadyDate ||
+            (toReadyDate && GetDateFormat(toReadyDate)),
           productsIds: currentProductsIds,
           productionStatus: currentProductionStatus || status?.value,
           orderStatus: currentOrderStatus || orderStatus?.value,
@@ -758,23 +766,24 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           formatISODateTime(mission?.createdDate),
           formatISODateTime(mission?.dueDate),
           <div
-              style={{ cursor: "pointer" }}
-              onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+            style={{ cursor: "pointer" }}
+            onClick={() => onClickOpenCustomerModal(mission?.customerID)}
           >
             {mission?.clientName}
           </div>,
           mission?.supplierName,
           mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName
+            ? `${mission?.number} / ${
+                mission?.productTypeName
                   ? mission?.productTypeName
                   : mission?.productType
               }`
-              : mission?.number,
+            : mission?.number,
           mission?.orderNumber,
           mission?.purchaseOrderNumber,
           mission?.outSourceType === null
-              ? EWorkSource[0]
-              : EWorkSource[mission?.outSourceType],
+            ? EWorkSource[0]
+            : EWorkSource[mission?.outSourceType],
           mission?.quantity,
           mission?.cost,
           mission?.price,
@@ -782,24 +791,24 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           mission?.numberOfBoardMissions,
           mission?.productName,
           mission?.isReady
-              ? t("boardMissions.done")
-              : mission?.boardMissionStatus && mission?.station
-                  ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                  : "",
+            ? t("boardMissions.done")
+            : mission?.boardMissionStatus && mission?.station
+            ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+            : "",
           <MoreMenuWidget
-              mission={mission}
-              onClickDuplicate={onOpenDuplicateModal}
-              onOpenModal={onOpenModal}
-              onClickPrintPackagingSlip={onOpenPackagesModal}
-              onClickMarksAsDone={onOpenMarkReadyModal}
-              handleClickBackToProcess={handleClickBackToProcess}
-              onClickMarksAsDoneForProductType={
-                onOpenMarkReadyModalForProductType
-              }
-              onClickReturnToProduction={onOpenReturnToProdModal}
-              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-              onClickWorkMissionPdf={onClickWorkMissionPdf}
-              onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+            mission={mission}
+            onClickDuplicate={onOpenDuplicateModal}
+            onOpenModal={onOpenModal}
+            onClickPrintPackagingSlip={onOpenPackagesModal}
+            onClickMarksAsDone={onOpenMarkReadyModal}
+            handleClickBackToProcess={handleClickBackToProcess}
+            onClickMarksAsDoneForProductType={
+              onOpenMarkReadyModalForProductType
+            }
+            onClickReturnToProduction={onOpenReturnToProdModal}
+            onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+            onClickWorkMissionPdf={onClickWorkMissionPdf}
+            onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
           />,
         ]);
         setAllPurchaseJobs(mapData);
@@ -812,40 +821,40 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentPageNumber = router.query.pageNumber;
 
     await getAllPurchaseJobsApi(
-        callApi,
-        callBack,
-        isClear
-            ? {
-              productsIds: [],
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-            }
-            : {
-              clientId: customer?.id,
-              agentId: agent?.id,
-              search:
-                  finalPatternSearch !== null &&
-                  finalPatternSearch !== undefined &&
-                  finalPatternSearch !== ""
-                      ? finalPatternSearch
-                      : currentFinalPatternSearch,
-              fromDate: fromDate && GetDateFormat(fromDate),
-              toDate: toDate && GetDateFormat(toDate),
+      callApi,
+      callBack,
+      isClear
+        ? {
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
+        : {
+            clientId: customer?.id,
+            agentId: agent?.id,
+            search:
+              finalPatternSearch !== null &&
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
 
-              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-              toDueDate: toDueDate && GetDateFormat(toDueDate),
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-              productsIds: productIds,
-              productionStatus: status?.value,
-              orderStatus: orderStatus?.value,
-              pageNumber: currentPageNumber || pageNumber,
-              pageSize: pageSize,
-              supplierId: supplierId?.value,
-              isPurchaseJobs: true,
-            }
+            productsIds: productIds,
+            productionStatus: status?.value,
+            orderStatus: orderStatus?.value,
+            pageNumber: currentPageNumber || pageNumber,
+            pageSize: pageSize,
+            supplierId: supplierId?.value,
+            isPurchaseJobs: true,
+          }
     );
   };
 
@@ -853,12 +862,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
-        }&customerId=${missionItem?.customerID
+        `/products/duplicate?clientTypeId=${
+          missionItem?.clientTypeId
+        }&customerId=${
+          missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
-        }&documentType=${DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -928,7 +941,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
-  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
+    useState<boolean>(false);
 
   const [
     openMarkReadyModalForProductType,
@@ -1175,14 +1189,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     await printOrderJobUsingPrintNodeApi(callApi, callBack, orderId);
   };
   const cancelPrintNodeModal = async (orderId: string) => {
-    if(!orderId){
+    if (!orderId) {
       return;
     }
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printNodeModalCancelLog(callApi, callBack, {orderId: orderId});
+    await printNodeModalCancelLog(callApi, callBack, { orderId: orderId });
   };
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
@@ -1336,8 +1350,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
+      ? [router.query.productsIds]
+      : productIds;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1385,8 +1399,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-          finalPatternSearch !== undefined &&
-          finalPatternSearch !== ""
+        finalPatternSearch !== undefined &&
+        finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -1527,7 +1541,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
-    cancelPrintNodeModal
+    cancelPrintNodeModal,
   };
 };
 
