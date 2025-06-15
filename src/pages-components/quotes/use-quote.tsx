@@ -1967,6 +1967,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         return `${t("logs.ADD")}`;
       case LogActionType[22]:
         return `${t("logs.CLOSE")}`;
+      case LogActionType[23]:
+        return `${t("logs.SEND_READY_BOARDMISSION_MAIL")}`;
+      case LogActionType[24]:
+        return `${t("logs.SEND_READY_BOARDMISSION_SMS")}`;
+      case LogActionType[25]:
+        return `${t("logs.SEND_READY_ORDER_MAIL")}`;
+      case LogActionType[26]:
+        return `${t("logs.SEND_READY_ORDER_SMS")}`;
 
       default:
         return "";
