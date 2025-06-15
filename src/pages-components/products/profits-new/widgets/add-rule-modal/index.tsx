@@ -19,6 +19,7 @@ import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-men
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const AddRuleModal = ({
   openModal,
@@ -412,6 +413,7 @@ const AddRuleModal = ({
           <DateRangePicker
             onChange={onSelectDeliveryTimeDates}
             value={fromDate && toDate ? [fromDate, toDate] : null}
+            ranges={predefinedRanges}
           />
         </div>
       </div>

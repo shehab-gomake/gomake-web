@@ -86,12 +86,7 @@ const UseDocumentDesign = () => {
         alertFaultUpdate();
       }
     };
-    await AddOrUpdateDocumentDesignDocApi(callApi, callBack, {
-      ...documentDesign,
-      pdfLogo: null,
-      pdfHeader: null,
-      pdfFooter: null,
-    });
+    await AddOrUpdateDocumentDesignDocApi(callApi, callBack, documentDesign);
   };
 
   const ResetDocumentDesign = async (documentDesign) => {
