@@ -1,7 +1,10 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
+import {
+  IOutSourceSupplier,
+  IWorkFlowAction,
+} from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton, Skeleton, Tooltip } from "@mui/material";
 
@@ -20,7 +23,7 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
@@ -302,11 +305,30 @@ const ActionContainerComponent = ({
     foldOptions,
   } = useActionUpdateValues();
 
-  const suppliersState = useRecoilValue(outsourceSuppliersState);
+  const [suppliersState, setOutsourceSuppliers] = useRecoilState(
+    outsourceSuppliersState
+  );
+  const handleAddSupplier = (newSupplier) => {
+    const supplierFormatted = {
+      supplierId: newSupplier.id,
+      supplierName: newSupplier.name,
+    };
+
+    setOutsourceSuppliers((prev) => [...prev, supplierFormatted]);
+
+    handleSupplierChange(null, {
+      id: supplierFormatted.supplierId,
+      value: supplierFormatted.supplierId,
+      label: supplierFormatted.supplierName,
+      text: supplierFormatted.supplierName,
+    });
+  };
+
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
     isActionEmployeeUpdatedState
   );
+
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -446,6 +468,9 @@ const ActionContainerComponent = ({
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
 
   const handleSupplierChange = (e, value) => {
+    debugger;
+    const aaa = suppliers;
+
     setIsUpdateBusinessName(null);
     if (isFromSetting) {
       updateProductAction({
@@ -585,19 +610,16 @@ const ActionContainerComponent = ({
                           getOptionLabel={(item) => item.text}
                           defaultFiltering={false}
                           onChangeTextField={checkWhatRenderArray}
-                          // value={
-                          //   customer?.name ?? t("sales.quote.chooseSupplier")
-                          // }
                           value={
                             suppliers?.find((sup) => sup.value === supplierId)
                               ?.label ?? t("sales.quote.chooseSupplier")
                           }
                           loading={isFetching}
                           onChange={handleSupplierChange}
-                          isFromCartPage={true}
                           isUpdate={isUpdateBusinessName}
                           setIsUpdate={setIsUpdateBusinessName}
                           onBlur={onBlurBusinessName}
+                          onAddCustomer={handleAddSupplier}
                         />
                       </Stack>
                     ) : (
