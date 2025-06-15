@@ -11,7 +11,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const rollDigitalPrintingSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'unWinder',  component: UnwiderRewinderComponent},
     {label: 'coating',  component: MachineCoatingComponent},

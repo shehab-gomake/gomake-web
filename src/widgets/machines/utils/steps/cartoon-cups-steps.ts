@@ -8,7 +8,7 @@ import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/
 
 const cartoonCupsSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'speed',  component: SpeedComponent},
     {label: 'cupsSize',  component: OtherSettingsInputsComponent},
 ];

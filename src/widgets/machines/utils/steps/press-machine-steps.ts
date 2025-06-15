@@ -8,7 +8,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const pressMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
 ];

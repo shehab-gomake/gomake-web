@@ -10,7 +10,7 @@ import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-in
 
 const packageTyingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'packageSettings',  component: MediaSettingComponent},
     {label: 'peedCell',  component: SpeedComponent},
     {label: 'cost',  component: BeatsInputsComponent},

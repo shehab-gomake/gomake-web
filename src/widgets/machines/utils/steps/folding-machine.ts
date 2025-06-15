@@ -11,14 +11,14 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 const foldingMachineSteps = (isAdmin: boolean): IStep[] => {
     return isAdmin ? [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'folding', component: MachineRunComponent},
             {label: 'speed', component: SpeedComponent},
         ] :
         [
             {label: 'basic', component: BasicInputsComponent},
-            {label: 'machineDimensions', component: MachineDimensionsComponent},
+            //{label: 'machineDimensions', component: MachineDimensionsComponent},
             {label: 'media', component: MediaSettingComponent},
             {label: 'folding', component: MachineRunComponent},
             {label: 'connection', component: ConnectionComponent},

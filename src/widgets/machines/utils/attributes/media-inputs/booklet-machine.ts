@@ -6,7 +6,9 @@ import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-
 const bookletMachine = (state: Record<string, any>) => {
     return [
         ...setupTimeInput(state),
-        ...mediaDimensionsSettings(state),
+        ...minMaxInput(state, 'width', 'widthInRunningDirection', EMeasurementUnits.CM),
+        ...minMaxInput(state, 'length', 'lengthInRunningDirection', EMeasurementUnits.CM),
+        ...minMaxInput(state, 'paperThickness', 'paperThickness', EMeasurementUnits.UM),
         {
             name: "",
             label: "machineAttributes.maxThicknessBeforeFolding",
@@ -18,10 +20,6 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxThicknessBeforeFolding ? state.attributes?.maxThicknessBeforeFolding : '',
             unit: EMeasurementUnits.MM
         },
-        ...minMaxInput(state, 'width', 'width', EMeasurementUnits.CM),
-        ...minMaxInput(state, 'length', 'length', EMeasurementUnits.CM),
-        ...minMaxInput(state, 'paperThickness', 'paperThickness', EMeasurementUnits.UM),
-
         {
             name: "squareSpineOption",
             label: "machineAttributes.squareSpineOption",

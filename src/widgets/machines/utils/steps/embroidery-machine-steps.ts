@@ -7,7 +7,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const embroideryMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'mediaSpeed',  component: SpeedComponent},
 ];
 

@@ -12,7 +12,7 @@ const scoringMachineSteps = (isAdmin: boolean): IStep[] => {
  return isAdmin ?
      [
          {label: 'basic',  component: BasicInputsComponent},
-         {label: 'machineDimensions',  component: MachineDimensionsComponent},
+         //{label: 'machineDimensions',  component: MachineDimensionsComponent},
          {label: 'media',  component: MediaSettingComponent},
          {label: 'scoring',  component: MachineRunComponent},
          {label: 'speed',  component: SpeedComponent},
@@ -20,7 +20,7 @@ const scoringMachineSteps = (isAdmin: boolean): IStep[] => {
      :
     [
         {label: 'basic',  component: BasicInputsComponent},
-        {label: 'machineDimensions',  component: MachineDimensionsComponent},
+        //{label: 'machineDimensions',  component: MachineDimensionsComponent},
         {label: 'media',  component: MediaSettingComponent},
         {label: 'scoring',  component: MachineRunComponent},
         {label: 'connection',  component: ConnectionComponent},

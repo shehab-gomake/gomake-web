@@ -12,14 +12,14 @@ import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-in
 
 const rollDieCutMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
     {label: 'basic', component: BasicInputsComponent},
-    {label: 'machineDimensions', component: MachineDimensionsComponent},
+    //{label: 'machineDimensions', component: MachineDimensionsComponent},
     {label: 'media', component: MediaSettingComponent},
     {label: 'basicSpeed', component: SpeedComponent},
     {label: 'core', component: OtherSettingsInputsComponent},
     {label: 'dieCut', component: BeatsInputsComponent},
 ] :  [
     {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'basicSpeed', component: SpeedComponent},
         {label: 'core', component: OtherSettingsInputsComponent},
