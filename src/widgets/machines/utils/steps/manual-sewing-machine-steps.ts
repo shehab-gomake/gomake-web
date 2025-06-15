@@ -10,13 +10,13 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 const manualSewingMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ?
     [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'speed', component: SpeedComponent},
     ] :
     [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'connection', component: ConnectionComponent},
         {label: 'speed', component: SpeedComponent},

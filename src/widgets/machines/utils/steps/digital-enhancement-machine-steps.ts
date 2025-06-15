@@ -9,7 +9,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const digitalEnhancementMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
     {label: 'feedersStackers',  component: FeedersStackersComponent},

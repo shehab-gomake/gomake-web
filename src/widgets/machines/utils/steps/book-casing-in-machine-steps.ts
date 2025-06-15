@@ -11,13 +11,13 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 const bookCasingInMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ?
     [
         {label: 'basic',  component: BasicInputsComponent},
-        {label: 'machineDimensions',  component: MachineDimensionsComponent},
+        //{label: 'machineDimensions',  component: MachineDimensionsComponent},
         {label: 'blockDimensions',  component: MediaSettingComponent},
         {label: 'basicSpeed',  component: SpeedComponent},
     ] :
     [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'blockDimensions',  component: MediaSettingComponent},
     {label: 'basicSpeed',  component: SpeedComponent},
     {label: 'connection',  component: ConnectionComponent},

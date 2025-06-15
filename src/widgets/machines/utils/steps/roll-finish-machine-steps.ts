@@ -17,7 +17,7 @@ import {EmbossingUnitComponent} from "@/widgets/machines/components/forms/roll-f
 
 const rollFinishMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'core', component: OtherSettingsInputsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'basicSpeed', component: SpeedComponent},
@@ -30,7 +30,7 @@ const rollFinishMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
     ] :
     [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'core', component: OtherSettingsInputsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'basicSpeed', component: SpeedComponent},

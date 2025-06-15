@@ -9,7 +9,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 
 const autoBookMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'bookDimensions',  component: MediaSettingComponent},
     {label: 'basicSpeed',  component: SpeedComponent},
 ];
