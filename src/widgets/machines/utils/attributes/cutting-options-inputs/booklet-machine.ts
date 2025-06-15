@@ -13,6 +13,18 @@ const bookletMachine = (state: Record<string, any>) => {
             isValid: true,
         },
         {
+            name: "middle",
+            label: "machineAttributes.cuttingMiddle",
+            type: "switch",
+            placeholder: "machineAttributes.cuttingMiddle",
+            required: true,
+            parameterKey: "cuttingMiddle",
+            value: state.attributes?.cuttingMiddle,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+        },
+        {
             name: "side",
             label: "machineAttributes.side",
             type: "switch",

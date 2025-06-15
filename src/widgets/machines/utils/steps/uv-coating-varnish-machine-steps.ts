@@ -12,7 +12,7 @@ import {PrintingColors} from "@/widgets/machines/components/forms/printing-color
 
 const uvCoatingVarnishMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent}
 ];

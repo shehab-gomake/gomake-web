@@ -12,7 +12,7 @@ import {PrintingColors} from "@/widgets/machines/components/forms/printing-color
 
 const ofssetPrintingSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'plate',  component: MachinePlateComponent},
     {label: 'BlanketCylinder',  component: MachineBlanketCylinderComponent},

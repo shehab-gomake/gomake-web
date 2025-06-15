@@ -9,7 +9,7 @@ import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/
 
 const laminationMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
-    {label: 'machineDimensions',  component: MachineDimensionsComponent},
+    //{label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
     {label: 'foil',  component: OtherSettingsInputsComponent},

@@ -17,13 +17,13 @@ import {EmbossingUnitComponent} from "@/widgets/machines/components/forms/roll-f
 
 const bookBlockMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'basicSpeed', component: SpeedComponent},
     ] :
     [
         {label: 'basic', component: BasicInputsComponent},
-        {label: 'machineDimensions', component: MachineDimensionsComponent},
+        //{label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'media', component: MediaSettingComponent},
         {label: 'basicSpeed', component: SpeedComponent},
 
