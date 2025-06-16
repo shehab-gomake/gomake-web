@@ -5,13 +5,14 @@ import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { ActionsListMenu } from "@/widgets/product-pricing-widget/components/actions-menu";
 import { useWorkFlows } from "./use-work-flows";
 import { Typography } from "@mui/material";
-import { GomakePrimaryButton, SecondSwitch } from "@/components";
+import { GoMakeDeleteModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { CopyAnotherProductsModal } from "./copy-another-products-modal";
-import { useState } from "react";
 import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
+import { useModal } from "@/hooks/use-modal";
 
 const WorkFlowsWidget = ({ productState, getProductById }: any) => {
+  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -38,8 +39,11 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
     handleCloseCopyAnotherProductsModal,
     view,
     setView,
-  } = useWorkFlows({ getProductById });
-
+    updateProductSourceType,
+    sourceType,
+    setSourceType,
+  } = useWorkFlows({ getProductById, sourceTypeFromProduct: productState?.sourceType });
+  const alertChangeSourceTypeModal = useModal();
 
   return (
     <div style={clasess.mainContainer}>
@@ -73,11 +77,9 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
         </div>}
         <InOutSourceSelect
           onChange={(v: EWorkSource) => {
-            setView(
-              v === EWorkSource.OUT
-                ? EPricingViews.OUTSOURCE_WORKFLOW
-                : EPricingViews.SELECTED_WORKFLOW
-            );
+            alertChangeSourceTypeModal.open();
+            setSourceType(v);
+
           }}
           value={
             view === EPricingViews.OUTSOURCE_WORKFLOW
@@ -132,6 +134,17 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
       <CopyAnotherProductsModal
         openModal={openCopyAnotherProductsModal}
         onClose={handleCloseCopyAnotherProductsModal}
+      />
+      <GoMakeDeleteModal
+        open={alertChangeSourceTypeModal.isOpen}
+        onClose={alertChangeSourceTypeModal.close}
+        onClickDelete={() => {
+          updateProductSourceType(sourceType);
+          alertChangeSourceTypeModal.close();
+        }}
+        title={t("pricingWidget.changeSourceType")}
+        subTitle={t("pricingWidget.changeSourceTypeDescription")}
+        yesBtn={t("modal.confirm")}
       />
     </div>
   );
