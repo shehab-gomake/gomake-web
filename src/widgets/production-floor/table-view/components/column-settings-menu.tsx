@@ -5,6 +5,8 @@ import {
   ListItemText,
   ListItemIcon,
   Tooltip,
+  Stack,
+  Divider,
 } from "@mui/material";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -16,9 +18,13 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   columnOrderState,
   columnVisibilityState,
+  allColumnKeys,
 } from "../../state/column-order";
 import { SecondSwitch } from "@/components";
 import React from "react";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { updateCpaManagerMailApi } from "@/services/api-service/settings/finance-api";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 interface DragItem {
   id: string;
@@ -28,6 +34,7 @@ interface DragItem {
 //!here
 export const ColumnSettingsMenu = () => {
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -36,14 +43,20 @@ export const ColumnSettingsMenu = () => {
   );
   const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
 
+  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
+    ...columnVisibility,
+  }));
+  const [tempColumnOrder, setTempColumnOrder] = useState(() => [
+    ...columnOrder,
+  ]);
+
   const draggingOrderRef = useRef([...columnOrder]);
-  const [, forceUpdate] = useState(0); // used to force re-render
 
   const handleToggleColumn = (key: string) => {
-    setColumnVisibility({
-      ...columnVisibility,
-      [key]: !columnVisibility[key],
-    });
+    setTempColumnVisibility((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   const handleOpen = (e) => setAnchorEl(e.currentTarget);
@@ -54,18 +67,35 @@ export const ColumnSettingsMenu = () => {
     const [removed] = updated.splice(dragIndex, 1);
     updated.splice(hoverIndex, 0, removed);
     draggingOrderRef.current = updated;
-    forceUpdate((n) => n + 1); // trigger re-render
+    setTempColumnOrder([...updated]);
   }, []);
 
-  const handleDrop = () => {
-    setColumnOrder(draggingOrderRef.current);
+  const handleSave = async () => {
+    const updatedVisibility = Object.fromEntries(
+      allColumnKeys.map((key) => [key, !!tempColumnVisibility[key]])
+    );
+
+    const updatedColumns = tempColumnOrder.map((key) => ({
+      key,
+      visible: !!tempColumnVisibility[key],
+    }));
+
+    setColumnOrder(tempColumnOrder);
+    setColumnVisibility(updatedVisibility);
+
+    try {
+      await updateCpaManagerMailApi(callApi, () => {}, {
+        productionFloorColumnSettings: updatedColumns,
+      });
+    } catch (error) {
+      console.error("Failed to save column settings", error);
+    }
+    handleClose();
   };
 
-  useEffect(() => {
-    if (open) {
-      draggingOrderRef.current = [...columnOrder]; // sync on open
-    }
-  }, [open, columnOrder]);
+  const handleCancel = () => {
+    handleClose();
+  };
 
   return (
     <>
@@ -77,19 +107,34 @@ export const ColumnSettingsMenu = () => {
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <DndProvider backend={HTML5Backend}>
-          {draggingOrderRef.current.map((key, index) => (
+          {tempColumnOrder.map((key, index) => (
             <DraggableMenuItem
               key={key}
               id={key}
               index={index}
               label={getLabel(t, key)}
-              checked={columnVisibility[key]}
+              checked={tempColumnVisibility[key]}
               onToggle={() => handleToggleColumn(key)}
               moveItem={moveItem}
-              onDropComplete={handleDrop}
             />
           ))}
         </DndProvider>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
+          <PrimaryButton
+            style={{ width: "fit-content" }}
+            onClick={handleCancel}
+          >
+            {t("modal.cancel")}
+          </PrimaryButton>
+          <PrimaryButton
+            style={{ width: "fit-content" }}
+            variant={"contained"}
+            onClick={handleSave}
+          >
+            {t("sales.quote.save")}
+          </PrimaryButton>
+        </Stack>
       </Menu>
     </>
   );
@@ -103,7 +148,6 @@ const DraggableMenuItem = React.memo(
     checked,
     onToggle,
     moveItem,
-    onDropComplete,
   }: {
     id: string;
     index: number;
@@ -111,7 +155,6 @@ const DraggableMenuItem = React.memo(
     checked: boolean;
     onToggle: () => void;
     moveItem: (dragIndex: number, hoverIndex: number) => void;
-    onDropComplete: () => void;
   }) => {
     const ref = useRef<HTMLLIElement>(null);
 
@@ -119,19 +162,15 @@ const DraggableMenuItem = React.memo(
       accept: "column",
       hover(item, monitor) {
         if (!ref.current) return;
-
         const dragIndex = item.index;
         const hoverIndex = index;
-
         if (dragIndex === hoverIndex) return;
 
         const hoverBoundingRect = ref.current.getBoundingClientRect();
         const hoverMiddleY =
           (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
         const clientOffset = monitor.getClientOffset();
-
         if (!clientOffset) return;
-
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
         if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
@@ -152,9 +191,6 @@ const DraggableMenuItem = React.memo(
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
-      end: () => {
-        onDropComplete();
-      },
     });
 
     drag(drop(ref));

@@ -40,7 +40,6 @@ import { productionFloorFiltersState } from "../../state/production-floor-filter
 import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
-import { useVisibleOrderedColumns } from "@/hooks/use-visible-ordered-columns";
 import { ColumnSettingsMenu } from "../components/column-settings-menu";
 
 interface IProps {
