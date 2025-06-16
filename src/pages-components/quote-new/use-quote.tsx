@@ -66,6 +66,7 @@ import {
   getClientPaymentItemsApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import {
+  checkedItemsIdsState,
   creditTransactionsState,
   transactionOptionsData,
 } from "@/widgets/quote-new/buttons-container/states";
@@ -86,6 +87,8 @@ import { useModal } from "@/hooks/use-modal";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
+import cloneDeep from "lodash.clonedeep";
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 
 export enum MessageType {
@@ -131,7 +134,6 @@ const useQuoteNew = ({
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
     quoteConfirmationState
   );
-
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
 
@@ -551,6 +553,11 @@ const useQuoteNew = ({
   };
 
   const updateExchangeRate = async (value: number) => {
+    if(docType === DOCUMENT_TYPE.receipt && isNewCreation){
+      updateCurrency(quoteItemValue.currency,value).then()
+      return;
+    }
+    
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -585,7 +592,7 @@ const useQuoteNew = ({
     });
   };
 
-  const updateCurrency = async (currency: string) => {
+  const updateCurrency = async (currency: string,exchangeRate: number = null) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -600,8 +607,18 @@ const useQuoteNew = ({
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateCurrency(null);
-        const updatedQuoteItemValue = { ...quoteItemValue };
-        updatedQuoteItemValue.currency = currency;
+        const newData = res.data;
+        const updatedQuoteItemValue = cloneDeep(quoteItemValue);
+        updatedQuoteItemValue.currency = newData.currency;
+        updatedQuoteItemValue.systemCurrency = newData.systemCurrency;
+        updatedQuoteItemValue.exchangeRate = newData.exchangeRate;
+        for(let i = 0 ;i < updatedQuoteItemValue.receiptItems.length; i++) {
+          const newItem = newData.receiptItems.find(ri=>ri.docEntry === updatedQuoteItemValue.receiptItems[i].docEntry && ri.docLine === updatedQuoteItemValue.receiptItems[i].docLine);
+          if(newItem != null){
+            updatedQuoteItemValue.receiptItems[i].sumApplied = newItem.sumApplied;
+          }
+        }
+        
         setQuoteItemValue(updatedQuoteItemValue);
       } else {
         alertFaultUpdate();
@@ -616,6 +633,7 @@ const useQuoteNew = ({
           clientId: quoteItemValue?.customerID,
           documentNumber: router?.query?.documentNumber,
           currency: currency,
+          exchangeRate: exchangeRate,
         },
         false
       );
