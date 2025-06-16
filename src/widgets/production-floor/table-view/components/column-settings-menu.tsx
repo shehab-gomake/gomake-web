@@ -25,6 +25,7 @@ import React from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { updateCpaManagerMailApi } from "@/services/api-service/settings/finance-api";
 import { PrimaryButton } from "@/components/button/primary-button";
+import ReorderIcon from "@mui/icons-material/Reorder";
 
 interface DragItem {
   id: string;
@@ -94,8 +95,30 @@ export const ColumnSettingsMenu = () => {
   };
 
   const handleCancel = () => {
+    setTempColumnVisibility({ ...columnVisibility });
+    setTempColumnOrder([...columnOrder]);
     handleClose();
   };
+
+  const handleHideAll = () => {
+    const hidden = Object.fromEntries(allColumnKeys.map((key) => [key, false]));
+    setTempColumnVisibility(hidden);
+  };
+
+  const handleShowAll = () => {
+    const shown = Object.fromEntries(allColumnKeys.map((key) => [key, true]));
+    setTempColumnVisibility(shown);
+  };
+
+  const handleResetOrder = () => {
+    setTempColumnOrder([...allColumnKeys]);
+  };
+
+  useEffect(() => {
+    if (open) {
+      draggingOrderRef.current = [...columnOrder];
+    }
+  }, [open, columnOrder]);
 
   return (
     <>
@@ -106,6 +129,30 @@ export const ColumnSettingsMenu = () => {
       </Tooltip>
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <Stack direction="row" justifyContent="space-between" px={1} py={1}>
+          <PrimaryButton
+            variant="text"
+            style={{ fontSize: 12, padding: "4px 8px" }}
+            onClick={handleHideAll}
+          >
+            {t("Hide all")}
+          </PrimaryButton>
+          <PrimaryButton
+            variant="text"
+            style={{ fontSize: 12, padding: "4px 8px" }}
+            onClick={handleResetOrder}
+          >
+            {t("Reset order")}
+          </PrimaryButton>
+          <PrimaryButton
+            variant="text"
+            style={{ fontSize: 12, padding: "4px 8px" }}
+            onClick={handleShowAll}
+          >
+            {t("Show all")}
+          </PrimaryButton>
+        </Stack>
+
         <DndProvider backend={HTML5Backend}>
           {tempColumnOrder.map((key, index) => (
             <DraggableMenuItem
@@ -207,7 +254,7 @@ const DraggableMenuItem = React.memo(
         }}
       >
         <ListItemIcon>
-          <DragIndicatorIcon fontSize="small" />
+          <ReorderIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText primary={label} />
         <SecondSwitch
