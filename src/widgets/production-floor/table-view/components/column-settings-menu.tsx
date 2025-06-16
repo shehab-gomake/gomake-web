@@ -6,11 +6,11 @@ import {
   ListItemIcon,
   Tooltip,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import {
@@ -18,22 +18,26 @@ import {
   columnVisibilityState,
 } from "../../state/column-order";
 import { SecondSwitch } from "@/components";
-import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import React from "react";
 
 interface DragItem {
   id: string;
   index: number;
 }
 
-//!here new
+//!here
 export const ColumnSettingsMenu = () => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const [columnVisibility, setColumnVisibility] = useRecoilState(
     columnVisibilityState
   );
   const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
+
+  const draggingOrderRef = useRef([...columnOrder]);
+  const [, forceUpdate] = useState(0); // used to force re-render
 
   const handleToggleColumn = (key: string) => {
     setColumnVisibility({
@@ -45,12 +49,23 @@ export const ColumnSettingsMenu = () => {
   const handleOpen = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const moveItem = (dragIndex, hoverIndex) => {
-    const updated = [...columnOrder];
+  const moveItem = useCallback((dragIndex: number, hoverIndex: number) => {
+    const updated = [...draggingOrderRef.current];
     const [removed] = updated.splice(dragIndex, 1);
     updated.splice(hoverIndex, 0, removed);
-    setColumnOrder(updated);
+    draggingOrderRef.current = updated;
+    forceUpdate((n) => n + 1); // trigger re-render
+  }, []);
+
+  const handleDrop = () => {
+    setColumnOrder(draggingOrderRef.current);
   };
+
+  useEffect(() => {
+    if (open) {
+      draggingOrderRef.current = [...columnOrder]; // sync on open
+    }
+  }, [open, columnOrder]);
 
   return (
     <>
@@ -62,7 +77,7 @@ export const ColumnSettingsMenu = () => {
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <DndProvider backend={HTML5Backend}>
-          {columnOrder.map((key, index) => (
+          {draggingOrderRef.current.map((key, index) => (
             <DraggableMenuItem
               key={key}
               id={key}
@@ -71,6 +86,7 @@ export const ColumnSettingsMenu = () => {
               checked={columnVisibility[key]}
               onToggle={() => handleToggleColumn(key)}
               moveItem={moveItem}
+              onDropComplete={handleDrop}
             />
           ))}
         </DndProvider>
@@ -79,89 +95,97 @@ export const ColumnSettingsMenu = () => {
   );
 };
 
-const DraggableMenuItem = ({
-  id,
-  index,
-  label,
-  checked,
-  onToggle,
-  moveItem,
-}: {
-  id: string;
-  index: number;
-  label: string;
-  checked: boolean;
-  onToggle: () => void;
-  moveItem: (dragIndex: number, hoverIndex: number) => void;
-}) => {
-  const ref = useRef<HTMLLIElement>(null);
+const DraggableMenuItem = React.memo(
+  ({
+    id,
+    index,
+    label,
+    checked,
+    onToggle,
+    moveItem,
+    onDropComplete,
+  }: {
+    id: string;
+    index: number;
+    label: string;
+    checked: boolean;
+    onToggle: () => void;
+    moveItem: (dragIndex: number, hoverIndex: number) => void;
+    onDropComplete: () => void;
+  }) => {
+    const ref = useRef<HTMLLIElement>(null);
 
-  const [, drop] = useDrop<DragItem>({
-    accept: "column",
-    hover(item, monitor) {
-      if (!ref.current) return;
+    const [, drop] = useDrop<DragItem>({
+      accept: "column",
+      hover(item, monitor) {
+        if (!ref.current) return;
 
-      const dragIndex = item.index;
-      const hoverIndex = index;
+        const dragIndex = item.index;
+        const hoverIndex = index;
 
-      if (dragIndex === hoverIndex) return;
+        if (dragIndex === hoverIndex) return;
 
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
+        const hoverBoundingRect = ref.current.getBoundingClientRect();
+        const hoverMiddleY =
+          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const clientOffset = monitor.getClientOffset();
 
-      if (!clientOffset) return;
+        if (!clientOffset) return;
 
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
 
-      moveItem(dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    },
-  });
+        moveItem(dragIndex, hoverIndex);
+        item.index = hoverIndex;
+      },
+    });
 
-  const [{ isDragging }, drag] = useDrag<
-    DragItem,
-    void,
-    { isDragging: boolean }
-  >({
-    type: "column",
-    item: { id, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+    const [{ isDragging }, drag] = useDrag<
+      DragItem,
+      void,
+      { isDragging: boolean }
+    >({
+      type: "column",
+      item: { id, index },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: () => {
+        onDropComplete();
+      },
+    });
 
-  drag(drop(ref));
+    drag(drop(ref));
 
-  return (
-    <MenuItem
-      ref={ref}
-      dense
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        border: isDragging ? "1px dashed #2e3092" : "none",
-        cursor: "move",
-      }}
-    >
-      <ListItemIcon>
-        <DragIndicatorIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText primary={label} />
-      <SecondSwitch
-        variant="primary"
-        checked={checked}
-        onChange={(e) => {
-          e.stopPropagation();
-          onToggle();
+    return (
+      <MenuItem
+        ref={ref}
+        dense
+        style={{
+          opacity: isDragging ? 0.5 : 1,
+          border: isDragging ? "1px dashed #2e3092" : "none",
+          cursor: "move",
+          transition: "opacity 0.15s ease",
         }}
-      />
-    </MenuItem>
-  );
-};
+      >
+        <ListItemIcon>
+          <DragIndicatorIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText primary={label} />
+        <SecondSwitch
+          variant="primary"
+          checked={checked}
+          onChange={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
+        />
+      </MenuItem>
+    );
+  }
+);
 
 const getLabel = (t, key: string): string => {
   const map = {

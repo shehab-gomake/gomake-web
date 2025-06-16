@@ -61,7 +61,7 @@ interface IProps {
   isUrgentWork?: boolean;
   onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
   employeesCategories?: any;
-  visibleColumns: string[]; //!here
+  visibleColumns: string[];
 }
 
 enum EDropArea {
@@ -245,7 +245,7 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                ...commonStyle,
                 ...(isMobileScreen && {
                   position: "sticky",
                   [isRTL ? "right" : "left"]: 0,
@@ -278,7 +278,7 @@ const TableRowComponent = ({
           <SecondaryTableCell
             align={"center"}
             style={{
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              ...commonStyle,
               cursor: "pointer",
               ...(isMobileScreen && {
                 position: "sticky",
@@ -423,8 +423,8 @@ const TableRowComponent = ({
             style={{
               width: "20px",
               cursor: "pointer",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
               fontSize: GetProductionFontSizeFromPreferences(),
+              ...commonStyle,
             }}
             onClick={() => onClickClient(boardMission?.clientId)}
           >
@@ -439,8 +439,8 @@ const TableRowComponent = ({
             style={{
               width: "15px",
               cursor: "pointer",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
               fontSize: GetProductionFontSizeFromPreferences(),
+              ...commonStyle,
             }}
           >
             {getTruncatedLabel(boardMission?.agentName, 15)}
@@ -453,7 +453,7 @@ const TableRowComponent = ({
             align={"center"}
             style={{
               padding: "0px 10px",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              ...commonStyle,
             }}
           >
             <ClickableLabelComponent
@@ -601,14 +601,12 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
-
       <TableRow
         ref={ref}
         style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px" }}
       >
         {visibleColumns.map((key) => renderCell(key))}
       </TableRow>
-
       <TableRow>
         <TableCell
           colSpan={10}
@@ -627,7 +625,6 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
-
       <GoMakeDeleteModal
         title={t("sales.quote.simpleApproveMail")}
         yesBtn={t("modal.yes")}

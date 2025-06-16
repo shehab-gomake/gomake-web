@@ -377,7 +377,7 @@ const StatusTableComponent = ({
                           isUrgentWork={hasUrgentOrApproval}
                           onUpdateJobDueDate={updateJobDueDate}
                           employeesCategories={employeesCategories}
-                          visibleColumns={visibleColumns} //!here
+                          visibleColumns={visibleColumns}
                         />
                       ));
                   })()}
