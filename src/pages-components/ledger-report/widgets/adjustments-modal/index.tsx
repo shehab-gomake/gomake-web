@@ -8,6 +8,7 @@ import { Skeleton } from "@mui/material";
 import { ModalType } from "@/enums";
 import { useRecoilValue } from "recoil";
 import { systemCurrencyState } from "@/store";
+import { NoDataComponent } from "@/widgets/quote-new/receipts-table/Payment-methods-details/no-data-component";
 
 const AdjustmentsLedgerReportModal = ({
   openModal,
@@ -16,6 +17,8 @@ const AdjustmentsLedgerReportModal = ({
   getClientPaymentItems,
   customerId,
   setClientPaymentsList,
+  isLoading,
+  hasFetchedOnce,
 }) => {
   const { classes } = useStyle();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
@@ -54,12 +57,18 @@ const AdjustmentsLedgerReportModal = ({
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("reports.adjustmentsLists")}
+        modalTitle={
+          isLoading ||
+          !hasFetchedOnce ||
+          (clientPaymentsList && clientPaymentsList.length > 0)
+            ? t("reports.adjustmentsLists")
+            : " "
+        }
         onClose={handleModalClose}
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
-          {clientPaymentsList?.length <= 0 ? (
+          {isLoading || !hasFetchedOnce ? (
             <>
               <Skeleton
                 height={600}
@@ -79,7 +88,7 @@ const AdjustmentsLedgerReportModal = ({
                 ))}
               </div>
             </>
-          ) : (
+          ) : clientPaymentsList?.length > 0 ? (
             <>
               <PrimaryTable
                 rows={getTableDataRows()}
@@ -104,6 +113,8 @@ const AdjustmentsLedgerReportModal = ({
                 ))}
               </div>
             </>
+          ) : (
+            <NoDataComponent subNoDataText={t("reports.noAdjustments")} />
           )}
         </div>
         <GoMakeDeleteModal

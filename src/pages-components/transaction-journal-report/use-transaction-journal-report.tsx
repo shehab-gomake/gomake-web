@@ -8,7 +8,7 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import {DocumentsTypeReportList, EReportType, ReportsType} from "@/enums";
+import { DocumentsTypeReportList, EReportType, ReportsType } from "@/enums";
 import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
@@ -514,8 +514,11 @@ const useTransactionJournalReport = ({
     useState<boolean>(false);
 
   const onClickCloseAdjustmentsModal = () => {
+    setClientPaymentsList([]);
     setIsOpenAdjustmentsModal(false);
+    setHasFetchedOnce(false);
   };
+
   const onClickOpenAdjustmentsModal = () => {
     if (customer?.id) {
       setIsOpenAdjustmentsModal(true);
@@ -525,8 +528,13 @@ const useTransactionJournalReport = ({
   };
 
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+  const [isLoadingPayments, setIsLoadingPayments] = useState<boolean>(false);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 
   const getClientPaymentItems = useCallback(async () => {
+    setIsLoadingPayments(true);
+    setHasFetchedOnce(false);
+
     const res = await callApi(
       EHttpMethod.GET,
       `/v1/erp-service/receipts/get-client-payment-items`,
@@ -534,6 +542,10 @@ const useTransactionJournalReport = ({
         clientId: customer?.id,
       }
     );
+
+    setIsLoadingPayments(false);
+    setHasFetchedOnce(true);
+
     if (res?.success) {
       let data = res.data?.data?.data;
       if (data?.length > 0) {
@@ -552,11 +564,11 @@ const useTransactionJournalReport = ({
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
-      }else{
-        setIsOpenAdjustmentsModal(false);
-        alertFault("reports.noData");
+      } else {
+        setClientPaymentsList([]);
       }
     } else {
+      setClientPaymentsList([]);
       alertFaultGetData();
     }
   }, [customer]);
@@ -691,19 +703,19 @@ const useTransactionJournalReport = ({
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/get-transaction-journal-report-pdf`,
-        {
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          documentsType:
-              reportType === EReportType.DailyPayments
-                  ? DocumentsTypeReportList.Payments
-                  : documentType?.id,
-          cardType: isPurchaseReport
-              ? CLIENT_TYPE.SUPPLIER
-              : CLIENT_TYPE.CUSTOMER,
-        }
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-transaction-journal-report-pdf`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        documentsType:
+          reportType === EReportType.DailyPayments
+            ? DocumentsTypeReportList.Payments
+            : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+      }
     );
     if (res?.success) {
       const pdfLink = res?.data?.data?.data;
@@ -712,7 +724,7 @@ const useTransactionJournalReport = ({
     } else {
       alertFaultGetData();
     }
-  }
+  };
   return {
     t,
     handleDocumentTypeChange,
@@ -767,7 +779,9 @@ const useTransactionJournalReport = ({
     getErpAccountsList,
     onClickDownloadMovingFiles,
     onClickExportJournalExcelReport,
-    onClickExportJournalPDFReport
+    onClickExportJournalPDFReport,
+    isLoadingPayments,
+    hasFetchedOnce,
   };
 };
 
