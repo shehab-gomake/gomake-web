@@ -13,6 +13,7 @@ import { AddShipmentModal } from "./widget/shipments-setting/add-shipment-modal"
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { Stack } from "@mui/material";
 import { HeaderTitle } from "../header-title";
+import Head from "next/head";
 
 const ProductsSettingsWidget = () => {
   const { classes } = useStyle();
@@ -56,6 +57,9 @@ const ProductsSettingsWidget = () => {
 
   return (
     <div style={classes.mainContainer}>
+        <Head>
+            <title>{t("settings.products")}</title>
+        </Head>
       <div style={classes.mainHeadecontainer}>
         {value !== EWidgetProductSettingsTabs.ADD_PRODUCT && (
           <PrimaryTabsComponent

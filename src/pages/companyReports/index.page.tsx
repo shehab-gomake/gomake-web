@@ -5,6 +5,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 export default function CompanyReport() {
   return (
     <CustomerAuthLayout
+      staticPageTitle="company report"
       permissionEnumValue={Permissions.SHOW_PRINTHOUSES_TABLE}
       className={`custom-scrollbar`}
     >

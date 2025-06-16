@@ -4,7 +4,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 export default function CustomerMachinesPage() {
     return (
-        <CustomerAuthLayout permissionEnumValue={Permissions.MACHINES_ADMIN} className={`custom-scrollbar`}>
+        <CustomerAuthLayout staticPageTitle={"machines admin"} permissionEnumValue={Permissions.MACHINES_ADMIN} className={`custom-scrollbar`}>
             <CategoriesTable isAdmin={true} />
         </CustomerAuthLayout>
     );

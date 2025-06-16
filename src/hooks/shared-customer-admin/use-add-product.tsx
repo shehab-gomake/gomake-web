@@ -216,6 +216,29 @@ const useAddProduct = ({ classes }) => {
     }
   };
 
+  const removeProductParamete = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any, updateType: UpdateTypes) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/remove-parameter-from-product`,
+        {
+          productId: router?.query?.id,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          parameterId: parameter?.id,
+          updateType: updateType || 0
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        getProductById();
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [router]
+  );
+
   const updatedProductParameterShowToClient = useCallback(
     async (
       sectionId: string,
@@ -291,6 +314,7 @@ const useAddProduct = ({ classes }) => {
     },
     [router]
   );
+
 
   const updatedProductParameteName = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
@@ -653,7 +677,7 @@ const useAddProduct = ({ classes }) => {
     sectionId,
     subSectionId
   ) => {
-    if(!parameter?.productParametersExternalValues){
+    if (!parameter?.productParametersExternalValues) {
       parameter.productParametersExternalValues = []
     }
     //Check if parameterType is material
@@ -729,7 +753,7 @@ const useAddProduct = ({ classes }) => {
     }
 
     //Extract externalCode for the materials/switch that come from productParametersExternalValues
-    if (isMaterial || isSwitch || isInput)  {
+    if (isMaterial || isSwitch || isInput) {
       let valuesConfigs = [];
       if (parameter?.productParametersExternalValues) {
         const externalValuesMap = new Map(
@@ -745,7 +769,7 @@ const useAddProduct = ({ classes }) => {
             externalValue:
               externalValuesMap.get(materialOption.valueId) || null,
           }));
-        } else if(isSwitch) {
+        } else if (isSwitch) {
           valuesConfigs = [
             {
               value: t("products.parameters.true"),
@@ -758,10 +782,10 @@ const useAddProduct = ({ classes }) => {
               externalValue: externalValuesMap.get("false") || null,
             },
           ];
-        }else{
+        } else {
           valuesConfigs = parameter?.productParametersExternalValues.map((x) => ({
-            updateName:x.valueId,
-            externalValue:x.externalCode
+            updateName: x.valueId,
+            externalValue: x.externalCode
           }));
         }
       }
@@ -1372,6 +1396,7 @@ const useAddProduct = ({ classes }) => {
     onOpenExternalIdsModal,
     onCloseExternalIdsModal,
     openExternalIdsModal,
+    removeProductParamete,
   };
 };
 

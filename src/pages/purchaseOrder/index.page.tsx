@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function PurchaseOrder() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"purchase order"}>
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.purchaseOrder} />
     </CustomerAuthLayout>
   );

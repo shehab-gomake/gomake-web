@@ -4,7 +4,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 
 export default function DigitalOffsetPrice() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout staticPageTitle={"duplicate product"}>
       <PriceListPageWidget widgetType={EWidgetProductType.DUPLICATE} />
     </CustomerAuthLayout>
   );

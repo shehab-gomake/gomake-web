@@ -54,13 +54,24 @@ const CharacterDetails = ({
 
   return (
     <>
-      <div style={{ position: "relative", ...detailsStyle }}>
+      <div
+        onClick={canUpdate ? () => setIsEdit(true) : undefined}
+        style={{
+          cursor: canUpdate ? "pointer" : "default",
+          position: "relative",
+          textAlign: isRTL ? "right" : "left",
+          ...detailsStyle,
+        }}
+      >
         <div style={{ ...classes.mainContainer }}>
           {parse(truncatedDetails || "")}
           {!showAll && ".. "}
           {details?.length > 90 && (
             <span
-              onClick={showAll ? handleShowLess : handleShowMore}
+              onClick={(e) => {
+                e.stopPropagation();
+                showAll ? handleShowLess() : handleShowMore();
+              }}
               style={showAllStyle || { ...classes.showAllContaner }}
             >
               {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
@@ -70,7 +81,10 @@ const CharacterDetails = ({
 
         {canUpdate && (
           <IconButton
-            onClick={() => setIsEdit(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEdit(true);
+            }}
             style={{
               position: "absolute",
               top: 0,

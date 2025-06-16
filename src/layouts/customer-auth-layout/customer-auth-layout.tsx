@@ -4,7 +4,7 @@ import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { HeaderWidget } from "@/widgets/header";
-import { navStatusState } from "@/store/nav-status";
+import {navStatusState, pageTitleState} from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeAlertModal, GoMakeModal } from "@/components";
@@ -19,6 +19,8 @@ import { SetupSection } from "@/widgets/quick-setup";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { tokenExpiredState } from "@/store/token-expired-modal";
 import { useGomakeRouter } from "@/hooks";
+import Head from "next/head";
+import {useEffect} from "react";
 
 
 const CustomerAuthLayout = ({
@@ -29,6 +31,7 @@ const CustomerAuthLayout = ({
   disableHeaderSideMenu,
   className,
   backgroundColor,
+  staticPageTitle
 }: IAuthLayout) => {
   const { navigate } = useGomakeRouter();
   const isMobileScreen = useMediaQuery("(max-width:768px)");
@@ -42,13 +45,22 @@ const CustomerAuthLayout = ({
     customGap,
   });
   const setNavStatus = useSetRecoilState(navStatusState);
+  const [pageTitle,setPageTitle] = useRecoilState(pageTitleState);
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
   const [isTokenExpired, setIsTokenExpired] = useRecoilState(tokenExpiredState);
 
   const alertNewVersion = useModal();
   const appVersion = useRecoilValue(versionState);
-
+  useEffect(()=>{
+    setPageTitle(staticPageTitle)
+  },[staticPageTitle])
+  const getPageTitle = () => {
+    if(pageTitle){
+      return pageTitle;
+    }
+    return "Gomake";
+  }
   /*useEffect(() => {
     const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
     if (!lastSeenVersion) {
@@ -78,6 +90,9 @@ const CustomerAuthLayout = ({
     <>
       {
         <div style={classes.container}>
+          <Head>
+            <title>{getPageTitle()}</title>
+          </Head>
           {isMobileScreen ? (
             <div></div>
           ) : (

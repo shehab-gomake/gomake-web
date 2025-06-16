@@ -6,6 +6,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 export default function SupplierAgingPage() {
   return (
     <CustomerAuthLayout
+      staticPageTitle={"Supplier Aging Report"}
       permissionEnumValue={Permissions.SHOW_SUPPLIER_AGING_REPORT}
       className={`custom-scrollbar`}
     >

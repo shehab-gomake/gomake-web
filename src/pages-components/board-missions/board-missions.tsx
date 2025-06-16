@@ -36,8 +36,10 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
 import {
-  addOrderBoardMissionsToFileUploaderApi, getInitialOrderFoldersData, printNodeModalCancelLog,
-  printNodeModalShowLog
+  addOrderBoardMissionsToFileUploaderApi,
+  getInitialOrderFoldersData,
+  printNodeModalCancelLog,
+  printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
@@ -47,7 +49,8 @@ import { EPreferences } from "@/enums/prefernces";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
-import {getUserToken} from "@/services/storage-data";
+import { getUserToken } from "@/services/storage-data";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -148,7 +151,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
-    cancelPrintNodeModal
+    cancelPrintNodeModal,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -163,45 +166,52 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   useEffect(() => {
-    if (
-      router.isReady &&
-      companyProfile.filesApiAddress &&
-      newOrderId
-    ) {
-      if(CheckPreferenceValue(EPreferences.INITIALIZE_ORDER_FOLDERS_AFTER_CREATION)){
+    if (router.isReady && companyProfile.filesApiAddress && newOrderId) {
+      if (
+        CheckPreferenceValue(
+          EPreferences.INITIALIZE_ORDER_FOLDERS_AFTER_CREATION
+        )
+      ) {
         const callBack = (res) => {
-          debugger
-          const url = companyProfile.filesApiAddress + "/api/Files/CreateOrderFolder";
-          axios.post(url,res.data,{
-            headers: {
-              authorization: "Bearer " + getUserToken(),
-            }
-          }).then()
+          debugger;
+          const url =
+            companyProfile.filesApiAddress + "/api/Files/CreateOrderFolder";
+          axios
+            .post(url, res.data, {
+              headers: {
+                authorization: "Bearer " + getUserToken(),
+              },
+            })
+            .then();
         };
-        getInitialOrderFoldersData(callApi,callBack,{orderId:newOrderId}).then()
+        getInitialOrderFoldersData(callApi, callBack, {
+          orderId: newOrderId,
+        }).then();
       }
-      
-      if(connectionId){
+
+      if (connectionId) {
         const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
         }).then();
       }
-     
     }
 
-    if(router.isReady){
-      if(!!(
+    if (router.isReady) {
+      if (
+        !!(
           isPrintHouseUsePrintNode &&
           newOrderId &&
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
-      )){
-        printNodeModalShowLog(callApi,()=>{},{orderId:newOrderId}).then();
+        )
+      ) {
+        printNodeModalShowLog(callApi, () => {}, {
+          orderId: newOrderId,
+        }).then();
         setOpenPrintNodeModal(true);
         setPrintNodeOrderId(newOrderId);
       }
-      
     }
   }, [newOrderId]);
 
@@ -359,13 +369,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               value={
                                 fromDate && toDate ? [fromDate, toDate] : null
                               }
+                              ranges={predefinedRanges}
                             />
                           </div>
 
                           <div style={classes.statusFilterContainer}>
                             <GlobalStyle RTL={RTL} />
                             <h3 style={classes.filterLabelStyle}>
-                              {t("Due Date")}
+                              {t("boardMissions.dueDate")}
                             </h3>
                             <DateRangePicker
                               onChange={onSelectDueTimeDates}
@@ -374,13 +385,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                   ? [fromDueDate, toDueDate]
                                   : null
                               }
+                              ranges={predefinedRanges}
                             />
                           </div>
-
                           <div style={classes.statusFilterContainer}>
                             <GlobalStyle RTL={RTL} />
                             <h3 style={classes.filterLabelStyle}>
-                              {t("Ready Date")}
+                              {t("boardMissions.readyDate")}
                             </h3>
                             <DateRangePicker
                               onChange={onSelectReadyTimeDates}
@@ -389,6 +400,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                   ? [fromReadyDate, toReadyDate]
                                   : null
                               }
+                              ranges={predefinedRanges}
                             />
                           </div>
                         </div>
@@ -660,7 +672,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           setOpenPrintNodeModal(false);
           cancelPrintNodeModal(printNodeOrderId).then();
           setNewOrderId("");
-          
         }}
         cancelBtn={t("modal.cancel")}
       />

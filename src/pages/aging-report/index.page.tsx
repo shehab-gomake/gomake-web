@@ -5,7 +5,7 @@ import { CLIENT_TYPE } from "../customers/enums";
 
 export default function AgingReportPage() {
   return (
-    <CustomerAuthLayout
+    <CustomerAuthLayout staticPageTitle="aging report"
       permissionEnumValue={Permissions.SHOW_AGING_REPORT}
       className={`custom-scrollbar`}
     >

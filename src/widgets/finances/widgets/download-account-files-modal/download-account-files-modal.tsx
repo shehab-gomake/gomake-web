@@ -8,6 +8,7 @@ import { useStyle } from "./style";
 import { GoMakeDatepicker } from "@/components/datepicker/datepicker";
 import { useDownloadAccountFilesModal } from "./use-download-account-files-modal";
 import { DateRangePicker } from "rsuite";
+import { predefinedRanges } from "@/utils/dateRanges";
 
 interface DownloadAccountFilesModalProps {
   openModal: boolean;
@@ -43,7 +44,10 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({
                 {t("boardMissions.dateRange")}
               </h3>
               <div style={{ width: 300 }}>
-                <DateRangePicker onChange={onSelectDeliveryTimeDates} />
+                <DateRangePicker
+                  onChange={onSelectDeliveryTimeDates}
+                  ranges={predefinedRanges}
+                />
               </div>
             </div>
             <div style={classes.date1FilterContainer}>

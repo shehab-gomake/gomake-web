@@ -5,7 +5,8 @@ import { EReportType } from "@/enums";
 
 export default function TransactionJournalReportPage() {
   return (
-    <CustomerAuthLayout
+    <CustomerAuthLayout 
+      staticPageTitle={"daily payments report"}
       permissionEnumValue={Permissions.SHOW_DAILY_PAYMENT_REPORT}
       className={`custom-scrollbar`}
     >

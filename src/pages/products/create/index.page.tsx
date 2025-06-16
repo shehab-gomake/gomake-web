@@ -7,7 +7,7 @@ export default function DigitalOffsetPrice() {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
 
   return (
-    <CustomerAuthLayout backgroundColor={"#f6f6f6"}>
+    <CustomerAuthLayout staticPageTitle={"add product"} backgroundColor={"#f6f6f6"}>
       <PriceListPageWidget
         widgetType={EWidgetProductType.CREATE}
         isMobileScreen={isMobileScreen}
