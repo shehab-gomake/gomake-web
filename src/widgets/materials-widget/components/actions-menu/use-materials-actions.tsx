@@ -63,7 +63,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -235,6 +235,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     materialFilter,
     supplierId
   }) => {
+    if (!updatedValue || updatedValue === "") {
+      alertFault(t("products.offsetPrice.admin.fillValue"));
+      return;
+    }
     return await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: materialCategory.toString(),
@@ -381,6 +385,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setAction(null);
       setIsAllMaterialsChecked(false);
 
+    }
+    else {
+      alertFaultUpdate();
     }
   };
 
