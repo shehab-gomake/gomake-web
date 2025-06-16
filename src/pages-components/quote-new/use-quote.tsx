@@ -15,6 +15,7 @@ import {
   quoteItemState,
   openReceiptCreationModalState,
   systemVATState,
+  selectedFirstMaterialState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
 import {
@@ -85,7 +86,7 @@ import { useModal } from "@/hooks/use-modal";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
+import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 
 export enum MessageType {
   Email = 0,
@@ -388,18 +389,18 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1105,12 +1106,13 @@ const useQuoteNew = ({
   const onCloseNewContact = () => {
     setOpenAddNewContactModal(false);
   };
-
+  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const getCalculateQuoteItem = async (
     quoteItem: any,
     calculationType: number,
     data: number,
-    newUpdatedQuoteItemValue?: any
+    newUpdatedQuoteItemValue?: any,
+    isPrintHouseMaterialItem?: boolean
   ) => {
     if (isNewCreation) {
       const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue;
@@ -1129,7 +1131,7 @@ const useQuoteNew = ({
                 : newQuoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
-            isPrintHouseMaterialItem: quoteItem?.printHouseMaterialId
+            isPrintHouseMaterialItem: (quoteItem?.printHouseMaterialId && (isPrintHouseMaterialItem || selectedFirstMaterial))
               ? true
               : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1208,8 +1210,10 @@ const useQuoteNew = ({
             ),
           };
           setQuoteItemValue(updatedQuoteItemValue);
+          setSelectedFirstMaterial(false);
         }
       } else {
+        setSelectedFirstMaterial(false);
       }
     } else {
       const callBack = (res) => {
@@ -1368,7 +1372,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1750,7 +1754,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2121,8 +2125,8 @@ const useQuoteNew = ({
   //     getAllEmployees();
   //   }
   // }, [isQuoteConfirmation]);
-  
-  const {documentTitle} = useDocumentTitle(docType,isOutgoingPayments)
+
+  const { documentTitle } = useDocumentTitle(docType, isOutgoingPayments)
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
