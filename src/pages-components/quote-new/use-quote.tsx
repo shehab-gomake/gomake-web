@@ -87,9 +87,8 @@ import { useModal } from "@/hooks/use-modal";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
-import cloneDeep from "lodash.clonedeep";
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
+import cloneDeep from "lodash.clonedeep";
 
 export enum MessageType {
   Email = 0,
@@ -391,18 +390,18 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -553,11 +552,11 @@ const useQuoteNew = ({
   };
 
   const updateExchangeRate = async (value: number) => {
-    if(docType === DOCUMENT_TYPE.receipt && isNewCreation){
-      updateCurrency(quoteItemValue.currency,value).then()
+    if (docType === DOCUMENT_TYPE.receipt && isNewCreation) {
+      updateCurrency(quoteItemValue.currency, value).then();
       return;
     }
-    
+
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -592,7 +591,10 @@ const useQuoteNew = ({
     });
   };
 
-  const updateCurrency = async (currency: string,exchangeRate: number = null) => {
+  const updateCurrency = async (
+    currency: string,
+    exchangeRate: number = null
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -612,13 +614,18 @@ const useQuoteNew = ({
         updatedQuoteItemValue.currency = newData.currency;
         updatedQuoteItemValue.systemCurrency = newData.systemCurrency;
         updatedQuoteItemValue.exchangeRate = newData.exchangeRate;
-        for(let i = 0 ;i < updatedQuoteItemValue.receiptItems.length; i++) {
-          const newItem = newData.receiptItems.find(ri=>ri.docEntry === updatedQuoteItemValue.receiptItems[i].docEntry && ri.docLine === updatedQuoteItemValue.receiptItems[i].docLine);
-          if(newItem != null){
-            updatedQuoteItemValue.receiptItems[i].sumApplied = newItem.sumApplied;
+        for (let i = 0; i < updatedQuoteItemValue.receiptItems.length; i++) {
+          const newItem = newData.receiptItems.find(
+            (ri) =>
+              ri.docEntry === updatedQuoteItemValue.receiptItems[i].docEntry &&
+              ri.docLine === updatedQuoteItemValue.receiptItems[i].docLine
+          );
+          if (newItem != null) {
+            updatedQuoteItemValue.receiptItems[i].sumApplied =
+              newItem.sumApplied;
           }
         }
-        
+
         setQuoteItemValue(updatedQuoteItemValue);
       } else {
         alertFaultUpdate();
@@ -1124,7 +1131,9 @@ const useQuoteNew = ({
   const onCloseNewContact = () => {
     setOpenAddNewContactModal(false);
   };
-  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
+  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(
+    selectedFirstMaterialState
+  );
   const getCalculateQuoteItem = async (
     quoteItem: any,
     calculationType: number,
@@ -1149,9 +1158,11 @@ const useQuoteNew = ({
                 : newQuoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
-            isPrintHouseMaterialItem: (quoteItem?.printHouseMaterialId && (isPrintHouseMaterialItem || selectedFirstMaterial))
-              ? true
-              : false,
+            isPrintHouseMaterialItem:
+              quoteItem?.printHouseMaterialId &&
+              (isPrintHouseMaterialItem || selectedFirstMaterial)
+                ? true
+                : false,
             finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
             roundPrices: newQuoteItemValue?.client?.roundPrices,
@@ -1390,7 +1401,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1772,7 +1783,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2144,7 +2155,7 @@ const useQuoteNew = ({
   //   }
   // }, [isQuoteConfirmation]);
 
-  const { documentTitle } = useDocumentTitle(docType, isOutgoingPayments)
+  const { documentTitle } = useDocumentTitle(docType, isOutgoingPayments);
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
