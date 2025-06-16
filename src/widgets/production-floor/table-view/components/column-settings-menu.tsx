@@ -138,21 +138,21 @@ export const ColumnSettingsMenu = () => {
             style={{ fontSize: 12, padding: "4px 8px" }}
             onClick={handleHideAll}
           >
-            {t("Hide all")}
+            {t("productionFloor.hideAll")}
           </PrimaryButton>
           <PrimaryButton
             variant="text"
             style={{ fontSize: 12, padding: "4px 8px" }}
             onClick={handleResetOrder}
           >
-            {t("Reset order")}
+            {t("productionFloor.resetOrder")}
           </PrimaryButton>
           <PrimaryButton
             variant="text"
             style={{ fontSize: 12, padding: "4px 8px" }}
             onClick={handleShowAll}
           >
-            {t("Show all")}
+            {t("productionFloor.showAll")}
           </PrimaryButton>
         </Stack>
 
