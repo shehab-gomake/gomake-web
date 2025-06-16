@@ -89,7 +89,6 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
 import cloneDeep from "lodash.clonedeep";
-import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 
 export enum MessageType {
   Email = 0,
