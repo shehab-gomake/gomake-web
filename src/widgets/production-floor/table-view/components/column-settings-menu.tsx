@@ -15,24 +15,25 @@ import { useTranslation } from "react-i18next";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  columnOrderState,
-  columnVisibilityState,
-  allColumnKeys,
-} from "../../state/column-order";
+
 import { SecondSwitch } from "@/components";
 import React from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { updateCpaManagerMailApi } from "@/services/api-service/settings/finance-api";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ReorderIcon from "@mui/icons-material/Reorder";
+import { saveProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
+import {
+  allColumnKeys,
+  columnOrderState,
+  columnVisibilityState,
+} from "../../state/production-floor-coulmns-table-settings";
 
 interface DragItem {
   id: string;
   index: number;
 }
 
-//!here
 export const ColumnSettingsMenu = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -85,9 +86,11 @@ export const ColumnSettingsMenu = () => {
     setColumnVisibility(updatedVisibility);
 
     try {
-      await updateCpaManagerMailApi(callApi, () => {}, {
-        productionFloorColumnSettings: updatedColumns,
-      });
+      await saveProductionFloorTableSettingsApi(
+        callApi,
+        () => {},
+        updatedColumns
+      );
     } catch (error) {
       console.error("Failed to save column settings", error);
     }
@@ -154,7 +157,7 @@ export const ColumnSettingsMenu = () => {
         </Stack>
 
         <DndProvider backend={HTML5Backend}>
-          {tempColumnOrder.map((key, index) => (
+          {tempColumnOrder?.map((key, index) => (
             <DraggableMenuItem
               key={key}
               id={key}

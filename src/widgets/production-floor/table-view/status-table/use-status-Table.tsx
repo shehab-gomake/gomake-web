@@ -16,7 +16,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import {
   columnOrderState,
   columnVisibilityState,
-} from "../../state/column-order";
+} from "../../state/production-floor-coulmns-table-settings";
 
 const useStatusTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -129,6 +129,7 @@ const useStatusTable = () => {
       .filter((key) => columnVisibility[key])
       .map((key) => headerMap[key]);
   };
+
   return {
     isOpen,
     onClickStatus,

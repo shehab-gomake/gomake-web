@@ -1,8 +1,8 @@
 import { StatusTableComponent } from "@/widgets/production-floor/table-view/status-table/status-table-component";
 import { useProductionFloorTable } from "@/widgets/production-floor/table-view/use-production-floor-table";
 import Stack from "@mui/material/Stack";
-import { useEffect, useMemo } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -21,6 +21,16 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { useRouter } from "next/router";
 import { useEmployeeList } from "@/hooks/use-employee-list";
 import { useVisibleOrderedColumns } from "@/hooks/use-visible-ordered-columns";
+import {
+  allColumnKeys,
+  columnOrderState,
+  ColumnSetting,
+  columnVisibilityState,
+  parseSavedColumnSettings,
+} from "../state/production-floor-coulmns-table-settings";
+import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { Paper, Skeleton } from "@mui/material";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -137,12 +147,38 @@ const ProductionFloorTableView = ({ connectionId }) => {
   ].filter(Boolean);
 
   const router = useRouter();
+  const { callApi } = useGomakeAxios();
 
   const visibleColumns = useVisibleOrderedColumns();
+  const setColumnVisibility = useSetRecoilState(columnVisibilityState);
+  const setColumnOrder = useSetRecoilState(columnOrderState);
 
+  const [columnsReady, setColumnsReady] = useState(false);
   useEffect(() => {
-    console.log("visibleColumns are :  ", visibleColumns);
-  }, [visibleColumns]);
+    const loadColumnSettings = async () => {
+      try {
+        const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+        const saved: ColumnSetting[] = res?.data;
+
+        if (saved && saved.length > 0) {
+          const { order, visibility } = parseSavedColumnSettings(saved);
+          setColumnOrder(order);
+          setColumnVisibility(visibility);
+        } else {
+          setColumnOrder(allColumnKeys);
+          setColumnVisibility(
+            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+          );
+        }
+      } catch (e) {
+        console.error("Failed to load column settings", e);
+      } finally {
+        setColumnsReady(true);
+      }
+    };
+
+    loadColumnSettings();
+  }, []);
 
   return (
     <Stack gap={"20px"}>
@@ -185,29 +221,38 @@ const ProductionFloorTableView = ({ connectionId }) => {
         </>
       ) : (
         <>
-          {filteredDataByMachine.map((statusBoards, index) => {
-            const allBoardMissions = filteredDataByMachine.flatMap(
-              (board) => board.boardMissions
-            );
-            return (
-              <StatusTableComponent
-                key={index}
-                status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-                boards={statusBoards?.boardMissions}
-                onClickClient={getCustomerForEdit}
-                allBoardMissions={allBoardMissions}
-                setFilters={setFilters}
-                storageList={storageList}
-                inputValue={inputValue}
-                defaultValue={defaultValue}
-                addPrintHouseJobsStorage={addPrintHouseJobsStorage}
-                handleStorageChange={handleStorageChange}
-                setInputValue={setInputValue}
-                employeesCategories={employeesCategories}
-                visibleColumns={visibleColumns}
-              />
-            );
-          })}
+          {!columnsReady ? (
+            // Skeleton while loading columns
+            <Stack gap={"10px"}>
+              {[...new Array(5)].map((_) => (
+                <Skeleton variant="rounded" width={"100%"} height={60} />
+              ))}
+            </Stack>
+          ) : (
+            filteredDataByMachine.map((statusBoards, index) => {
+              const allBoardMissions = filteredDataByMachine.flatMap(
+                (board) => board.boardMissions
+              );
+              return (
+                <StatusTableComponent
+                  key={index}
+                  status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+                  boards={statusBoards?.boardMissions}
+                  onClickClient={getCustomerForEdit}
+                  allBoardMissions={allBoardMissions}
+                  setFilters={setFilters}
+                  storageList={storageList}
+                  inputValue={inputValue}
+                  defaultValue={defaultValue}
+                  addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+                  handleStorageChange={handleStorageChange}
+                  setInputValue={setInputValue}
+                  employeesCategories={employeesCategories}
+                  visibleColumns={visibleColumns}
+                />
+              );
+            })
+          )}
         </>
       )}
 
