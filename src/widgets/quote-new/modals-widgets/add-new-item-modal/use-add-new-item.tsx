@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { useRecoilState } from "recoil";
-import { quoteItemState } from "@/store";
+import { quoteItemState, selectedFirstMaterialState } from "@/store";
 import {
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
@@ -27,10 +27,9 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   const { navigate } = useGomakeRouter();
   const router = useRouter();
   const { CheckPermission } = useUserPermission();
-
+  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const [combinedData, setCombinedData] = useState<any>([]);
-  const [quoteItemValue, setQuoteItemValue] =
-    useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
 
   const [active, setActive] = useState(true);
   const [productName, setProductName] = useState("");
@@ -224,6 +223,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   };
 
   const getDocumentItemDataFromMaterial = async () => {
+    setSelectedFirstMaterial(true);
     const callBack = (res) => {
       if (res.success) {
         const selectedMaterial = res?.data;
@@ -254,7 +254,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
           newItem,
           1,
           newItem.price,
-          updatedQuoteItemValue
+          updatedQuoteItemValue,
+          true
         );
         //onClose()
         handleCloseModal();
@@ -355,20 +356,10 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   };
 
   const onClickCreateQuoteForCustomer = () => {
+    setSelectedFirstMaterial(true);
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-        // if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-        //   const updatedQuoteItemValue = { ...quoteItemValue };
-        //   const newItem = active === true ? { ...item } : { ...genericItem };
-
-        //   updatedQuoteItemValue.documentItems = [
-        //     ...updatedQuoteItemValue.documentItems,
-        //     newItem,
-        //   ];
-        //   setQuoteItemValue(updatedQuoteItemValue);
-        //   //onClose()
-        //   handleCloseModal();
-        // }
+        setSelectedFirstMaterial(true);
         getDocumentItemDataFromMaterial();
       } else {
         const updatedQuoteItemValue = { ...quoteItemValue };

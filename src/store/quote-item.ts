@@ -25,3 +25,8 @@ export const requestAbortControllerState = atom<AbortController | null>({
   key: "requestAbortControllerState",
   default: null,
 });
+
+export const selectedFirstMaterialState = atom<boolean>({
+  key: "selectedFirstMaterialState",
+  default: true,
+});
