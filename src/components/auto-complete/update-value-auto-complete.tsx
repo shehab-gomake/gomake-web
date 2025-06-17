@@ -77,14 +77,6 @@ const UpdateValueAutoComplete = ({
           <Autocomplete
             id="updateValueAutoComplete"
             options={options}
-            // !here
-            // value={
-            //   typeof value === "object"
-            //     ? value
-            //     : value
-            //     ? { id: "", value: "", text: value }
-            //     : null
-            // }
             sx={{
               ml: 1,
               flex: 1,
