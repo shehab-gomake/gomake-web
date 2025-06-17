@@ -34,7 +34,7 @@ const AddCustomerButton = ({
       />
       <Tooltip title={t("customers.emptyState.clickToAdd")} arrow>
         <AddButton
-          className={isEmpty ? "shadow-button" : ""}
+          // className={isEmpty ? "shadow-button" : ""}
           style={{ width: "fit-content", alignSelf: "flex-end" }}
           onClick={() => setOpen(!open)}
           label={
