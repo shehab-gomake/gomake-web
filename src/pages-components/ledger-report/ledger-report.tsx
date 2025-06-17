@@ -61,6 +61,8 @@ const LedgerReportWidget = ({
     erpAccountsList,
     getErpAccountsList,
     isPurchaseReport,
+    hasFetchedPaymentsOnce,
+    isLoadingPayments,
   } = useLedgerReport({ customerId, clientType });
 
   useEffect(() => {
@@ -133,6 +135,8 @@ const LedgerReportWidget = ({
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
         setClientPaymentsList={setClientPaymentsList}
+        isLoading={isLoadingPayments}
+        hasFetchedOnce={hasFetchedPaymentsOnce}
       />
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
