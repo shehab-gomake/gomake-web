@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = (isQuoteConfirmation) => {
-  const { secondColor, grayColor, theme } = useGomakeTheme();
+  const { secondColor, grayColor, theme, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const dir = t("direction");
   const classes = useMemo(() => {
@@ -33,7 +33,7 @@ const useStyle = (isQuoteConfirmation) => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 15,
+        gap: 5,
       },
       quoteStatusContainer: {
         display: "flex",
@@ -173,6 +173,22 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "center",
         width: "max-content",
         ...adaptMarginLeft(dir, 8),
+      },
+      createNewDocument: {
+        display: "inline-flex",
+        padding: "0px 12px",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "4px",
+        borderRadius: "8px",
+        border: "1px solid #2E3092",
+        background: "#FFF",
+        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        textTransform: "none" as "none",
+        color: primaryColor(600),
+        ...FONT_FAMILY.Inter(500, 14),
+        lineHeight: "18px",
+        height: "30px",
       },
     };
   }, [isQuoteConfirmation, theme]);

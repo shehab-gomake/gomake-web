@@ -333,16 +333,18 @@ const QuoteNewPageWidget = ({
     modalCallback,
     openReceiptModal,
     receiptSendModal,
+    isNewCreation,
+    renderCreateNewButton,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSocketIo({ getQuote });
+    const {} = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSocketIo({ getQuote });
+    const {} = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -401,7 +403,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -462,8 +464,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -532,7 +534,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -541,10 +543,12 @@ const QuoteNewPageWidget = ({
                         </div>
                       ) : (
                         <>
-                          {!router?.query?.isNewCreation && (
+                          {!isNewCreation && (
                             <div style={classes.quoteStatusContainer}>
                               {_renderQuoteStatus(
-                                quoteState?.documentStatus,
+                                quoteState?.[
+                                  isReceipt ? "status" : "documentStatus"
+                                ],
                                 quoteState,
                                 t
                               )}
@@ -553,7 +557,6 @@ const QuoteNewPageWidget = ({
                         </>
                       )}
                     </>
-
                     {isShowSettingIcon && (
                       <IconButton
                         style={{ marginRight: 4 }}
@@ -570,6 +573,7 @@ const QuoteNewPageWidget = ({
                         <SettingMenuIcon />
                       </IconButton>
                     )}
+                    {isReceipt && !isNewCreation && renderCreateNewButton()}
                   </div>
                 )}
               </div>
@@ -609,7 +613,7 @@ const QuoteNewPageWidget = ({
                           quoteItemValue?.isEditable
                         }
                         inputRef={creationDateRef}
-                      // preventOpenCondition={!quoteState.client}
+                        // preventOpenCondition={!quoteState.client}
                       />
                       {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                         (isQuote && !selectDate ? (
@@ -647,7 +651,7 @@ const QuoteNewPageWidget = ({
                           }}
                           isEditable={quoteItemValue?.isEditable}
                           inputRef={taxDateRef}
-                        // preventOpenCondition={!quoteState.client}
+                          // preventOpenCondition={!quoteState.client}
                         />
                       )}
                     </LocalizationProvider>
@@ -1054,18 +1058,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>
