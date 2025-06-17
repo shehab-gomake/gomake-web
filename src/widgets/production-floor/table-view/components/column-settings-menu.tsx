@@ -131,7 +131,13 @@ export const ColumnSettingsMenu = () => {
         </IconButton>
       </Tooltip>
 
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => {
+          handleCancel();
+        }}
+      >
         <Stack direction="row" justifyContent="space-between" px={1} py={1}>
           <PrimaryButton
             variant="text"
