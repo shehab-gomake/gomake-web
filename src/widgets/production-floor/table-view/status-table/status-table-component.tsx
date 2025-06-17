@@ -20,7 +20,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -41,6 +41,11 @@ import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 import { ColumnSettingsMenu } from "../components/column-settings-menu";
+import {
+  columnOrderState,
+  columnVisibilityState,
+  getCustomWidth,
+} from "../../state/production-floor-coulmns-table-settings";
 
 interface IProps {
   status: IProductionStatus;
@@ -212,29 +217,8 @@ const StatusTableComponent = ({
       : boards;
   }, [boards, search]);
 
-  const getCustomWidth = (index: number) => {
-    const widths = [
-      "3%", //  checkBox
-      "13%", //  Job / Order
-      "7%", // Delivery Date
-      "9%", // Customer
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%", // Agent
-      CheckPreferenceValue(
-        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "8%", // Product name
-      CheckPreferenceValue(
-        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "15%", // Description
-      CheckPreferenceValue(
-        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "13%", // Notes
-      "11%", // Status
-      "15%", // Current station
-      "12%", // Next station
-      "2%", // More
-    ].filter(Boolean);
-    return widths[index] || "auto";
-  };
+  const columnOrder = useRecoilValue(columnOrderState);
+  const columnVisibility = useRecoilValue(columnVisibilityState);
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -279,14 +263,19 @@ const StatusTableComponent = ({
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
                     {tableHeaders(status.id)?.map((header, index) => {
+                      const key = columnOrder.filter(
+                        (k) => columnVisibility[k]
+                      )[index];
+                      const width = getCustomWidth(key);
+
                       return (
                         <SecondaryTableCell
                           style={{
                             backgroundColor: "#F9FAFB",
                             placeItems: "center",
-                            minWidth: getCustomWidth(index),
-                            maxWidth: getCustomWidth(index),
-                            width: getCustomWidth(index),
+                            minWidth: width,
+                            maxWidth: width,
+                            width,
                             // Spread the mobile styles conditionally
                             ...(isMobileScreen && {
                               position: index <= 1 ? "sticky" : "relative",
