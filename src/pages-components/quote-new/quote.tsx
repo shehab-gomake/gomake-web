@@ -532,31 +532,34 @@ const QuoteNewPageWidget = ({
                           )}
                         />
                       )}
-                    <>
-                      {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
-                        <div
-                          style={classes.signatureApproval}
-                          onClick={onClickOpenSignatureApprovalModal}
-                        >
-                          Signature approval
-                        </div>
-                      ) : (
-                        <>
-                          {!isNewCreation && (
-                            <div style={classes.quoteStatusContainer}>
-                              {_renderQuoteStatus(
-                                quoteState?.[
-                                  isReceipt ? "status" : "documentStatus"
-                                ],
-                                quoteState,
-                                t
-                              )}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </>
+                    {isQuote && (
+                      <>
+                        {quoteItemValue?.signImageUrl &&
+                        quoteItemValue?.signerName ? (
+                          <div
+                            style={classes.signatureApproval}
+                            onClick={onClickOpenSignatureApprovalModal}
+                          >
+                            {t("sales.cart.signatureApproval")}
+                          </div>
+                        ) : (
+                          <>
+                            {!isNewCreation && (
+                              <div style={classes.quoteStatusContainer}>
+                                {_renderQuoteStatus(
+                                  quoteState?.[
+                                    isReceipt ? "status" : "documentStatus"
+                                  ],
+                                  quoteState,
+                                  t
+                                )}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+                    {isReceipt && !isNewCreation && renderCreateNewButton()}
                     {isShowSettingIcon && (
                       <IconButton
                         style={{ marginRight: 4 }}
@@ -573,10 +576,10 @@ const QuoteNewPageWidget = ({
                         <SettingMenuIcon />
                       </IconButton>
                     )}
-                    {isReceipt && !isNewCreation && renderCreateNewButton()}
                   </div>
                 )}
               </div>
+
               {isPrePaymentPage ? (
                 <div style={classes.firstBorder} />
               ) : (
