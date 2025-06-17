@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { materialsCategoriesState } from "@/store/material-categories";
 import {
-  useCustomerDropDownList,
   useGomakeAxios,
   useGomakeRouter,
   useSnackBar,
@@ -100,7 +99,6 @@ import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -142,6 +140,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false)
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
@@ -862,6 +861,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
+
               if (
                 parameter?.isHidden &&
                 // !parameter?.isHiddenInSetting &&
@@ -1089,8 +1089,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.valuesConfigs &&
                     parameter?.valuesConfigs?.length === 1 &&
                     parameter?.isRequired &&
-                    parameter?.parameterType !==
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    (parameter?.parameterType !==
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+                      parameter?.parameterCode === "FlatbedColor")
                   ) {
                     let existsSubProductParameter = subProduct?.parameters?.find(
                       (x) =>
@@ -1716,9 +1717,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
             }
             if (parameter.materialPath && parameter.materialPath.length > 0) {
-              if (parameter.name === "Rings Radius") {
-                debugger;
-              }
               if (parameter.materialPath.length == 1) {
                 const materialData = materials?.find((x) =>
                   compareStrings(x.pathName, parameter.materialPath[0])
@@ -3609,74 +3607,56 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionId: string,
     subSectionId: string,
     parameters: any[],
-    actionIndex: number
+    actionIndex: number,
+    // productTemplate: any
   ) => {
-    // Find the parameter in the productTemplate
+    // Remove ALL instances of this parameter from the parameters array
+    let found = true;
+    while (found) {
+      const paramIndex = parameters.findIndex(
+        (param) =>
+          param.parameterId === parameterId &&
+          param.actionIndex == actionIndex &&
+          param.sectionId == sectionId &&
+          param.subSectionId == subSectionId
+      );
+      if (paramIndex !== -1) {
+        parameters.splice(paramIndex, 1);
+      } else {
+        found = false;
+      }
+    }
     const productTemplateCopy = cloneDeep(productTemplate);
-    const section = productTemplateCopy.sections.find(
-      (section) => section.id === sectionId
-    );
-    const subSection = section?.subSections.find(
-      (sub) => sub.id === subSectionId
-    );
-    const deletedParameter = subSection?.parameters.find(
+    // Find the parameter definition in the template
+    const section = productTemplateCopy.sections.find((section) => section.id === sectionId);
+    const subSection = section?.subSections.find((sub) => sub.id === subSectionId);
+    const paramDef = subSection?.parameters.find(
       (param) => param.id === parameterId && param.actionIndex == actionIndex
     );
-    // Check if the deleted parameter has related parameters
-    if (deletedParameter && deletedParameter.relatedParameters) {
-      deletedParameter.relatedParameters.forEach((relatedParam) => {
-        // Remove the related parameter from the parameters array
-        const relatedIndex = parameters.findIndex(
-          (param) =>
-            param.parameterId === relatedParam.parameterId &&
-            param.actionIndex == relatedParam.actionIndex &&
-            param.sectionId == sectionId &&
-            param.subSectionId == subSectionId
+
+    // Recursively remove all parameters that this parameter is related to (down the chain)
+    if (paramDef && paramDef.relatedParameters) {
+      paramDef.relatedParameters.forEach((relatedParam) => {
+        removeRelatedParametersFromSubProducts(
+          relatedParam.parameterId,
+          sectionId,
+          subSectionId,
+          parameters,
+          relatedParam.actionIndex !== undefined ? relatedParam.actionIndex : actionIndex,
         );
-
-        if (relatedIndex !== -1) {
-          const relatedParameterId = parameters[relatedIndex].parameterId;
-
-          // Remove the related parameter
-          parameters.splice(relatedIndex, 1);
-
-          // Recursively remove related parameters for the removed parameter
-          removeRelatedParametersFromSubProducts(
-            relatedParameterId,
-            sectionId,
-            subSectionId,
-            parameters,
-            deletedParameter.actionIndex
-          );
-        }
       });
     }
-    if (deletedParameter && deletedParameter.settingParameters) {
-      deletedParameter.settingParameters.forEach((settingParam) => {
-        // Remove the setting parameter from the parameters array
-        const settingIndex = parameters.findIndex(
-          (param) =>
-            param.parameterId === settingParam.id &&
-            param.actionIndex == settingParam.actionIndex &&
-            param.sectionId == sectionId &&
-            param.subSectionId == subSectionId
+
+    // Recursively remove all setting parameters (if you want this too)
+    if (paramDef && paramDef.settingParameters) {
+      paramDef.settingParameters.forEach((settingParam) => {
+        removeRelatedParametersFromSubProducts(
+          settingParam.id,
+          sectionId,
+          subSectionId,
+          parameters,
+          settingParam.actionIndex !== undefined ? settingParam.actionIndex : actionIndex,
         );
-
-        if (settingIndex !== -1) {
-          const settingParameterId = parameters[settingIndex].parameterId;
-
-          // Remove the setting parameter
-          parameters.splice(settingIndex, 1);
-
-          // Recursively remove setting parameters for the removed parameter
-          removeRelatedParametersFromSubProducts(
-            settingParameterId,
-            sectionId,
-            subSectionId,
-            parameters,
-            deletedParameter.actionIndex
-          );
-        }
       });
     }
   };
@@ -4320,7 +4300,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           sectionId,
           subSectionId,
           temp,
-          subSectionParameter.actionIndex
+          subSectionParameter.actionIndex,
         );
       }
       if (findIndex !== -1) {
@@ -4348,14 +4328,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         } else {
           if (widgetType == EWidgetProductType.CREATE) {
-            temp.splice(findIndex, 1);
             removeRelatedParametersFromSubProducts(
               parameterId,
               sectionId,
               subSectionId,
               temp,
-              subSectionParameter.actionIndex
+              subSectionParameter.actionIndex,
             );
+            temp.splice(findIndex, 1);
           }
         }
       } else {
@@ -4392,7 +4372,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
-            // debugger;
             let values = myparameter?.valuesConfigs?.filter(
               (valueConfig) =>
                 data?.value?.values &&
@@ -4898,14 +4877,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
                   const dieCutSizesParametersArray = [];
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "Width",
-                    value: dieUnitWidth,
-                  });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "Height",
-                    value: dieUnitLength,
-                  });
+                  // dieCutSizesParametersArray.push({
+                  //   parameterCode: "Width",
+                  //   value: dieUnitWidth,
+                  // });
+                  // dieCutSizesParametersArray.push({
+                  //   parameterCode: "Height",
+                  //   value: dieUnitLength,
+                  // });
                   dieCutSizesParametersArray.push({
                     parameterCode: "DieUnitWidth",
                     value: finalUnitWidth,
@@ -5016,14 +4995,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
             const dieCutSizesParametersArray = [];
-            dieCutSizesParametersArray.push({
-              parameterCode: "Width",
-              value: dieUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "Height",
-              value: dieUnitLength,
-            });
+            // dieCutSizesParametersArray.push({
+            //   parameterCode: "Width",
+            //   value: dieUnitWidth,
+            // });
+            // dieCutSizesParametersArray.push({
+            //   parameterCode: "Height",
+            //   value: dieUnitLength,
+            // });
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitWidth",
               value: finalUnitWidth,
@@ -5087,14 +5066,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
             let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
             const dieCutSizesParametersArray = [];
-            dieCutSizesParametersArray.push({
-              parameterCode: "Width",
-              value: dieUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "Height",
-              value: dieUnitLength,
-            });
+            // dieCutSizesParametersArray.push({
+            //   parameterCode: "Width",
+            //   value: dieUnitWidth,
+            // });
+            // dieCutSizesParametersArray.push({
+            //   parameterCode: "Height",
+            //   value: dieUnitLength,
+            // });
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitWidth",
               value: finalUnitWidth,
