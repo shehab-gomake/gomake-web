@@ -235,6 +235,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     materialFilter,
     supplierId
   }) => {
+    console.log("updatedValue", updatedValue);
     if (!updatedValue || updatedValue === "") {
       alertFault(t("products.offsetPrice.admin.fillValue"));
       return;
@@ -319,7 +320,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             materialCategory,
             isAllMaterialsChecked,
             selectedMaterialsIds,
-            updatedValue,
+            updatedValue: "delete",
             uncheckedMaterials,
             rate,
             activeFilter,
