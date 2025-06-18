@@ -319,7 +319,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             materialCategory,
             isAllMaterialsChecked,
             selectedMaterialsIds,
-            updatedValue,
+            updatedValue: "delete",
             uncheckedMaterials,
             rate,
             activeFilter,
