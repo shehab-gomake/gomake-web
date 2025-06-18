@@ -861,7 +861,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-
               if (
                 parameter?.isHidden &&
                 // !parameter?.isHiddenInSetting &&
@@ -1146,7 +1145,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             x.actionIndex === parameter?.actionIndex
                         );
 
-                      if (!existsSubProductParameter) {
+                      if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
