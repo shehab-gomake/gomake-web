@@ -138,7 +138,8 @@ const PricingWidget = ({
                   : "outlined"
               }
             >
-              {t("pricingWidget.selected")}
+              {selectedWorkFlow?.tabName}
+              {/* {t("pricingWidget.selected")} */}
             </PrimaryButton>
             {calculationResult &&
               !isMobileScreen &&
@@ -153,15 +154,15 @@ const PricingWidget = ({
                   sx={classes.button}
                   variant={
                     view === EPricingViews.OTHERS_WORKFLOWS &&
-                    selectedTab?.productType === section.productType
+                      selectedTab?.productType === section.productType
                       ? "contained"
                       : "outlined"
                   }
                 >
                   {section.isNeedTranslation
                     ? t("workFlowTabs." + section.name)
-                    : section.name}{" "}
-                  ({section.count + 1})
+                    : section.name}
+                  {/* ({section.count + 1}) */}
                 </PrimaryButton>
               ))}
           </ButtonGroup>

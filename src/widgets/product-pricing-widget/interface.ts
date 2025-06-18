@@ -71,6 +71,7 @@ export interface ICalculatedWorkFlow {
   checkWhatRenderArray?: (arg: any) => void;
   setCustomer?: any;
   isFetching?: boolean;
+  tabName?: string;
 }
 
 export interface IPrintActionType {
