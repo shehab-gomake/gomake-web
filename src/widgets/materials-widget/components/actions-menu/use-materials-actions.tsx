@@ -235,7 +235,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     materialFilter,
     supplierId
   }) => {
-    console.log("updatedValue", updatedValue);
     if (!updatedValue || updatedValue === "") {
       alertFault(t("products.offsetPrice.admin.fillValue"));
       return;
