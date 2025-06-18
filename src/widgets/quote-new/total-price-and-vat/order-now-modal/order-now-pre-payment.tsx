@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const OrderNowPrePaymentModal = ({
   openModal,
@@ -22,6 +22,10 @@ const OrderNowPrePaymentModal = ({
   const [totalAmount, setTotalAmount] = useState(
     quoteItemValue?.totalPayment || 0
   );
+
+  useEffect(() => {
+    setTotalAmount(quoteItemValue?.totalPayment || 0);
+  }, [quoteItemValue?.totalPayment]);
 
   const handlePercentageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPercentage = Number(e.target.value);
