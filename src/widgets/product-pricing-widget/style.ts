@@ -73,19 +73,18 @@ const useStyle = () => {
       },
       buttonGroup: {
         borderRadius: "0px",
-        // border: "1px solid" + primaryColor(500),
         overflow: "hidden",
         display: "flex",
         flexWrap: "nowrap",
         width: "max-content",
       },
       tabsContainer: {
-        maxWidth: "800px",
         overflowX: "auto" as const,
         overflowY: "hidden" as const,
       },
       fixedOutSourceButton: {
         width: "fit-content",
+        minWidth: "fit-content",
         border: "none",
         borderRadius: 0,
 

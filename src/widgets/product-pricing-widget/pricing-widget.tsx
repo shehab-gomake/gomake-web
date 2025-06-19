@@ -119,20 +119,70 @@ const PricingWidget = ({
 
   const { updateWorkFlowForMachine, updateWorkFlowForMaterials } =
     useActionUpdateValues();
+
+  const tabs = [
+    {
+      "name": "Digital Printer #1",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": true,
+      "workflowId": "1663e0b3-581e-4f28-9510-8522bbcf328d"
+    },
+    {
+      "name": "Digital Printer #2",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #3",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #4",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #5",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+
+  ]
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
-        style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
+        gap={"16px"}
+      // style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
       >
         {!!workFlows ? (
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "67%" }} className="custom-scrollbar">
             <Box style={classes.tabsContainer}>
-              <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
+              <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"} className="custom-scrollbar">
                 {calculationResult &&
                   !isMobileScreen &&
-                  calculationResult?.tabs?.map((section, index) => (
+                  tabs?.map((section, index) => (
                     <PrimaryButton
                       key={index}
                       data-tour="allWorkflowsBtn"
@@ -179,7 +229,7 @@ const PricingWidget = ({
           direction={"row"}
           gap={"10px"}
           alignItems={"center"}
-          style={{ display: "flex", flexWrap: "wrap" }}
+          style={{ display: "flex", width: "30%", justifyContent: "flex-end" }}
         >
           {deliveryDate && (
             <Stack
