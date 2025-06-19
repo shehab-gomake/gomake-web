@@ -77,6 +77,23 @@ const useStyle = () => {
         display: "flex",
         flexWrap: "nowrap",
         width: "max-content",
+        position: "relative",
+      },
+      tabsContainerSx: {
+        "&::-webkit-scrollbar": {
+          height: "10px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#f1f1f1",
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#CBCDCF",
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#667085",
+        },
       },
       tabsContainer: {
         overflowX: "auto" as const,
@@ -87,7 +104,6 @@ const useStyle = () => {
         minWidth: "fit-content",
         border: "none",
         borderRadius: 0,
-
       },
       button: {
         minWidth: "fit-content",
