@@ -32,10 +32,12 @@ import { EPricingViews, EWorkSource } from "./enums";
 import {
   getWorkFlowsActionsApi,
   getWorkFlowsApi,
+  selectWorkflowByIdApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useRouter } from "next/router";
 
 const usePricingWidget = ({
   getOutSourcingSuppliers,
@@ -275,13 +277,17 @@ const usePricingWidget = ({
       productType: productType,
     });
   };
+  const router = useRouter();
+
+
   const handleTabClick = (productType) => {
-    setView(EPricingViews.OTHERS_WORKFLOWS);
-    setSelectedTab(productType?.name);
-    setPageSize(10);
-    setHeightScrolling(50);
-    settledWorkFlowsByTabList([]);
-    fetchWorkflows(productType, 10);
+    console.log("productType", productType);
+    // setView(EPricingViews.OTHERS_WORKFLOWS);
+    // setSelectedTab(productType?.name);
+    // setPageSize(10);
+    // setHeightScrolling(50);
+    // settledWorkFlowsByTabList([]);
+    // fetchWorkflows(productType, 10);
   };
 
   useEffect(() => {

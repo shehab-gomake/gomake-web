@@ -110,6 +110,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     setShowCalculationInCompletedModal,
     currentSignalRConnectionId,
     deliveryDate,
+    SelectWorkFlowById
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -365,6 +366,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                               workFlows={workFlows}
                               widgetType={widgetType}
                               getSelectedWorkFlow={func}
+                              SelectWorkFlowById={SelectWorkFlowById}
                               selectedWorkFlowCalculatedIsLoaded={
                                 selectedWorkFlowCalculatedIsLoaded
                               }

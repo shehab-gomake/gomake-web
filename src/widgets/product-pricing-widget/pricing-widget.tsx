@@ -44,6 +44,7 @@ const PricingWidget = ({
   getSelectedWorkFlow,
   deliveryDate,
   isMobileScreen,
+  SelectWorkFlowById
 }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -148,7 +149,9 @@ const PricingWidget = ({
                   key={index}
                   data-tour="allWorkflowsBtn"
                   onClick={() => {
-                    handleTabClick(section.productType);
+                    SelectWorkFlowById(section);
+                    console.log("section", section);
+                    // handleTabClick(section);
                     setSelectedTab(section);
                   }}
                   sx={classes.button}

@@ -101,6 +101,7 @@ import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -2312,6 +2313,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     billingMethod,
     sampleType,
   ]);
+
+  const SelectWorkFlowById = async (data) => {
+    console.log("datadatadatadatadata", data);
+    const callBack = (res) => {
+      console.log("res", res);
+      if (res?.success) {
+      } else {
+        console.error("Failed to fetch workflows");
+      }
+    };
+    await selectWorkflowByIdApi(callApi, callBack, {
+      signalRConnectionId: calculationResult.signalRConnectionId,
+      workflowId: data?.workflowId,
+      productId: router.query.productId,
+    });
+  }
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -6630,6 +6647,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setShowCalculationInCompletedModal,
     currentSignalRConnectionId,
     deliveryDate,
+    SelectWorkFlowById
   };
 };
 
