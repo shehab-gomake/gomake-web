@@ -72,17 +72,33 @@ const useStyle = () => {
         color: "white",
       },
       buttonGroup: {
-        borderRadius: "5px",
-        border: "1px solid" + primaryColor(500),
+        borderRadius: "0px",
+        // border: "1px solid" + primaryColor(500),
         overflow: "hidden",
-        // width: "400px",
+        display: "flex",
+        flexWrap: "nowrap",
+        width: "max-content",
+      },
+      tabsContainer: {
+        maxWidth: "800px",
+        overflowX: "auto" as const,
+        overflowY: "hidden" as const,
+      },
+      fixedOutSourceButton: {
+        width: "fit-content",
+        border: "none",
+        borderRadius: 0,
+
       },
       button: {
-        width: "fit-content",
+        minWidth: "fit-content",
         borderRadius: 0,
         border: 0,
+        whiteSpace: "nowrap",
+        
         "&:hover": {
-          width: "fit-content",
+          minWidth: "fit-content",
+          flex: "1 1 auto",
           borderRadius: 0,
           border: 0,
         },

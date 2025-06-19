@@ -393,7 +393,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculatedPriceProductItemValueState
   );
 
-  const _setDataFromSelectedWorkFlow = (res, calculationSessionId?) => {
+  const _setDataFromSelectedWorkFlow = (res, calculationSessionId?, isOneData?) => {
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -410,7 +410,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return;
     }
     setLoading(false);
-    const result = res?.data?.data?.data;
+    const result = isOneData ? res?.data : res?.data?.data?.data;
     if (result.productItemValueDraftId === calculationSessionId) {
       const responseConnectionId = result?.signalRConnectionId;
       setShowCalculationInCompletedAlert(
@@ -488,9 +488,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const res: any = await callApi("GET", url, {}, false);
     const result = res?.data?.data?.data;
     setDeliveryDate(result);
-    // setWorkFlows(result.productItemValue.workFlows);
-
-    // _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -2316,13 +2313,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const SelectWorkFlowById = async (data) => {
     const callBack = (res) => {
-      getSelectedWorkFlow(
-        calculationResult.signalRConnectionId,
-        calculationResult?.isNeedPriceUpdate
-      );
+
       if (res?.success) {
+        _setDataFromSelectedWorkFlow(res, currentCalculationSessionId, true);
       } else {
-        console.error("Failed to fetch workflows");
+        alertFault(res?.message);
       }
     };
     await selectWorkflowByIdApi(callApi, callBack, {

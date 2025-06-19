@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, Divider } from "@mui/material";
+import { Stack, ButtonGroup, Divider, Box } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
@@ -126,46 +126,52 @@ const PricingWidget = ({
         justifyContent={"space-between"}
         style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
       >
-        {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
-          <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
-            {/* <PrimaryButton
+        {!!workFlows ? (
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", }}>
+            <Box style={classes.tabsContainer}>
+              <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
+                {calculationResult &&
+                  !isMobileScreen &&
+                  calculationResult?.tabs?.map((section, index) => (
+                    <PrimaryButton
+                      key={index}
+                      data-tour="allWorkflowsBtn"
+                      onClick={() => {
+                        SelectWorkFlowById(section);
+                        if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
+                          setView(EPricingViews.SELECTED_WORKFLOW);
+                        }
+                        setSelectedTab(section);
+
+                      }}
+                      sx={classes.button}
+                      variant={
+                        section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
+                          ? "contained"
+                          : "outlined"
+                      }
+                    >
+                      {section.isNeedTranslation
+                        ? t("workFlowTabs." + section.name)
+                        : section.name}
+                    </PrimaryButton>
+                  ))}
+              </ButtonGroup>
+
+            </Box>
+            <PrimaryButton
+              style={classes.fixedOutSourceButton}
+              variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
-                setView(EPricingViews.SELECTED_WORKFLOW);
-                settledWorkFlowsByTabList([]);
+                setSelectedWorkFlowCalculatedIsLoaded(true);
+                setView(EPricingViews.OUTSOURCE_WORKFLOW);
+                updateProductItemValue(EWorkSource.OUT);
+                setIsChangeView(false);
               }}
-              sx={classes.button}
-              variant={
-                view === EPricingViews.SELECTED_WORKFLOW
-                  ? "contained"
-                  : "outlined"
-              }
             >
-              {selectedWorkFlow?.tabName}
-            </PrimaryButton> */}
-            {calculationResult &&
-              !isMobileScreen &&
-              calculationResult?.tabs?.map((section, index) => (
-                <PrimaryButton
-                  key={index}
-                  data-tour="allWorkflowsBtn"
-                  onClick={() => {
-                    SelectWorkFlowById(section);
-                    // handleTabClick(section);
-                    setSelectedTab(section);
-                  }}
-                  sx={classes.button}
-                  variant={
-                    section.isSelected
-                      ? "contained"
-                      : "outlined"
-                  }
-                >
-                  {section.isNeedTranslation
-                    ? t("workFlowTabs." + section.name)
-                    : section.name}
-                </PrimaryButton>
-              ))}
-          </ButtonGroup>
+              Out Source
+            </PrimaryButton>
+          </div>
         ) : (
           <div />
         )}
@@ -221,7 +227,7 @@ const PricingWidget = ({
               )}
           </PermissionCheck>
 
-          <InOutSourceSelect
+          {/* <InOutSourceSelect
             onChange={(v: EWorkSource) => {
               setSelectedWorkFlowCalculatedIsLoaded(true);
               setView(
@@ -245,7 +251,7 @@ const PricingWidget = ({
                 ? EWorkSource.OUT
                 : EWorkSource.INTERNAL
             }
-          />
+          /> */}
         </Stack>
       </Stack>
 

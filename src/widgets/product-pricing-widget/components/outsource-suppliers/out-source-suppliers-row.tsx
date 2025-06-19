@@ -84,7 +84,6 @@ const OutSourceSuppliersRowComponent = ({
 
   const calculationResult = useRecoilValue(calculationResultState);
   useEffect(() => {
-    debugger;
     if (options?.length > 0) {
       const isEditOrDuplicate =
         widgetType === EWidgetProductType.EDIT ||
@@ -324,7 +323,7 @@ const OutSourceSupplierRow = ({
             label={t("pricingWidget.endTime")}
             value={
               Array.isArray(action?.totalProductionTime?.outSourceValues) &&
-              action?.totalProductionTime?.outSourceValues.length > 0
+                action?.totalProductionTime?.outSourceValues.length > 0
                 ? action?.totalProductionTime?.outSourceValues[0]
                 : 0
             }
@@ -345,7 +344,7 @@ const OutSourceSupplierRow = ({
             label={t("pricingWidget.cost")}
             value={
               Array.isArray(action?.totalCost?.outSourceValues) &&
-              action?.totalCost?.outSourceValues.length > 0
+                action?.totalCost?.outSourceValues.length > 0
                 ? action?.totalCost?.outSourceValues[0]
                 : 0
             }
@@ -362,7 +361,7 @@ const OutSourceSupplierRow = ({
             label={t("pricingWidget.profit")}
             value={
               Array.isArray(action?.profit?.outSourceValues) &&
-              action?.profit?.outSourceValues.length > 0
+                action?.profit?.outSourceValues.length > 0
                 ? action?.profit?.outSourceValues[0]
                 : 0
             }
@@ -381,7 +380,7 @@ const OutSourceSupplierRow = ({
             label={t("pricingWidget.finalPrice")}
             value={
               Array.isArray(action?.totalPrice?.outSourceValues) &&
-              action?.totalPrice?.outSourceValues.length > 0
+                action?.totalPrice?.outSourceValues.length > 0
                 ? action?.totalPrice?.outSourceValues[0]
                 : 0
             }
@@ -468,9 +467,9 @@ const EditableValue = ({
           style={
             valueColor
               ? {
-                  ...classes.detailValue,
-                  color: valueColor,
-                }
+                ...classes.detailValue,
+                color: valueColor,
+              }
               : classes.detailValue
           }
         >{`${value} ${unit}`}</Button>
@@ -534,9 +533,9 @@ const EditableSelect = ({
           style={
             valueColor
               ? {
-                  ...classes.detailValue,
-                  color: valueColor,
-                }
+                ...classes.detailValue,
+                color: valueColor,
+              }
               : classes.detailValue
           }
         >{`${value}`}</Button>
