@@ -2315,9 +2315,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   const SelectWorkFlowById = async (data) => {
-    console.log("datadatadatadatadata", data);
     const callBack = (res) => {
-      console.log("res", res);
+      getSelectedWorkFlow(
+        calculationResult.signalRConnectionId,
+        calculationResult?.isNeedPriceUpdate
+      );
       if (res?.success) {
       } else {
         console.error("Failed to fetch workflows");

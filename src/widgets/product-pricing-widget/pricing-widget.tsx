@@ -100,6 +100,7 @@ const PricingWidget = ({
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
+  console.log("calculationResult", calculationResult);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
 
@@ -127,7 +128,7 @@ const PricingWidget = ({
       >
         {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
           <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
-            <PrimaryButton
+            {/* <PrimaryButton
               onClick={() => {
                 setView(EPricingViews.SELECTED_WORKFLOW);
                 settledWorkFlowsByTabList([]);
@@ -140,8 +141,7 @@ const PricingWidget = ({
               }
             >
               {selectedWorkFlow?.tabName}
-              {/* {t("pricingWidget.selected")} */}
-            </PrimaryButton>
+            </PrimaryButton> */}
             {calculationResult &&
               !isMobileScreen &&
               calculationResult?.tabs?.map((section, index) => (
@@ -150,14 +150,12 @@ const PricingWidget = ({
                   data-tour="allWorkflowsBtn"
                   onClick={() => {
                     SelectWorkFlowById(section);
-                    console.log("section", section);
                     // handleTabClick(section);
                     setSelectedTab(section);
                   }}
                   sx={classes.button}
                   variant={
-                    view === EPricingViews.OTHERS_WORKFLOWS &&
-                      selectedTab?.productType === section.productType
+                    section.isSelected
                       ? "contained"
                       : "outlined"
                   }
@@ -165,7 +163,6 @@ const PricingWidget = ({
                   {section.isNeedTranslation
                     ? t("workFlowTabs." + section.name)
                     : section.name}
-                  {/* ({section.count + 1}) */}
                 </PrimaryButton>
               ))}
           </ButtonGroup>

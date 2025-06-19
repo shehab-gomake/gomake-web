@@ -281,7 +281,6 @@ const usePricingWidget = ({
 
 
   const handleTabClick = (productType) => {
-    console.log("productType", productType);
     // setView(EPricingViews.OTHERS_WORKFLOWS);
     // setSelectedTab(productType?.name);
     // setPageSize(10);
