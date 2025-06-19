@@ -41,12 +41,18 @@ const MaterialMenuWidget = ({
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
+    isUnderLine: boolean;
+    text: string;
+    icon: string;
   } | null>(actionMenuState);
   const onClickActionModal = () => {
     setSelectedMaterialIdForUpdate(dataRow.id);
     setAction({
-      key: "Duplicate",
-      action: 10,
+      "key": "Duplicate",
+      "isUnderLine": false,
+      "text": "Duplicate",
+      "icon": "duplicate",
+      "action": EMaterialsActions.Duplicate
     });
   };
   return (

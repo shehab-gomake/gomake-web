@@ -266,7 +266,13 @@ const ActionMenu = (props: IActionMenuProps) => {
                   onChange={(e) => onTextInputChange(e.target.value)}
                   value={updatedValue}
                   type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
-                  style={{ height: 40 }}
+                  style={{
+                    height: "100%",
+                    borderBottom: !updatedValue ? "1px solid red" : "1px solid blue",
+                    boxShadow: "none",
+                    WebkitBoxShadow: "none",
+
+                  }}
                 />
               </div>
 

@@ -295,12 +295,10 @@ const OutSourceSupplierRow = ({
             value={customer?.name ?? t("sales.quote.chooseSupplier")}
             loading={isFetching}
             onChange={(e, v) => handleSupplierUpdate(v?.id, action?.id)}
-            isFromCartPage={true}
             isUpdate={isUpdateBusinessName}
             setIsUpdate={setIsUpdateBusinessName}
             onBlur={onBlurBusinessName}
           />
-
           {/*<EditableSelect
                 isEditable={true}
                 label={t("suppliers.supplierName")}
