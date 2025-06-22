@@ -44,3 +44,22 @@ export const parseSavedColumnSettings = (
   const order = settings.map((s) => s.key);
   return { visibility, order };
 };
+
+export const columnWidthsMap: Record<string, string> = {
+  checkbox: "3%",
+  job_order: "13%",
+  deliveryDate: "7%",
+  customer: "9%",
+  agent: "9%",
+  productName: "8%",
+  description: "15%",
+  notes: "13%",
+  status: "11%",
+  currentStation: "15%",
+  nextStation: "12%",
+  more: "2%",
+};
+
+export const getCustomWidth = (key: string): string => {
+  return columnWidthsMap[key] ?? "auto";
+};
