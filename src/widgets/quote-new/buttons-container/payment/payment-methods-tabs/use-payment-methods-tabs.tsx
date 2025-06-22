@@ -501,7 +501,6 @@ const usePaymentMethodsTabs = () => {
     return messages;
   };
 
-  //!here
   const onClickMakePayment = async (handleSaveAndClose, isPinPadUsed) => {
     if (isFirstWidget) {
       const errorMessages = validateCreditCardForm();
