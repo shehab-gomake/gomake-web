@@ -89,6 +89,9 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 import cloneDeep from "lodash.clonedeep";
+import { Button } from "@mui/material";
+import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
+import { useStyle } from "./style";
 
 export enum MessageType {
   Email = 0,
@@ -107,6 +110,10 @@ const useQuoteNew = ({
   isPrePaymentPage = false,
 }: IQuoteProps) => {
   const documentPath = DOCUMENT_TYPE[docType];
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
+  const { classes } = useStyle(false);
 
   const {
     alertSuccessUpdate,
@@ -126,7 +133,6 @@ const useQuoteNew = ({
   const { callApi } = useGomakeAxios();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
-  const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -2397,6 +2403,29 @@ const useQuoteNew = ({
     });
   };
 
+  const renderCreateNewButton = () => (
+    <Button
+      sx={{
+        ...classes.createNewDocument,
+        "& .MuiButton-startIcon": {
+          ...(RTL
+            ? { marginLeft: "4px", marginRight: 0 }
+            : { marginRight: "4px", marginLeft: 0 }),
+        },
+      }}
+      onClick={() =>
+        navigate(
+          isOutgoingPayments
+            ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+            : `/${documentPath}?isNewCreation=true`
+        )
+      }
+      startIcon={<PlusIcon />}
+    >
+      {t("sales.quote.createNew")}
+    </Button>
+  );
+
   return {
     dateRef,
     taxDateRef,
@@ -2652,6 +2681,8 @@ const useQuoteNew = ({
     modalCallback,
     openReceiptModal,
     receiptSendModal,
+    renderCreateNewButton,
+    isNewCreation,
   };
 };
 
