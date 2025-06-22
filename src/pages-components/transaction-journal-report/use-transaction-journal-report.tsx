@@ -62,6 +62,7 @@ const useTransactionJournalReport = ({
   clientType,
 }: TransactionJournalReportWidgetProps) => {
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
+  const isDailyReport = reportType === EReportType.DailyPayments;
 
   const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
     useSnackBar();
@@ -71,8 +72,10 @@ const useTransactionJournalReport = ({
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
+
+  const defaultStartDate = isDailyReport ? new Date() : undefined;
   const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("transaction-journal-report-date")
+    initialFromDate("transaction-journal-report-date", defaultStartDate)
   );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
