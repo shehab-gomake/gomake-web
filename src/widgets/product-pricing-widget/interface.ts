@@ -20,6 +20,7 @@ export interface IPricingWidgetProps {
   setSelectedWorkFlowCalculatedIsLoaded?: any;
   isMobileScreen?: boolean;
   deliveryDate?: any;
+  SelectWorkFlowById?: any;
 }
 
 export interface IPricingAction {
@@ -71,6 +72,7 @@ export interface ICalculatedWorkFlow {
   checkWhatRenderArray?: (arg: any) => void;
   setCustomer?: any;
   isFetching?: boolean;
+  tabName?: string;
 }
 
 export interface IPrintActionType {

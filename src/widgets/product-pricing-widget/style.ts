@@ -72,17 +72,48 @@ const useStyle = () => {
         color: "white",
       },
       buttonGroup: {
-        borderRadius: "5px",
-        border: "1px solid" + primaryColor(500),
+        borderRadius: "0px",
         overflow: "hidden",
-        // width: "400px",
+        display: "flex",
+        flexWrap: "nowrap",
+        width: "max-content",
+        position: "relative",
+      },
+      tabsContainerSx: {
+        "&::-webkit-scrollbar": {
+          height: "10px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#f1f1f1",
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#CBCDCF",
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#667085",
+        },
+      },
+      tabsContainer: {
+        overflowX: "auto" as const,
+        overflowY: "hidden" as const,
+      },
+      fixedOutSourceButton: {
+        width: "fit-content",
+        minWidth: "fit-content",
+        border: "none",
+        borderRadius: 0,
       },
       button: {
-        width: "fit-content",
+        minWidth: "fit-content",
         borderRadius: 0,
         border: 0,
+        whiteSpace: "nowrap",
+        
         "&:hover": {
-          width: "fit-content",
+          minWidth: "fit-content",
+          flex: "1 1 auto",
           borderRadius: 0,
           border: 0,
         },

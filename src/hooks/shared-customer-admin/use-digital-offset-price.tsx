@@ -100,7 +100,9 @@ import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -395,7 +397,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculatedPriceProductItemValueState
   );
 
-  const _setDataFromSelectedWorkFlow = (res, calculationSessionId?) => {
+  const _setDataFromSelectedWorkFlow = (res, calculationSessionId?, isOneData?) => {
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -412,7 +414,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return;
     }
     setLoading(false);
-    const result = res?.data?.data?.data;
+    const result = isOneData ? res?.data : res?.data?.data?.data;
     if (result.productItemValueDraftId === calculationSessionId) {
       const responseConnectionId = result?.signalRConnectionId;
       setShowCalculationInCompletedAlert(
@@ -495,9 +497,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const res: any = await callApi("GET", url, {}, false);
     const result = res?.data?.data?.data;
     setDeliveryDate(result);
-    // setWorkFlows(result.productItemValue.workFlows);
-
-    // _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -2322,6 +2321,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     billingMethod,
     sampleType,
   ]);
+
+  const SelectWorkFlowById = async (data) => {
+    const callBack = (res) => {
+
+      if (res?.success) {
+        _setDataFromSelectedWorkFlow(res, currentCalculationSessionId, true);
+      } else {
+        alertFault(res?.message);
+      }
+    };
+    await selectWorkflowByIdApi(callApi, callBack, {
+      signalRConnectionId: calculationResult.signalRConnectionId,
+      workflowId: data?.workflowId,
+      productId: router.query.productId,
+    });
+  }
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -6644,6 +6659,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setShowCalculationInCompletedModal,
     currentSignalRConnectionId,
     deliveryDate,
+    SelectWorkFlowById
   };
 };
 

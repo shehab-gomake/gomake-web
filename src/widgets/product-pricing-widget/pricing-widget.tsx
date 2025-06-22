@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, Divider } from "@mui/material";
+import { Stack, ButtonGroup, Divider, Box } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
@@ -20,7 +20,7 @@ import {
   openModalMachineState,
   openModalMaterialState,
 } from "./state";
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeDeleteModal } from "@/components";
@@ -34,6 +34,7 @@ import { _renderDeliveryDate } from "@/utils/helpers";
 import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
 import { useActionUpdateValues } from "./components/action/use-action-update-values";
+import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/components/icons/arrow-icon";
 
 const PricingWidget = ({
   workFlows,
@@ -44,6 +45,7 @@ const PricingWidget = ({
   getSelectedWorkFlow,
   deliveryDate,
   isMobileScreen,
+  SelectWorkFlowById
 }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -99,6 +101,7 @@ const PricingWidget = ({
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
+  console.log("calculationResult", calculationResult);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
 
@@ -117,54 +120,240 @@ const PricingWidget = ({
 
   const { updateWorkFlowForMachine, updateWorkFlowForMaterials } =
     useActionUpdateValues();
+
+  const tabs = [
+    {
+      "name": "Digital Printer #1",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": true,
+      "workflowId": "1663e0b3-581e-4f28-9510-8522bbcf328d"
+    },
+    {
+      "name": "Digital Printer #2",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #3",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #4",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #5",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #6",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #7",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+    {
+      "name": "Digital Printer #8",
+      "count": 1,
+      "productType": null,
+      "isNeedTranslation": false,
+      "isRecommendedBySystem": false,
+      "isSelected": false,
+      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
+    },
+
+  ]
+
+  const buttonGroupRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollButtons = () => {
+    if (buttonGroupRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = buttonGroupRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollButtons();
+    const buttonGroup = buttonGroupRef.current;
+    if (buttonGroup) {
+      buttonGroup.addEventListener('scroll', checkScrollButtons);
+      return () => buttonGroup.removeEventListener('scroll', checkScrollButtons);
+    }
+  }, [tabs]);
+
+  const scrollToStart = () => {
+    if (buttonGroupRef.current) {
+      buttonGroupRef.current.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollToEnd = () => {
+    if (buttonGroupRef.current) {
+      buttonGroupRef.current.scrollTo({
+        left: buttonGroupRef.current.scrollWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
-        style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
+        gap={"16px"}
+      // style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
       >
-        {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
-          <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
+        {!!workFlows ? (
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "67%" }}  >
+            {canScrollLeft && (
+              <div
+                onClick={scrollToStart}
+                style={{
+                  cursor: "pointer",
+                  padding: "6px",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e0e0e0",
+                  minWidth: "36px",
+                  height: "36px",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  marginBottom: "10px",
+                  marginRight: "5px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f8f9fa";
+                  e.currentTarget.style.borderColor = "#d0d7de";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                  e.currentTarget.style.borderColor = "#e0e0e0";
+                }}
+              >
+                <HeaderLeftArrowIcon />
+              </div>
+            )}
+            <Box sx={classes.tabsContainerSx} style={classes.tabsContainer} ref={buttonGroupRef} >
+
+              <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}  >
+                {calculationResult &&
+                  !isMobileScreen &&
+                  calculationResult?.tabs?.map((section, index) => (
+                    <PrimaryButton
+                      key={index}
+                      data-tour="allWorkflowsBtn"
+                      onClick={() => {
+                        SelectWorkFlowById(section);
+                        if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
+                          setView(EPricingViews.SELECTED_WORKFLOW);
+                        }
+                        setSelectedTab(section);
+
+                      }}
+                      sx={classes.button}
+                      variant={
+                        section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
+                          ? "contained"
+                          : "outlined"
+                      }
+                    >
+                      {section.isNeedTranslation
+                        ? t("workFlowTabs." + section.name)
+                        : section.name}
+                    </PrimaryButton>
+                  ))}
+              </ButtonGroup>
+
+            </Box>
             <PrimaryButton
+              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px" }}
+              variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
-                setView(EPricingViews.SELECTED_WORKFLOW);
-                settledWorkFlowsByTabList([]);
+                setSelectedWorkFlowCalculatedIsLoaded(true);
+                setView(EPricingViews.OUTSOURCE_WORKFLOW);
+                updateProductItemValue(EWorkSource.OUT);
+                setIsChangeView(false);
               }}
-              sx={classes.button}
-              variant={
-                view === EPricingViews.SELECTED_WORKFLOW
-                  ? "contained"
-                  : "outlined"
-              }
             >
-              {t("pricingWidget.selected")}
+              Out Source
             </PrimaryButton>
-            {calculationResult &&
-              !isMobileScreen &&
-              calculationResult?.tabs?.map((section, index) => (
-                <PrimaryButton
-                  key={index}
-                  data-tour="allWorkflowsBtn"
-                  onClick={() => {
-                    handleTabClick(section.productType);
-                    setSelectedTab(section);
-                  }}
-                  sx={classes.button}
-                  variant={
-                    view === EPricingViews.OTHERS_WORKFLOWS &&
-                    selectedTab?.productType === section.productType
-                      ? "contained"
-                      : "outlined"
-                  }
-                >
-                  {section.isNeedTranslation
-                    ? t("workFlowTabs." + section.name)
-                    : section.name}{" "}
-                  ({section.count + 1})
-                </PrimaryButton>
-              ))}
-          </ButtonGroup>
+            {/* Right Arrow Button */}
+            {canScrollRight && (
+              <div
+                onClick={scrollToEnd}
+                style={{
+                  cursor: "pointer",
+                  padding: "6px",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #e0e0e0",
+                  minWidth: "36px",
+                  height: "36px",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  marginBottom: "10px",
+                  marginLeft: "5px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f8f9fa";
+                  e.currentTarget.style.borderColor = "#d0d7de";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                  e.currentTarget.style.borderColor = "#e0e0e0";
+                }}
+              >
+                <HeaderRightArrowIcon />
+              </div>
+            )}
+          </div>
         ) : (
           <div />
         )}
@@ -172,7 +361,7 @@ const PricingWidget = ({
           direction={"row"}
           gap={"10px"}
           alignItems={"center"}
-          style={{ display: "flex", flexWrap: "wrap" }}
+          style={{ display: "flex", width: "30%", justifyContent: "flex-end" }}
         >
           {deliveryDate && (
             <Stack
@@ -220,7 +409,7 @@ const PricingWidget = ({
               )}
           </PermissionCheck>
 
-          <InOutSourceSelect
+          {/* <InOutSourceSelect
             onChange={(v: EWorkSource) => {
               setSelectedWorkFlowCalculatedIsLoaded(true);
               setView(
@@ -244,7 +433,7 @@ const PricingWidget = ({
                 ? EWorkSource.OUT
                 : EWorkSource.INTERNAL
             }
-          />
+          /> */}
         </Stack>
       </Stack>
 
