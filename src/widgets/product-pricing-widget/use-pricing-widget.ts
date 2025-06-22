@@ -32,10 +32,12 @@ import { EPricingViews, EWorkSource } from "./enums";
 import {
   getWorkFlowsActionsApi,
   getWorkFlowsApi,
+  selectWorkflowByIdApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useRouter } from "next/router";
 
 const usePricingWidget = ({
   getOutSourcingSuppliers,
@@ -61,9 +63,11 @@ const usePricingWidget = ({
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+  console.log("selectedWorkFlow", selectedWorkFlow);
   const productItemValueByEdit = useRecoilValue<any>(
     productItemValueByEditState
   );
+  console.log("view", view);
   const [pageSize, setPageSize] = useState(10);
   const [heightScrolling, setHeightScrolling] = useState(50);
   const [isChangeView, setIsChangeView] = useState(true);
@@ -160,13 +164,13 @@ const usePricingWidget = ({
     getOutSourcingSuppliers();
   }, []);
 
-  useEffect(() => {
-    if (productItemValueByEdit?.sourceType === EWorkSource.OUT) {
-      setView(EPricingViews.OUTSOURCE_WORKFLOW);
-    } else if (productItemValueByEdit?.sourceType === EWorkSource.INTERNAL) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-  }, [productItemValueByEdit]);
+  // useEffect(() => {
+  //   if (productItemValueByEdit?.sourceType === EWorkSource.OUT) {
+  //     setView(EPricingViews.OUTSOURCE_WORKFLOW);
+  //   } else if (productItemValueByEdit?.sourceType === EWorkSource.INTERNAL) {
+  //     setView(EPricingViews.SELECTED_WORKFLOW);
+  //   }
+  // }, [productItemValueByEdit]);
 
   useEffect(() => {
     if (!selectedWorkFlow) {
@@ -275,13 +279,16 @@ const usePricingWidget = ({
       productType: productType,
     });
   };
+  const router = useRouter();
+
+
   const handleTabClick = (productType) => {
-    setView(EPricingViews.OTHERS_WORKFLOWS);
-    setSelectedTab(productType?.name);
-    setPageSize(10);
-    setHeightScrolling(50);
-    settledWorkFlowsByTabList([]);
-    fetchWorkflows(productType, 10);
+    // setView(EPricingViews.OTHERS_WORKFLOWS);
+    // setSelectedTab(productType?.name);
+    // setPageSize(10);
+    // setHeightScrolling(50);
+    // settledWorkFlowsByTabList([]);
+    // fetchWorkflows(productType, 10);
   };
 
   useEffect(() => {
