@@ -101,7 +101,6 @@ const PricingWidget = ({
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
-  console.log("calculationResult", calculationResult);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
 
@@ -120,82 +119,6 @@ const PricingWidget = ({
 
   const { updateWorkFlowForMachine, updateWorkFlowForMaterials } =
     useActionUpdateValues();
-
-  const tabs = [
-    {
-      "name": "Digital Printer #1",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": true,
-      "workflowId": "1663e0b3-581e-4f28-9510-8522bbcf328d"
-    },
-    {
-      "name": "Digital Printer #2",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #3",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #4",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #5",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #6",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #7",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #8",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-
-  ]
 
   const buttonGroupRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -216,7 +139,7 @@ const PricingWidget = ({
       buttonGroup.addEventListener('scroll', checkScrollButtons);
       return () => buttonGroup.removeEventListener('scroll', checkScrollButtons);
     }
-  }, [tabs]);
+  }, [calculationResult?.tabs]);
 
   const scrollToStart = () => {
     if (buttonGroupRef.current) {
@@ -295,6 +218,10 @@ const PricingWidget = ({
 
                       }}
                       sx={classes.button}
+                      style={{
+                        letterSpacing: "0em",
+                        transition: "0s",
+                      }}
                       variant={
                         section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
                           ? "contained"
@@ -310,7 +237,7 @@ const PricingWidget = ({
 
             </Box>
             <PrimaryButton
-              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px" }}
+              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px", letterSpacing: "0em", transition: "0s" }}
               variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
                 setSelectedWorkFlowCalculatedIsLoaded(true);
@@ -318,6 +245,7 @@ const PricingWidget = ({
                 updateProductItemValue(EWorkSource.OUT);
                 setIsChangeView(false);
               }}
+
             >
               Out Source
             </PrimaryButton>
