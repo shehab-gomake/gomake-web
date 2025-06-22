@@ -543,10 +543,10 @@ const ActionContainerComponent = ({
 
   const mappedSuppliers = renderOptions
     ? renderOptions()?.map((supplier) => ({
-        text: supplier?.name,
-        id: supplier?.id,
-        ...supplier,
-      }))
+      text: supplier?.name,
+      id: supplier?.id,
+      ...supplier,
+    }))
     : [];
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
@@ -681,7 +681,8 @@ const ActionContainerComponent = ({
                                       v?.value,
                                       actionId,
                                       productType,
-                                      actionIndex
+                                      actionIndex,
+                                      v?.label
                                     );
                                     setAttributesData({
                                       actionId,
@@ -829,9 +830,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                      0,
-                                      20
-                                    ) + "..."
+                                    0,
+                                    20
+                                  ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -852,7 +853,8 @@ const ActionContainerComponent = ({
                                   v?.value,
                                   actionId,
                                   productType,
-                                  actionIndex
+                                  actionIndex,
+                                  v?.label
                                 );
                                 setAttributesData({
                                   actionId,
@@ -925,7 +927,8 @@ const ActionContainerComponent = ({
                                   v?.id,
                                   actionId,
                                   productType,
-                                  actionIndex
+                                  actionIndex,
+                                  v?.label
                                 );
                                 setAttributesData({
                                   actionId,
@@ -1017,17 +1020,16 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${
-                              source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                    calculateOutSourceProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                                : formatValueWithUnit(
-                                    calculateProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                            })`}
+                            {`(${source === EWorkSource.OUT
+                              ? formatValueWithUnit(
+                                calculateOutSourceProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              : formatValueWithUnit(
+                                calculateProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              })`}
                           </span>
                         </Stack>
                       )}
