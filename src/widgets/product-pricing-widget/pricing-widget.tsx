@@ -282,7 +282,7 @@ const PricingWidget = ({
               <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}  >
                 {calculationResult &&
                   !isMobileScreen &&
-                  tabs?.map((section, index) => (
+                  calculationResult?.tabs?.map((section, index) => (
                     <PrimaryButton
                       key={index}
                       data-tour="allWorkflowsBtn"
