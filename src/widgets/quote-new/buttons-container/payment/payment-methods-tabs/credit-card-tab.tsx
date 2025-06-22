@@ -8,6 +8,8 @@ import { GoMakeAutoComplate } from "@/components";
 import { useEffect } from "react";
 import { adaptPaddingRight } from "@/utils/adapter";
 import { getItem, setItem } from "@/services/storage-data";
+import { error } from "console";
+import { Stack } from "@mui/material";
 
 const CreditCardTab = ({
   firstWidget,
@@ -43,6 +45,9 @@ const CreditCardTab = ({
     pinPadsOptions,
     dir,
     setCreditCard,
+    errors,
+    validateCreditCardForm,
+    alertFault,
   } = usePaymentMethodsTabs();
 
   useEffect(() => {
@@ -110,9 +115,18 @@ const CreditCardTab = ({
       )}
       {!transactionSelected && (
         <div style={classes.mainContainer}>
+          {/* !here first */}
           {firstWidget && (
             <div style={classes.firstWidgetStyle}>
-              <div style={classes.creditCardInputsContainer}>
+              <div
+                style={{
+                  ...classes.creditCardInputsContainer,
+                  border:
+                    errors.cardNumber || errors.cvv || errors.expDate_MMYY
+                      ? "1.5px solid red"
+                      : classes.creditCardInputsContainer.border,
+                }}
+              >
                 <CreditCardIcon sx={{ color: "#2e3092" }} />
                 <input
                   {...getCardNumberProps({ onChange: handleCardNumberChange })}
@@ -156,9 +170,15 @@ const CreditCardTab = ({
                     handleChangeInputs("holderID", e.target.value)
                   }
                 />
+                {/* <Stack style={{ width: "45%" }}> */}
                 <input
                   key={"Total-1"}
-                  style={classes.creditSecondCardInputs}
+                  style={{
+                    ...classes.creditSecondCardInputs,
+                    border: errors.transactionSum
+                      ? "1.5px solid red"
+                      : classes.creditCardInputsContainer.border,
+                  }}
                   placeholder="Total"
                   value={totalCreditCard}
                   onChange={(e) => {
@@ -168,6 +188,11 @@ const CreditCardTab = ({
                   readOnly={isTransacted}
                   type="number"
                 />
+                {/* !here new idea */}
+                {/* {errors.transactionSum && (
+                    <h6 style={{ color: "red" }}>{errors.transactionSum}</h6>
+                  )}
+                </Stack> */}
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
@@ -197,7 +222,12 @@ const CreditCardTab = ({
                   }
                 />
                 <input
-                  style={classes.creditSecondCardInputs}
+                  style={{
+                    ...classes.creditSecondCardInputs,
+                    border: errors.customerEmail
+                      ? "1.5px solid red"
+                      : classes.creditCardInputsContainer.border,
+                  }}
                   placeholder="Email"
                   value={creditCard?.customerEmail}
                   onChange={(e) =>
@@ -294,6 +324,7 @@ const CreditCardTab = ({
               </div>
             </div>
           )}
+          {/* !here second */}
           {thirdWidget && (
             <div style={classes.firstWidgetStyle}>
               <div style={classes.creditCardSecondInputsContainer}>
@@ -315,7 +346,13 @@ const CreditCardTab = ({
                 />
                 <input
                   key={"Total-3"}
-                  style={{ ...classes.creditSecondCardInputs, width: "100%" }}
+                  style={{
+                    ...classes.creditSecondCardInputs,
+                    width: "100%",
+                    border: errors.transactionSumSec
+                      ? "1.5px solid red"
+                      : classes.creditSecondCardInputs.border,
+                  }}
                   placeholder="Total"
                   value={totalCreditCard}
                   onChange={(e) => {
@@ -363,9 +400,9 @@ const CreditCardTab = ({
             <PrimaryButton
               variant="contained"
               style={{ width: "75%", padding: "4px" }}
-              onClick={() =>
-                onClickMakePayment(handleSaveAndClose, thirdWidget)
-              }
+              onClick={() => {
+                onClickMakePayment(handleSaveAndClose, thirdWidget);
+              }}
             >
               {t("payment.makePayment")}
             </PrimaryButton>

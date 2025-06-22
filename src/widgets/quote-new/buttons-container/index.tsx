@@ -247,7 +247,7 @@ const ButtonsContainer = ({
               {t("sales.quote.deleteDelivery")}
             </GomakePrimaryButton>
           )}
-        {((isPurchaseInvoice || isPurchaseOrder) && !isNewCreation) &&
+        {(isPurchaseInvoice || isPurchaseOrder) && !isNewCreation && (
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
@@ -263,7 +263,7 @@ const ButtonsContainer = ({
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
-        }
+        )}
         {isNewCreation && (isDeliveryNote || isInvoice) && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -335,14 +335,14 @@ const ButtonsContainer = ({
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
           (isPurchaseOrder &&
             quoteItemValue?.documentStatus !==
-            PURCHASE_ORDER_STATUSES.Canceled)) && (
-            <GomakePrimaryButton
-              style={classes.btnSecondContainer}
-              onClick={handleCancelBtnClick}
-            >
-              {t("materials.buttons.cancel")}
-            </GomakePrimaryButton>
-          )}
+              PURCHASE_ORDER_STATUSES.Canceled)) && (
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleCancelBtnClick}
+          >
+            {t("materials.buttons.cancel")}
+          </GomakePrimaryButton>
+        )}
         {isReceipt &&
           !!canCancelReceipt &&
           !isNewCreation &&
@@ -378,6 +378,7 @@ const ButtonsContainer = ({
                 }
               }
               if (isReceipt) {
+                //!here
                 onClickCreateNewReceipt();
               } else if (isInvoice) {
                 if (
@@ -442,10 +443,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -581,7 +583,7 @@ const ButtonsContainer = ({
           cancelBtn={t("sales.modals.proceedWithoutPayment")}
           openModal={CheckoutModalOpen.isOpen}
           withClose={false}
-          onClose={() => { }}
+          onClose={() => {}}
           onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
           onClickCancel={() => {
             if (checkoutModalData) {
