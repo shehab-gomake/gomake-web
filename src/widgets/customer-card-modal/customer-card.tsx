@@ -28,6 +28,8 @@ import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-repo
 import { ClientBalance } from "./components/client-balance/client-balance";
 import { ClientTypeModal } from "../client-types/components/add-edit-client-type-modal";
 import { PlusIcon } from "@/icons";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   customerAction: CUSTOMER_ACTIONS;
@@ -120,6 +122,7 @@ const CustomerCardWidget = ({
     CheckPermission,
     profileState,
     systemCurrency,
+    defaultPaymentTerm,
   } = useCustomerCard({
     t,
     customer,
@@ -279,6 +282,8 @@ const CustomerCardWidget = ({
           clientType={typeClient}
           onChangeInputs={onChangeInputs}
           state={customer}
+          defaultPaymentTerm={defaultPaymentTerm}
+          isAddAction={customerAction === CUSTOMER_ACTIONS.Add}
         />
       ),
     },

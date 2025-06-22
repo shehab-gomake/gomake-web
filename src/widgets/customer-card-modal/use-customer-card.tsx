@@ -24,6 +24,7 @@ import { isValidCustomer } from "@/utils/helpers";
 import { useUserPermission } from "@/hooks/use-permission";
 import { userProfileState } from "@/store/user-profile";
 import { printHouseCountryState } from "@/store/print-house-country";
+import { EPreferences } from "@/enums/prefernces";
 
 const useCustomerCard = ({
   t,
@@ -55,7 +56,8 @@ const useCustomerCard = ({
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { CheckPreferenceValue, GetPreferenceValueKey } =
+    usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
 
@@ -473,7 +475,9 @@ const useCustomerCard = ({
   };
 
   const onChangeInputs = (key, value) => {
-    setCustomer({ ...customer, [key]: value });
+    const newValue = value === "" ? null : value;
+
+    setCustomer({ ...customer, [key]: newValue });
   };
 
   const onUpdatePass = async (
@@ -577,6 +581,10 @@ const useCustomerCard = ({
     }
   }, []);
 
+  const defaultPaymentTerm = GetPreferenceValueKey(
+    EPreferences.DEFAULT_PAYMENT_TERMS
+  );
+
   return {
     customerTableHeaders,
     customerTableRows,
@@ -636,6 +644,7 @@ const useCustomerCard = ({
     CheckPermission,
     profileState,
     systemCurrency,
+    defaultPaymentTerm,
   };
 };
 
