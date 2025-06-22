@@ -38,9 +38,12 @@ const PaymentModal = ({
     documentItemValue,
     setActiveWidget,
     isOutgoingPayments,
+    validateRequiredAccountCodes,
   } = usePaymentsTable();
 
   const handleSaveAndClose = (transactionData) => {
+    if (!validateRequiredAccountCodes()) return;
+
     handleSave(transactionData);
     onClose();
   };
@@ -87,7 +90,11 @@ const PaymentModal = ({
     >
       <div style={classes.boxStyle}>
         <div style={classes.firstSection}>
-          <PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} />
+          <PrimaryTabsComponent
+            tabs={tabs}
+            selectedTabIndex={selectedTab}
+            withBackGround={true}
+          />
         </div>
         <FooterSection onCloseModal={onClose} />
       </div>

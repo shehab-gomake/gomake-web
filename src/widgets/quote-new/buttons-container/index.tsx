@@ -378,7 +378,6 @@ const ButtonsContainer = ({
                 }
               }
               if (isReceipt) {
-                //!here
                 onClickCreateNewReceipt();
               } else if (isInvoice) {
                 if (

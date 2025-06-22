@@ -5,11 +5,33 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeAutoComplate } from "@/components";
-import { useEffect } from "react";
+import { CSSProperties, useEffect } from "react";
 import { adaptPaddingRight } from "@/utils/adapter";
 import { getItem, setItem } from "@/services/storage-data";
 import { error } from "console";
 import { Stack } from "@mui/material";
+import { useTranslation } from "react-i18next";
+
+interface FormErrorMessageProps {
+  error?: string;
+  style?: CSSProperties;
+}
+
+export const FormErrorMessage: React.FC<FormErrorMessageProps> = ({
+  error,
+  style,
+}) => {
+  const { t } = useTranslation();
+  if (!error) return null;
+
+  return (
+    <div
+      style={{ color: "red", fontSize: "0.8rem", marginTop: "4px", ...style }}
+    >
+      {t(error)}
+    </div>
+  );
+};
 
 const CreditCardTab = ({
   firstWidget,
@@ -115,50 +137,80 @@ const CreditCardTab = ({
       )}
       {!transactionSelected && (
         <div style={classes.mainContainer}>
-          {/* !here first */}
           {firstWidget && (
             <div style={classes.firstWidgetStyle}>
-              <div
-                style={{
-                  ...classes.creditCardInputsContainer,
-                  border:
-                    errors.cardNumber || errors.cvv || errors.expDate_MMYY
-                      ? "1.5px solid red"
-                      : classes.creditCardInputsContainer.border,
-                }}
-              >
-                <CreditCardIcon sx={{ color: "#2e3092" }} />
-                <input
-                  {...getCardNumberProps({ onChange: handleCardNumberChange })}
+              <div style={{ width: "75%" }}>
+                <div
                   style={{
-                    ...classes.creditCardInputs,
-                    width: "55%",
-                    ...adaptPaddingRight(dir, 5),
-                    direction: dir,
+                    ...classes.creditCardInputsContainer,
+                    border:
+                      errors.cardNumber || errors.cvv || errors.expDate_MMYY
+                        ? "1.5px solid red"
+                        : classes.creditCardInputsContainer.border,
                   }}
-                  placeholder="Card number"
-                  value={creditCard?.cardNumber}
-                />
-                <input
-                  onChange={handleExpiryDateChange}
-                  style={{
-                    ...classes.creditCardInputs,
-                    width: "20%",
-                    direction: dir,
-                  }}
-                  placeholder="MM/YY"
-                  value={creditCard?.expDate_MMYY}
-                />
-                <input
-                  {...getCVCProps({ onChange: handleCVVChange })}
-                  style={{
-                    ...classes.creditCardInputs,
-                    width: "20%",
-                    direction: dir,
-                  }}
-                  placeholder="CVV"
-                  value={creditCard?.cvv}
-                />
+                >
+                  <CreditCardIcon sx={{ color: "#2e3092" }} />
+                  <input
+                    {...getCardNumberProps({
+                      onChange: handleCardNumberChange,
+                    })}
+                    style={{
+                      ...classes.creditCardInputs,
+                      width: "55%",
+                      ...adaptPaddingRight(dir, 5),
+                      direction: dir,
+                    }}
+                    placeholder="Card number"
+                    value={creditCard?.cardNumber}
+                  />
+
+                  <input
+                    onChange={handleExpiryDateChange}
+                    style={{
+                      ...classes.creditCardInputs,
+                      width: "20%",
+                      direction: dir,
+                    }}
+                    placeholder="MM/YY"
+                    value={creditCard?.expDate_MMYY}
+                  />
+                  <input
+                    {...getCVCProps({ onChange: handleCVVChange })}
+                    style={{
+                      ...classes.creditCardInputs,
+                      width: "20%",
+                      direction: dir,
+                    }}
+                    placeholder="CVV"
+                    value={creditCard?.cvv}
+                  />
+                </div>
+
+                {(errors.cardNumber || errors.expDate_MMYY || errors.cvv) && (
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "0.8rem",
+                      marginTop: "4px",
+                      paddingLeft: "30px",
+                      display: "flex",
+                      width: "100%",
+                    }}
+                  >
+                    <FormErrorMessage
+                      error={errors.cardNumber}
+                      style={{ width: "55%" }}
+                    />
+                    <FormErrorMessage
+                      error={errors.expDate_MMYY}
+                      style={{ width: "30%" }}
+                    />
+                    <FormErrorMessage
+                      error={errors.cvv}
+                      style={{ width: "20%" }}
+                    />
+                  </div>
+                )}
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
@@ -170,29 +222,27 @@ const CreditCardTab = ({
                     handleChangeInputs("holderID", e.target.value)
                   }
                 />
-                {/* <Stack style={{ width: "45%" }}> */}
-                <input
-                  key={"Total-1"}
-                  style={{
-                    ...classes.creditSecondCardInputs,
-                    border: errors.transactionSum
-                      ? "1.5px solid red"
-                      : classes.creditCardInputsContainer.border,
-                  }}
-                  placeholder="Total"
-                  value={totalCreditCard}
-                  onChange={(e) => {
-                    handleTotalCreditCardChange(e.target.value);
-                    handleChangeInputs("transactionSum", e.target.value);
-                  }}
-                  readOnly={isTransacted}
-                  type="number"
-                />
-                {/* !here new idea */}
-                {/* {errors.transactionSum && (
-                    <h6 style={{ color: "red" }}>{errors.transactionSum}</h6>
-                  )}
-                </Stack> */}
+                <Stack style={{ width: "45%" }}>
+                  <input
+                    key={"Total-1"}
+                    style={{
+                      ...classes.creditSecondCardInputs,
+                      border: errors.transactionSum
+                        ? "1.5px solid red"
+                        : classes.creditCardInputsContainer.border,
+                      width: "100%",
+                    }}
+                    placeholder="Total"
+                    value={totalCreditCard}
+                    onChange={(e) => {
+                      handleTotalCreditCardChange(e.target.value);
+                      handleChangeInputs("transactionSum", e.target.value);
+                    }}
+                    readOnly={isTransacted}
+                    type="number"
+                  />
+                  <FormErrorMessage error={errors.transactionSum} />
+                </Stack>
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
@@ -324,13 +374,12 @@ const CreditCardTab = ({
               </div>
             </div>
           )}
-          {/* !here second */}
           {thirdWidget && (
             <div style={classes.firstWidgetStyle}>
               <div style={classes.creditCardSecondInputsContainer}>
                 <GoMakeAutoComplate
                   key={creditCard?.pinPadId || "Select a PIN pad"}
-                  style={classes.selectInputs}
+                  style={{ ...classes.selectInputs, width: "45%" }}
                   placeholder={t("payment.selectPinPad")}
                   options={pinPadsOptions}
                   value={pinPadsOptions?.find(
@@ -344,23 +393,26 @@ const CreditCardTab = ({
                     handleChangeInputs("pinPadId", selectedValue);
                   }}
                 />
-                <input
-                  key={"Total-3"}
-                  style={{
-                    ...classes.creditSecondCardInputs,
-                    width: "100%",
-                    border: errors.transactionSumSec
-                      ? "1.5px solid red"
-                      : classes.creditSecondCardInputs.border,
-                  }}
-                  placeholder="Total"
-                  value={totalCreditCard}
-                  onChange={(e) => {
-                    handleTotalCreditCardChange(e.target.value);
-                    handleChangeInputs("transactionSum", e.target.value);
-                  }}
-                  readOnly={isTransacted}
-                />
+                <Stack style={{ width: "45%" }}>
+                  <input
+                    key={"Total-3"}
+                    style={{
+                      ...classes.creditSecondCardInputs,
+                      width: "100%",
+                      border: errors.transactionSumSec
+                        ? "1.5px solid red"
+                        : classes.creditSecondCardInputs.border,
+                    }}
+                    placeholder="Total"
+                    value={totalCreditCard}
+                    onChange={(e) => {
+                      handleTotalCreditCardChange(e.target.value);
+                      handleChangeInputs("transactionSum", e.target.value);
+                    }}
+                    readOnly={isTransacted}
+                  />
+                  <FormErrorMessage error={errors.transactionSumSec} />
+                </Stack>
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
                 <div style={{ width: "45%" }}>

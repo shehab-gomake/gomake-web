@@ -449,7 +449,7 @@ const usePaymentMethodsTabs = () => {
     const messages: string[] = [];
 
     if (!creditCard.cardNumber || creditCard.cardNumber.length < 13) {
-      newErrors.cardNumber = "Invalid card number";
+      newErrors.cardNumber = "alerts.invalidCardNumber";
       messages.push("alerts.invalidCardNumber");
     }
 
@@ -457,23 +457,22 @@ const usePaymentMethodsTabs = () => {
       !creditCard.expDate_MMYY ||
       !/^\d{2}\/\d{2}$/.test(creditCard.expDate_MMYY)
     ) {
-      newErrors.expDate_MMYY = "Invalid expiration date";
+      newErrors.expDate_MMYY = "alerts.invalidExpirationDate";
       messages.push("alerts.invalidExpirationDate");
     }
 
     if (!creditCard.cvv || creditCard.cvv.length < 3) {
-      newErrors.cvv = "Invalid CVV";
+      newErrors.cvv = "alerts.invalidCVV";
       messages.push("alerts.invalidCVV");
     }
 
-    //!here not sure
     if (creditCard.holderID && creditCard.holderID.length !== 9) {
-      newErrors.holderID = "ID must be 9 digits";
+      newErrors.holderID = "alerts.invalidID";
       messages.push("alerts.invalidID");
     }
 
     if (creditCard.transactionSum <= 0) {
-      newErrors.transactionSum = "total Payment Zero";
+      newErrors.transactionSum = "alerts.totalPaymentZero";
       messages.push("alerts.totalPaymentZero");
     }
 
@@ -481,7 +480,7 @@ const usePaymentMethodsTabs = () => {
       creditCard.customerEmail &&
       !/^\S+@\S+\.\S+$/.test(creditCard.customerEmail)
     ) {
-      newErrors.customerEmail = "Invalid email";
+      newErrors.customerEmail = "alerts.invalidEmail";
       messages.push("alerts.invalidEmail");
     }
 
@@ -494,7 +493,7 @@ const usePaymentMethodsTabs = () => {
     const messages: string[] = [];
 
     if (creditCard.transactionSum <= 0) {
-      newErrors.transactionSumSec = "total Payment Zero";
+      newErrors.transactionSumSec = "alerts.totalPaymentZero";
       messages.push("alerts.totalPaymentZero");
     }
 
@@ -502,12 +501,11 @@ const usePaymentMethodsTabs = () => {
     return messages;
   };
 
+  //!here
   const onClickMakePayment = async (handleSaveAndClose, isPinPadUsed) => {
     if (isFirstWidget) {
       const errorMessages = validateCreditCardForm();
       if (errorMessages.length > 0) {
-        const translated = errorMessages.map((key) => t(key));
-        alertFault(translated.join(", "));
         return;
       }
     }
@@ -515,8 +513,6 @@ const usePaymentMethodsTabs = () => {
     if (isThirdWidget) {
       const errorMessages = validateCreditCardFormSec();
       if (errorMessages.length > 0) {
-        const translated = errorMessages.map((key) => t(key));
-        alertFault(translated.join(", "));
         return;
       }
     }
