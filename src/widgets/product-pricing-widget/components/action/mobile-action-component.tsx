@@ -493,7 +493,8 @@ const MobileActionContainerComponent = ({
                                       v?.value,
                                       actionId,
                                       productType,
-                                      actionIndex
+                                      actionIndex,
+                                      v?.label
                                     );
                                     setAttributesData({
                                       actionId,
@@ -635,9 +636,9 @@ const MobileActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                      0,
-                                      20
-                                    ) + "..."
+                                    0,
+                                    20
+                                  ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -657,7 +658,8 @@ const MobileActionContainerComponent = ({
                                   v?.value,
                                   actionId,
                                   productType,
-                                  actionIndex
+                                  actionIndex,
+                                  v?.label
                                 );
                                 setAttributesData({
                                   actionId,
@@ -729,7 +731,8 @@ const MobileActionContainerComponent = ({
                                   v?.id,
                                   actionId,
                                   productType,
-                                  actionIndex
+                                  actionIndex,
+                                  v?.label
                                 );
                                 setAttributesData({
                                   actionId,
@@ -821,17 +824,16 @@ const MobileActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${
-                              source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                    calculateOutSourceProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                                : formatValueWithUnit(
-                                    calculateProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                            })`}
+                            {`(${source === EWorkSource.OUT
+                              ? formatValueWithUnit(
+                                calculateOutSourceProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              : formatValueWithUnit(
+                                calculateProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              })`}
                           </span>
                         </Stack>
                       )}
