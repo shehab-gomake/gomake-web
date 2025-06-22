@@ -15,8 +15,9 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
 
-const useWorkFlows = ({ getProductById }: any) => {
+const useWorkFlows = ({ getProductById, sourceTypeFromProduct }: any) => {
   const { callApi } = useGomakeAxios();
   const {
     alertFaultUpdate,
@@ -36,6 +37,22 @@ const useWorkFlows = ({ getProductById }: any) => {
   const [anchorElActionsListMenu, setAnchorElActionsListMenu] =
     useState<null | HTMLElement>(null);
   const openActionsListMenu = Boolean(anchorElActionsListMenu);
+
+  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] =
+    useState(false);
+  const handleOpenCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(true);
+  };
+
+  const handleCloseCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(false);
+  };
+
+  const [view, setView] = useState(EPricingViews.SELECTED_WORKFLOW);
+  const [sourceType, setSourceType] = useState(EWorkSource.INTERNAL);
+
+
+
   const handleCloseActionsListMenu = () => {
     setAnchorElActionsListMenu(null);
   };
@@ -63,7 +80,9 @@ const useWorkFlows = ({ getProductById }: any) => {
         setActionListDropDown(res?.data);
       }
     };
-    await getAllActionsApi(callApi, callBack);
+    await getAllActionsApi(callApi, callBack, {
+      includeOutSourceAction: false,
+    });
   };
   useEffect(() => {
     getActions();
@@ -195,6 +214,38 @@ const useWorkFlows = ({ getProductById }: any) => {
       alertFaultUpdate();
     }
   }, []);
+
+  const updateProductSourceType = useCallback(async (sourceType: EWorkSource) => {
+    const res: any = await callApi(
+      EHttpMethod.PUT,
+      "/v1/printhouse-config/products/update-product-source-type",
+      {
+        productId: router.query?.id,
+        sourceType,
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      setView(
+        sourceType === EWorkSource.OUT
+          ? EPricingViews.OUTSOURCE_WORKFLOW
+          : EPricingViews.SELECTED_WORKFLOW
+      );
+      getProductActions();
+      getProductById();
+    } else {
+      alertFaultUpdate();
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("sourceTypeFromProduct", sourceTypeFromProduct);
+    if (sourceTypeFromProduct === EWorkSource.OUT) {
+      setView(EPricingViews.OUTSOURCE_WORKFLOW);
+    } else {
+      setView(EPricingViews.SELECTED_WORKFLOW);
+    }
+  }, [sourceTypeFromProduct]);
   return {
     actionListDropDown,
     anchorElActionsListMenu,
@@ -214,6 +265,14 @@ const useWorkFlows = ({ getProductById }: any) => {
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    openCopyAnotherProductsModal,
+    handleOpenCopyAnotherProductsModal,
+    handleCloseCopyAnotherProductsModal,
+    view,
+    setView,
+    updateProductSourceType,
+    sourceType,
+    setSourceType,
   };
 };
 

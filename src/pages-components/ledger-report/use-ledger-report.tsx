@@ -83,7 +83,10 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
 
   const onClickCloseAdjustmentsModal = () => {
     setIsOpenAdjustmentsModal(false);
+    setClientPaymentsList([]);
+    setHasFetchedPaymentsOnce(false);
   };
+
   const onClickOpenAdjustmentsModal = () => {
     if (customer?.id || customerId) {
       setIsOpenAdjustmentsModal(true);
@@ -266,7 +269,13 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     }
   }, [fromDate, toDate, isExtended, customer, customerId]);
 
+  const [isLoadingPayments, setIsLoadingPayments] = useState(false);
+  const [hasFetchedPaymentsOnce, setHasFetchedPaymentsOnce] = useState(false);
+
   const getClientPaymentItems = useCallback(async () => {
+    setIsLoadingPayments(true);
+    setHasFetchedPaymentsOnce(false);
+
     const res = await callApi(
       EHttpMethod.GET,
       `/v1/erp-service/receipts/get-client-payment-items`,
@@ -274,6 +283,9 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
         clientId: customerId ? customerId : customer?.id,
       }
     );
+    setIsLoadingPayments(false);
+    setHasFetchedPaymentsOnce(true);
+
     if (res?.success) {
       let data = res.data?.data?.data;
       if (data?.length > 0) {
@@ -292,14 +304,17 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
-      }else{
-        setIsOpenAdjustmentsModal(false);
-        alertFault("reports.noData");
+      } else {
+        setClientPaymentsList([]);
+        // setIsOpenAdjustmentsModal(false);
+        // alertFault("reports.noData");
       }
     } else {
+      setClientPaymentsList([]);
       alertFaultGetData();
     }
   }, [customer, customerId]);
+
   useEffect(() => {
     if ((customer?.id || customerId) && isopenAdjustmentsModal) {
       getClientPaymentItems();
@@ -404,6 +419,8 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     erpAccountsList,
     getErpAccountsList,
     isPurchaseReport,
+    hasFetchedPaymentsOnce,
+    isLoadingPayments,
   };
 };
 

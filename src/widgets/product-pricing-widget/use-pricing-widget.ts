@@ -355,7 +355,9 @@ const usePricingWidget = ({
         setActionListDropDown(res?.data);
       }
     };
-    await getAllActionsApi(callApi, callBack);
+    await getAllActionsApi(callApi, callBack, {
+      includeOutSourceAction: false,
+    });
   };
   useEffect(() => {
     getActions();

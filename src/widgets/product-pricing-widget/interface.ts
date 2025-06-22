@@ -142,12 +142,12 @@ export interface IOutput {
 export interface IOutSourceSupplier {
   supplierId: string;
   supplierName: string;
-  cost: number;
-  finalPrice: number;
-  profit: number;
-  workHours: number;
-  status: EOutsourceSupplierStatus;
-  widgetType: string;
+  cost?: number;
+  finalPrice?: number;
+  profit?: number;
+  workHours?: number;
+  status?: EOutsourceSupplierStatus;
+  widgetType?: string;
 }
 
 export interface IRectangle {
