@@ -46,10 +46,13 @@ import {
 } from "./states";
 import CustomMethodsTable from "./Payment-methods-details/methods-table";
 import { usePaymentMethodsTabs } from "../buttons-container/payment/payment-methods-tabs/use-payment-methods-tabs";
+import { useSnackBar } from "@/hooks";
 
 const usePaymentsTable = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const { alertFault } = useSnackBar();
+
   const isOutgoingPayments = router.query?.isOutgoingPayments === "true";
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const [documentItemValue, setDocumentItemValue] =
@@ -196,6 +199,40 @@ const usePaymentsTable = () => {
   };
 
   const isTransacted = useRecoilValue<boolean>(isTransactedState);
+  const validateRequiredAccountCodes = () => {
+    if (totalTransfer > 0 && !transferState?.transferAccount) {
+      alertFault("payment.alertNoTransferCode");
+      return false;
+    }
+
+    if (totalChecks > 0 && !checkAccountCode) {
+      alertFault("payment.alertNoChecksCode");
+      return false;
+    }
+
+    if (totalCash > 0 && !cashAccountCode) {
+      alertFault("payment.alertNoCashCode");
+      return false;
+    }
+
+    // Check each check row with checkSum > 0
+    for (let check of checksReceipt) {
+      if (check.checkSum > 0) {
+        const isValid =
+          !!check.accountNum &&
+          !!check.branch &&
+          !!check.bankCode &&
+          !!check.checkNumber;
+
+        if (!isValid) {
+          alertFault(t("payment.alertAllChecksFieldsAreReq"));
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
 
   const handleSave = (transactionData?, isResetTotal = false) => {
     const creditCardTotalValue = isResetTotal ? 0 : totalCreditCard; // Use 0 if reset
@@ -207,6 +244,7 @@ const usePaymentsTable = () => {
     const isSecondCreditCardEmpty =
       Object.keys(secondCreditCard).length === 0 &&
       secondCreditCard.constructor === Object;
+
     const receiptItemCopy = {
       ...documentItemValue,
       bitSum: Number(totalBit),
@@ -541,6 +579,7 @@ const usePaymentsTable = () => {
     allocatedSums,
     setAllocatedSums,
     isOutgoingPayments,
+    validateRequiredAccountCodes,
   };
 };
 

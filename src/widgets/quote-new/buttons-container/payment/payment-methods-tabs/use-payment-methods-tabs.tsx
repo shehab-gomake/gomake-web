@@ -31,7 +31,12 @@ import {
 } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
-import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
+import {
+  firstWidgetState,
+  isTransactedState,
+  secondWidgetState,
+  thirdWidgetState,
+} from "@/widgets/quote-new/receipts-table/states";
 import { loadingWithShadowState, quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 
@@ -435,7 +440,82 @@ const usePaymentMethodsTabs = () => {
 
   const setLoadingWithLockScreen = useSetRecoilState(loadingWithShadowState);
 
+  const isFirstWidget = useRecoilValue<boolean>(firstWidgetState);
+  const isThirdWidget = useRecoilValue<boolean>(thirdWidgetState);
+
+  const [errors, setErrors] = useState<any>({});
+  const validateCreditCardForm = (): string[] => {
+    const newErrors: any = {};
+    const messages: string[] = [];
+
+    if (!creditCard.cardNumber || creditCard.cardNumber.length < 13) {
+      newErrors.cardNumber = "alerts.invalidCardNumber";
+      messages.push("alerts.invalidCardNumber");
+    }
+
+    if (
+      !creditCard.expDate_MMYY ||
+      !/^\d{2}\/\d{2}$/.test(creditCard.expDate_MMYY)
+    ) {
+      newErrors.expDate_MMYY = "alerts.invalidExpirationDate";
+      messages.push("alerts.invalidExpirationDate");
+    }
+
+    if (!creditCard.cvv || creditCard.cvv.length < 3) {
+      newErrors.cvv = "alerts.invalidCVV";
+      messages.push("alerts.invalidCVV");
+    }
+
+    if (creditCard.holderID && creditCard.holderID.length !== 9) {
+      newErrors.holderID = "alerts.invalidID";
+      messages.push("alerts.invalidID");
+    }
+
+    if (creditCard.transactionSum <= 0) {
+      newErrors.transactionSum = "alerts.totalPaymentZero";
+      messages.push("alerts.totalPaymentZero");
+    }
+
+    if (
+      creditCard.customerEmail &&
+      !/^\S+@\S+\.\S+$/.test(creditCard.customerEmail)
+    ) {
+      newErrors.customerEmail = "alerts.invalidEmail";
+      messages.push("alerts.invalidEmail");
+    }
+
+    setErrors(newErrors);
+    return messages;
+  };
+
+  const validateCreditCardFormSec = (): string[] => {
+    const newErrors: any = {};
+    const messages: string[] = [];
+
+    if (creditCard.transactionSum <= 0) {
+      newErrors.transactionSumSec = "alerts.totalPaymentZero";
+      messages.push("alerts.totalPaymentZero");
+    }
+
+    setErrors(newErrors);
+    return messages;
+  };
+
   const onClickMakePayment = async (handleSaveAndClose, isPinPadUsed) => {
+    if (isFirstWidget) {
+      const errorMessages = validateCreditCardForm();
+      if (errorMessages.length > 0) {
+        return;
+      }
+    }
+
+    if (isThirdWidget) {
+      const errorMessages = validateCreditCardFormSec();
+      if (errorMessages.length > 0) {
+        return;
+      }
+    }
+
     setLoadingWithLockScreen(true);
     const callBack = (res) => {
       if (res?.success) {
@@ -517,6 +597,9 @@ const usePaymentMethodsTabs = () => {
     pinPadsOptions,
     dir,
     setCreditCard,
+    errors,
+    validateCreditCardForm,
+    alertFault,
   };
 };
 

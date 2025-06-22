@@ -28,6 +28,7 @@ const FooterSection = ({ onCloseModal }: any) => {
     resetTotalCreditCard,
     resetCreditCardState,
     setTotalPayment,
+    validateRequiredAccountCodes,
   } = usePaymentsTable();
 
   const totalAllocatedDocuments = useRecoilValue<number>(
@@ -35,6 +36,8 @@ const FooterSection = ({ onCloseModal }: any) => {
   );
 
   const handleClickCancelTransactionModal = () => {
+    if (!validateRequiredAccountCodes()) return;
+
     handleSave(null, true);
     // reset credit card total and state
     // setTotalPayment(totalPayment - totalCreditCard);
@@ -49,6 +52,8 @@ const FooterSection = ({ onCloseModal }: any) => {
   };
 
   const handleSaveAndClose = (transactionData) => {
+    if (!validateRequiredAccountCodes()) return;
+
     handleSave(transactionData);
     onCloseModal();
   };
@@ -62,6 +67,8 @@ const FooterSection = ({ onCloseModal }: any) => {
     ) {
       handleOpenTransactionModal();
     } else {
+      if (!validateRequiredAccountCodes()) return;
+
       handleSave();
       onCloseModal();
     }
