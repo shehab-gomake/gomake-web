@@ -32,9 +32,9 @@ const useStyle = (width?: string) => {
       titleContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
         alignItems: "center",
-        gap: 5,
+        flexWrap: "wrap" as "wrap",
+        justifyContent: "space-between",
       },
       titleSettingContainer: {
         display: "flex",
@@ -208,6 +208,22 @@ const useStyle = (width?: string) => {
       required: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
+      },
+      createNewDocument: {
+        display: "inline-flex",
+        padding: "0px 12px",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "4px",
+        borderRadius: "8px",
+        border: "1px solid #2E3092",
+        background: "#FFF",
+        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        textTransform: "none" as "none",
+        color: primaryColor(600),
+        ...FONT_FAMILY.Inter(500, 14),
+        lineHeight: "18px",
+        height: "40px",
       },
     };
   }, [t, theme]);

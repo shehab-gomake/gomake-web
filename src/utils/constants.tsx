@@ -137,8 +137,7 @@ export const _renderDocumentStatus = (status: number, t: any) => {
 export const _renderStatus = (
   docType: DOCUMENT_TYPE,
   document: any,
-  t: any,
-  navigate: any
+  t: any
 ): JSX.Element => {
   if (document) {
     let statusContent: JSX.Element | null = null;
@@ -194,8 +193,7 @@ export const _renderStatus = (
           </div>
         );
       }
-    }
-    else if (document.externalDocumentNumber) {
+    } else if (document.externalDocumentNumber) {
       const externalDocument = document.externalDocumentNumber;
       let result: JSX.Element[] = [];
       if (externalDocument.length > 0) {
@@ -214,37 +212,6 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
-          <span key={index}>
-            <a
-              style={{
-                minWidth: "auto",
-                height: "auto",
-                padding: 0,
-                color: "#2e3092",
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
-                document.titleDocumentNumber.slice(1)
-                }?Id=${item.documentId}`}
-            >
-              {item.documentNumber}
-            </a>
-            {index < document.documentNumbers.length - 1 && ", "}
-          </span>
-        ))
-        : [];
-
-      const secondDocuments = document.secondDocumentNumbers
-        ? document.secondDocumentNumbers.map((item: any, index: number) => {
-          const isPayment = document.titleSecondDocumentNumber === "Payment";
-          const href = isPayment
-            ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
-            : `/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
-            document.titleSecondDocumentNumber.slice(1)
-            }?Id=${item.documentId}`;
-
-          return (
             <span key={index}>
               <a
                 style={{
@@ -255,14 +222,71 @@ export const _renderStatus = (
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
-                href={href}
+                href={`/${
+                  document.titleDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
               >
                 {item.documentNumber}
               </a>
-              {index < document.secondDocumentNumbers.length - 1 && ", "}
+              {index < document.documentNumbers.length - 1 && ", "}
             </span>
-          );
-        })
+          ))
+        : [];
+
+      const secondDocuments = document.secondDocumentNumbers
+        ? document.secondDocumentNumbers.map((item: any, index: number) => {
+            const isPayment = document.titleSecondDocumentNumber === "Payment";
+            const href = isPayment
+              ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
+              : `/${
+                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleSecondDocumentNumber.slice(1)
+                }?Id=${item.documentId}`;
+
+            return (
+              <span key={index}>
+                <a
+                  style={{
+                    minWidth: "auto",
+                    height: "auto",
+                    padding: 0,
+                    color: "#2e3092",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                  href={href}
+                >
+                  {item.documentNumber}
+                </a>
+                {index < document.secondDocumentNumbers.length - 1 && ", "}
+              </span>
+            );
+          })
+        : [];
+
+      const thirdDocuments = document.thirdDocumentNumbers
+        ? document.thirdDocumentNumbers.map((item: any, index: number) => (
+            <span key={`third-${index}`}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "#2e3092",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleThirdDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.thirdDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
         : [];
 
       let result: JSX.Element[] = [];
@@ -284,6 +308,16 @@ export const _renderStatus = (
           </div>
         );
       }
+
+      if (thirdDocuments.length > 0) {
+        result.push(
+          <div key="third-documents">
+            {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
+            {thirdDocuments}
+          </div>
+        );
+      }
+
       statusContent = <>{result}</>;
     }
 

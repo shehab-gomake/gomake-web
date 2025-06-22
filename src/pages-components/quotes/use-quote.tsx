@@ -507,7 +507,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     " " +
                     quote?.totalPrice,
                 quote?.notes,
-                _renderStatus(docType, quote, t, navigate),
+                _renderStatus(docType, quote, t),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -551,7 +551,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     {t("sales.quote.draft")}
                   </span>
                 ) : (
-                  _renderStatus(docType, quote, t, navigate)
+                  _renderStatus(docType, quote, t)
                 ),
                 <MoreMenuWidget
                   quote={quote}
@@ -586,7 +586,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     " " +
                     quote?.totalPrice,
                 quote?.notes,
-                _renderStatus(docType, quote, t, navigate),
+                _renderStatus(docType, quote, t),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -679,7 +679,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   document={quote}
                   documentType={docType}
                 />,
-                _renderStatus(docType, quote, t, navigate),
+                _renderStatus(docType, quote, t),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -769,7 +769,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     {t("sales.quote.draft")}
                   </span>
                 ) : (
-                  _renderStatus(docType, quote, t, navigate)
+                  _renderStatus(docType, quote, t)
                 ),
                 <MoreMenuWidget
                   quote={quote}
@@ -1048,7 +1048,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   quote?.totalPrice,
               quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
+              _renderStatus(docType, quote, t),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1090,7 +1090,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   {t("sales.quote.draft")}
                 </span>
               ) : (
-                _renderStatus(docType, quote, t, navigate)
+                _renderStatus(docType, quote, t)
               ),
               <MoreMenuWidget
                 quote={quote}
@@ -1123,7 +1123,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   quote?.totalPrice,
               quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
+              _renderStatus(docType, quote, t),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1205,7 +1205,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 document={quote}
                 documentType={docType}
               />,
-              _renderStatus(docType, quote, t, navigate),
+              _renderStatus(docType, quote, t),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1292,7 +1292,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   {t("sales.quote.draft")}
                 </span>
               ) : (
-                _renderStatus(docType, quote, t, navigate)
+                _renderStatus(docType, quote, t)
               ),
               <MoreMenuWidget
                 quote={quote}
@@ -1792,7 +1792,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     : classes.closeBtnStyle
                 }
               >
-                {_renderStatus(docType, document, t, navigate)}
+                {_renderStatus(docType, document, t)}
               </h2>
             </div>,
           ];

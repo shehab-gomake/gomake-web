@@ -63,7 +63,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -101,18 +101,17 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const setOpenCreatePurchaseOrderModal = useSetRecoilState<boolean>(openCreatePurchaseOrderModalState);
 
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
-
   useEffect(() => {
     if (selectedMaterialIdForUpdate) {
       setSelectedMaterialsIds([selectedMaterialIdForUpdate])
     } else {
-      const getSelectedMaterialsIds = () =>
-        materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+      const getSelectedMaterialsIds = () => materialCategoryData.filter((row) => row.checked).map((row) => row.id);
 
       setSelectedMaterialsIds(getSelectedMaterialsIds());
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);
+  console.log("materialCategoryData", { materialCategoryData, selectedMaterialIdForUpdate, selectedMaterialsIds });
 
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
@@ -125,8 +124,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
-    setSelectedMaterialIdForUpdate("");
-    setUpdatedValue("")
+
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -202,6 +200,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
       return;
     }
     setAction(action);
+    setSelectedMaterialIdForUpdate("");
+    setUpdatedValue("")
   };
 
   const onTextInputChange = (v: string) => {
@@ -235,6 +235,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     materialFilter,
     supplierId
   }) => {
+    if (!updatedValue || updatedValue === "") {
+      alertFault(t("products.offsetPrice.admin.fillValue"));
+      return;
+    }
     return await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: materialCategory.toString(),
@@ -315,7 +319,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             materialCategory,
             isAllMaterialsChecked,
             selectedMaterialsIds,
-            updatedValue,
+            updatedValue: "delete",
             uncheckedMaterials,
             rate,
             activeFilter,
@@ -381,6 +385,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setAction(null);
       setIsAllMaterialsChecked(false);
 
+    }
+    else {
+      alertFaultUpdate();
     }
   };
 
@@ -676,8 +683,22 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setProperties(updatedProperties);
   };
   const duplicatePrintHouseMaterials = useCallback(async () => {
-    const transformedArray = properties.map((item) => {
+    // Filter out empty properties (where key is empty or undefined)
+    const validProperties = properties.filter(item => item?.key?.key);
 
+    // Check if any property has empty values
+    const hasEmptyValues = validProperties.some(item =>
+      !item.values ||
+      item.values.length === 0 ||
+      item.values.every(value => !value || value.trim() === '')
+    );
+
+    if (hasEmptyValues) {
+      alertFault(t("materials.inputs.errorEmptyPropertyValue"));
+      return;
+    }
+
+    const transformedArray = validProperties.map((item) => {
       const convertedValues = item.values.map(value =>
         unitType === UNIT_TYPE.IMPERIAL ?
           convertValueToOriginalUnit(item?.key?.unit, value) :
@@ -733,7 +754,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     } else {
       alertFaultAdded();
     }
-  }, [properties]);
+  }, [properties, selectedMaterialsIds, selectedMaterialIdForUpdate]);
   const duplicateMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
       const convertedValues = item.values.map(value =>
