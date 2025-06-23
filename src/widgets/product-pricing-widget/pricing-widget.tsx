@@ -41,7 +41,9 @@ import Image from "next/image";
 import { BestSellerBlueIcon } from "@/icons/best-seller-blue";
 import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { useTranslation } from "react-i18next";
-import { adaptLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { DoneIcon } from "../shared-admin-customers/add-product/icons/done";
+import { CheckBoxAccordion } from "@/icons";
 
 const PricingWidget = ({
   workFlows,
@@ -217,6 +219,9 @@ const PricingWidget = ({
                       key={index}
                       data-tour="allWorkflowsBtn"
                       onClick={() => {
+                        if (section.isSelected) {
+                          return;
+                        }
                         SelectWorkFlowById(section);
                         if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
                           setView(EPricingViews.SELECTED_WORKFLOW);
@@ -236,16 +241,24 @@ const PricingWidget = ({
                           : "outlined"
                       }
                     >
-                      {
-                        section.isRecommendedBySystem &&
-                        <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
-                          <BestSellerWhiteIcon />
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
+                        {
+                          section.isRecommendedBySystem &&
+                          <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
+                            <BestSellerWhiteIcon />
+                          </div>
+                        }
+                        <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
+                          {section.isNeedTranslation
+                            ? t("workFlowTabs." + section.name)
+                            : section.name}
                         </div>
-                      }
-                      <div style={{ position: "relative", ...adaptPaddingRight(direction, 20) }}>
-                        {section.isNeedTranslation
-                          ? t("workFlowTabs." + section.name)
-                          : section.name}
+                        {
+                          section.isSelected &&
+                          <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                            <CheckBoxAccordion />
+                          </div>
+                        }
                       </div>
                     </PrimaryButton>
                   ))}
@@ -263,7 +276,13 @@ const PricingWidget = ({
               }}
 
             >
-              Out Source
+              {t("products.actions.outSource")}
+              {
+                view === EPricingViews.OUTSOURCE_WORKFLOW &&
+                <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                  <CheckBoxAccordion />
+                </div>
+              }
             </PrimaryButton>
             {/* Right Arrow Button */}
             {canScrollRight && (

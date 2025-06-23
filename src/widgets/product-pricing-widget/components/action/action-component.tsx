@@ -1416,12 +1416,12 @@ const ActionContainerComponent = ({
           <GoMakeDeleteModal
             open={selectedMachineModal.isOpen}
             onClose={selectedMachineModal.close}
-            title={"Change the current workflow with your selected option?"}
+            title={t("pricingWidget.changeWorkflowModalTitle")}
             subTitle={" "}
-            yesBtn={"Select the best workflow with your changes"}
+            yesBtn={t("pricingWidget.yesBtnChangeWorkflowModal")}
             confirmBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line", }}
             cancelBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line" }}
-            cancelBtn={"Select the best workflow with your changes,\n but keeps extra actions from the current workflow"}
+            cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
             modalType={ModalType.WARNING}
             style={{
               width: "60%",
