@@ -364,7 +364,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId ===
-        currentCalculationSessionId &&
+      currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
@@ -461,15 +461,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${
-      router?.query?.productId
-    }&ignoreCalculatedWorkflows=${
-      ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
-    }`;
-    if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
-        IsNeedPriceUpdate ? false : priceRecovery
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId
+      }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
       }`;
+    if (documentItemId) {
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery
+        }`;
     }
 
     const res: any = await callApi("GET", url, {}, false);
@@ -489,9 +486,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow-delivery-date?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
-        IsNeedPriceUpdate ? false : priceRecovery
-      }`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery
+        }`;
     }
 
     const res: any = await callApi("GET", url, {}, false);
@@ -552,14 +548,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       signalRPricingResult &&
       signalRPricingResult.productItemValueDraftId ===
-        currentCalculationSessionId &&
+      currentCalculationSessionId &&
       signalRPricingResult.signalRConnectionId === currentSignalRConnectionId
     ) {
       //setLoading(false);
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount =
         signalRPricingResult.currentWorkFlowIndex >
-        calculationProgress.currentWorkFlowsCount
+          calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
@@ -623,9 +619,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             flow.id === updatedSelectedWorkFlow?.id
               ? updatedSelectedWorkFlow
               : {
-                  ...flow,
-                  selected: false,
-                }
+                ...flow,
+                selected: false,
+              }
           )
         );
       } else {
@@ -1060,7 +1056,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         ...(value && {
                           valueIds: [
                             parameter?.parameterType ===
-                            EParameterTypes.MACHINES_SELECT
+                              EParameterTypes.MACHINES_SELECT
                               ? value?.updateName
                               : value?.id,
                           ],
@@ -1082,11 +1078,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 } else if (
                   parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS ||
+                  EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                  EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
                   const value = parameter?.valuesConfigs?.find(
@@ -1169,7 +1165,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             valueIds: [value?.materialValueIds[0]?.valueId],
                             values: [
                               value?.updateName ||
-                                value?.materialValueIds[0]?.valueId,
+                              value?.materialValueIds[0]?.valueId,
                             ],
                           }),
                           sectionId: section?.id,
@@ -1444,24 +1440,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
                           ? [
-                              unitType === UNIT_TYPE.IMPERIAL &&
+                            unitType === UNIT_TYPE.IMPERIAL &&
                               childParam?.code != "Width" &&
                               childParam?.code != "Height"
-                                ? (
-                                    item?.defaultValue * childParam?.factor
-                                  ).toFixed(3)
-                                : item?.defaultValue,
-                            ]
+                              ? (
+                                item?.defaultValue * childParam?.factor
+                              ).toFixed(3)
+                              : item?.defaultValue,
+                          ]
                           : [
-                              unitType === UNIT_TYPE.IMPERIAL &&
+                            unitType === UNIT_TYPE.IMPERIAL &&
                               childParam?.code != "Width" &&
                               childParam?.code != "Height"
-                                ? (
-                                    childParam?.defaultValue *
-                                    childParam?.factor
-                                  ).toFixed(3)
-                                : childParam?.defaultValue,
-                            ],
+                              ? (
+                                childParam?.defaultValue *
+                                childParam?.factor
+                              ).toFixed(3)
+                              : childParam?.defaultValue,
+                          ],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -1562,12 +1558,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       setSubProducts((prev) => {
         return prev.map((subProduct) => {
+          const filteredParameters = productTemplate?.productItemValue?.itemParmetersValues?.filter(
+            (item) => item.subProductType === subProduct.type
+          );
+
+          // Add isDisabled logic for size parameters
+          const processedParameters = filteredParameters?.map((item) => {
+            // Check if there's a size parameter with values[0] !== "custom"
+            const sizeParameter = filteredParameters?.find(param => param.parameterCode === "size");
+            const shouldDisableWidthHeight = sizeParameter &&
+              sizeParameter.values &&
+              sizeParameter.values.length > 0 &&
+              sizeParameter.values[0] !== 'اختياري' &&
+              sizeParameter.values[0] !== 'custom'
+
+            // Disable Width and Height parameters when size parameter has non-custom value
+            if ((item.parameterCode === "Width" || item.parameterCode === "Height") && shouldDisableWidthHeight) {
+              return {
+                ...item,
+                isDisabled: true
+              };
+            }
+            return item;
+          });
+
           return {
             ...subProduct,
-            parameters:
-              productTemplate?.productItemValue?.itemParmetersValues?.filter(
-                (item) => item.subProductType === subProduct.type
-              ),
+            parameters: processedParameters,
           };
         });
       });
@@ -1713,13 +1730,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (
                 (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
                   parameter?.parameterType ===
-                    EParameterTypes.MACHINES_SELECT ||
+                  EParameterTypes.MACHINES_SELECT ||
                   parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS ||
+                  EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                  EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
@@ -1772,24 +1789,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       );
                       return existingConfig
                         ? {
-                            ...existingConfig,
-                            additionalAttribute: data.additionalAttribute,
-                            currency: data.currency,
-                          }
+                          ...existingConfig,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        }
                         : {
-                            id: data.valueId,
-                            isHidden: false,
-                            isDefault: false,
-                            updateName: null,
-                            activateAction: false,
-                            isDeleted: false,
-                            materialValueIds: null,
-                            values: null,
-                            selectedParameterValues: null,
-                            code: null, // Add code if needed
-                            additionalAttribute: data.additionalAttribute,
-                            currency: data.currency,
-                          };
+                          id: data.valueId,
+                          isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
+                          materialValueIds: null,
+                          values: null,
+                          selectedParameterValues: null,
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        };
                     });
                   }
                 } else {
@@ -1985,7 +2002,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(
                             m.valueId,
                             (x.valueIds && x.valueIds[0]) ||
-                              (x.values && x.values[0])
+                            (x.values && x.values[0])
                           )
                         )
                       );
@@ -2274,9 +2291,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     const itemQuantity =
       quantity &&
-      quantity.values &&
-      quantity.values.length &&
-      quantity?.values[0]
+        quantity.values &&
+        quantity.values.length &&
+        quantity?.values[0]
         ? +quantity?.values[0]
         : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
@@ -2915,12 +2932,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   errorText && parameter?.isRequired && !value?.values?.[0]
                     ? clasess.parameterRequierdLabelStyle
                     : value?.values?.[0] === "true"
-                    ? inunderParameter
-                      ? clasess.parameterunderParameterStyle
-                      : clasess.parameterType3ActiveLabelStyle
-                    : inunderParameter
-                    ? clasess.underParameterLabelStyle
-                    : clasess.parameterLabelStyle
+                      ? inunderParameter
+                        ? clasess.parameterunderParameterStyle
+                        : clasess.parameterType3ActiveLabelStyle
+                      : inunderParameter
+                        ? clasess.underParameterLabelStyle
+                        : clasess.parameterLabelStyle
                 }
               >
                 {parameter?.name}
@@ -3037,11 +3054,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           setProductTemplate(productCopy);
                         } else if (
                           parameter?.parameterType ===
-                            EParameterTypes.DROP_DOWN_LIST ||
+                          EParameterTypes.DROP_DOWN_LIST ||
                           parameter?.parameterType ===
-                            EParameterTypes.SELECT_MATERIALS ||
+                          EParameterTypes.SELECT_MATERIALS ||
                           parameter?.parameterType ===
-                            EParameterTypes.MACHINES_SELECT
+                          EParameterTypes.MACHINES_SELECT
                         ) {
                           const valueInArray =
                             relatedParameter.selectedValueIds?.find(
@@ -3796,7 +3813,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               ) {
                 const materialPath =
                   relatedParameter.materialPath[
-                    relatedParameter.materialPath.length - 1
+                  relatedParameter.materialPath.length - 1
                   ];
                 const materialRelatedParameters = subSection.parameters.filter(
                   (x) =>
@@ -4059,24 +4076,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     return existingConfig
                       ? {
-                          ...existingConfig,
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        }
+                        ...existingConfig,
+                        additionalAttribute: data.additionalAttribute,
+                        currency: data.currency,
+                      }
                       : {
-                          id: data.valueId,
-                          isHidden: false,
-                          isDefault: false,
-                          updateName: null,
-                          activateAction: false,
-                          isDeleted: false,
-                          materialValueIds: null,
-                          values: null,
-                          selectedParameterValues: null,
-                          code: null, // Add code if needed
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        };
+                        id: data.valueId,
+                        isHidden: false,
+                        isDefault: false,
+                        updateName: null,
+                        activateAction: false,
+                        isDeleted: false,
+                        materialValueIds: null,
+                        values: null,
+                        selectedParameterValues: null,
+                        code: null, // Add code if needed
+                        additionalAttribute: data.additionalAttribute,
+                        currency: data.currency,
+                      };
                   });
                 }
               } else {
@@ -4121,7 +4138,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (parameterDefaultValue) {
               const materialPath =
                 relatedParameter.materialPath[
-                  relatedParameter.materialPath.length - 1
+                relatedParameter.materialPath.length - 1
                 ];
               const materialRelatedParameters = subSection.parameters.filter(
                 (x) =>
@@ -4443,14 +4460,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       parameterCode: myparameter?.code,
                       values:
                         unitType === UNIT_TYPE.IMPERIAL &&
-                        myparameter?.code != "Width" &&
-                        myparameter?.code != "Height"
+                          myparameter?.code != "Width" &&
+                          myparameter?.code != "Height"
                           ? [
-                              (
-                                data?.value?.values[parameterId] *
-                                myparameter?.factor
-                              ).toFixed(3),
-                            ]
+                            (
+                              data?.value?.values[parameterId] *
+                              myparameter?.factor
+                            ).toFixed(3),
+                          ]
                           : [data?.value?.values[parameterId]],
                       isDisabled: hasValues(data?.value),
                       factor: myparameter?.factor,
@@ -4491,14 +4508,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     isQuantityParameter: myparameter?.isQuantityParameter,
                     values:
                       unitType === UNIT_TYPE.IMPERIAL &&
-                      myparameter?.code != "Width" &&
-                      myparameter?.code != "Height"
+                        myparameter?.code != "Width" &&
+                        myparameter?.code != "Height"
                         ? [
-                            (
-                              data?.value?.values[parameterId] *
-                              myparameter?.factor
-                            ).toFixed(3),
-                          ]
+                          (
+                            data?.value?.values[parameterId] *
+                            myparameter?.factor
+                          ).toFixed(3),
+                        ]
                         : [data?.value?.values[parameterId]],
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
@@ -4700,7 +4717,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-              subSectionParameter.materialPath.length - 1
+            subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -5436,11 +5453,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     ...(isShowDetailsTab
       ? [
-          {
-            name: t("reports.details"),
-            onclick: () => onClickDetailsTab,
-          },
-        ]
+        {
+          name: t("reports.details"),
+          onclick: () => onClickDetailsTab,
+        },
+      ]
       : []),
     {
       name: t("quality.production"),
@@ -5765,8 +5782,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             param?.ParameterType === 5
               ? [param?.valueIds[0]]
               : param.values.map((value) =>
-                  (parseFloat(value) / param.factor).toFixed(3)
-                ),
+                (parseFloat(value) / param.factor).toFixed(3)
+              ),
         };
       }
       return param;
@@ -6143,17 +6160,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           unitPrice:
             +sliderCurrentProductItemValueTotalPrice /
             (quantity &&
-            quantity.values &&
-            quantity.values.length > 0 &&
-            quantity?.values[0]
+              quantity.values &&
+              quantity.values.length > 0 &&
+              quantity?.values[0]
               ? +quantity?.values[0]
               : 1), //!new
           finalPrice: +sliderCurrentProductItemValueTotalPrice, //!new
           amount:
             quantity &&
-            quantity.values &&
-            quantity.values.length &&
-            quantity?.values[0]
+              quantity.values &&
+              quantity.values.length &&
+              quantity?.values[0]
               ? quantity?.values[0]
               : 0,
           isNeedGraphics: false,
