@@ -27,7 +27,7 @@ interface IProps {
   isFromDocumentsOrJobs?: boolean;
   router?: any;
   isMobile?: boolean;
-  initialPageSize?: number;
+  initialPageSize: number;
 }
 
 const GoMakePagination = ({
