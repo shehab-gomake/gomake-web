@@ -205,7 +205,7 @@ const PricingWidget = ({
             <Box sx={classes.tabsContainerSx} style={classes.tabsContainer} ref={buttonGroupRef} >
 
               <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}  >
-                {calculationResult &&
+                {workFlows.length > 0 && selectedWorkFlow && calculationResult &&
                   !isMobileScreen &&
                   calculationResult?.tabs?.map((section, index) => (
                     <PrimaryButton
@@ -226,6 +226,7 @@ const PricingWidget = ({
                       style={{
                         letterSpacing: "0em",
                         transition: "0s",
+
 
                       }}
                       variant={
@@ -258,8 +259,14 @@ const PricingWidget = ({
               </ButtonGroup>
 
             </Box>
-            <PrimaryButton
-              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px", letterSpacing: "0em", transition: "0s" }}
+            {workFlows.length > 0 && selectedWorkFlow && <PrimaryButton
+              sx={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px", }}
+              style={{
+                letterSpacing: "0em",
+                transition: "0s",
+
+
+              }}
               variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
                 setSelectedWorkFlowCalculatedIsLoaded(true);
@@ -276,7 +283,7 @@ const PricingWidget = ({
                   <CheckBoxAccordion />
                 </div>
               }
-            </PrimaryButton>
+            </PrimaryButton>}
             {/* Right Arrow Button */}
             {canScrollRight && (
               <div
@@ -319,7 +326,7 @@ const PricingWidget = ({
           alignItems={"center"}
           style={{ display: "flex", width: "30%", justifyContent: "flex-end" }}
         >
-          {deliveryDate && (
+          {deliveryDate && workFlows.length > 0 && selectedWorkFlow && (
             <Stack
               direction={"row"}
               gap={"10px"}
@@ -349,7 +356,7 @@ const PricingWidget = ({
                   <ArrowDropDownIcon />
                 </div>
               )}
-            {!isHasSubWorkFlowsOrProductTypeActions &&
+            {!isHasSubWorkFlowsOrProductTypeActions && workFlows.length > 0 && selectedWorkFlow &&
               view === EPricingViews.SELECTED_WORKFLOW &&
               !isMobileScreen && (
                 <div
@@ -365,31 +372,6 @@ const PricingWidget = ({
               )}
           </PermissionCheck>
 
-          {/* <InOutSourceSelect
-            onChange={(v: EWorkSource) => {
-              setSelectedWorkFlowCalculatedIsLoaded(true);
-              setView(
-                v === EWorkSource.OUT
-                  ? EPricingViews.OUTSOURCE_WORKFLOW
-                  : EPricingViews.SELECTED_WORKFLOW
-              );
-              updateProductItemValue(v);
-              setIsChangeView(false);
-            }}
-            disabled={!selectedWorkFlow}
-            withPartially={
-              selectedWorkFlow?.actions?.some(
-                (action) => action.source === EWorkSource.OUT
-              ) &&
-              view !== EPricingViews.OUTSOURCE_WORKFLOW &&
-              !selectedWorkFlowCalculatedIsLoaded
-            }
-            value={
-              view === EPricingViews.OUTSOURCE_WORKFLOW
-                ? EWorkSource.OUT
-                : EWorkSource.INTERNAL
-            }
-          /> */}
         </Stack>
       </Stack>
 
