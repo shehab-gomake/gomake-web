@@ -175,7 +175,9 @@ const useActionUpdateValues = () => {
     machineId: string,
     actionId: string,
     productType: string,
-    actionIndex: number
+    actionIndex: number,
+    machineName: string,
+    selectBestWorkFlow: boolean
   ) => {
     updateProductItemDraftActionMachine(callApi, apiCallBackMachine, {
       actionId: actionId,
@@ -184,13 +186,17 @@ const useActionUpdateValues = () => {
       productItemValueId: currentProductItemValue,
       actionIndex: actionIndex,
       signalRConnectionId: connectionId,
+      tabName: machineName,
+      selectBestWorkFlow: selectBestWorkFlow
     }).then();
   };
   const selectNewMaterials = (
     printHouseMaterialSizeId: string,
     actionId: string,
     productType: string,
-    actionIndex: number
+    actionIndex: number,
+    materialName: string,
+    selectBestWorkFlow: boolean
   ) => {
     updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
       actionId: actionId,
@@ -199,22 +205,8 @@ const useActionUpdateValues = () => {
       productItemValueId: currentProductItemValue,
       actionIndex: actionIndex,
       signalRConnectionId: connectionId,
-    }).then();
-  };
-
-  const selectNewEmployee = (
-    printHouseMaterialSizeId: string,
-    actionId: string,
-    productType: string,
-    actionIndex: number
-  ) => {
-    updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
-      actionId: actionId,
-      printHouseMaterialSizeId: printHouseMaterialSizeId,
-      productType: productType,
-      productItemValueId: currentProductItemValue,
-      actionIndex: actionIndex,
-      signalRConnectionId: connectionId,
+      tabName: materialName,
+      selectBestWorkFlow: selectBestWorkFlow
     }).then();
   };
 
@@ -222,7 +214,8 @@ const useActionUpdateValues = () => {
     FoldOptionValueId: string,
     actionId: string,
     productType: string,
-    actionIndex: number
+    actionIndex: number,
+    foldName: string
   ) => {
     updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
       actionId: actionId,
@@ -231,6 +224,7 @@ const useActionUpdateValues = () => {
       productItemValueId: currentProductItemValue,
       actionIndex: actionIndex,
       signalRConnectionId: connectionId,
+      tabName: foldName
     }).then();
   };
 
@@ -396,7 +390,6 @@ const useActionUpdateValues = () => {
     getActionMachinesList,
     getActionMaterialsList,
     selectNewMachine,
-    selectNewEmployee,
     selectNewMaterials,
     updateActionData,
     selectNewFold,

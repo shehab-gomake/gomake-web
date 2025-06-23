@@ -10,6 +10,7 @@ const CALCULATE_SELECTED_ITEMS_URL= "/v1/erp-service/quote-confirmation/calculat
 
 const GET_WORK_FLOWS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flows";
 const GET_WORK_FLOWS_ACTIONS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flow-actions";
+const SELECT_WORKFLOW_BY_ID_URL = "/v1/erp-service/productItemValueDrafts/select-workflow-by-id/:signalRConnectionId";
 
 
 const getDocumentByIdApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -31,11 +32,22 @@ const getWorkFlowsApi: ICallAndSetData = async (callApi, setState, data) => {
     data
   );
 };
+
 const getWorkFlowsActionsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_WORK_FLOWS_ACTIONS_URL,
+    setState,
+    data
+  );
+};
+
+const selectWorkflowByIdApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    SELECT_WORKFLOW_BY_ID_URL,
     setState,
     data
   );
@@ -93,5 +105,6 @@ export {
     updateDocumentCommentsConfirmationApi,
     calculateSelectedItemsApi,
     getWorkFlowsApi,
-    getWorkFlowsActionsApi
+    getWorkFlowsActionsApi,
+    selectWorkflowByIdApi
 };
