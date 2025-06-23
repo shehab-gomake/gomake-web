@@ -104,6 +104,9 @@ const useStyle = () => {
         minWidth: "fit-content",
         border: "none",
         borderRadius: 0,
+        "&:hover": {
+          border: "2px solid #2E3092",
+        }
       },
       button: {
         minWidth: "fit-content",
@@ -119,9 +122,9 @@ const useStyle = () => {
           minWidth: "fit-content",
           flex: "1 1 auto",
           borderRadius: 0,
-          border: 0,
           letterSpacing: "0em",
           transition: "0s",
+          border: "2px solid #2E3092",
         },
       },
       sourceLabel: {
