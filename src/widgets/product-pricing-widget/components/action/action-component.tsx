@@ -23,13 +23,13 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -55,7 +55,6 @@ import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list"
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
-import { Height, Padding } from "@mui/icons-material";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
