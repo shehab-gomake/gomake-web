@@ -21,6 +21,7 @@ import {
 } from "./components/states";
 import { DEPOSIT_TYPE, PAYMENT_TYPE } from "../deposit/enums";
 import { useDebounce } from "@/utils/use-debounce";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 const useDeposits = () => {
   const { t } = useTranslation();
@@ -35,6 +36,14 @@ const useDeposits = () => {
     depositsPageCountState
   );
   const [pageSize, setPageSize] = useRecoilState<number>(depositsPageSizeState);
+  const { initialPageSize } = useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useRecoilState<Date>(depositsFromDateState);
   const [toDate, setToDate] = useRecoilState<Date>(depositsToDateState);
@@ -292,6 +301,7 @@ const useDeposits = () => {
     handleDateChange,
     fromDate,
     toDate,
+    initialPageSize,
   };
 };
 

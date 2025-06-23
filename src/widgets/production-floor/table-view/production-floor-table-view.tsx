@@ -31,6 +31,7 @@ import {
 import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { Paper, Skeleton } from "@mui/material";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -55,6 +56,13 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
+
+  const { initialPageSize } = useListPagination();
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
 
   const {
     storageList,
@@ -217,6 +225,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
             pageSize={pageSize}
             router={router}
             isFromDocumentsOrJobs={true}
+            initialPageSize={initialPageSize}
           />
         </>
       ) : (

@@ -81,6 +81,7 @@ export default function Customers() {
     openClientTypeModal,
     setOpenClientTypeModal,
     addCustomerStep,
+    initialPageSize,
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -198,6 +199,7 @@ export default function Customers() {
             setPage={setPageNumber}
             pagesCount={pagesCount}
             pageSize={pageSize}
+            initialPageSize={initialPageSize}
           />
         </Stack>
       ),

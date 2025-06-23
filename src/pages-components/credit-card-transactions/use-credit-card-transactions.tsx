@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { format, endOfToday } from "date-fns";
 import { initialFromDate } from "@/utils/helpers";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
@@ -33,8 +34,15 @@ const useCreditCardTransactions = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openRefundModal, setOpenRefundModal] = useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>();
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const { initialPageSize, pageSize, setPageSize, pagesCount, setPagesCount } =
+    useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
   const [fromDate, setFromDate] = useState<Date>(
     initialFromDate("credit-card-transactions-date")
   );
@@ -278,6 +286,7 @@ const useCreditCardTransactions = () => {
     fromDate,
     toDate,
     isFetching,
+    initialPageSize,
   };
 };
 
