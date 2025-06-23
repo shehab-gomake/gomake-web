@@ -82,7 +82,7 @@ const useMoreCircle = () => {
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
-    onOpenPackagesModal
+    onOpenPackagesModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -90,8 +90,9 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -425,7 +426,10 @@ const useMoreCircle = () => {
           quote?.isCanClose &&
           !isCanceledOrder &&
           isShowPurchaseOrders,
-        onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
+        onClick: () =>
+          navigate(
+            `/purchaseOrders?finalPatternSearch=${quote?.number}&pageNumber=1`
+          ),
         icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders"),
       },
@@ -490,8 +494,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-              onClickOpenCloseOrderModal(quote)
-            )
+                onClickOpenCloseOrderModal(quote)
+              )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),
@@ -542,8 +546,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -585,7 +589,8 @@ const useMoreCircle = () => {
           onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
         icon: <MailIcon />,
         name: t(
-          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          `sales.quote.${
+            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
           }`
         ),
       },

@@ -263,6 +263,7 @@ const QuotesListPageWidget = ({
     openDeleteModal,
   } = useDeliveryStatusButton();
 
+  //! I think we don't need this
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
