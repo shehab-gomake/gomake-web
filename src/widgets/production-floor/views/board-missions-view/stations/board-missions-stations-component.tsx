@@ -10,9 +10,9 @@ import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { t } from "i18next";
 import { isPrintNodeModalOpenState } from "./state";
-import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
-import { printNodeModalCancelLog, printOrderJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
+import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
+import { useRouter } from "next/router";
 
 const BoardMissionsStationsComponent = ({
   stations,
@@ -20,9 +20,9 @@ const BoardMissionsStationsComponent = ({
   boardMissions,
   getStations,
 }) => {
+  const router = useRouter();
   const { callApi } = useGomakeAxios();
   const [isPrintNodeModalOpen, setIsPrintNodeModalOpen] = useRecoilState(isPrintNodeModalOpenState);
-  const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
   const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
   const sortedStations = useMemo(
     () =>
@@ -33,22 +33,12 @@ const BoardMissionsStationsComponent = ({
   );
   const isLoading =
     !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
-  const printOrderJobsUsingPrintNode = async (orderId: string) => {
+  const printJobUsingPrintNode = async (jobId: string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printOrderJobUsingPrintNodeApi(callApi, callBack, orderId);
-  };
-  const cancelPrintNodeModal = async (orderId: string) => {
-    if (!orderId) {
-      return;
-    }
-    const callBack = (res) => {
-      if (res.success) {
-      }
-    };
-    await printNodeModalCancelLog(callApi, callBack, { orderId: orderId });
+    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
   };
   return (
     <Stack gap={"10px"} maxHeight="100%">
@@ -107,14 +97,11 @@ const BoardMissionsStationsComponent = ({
             }}
             onClickDelete={() => {
               setIsPrintNodeModalOpen(false);
-              printOrderJobsUsingPrintNode(newOrderId).then();
-              setNewOrderId("");
+              printJobUsingPrintNode(router.query.boardMissionsId as string).then();
             }}
-            onClickCancel={() => {
-              setIsPrintNodeModalOpen(false);
-              cancelPrintNodeModal(newOrderId).then();
-              setNewOrderId("");
-            }}
+            // onClickCancel={() => {
+            //   setIsPrintNodeModalOpen(false)
+            // }}
             cancelBtn={t("modal.cancel")}
           />
         </>
