@@ -68,6 +68,11 @@ export const getBoardMissionsByIdState = atom({
   default: null,
 });
 
+export const isPrintNodeModalOpenState = atom({
+  key: "isPrintNodeModalOpenState",
+  default: false,
+});
+
 
 
 
