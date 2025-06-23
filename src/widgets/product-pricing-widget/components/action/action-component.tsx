@@ -1420,7 +1420,17 @@ const ActionContainerComponent = ({
             yesBtn={t("pricingWidget.yesBtnChangeWorkflowModal")}
             confirmBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line", }}
             cancelBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line" }}
-            cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
+            cancelBtn={
+              <Stack alignItems={'center'} justifyContent={'center'}>
+                {
+                  t('pricingWidget.noBtnChangeWorkflowModal').split(('\n')).map(text =>
+                    <span>{text}</span>
+                  )
+                }
+              </Stack>
+
+            }
+            // cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
             modalType={ModalType.WARNING}
             style={{
               width: "60%",
