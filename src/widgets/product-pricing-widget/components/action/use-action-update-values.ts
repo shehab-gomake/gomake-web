@@ -176,7 +176,8 @@ const useActionUpdateValues = () => {
     actionId: string,
     productType: string,
     actionIndex: number,
-    machineName: string
+    machineName: string,
+    selectBestWorkFlow: boolean
   ) => {
     updateProductItemDraftActionMachine(callApi, apiCallBackMachine, {
       actionId: actionId,
@@ -185,7 +186,8 @@ const useActionUpdateValues = () => {
       productItemValueId: currentProductItemValue,
       actionIndex: actionIndex,
       signalRConnectionId: connectionId,
-      tabName: machineName
+      tabName: machineName,
+      selectBestWorkFlow: selectBestWorkFlow
     }).then();
   };
   const selectNewMaterials = (
@@ -193,7 +195,8 @@ const useActionUpdateValues = () => {
     actionId: string,
     productType: string,
     actionIndex: number,
-    materialName: string
+    materialName: string,
+    selectBestWorkFlow: boolean
   ) => {
     updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
       actionId: actionId,
@@ -202,7 +205,8 @@ const useActionUpdateValues = () => {
       productItemValueId: currentProductItemValue,
       actionIndex: actionIndex,
       signalRConnectionId: connectionId,
-      tabName: materialName
+      tabName: materialName,
+      selectBestWorkFlow: selectBestWorkFlow
     }).then();
   };
 

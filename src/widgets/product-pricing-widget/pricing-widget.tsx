@@ -35,6 +35,15 @@ import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
 import { useActionUpdateValues } from "./components/action/use-action-update-values";
 import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/components/icons/arrow-icon";
+import BestSellerBlueImage from "@/icons/bue.png";
+import BestSellerWhiteImage from "@/icons/white.png";
+import Image from "next/image";
+import { BestSellerBlueIcon } from "@/icons/best-seller-blue";
+import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
+import { useTranslation } from "react-i18next";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { DoneIcon } from "../shared-admin-customers/add-product/icons/done";
+import { CheckBoxAccordion } from "@/icons";
 
 const PricingWidget = ({
   workFlows,
@@ -101,7 +110,6 @@ const PricingWidget = ({
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
-  console.log("calculationResult", calculationResult);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
 
@@ -120,82 +128,6 @@ const PricingWidget = ({
 
   const { updateWorkFlowForMachine, updateWorkFlowForMaterials } =
     useActionUpdateValues();
-
-  const tabs = [
-    {
-      "name": "Digital Printer #1",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": true,
-      "workflowId": "1663e0b3-581e-4f28-9510-8522bbcf328d"
-    },
-    {
-      "name": "Digital Printer #2",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #3",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #4",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #5",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #6",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #7",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-    {
-      "name": "Digital Printer #8",
-      "count": 1,
-      "productType": null,
-      "isNeedTranslation": false,
-      "isRecommendedBySystem": false,
-      "isSelected": false,
-      "workflowId": "d06e664c-6e88-40f8-bc24-66700b80aa5c"
-    },
-
-  ]
 
   const buttonGroupRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -216,7 +148,7 @@ const PricingWidget = ({
       buttonGroup.addEventListener('scroll', checkScrollButtons);
       return () => buttonGroup.removeEventListener('scroll', checkScrollButtons);
     }
-  }, [tabs]);
+  }, [calculationResult?.tabs]);
 
   const scrollToStart = () => {
     if (buttonGroupRef.current) {
@@ -235,7 +167,7 @@ const PricingWidget = ({
       });
     }
   };
-
+  const direction = t("direction");
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
@@ -287,6 +219,9 @@ const PricingWidget = ({
                       key={index}
                       data-tour="allWorkflowsBtn"
                       onClick={() => {
+                        if (section.isSelected) {
+                          return;
+                        }
                         SelectWorkFlowById(section);
                         if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
                           setView(EPricingViews.SELECTED_WORKFLOW);
@@ -295,22 +230,43 @@ const PricingWidget = ({
 
                       }}
                       sx={classes.button}
+                      style={{
+                        letterSpacing: "0em",
+                        transition: "0s",
+
+                      }}
                       variant={
                         section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
                           ? "contained"
                           : "outlined"
                       }
                     >
-                      {section.isNeedTranslation
-                        ? t("workFlowTabs." + section.name)
-                        : section.name}
+                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
+                        {
+                          section.isRecommendedBySystem &&
+                          <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
+                            <BestSellerWhiteIcon />
+                          </div>
+                        }
+                        <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
+                          {section.isNeedTranslation
+                            ? t("workFlowTabs." + section.name)
+                            : section.name}
+                        </div>
+                        {
+                          section.isSelected &&
+                          <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                            <CheckBoxAccordion />
+                          </div>
+                        }
+                      </div>
                     </PrimaryButton>
                   ))}
               </ButtonGroup>
 
             </Box>
             <PrimaryButton
-              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px" }}
+              style={{ ...classes.fixedOutSourceButton, marginBottom: (canScrollLeft || canScrollRight) ? "10px" : "0px", letterSpacing: "0em", transition: "0s" }}
               variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
                 setSelectedWorkFlowCalculatedIsLoaded(true);
@@ -318,8 +274,15 @@ const PricingWidget = ({
                 updateProductItemValue(EWorkSource.OUT);
                 setIsChangeView(false);
               }}
+
             >
-              Out Source
+              {t("products.actions.outSource")}
+              {
+                view === EPricingViews.OUTSOURCE_WORKFLOW &&
+                <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                  <CheckBoxAccordion />
+                </div>
+              }
             </PrimaryButton>
             {/* Right Arrow Button */}
             {canScrollRight && (

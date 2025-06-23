@@ -29,7 +29,7 @@ import {
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -53,6 +53,9 @@ import { ReloadPriceIcon } from "@/icons/reload-price";
 import { formatValueWithUnit } from "@/utils/is-currency";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useModal } from "@/hooks/use-modal";
+import { ModalType } from "@/enums";
+import { Height, Padding } from "@mui/icons-material";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -309,6 +312,10 @@ const ActionContainerComponent = ({
     outsourceSuppliersState
   );
 
+  const selectedMachineModal = useModal();
+  const [selectedMachine, setSelectedMachine] = useState<any>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
+
   const handleAddSupplier = (newSupplier) => {
     const supplierFormatted: IOutSourceSupplier = {
       supplierId: newSupplier.id,
@@ -555,6 +562,8 @@ const ActionContainerComponent = ({
     setIsUpdateBusinessName(null);
   };
 
+
+
   return (
     <>
       {selectedWorkFlowCalculatedIsLoaded ? (
@@ -677,21 +686,18 @@ const ActionContainerComponent = ({
                                       machineName: v?.label,
                                     });
                                   } else {
-                                    selectNewMachine(
-                                      v?.value,
-                                      actionId,
-                                      productType,
-                                      actionIndex,
-                                      v?.label
-                                    );
+                                    selectedMachineModal.open();
+                                    setSelectedMachine(v);
+                                    setSelectedMaterial(null);
                                     setAttributesData({
                                       actionId,
                                       productType,
                                       actionIndex,
-                                      machineName: v?.label,
-                                      machineId: v?.value,
+                                      machineName: selectedMachine?.label,
+                                      machineId: selectedMachine?.value,
                                       printingActionId: id,
                                     });
+
                                   }
                                   setChooseMachine(false);
                                 }}
@@ -849,13 +855,9 @@ const ActionContainerComponent = ({
                             <GoMakeAutoComplate
                               disableClearable={true}
                               onChange={(e, v) => {
-                                selectNewMaterials(
-                                  v?.value,
-                                  actionId,
-                                  productType,
-                                  actionIndex,
-                                  v?.label
-                                );
+                                setSelectedMaterial(v);
+                                setSelectedMachine(null);
+                                selectedMachineModal.open();
                                 setAttributesData({
                                   actionId,
                                   productType,
@@ -1411,6 +1413,64 @@ const ActionContainerComponent = ({
               />
             </Stack>
           </Fade>
+          <GoMakeDeleteModal
+            open={selectedMachineModal.isOpen}
+            onClose={selectedMachineModal.close}
+            title={t("pricingWidget.changeWorkflowModalTitle")}
+            subTitle={" "}
+            yesBtn={t("pricingWidget.yesBtnChangeWorkflowModal")}
+            confirmBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line", }}
+            cancelBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line" }}
+            cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
+            modalType={ModalType.WARNING}
+            style={{
+              width: "60%",
+            }}
+            onClickDelete={() => {
+              if (selectedMachine) {
+                selectNewMachine(
+                  selectedMachine?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMachine?.label,
+                  true
+                );
+              }
+              else if (selectedMaterial) {
+                selectNewMaterials(
+                  selectedMaterial?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMaterial?.label,
+                  true
+                );
+              }
+            }}
+            onClickCancel={() => {
+              if (selectedMachine) {
+                selectNewMachine(
+                  selectedMachine?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMachine?.label,
+                  false
+                );
+              }
+              else if (selectedMaterial) {
+                selectNewMaterials(
+                  selectedMaterial?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMaterial?.label,
+                  false
+                );
+              }
+            }}
+          />
         </>
       )}
     </>

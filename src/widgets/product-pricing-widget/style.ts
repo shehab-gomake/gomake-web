@@ -107,15 +107,21 @@ const useStyle = () => {
       },
       button: {
         minWidth: "fit-content",
+        width: "fit-content",
         borderRadius: 0,
         border: 0,
+        flex: "1 1 auto",
         whiteSpace: "nowrap",
-        
+        letterSpacing: "0em",
+        transition: "0s",
+        position: "relative",
         "&:hover": {
           minWidth: "fit-content",
           flex: "1 1 auto",
           borderRadius: 0,
           border: 0,
+          letterSpacing: "0em",
+          transition: "0s",
         },
       },
       sourceLabel: {
