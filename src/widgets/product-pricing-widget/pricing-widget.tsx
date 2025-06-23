@@ -35,6 +35,13 @@ import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
 import { useActionUpdateValues } from "./components/action/use-action-update-values";
 import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/components/icons/arrow-icon";
+import BestSellerBlueImage from "@/icons/bue.png";
+import BestSellerWhiteImage from "@/icons/white.png";
+import Image from "next/image";
+import { BestSellerBlueIcon } from "@/icons/best-seller-blue";
+import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
+import { useTranslation } from "react-i18next";
+import { adaptLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 
 const PricingWidget = ({
   workFlows,
@@ -158,7 +165,7 @@ const PricingWidget = ({
       });
     }
   };
-
+  const direction = t("direction");
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
@@ -221,6 +228,7 @@ const PricingWidget = ({
                       style={{
                         letterSpacing: "0em",
                         transition: "0s",
+
                       }}
                       variant={
                         section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
@@ -228,9 +236,17 @@ const PricingWidget = ({
                           : "outlined"
                       }
                     >
-                      {section.isNeedTranslation
-                        ? t("workFlowTabs." + section.name)
-                        : section.name}
+                      {
+                        section.isRecommendedBySystem &&
+                        <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
+                          <BestSellerWhiteIcon />
+                        </div>
+                      }
+                      <div style={{ position: "relative", ...adaptPaddingRight(direction, 20) }}>
+                        {section.isNeedTranslation
+                          ? t("workFlowTabs." + section.name)
+                          : section.name}
+                      </div>
                     </PrimaryButton>
                   ))}
               </ButtonGroup>

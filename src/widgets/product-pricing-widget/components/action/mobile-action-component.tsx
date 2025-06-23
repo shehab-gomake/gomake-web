@@ -494,7 +494,8 @@ const MobileActionContainerComponent = ({
                                       actionId,
                                       productType,
                                       actionIndex,
-                                      v?.label
+                                      v?.label,
+                                      true
                                     );
                                     setAttributesData({
                                       actionId,
@@ -659,7 +660,8 @@ const MobileActionContainerComponent = ({
                                   actionId,
                                   productType,
                                   actionIndex,
-                                  v?.label
+                                  v?.label,
+                                  true
                                 );
                                 setAttributesData({
                                   actionId,

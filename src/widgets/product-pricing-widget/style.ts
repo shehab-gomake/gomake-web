@@ -114,6 +114,7 @@ const useStyle = () => {
         whiteSpace: "nowrap",
         letterSpacing: "0em",
         transition: "0s",
+        position: "relative",
         "&:hover": {
           minWidth: "fit-content",
           flex: "1 1 auto",
