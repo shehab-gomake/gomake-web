@@ -2,7 +2,6 @@ import { Stack, ButtonGroup, Divider, Box } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
-import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
 import { WorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/work-flow-component";
 import { Actions } from "@/widgets/product-pricing-widget/components/action/action-component";
@@ -35,14 +34,8 @@ import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
 import { useActionUpdateValues } from "./components/action/use-action-update-values";
 import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/components/icons/arrow-icon";
-import BestSellerBlueImage from "@/icons/bue.png";
-import BestSellerWhiteImage from "@/icons/white.png";
-import Image from "next/image";
-import { BestSellerBlueIcon } from "@/icons/best-seller-blue";
 import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
-import { useTranslation } from "react-i18next";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
-import { DoneIcon } from "../shared-admin-customers/add-product/icons/done";
 import { CheckBoxAccordion } from "@/icons";
 
 const PricingWidget = ({
