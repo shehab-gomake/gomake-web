@@ -137,7 +137,7 @@ const useTransactionJournalReport = ({
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+                href={`/${documentPath}?finalPatternSearch=${data?.docNumber}&pageNumber=1`}
               >
                 {data?.docNumber}
               </a>

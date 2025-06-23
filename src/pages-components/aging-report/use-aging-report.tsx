@@ -156,6 +156,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
                     case DocumentsTypeReportList.PurchaseInvoiceRefund:
                       documentPath = "purchaseInvoiceRefunds";
                       break;
+                    case DocumentsTypeReportList.Payments:
+                      documentPath = "receipts";
+                      break;
                     default:
                       documentPath = null;
                   }
@@ -168,7 +171,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
                             color: "inherit",
                             textDecoration: "unset",
                           }}
-                          href={`/${documentPath}?documentNumber=${nestedValue}`}
+                          href={`/${documentPath}?finalPatternSearch=${nestedValue}&pageNumber=1`}
                         >
                           {nestedValue}
                         </a>
