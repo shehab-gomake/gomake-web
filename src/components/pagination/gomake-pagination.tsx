@@ -27,6 +27,7 @@ interface IProps {
   isFromDocumentsOrJobs?: boolean;
   router?: any;
   isMobile?: boolean;
+  initialPageSize?: number;
 }
 
 const GoMakePagination = ({
@@ -40,6 +41,7 @@ const GoMakePagination = ({
   isFromDocumentsOrJobs = false,
   router,
   isMobile = false,
+  initialPageSize,
 }: IProps) => {
   const { classes } = useStyle(isMobile);
   const { t } = useTranslation();
@@ -51,6 +53,13 @@ const GoMakePagination = ({
   const themeRTL = createTheme({
     direction: dir,
   });
+
+  const defaultPageSizes = [10, 15, 20, 30];
+
+  const pageSizeOptions = defaultPageSizes.includes(initialPageSize)
+    ? defaultPageSizes
+    : [...defaultPageSizes, initialPageSize].sort((a, b) => a - b);
+
   return (
     <div style={{ ...classes.paginationStyle, ...style }}>
       <ThemeProvider theme={themeRTL}>
@@ -67,6 +76,7 @@ const GoMakePagination = ({
           <InputLabel id="demo-simple-select-standard-label">
             {t("general.lines")}
           </InputLabel>
+
           <Select
             labelId="demo-simple-select-standard-label"
             id="demo-simple-select-standard"
@@ -74,10 +84,11 @@ const GoMakePagination = ({
             onChange={onChangePageSize}
             label={t("general.lines")}
           >
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={15}>15</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={30}>30</MenuItem>
+            {pageSizeOptions.map((size) => (
+              <MenuItem key={size} value={size}>
+                {size}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>

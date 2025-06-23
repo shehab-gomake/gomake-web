@@ -33,6 +33,7 @@ import {
   SetupStep,
   SetupStepItem,
 } from "@/store/print-house-setup-state-state";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 export interface IStatus {
   label: string;
@@ -59,9 +60,19 @@ const useCustomers = (
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const [openExportModal, setOpenExportModal] = useState<boolean>(false);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+
+  // const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize); //!here
+  const { pageSize, setPageSize, initialPageSize } = useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
+  const [openExportModal, setOpenExportModal] = useState<boolean>(false);
+
   const onOpenExportClientModal = () => {
     setOpenExportModal(true);
   };
@@ -402,6 +413,7 @@ const useCustomers = (
     setOpenClientTypeModal,
     addSupplierStep,
     addCustomerStep,
+    initialPageSize,
   };
 };
 export { useCustomers };
