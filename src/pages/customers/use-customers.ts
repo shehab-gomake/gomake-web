@@ -59,11 +59,9 @@ const useCustomers = (
   const { CheckPermission } = useUserPermission();
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-  const [pagesCount, setPagesCount] = useState(0);
   const { CheckPreferenceValue } = usePrintHousePreferences();
-
-  // const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize); //!here
-  const { pageSize, setPageSize, initialPageSize } = useListPagination();
+  const { pageSize, setPageSize, pagesCount, setPagesCount, initialPageSize } =
+    useListPagination();
 
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
