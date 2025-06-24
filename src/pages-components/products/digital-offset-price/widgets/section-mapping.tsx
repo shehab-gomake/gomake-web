@@ -214,7 +214,16 @@ const SectionMappingWidget = ({
         <div style={clasess.parametersContainer}>
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
-            ?.filter((param: any) => !param.isUnderParameterId)
+            ?.filter((param: any) => {
+              // If parameter has isUnderParameterId, check if it exists in subSection?.parameters
+              if (param.isUnderParameterId) {
+                const existsInParameters = subSection?.parameters?.find(
+                  (sectionParam: any) => (sectionParam.id === param.isUnderParameterId) && !sectionParam?.isHidden
+                );
+                return !existsInParameters;
+              }
+              return !param.isUnderParameterId;
+            })
             ?.map((parameter: any) => {
               const isUnderParameterId = underParameterIds.some(
                 (item) => item.underParameterId === parameter.id && !relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
