@@ -208,6 +208,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       setIsRenderData(false)
     }
   }, [newDieCutSelect])
+  const [pdfUrl, setPdfUrl] = useState(null)
+  const [dxfUrl, setDxfUrl] = useState(null)
   const createNewTemplateEndPoint = async () => {
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
@@ -232,6 +234,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     }
     const callBack = (res) => {
       if (res?.isOkay) {
+        setPdfUrl(res.data.pdfUrl)
+        setDxfUrl(res.data.dxfUrl)
         getAllMaterial().then((materials) => {
           // getProductById(materials);
         });
@@ -439,7 +443,11 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     selectedDieCutTypeValue,
     setSelectedCardId,
     setSelectedCardData,
-    setLastOption
+    setLastOption,
+    pdfUrl,
+    setPdfUrl,
+    dxfUrl,
+    setDxfUrl
   };
 };
 
