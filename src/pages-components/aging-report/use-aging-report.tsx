@@ -303,7 +303,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           orderBy,
           isDescOrder,
@@ -358,7 +358,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           cardType: isPurchaseReport
             ? CLIENT_TYPE.SUPPLIER
