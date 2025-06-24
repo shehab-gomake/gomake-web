@@ -56,13 +56,36 @@ const useMonitoringDashboard = () => {
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
+  // const formatDateOnly = (date: Date) => {
+  //   return (
+  //     date.getFullYear() +
+  //     "-" +
+  //     String(date.getMonth() + 1).padStart(2, "0") +
+  //     "-" +
+  //     String(date.getDate()).padStart(2, "0")
+  //   );
+  // };
+
+  const convertUtcToLocalIsoString = (utcString: string): string => {
+    try {
+      const date = new Date(utcString); // Correct: Don't add "Z"
+      const localDate = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000
+      );
+      return localDate.toISOString().split("T")[0]; // Return only "YYYY-MM-DD"
+    } catch (e) {
+      return utcString;
+    }
+  };
+
   const getSalesChartRoute = async (
     filters,
     extraCostData?: { actualCost?: number; target?: number }
   ) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
+
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
@@ -97,8 +120,8 @@ const useMonitoringDashboard = () => {
 
   const getPieProductTypeChart = async (filters) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
@@ -135,8 +158,8 @@ const useMonitoringDashboard = () => {
 
   const getProductPerformanceChart = async (filters) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
@@ -182,8 +205,8 @@ const useMonitoringDashboard = () => {
 
   const getAgentPerformanceChart = async (filters) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
@@ -230,8 +253,8 @@ const useMonitoringDashboard = () => {
 
   const getClientPerformanceChart = async (filters) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
@@ -278,8 +301,8 @@ const useMonitoringDashboard = () => {
 
   const getPieAgentChart = async (filters) => {
     const data: any = {
-      fromDate: filters?.startDate?.toISOString(),
-      toDate: filters?.endDate?.toISOString(),
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
       ...(filters.selectedAgentIds?.length && {
         agents: filters.selectedAgentIds,
       }),
