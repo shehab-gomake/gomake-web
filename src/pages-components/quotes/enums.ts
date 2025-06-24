@@ -83,6 +83,9 @@ export enum LogActionType {
   SEND_READY_BOARDMISSION_SMS,
   SEND_READY_ORDER_MAIL,
   SEND_READY_ORDER_SMS,
+  SEND_PAYMENT_LINK,
+  PAYMENT_SUCCESS,
+  PAYMENT_FAILED
 }
 
 export enum ApprovalStatus {
