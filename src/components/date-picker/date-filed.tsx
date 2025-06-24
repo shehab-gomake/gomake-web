@@ -2,7 +2,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Box, Typography, InputAdornment } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import { useEffect, useMemo, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
@@ -20,6 +20,8 @@ interface IDateFieldProps {
   openPicker?: boolean;
   onClose?: () => void;
   isHidden?: boolean;
+  direction?: "row" | "column";
+  compactMode?: boolean;
 }
 
 const DateField: React.FC<IDateFieldProps> = ({
@@ -36,6 +38,8 @@ const DateField: React.FC<IDateFieldProps> = ({
   openPicker = false,
   onClose = null,
   isHidden = false,
+  direction = "row",
+  compactMode = false,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -78,6 +82,7 @@ const DateField: React.FC<IDateFieldProps> = ({
       (
         <TextField
           {...params}
+          size={compactMode ? "small" : "medium"}
           placeholder={t("sales.quote.selectDate")}
           disabled={!isEditable}
           InputProps={{
@@ -88,6 +93,7 @@ const DateField: React.FC<IDateFieldProps> = ({
               </InputAdornment>
             ),
           }}
+          // onClick={!compactMode ? handleOpenPicker : undefined}
           onClick={handleOpenPicker}
           sx={{
             marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
@@ -105,26 +111,26 @@ const DateField: React.FC<IDateFieldProps> = ({
   return (
     <Box
       ref={inputRef}
-      sx={
-        inputWidth
-          ? {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 0,
-              width: inputWidth,
-            }
-          : {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 0,
-            }
-      }
+      sx={{
+        display: "flex",
+        flexDirection: direction,
+        alignItems: direction === "row" ? "center" : "flex-start",
+        padding: 0,
+        ...(inputWidth && { width: inputWidth }),
+        ...(compactMode && {
+          gap: "6px",
+        }),
+      }}
     >
       <Typography
-        variant="subtitle1"
-        sx={{ whiteSpace: "nowrap", color: "#667085" }}
+        variant={compactMode ? "subtitle1" : "subtitle2"}
+        sx={{
+          whiteSpace: "nowrap",
+          padding: "0px",
+          color: compactMode ? "black" : "#667085",
+          fontSize: compactMode ? "14px" : undefined,
+          fontWeight: compactMode ? 500 : undefined,
+        }}
       >
         {label}
       </Typography>

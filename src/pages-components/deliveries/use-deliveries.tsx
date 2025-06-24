@@ -17,6 +17,7 @@ import { useDebounce } from "@/utils/use-debounce";
 import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-io";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 interface Query {
   customerId?: string;
@@ -36,9 +37,16 @@ const useDeliveries = () => {
   const { orderId, customerId, documentNumber } = query;
 
   const [page, setPage] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+
+  const { initialPageSize, pageSize, setPageSize, pagesCount, setPagesCount } =
+    useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
   const handlePageSizeChange = (event) => {
     setPage(1);
     setPageSize(event.target.value);
@@ -449,6 +457,7 @@ const useDeliveries = () => {
     orderId,
     customerId,
     documentNumber,
+    initialPageSize,
   };
 };
 

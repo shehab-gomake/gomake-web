@@ -18,6 +18,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
 import { initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 export interface FilterState {
   fromAccount: string;
@@ -81,9 +82,21 @@ const useTransactionJournalReport = ({
   const [dataTable, setDataTable] = useState<any>([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const {
+    initialPageSize,
+    pageSize,
+    setPageSize,
+    pagesCount,
+    setPagesCount,
+    pageNumber,
+    setPageNumber,
+  } = useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
   const [isOpenCreateTransactionModal, setIsCreateTransactionModal] =
     useState<boolean>(false);
   const {
@@ -137,7 +150,7 @@ const useTransactionJournalReport = ({
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+                href={`/${documentPath}?finalPatternSearch=${data?.docNumber}&pageNumber=1`}
               >
                 {data?.docNumber}
               </a>
@@ -785,6 +798,7 @@ const useTransactionJournalReport = ({
     onClickExportJournalPDFReport,
     isLoadingPayments,
     hasFetchedOnce,
+    initialPageSize,
   };
 };
 

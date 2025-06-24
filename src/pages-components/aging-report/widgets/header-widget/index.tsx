@@ -1,15 +1,22 @@
-import { Checkbox } from "@mui/material";
+import {
+  Checkbox,
+  Box,
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+} from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components";
 import {
   AgingReportHeaderWidgetProps,
   useAgingReportHeader,
 } from "./use-header-widget";
-import { DateRangePicker } from "rsuite";
-import { createGlobalStyle } from "styled-components";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { DateField } from "@/components/date-picker/date-filed";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
 
 const AgingReportHeaderWidget = ({
   agent,
@@ -26,29 +33,57 @@ const AgingReportHeaderWidget = ({
   toDate,
   isFetchingCustomers,
   isPurchaseReport,
+  setFromDate,
+  setToDate,
 }: AgingReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === "rtl";
-  const GlobalStyle = createGlobalStyle`
-  .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
-  }
-`;
+  const theme = createTheme({
+    direction: dir,
+  });
+
+  const handleFromDateChange = (newDate) => {
+    setFromDate(newDate ? new Date(newDate) : null);
+  };
+
+  const handleToDateChange = (newDate) => {
+    setToDate(newDate ? new Date(newDate) : null);
+  };
 
   return (
     <div style={classes.mainContainer}>
       <div style={classes.date1FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-        <div style={{ width: "100%" }}>
-          <GlobalStyle RTL={RTL} />
-          <DateRangePicker
-            onChange={handleDateChange}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
-          />
-        </div>
+        <Box display="flex" gap={2} width="100%">
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <LocalizationProvider
+              dateAdapter={AdapterMoment}
+              adapterLocale="en-gb"
+            >
+              <DateField
+                label={t("general.startDate")}
+                date={formatDateToISOString(fromDate)}
+                handleChange={handleFromDateChange}
+                isEditable={true}
+                withTime={false}
+                inputWidth="100%"
+                direction="column"
+                compactMode={true}
+              />
+
+              <DateField
+                label={t("general.endDate")}
+                date={formatDateToISOString(toDate)}
+                handleChange={handleToDateChange}
+                isEditable={true}
+                withTime={false}
+                inputWidth="100%"
+                direction="column"
+                compactMode={true}
+              />
+            </LocalizationProvider>
+          </ThemeProvider>
+        </Box>
       </div>
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>

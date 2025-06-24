@@ -83,6 +83,7 @@ const TransactionJournalReportWidget = ({
     onClickExportJournalPDFReport,
     isLoadingPayments,
     hasFetchedOnce,
+    initialPageSize,
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -267,6 +268,7 @@ const TransactionJournalReportWidget = ({
           setPage={setPageNumber}
           pagesCount={pagesCount}
           pageSize={pageSize}
+          initialPageSize={initialPageSize}
         />
       )}
     </div>

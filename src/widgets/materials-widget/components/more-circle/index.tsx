@@ -14,6 +14,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { filterState, materialCategorySuppliersState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
+import { DfxIcon } from "@/components/icons/dfx-icon";
+import { PdfIcon } from "@/components/icons/pdf-icon";
 
 const MaterialMenuWidget = ({
   dataRow,
@@ -23,6 +25,7 @@ const MaterialMenuWidget = ({
   onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   toggleIsActive
 }) => {
+  console.log("dataRow", dataRow)
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
     onChangeRowCheckBox,
@@ -115,6 +118,33 @@ const MaterialMenuWidget = ({
             {t("navigationButtons.delete")}
           </div>
         </MenuItem>
+        {
+          dataRow?.dxfUrl && <Divider />
+        }
+        {
+          dataRow?.dxfUrl && <MenuItem style={clasess.menuItemContainer} onClick={() => {
+            window.open(dataRow?.dxfUrl, '_blank');
+          }}>
+            <DfxIcon height={16} width={16} />
+            <div style={clasess.rowTextStyle}>
+              {t("products.offsetPrice.admin.viewDfx")}
+            </div>
+          </MenuItem>
+        }
+        {
+          dataRow?.pdfUrl && <Divider />
+        }
+        {
+          dataRow?.pdfUrl &&
+          <MenuItem style={clasess.menuItemContainer} onClick={() => {
+            window.open(dataRow?.pdfUrl, '_blank');
+          }}>
+            <PdfIcon height={16} width={16} color={clasess.iconColor} />
+            <div style={clasess.rowTextStyle}>
+              {t("products.offsetPrice.admin.viewPdf")}
+            </div>
+          </MenuItem>
+        }
       </GoMakeMenu>
     </>
   );

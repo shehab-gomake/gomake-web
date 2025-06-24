@@ -48,6 +48,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import {
   boardMissionsStationsState,
   isOrderCompletedState,
+  isPrintNodeModalOpenState,
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -132,6 +133,7 @@ const BoardMissionsStationActionItem = ({
     return "";
   }, [supplierId, suppliers, suppliersState]);
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
+  const setIsPrintNodeModalOpen = useSetRecoilState(isPrintNodeModalOpenState);
   const [openPackagingModal, setOpenPackagingModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
@@ -345,6 +347,7 @@ const BoardMissionsStationActionItem = ({
     const callBack = (res) => {
       setLoading(false);
       if (res.success) {
+        setIsPrintNodeModalOpen(res.data.showPrintNodeModal);
         alertSuccessUpdate();
         const currentActionId = res?.data?.currentStationId;
         setStations(

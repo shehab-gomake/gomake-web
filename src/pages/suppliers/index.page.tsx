@@ -37,7 +37,7 @@ export default function Home() {
     ClientTypeId,
     agentId,
     isActive,
-    pageSize,
+    setPageSize,
     filters,
     clientType,
     tableHeaders,
@@ -81,6 +81,8 @@ export default function Home() {
     openClientTypeModal,
     setOpenClientTypeModal,
     addSupplierStep,
+    pageSize,
+    initialPageSize,
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
 
   const activeText = t("usersSettings.active");
@@ -207,6 +209,7 @@ export default function Home() {
             setPage={setPageNumber}
             pagesCount={pagesCount}
             pageSize={pageSize}
+            initialPageSize={initialPageSize}
           />
         </Stack>
       ),

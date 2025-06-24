@@ -79,7 +79,7 @@ const useStyle = () => {
       },
       creditCardInputsContainer: {
         display: "flex",
-        width: "75%",
+        width: "100%",
         padding: "4px",
         border: `1.5px solid ${primaryColor(300)}`,
         borderRadius: "4px",
@@ -101,6 +101,7 @@ const useStyle = () => {
         borderRadius: "4px",
         width: "45%",
         padding: "4px",
+        height: "fit-content",
       },
 
       selectInputs: {
