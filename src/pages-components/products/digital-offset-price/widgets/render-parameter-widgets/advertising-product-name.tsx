@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { AddNewIcon, AdvertisingIcon } from "@/icons";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, Tooltip } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
@@ -9,6 +9,8 @@ import { SearchInput } from "@/components/containers/search-input";
 import { EParameterTypes } from "@/enums";
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
+import { PdfIcon } from "@/components/icons/pdf-icon";
+import { DfxIcon } from "@/components/icons/dfx-icon";
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
@@ -54,7 +56,11 @@ const AdvertisingProductNameParameterWidget = ({
     setSearchValue,
     selectedDieCutTypeValue,
     setSelectedCardId,
-    setSelectedCardData
+    setSelectedCardData,
+    pdfUrl,
+    setPdfUrl,
+    dxfUrl,
+    setDxfUrl
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
@@ -96,6 +102,8 @@ const AdvertisingProductNameParameterWidget = ({
 
     return MyOptions;
   }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
+
+  console.log("getOptions", getOptions())
 
   const [selectedValue, setSelectedValue] = useState(
     index !== -1
@@ -295,6 +303,15 @@ const AdvertisingProductNameParameterWidget = ({
                 </div>
               </div>
               <div style={clasess.modalContentButton}>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: 10 }}>
+                  {pdfUrl && <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={() => {
+                    window.open(pdfUrl, '_blank');
+                  }}>{t("products.offsetPrice.admin.viewPdf")}</GomakePrimaryButton>}
+                  {dxfUrl && <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={() => {
+                    window.open(dxfUrl, '_blank');
+                  }}>{t("products.offsetPrice.admin.viewDfx")}</GomakePrimaryButton>}
+                </div>
+
                 <GomakePrimaryButton
                   style={clasess.modalContentButtonItem}
                   onClick={() => {
@@ -312,44 +329,16 @@ const AdvertisingProductNameParameterWidget = ({
                       parameter?.code,
                       newDataGenerated
                     );
-                    // setSubProducts(prevSubProducts => {
-                    //   return prevSubProducts.map(subProduct => {
-                    //     return {
-                    //       ...subProduct,
-                    //       parameters: [
-                    //         ...subProduct.parameters.filter(parameter => parameter.parameterCode !== "DieCut"),
-                    //         {
-                    //           "parameterId": "f81d5faf-7c4b-40cd-a178-98d79d61c326",
-                    //           "parameterName": "Choose Die-Cut",
-                    //           "actionId": null,
-                    //           "parameterType": 4,
-                    //           "isQuantityParameter": false,
-                    //           "values": [newDataGenerated?.rowData?.name?.value],
-                    //           "valueIds": [newDataGenerated?.id],
-                    //           "sectionId": section?.id,
-                    //           "subSectionId": subSection?.id,
-                    //           "actionIndex": parameter?.actionIndex,
-                    //           "parameterCode": "DieCut",
-                    //           "valuesConfigs": [],
-                    //           "unitKey": null,
-                    //           "defaultUnit": null,
-                    //           "factor": null,
-                    //           "unitType": 0,
-                    //           "isGeneralInfoInProductionFloor": true
-                    //         }
-                    //       ]
-                    //     };
-                    //   });
-                    // });
-
                     setIsViewInfoAfterGenerate(false)
                     setOpenGenerateModal(false)
-
+                    setPdfUrl(null)
+                    setDxfUrl(null)
                   }}
                 >{
                     t("products.offsetPrice.admin.ok")
                   }
                 </GomakePrimaryButton>
+
               </div>
             </div>
           }
@@ -441,6 +430,8 @@ const AdvertisingProductNameParameterWidget = ({
                   const image = item.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
                   const name = item.updateName || item.additionalAttribute?.find(attr => attr.valueId === 'name')?.value;
                   const isSelected = selectedCardId === item.id;
+                  const pdfUrlValue = item.additionalAttribute?.find(attr => attr.valueId === 'pdfUrl')?.value;
+                  const dfxUrlValue = item.additionalAttribute?.find(attr => attr.valueId === 'dfxUrl')?.value;
                   return (
                     <div
                       key={item.id}
@@ -456,7 +447,8 @@ const AdvertisingProductNameParameterWidget = ({
                         boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
                         background: "#fff",
                         cursor: "pointer",
-                        transition: "border 0.2s"
+                        transition: "border 0.2s",
+                        position: "relative"
                       }}
                       onClick={() => {
                         setSelectedCardId(item.id);
@@ -481,6 +473,32 @@ const AdvertisingProductNameParameterWidget = ({
                         setIsOpenDieCutModal(false);
                       }}
                     >
+                      {
+                        pdfUrlValue &&
+                        <div onClick={() => {
+                          window.open(pdfUrlValue, '_blank');
+                        }}
+                          style={{ position: "absolute", top: 5, right: 5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                          <Tooltip title={t("products.offsetPrice.admin.viewPdf")}>
+                            <IconButton>
+                              <PdfIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+                      }
+                      {
+                        dfxUrlValue &&
+                        <div onClick={() => {
+                          window.open(dfxUrlValue, '_blank');
+                        }}
+                          style={{ position: "absolute", top: 5, right: 30, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                          <Tooltip title={t("products.offsetPrice.admin.viewDfx")}>
+                            <IconButton>
+                              <DfxIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+                      }
                       {(
                         <img
                           src={parameter?.code === "DiecutType" ? categoryImage : image}
@@ -492,6 +510,7 @@ const AdvertisingProductNameParameterWidget = ({
                     </div>
                   );
                 })}
+
               </div>
 
             }
