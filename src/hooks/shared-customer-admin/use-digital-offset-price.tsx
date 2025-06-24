@@ -99,7 +99,6 @@ import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
@@ -223,6 +222,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [deviceCategory, setDeviceCategory] = useState("");
   const [deviceSize, setDeviceSize] = useState("");
+  console.log("deviceSize", deviceSize)
 
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
     isActionEmployeeUpdatedState
@@ -840,6 +840,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
+  console.log("underParameterIds", underParameterIds)
 
   useEffect(() => {
     if (!isSetTemplete) {
