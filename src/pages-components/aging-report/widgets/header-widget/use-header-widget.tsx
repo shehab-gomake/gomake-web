@@ -17,6 +17,8 @@ export interface AgingReportHeaderWidgetProps {
   handleCustomerChange: any;
   detailedReport: boolean;
   onChangeDetailedReport: any;
+  agingReportByCreationDate: any,
+  onChangeAgingReportByCreationDate: any,
   onChangeByReferenceDate: any;
   handleDateChange?: any;
   fromDate?: Date | null;
