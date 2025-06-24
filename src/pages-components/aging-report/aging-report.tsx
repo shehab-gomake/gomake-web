@@ -50,6 +50,8 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     isPurchaseReport,
     setFromDate,
     setToDate,
+    agingReportByCreationDate,
+    onChangeAgingReportByCreationDate
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -81,6 +83,8 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         handleCustomerChange={handleCustomerChange}
         detailedReport={detailedReport}
         onChangeDetailedReport={onChangeDetailedReport}
+        agingReportByCreationDate={agingReportByCreationDate}
+        onChangeAgingReportByCreationDate={onChangeAgingReportByCreationDate}
         onChangeByReferenceDate={onChangeByReferenceDate}
         handleDateChange={handleDateChange}
         fromDate={fromDate}
