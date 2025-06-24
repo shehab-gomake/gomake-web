@@ -95,6 +95,7 @@ import { GomakeTextInput } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
 import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 type PaymentTypeOption = {
   label: string;
@@ -185,8 +186,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   });
   const [activeCard, setActiveCard] = useState(null);
   const [page, setPage] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const { pageSize, setPageSize, pagesCount, setPagesCount, initialPageSize } =
+    useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
@@ -3355,6 +3363,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     paymentType,
     handlePaymentTypeChange,
     typeOfPayments,
+    initialPageSize,
   };
 };
 

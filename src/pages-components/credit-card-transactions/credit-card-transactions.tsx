@@ -40,6 +40,7 @@ const CreditCardTransactionsWidget = () => {
     fromDate,
     toDate,
     isFetching,
+    initialPageSize,
   } = useCreditCardTransactions();
 
   return (
@@ -78,6 +79,7 @@ const CreditCardTransactionsWidget = () => {
           setPage={setPage}
           pagesCount={pagesCount}
           pageSize={pageSize}
+          initialPageSize={initialPageSize}
         />
       </Stack>
       <GoMakeModal

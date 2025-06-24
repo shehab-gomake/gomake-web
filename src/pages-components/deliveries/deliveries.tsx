@@ -60,6 +60,7 @@ const DeliveriesPageWidget = () => {
     orderId,
     customerId,
     documentNumber,
+    initialPageSize,
   } = useDeliveries();
 
   const {
@@ -259,6 +260,7 @@ const DeliveriesPageWidget = () => {
           router={router}
           isFromDocumentsOrJobs={true}
           isMobile={isMobile}
+          initialPageSize={initialPageSize}
         />
       </Stack>
       <QRScannerFab />
