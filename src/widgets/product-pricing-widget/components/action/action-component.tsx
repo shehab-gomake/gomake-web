@@ -23,13 +23,13 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -53,6 +53,8 @@ import { ReloadPriceIcon } from "@/icons/reload-price";
 import { formatValueWithUnit } from "@/utils/is-currency";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useModal } from "@/hooks/use-modal";
+import { ModalType } from "@/enums";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -309,6 +311,10 @@ const ActionContainerComponent = ({
     outsourceSuppliersState
   );
 
+  const selectedMachineModal = useModal();
+  const [selectedMachine, setSelectedMachine] = useState<any>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
+
   const handleAddSupplier = (newSupplier) => {
     const supplierFormatted: IOutSourceSupplier = {
       supplierId: newSupplier.id,
@@ -543,10 +549,10 @@ const ActionContainerComponent = ({
 
   const mappedSuppliers = renderOptions
     ? renderOptions()?.map((supplier) => ({
-        text: supplier?.name,
-        id: supplier?.id,
-        ...supplier,
-      }))
+      text: supplier?.name,
+      id: supplier?.id,
+      ...supplier,
+    }))
     : [];
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
@@ -554,6 +560,8 @@ const ActionContainerComponent = ({
   const onBlurBusinessName = async () => {
     setIsUpdateBusinessName(null);
   };
+
+
 
   return (
     <>
@@ -677,20 +685,18 @@ const ActionContainerComponent = ({
                                       machineName: v?.label,
                                     });
                                   } else {
-                                    selectNewMachine(
-                                      v?.value,
-                                      actionId,
-                                      productType,
-                                      actionIndex
-                                    );
+                                    selectedMachineModal.open();
+                                    setSelectedMachine(v);
+                                    setSelectedMaterial(null);
                                     setAttributesData({
                                       actionId,
                                       productType,
                                       actionIndex,
-                                      machineName: v?.label,
-                                      machineId: v?.value,
+                                      machineName: selectedMachine?.label,
+                                      machineId: selectedMachine?.value,
                                       printingActionId: id,
                                     });
+
                                   }
                                   setChooseMachine(false);
                                 }}
@@ -829,9 +835,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                      0,
-                                      20
-                                    ) + "..."
+                                    0,
+                                    20
+                                  ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -848,12 +854,9 @@ const ActionContainerComponent = ({
                             <GoMakeAutoComplate
                               disableClearable={true}
                               onChange={(e, v) => {
-                                selectNewMaterials(
-                                  v?.value,
-                                  actionId,
-                                  productType,
-                                  actionIndex
-                                );
+                                setSelectedMaterial(v);
+                                setSelectedMachine(null);
+                                selectedMachineModal.open();
                                 setAttributesData({
                                   actionId,
                                   productType,
@@ -925,7 +928,8 @@ const ActionContainerComponent = ({
                                   v?.id,
                                   actionId,
                                   productType,
-                                  actionIndex
+                                  actionIndex,
+                                  v?.label
                                 );
                                 setAttributesData({
                                   actionId,
@@ -1017,17 +1021,16 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${
-                              source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                    calculateOutSourceProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                                : formatValueWithUnit(
-                                    calculateProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                            })`}
+                            {`(${source === EWorkSource.OUT
+                              ? formatValueWithUnit(
+                                calculateOutSourceProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              : formatValueWithUnit(
+                                calculateProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              })`}
                           </span>
                         </Stack>
                       )}
@@ -1409,6 +1412,74 @@ const ActionContainerComponent = ({
               />
             </Stack>
           </Fade>
+          <GoMakeDeleteModal
+            open={selectedMachineModal.isOpen}
+            onClose={selectedMachineModal.close}
+            title={t("pricingWidget.changeWorkflowModalTitle")}
+            subTitle={" "}
+            yesBtn={t("pricingWidget.yesBtnChangeWorkflowModal")}
+            confirmBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line", }}
+            cancelBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line" }}
+            cancelBtn={
+              <Stack alignItems={'center'} justifyContent={'center'}>
+                {
+                  t('pricingWidget.noBtnChangeWorkflowModal').split(('\n')).map(text =>
+                    <span>{text}</span>
+                  )
+                }
+              </Stack>
+
+            }
+            // cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
+            modalType={ModalType.WARNING}
+            style={{
+              width: "60%",
+            }}
+            onClickDelete={() => {
+              if (selectedMachine) {
+                selectNewMachine(
+                  selectedMachine?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMachine?.label,
+                  true
+                );
+              }
+              else if (selectedMaterial) {
+                selectNewMaterials(
+                  selectedMaterial?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMaterial?.label,
+                  true
+                );
+              }
+            }}
+            onClickCancel={() => {
+              if (selectedMachine) {
+                selectNewMachine(
+                  selectedMachine?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMachine?.label,
+                  false
+                );
+              }
+              else if (selectedMaterial) {
+                selectNewMaterials(
+                  selectedMaterial?.value,
+                  actionId,
+                  productType,
+                  actionIndex,
+                  selectedMaterial?.label,
+                  false
+                );
+              }
+            }}
+          />
         </>
       )}
     </>
