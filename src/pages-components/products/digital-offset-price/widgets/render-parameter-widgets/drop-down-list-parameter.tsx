@@ -75,6 +75,11 @@ const DropDownListParameterWidget = ({
       );
     }
   }, [parameter, index,]);
+  useEffect(() => {
+    if (parameter?.code === "devicesize" && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+      setDeviceSize(selectedValue?.updateName[0]);
+    }
+  }, [selectedValue])
   const handleValueChange = (e, value) => {
     setSelectedValue(value); // Update the selected value in state
     // Handle category or size changes
