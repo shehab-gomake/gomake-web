@@ -53,7 +53,6 @@ const useCalculationSocketIO = () => {
     });
   
     return () => {
-      console.log("Closing socket connection...");
       socket.disconnect();
     };
   },[])

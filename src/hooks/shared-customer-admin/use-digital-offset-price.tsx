@@ -148,7 +148,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
   );
-  
+
   useEffect(() => {
     setIgnoreCalculatedWorkflows(
       productTemplate?.ignoreCalculatedWorkflows || false
@@ -2349,7 +2349,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     };
     await selectWorkflowByIdApi(callApi, callBack, {
-      signalRConnectionId: calculationResult.signalRConnectionId,
+      signalRConnectionId: currentSignalRConnectionId,
       workflowId: data?.workflowId,
       productId: router.query.productId,
     });
