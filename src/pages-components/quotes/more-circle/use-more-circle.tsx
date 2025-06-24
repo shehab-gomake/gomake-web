@@ -11,7 +11,7 @@ import { PDFIcon } from "./icons/pdf";
 import { TickCancelIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { downloadPdf } from "@/utils/helpers";
-import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
+import { getOrderBoardMissionPDF, getOrderSummaryPDF } from "@/services/api-service/generic-doc/documents-api";
 import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -112,6 +112,19 @@ const useMoreCircle = () => {
       };
       await getOrderBoardMissionPDF(callApi, callBack, {
         documentId: quoteItem?.id,
+      });
+    };
+
+    const onClickGetOrderSummaryPDF = async (quoteItem) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          downloadPdf(pdfLink);
+        } else {
+        }
+      };
+      await getOrderSummaryPDF(callApi, callBack, {
+        orderId: quoteItem?.id,
       });
     };
 
@@ -297,6 +310,12 @@ const useMoreCircle = () => {
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
+      },
+      {
+        condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
+        onClick: () => onClickGetOrderSummaryPDF(quote),
+        icon: <PDFIcon />,
+        name: t("sales.quote.orderSummaryPdf"),
       },
       {
         condition: (!isPauseOrder && isOrder) || isQuote,
