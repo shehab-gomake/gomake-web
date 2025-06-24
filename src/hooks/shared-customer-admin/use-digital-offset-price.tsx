@@ -222,7 +222,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [deviceCategory, setDeviceCategory] = useState("");
   const [deviceSize, setDeviceSize] = useState("");
-  console.log("deviceSize", deviceSize)
 
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
     isActionEmployeeUpdatedState
@@ -840,7 +839,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
-  console.log("underParameterIds", underParameterIds)
 
   useEffect(() => {
     if (!isSetTemplete) {
