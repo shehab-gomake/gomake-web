@@ -157,7 +157,6 @@ const ProductionFloorWidget = () => {
 
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [isScanningFlag, setIsScanningFlag] = useState(false);
-  console.log("scanResult", { scanResult, isScanningFlag });
   useEffect(() => {
     if (!isScanningFlag) {
       handleScanAgain();
@@ -165,13 +164,11 @@ const ProductionFloorWidget = () => {
   }, [isScanningFlag]);
 
   const handleScan = async (data: { text: string } | null) => {
-    console.log("res11111", data);
     if (!data) return;
     try {
       await getBoardMissionsIdByQrCodeApi(
         callApi,
         (res) => {
-          console.log("res2222", res);
           if (res?.success) {
             setIsOpenModal(true);
           } else {
