@@ -2928,7 +2928,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             >
               <div
                 style={
-                  errorText && parameter?.isRequired && !value?.values?.[0]
+                  errorText && parameter?.isRequired && (value?.values?.[0]?.length === 0 || !value?.values?.[0])
                     ? clasess.parameterRequierdLabelStyle
                     : value?.values?.[0] === "true"
                       ? inunderParameter
@@ -3010,6 +3010,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   p.id === parameterId &&
                                   p.actionIndex === actionIndex
                               );
+                              const value = _getParameter(
+                                myParameter,
+                                subSection,
+                                section
+                              );
                               return (
                                 <React.Fragment>
                                   {relatedParameter.isStartNewLine ? (
@@ -3025,7 +3030,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                       subSection,
                                       section,
                                       subSection?.parameters,
-                                      myParameter?.value,
+                                      value,
                                       list,
                                       true,
                                       false,
