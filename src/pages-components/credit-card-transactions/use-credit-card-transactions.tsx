@@ -243,16 +243,16 @@ const useCreditCardTransactions = () => {
     setReceiptNumber(event.target.value);
   };
 
-  const handleDateChange = (value) => {
-    if (value && value.length === 2) {
-      localStorage.setItem("credit-card-transactions-date", value[0]);
-      setFromDate(value[0]);
-      setToDate(value[1]);
-    } else {
-      setFromDate(null);
-      setToDate(null);
-    }
-  };
+  // const handleDateChange = (value) => {
+  //   if (value && value.length === 2) {
+  //     localStorage.setItem("credit-card-transactions-date", value[0]);
+  //     setFromDate(value[0]);
+  //     setToDate(value[1]);
+  //   } else {
+  //     setFromDate(null);
+  //     setToDate(null);
+  //   }
+  // };
 
   return {
     t,
@@ -281,7 +281,6 @@ const useCreditCardTransactions = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,

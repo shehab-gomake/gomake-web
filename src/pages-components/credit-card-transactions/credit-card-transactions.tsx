@@ -36,7 +36,6 @@ const CreditCardTransactionsWidget = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,
@@ -60,7 +59,6 @@ const CreditCardTransactionsWidget = () => {
             renderOptions={renderOptions}
             checkWhatRenderArray={checkWhatRenderArray}
             handleCustomerChange={handleCustomerChange}
-            handleDateChange={handleDateChange}
             fromDate={fromDate}
             toDate={toDate}
             isFetchingCustomers={isFetching}
