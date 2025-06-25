@@ -4304,13 +4304,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      if (
-        findIndex !== -1 &&
-        data?.values === null &&
-        data?.valueIds === null
-      ) {
-        temp.splice(findIndex, 1);
-      }
+      // if (
+      //   findIndex !== -1 &&
+      //   data?.values === null &&
+      //   data?.valueIds === null
+      // ) {
+      //   temp.splice(findIndex, 1);
+      // }
       var valueConfig = subSectionParameter?.valuesConfigs?.find(
         (x) => x.id === data.valueIds
       );
@@ -4381,7 +4381,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               temp,
               subSectionParameter.actionIndex,
             );
-            temp.splice(findIndex, 1);
+            // temp.splice(findIndex, 1);
           }
         }
       } else {
