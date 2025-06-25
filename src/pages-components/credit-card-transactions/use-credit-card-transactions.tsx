@@ -9,7 +9,7 @@ import {
 } from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { format, endOfToday } from "date-fns";
+import { format, endOfToday, endOfYear } from "date-fns";
 import { initialFromDate } from "@/utils/helpers";
 import { useListPagination } from "@/hooks/use-list-pagination";
 
@@ -43,10 +43,9 @@ const useCreditCardTransactions = () => {
     }
   }, [initialPageSize]);
 
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("credit-card-transactions-date")
-  );
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate(""));
+  const [toDate, setToDate] = useState<Date>(endOfYear(new Date()));
+
   const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">();
   const [receiptNumber, setReceiptNumber] = useState<string>();
@@ -244,16 +243,16 @@ const useCreditCardTransactions = () => {
     setReceiptNumber(event.target.value);
   };
 
-  const handleDateChange = (value) => {
-    if (value && value.length === 2) {
-      localStorage.setItem("credit-card-transactions-date", value[0]);
-      setFromDate(value[0]);
-      setToDate(value[1]);
-    } else {
-      setFromDate(null);
-      setToDate(null);
-    }
-  };
+  // const handleDateChange = (value) => {
+  //   if (value && value.length === 2) {
+  //     localStorage.setItem("credit-card-transactions-date", value[0]);
+  //     setFromDate(value[0]);
+  //     setToDate(value[1]);
+  //   } else {
+  //     setFromDate(null);
+  //     setToDate(null);
+  //   }
+  // };
 
   return {
     t,
@@ -282,11 +281,12 @@ const useCreditCardTransactions = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,
     initialPageSize,
+    setToDate,
+    setFromDate,
   };
 };
 

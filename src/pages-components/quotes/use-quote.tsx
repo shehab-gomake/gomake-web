@@ -2023,13 +2023,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[26]:
         return `${t("logs.SEND_READY_ORDER_SMS")}`;
       case LogActionType[27]:
-        return `${t("logs.SEND_PAYMENT_LINK", {
-          mail: values[0],
-        })}`;
+        return `${t("logs.PAYMENT_LINK_GENERATED")}`;
       case LogActionType[28]:
         return `${t("logs.PAYMENT_SUCCESS")}`;
       case LogActionType[29]:
         return `${t("logs.PAYMENT_FAILED")}`;
+      case LogActionType[30]:
+        return `${t("logs.MOVE_JOB_TO_READY", {
+          jobNumber: values[0],
+        })}`;
 
       default:
         return "";

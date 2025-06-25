@@ -32,7 +32,6 @@ const SalesReportWidget = ({ clientType }: IProps) => {
     displayByGroups,
     tableHeaders,
     getTotalTableDataRows,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,
@@ -41,6 +40,8 @@ const SalesReportWidget = ({ clientType }: IProps) => {
     handleExportRows,
     onClickExportExcelReport,
     isPurchaseReport,
+    setToDate,
+    setFromDate,
   } = useSalesReport(clientType);
 
   return (
@@ -65,11 +66,12 @@ const SalesReportWidget = ({ clientType }: IProps) => {
         reportsTypeList={reportsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
-        handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
         isFetchingCustomers={isFetching}
         isPurchaseReport={isPurchaseReport}
+        setToDate={setToDate}
+        setFromDate={setFromDate}
       />
       <Divider />
       <SalesReportButtonWidget

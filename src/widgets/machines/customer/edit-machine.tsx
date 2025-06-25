@@ -51,10 +51,6 @@ const CustomerEditMachines = () => {
     const onSelectMachine = (value: string) => {
         setMachine(value);
         setActiveStep(-1);
-        setTimeout(() => {
-            setMachine(value);
-            setActiveStep(-1);
-        }, 0);
     }
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
