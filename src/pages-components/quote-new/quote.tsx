@@ -12,7 +12,7 @@ import {
   GoMakeDeleteModal,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useStyle } from "./style";
@@ -47,9 +47,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme } from "@mui/material/styles";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
@@ -60,7 +58,6 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 import { SettingMenuIcon } from "@/icons/setting-menu ";
@@ -601,64 +598,57 @@ const QuoteNewPageWidget = ({
                       </div>
                     </div>
                   )}
-                  <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <LocalizationProvider
-                      dateAdapter={AdapterMoment}
-                      adapterLocale="en-gb"
-                    >
-                      <DateField
-                        label={t("sales.quote.creationDate")}
-                        date={creationDate}
-                        handleChange={handleChangeCreationDate}
-                        isEditable={
-                          (isInvoice || isPurchaseInvoice) &&
-                          quoteItemValue?.isEditable
-                        }
-                        inputRef={creationDateRef}
-                        // preventOpenCondition={!quoteState.client}
-                      />
-                      {documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                        (isQuote && !selectDate ? (
-                          <Skeleton variant="text" width={200} height={40} />
-                        ) : (
-                          <DateField
-                            label={
-                              isOrder || isQuote
-                                ? t("sales.quote.deliveryDate")
-                                : t("sales.quote.dateOfReference")
-                            }
-                            date={convertUtcToLocalIsoString(selectDate)}
-                            handleChange={(newDate) => {
-                              let mom = moment(newDate);
-                              let formattedDueDate = mom
-                                .utc()
-                                .format("YYYY-MM-DD HH:mm:ss");
-                              setSelectDate(formattedDueDate);
-                              setActiveClickAway(true);
-                            }}
-                            isEditable={quoteItemValue?.isEditable}
-                            inputRef={dateRef}
-                            // preventOpenCondition={!quoteState.client}
-                            withTime={isOrder || isQuote}
-                          />
-                        ))}
 
-                      {isInvoice && (
-                        <DateField
-                          label={t("sales.quote.taxDate")}
-                          date={taxDate}
-                          handleChange={(newDate) => {
-                            setTaxDate(newDate);
-                            setActiveClickAwayForTaxDate(true);
-                          }}
-                          isEditable={quoteItemValue?.isEditable}
-                          inputRef={taxDateRef}
-                          // preventOpenCondition={!quoteState.client}
-                        />
-                      )}
-                    </LocalizationProvider>
-                  </ThemeProvider>
+                  <DateField
+                    label={t("sales.quote.creationDate")}
+                    date={creationDate}
+                    handleChange={handleChangeCreationDate}
+                    isEditable={
+                      (isInvoice || isPurchaseInvoice) &&
+                      quoteItemValue?.isEditable
+                    }
+                    inputRef={creationDateRef}
+                    // preventOpenCondition={!quoteState.client}
+                  />
+                  {documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                    (isQuote && !selectDate ? (
+                      <Skeleton variant="text" width={200} height={40} />
+                    ) : (
+                      <DateField
+                        label={
+                          isOrder || isQuote
+                            ? t("sales.quote.deliveryDate")
+                            : t("sales.quote.dateOfReference")
+                        }
+                        date={convertUtcToLocalIsoString(selectDate)}
+                        handleChange={(newDate) => {
+                          let mom = moment(newDate);
+                          let formattedDueDate = mom
+                            .utc()
+                            .format("YYYY-MM-DD HH:mm:ss");
+                          setSelectDate(formattedDueDate);
+                          setActiveClickAway(true);
+                        }}
+                        isEditable={quoteItemValue?.isEditable}
+                        inputRef={dateRef}
+                        // preventOpenCondition={!quoteState.client}
+                        withTime={isOrder || isQuote}
+                      />
+                    ))}
+
+                  {isInvoice && (
+                    <DateField
+                      label={t("sales.quote.taxDate")}
+                      date={taxDate}
+                      handleChange={(newDate) => {
+                        setTaxDate(newDate);
+                        setActiveClickAwayForTaxDate(true);
+                      }}
+                      isEditable={quoteItemValue?.isEditable}
+                      inputRef={taxDateRef}
+                      // preventOpenCondition={!quoteState.client}
+                    />
+                  )}
                   <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
                     <ClientBalanceComponent
                       clientBalance={quoteState.clientBalance}

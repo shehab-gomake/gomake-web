@@ -1,16 +1,13 @@
-import { Checkbox } from "@mui/material";
-
+import { Box, Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { GoMakeAutoComplate } from "@/components";
-
 import {
   AgingReportHeaderWidgetProps,
   useAgingReportHeader,
 } from "./use-header-widget";
-import { DateRangePicker } from "rsuite";
-import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { DateField } from "@/components/date-picker/date-filed";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const LedgerReportHeaderWidget = ({
   customer,
@@ -25,8 +22,19 @@ const LedgerReportHeaderWidget = ({
   customerId,
   isFetchingCustomers,
   isPurchaseReport,
+  setToDate,
+  setFromDate,
 }: AgingReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
+
+  const handleFromDateChange = (newDate) => {
+    setFromDate(newDate ? new Date(newDate) : null);
+  };
+
+  const handleToDateChange = (newDate) => {
+    setToDate(newDate ? new Date(newDate) : null);
+  };
+
   return (
     <div style={classes.mainContainer}>
       {!customerId && (
@@ -51,16 +59,30 @@ const LedgerReportHeaderWidget = ({
           />
         </div>
       )}
-
       <div style={classes.date1FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-        <div style={{ width: "100%" }}>
-          <DateRangePicker
-            onChange={handleDateChange}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
+        <Box display="flex" gap={2} width="100%">
+          <DateField
+            label={t("general.startDate")}
+            date={formatDateToISOString(fromDate)}
+            handleChange={handleFromDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
           />
-        </div>
+
+          <DateField
+            label={t("general.endDate")}
+            date={formatDateToISOString(toDate)}
+            handleChange={handleToDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
+          />
+        </Box>
       </div>
 
       <div style={classes.checkBoxContainer}>

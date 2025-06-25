@@ -33,11 +33,8 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useGomakeAxios } from "@/hooks";
-import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
@@ -207,8 +204,7 @@ const TableRowComponent = ({
     onUpdateStuckReason,
   } = useSimpleApproveModal(updateStatus);
 
-  const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
-    usePrintHousePreferences();
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
 
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
@@ -359,29 +355,23 @@ const TableRowComponent = ({
                   )}
                 />
               </div>
-
               <div style={{ visibility: "hidden" }}>
-                <LocalizationProvider
-                  dateAdapter={AdapterMoment}
-                  adapterLocale="en-gb"
-                >
-                  <div>
-                    <DateField
-                      label={""}
-                      date={convertUtcToLocalIsoString(
-                        boardMission.dueDate?.toString()
-                      )}
-                      handleChange={(newDate) => {
-                        onUpdateJobDueDate(boardMission.id, newDate);
-                      }}
-                      isEditable={true}
-                      withTime={true}
-                      inputWidth={"1px"}
-                      openPicker={openDatePicker}
-                      onClose={() => setOpenDatePicker(false)}
-                    />
-                  </div>
-                </LocalizationProvider>
+                <div>
+                  <DateField
+                    label={""}
+                    date={convertUtcToLocalIsoString(
+                      boardMission.dueDate?.toString()
+                    )}
+                    handleChange={(newDate) => {
+                      onUpdateJobDueDate(boardMission.id, newDate);
+                    }}
+                    isEditable={true}
+                    withTime={true}
+                    inputWidth={"1px"}
+                    openPicker={openDatePicker}
+                    onClose={() => setOpenDatePicker(false)}
+                  />
+                </div>
               </div>
               <div
                 style={{

@@ -2,13 +2,12 @@ import {
   AccountingTransactionReportHeaderProps,
   useAgingReportHeader,
 } from "./use-header-widget";
-import { DateRangePicker } from "rsuite";
-import { createGlobalStyle } from "styled-components";
 import { GoMakeAutoComplate } from "@/components";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+import { DateField } from "@/components/date-picker/date-filed";
+import { Box } from "@mui/material";
 
 const AccountingTransactionReportHeader = ({
-  handleDateChange,
   filterState,
   setFilterState,
   handleClickClear,
@@ -16,14 +15,6 @@ const AccountingTransactionReportHeader = ({
 }: AccountingTransactionReportHeaderProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === "rtl";
-
-  const GlobalStyle = createGlobalStyle`
-  .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
-  }
-`;
 
   const handleAccountChange = (e: any, value: any) => {
     setFilterState((prevState) => ({
@@ -32,22 +23,45 @@ const AccountingTransactionReportHeader = ({
     }));
   };
 
+  const handleFromDateChange = (newDate) => {
+    setFilterState((prevState) => ({
+      ...prevState,
+      startDate: newDate ? new Date(newDate) : null,
+    }));
+  };
+
+  const handleToDateChange = (newDate) => {
+    setFilterState((prevState) => ({
+      ...prevState,
+      endDate: newDate ? new Date(newDate) : null,
+    }));
+  };
+
   return (
     <div style={classes.mainContainer}>
       <div style={classes.date1FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-        <div style={{ width: "100%" }}>
-          <GlobalStyle RTL={RTL} />
-          <DateRangePicker
-            onChange={handleDateChange}
-            value={
-              filterState.startDate && filterState.endDate
-                ? [filterState.startDate, filterState.endDate]
-                : null
-            }
-            ranges={predefinedRanges}
+        <Box display="flex" gap={2} width="100%">
+          <DateField
+            label={t("general.startDate")}
+            date={formatDateToISOString(filterState.startDate)}
+            handleChange={handleFromDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
           />
-        </div>
+          <DateField
+            label={t("general.endDate")}
+            date={formatDateToISOString(filterState.endDate)}
+            handleChange={handleToDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
+          />
+        </Box>
       </div>
 
       <div style={{ ...classes.date1FilterContainer, width: "18%" }}>

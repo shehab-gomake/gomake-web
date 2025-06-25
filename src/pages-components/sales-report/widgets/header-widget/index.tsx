@@ -1,4 +1,4 @@
-import { Checkbox } from "@mui/material";
+import { Box, Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
@@ -7,11 +7,10 @@ import {
   SalesReportHeaderWidgetProps,
   useSalesReportHeader,
 } from "./use-header-widget";
-import { DateRangePicker } from "rsuite";
-import { createGlobalStyle } from "styled-components";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+import { DateField } from "@/components/date-picker/date-filed";
 
 const SalesReportHeaderWidget = ({
   agent,
@@ -26,34 +25,49 @@ const SalesReportHeaderWidget = ({
   reportsTypeList,
   handleDocumentTypeChange,
   documentType,
-  handleDateChange,
   fromDate,
   toDate,
   isFetchingCustomers,
   isPurchaseReport,
+  setToDate,
+  setFromDate,
 }: SalesReportHeaderWidgetProps) => {
   const { classes, t } = useSalesReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === "rtl";
-  const GlobalStyle = createGlobalStyle`
-  .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
-  }
-`;
+
+  const handleFromDateChange = (newDate) => {
+    setFromDate(newDate ? new Date(newDate) : null);
+  };
+
+  const handleToDateChange = (newDate) => {
+    setToDate(newDate ? new Date(newDate) : null);
+  };
 
   return (
     <div style={classes.mainContainer}>
       <div style={classes.date1FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-        <div style={{ width: "100%" }}>
-          <GlobalStyle RTL={RTL} />
-          <DateRangePicker
-            onChange={handleDateChange}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
+        <Box display="flex" gap={2} width="100%">
+          <DateField
+            label={t("general.startDate")}
+            date={formatDateToISOString(fromDate)}
+            handleChange={handleFromDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
           />
-        </div>
+          <DateField
+            label={t("general.endDate")}
+            date={formatDateToISOString(toDate)}
+            handleChange={handleToDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
+          />
+        </Box>
       </div>
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>

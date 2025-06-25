@@ -1,5 +1,13 @@
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { TextField, Box, Typography, InputAdornment } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Typography,
+  InputAdornment,
+  createTheme,
+  ThemeProvider,
+  CssBaseline,
+} from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
@@ -46,6 +54,10 @@ const DateField: React.FC<IDateFieldProps> = ({
   const isRTL = dir === "rtl";
   const { alertFault } = useSnackBar();
   const [open, setOpen] = useState(openPicker);
+
+  const theme = createTheme({
+    direction: dir, // Ensure the theme is in RTL mode
+  });
 
   useEffect(() => {
     setOpen(openPicker);
@@ -109,62 +121,65 @@ const DateField: React.FC<IDateFieldProps> = ({
   );
 
   return (
-    <Box
-      ref={inputRef}
-      sx={{
-        display: "flex",
-        flexDirection: direction,
-        alignItems: direction === "row" ? "center" : "flex-start",
-        padding: 0,
-        ...(inputWidth && { width: inputWidth }),
-        ...(compactMode && {
-          gap: "6px",
-        }),
-      }}
-    >
-      <Typography
-        variant={compactMode ? "subtitle1" : "subtitle2"}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        ref={inputRef}
         sx={{
-          whiteSpace: "nowrap",
-          padding: "0px",
-          color: compactMode ? "black" : "#667085",
-          fontSize: compactMode ? "14px" : undefined,
-          fontWeight: compactMode ? 500 : undefined,
+          display: "flex",
+          flexDirection: direction,
+          alignItems: direction === "row" ? "center" : "flex-start",
+          padding: 0,
+          ...(inputWidth && { width: inputWidth }),
+          ...(compactMode && {
+            gap: "6px",
+          }),
         }}
       >
-        {label}
-      </Typography>
-      {withTime ? (
-        <DateTimePicker
-          open={open}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-          value={date ? moment(date) : null}
-          // onChange={handleDateChange}
-          onAccept={handleDateChange}
-          disabled={!isEditable}
-          slots={{
-            textField: textFieldSlot,
+        <Typography
+          variant={compactMode ? "subtitle1" : "subtitle2"}
+          sx={{
+            whiteSpace: "nowrap",
+            padding: "0px",
+            color: compactMode ? "black" : "#667085",
+            fontSize: compactMode ? "14px" : undefined,
+            fontWeight: compactMode ? 500 : undefined,
           }}
-          sx={isHidden && { display: "none" }}
-          format={format}
-          ampm={false}
-        />
-      ) : (
-        <DatePicker
-          open={open}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-          value={date ? moment(date) : null}
-          onChange={handleDateChange}
-          disabled={!isEditable}
-          slots={{
-            textField: textFieldSlot,
-          }}
-          format="DD/MM/YYYY"
-        />
-      )}
-    </Box>
+        >
+          {label}
+        </Typography>
+        {withTime ? (
+          <DateTimePicker
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            value={date ? moment(date) : null}
+            // onChange={handleDateChange}
+            onAccept={handleDateChange}
+            disabled={!isEditable}
+            slots={{
+              textField: textFieldSlot,
+            }}
+            sx={isHidden && { display: "none" }}
+            format={format}
+            ampm={false}
+          />
+        ) : (
+          <DatePicker
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            value={date ? moment(date) : null}
+            onChange={handleDateChange}
+            disabled={!isEditable}
+            slots={{
+              textField: textFieldSlot,
+            }}
+            format="DD/MM/YYYY"
+          />
+        )}
+      </Box>
+    </ThemeProvider>
   );
 };
 
