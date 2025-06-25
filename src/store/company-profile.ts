@@ -67,6 +67,8 @@ export interface ICompanyProfile {
   }>;
   paymentReminder?: number;
   checksSerialNumber?: number;
+  mailProvider: any;
+  appPassword?: string;
 }
 
 export enum CreditClearanceCompanies {
@@ -74,3 +76,16 @@ export enum CreditClearanceCompanies {
   YAAD_PAY,
   Stripe,
 }
+
+export enum IMailProviders {
+  SEND_GRID = 0,
+  AMAZON,
+  GMAIL,
+  OUTLOOK,
+}
+
+export const mailProviderOptions = [
+  { text: "profileSettings.gmail", value: IMailProviders.GMAIL },
+  { text: "profileSettings.outlook", value: IMailProviders.OUTLOOK },
+  { text: "profileSettings.aws", value: IMailProviders.AMAZON },
+];

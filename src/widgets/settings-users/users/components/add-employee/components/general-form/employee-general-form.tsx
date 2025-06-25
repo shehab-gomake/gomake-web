@@ -42,6 +42,8 @@ import { useModal } from "@/hooks/use-modal";
 import { usePrintHouseActionsList } from "@/hooks/use-print-house-actions";
 import { PenIcon } from "@/icons/pen-icon";
 import { productionFloorColorInputs } from "./inputs/production-floor-color-inputs";
+import { mailingInputs } from "./inputs/mailing-inputs";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
@@ -55,6 +57,8 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     []
   );
   const profileState = useRecoilValue(userProfileState);
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
+
   const { callApi } = useGomakeAxios();
   const { printers, isPrintHouseUsePrintNode, getPrinterBins } =
     usePrintNodePrinters();
@@ -67,6 +71,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     };
     await getAllActionsRequireEmployeeApi(callApi, callBack);
   };
+
   useEffect(() => {
     getActions();
   }, []);
@@ -194,7 +199,12 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
         quoteLimitationOptions
       ),
       account: accountInputs(state, action),
-      agent: agentInputs(state.employee),
+      // agent: agentInputs(state.employee),
+      mailing: mailingInputs(
+        state.employee,
+        printHouseProfileState?.mailingProviderType,
+        t
+      ),
       ips: ipAddressesInputs(state),
       printNode: printNodeInputs(
         state.employee,
@@ -211,6 +221,8 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
       productionFloorColor: productionFloorColorInputs(state.employee),
     };
   }, [state, printers]);
+
+  const allInputs = inputs();
 
   const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -278,25 +290,27 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             onChange={handelIsAgentChange}
           />
         </div>
-        {/*!!state.employee.isAgent &&
-            <Stack direction="row" spacing={2}>
-              <OutlookEmailLoginComponent/>
-              <GoogleAuth/>
-            </Stack>*/}
-        {/* {
-                    !!state.employee.isAgent && <>
-                        <h3 style={classes.subSectionHeader}>{t('usersSettings.agent')}</h3>
-                        <div style={classes.inputsContainer}>
-                            {
-                                inputs().agent.map(employee => <FormInput key={employee.parameterKey}
-                                    input={employee as IInput}
-                                    changeState={updateEmployeeState}
-                                    error={employee.required && !state.employee[employee.parameterKey]} />)
-                            }
-                        </div>
-                    </>
-                } */}
       </div>
+      {/* !here */}
+      {!!state?.employee?.isAgent && (
+        <div style={classes.subSection}>
+          <h3 style={classes.subSectionHeader}>{t("settings.mailing")}</h3>
+          <div style={classes.inputsContainer}>
+            {allInputs.mailing.map((employee) => (
+              <FormInput
+                key={employee.parameterKey}
+                input={employee as IInput}
+                changeState={updateEmployeeState}
+                error={
+                  employee.required && !state.employee[employee.parameterKey]
+                }
+                readonly={!!employee.readonly}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      {/* !here */}
       <div style={classes.subSection}>
         <div style={classes.inputsContainer}>
           {inputs().ips.map((employee) => (
@@ -418,7 +432,8 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
               key={color.parameterKey}
               input={color as IInput}
               changeState={updateEmployeeState}
-              error={false} />
+              error={false}
+            />
           ))}
         </div>
       </div>

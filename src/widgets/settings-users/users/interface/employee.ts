@@ -28,7 +28,7 @@ export interface Employee {
   smsTemplatesGroupId: string | null;
   quoteLimitationType: number | null;
   quotePriceLimit: number | null;
-  mailProvider: string | null;
+  // mailProvider: string | null;
   pinCodeForLoginWithApplication: string | null;
   actionIds: string[] | null;
   stationsFilter?: IStation[];
@@ -37,6 +37,9 @@ export interface Employee {
   minPriceChangePercents?: number | null;
   maxPriceChangePercents?: number | null;
   productionFloorColor?: string;
+
+  //!here
+  appPassword?: any;
 }
 
 export interface IUserData {

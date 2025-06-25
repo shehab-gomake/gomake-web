@@ -30,4 +30,5 @@ export interface IPrintHouseProfile {
   allowedFeaturesId: string[];
   domain?: string;
   isShowOnBoardingMenu?: boolean;
+  mailingProviderType?: number;
 }
