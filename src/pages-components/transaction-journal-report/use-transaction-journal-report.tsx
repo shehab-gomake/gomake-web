@@ -8,7 +8,7 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import {DocumentsTypeReportList, EReportType, ReportsType} from "@/enums";
+import { DocumentsTypeReportList, EReportType, ReportsType } from "@/enums";
 import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
@@ -18,6 +18,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
 import { initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 export interface FilterState {
   fromAccount: string;
@@ -62,6 +63,7 @@ const useTransactionJournalReport = ({
   clientType,
 }: TransactionJournalReportWidgetProps) => {
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
+  const isDailyReport = reportType === EReportType.DailyPayments;
 
   const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
     useSnackBar();
@@ -71,16 +73,30 @@ const useTransactionJournalReport = ({
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
+
+  const defaultStartDate = isDailyReport ? new Date() : undefined;
   const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("transaction-journal-report-date")
+    initialFromDate("transaction-journal-report-date", defaultStartDate)
   );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const {
+    initialPageSize,
+    pageSize,
+    setPageSize,
+    pagesCount,
+    setPagesCount,
+    pageNumber,
+    setPageNumber,
+  } = useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
   const [isOpenCreateTransactionModal, setIsCreateTransactionModal] =
     useState<boolean>(false);
   const {
@@ -134,7 +150,7 @@ const useTransactionJournalReport = ({
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+                href={`/${documentPath}?finalPatternSearch=${data?.docNumber}&pageNumber=1`}
               >
                 {data?.docNumber}
               </a>
@@ -514,8 +530,11 @@ const useTransactionJournalReport = ({
     useState<boolean>(false);
 
   const onClickCloseAdjustmentsModal = () => {
+    setClientPaymentsList([]);
     setIsOpenAdjustmentsModal(false);
+    setHasFetchedOnce(false);
   };
+
   const onClickOpenAdjustmentsModal = () => {
     if (customer?.id) {
       setIsOpenAdjustmentsModal(true);
@@ -525,8 +544,13 @@ const useTransactionJournalReport = ({
   };
 
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+  const [isLoadingPayments, setIsLoadingPayments] = useState<boolean>(false);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 
   const getClientPaymentItems = useCallback(async () => {
+    setIsLoadingPayments(true);
+    setHasFetchedOnce(false);
+
     const res = await callApi(
       EHttpMethod.GET,
       `/v1/erp-service/receipts/get-client-payment-items`,
@@ -534,6 +558,10 @@ const useTransactionJournalReport = ({
         clientId: customer?.id,
       }
     );
+
+    setIsLoadingPayments(false);
+    setHasFetchedOnce(true);
+
     if (res?.success) {
       let data = res.data?.data?.data;
       if (data?.length > 0) {
@@ -552,11 +580,11 @@ const useTransactionJournalReport = ({
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
-      }else{
-        setIsOpenAdjustmentsModal(false);
-        alertFault("reports.noData");
+      } else {
+        setClientPaymentsList([]);
       }
     } else {
+      setClientPaymentsList([]);
       alertFaultGetData();
     }
   }, [customer]);
@@ -691,19 +719,19 @@ const useTransactionJournalReport = ({
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/get-transaction-journal-report-pdf`,
-        {
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          documentsType:
-              reportType === EReportType.DailyPayments
-                  ? DocumentsTypeReportList.Payments
-                  : documentType?.id,
-          cardType: isPurchaseReport
-              ? CLIENT_TYPE.SUPPLIER
-              : CLIENT_TYPE.CUSTOMER,
-        }
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-transaction-journal-report-pdf`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        documentsType:
+          reportType === EReportType.DailyPayments
+            ? DocumentsTypeReportList.Payments
+            : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+      }
     );
     if (res?.success) {
       const pdfLink = res?.data?.data?.data;
@@ -712,7 +740,7 @@ const useTransactionJournalReport = ({
     } else {
       alertFaultGetData();
     }
-  }
+  };
   return {
     t,
     handleDocumentTypeChange,
@@ -767,7 +795,10 @@ const useTransactionJournalReport = ({
     getErpAccountsList,
     onClickDownloadMovingFiles,
     onClickExportJournalExcelReport,
-    onClickExportJournalPDFReport
+    onClickExportJournalPDFReport,
+    isLoadingPayments,
+    hasFetchedOnce,
+    initialPageSize,
   };
 };
 

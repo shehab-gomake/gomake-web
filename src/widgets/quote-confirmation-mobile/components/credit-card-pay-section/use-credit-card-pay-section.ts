@@ -67,6 +67,7 @@ const useCreditCardPaySection = ({
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(
     initialPaymentDetails
   );
+  console.log("paymentDetailsState", paymentDetailsState)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
 
   const transactionTypes = [
@@ -141,10 +142,19 @@ const useCreditCardPaySection = ({
   };
 
   const handleProceedCheckout = async () => {
-    const { expDate_MMYY, cvv, cardNumber } = paymentDetailsState;
+    const { expDate_MMYY, cvv, cardNumber, holderID } = paymentDetailsState;
     if (!expDate_MMYY || !cvv || !cardNumber) {
       alertRequiredFields();
       return;
+    }
+
+    // Validate holderID has more than 9 digits
+    if (holderID && holderID !== "") {
+      const digitCount = (holderID.match(/\d/g) || []).length;
+      if (digitCount !== 9) {
+        alertFault("Holder ID must contain equal to 9 numbers");
+        return;
+      }
     }
 
     const selectedDebtsToPay =

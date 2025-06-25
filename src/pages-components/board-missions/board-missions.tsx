@@ -152,6 +152,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
     cancelPrintNodeModal,
+    initialPageSize,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -509,6 +510,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           pageSize={pageSize}
           router={router}
           isFromDocumentsOrJobs={true}
+          initialPageSize={initialPageSize}
         />
       </Stack>
       <ThreeOptionsModal
@@ -713,7 +715,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={() => onClickMoveBoardMissionToDone(true)}
+        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
         onClickCancel={onCloseMarkReadyModalForHasJobs}
       >
         <div style={{ width: "100%", minWidth: 300 }}>

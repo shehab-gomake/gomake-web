@@ -404,7 +404,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       receiptItems: filteredReceiptItems,
     };
     if (finalTotalPayment === 0) {
-      alertFaultAdded();
+      alertFault(t("alerts.totalPaymentZero"));
       return;
     }
     const callBack = (res) => {

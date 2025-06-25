@@ -1090,7 +1090,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       modalContentImage:{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", height: "100%", gap: 50 },
       modalContentImageItem: { width: "55%"},
       modalContentDataItem:{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 },
-      modalContentButton: { display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" },
+      modalContentButton: { display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: 15 },
       modalContentButtonItem: { width: "fit-content", height: 40, minWidth: 150 },
       modalContentImageItem2: { width: 280, height: 280, objectFit: "contain" },
       modalContentDataItem2: {

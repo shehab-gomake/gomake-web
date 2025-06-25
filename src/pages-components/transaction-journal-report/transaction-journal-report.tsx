@@ -80,7 +80,10 @@ const TransactionJournalReportWidget = ({
     erpAccountsList,
     getErpAccountsList,
     onClickDownloadMovingFiles,
-    onClickExportJournalPDFReport
+    onClickExportJournalPDFReport,
+    isLoadingPayments,
+    hasFetchedOnce,
+    initialPageSize,
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -254,6 +257,8 @@ const TransactionJournalReportWidget = ({
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
         setClientPaymentsList={setClientPaymentsList}
+        isLoading={isLoadingPayments}
+        hasFetchedOnce={hasFetchedOnce}
       />
       {(isAccountingTransaction || isAdjustmentsReport) && (
         <GoMakePagination
@@ -263,6 +268,7 @@ const TransactionJournalReportWidget = ({
           setPage={setPageNumber}
           pagesCount={pagesCount}
           pageSize={pageSize}
+          initialPageSize={initialPageSize}
         />
       )}
     </div>

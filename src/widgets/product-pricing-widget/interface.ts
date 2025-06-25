@@ -20,6 +20,7 @@ export interface IPricingWidgetProps {
   setSelectedWorkFlowCalculatedIsLoaded?: any;
   isMobileScreen?: boolean;
   deliveryDate?: any;
+  SelectWorkFlowById?: any;
 }
 
 export interface IPricingAction {
@@ -71,6 +72,7 @@ export interface ICalculatedWorkFlow {
   checkWhatRenderArray?: (arg: any) => void;
   setCustomer?: any;
   isFetching?: boolean;
+  tabName?: string;
 }
 
 export interface IPrintActionType {
@@ -142,12 +144,12 @@ export interface IOutput {
 export interface IOutSourceSupplier {
   supplierId: string;
   supplierName: string;
-  cost: number;
-  finalPrice: number;
-  profit: number;
-  workHours: number;
-  status: EOutsourceSupplierStatus;
-  widgetType: string;
+  cost?: number;
+  finalPrice?: number;
+  profit?: number;
+  workHours?: number;
+  status?: EOutsourceSupplierStatus;
+  widgetType?: string;
 }
 
 export interface IRectangle {

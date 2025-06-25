@@ -8,7 +8,6 @@ import { DepositsFiltersWidget } from "./components/filters-section";
 import { useEffect, useState } from "react";
 import { GoMakeModal } from "@/components";
 import { DocumentLogsWidget } from "../quotes/widgets/documents-logs-widget/logs-widget";
-import { useAgentsList } from "@/hooks/use-agent-list";
 
 const DepositsListPageWidget = () => {
   const { classes } = useStyle();
@@ -31,6 +30,7 @@ const DepositsListPageWidget = () => {
     employeeId,
     onSelectLogsDateRange,
     resetLogsDatePicker,
+    initialPageSize,
   } = useDeposits();
 
   useEffect(() => {
@@ -64,6 +64,7 @@ const DepositsListPageWidget = () => {
           setPage={setPage}
           pagesCount={pagesCount}
           pageSize={pageSize}
+          initialPageSize={initialPageSize}
         />
         <GoMakeModal
           insideStyle={classes.insideStyle}

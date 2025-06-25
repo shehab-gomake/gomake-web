@@ -1,20 +1,37 @@
 import { StatusTableComponent } from "@/widgets/production-floor/table-view/status-table/status-table-component";
 import { useProductionFloorTable } from "@/widgets/production-floor/table-view/use-production-floor-table";
 import Stack from "@mui/material/Stack";
-import { useEffect, useMemo } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
 import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
 import { useStorageList } from "@/hooks/use-storage-list";
-import { allBoardMissionsState, pagesCountState, pageSizeState, pageNumberState } from "../state/filter-group";
+import {
+  allBoardMissionsState,
+  pagesCountState,
+  pageSizeState,
+  pageNumberState,
+} from "../state/filter-group";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useRouter } from "next/router";
 import { useEmployeeList } from "@/hooks/use-employee-list";
+import { useVisibleOrderedColumns } from "@/hooks/use-visible-ordered-columns";
+import {
+  allColumnKeys,
+  columnOrderState,
+  ColumnSetting,
+  columnVisibilityState,
+  parseSavedColumnSettings,
+} from "../state/production-floor-coulmns-table-settings";
+import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { Paper, Skeleton } from "@mui/material";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -40,6 +57,13 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
 
+  const { initialPageSize } = useListPagination();
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
   const {
     storageList,
     inputValue,
@@ -47,7 +71,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
     addPrintHouseJobsStorage,
     handleStorageChange,
     setInputValue,
-  } = useStorageList()
+  } = useStorageList();
   const { employeesCategories } = useEmployeeList();
   const handlePageChange = (event, value) => {
     setPageNumber(value);
@@ -83,18 +107,18 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const matchSearch = (mission) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-        search
-      ) ||
-      `${mission.clientName?.toLowerCase()}`.includes(
-        search.toLowerCase()
-      ) ||
-      `${mission.productName?.toLowerCase()}`.includes(
-        search.toLowerCase()
-      ) ||
-      mission.automatedTags?.some((tag) =>
-        tag.toLowerCase().includes(search.toLowerCase())
-      ) ||
-      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+          search
+        ) ||
+          `${mission.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${mission.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          mission.automatedTags?.some((tag) =>
+            tag.toLowerCase().includes(search.toLowerCase())
+          ) ||
+          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(
@@ -131,52 +155,90 @@ const ProductionFloorTableView = ({ connectionId }) => {
   ].filter(Boolean);
 
   const router = useRouter();
+  const { callApi } = useGomakeAxios();
 
+  const visibleColumns = useVisibleOrderedColumns();
+  const setColumnVisibility = useSetRecoilState(columnVisibilityState);
+  const setColumnOrder = useSetRecoilState(columnOrderState);
 
+  const [columnsReady, setColumnsReady] = useState(false);
+  useEffect(() => {
+    const loadColumnSettings = async () => {
+      try {
+        const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+        const saved: ColumnSetting[] = res?.data;
+
+        if (saved && saved.length > 0) {
+          const { order, visibility } = parseSavedColumnSettings(saved);
+          setColumnOrder(order);
+          setColumnVisibility(visibility);
+        } else {
+          setColumnOrder(allColumnKeys);
+          setColumnVisibility(
+            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+          );
+        }
+      } catch (e) {
+        console.error("Failed to load column settings", e);
+      } finally {
+        setColumnsReady(true);
+      }
+    };
+
+    loadColumnSettings();
+  }, []);
 
   return (
     <Stack gap={"20px"}>
-      {
-        view === EProductionFloorView.DONE_JOBS ? (
-          <>
-            <PrimaryTable
-              stickyFirstCol={false}
-              stickyHeader={true}
-              maxHeight={"calc(100vh - 250px)"}
-              rows={allBoardMissions}
-              headers={tableHeader}
-              columnWidths={
-                ["7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "8%",
-                  "4%"]
-              }
-            />
-            <GoMakePagination
-              onChangePageNumber={handlePageChange}
-              onChangePageSize={handlePageSizeChange}
-              page={pageNumber}
-              setPage={setPageNumber}
-              pagesCount={pagesCount}
-              pageSize={pageSize}
-              router={router}
-              isFromDocumentsOrJobs={true}
-            />
-          </>
-        ) :
-          <>
-            {filteredDataByMachine.map((statusBoards, index) => {
+      {view === EProductionFloorView.DONE_JOBS ? (
+        <>
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={true}
+            maxHeight={"calc(100vh - 250px)"}
+            rows={allBoardMissions}
+            headers={tableHeader}
+            columnWidths={[
+              "7%",
+              "5%",
+              "6%",
+              "7%",
+              "6%",
+              "7%",
+              "11%",
+              "8%",
+              "6%",
+              "8%",
+              "5%",
+              "5%",
+              "7%",
+              "8%",
+              "4%",
+            ]}
+          />
+          <GoMakePagination
+            onChangePageNumber={handlePageChange}
+            onChangePageSize={handlePageSizeChange}
+            page={pageNumber}
+            setPage={setPageNumber}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
+            router={router}
+            isFromDocumentsOrJobs={true}
+            initialPageSize={initialPageSize}
+          />
+        </>
+      ) : (
+        <>
+          {!columnsReady ? (
+            // Skeleton while loading columns
+            <Stack gap={"10px"}>
+              {[...new Array(5)].map((_) => (
+                <Skeleton variant="rounded" width={"100%"} height={60} />
+              ))}
+            </Stack>
+          ) : (
+            filteredDataByMachine.map((statusBoards, index) => {
               const allBoardMissions = filteredDataByMachine.flatMap(
                 (board) => board.boardMissions
               );
@@ -195,11 +257,13 @@ const ProductionFloorTableView = ({ connectionId }) => {
                   handleStorageChange={handleStorageChange}
                   setInputValue={setInputValue}
                   employeesCategories={employeesCategories}
+                  visibleColumns={visibleColumns}
                 />
               );
-            })}
-          </>
-      }
+            })
+          )}
+        </>
+      )}
 
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}

@@ -46,6 +46,7 @@ import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
+import { useListPagination } from "@/hooks/use-list-pagination";
 
 type StatusOption = {
   label: string;
@@ -121,9 +122,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const {
+    pageSize,
+    setPageSize,
+    pagesCount,
+    setPagesCount,
+    pageNumber,
+    setPageNumber,
+    initialPageSize,
+  } = useListPagination();
+
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const {
@@ -1139,7 +1153,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       if (res?.success) {
         alertSuccessUpdate();
         getAllData(isPurchaseJobs, false);
-        onOpenPackagesModal(selectedMission);
+        if (!selectedMission?.productType) {
+          onOpenPackagesModal(selectedMission);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -1542,6 +1558,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
     cancelPrintNodeModal,
+    initialPageSize,
   };
 };
 

@@ -20,9 +20,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
@@ -40,6 +40,12 @@ import { productionFloorFiltersState } from "../../state/production-floor-filter
 import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
+import { ColumnSettingsMenu } from "../components/column-settings-menu";
+import {
+  columnOrderState,
+  columnVisibilityState,
+  getCustomWidth,
+} from "../../state/production-floor-coulmns-table-settings";
 
 interface IProps {
   status: IProductionStatus;
@@ -55,6 +61,7 @@ interface IProps {
   handleStorageChange?: any;
   setInputValue?: any;
   employeesCategories?: any;
+  visibleColumns: string[];
 }
 
 const StatusTableComponent = ({
@@ -70,10 +77,9 @@ const StatusTableComponent = ({
   addPrintHouseJobsStorage,
   handleStorageChange,
   setInputValue,
-  employeesCategories
+  employeesCategories,
+  visibleColumns,
 }: IProps) => {
-
-
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
@@ -101,6 +107,7 @@ const StatusTableComponent = ({
       board.showGraphicsApprovalAlert === 0 ||
       board.showGraphicsApprovalAlert === 2
   );
+
   const {
     t,
     RTL,
@@ -192,70 +199,62 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        )
       : boards;
   }, [boards, search]);
 
-  const getCustomWidth = (index: number) => {
-    const widths = [
-      "3%", //  checkBox
-      "13%", //  Job / Order
-      "7%", // Delivery Date
-      "9%", // Customer
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%", // Agent
-      CheckPreferenceValue(
-        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "8%", // Product name
-      CheckPreferenceValue(
-        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "15%", // Description
-      CheckPreferenceValue(
-        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "13%", // Notes
-      "11%", // Status
-      "15%", // Current station
-      "12%", // Next station
-      "2%", // More
-    ].filter(Boolean);
-    return widths[index] || "auto";
-  };
+  const columnOrder = useRecoilValue(columnOrderState);
+  const columnVisibility = useRecoilValue(columnVisibilityState);
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
-      <Button
-        onClick={onClickStatus}
-        startIcon={isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        sx={{
-          height: "35px",
-          padding: "6px 12px",
-          width: "fit-content",
-          margin: 0,
-          backgroundColor: status.backgroundColor,
-          color: status.textColor,
-          "&:hover": {
-            opacity: 0.7,
-            backgroundColor: status?.backgroundColor,
-            color: status?.textColor,
-          },
-        }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent={"space-between"}
       >
-        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
+        <Button
+          onClick={onClickStatus}
+          startIcon={
+            isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+          }
+          sx={{
+            height: "35px",
+            padding: "6px 12px",
+            width: "fit-content",
+            margin: 0,
+            backgroundColor: status.backgroundColor,
+            color: status.textColor,
+            "&:hover": {
+              opacity: 0.7,
+              backgroundColor: status?.backgroundColor,
+              color: status?.textColor,
+            },
+          }}
+        >
+          {`${
+            !status.isGroup
+              ? t("productionStatuses." + status.name)
+              : status.name
           } (${getBoards().length})`}
-      </Button>
+        </Button>
+        {status.index === 1 && <ColumnSettingsMenu />}
+      </Stack>
+
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper>
@@ -264,14 +263,19 @@ const StatusTableComponent = ({
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
                     {tableHeaders(status.id)?.map((header, index) => {
+                      const key = columnOrder.filter(
+                        (k) => columnVisibility[k]
+                      )[index];
+                      const width = getCustomWidth(key);
+
                       return (
                         <SecondaryTableCell
                           style={{
                             backgroundColor: "#F9FAFB",
                             placeItems: "center",
-                            minWidth: getCustomWidth(index),
-                            maxWidth: getCustomWidth(index),
-                            width: getCustomWidth(index),
+                            minWidth: width,
+                            maxWidth: width,
+                            width,
                             // Spread the mobile styles conditionally
                             ...(isMobileScreen && {
                               position: index <= 1 ? "sticky" : "relative",
@@ -288,12 +292,12 @@ const StatusTableComponent = ({
                               ? currentStationOrdering ===
                                 CurrentStationOrderingEnum.NONE
                                 ? {
-                                  "& .sort-icon": { opacity: 0 },
-                                  "&:hover .sort-icon": { opacity: 1 },
-                                }
+                                    "& .sort-icon": { opacity: 0 },
+                                    "&:hover .sort-icon": { opacity: 1 },
+                                  }
                                 : {
-                                  "& .sort-icon": { opacity: 1 },
-                                }
+                                    "& .sort-icon": { opacity: 1 },
+                                  }
                               : undefined
                           }
                         >
@@ -316,7 +320,7 @@ const StatusTableComponent = ({
                                     key: t("productionFloor.currentStation"),
                                     direction:
                                       currentStationOrdering ===
-                                        CurrentStationOrderingEnum.NONE
+                                      CurrentStationOrderingEnum.NONE
                                         ? CurrentStationOrderingEnum.ASC
                                         : CurrentStationOrderingEnum.NONE,
                                   });
@@ -361,6 +365,7 @@ const StatusTableComponent = ({
                           isUrgentWork={hasUrgentOrApproval}
                           onUpdateJobDueDate={updateJobDueDate}
                           employeesCategories={employeesCategories}
+                          visibleColumns={visibleColumns}
                         />
                       ));
                   })()}
@@ -389,12 +394,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -455,12 +460,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -485,7 +490,6 @@ const StatusTableComponent = ({
             }}
           />
         </div>
-
       </GoMakeDeleteModal>
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
@@ -496,7 +500,10 @@ const StatusTableComponent = ({
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
+        <AddStuckReasonWidget
+          stuckReason={stuckReason}
+          setStuckReason={setStuckReason}
+        />
       </GoMakeDeleteModal>
     </Stack>
   );

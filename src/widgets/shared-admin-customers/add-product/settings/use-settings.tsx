@@ -286,6 +286,7 @@ const useSettings = ({
           clientsTypes: productState?.clientsTypes,
           additionProfits: productState?.additionProfits,
           externalCode: productState?.externalCode,
+          minimumPrice: productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
           //sections: productState?.sections,
         }
       );

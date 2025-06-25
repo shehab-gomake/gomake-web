@@ -6,7 +6,7 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { format } from "date-fns";
+import { endOfYear, format, startOfYear, subYears } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
@@ -35,14 +35,14 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   );
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  const [agingReportByCreationDate, setAgingReportByCreationDate] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("aging-report-date")
-  );
 
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate(""));
+  const [toDate, setToDate] = useState<Date>(endOfYear(new Date()));
+
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -62,7 +62,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
     setIsDescOrder(!isDescOrder);
-    getAgingReportFilter(detailedReport, key, isDescOrder);
+    getAgingReportFilter(detailedReport,agingReportByCreationDate, key, isDescOrder);
   };
 
   const handleDateChange = (value) => {
@@ -83,9 +83,13 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport);
     setShowTable(false);
-    getAgingReportFilter(!detailedReport);
+    getAgingReportFilter(!detailedReport,agingReportByCreationDate);
   };
-
+  const onChangeAgingReportByCreationDate = () => {
+    setAgingReportByCreationDate(!agingReportByCreationDate);
+    setShowTable(false);
+    getAgingReportFilter(detailedReport,!agingReportByCreationDate);
+  };
   const onChangeByReferenceDate = () => {
     setByReferenceDate(!byReferenceDate);
   };
@@ -156,6 +160,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
                     case DocumentsTypeReportList.PurchaseInvoiceRefund:
                       documentPath = "purchaseInvoiceRefunds";
                       break;
+                    case DocumentsTypeReportList.Payments:
+                      documentPath = "receipts";
+                      break;
                     default:
                       documentPath = null;
                   }
@@ -168,7 +175,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
                             color: "inherit",
                             textDecoration: "unset",
                           }}
-                          href={`/${documentPath}?documentNumber=${nestedValue}`}
+                          href={`/${documentPath}?finalPatternSearch=${nestedValue}&pageNumber=1`}
                         >
                           {nestedValue}
                         </a>
@@ -228,7 +235,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   };
 
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false, orderBy?, isDescOrder?) => {
+    async (expendedReport = false,agingReportByCreationDate=false, orderBy?, isDescOrder?) => {
       if (!fromDate || !toDate) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
@@ -246,8 +253,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          //byCreationDate: byReferenceDate,
           expendedReport: expendedReport,
+          byCreationDate: agingReportByCreationDate,
           orderBy, //balanceDue  cardCode    cardName
           isDescOrder,
           cardType: isPurchaseReport
@@ -295,7 +303,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           orderBy,
           isDescOrder,
@@ -350,7 +358,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           cardType: isPurchaseReport
             ? CLIENT_TYPE.SUPPLIER
@@ -395,7 +403,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   useEffect(() => {
     getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
-
+  
   return {
     t,
     handleClickSelectDate,
@@ -435,6 +443,10 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     handleSortAgingReport,
     isDescOrder,
     isPurchaseReport,
+    setFromDate,
+    setToDate,
+    agingReportByCreationDate,
+    onChangeAgingReportByCreationDate
   };
 };
 

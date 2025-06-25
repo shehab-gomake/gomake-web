@@ -1,6 +1,6 @@
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { useRecoilValue } from "recoil";
-import {EPreferences} from "@/enums/prefernces";
+import { EPreferences } from "@/enums/prefernces";
 
 const usePrintHousePreferences = () => {
   const preferences = useRecoilValue<any>(printHousePreferencesState);
@@ -22,19 +22,27 @@ const usePrintHousePreferences = () => {
     }
     return preference.value;
   };
-  
-  const GetProductionFontSizeFromPreferences = ():string =>{
-    const preference = preferences.find((pref: any) => pref.code === EPreferences.PRODUCTION_FLOOR_TABLE_FONT_SIZE);
+
+  const GetProductionFontSizeFromPreferences = (): string => {
+    const preference = preferences.find(
+      (pref: any) => pref.code === EPreferences.PRODUCTION_FLOOR_TABLE_FONT_SIZE
+    );
 
     if (!preference) {
       return "15px";
     }
     return `${preference.value}px`;
-  }
+  };
+
+  const GetPreferenceValueKey = (key: string): string | undefined => {
+    const preference = preferences.find((pref: any) => pref.code === key);
+    return preference?.valueKey;
+  };
 
   return {
     CheckPreferenceValue,
-    GetProductionFontSizeFromPreferences
+    GetProductionFontSizeFromPreferences,
+    GetPreferenceValueKey,
   };
 };
 

@@ -24,11 +24,20 @@ const DateTimeComponent = ({ dateTime, direction, gap, style }: IProps) => {
 const convertUtcToLocalIsoString = (utcString: string): string => {
   try {
     const date = new Date(utcString + "Z"); // Parse the UTC date string
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); // Adjust to local timezone
+    const localDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    ); // Adjust to local timezone
     return localDate.toISOString().replace("Z", ""); // Remove the 'Z' to indicate local time
-  }catch (e){
+  } catch (e) {
     return utcString;
   }
 };
 
-export { DateTimeComponent, convertUtcToLocalIsoString };
+const formatDateToISOString = (date: Date | null | undefined) => {
+  if (date && !isNaN(date.getTime())) {
+    return date.toISOString();
+  }
+  return "";
+};
+
+export { DateTimeComponent, convertUtcToLocalIsoString, formatDateToISOString };

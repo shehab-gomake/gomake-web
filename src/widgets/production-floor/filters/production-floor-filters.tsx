@@ -319,7 +319,6 @@ const ProductionFloorFilters = ({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
-  console.log("visibleFilterGroups", visibleFilterGroups)
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {

@@ -386,13 +386,18 @@ export const formatSecondsToHHMMSS = (seconds: number): string => {
     .join(":");
 };
 
+export const startOfPreviousYear = () => {
+  const currentYear = new Date().getFullYear();
+  return new Date(currentYear - 1, 0, 1); // January 1st of the previous year
+};
+
 export const initialFromDate = (key: string, defaultDate?: Date) => {
   const savedDate = localStorage.getItem(key);
   return savedDate
     ? new Date(savedDate)
     : defaultDate
     ? defaultDate
-    : startOfYear(new Date());
+    : startOfPreviousYear();
 };
 
 export const areAllItemsChecked = (quoteConfirm) => {
