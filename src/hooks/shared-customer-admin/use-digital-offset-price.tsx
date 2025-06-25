@@ -1084,6 +1084,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
+                  if (parameter?.code === "PiercingType") {
+                    debugger;
+                  }
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
@@ -1095,8 +1098,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.valuesConfigs?.length === 1 &&
                     parameter?.isRequired &&
                     (parameter?.parameterType !==
-                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
-                      parameter?.parameterCode === "FlatbedColor")
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY)
                   ) {
                     let existsSubProductParameter =
                       subProduct?.parameters?.find(
@@ -1106,7 +1108,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           x.subSectionId === subSection.id &&
                           x.actionIndex === parameter?.actionIndex
                       );
-                    if (!existsSubProductParameter) {
+                    if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
