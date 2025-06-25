@@ -17,7 +17,7 @@ export interface TransactionJournalReportHeaderWidgetProps {
 }
 
 export interface AccountingTransactionReportHeaderProps {
-  handleDateChange: any;
+  // handleDateChange: any;
   filterState: FilterState;
   setFilterState: any;
   handleClickClear: () => void;

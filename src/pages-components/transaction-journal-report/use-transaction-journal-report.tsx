@@ -122,6 +122,7 @@ const useTransactionJournalReport = ({
     setPageSize(event.target.value);
   };
 
+  //!here
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
@@ -502,22 +503,22 @@ const useTransactionJournalReport = ({
     }
   })();
 
-  const handleDatesChange = (value) => {
-    if (value && value.length === 2) {
-      localStorage.setItem("accounting-transactions-report-date", value[0]);
-      setFilterState((prevState) => ({
-        ...prevState,
-        startDate: value[0],
-        endDate: value[1],
-      }));
-    } else {
-      setFilterState((prevState) => ({
-        ...prevState,
-        startDate: null,
-        endDate: null,
-      }));
-    }
-  };
+  // const handleDatesChange = (value) => {
+  //   if (value && value.length === 2) {
+  //     localStorage.setItem("accounting-transactions-report-date", value[0]);
+  //     setFilterState((prevState) => ({
+  //       ...prevState,
+  //       startDate: value[0],
+  //       endDate: value[1],
+  //     }));
+  //   } else {
+  //     setFilterState((prevState) => ({
+  //       ...prevState,
+  //       startDate: null,
+  //       endDate: null,
+  //     }));
+  //   }
+  // };
 
   const handleClearFilters = () => {
     setFilterState({
@@ -765,7 +766,6 @@ const useTransactionJournalReport = ({
     label,
     filterState,
     setFilterState,
-    handleDatesChange,
     handlePageSizeChange,
     pageSize,
     pagesCount,

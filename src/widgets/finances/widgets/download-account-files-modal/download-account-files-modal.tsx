@@ -43,8 +43,8 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({
               <h3 style={classes.filterLabelStyle}>
                 {t("boardMissions.dateRange")}
               </h3>
-              ff
               <div style={{ width: 300 }}>
+                {/* !here */}
                 <DateRangePicker
                   onChange={onSelectDeliveryTimeDates}
                   ranges={predefinedRanges}

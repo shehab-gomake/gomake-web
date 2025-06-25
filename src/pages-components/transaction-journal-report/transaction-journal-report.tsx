@@ -48,7 +48,6 @@ const TransactionJournalReportWidget = ({
     label,
     filterState,
     setFilterState,
-    handleDatesChange,
     handlePageSizeChange,
     pageSize,
     pagesCount,
@@ -141,15 +140,10 @@ const TransactionJournalReportWidget = ({
       )}
       {isAccountingTransaction && (
         <AccountingTransactionReportHeader
-          handleDateChange={handleDatesChange}
           filterState={filterState}
           setFilterState={setFilterState}
           handleClickClear={handleClearFilters}
           erpAccountsList={erpAccountsList}
-          fromDate={fromDate}
-          toDate={toDate}
-          setToDate={setToDate}
-          setFromDate={setFromDate}
         />
       )}
       {!isAdjustmentsReport && !isAccountingTransaction && (
