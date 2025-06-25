@@ -29,7 +29,6 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     handleCustomerChange,
     isFetching,
   } = useCustomerDropDownList({ clientType });
-
   const isSendPaymentModal = useModal();
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
@@ -267,7 +266,6 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          //byCreationDate: byReferenceDate,
           expendedReport: expendedReport,
           byCreationDate: agingReportByCreationDate,
           orderBy, //balanceDue  cardCode    cardName
@@ -445,6 +443,57 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     }
   }, [customer?.id, getAllClientContacts]);
 
+
+  const sendPaymenttoClient = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/send-debit-payment-to-client`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        referDate: selectDate ? selectDate : new Date(),
+        agentId: agent?.id,
+        expendedReport: detailedReport,
+        byCreationDate: agingReportByCreationDate,
+        orderBy,
+        isDescOrder,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+        email: selectedContactById?.mail,
+      }
+    );
+    console.log("res", res);
+    if (res?.success) {
+      setTableData(res?.data?.data?.data?.data);
+      setTableHeader(res?.data?.data?.data?.headers);
+      alertSuccessGetData();
+      setShowTable(true);
+    } else {
+      alertFaultGetData();
+      setShowTable(false);
+    }
+  },
+    [
+      fromDate,
+      toDate,
+      detailedReport,
+      agent,
+      customer,
+      selectDate,
+      byReferenceDate,
+    ]
+  );
+
   return {
     t,
     handleClickSelectDate,
@@ -494,7 +543,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     setClientContactsValue,
     selectedContactById,
     setSelectedContactById,
-    onChangeUpdateClientContact
+    onChangeUpdateClientContact,
+    sendPaymenttoClient
   };
 };
 

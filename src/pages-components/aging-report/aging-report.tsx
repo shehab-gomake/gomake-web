@@ -59,7 +59,8 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     setClientContactsValue,
     selectedContactById,
     setSelectedContactById,
-    onChangeUpdateClientContact
+    onChangeUpdateClientContact,
+    sendPaymenttoClient
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -145,7 +146,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         setSelectedContactById={setSelectedContactById}
         selectedContactById={selectedContactById}
         onChangeUpdateClientContact={onChangeUpdateClientContact}
-        SendCustomerLedgerToMailApi={() => { console.log("SendCustomerLedgerToMailApi") }}
+        SendCustomerLedgerToMailApi={sendPaymenttoClient}
         isAgingReport={true}
       />
 
