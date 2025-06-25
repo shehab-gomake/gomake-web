@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-
 import { useStyle } from "./style";
 
 export interface SalesReportHeaderWidgetProps {
@@ -16,13 +15,13 @@ export interface SalesReportHeaderWidgetProps {
   reportsTypeList?: any;
   handleDocumentTypeChange: any;
   documentType: any;
-  handleDateChange?: any;
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
-
   isPurchaseReport?: boolean;
   supplierList?: any[];
+  setToDate?: any;
+  setFromDate?: any;
 }
 const useSalesReportHeader = () => {
   const { classes } = useStyle();

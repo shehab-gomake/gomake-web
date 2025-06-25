@@ -23,7 +23,6 @@ const CreditCardTransactionsReportHeaderWidget = ({
   onClickClearFilter,
   checkWhatRenderArray,
   handleCustomerChange,
-  handleDateChange,
   fromDate,
   toDate,
   isFetchingCustomers,

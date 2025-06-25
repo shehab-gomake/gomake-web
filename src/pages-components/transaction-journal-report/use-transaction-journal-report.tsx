@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
+import { endOfYear, format } from "date-fns";
 import {
   useCustomerDropDownList,
   useDocumentsType,
@@ -75,10 +75,13 @@ const useTransactionJournalReport = ({
   const [showTable, setShowTable] = useState<boolean>(false);
 
   const defaultStartDate = isDailyReport ? new Date() : undefined;
+  const defaultEndDate = isDailyReport ? endOfToday() : endOfYear(new Date());
+
   const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("transaction-journal-report-date", defaultStartDate)
+    initialFromDate("", defaultStartDate)
   );
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [toDate, setToDate] = useState<Date>(defaultEndDate);
+
   const [dataTable, setDataTable] = useState<any>([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -440,16 +443,16 @@ const useTransactionJournalReport = ({
     [reportType]
   );
 
-  const handleDateChange = (value) => {
-    if (value && value.length === 2) {
-      localStorage.setItem("transaction-journal-report-date", value[0]);
-      setFromDate(value[0]);
-      setToDate(value[1]);
-    } else {
-      setFromDate(null);
-      setToDate(null);
-    }
-  };
+  // const handleDateChange = (value) => {
+  //   if (value && value.length === 2) {
+  //     localStorage.setItem("transaction-journal-report-date", value[0]);
+  //     setFromDate(value[0]);
+  //     setToDate(value[1]);
+  //   } else {
+  //     setFromDate(null);
+  //     setToDate(null);
+  //   }
+  // };
 
   const onClickShowCard = () => {
     setShowTable(false);
@@ -752,7 +755,6 @@ const useTransactionJournalReport = ({
     showTable,
     tableHeaders,
     dataTable,
-    handleDateChange,
     fromDate,
     toDate,
     showCustomerModal,
@@ -799,6 +801,8 @@ const useTransactionJournalReport = ({
     isLoadingPayments,
     hasFetchedOnce,
     initialPageSize,
+    setToDate,
+    setFromDate,
   };
 };
 

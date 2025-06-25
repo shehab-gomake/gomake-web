@@ -1,33 +1,33 @@
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { GoMakeAutoComplate } from "@/components";
-
 import {
   TransactionJournalReportHeaderWidgetProps,
   useAgingReportHeader,
 } from "./use-header-widget";
-import { DateRangePicker } from "rsuite";
-import { createGlobalStyle } from "styled-components";
 import { EReportType } from "@/enums";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { Box } from "@mui/material";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+import { DateField } from "@/components/date-picker/date-filed";
 
 const TransactionJournalReportHeaderWidget = ({
   handleDocumentTypeChange,
   documentType,
   documentsTypeList,
   reportType,
-  handleDateChange,
   fromDate,
   toDate,
+  setToDate,
+  setFromDate,
 }: TransactionJournalReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === "rtl";
-  const GlobalStyle = createGlobalStyle`
-  .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
-  }
-`;
+  const handleFromDateChange = (newDate) => {
+    setFromDate(newDate ? new Date(newDate) : null);
+  };
+
+  const handleToDateChange = (newDate) => {
+    setToDate(newDate ? new Date(newDate) : null);
+  };
+
   return (
     <div style={classes.mainContainer}>
       {reportType !== EReportType.DailyPayments && (
@@ -42,17 +42,29 @@ const TransactionJournalReportHeaderWidget = ({
           />
         </div>
       )}
-
       <div style={classes.date1FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-        <div style={{ width: "100%" }}>
-          <GlobalStyle RTL={RTL} />
-          <DateRangePicker
-            onChange={handleDateChange}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
+        <Box display="flex" gap={2} width="100%">
+          <DateField
+            label={t("general.startDate")}
+            date={formatDateToISOString(fromDate)}
+            handleChange={handleFromDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
           />
-        </div>
+          <DateField
+            label={t("general.endDate")}
+            date={formatDateToISOString(toDate)}
+            handleChange={handleToDateChange}
+            isEditable={true}
+            withTime={false}
+            inputWidth="100%"
+            direction="column"
+            compactMode={true}
+          />
+        </Box>
       </div>
     </div>
   );

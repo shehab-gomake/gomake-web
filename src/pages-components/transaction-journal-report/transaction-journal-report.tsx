@@ -38,7 +38,6 @@ const TransactionJournalReportWidget = ({
     showTable,
     tableHeaders,
     dataTable,
-    handleDateChange,
     fromDate,
     toDate,
     showCustomerModal,
@@ -84,6 +83,8 @@ const TransactionJournalReportWidget = ({
     isLoadingPayments,
     hasFetchedOnce,
     initialPageSize,
+    setToDate,
+    setFromDate,
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -145,6 +146,10 @@ const TransactionJournalReportWidget = ({
           setFilterState={setFilterState}
           handleClickClear={handleClearFilters}
           erpAccountsList={erpAccountsList}
+          fromDate={fromDate}
+          toDate={toDate}
+          setToDate={setToDate}
+          setFromDate={setFromDate}
         />
       )}
       {!isAdjustmentsReport && !isAccountingTransaction && (
@@ -153,9 +158,10 @@ const TransactionJournalReportWidget = ({
           documentType={documentType}
           documentsTypeList={documentsTypeList}
           reportType={reportType}
-          handleDateChange={handleDateChange}
           fromDate={fromDate}
           toDate={toDate}
+          setToDate={setToDate}
+          setFromDate={setFromDate}
         />
       )}
       <Divider />

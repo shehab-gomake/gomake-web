@@ -9,7 +9,7 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  handleDateChange?: any;
+  // handleDateChange?: any;
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
