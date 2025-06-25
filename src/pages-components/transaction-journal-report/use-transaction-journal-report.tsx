@@ -122,7 +122,6 @@ const useTransactionJournalReport = ({
     setPageSize(event.target.value);
   };
 
-  //!here
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
