@@ -35,6 +35,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   );
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  const [agingReportByCreationDate, setAgingReportByCreationDate] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
@@ -61,7 +62,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
     setIsDescOrder(!isDescOrder);
-    getAgingReportFilter(detailedReport, key, isDescOrder);
+    getAgingReportFilter(detailedReport,agingReportByCreationDate, key, isDescOrder);
   };
 
   const handleDateChange = (value) => {
@@ -82,9 +83,13 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport);
     setShowTable(false);
-    getAgingReportFilter(!detailedReport);
+    getAgingReportFilter(!detailedReport,agingReportByCreationDate);
   };
-
+  const onChangeAgingReportByCreationDate = () => {
+    setAgingReportByCreationDate(!agingReportByCreationDate);
+    setShowTable(false);
+    getAgingReportFilter(detailedReport,!agingReportByCreationDate);
+  };
   const onChangeByReferenceDate = () => {
     setByReferenceDate(!byReferenceDate);
   };
@@ -230,7 +235,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   };
 
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false, orderBy?, isDescOrder?) => {
+    async (expendedReport = false,agingReportByCreationDate=false, orderBy?, isDescOrder?) => {
       if (!fromDate || !toDate) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
@@ -248,8 +253,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          //byCreationDate: byReferenceDate,
           expendedReport: expendedReport,
+          byCreationDate: agingReportByCreationDate,
           orderBy, //balanceDue  cardCode    cardName
           isDescOrder,
           cardType: isPurchaseReport
@@ -297,7 +303,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           orderBy,
           isDescOrder,
@@ -352,7 +358,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: byReferenceDate,
+          byCreationDate: agingReportByCreationDate,
           expendedReport: detailedReport,
           cardType: isPurchaseReport
             ? CLIENT_TYPE.SUPPLIER
@@ -397,7 +403,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   useEffect(() => {
     getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
-
+  
   return {
     t,
     handleClickSelectDate,
@@ -439,6 +445,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isPurchaseReport,
     setFromDate,
     setToDate,
+    agingReportByCreationDate,
+    onChangeAgingReportByCreationDate
   };
 };
 
