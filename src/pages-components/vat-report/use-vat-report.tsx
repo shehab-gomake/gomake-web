@@ -1,0 +1,452 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+    useAgentsList,
+    useCustomerDropDownList,
+    useGomakeAxios,
+    useSnackBar,
+} from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { endOfYear, format } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
+import { DocumentsTypeReportList } from "@/enums";
+import { initialFromDate } from "@/utils/helpers";
+import { useClientTypesList } from "@/hooks/use-client-types";
+
+const useVatReport = (clientType: CLIENT_TYPE) => {
+    const { t } = useTranslation();
+    const { callApi } = useGomakeAxios();
+    const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+    const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
+    const {
+        customer,
+        renderOptions,
+        checkWhatRenderArray,
+        handleCustomerChange,
+        isFetching,
+    } = useCustomerDropDownList({ clientType });
+
+    const { agent, agentsCategories, handleAgentChange } = useAgentsList();
+    const [selectDate, setSelectDate] = useState<string>(
+        new Date().toISOString().split("T")[0]
+    );
+    const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
+    const [detailedReport, setDetailedReport] = useState<boolean>(false);
+    const [vatReportByCreationDate, setVatReportByCreationDate] = useState<boolean>(false);
+    const [showTable, setShowTable] = useState<boolean>(false);
+    const [tableHeader, setTableHeader] = useState<any>([]);
+    const [tableData, setTableData] = useState<any>([]);
+
+    const [fromDate, setFromDate] = useState<Date>(initialFromDate(""));
+    const [toDate, setToDate] = useState<Date>(endOfYear(new Date()));
+
+    // New states and logic for handling customer modal
+    const [showCustomerModal, setShowCustomerModal] = useState(false);
+    const [customerForEdit, setCustomerForEdit] = useState(null);
+
+    const transformedHeaders = tableHeader?.map((header) => {
+        const containsNumber = /\d/.test(header.key);
+        return {
+            ...header,
+            name: containsNumber ? header.name : t(`reports.${header.key}`),
+        };
+    });
+
+    const dateRef = useRef(null);
+    const [orderBy, setOrderBy] = useState<string>("cardCode");
+    const [isDescOrder, setIsDescOrder] = useState<boolean>(true);
+
+    const handleSortVatReport = (key: string) => {
+        setOrderBy(key);
+        setIsDescOrder(!isDescOrder);
+        getVatReportFilter(detailedReport, vatReportByCreationDate, key, isDescOrder);
+    };
+
+    const handleDateChange = (value) => {
+        if (value && value.length === 2) {
+            localStorage.setItem("vat-report-date", value[0]);
+            setFromDate(value[0]);
+            setToDate(value[1]);
+        } else {
+            setFromDate(null);
+            setToDate(null);
+        }
+    };
+
+    const handleClickSelectDate = () => {
+        dateRef?.current?.showPicker();
+    };
+
+    const onChangeDetailedReport = () => {
+        setDetailedReport(!detailedReport);
+        setShowTable(false);
+        getVatReportFilter(!detailedReport, vatReportByCreationDate);
+    };
+    const onChangeVatReportByCreationDate = () => {
+        setVatReportByCreationDate(!vatReportByCreationDate);
+        setShowTable(false);
+        getVatReportFilter(detailedReport, !vatReportByCreationDate);
+    };
+    const onChangeByReferenceDate = () => {
+        setByReferenceDate(!byReferenceDate);
+    };
+
+    const getTableDataRows = useCallback(
+        (onClickOpenCustomerModal) => {
+            return tableData?.flatMap((data: any) => {
+                const rows = [];
+
+                // Main row without totals
+                const mainRow = tableHeader.map((header: any) => {
+                    const nestedKey = header.key;
+                    const value = nestedKey
+                        .split(".")
+                        .reduce((acc, part) => acc && acc[part], data);
+
+                    if (nestedKey === "cardName") {
+                        return (
+                            <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => onClickOpenCustomerModal(data?.clientId)}
+                            >
+                                {value}
+                            </div>
+                        );
+                    }
+
+                    // Hide total values in the main row
+                    if (
+                        [
+                            "balanceDue",
+                            "_0to30",
+                            "_31to60",
+                            "_61to90",
+                            "_91to120",
+                            "_120plus",
+                        ].includes(nestedKey) &&
+                        detailedReport
+                    ) {
+                        return "";
+                    }
+
+                    return value || "";
+                });
+                rows.push(mainRow);
+
+                // Add detailed rows
+                if (Array.isArray(data.data) && detailedReport) {
+                    rows.push(
+                        ...data.data.map((nestedItem: any) => {
+                            return tableHeader.map((header: any, index: number) => {
+                                if (index < 3) return "";
+                                const nestedValue = header.key
+                                    .split(".")
+                                    .reduce((acc, part) => acc && acc[part], nestedItem);
+                                if (header.key === "docNumber") {
+                                    let documentPath;
+                                    switch (nestedItem?.docType) {
+                                        case DocumentsTypeReportList.Invoice:
+                                            documentPath = "invoices";
+                                            break;
+                                        case DocumentsTypeReportList.InvoiceRefund:
+                                            documentPath = "invoiceRefunds";
+                                            break;
+                                        case DocumentsTypeReportList.PurchaseInvoice:
+                                            documentPath = "purchaseInvoices";
+                                            break;
+                                        case DocumentsTypeReportList.PurchaseInvoiceRefund:
+                                            documentPath = "purchaseInvoiceRefunds";
+                                            break;
+                                        case DocumentsTypeReportList.Payments:
+                                            documentPath = "receipts";
+                                            break;
+                                        default:
+                                            documentPath = null;
+                                    }
+                                    return (
+                                        <>
+                                            {documentPath ? (
+                                                <a
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        color: "inherit",
+                                                        textDecoration: "unset",
+                                                    }}
+                                                    href={`/${documentPath}?finalPatternSearch=${nestedValue}&pageNumber=1`}
+                                                >
+                                                    {nestedValue}
+                                                </a>
+                                            ) : (
+                                                <span>{nestedValue}</span>
+                                            )}
+                                        </>
+                                    );
+                                }
+                                if (header.key === "type") {
+                                    return getDocumentTypeName(t, nestedItem?.docType);
+                                }
+                                return nestedValue || "";
+                            });
+                        })
+                    );
+                }
+
+                // Add totals row
+                if (detailedReport) {
+                    const totalsRow = tableHeader.map((header: any, index: number) => {
+                        if (index === 0) return " "; // Add "isTotal" to the first column
+                        const nestedKey = header.key;
+                        if (
+                            [
+                                "balanceDue",
+                                "_0to30",
+                                "_31to60",
+                                "_61to90",
+                                "_91to120",
+                                "_120plus",
+                            ].includes(nestedKey)
+                        ) {
+                            return data[nestedKey] || "";
+                        }
+                        return "";
+                    });
+                    rows.push(totalsRow);
+                }
+
+                return rows;
+            });
+        },
+        [tableData, tableHeader, detailedReport]
+    );
+    const onClickBtn1 = () => {
+        setShowTable(false);
+        getVatReportFilter(detailedReport);
+    };
+
+    const onClickBtn2 = () => {
+        ExportVatReportPDF();
+    };
+
+    const onClickBtn3 = () => {
+        ExportVatReportExcel();
+    };
+
+    const getVatReportFilter = useCallback(
+        async (expendedReport = false, vatReportByCreationDate = false, orderBy?, isDescOrder?) => {
+            if (!fromDate || !toDate) {
+                alertFault("alerts.pleaseEnsureDatesSelected");
+                return;
+            }
+
+            const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+            const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+            const res = await callApi(
+                EHttpMethod.POST,
+                `/v1/erp-service/reports/get-vat-report`,
+                {
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    clientId: customer?.id,
+                    referDate: selectDate ? selectDate : new Date(),
+                    agentId: agent?.id,
+                    //byCreationDate: byReferenceDate,
+                    expendedReport: expendedReport,
+                    byCreationDate: vatReportByCreationDate,
+                    orderBy, //balanceDue  cardCode    cardName
+                    isDescOrder,
+                    cardType: isPurchaseReport
+                        ? CLIENT_TYPE.SUPPLIER
+                        : CLIENT_TYPE.CUSTOMER,
+                }
+            );
+            if (res?.success) {
+                setTableData(res?.data?.data?.data?.data);
+                setTableHeader(res?.data?.data?.data?.headers);
+                alertSuccessGetData();
+                setShowTable(true);
+            } else {
+                alertFaultGetData();
+                setShowTable(false);
+            }
+        },
+        [
+            fromDate,
+            toDate,
+            detailedReport,
+            agent,
+            customer,
+            selectDate,
+            byReferenceDate,
+        ]
+    );
+
+    const ExportVatReportPDF = useCallback(async () => {
+        if (!fromDate || !toDate) {
+            alertFault("alerts.pleaseEnsureDatesSelected");
+            return;
+        }
+
+        const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+        const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+        const res = await callApi(
+            EHttpMethod.POST,
+            `/v1/erp-service/reports/export-vat-report-pdf`,
+            {
+                myBody: {
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    clientId: customer?.id,
+                    referDate: selectDate ? selectDate : new Date(),
+                    agentId: agent?.id,
+                    byCreationDate: vatReportByCreationDate,
+                    expendedReport: detailedReport,
+                    orderBy,
+                    isDescOrder,
+                    cardType: isPurchaseReport
+                        ? CLIENT_TYPE.SUPPLIER
+                        : CLIENT_TYPE.CUSTOMER,
+                },
+            },
+            true,
+            null
+        );
+        const pdfLink = res?.data?.data?.data;
+        downloadPdf(pdfLink);
+    }, [
+        fromDate,
+        toDate,
+        detailedReport,
+        agent,
+        customer,
+        selectDate,
+        byReferenceDate,
+        orderBy,
+        isDescOrder,
+    ]);
+    const downloadPdf = (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.addEventListener("click", () => {
+            setTimeout(() => {
+                anchor.remove();
+            }, 100);
+        });
+        anchor.click();
+    };
+    const ExportVatReportExcel = useCallback(async () => {
+        if (!fromDate || !toDate) {
+            alertFault("alerts.pleaseEnsureDatesSelected");
+            return;
+        }
+
+        const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+        const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+        const res = await callApi(
+            EHttpMethod.POST,
+            `/v1/erp-service/reports/export-vat-report-excel`,
+            {
+                myBody: {
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    clientId: customer?.id,
+                    referDate: selectDate ? selectDate : new Date(),
+                    agentId: agent?.id,
+                    byCreationDate: vatReportByCreationDate,
+                    expendedReport: detailedReport,
+                    cardType: isPurchaseReport
+                        ? CLIENT_TYPE.SUPPLIER
+                        : CLIENT_TYPE.CUSTOMER,
+                },
+            },
+            true,
+            null,
+            "blob"
+        );
+
+        const downloadLink = document.createElement("a");
+        const link = URL?.createObjectURL(res.data);
+        downloadLink.href = link;
+        downloadLink.download = isPurchaseReport
+            ? `supplier vat.xlsx`
+            : `customer vat.xlsx`;
+        downloadLink.click();
+    }, [
+        fromDate,
+        toDate,
+        detailedReport,
+        agent,
+        customer,
+        selectDate,
+        byReferenceDate,
+    ]);
+
+    // New function to handle opening customer modal
+    const onClickOpenCustomerModal = async (customerId: string) => {
+        const callBack = (res) => {
+            if (res.success) {
+                setCustomerForEdit(res.data);
+                setShowCustomerModal(true);
+            }
+        };
+        await getAndSetCustomerById(callApi, callBack, { customerId });
+    };
+
+    const { getClientTypesCategories } = useClientTypesList();
+
+    useEffect(() => {
+        getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
+    }, []);
+
+    return {
+        t,
+        handleClickSelectDate,
+        selectDate,
+        setSelectDate,
+        dateRef,
+        agent,
+        agentsCategories,
+        handleAgentChange,
+        customer,
+        renderOptions,
+        checkWhatRenderArray,
+        handleCustomerChange,
+        onClickBtn1,
+        onClickBtn2,
+        onClickBtn3,
+        showTable,
+        detailedReport,
+        setShowTable,
+        setDetailedReport,
+        getTableDataRows,
+        onChangeDetailedReport,
+        onChangeByReferenceDate,
+        transformedHeaders,
+        handleDateChange,
+        fromDate,
+        toDate,
+        showCustomerModal,
+        setShowCustomerModal,
+        customerForEdit,
+        setCustomerForEdit,
+        onClickOpenCustomerModal, // Expose the function
+        isFetching,
+        tableData,
+        tableHeader,
+        getVatReportFilter,
+        handleSortVatReport,
+        isDescOrder,
+        isPurchaseReport,
+        setFromDate,
+        setToDate,
+        vatReportByCreationDate,
+        onChangeVatReportByCreationDate
+    };
+};
+
+export { useVatReport }; 
