@@ -127,6 +127,7 @@ const LedgerReportWidget = ({
         selectedContactById={selectedContactById}
         onChangeUpdateClientContact={onChangeUpdateClientContact}
         SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
+        isAgingReport={false}
       />
       <AdjustmentsLedgerReportModal
         customerId={customerId || customer?.id}

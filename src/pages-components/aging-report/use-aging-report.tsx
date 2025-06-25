@@ -6,15 +6,16 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { endOfYear, format, startOfYear, subYears } from "date-fns";
+import { endOfYear, format, } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
 import { initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { useModal } from "@/hooks/use-modal";
+import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
 
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
@@ -28,6 +29,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     handleCustomerChange,
     isFetching,
   } = useCustomerDropDownList({ clientType });
+
+  const isSendPaymentModal = useModal();
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
@@ -47,6 +50,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
 
+  const [clientContactsValue, setClientContactsValue] = useState<any>([]);
+  const [selectedContactById, setSelectedContactById] = useState<any>();
+
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
     return {
@@ -62,7 +68,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
     setIsDescOrder(!isDescOrder);
-    getAgingReportFilter(detailedReport,agingReportByCreationDate, key, isDescOrder);
+    getAgingReportFilter(detailedReport, agingReportByCreationDate, key, isDescOrder);
   };
 
   const handleDateChange = (value) => {
@@ -83,12 +89,12 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport);
     setShowTable(false);
-    getAgingReportFilter(!detailedReport,agingReportByCreationDate);
+    getAgingReportFilter(!detailedReport, agingReportByCreationDate);
   };
   const onChangeAgingReportByCreationDate = () => {
     setAgingReportByCreationDate(!agingReportByCreationDate);
     setShowTable(false);
-    getAgingReportFilter(detailedReport,!agingReportByCreationDate);
+    getAgingReportFilter(detailedReport, !agingReportByCreationDate);
   };
   const onChangeByReferenceDate = () => {
     setByReferenceDate(!byReferenceDate);
@@ -234,8 +240,16 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     ExportAgingReportExcel();
   };
 
+  const onClickBtn4 = () => {
+    if (customer?.id) {
+      isSendPaymentModal.open();
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
+
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false,agingReportByCreationDate=false, orderBy?, isDescOrder?) => {
+    async (expendedReport = false, agingReportByCreationDate = false, orderBy?, isDescOrder?) => {
       if (!fromDate || !toDate) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
@@ -403,7 +417,34 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   useEffect(() => {
     getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
-  
+
+
+
+  const onChangeUpdateClientContact = useCallback(
+    (filedName: string, value: any) => {
+      setSelectedContactById((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [selectedContactById]
+  );
+
+
+  const getAllClientContacts = useCallback(async () => {
+    await getAndSetClientContacts(callApi, setClientContactsValue, {
+      ClientId: customer?.id,
+    });
+  }, [customer]);
+
+  useEffect(() => {
+    if (customer?.id) {
+      getAllClientContacts();
+    }
+  }, [customer?.id, getAllClientContacts]);
+
   return {
     t,
     handleClickSelectDate,
@@ -420,6 +461,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     onClickBtn1,
     onClickBtn2,
     onClickBtn3,
+    onClickBtn4,
     showTable,
     detailedReport,
     setShowTable,
@@ -446,7 +488,13 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     setFromDate,
     setToDate,
     agingReportByCreationDate,
-    onChangeAgingReportByCreationDate
+    onChangeAgingReportByCreationDate,
+    isSendPaymentModal,
+    clientContactsValue,
+    setClientContactsValue,
+    selectedContactById,
+    setSelectedContactById,
+    onChangeUpdateClientContact
   };
 };
 
