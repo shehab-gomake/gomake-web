@@ -143,6 +143,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -4415,7 +4416,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
-      if (subSectionParameter) {
+      if (subSectionParameter && data?.values !== null && data?.valueIds !== null) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             let values = myparameter?.valuesConfigs?.filter(
