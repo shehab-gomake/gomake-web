@@ -7,8 +7,9 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn1: () => void;
   onClickBtn2: () => void;
   onClickBtn3: () => void;
+  onClickBtn4: () => void;
 }
-const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: AgingReportButtonWidgetProps) => {
+const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3, onClickBtn4 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation()
 
@@ -24,6 +25,10 @@ const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: Agin
     {
       name: t("reports.excelDebtCollection"),
       onclick: onClickBtn3
+    },
+    {
+      name: t("sales.quote.sendPayment"),
+      onclick: onClickBtn4
     }
   ]
   return (
