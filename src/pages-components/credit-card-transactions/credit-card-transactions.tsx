@@ -41,6 +41,8 @@ const CreditCardTransactionsWidget = () => {
     toDate,
     isFetching,
     initialPageSize,
+    setToDate,
+    setFromDate,
   } = useCreditCardTransactions();
 
   return (
@@ -62,6 +64,8 @@ const CreditCardTransactionsWidget = () => {
             fromDate={fromDate}
             toDate={toDate}
             isFetchingCustomers={isFetching}
+            setToDate={setToDate}
+            setFromDate={setFromDate}
           />
           <PrimaryTable
             stickyFirstCol={false}

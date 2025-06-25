@@ -13,4 +13,6 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
+  setToDate?: any;
+  setFromDate?: any;
 }

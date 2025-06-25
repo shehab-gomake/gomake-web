@@ -23,8 +23,6 @@ import { ActionCountDown } from "./action-count-down/action-count-down";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { updateJobDueDateApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import moment from "moment/moment";
@@ -56,40 +54,43 @@ const HeaderDividerComponent = () => {
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const [jobDueDate, setJobDueDate] = useState(boardMissionsDetails.dueDate?.toString());
+  const [jobDueDate, setJobDueDate] = useState(
+    boardMissionsDetails.dueDate?.toString()
+  );
   useEffect(() => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
-  }, [boardMissionsDetails])
+  }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
 
-  const fieldMappings = useMemo(() => [
-    {
-      condition: boardMissionsDetails.createdDate,
-      label: t("productionFloor.started"),
-      value: DateHourFormatterShort(
-        convertUtcToLocalIsoString(boardMissionsDetails.createdDate?.toString())
-      ),
-    },
-    {
-      condition: boardMissionsDetails.dueDate,
-      label: t("sales.quote.deliveryDate"),
-      value:
-        <div>
-          <div style={{ visibility: "hidden", width: 0, height: 0 }}>
-            <LocalizationProvider
-              dateAdapter={AdapterMoment}
-              adapterLocale="en-gb"
-            >
+  const fieldMappings = useMemo(
+    () => [
+      {
+        condition: boardMissionsDetails.createdDate,
+        label: t("productionFloor.started"),
+        value: DateHourFormatterShort(
+          convertUtcToLocalIsoString(
+            boardMissionsDetails.createdDate?.toString()
+          )
+        ),
+      },
+      {
+        condition: boardMissionsDetails.dueDate,
+        label: t("sales.quote.deliveryDate"),
+        value: (
+          <div>
+            <div style={{ visibility: "hidden", width: 0, height: 0 }}>
               <div>
                 <DateField
                   label={""}
                   date={convertUtcToLocalIsoString(jobDueDate)}
                   handleChange={(newDate) => {
-                    let utcDueDate = new Date(newDate).toUTCString()
+                    let utcDueDate = new Date(newDate).toUTCString();
                     let mom = moment(newDate);
-                    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
+                    let formattedDueDate = mom
+                      .utc()
+                      .format("YYYY-MM-DD HH:mm:ss");
                     setJobDueDate(formattedDueDate);
-                    updateJobDueDateApi(callApi, () => { }, {
+                    updateJobDueDateApi(callApi, () => {}, {
                       boardMissionId: boardMissionsDetails.boardMissionId,
                       dueDate: utcDueDate,
                     }).then();
@@ -102,44 +103,43 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
                   onClose={() => setOpenDatePicker(false)}
                 />
               </div>
-            </LocalizationProvider>
+            </div>
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={() => setOpenDatePicker(true)}
+            >
+              {DateHourFormatterShort(convertUtcToLocalIsoString(jobDueDate))}
+            </span>
           </div>
-          <span style={{ cursor: "pointer" }} onClick={() => setOpenDatePicker(true)}>
-            {DateHourFormatterShort(convertUtcToLocalIsoString(jobDueDate))}
-          </span>
-        </div>,
-    },
-    {
-      condition: boardMissionsDetails.agentName,
-      label: t("productionFloor.agent"),
-      value: boardMissionsDetails.agentName,
-    },
-    {
-      condition: boardMissionsDetails.contactName,
-      label: t("sales.quote.contactName"),
-      value: boardMissionsDetails.contactName,
-    },
-    {
-      condition: boardMissionsDetails.clientEmail,
-      label: t("login.email"),
-      value: boardMissionsDetails.clientEmail,
-    },
-    {
-      condition:
-        boardMissionsDetails.clientPhone &&
-        clearPhoneNumberPrefix(boardMissionsDetails.clientPhone) !== "",
-      label: t("sales.quote.phone"),
-      value: !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
-        ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone)
-        : boardMissionsDetails.clientPhone,
-    },
-  ], [
-    boardMissionsDetails,
-    t,
-    jobDueDate,
-    openDatePicker,
-    callApi
-  ]);
+        ),
+      },
+      {
+        condition: boardMissionsDetails.agentName,
+        label: t("productionFloor.agent"),
+        value: boardMissionsDetails.agentName,
+      },
+      {
+        condition: boardMissionsDetails.contactName,
+        label: t("sales.quote.contactName"),
+        value: boardMissionsDetails.contactName,
+      },
+      {
+        condition: boardMissionsDetails.clientEmail,
+        label: t("login.email"),
+        value: boardMissionsDetails.clientEmail,
+      },
+      {
+        condition:
+          boardMissionsDetails.clientPhone &&
+          clearPhoneNumberPrefix(boardMissionsDetails.clientPhone) !== "",
+        label: t("sales.quote.phone"),
+        value: !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+          ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone)
+          : boardMissionsDetails.clientPhone,
+      },
+    ],
+    [boardMissionsDetails, t, jobDueDate, openDatePicker, callApi]
+  );
 
   const statusLabels = [
     {
@@ -223,7 +223,6 @@ const BoardMissionsDetailsHeader = () => {
     setStuckReason,
     handleCloseStuckModal,
     onUpdateStuckReason,
-
   } = useBoardMissionsDetailsHeader();
 
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
@@ -235,7 +234,7 @@ const BoardMissionsDetailsHeader = () => {
 
   useEffect(() => {
     setBoardMissionsDetails(boardMissionsDetails);
-  }, [boardMissionsDetails])
+  }, [boardMissionsDetails]);
 
   useEffect(() => {
     if (!!boardMissionsDetails?.boardMissionId && boards.length > 0) {
@@ -364,8 +363,9 @@ const BoardMissionsDetailsHeader = () => {
                     />
                     <HeaderDividerComponent />
                     <HeaderTitleComponent
-                      title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber
-                        }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                      title={`${boardMissionsDetails.boardMissionNumber}/${
+                        boardMissionsDetails.orderNumber
+                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
                     />
                     <span style={classes.productType}>
                       {boardMissionsDetails.sectionName}
@@ -581,9 +581,18 @@ const BoardMissionsDetailsHeader = () => {
             subTitle={" "}
             openModal={openSimpleStuckModal}
             onClose={handleCloseStuckModal}
-            onClickDelete={() => onUpdateStuckReason(stuckReason, boardMissionsDetails?.boardMissionId, boardMissionsDetails.productType)}
+            onClickDelete={() =>
+              onUpdateStuckReason(
+                stuckReason,
+                boardMissionsDetails?.boardMissionId,
+                boardMissionsDetails.productType
+              )
+            }
           >
-            <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
+            <AddStuckReasonWidget
+              stuckReason={stuckReason}
+              setStuckReason={setStuckReason}
+            />
           </GoMakeDeleteModal>
         </>
       )}

@@ -226,8 +226,7 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
       }
     );
     if (res?.success) {
-      // setTableData(res?.data?.data?.data?.salesReports); //!old
-      setTableData(res.data?.data?.data); //!new
+      setTableData(res.data?.data?.data);
       alertSuccessGetData();
       setShowTable(true);
     } else {
