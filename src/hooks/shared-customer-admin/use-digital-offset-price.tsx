@@ -4355,6 +4355,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionParameter.actionIndex,
         );
       }
+      if (subSectionParameter?.code === "devicecategory" || subSectionParameter?.code === "devicesize") {
+        // Delete Width and Height parameters from temp
+        if (data.values === null || data.valueIds === null) {
+          temp = temp.filter(item => item.parameterCode !== "Width" && item.parameterCode !== "Height");
+        }
+      }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
