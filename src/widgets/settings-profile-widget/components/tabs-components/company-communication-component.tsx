@@ -20,10 +20,10 @@ const CompanyCommunicationComponent = () => {
   };
 
   useEffect(() => {
-    if (!profile?.mailProvider) {
-      changeState("mailProvider", IMailProviders.GMAIL);
+    if (!profile?.mailingProviderType) {
+      changeState("mailingProviderType", IMailProviders.GMAIL);
     }
-  }, [profile?.mailProvider]);
+  }, [profile?.mailingProviderType]);
 
   return (
     <div className="custom-scrollbar" style={{ paddingTop: "30px" }}>

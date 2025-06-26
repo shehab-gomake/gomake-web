@@ -32,14 +32,13 @@ const mailInputs = (state) => {
 
 const mailInputs1 = (state: ISMSTemplate, mailingProviderType, t) => {
   return [
-    //!here
     {
-      name: "mailProvider",
+      name: "mailingProviderType",
       label: "profileSettings.mailProvider",
       type: "select",
       placeholder: "profileSettings.mailProvider",
       required: false,
-      parameterKey: "mailProvider",
+      parameterKey: "mailingProviderType",
       options: mailProviderOptions.map((pro) => ({
         text: t(pro.text),
         value: pro.value,
@@ -73,9 +72,9 @@ const mailInputs1 = (state: ISMSTemplate, mailingProviderType, t) => {
         value: state.emailPassword,
         machineInputType: "input",
         isValid: true,
-        iconElement: (
-          <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
-        ),
+        // iconElement: (
+        //   <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+        // ),
       },
   ].filter(Boolean);
 };

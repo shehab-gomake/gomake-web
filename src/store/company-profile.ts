@@ -67,7 +67,7 @@ export interface ICompanyProfile {
   }>;
   paymentReminder?: number;
   checksSerialNumber?: number;
-  mailProvider: any;
+  mailingProviderType: any;
   appPassword?: string;
 }
 
@@ -85,7 +85,7 @@ export enum IMailProviders {
 }
 
 export const mailProviderOptions = [
+  { text: "profileSettings.aws", value: IMailProviders.AMAZON },
   { text: "profileSettings.gmail", value: IMailProviders.GMAIL },
   { text: "profileSettings.outlook", value: IMailProviders.OUTLOOK },
-  { text: "profileSettings.aws", value: IMailProviders.AMAZON },
 ];

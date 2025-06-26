@@ -291,7 +291,6 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           />
         </div>
       </div>
-      {/* !here */}
       {!!state?.employee?.isAgent && (
         <div style={classes.subSection}>
           <h3 style={classes.subSectionHeader}>{t("settings.mailing")}</h3>
@@ -310,7 +309,6 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           </div>
         </div>
       )}
-      {/* !here */}
       <div style={classes.subSection}>
         <div style={classes.inputsContainer}>
           {inputs().ips.map((employee) => (

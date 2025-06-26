@@ -5,18 +5,16 @@ import { Employee } from "@/widgets/settings-users/users/interface/employee";
 const mailingInputs = (state: Employee, mailingProviderType, t) => {
   return [
     {
-      name: "mailProvider",
+      name: "mailingProviderType",
       label: "profileSettings.mailProvider",
       type: "select",
       placeholder: "profileSettings.mailProvider",
       required: true,
-      parameterKey: "mailProvider",
+      parameterKey: "mailingProviderType",
       options: mailProviderOptions.map((pro) => ({
         text: t(pro.text),
         value: pro.value,
       })),
-      // value: mailProviderOptions.find((op) => op.value === mailingProviderType)
-      //   .value,
       value: mailingProviderType,
       machineInputType: "input",
       readonly: true,
@@ -33,9 +31,9 @@ const mailingInputs = (state: Employee, mailingProviderType, t) => {
         value: state.appPassword,
         machineInputType: "input",
         isValid: true,
-        iconElement: (
-          <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
-        ),
+        // iconElement: (
+        //   <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+        // ),
       },
   ].filter(Boolean);
 };
