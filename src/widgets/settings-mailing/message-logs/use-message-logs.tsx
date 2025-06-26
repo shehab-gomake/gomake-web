@@ -12,7 +12,7 @@ const useMessageLogs = () => {
   const { callApi } = useGomakeAxios();
   const [mailLogs, setMailLogs] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-
+  console.log("mailLogs", mailLogs);
   const [patternSearch, setPatternSearch] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [clientId, setClientId] = useState<string>("");
@@ -56,7 +56,8 @@ const useMessageLogs = () => {
 
   const tableHeaders = [
     t("usersSettings.date"),
-    t("customers.modal.clientName"),
+    t("mailingSettings.clientName2"),
+    t("mailingSettings.employeeName"),
     t("mailingSettings.fromEmail"),
     t("mailingSettings.toEmail"),
     t("mailingSettings.templateType"),
@@ -82,6 +83,7 @@ const useMessageLogs = () => {
   const mailLogsTableRows = mailLogs.map((mailLog) => [
     mailLog.createdDate.split("T")[0],
     mailLog.clientName,
+    mailLog.employeeName,
     mailLog.fromEmail,
     mailLog.toEmails?.join(", ") || "",
     templateTypeOptions.find((type) => type.value === mailLog.templateType)?.label || mailLog.templateType,

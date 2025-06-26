@@ -50,7 +50,7 @@ const MessageLogs = () => {
             options={users}
             style={{ width: "200px" }}
             getOptionLabel={(option: any) => option.firstname + " " + option.lastname}
-            placeholder="Select user"
+            placeholder="Select employee"
             onChange={handleUserChange}
             value={users.find(option => option.id === userId) || null}
           />
