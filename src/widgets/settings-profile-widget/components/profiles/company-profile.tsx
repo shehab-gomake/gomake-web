@@ -12,7 +12,7 @@ import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { companyCommunicationInputs } from "./inputs/company-communication-inputs copy";
+import { companyCommunicationInputs } from "./inputs/company-communication-inputs";
 import { companyPrintNodeInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-print-node-inputs";
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import { useRecoilValue } from "recoil";
@@ -223,7 +223,6 @@ const CompanyProfileComponent = ({
                 section.inputs.map((companyInput) => (
                   <div key={companyInput.parameterKey}>
                     {
-                      // companyInput.type === 'outlookLogin' ? <Stack direction={'row'} gap={'10px'} paddingTop={'37px'}><OutlookEmailLoginComponent/> <GoogleAuth/> </Stack> :
                       <FormInput
                         input={companyInput as IInput}
                         changeState={changeState}

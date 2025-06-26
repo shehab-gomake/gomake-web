@@ -27,6 +27,7 @@ import { CheckboxIcon } from "@/icons/checkbox-icon";
 import { CheckboxCheckedIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -39,6 +40,7 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
   const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
   const [body, setBody] = useRecoilState<string>(smsBodyState);
   const languages = useRecoilValue(languageOptionsState);
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
 
   useEffect(() => {
     if (state?.smsTemplateBodies === null) {
@@ -259,13 +261,18 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
                 direction={"row"}
                 width={"180px"}
                 alignItems={"flex-start"}
+                gap={"5px"}
               >
-                {mailInputs1(state).map((item) => (
+                {mailInputs1(
+                  state,
+                  printHouseProfileState?.mailingProviderType,
+                  t
+                ).map((item) => (
                   <FormInput
                     input={item as IInput}
                     changeState={onChangeInputs}
                     error={false}
-                    readonly={false}
+                    readonly={!!item.readonly}
                   />
                 ))}
               </Stack>
