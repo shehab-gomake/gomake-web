@@ -837,6 +837,11 @@ const QuoteNewPageWidget = ({
                 modalCallback={modalCallback}
                 receiptSendModal={receiptSendModal}
                 openReceiptModal={openReceiptModal}
+                clientType={
+                  isPurchaseDocument
+                    ? CLIENT_TYPE.SUPPLIER
+                    : CLIENT_TYPE.CUSTOMER
+                }
               />
             </div>
           )}
