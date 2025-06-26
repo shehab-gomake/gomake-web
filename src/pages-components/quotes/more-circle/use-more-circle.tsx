@@ -11,7 +11,10 @@ import { PDFIcon } from "./icons/pdf";
 import { TickCancelIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { downloadPdf } from "@/utils/helpers";
-import { getOrderBoardMissionPDF, getOrderSummaryPDF } from "@/services/api-service/generic-doc/documents-api";
+import {
+  getOrderBoardMissionPDF,
+  getOrderSummaryPDF,
+} from "@/services/api-service/generic-doc/documents-api";
 import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -355,9 +358,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder &&
           isOrder &&
-          quote?.isCanClose &&
           !quote?.isWaitingForPayment &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
