@@ -144,7 +144,7 @@ const useMessageLogs = () => {
     getAllEmployeesApi(callApi, callBackFunction, {
       IsAgent: null,
       IsGraphicArtist: null,
-      isActive: null,
+      isActive: true,
     }).then();
   };
 
