@@ -1,6 +1,6 @@
 import { Button, Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { CreateIcon, PayIcon, PrinterIcon } from "./icons";
+import { CreateIcon, PayIcon, PrinterIcon, TickIcon } from "./icons";
 import { useStyle } from "../style";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { DeliveriesIcon } from "@/icons/side-list-icons/deliveries";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 interface OtherOptionsSectionProps {
   quoteItemValue: any;
@@ -34,6 +33,9 @@ const OtherOptionsSection = ({
   const { callApi } = useGomakeAxios();
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
+  const isInvoice = docType === DOCUMENT_TYPE.invoice;
+
   const [openExportPdfModal, setOpenExportPdfModal] = useState<boolean>(false);
 
   const onOpenExportPdfModal = () => {
@@ -92,6 +94,11 @@ const OtherOptionsSection = ({
     );
   };
 
+  const onClickCloseAsInvoice = () =>
+    navigate(
+      `/invoice?isNewCreation=true&deliveryNoteId=${quoteItemValue?.id}`
+    );
+
   const onClickCreateNewInvoice = () => {
     const queryParams = isOutgoingPayments
       ? "?isOutgoingPayments=true&isNewCreation=true"
@@ -146,7 +153,17 @@ const OtherOptionsSection = ({
       >
         {t("sales.modals.print")}
       </Button>
-      {docType === DOCUMENT_TYPE.invoice && (
+
+      {isDeliveryNote && (
+        <Button
+          sx={classes.optionsButtons}
+          onClick={onClickCloseAsInvoice}
+          startIcon={<TickIcon />}
+        >
+          {t("sales.quote.closeAsInvoice")}
+        </Button>
+      )}
+      {isInvoice && (
         <Button
           sx={classes.optionsButtons}
           onClick={onClickPay}
