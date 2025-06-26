@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "@/utils/use-debounce";
 import { SMSTemplatesEnum } from "../messageTemplates/enums/enum";
-import { getAllUsersApi } from "@/services/api-service/users/users-api";
+import { getAllEmployeesApi, getAllUsersApi } from "@/services/api-service/users/users-api";
 import { getAndSetPaginatedCustomersAndSuppliers } from "@/services/hooks/cart-side/customers/get-all-customers";
 
 const useMessageLogs = () => {
@@ -141,7 +141,11 @@ const useMessageLogs = () => {
         setUsers(data.data);
       }
     };
-    getAllUsersApi(callApi, callBackFunction).then();
+    getAllEmployeesApi(callApi, callBackFunction, {
+      IsAgent: null,
+      IsGraphicArtist: null,
+      isActive: null,
+    }).then();
   };
 
   useEffect(() => {
