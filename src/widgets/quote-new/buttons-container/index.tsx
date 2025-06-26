@@ -27,6 +27,7 @@ import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
 import { CloseOrderNotesModal } from "@/pages-components/products/profits-new/widgets/close-order-notes-modal";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -52,6 +53,7 @@ const ButtonsContainer = ({
   modalCallback,
   receiptSendModal,
   openReceiptModal,
+  clientType,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -371,7 +373,10 @@ const ButtonsContainer = ({
             style={classes.btnThirdContainer}
             onClick={() => {
               if (!isReceipt) {
-                const validationError = validateDocument(quoteItemValue);
+                const validationError = validateDocument(
+                  quoteItemValue,
+                  clientType === CLIENT_TYPE.CUSTOMER
+                );
                 if (validationError) {
                   alertFault(validationError);
                   return;
