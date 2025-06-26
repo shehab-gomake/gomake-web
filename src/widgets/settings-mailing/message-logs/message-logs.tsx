@@ -4,7 +4,6 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeAutoComplate } from "@/components";
 import { Stack } from "@mui/material";
-import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const MessageLogs = () => {
   const {
@@ -24,11 +23,9 @@ const MessageLogs = () => {
     users,
     handleUserChange,
     userId,
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
+    listClient,
     handleCustomerChange,
-    isFetching,
+    clientId
   } = useMessageLogs();
 
   return (
@@ -57,7 +54,15 @@ const MessageLogs = () => {
             onChange={handleUserChange}
             value={users.find(option => option.id === userId) || null}
           />
-          <ClientAutocomplete
+          <GoMakeAutoComplate
+            options={listClient}
+            style={{ width: "200px" }}
+            getOptionLabel={(option: any) => option.name}
+            placeholder="Select client"
+            onChange={handleCustomerChange}
+            value={listClient.find(option => option.id === clientId) || null}
+          />
+          {/* <ClientAutocomplete
             key={customer?.id}
             options={renderOptions()}
             onChangeTextField={checkWhatRenderArray}
@@ -66,7 +71,7 @@ const MessageLogs = () => {
             onChange={handleCustomerChange}
             value={customer}
             loading={isFetching}
-          />
+          /> */}
         </Stack>
       </Stack>
 

@@ -1,17 +1,17 @@
-import { useCustomerDropDownList, useGomakeAxios } from "@/hooks";
+import { useGomakeAxios } from "@/hooks";
 import { getAllMailLogsApi } from "@/services/api-service/mailing/mailing-api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "@/utils/use-debounce";
 import { SMSTemplatesEnum } from "../messageTemplates/enums/enum";
 import { getAllUsersApi } from "@/services/api-service/users/users-api";
+import { getAndSetPaginatedCustomersAndSuppliers } from "@/services/hooks/cart-side/customers/get-all-customers";
 
 const useMessageLogs = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [mailLogs, setMailLogs] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  console.log("mailLogs", mailLogs);
 
   const [patternSearch, setPatternSearch] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
@@ -150,17 +150,23 @@ const useMessageLogs = () => {
     setUserId(value?.id || null);
   };
 
-  const {
-    customer,
-    setCustomer,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-  } = useCustomerDropDownList({});
+
 
   const handleCustomerChange = (event, value) => {
     setClientId(value?.id || null);
   };
+  const [listClient, setListClient] = useState<any[]>([]);
+  const getPaginatedCustomersAndSuppliers = useCallback(async () => {
+    await getAndSetPaginatedCustomersAndSuppliers(callApi, setListClient, {
+      PageNumber: 1,
+      PageSize: 9999,
+
+    });
+  }, [debouncedPatternSearch, templateType, userId, clientId]);
+
+  useEffect(() => {
+    getPaginatedCustomersAndSuppliers();
+  }, [pageNumber, pageSize]);
 
   return {
     tableHeaders,
@@ -180,11 +186,9 @@ const useMessageLogs = () => {
     users,
     handleUserChange,
     userId,
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
     handleCustomerChange,
-    isFetching,
+    listClient,
+    clientId
   };
 };
 
