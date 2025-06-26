@@ -24,6 +24,8 @@ const UPDATE_SMS_TEMPLATES_GROUP_URL =
 
 const GET_ALL_SMS_TEMPLATES_List_URL = "/v1/crm-service/roles/get-all-sms-templates";
 
+const GET_ALL_MAIL_LOGS_URL = "/v1/communication-service/mail-logs/get-all";
+
 const getAllSMSTemplatesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -147,6 +149,16 @@ const updateSMSTemplateGroupApi = async (callApi, callBack, data) => {
   );
 };
 
+const getAllMailLogsApi = async (callApi, callBack, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_ALL_MAIL_LOGS_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   updateSMSTemplateApi,
   getAllSMSTemplatesApi,
@@ -157,5 +169,6 @@ export {
   getAllTemplateTypesApi,
   getSMSTemplateApi,
   deleteSMSTemplateGroupApi,
-  updateSMSTemplateGroupApi,
+  updateSMSTemplateGroupApi,  
+  getAllMailLogsApi
 };
