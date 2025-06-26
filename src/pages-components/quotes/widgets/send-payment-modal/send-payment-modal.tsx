@@ -142,6 +142,10 @@ const SendPaymentModal = ({
             showAlertModal({
               message: t("alerts.printHouseMailNotVerified"),
             });
+          } else if (res.errors.message === "app_password_required") {
+            showAlertModal({
+              message: t("alerts.app_password_required"),
+            });
           } else {
             alertFaultSend();
           }
