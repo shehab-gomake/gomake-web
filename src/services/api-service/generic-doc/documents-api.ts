@@ -41,8 +41,7 @@ const GET_BOARD_MISSION_PDF =
   "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
 const GET_ORDER_BOARD_MISSION_PDF =
   "/v1/erp-service/documents/export-order-board-mission-pdf";
-const GET_ORDER_SUMMARY_PDF =
-  "/v1/erp-service/documents/get-order-print-node";
+const GET_ORDER_SUMMARY_PDF = "/v1/erp-service/documents/get-order-print-node";
 const GET_PRINTING_TICKET_PDF =
   "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
@@ -129,7 +128,8 @@ const UPDATE_DOCUMENT_TITLE_URL =
   "/v1/erp-service/documents/update-document-title";
 const EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL =
   "/v1/erp-service/documents/export-document-table-to-excel";
-
+const EXPORT_DOCUMENT_TABLE_TO_PDF_URL =
+  "/v1/erp-service/documents/export-document-table-to-PDF";
 const SEND_RECEIPIT_TO_CLIENT_URL =
   "/v1/erp-service/receipt/send-receipt-to-client";
 const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL =
@@ -896,7 +896,7 @@ const getOrderBoardMissionPDF: ICallAndSetData = async (
   );
 };
 
-const getOrderSummaryPDF: ICallAndSetData = async ( 
+const getOrderSummaryPDF: ICallAndSetData = async (
   callApi,
   setState,
   data: { documentId: string }
@@ -1116,6 +1116,20 @@ const ExportDocumentTableToExcelApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL,
+    setState,
+    data
+  );
+};
+
+const ExportDocumentTableToPdfApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_DOCUMENT_TABLE_TO_PDF_URL,
     setState,
     data
   );
@@ -1357,4 +1371,5 @@ export {
   updateQuoteItemQuantityApi,
   saveDraftDocumentApi,
   removeDraftDocumentApi,
+  ExportDocumentTableToPdfApi,
 };
