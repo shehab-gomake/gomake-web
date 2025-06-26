@@ -143,6 +143,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -864,7 +865,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-
               if (
                 parameter?.isHidden &&
                 // !parameter?.isHiddenInSetting &&
@@ -1084,6 +1084,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
+                  if (parameter?.code === "PiercingType") {
+                    debugger;
+                  }
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
@@ -1095,8 +1098,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.valuesConfigs?.length === 1 &&
                     parameter?.isRequired &&
                     (parameter?.parameterType !==
-                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
-                      parameter?.parameterCode === "FlatbedColor")
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY)
                   ) {
                     let existsSubProductParameter =
                       subProduct?.parameters?.find(
@@ -1106,7 +1108,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           x.subSectionId === subSection.id &&
                           x.actionIndex === parameter?.actionIndex
                       );
-                    if (!existsSubProductParameter) {
+                    if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -1152,7 +1154,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             x.actionIndex === parameter?.actionIndex
                         );
 
-                      if (!existsSubProductParameter) {
+                      if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
@@ -2928,7 +2930,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             >
               <div
                 style={
-                  errorText && parameter?.isRequired && !value?.values?.[0]
+                  errorText && parameter?.isRequired && (value?.values?.[0]?.length === 0 || !value?.values?.[0])
                     ? clasess.parameterRequierdLabelStyle
                     : value?.values?.[0] === "true"
                       ? inunderParameter
@@ -3010,6 +3012,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   p.id === parameterId &&
                                   p.actionIndex === actionIndex
                               );
+                              const value = _getParameter(
+                                myParameter,
+                                subSection,
+                                section
+                              );
                               return (
                                 <React.Fragment>
                                   {relatedParameter.isStartNewLine ? (
@@ -3025,7 +3032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                       subSection,
                                       section,
                                       subSection?.parameters,
-                                      myParameter?.value,
+                                      value,
                                       list,
                                       true,
                                       false,
@@ -4305,13 +4312,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      if (
-        findIndex !== -1 &&
-        data?.values === null &&
-        data?.valueIds === null
-      ) {
-        temp.splice(findIndex, 1);
-      }
+      // if (
+      //   findIndex !== -1 &&
+      //   data?.values === null &&
+      //   data?.valueIds === null
+      // ) {
+      //   temp.splice(findIndex, 1);
+      // }
       var valueConfig = subSectionParameter?.valuesConfigs?.find(
         (x) => x.id === data.valueIds
       );
@@ -4350,6 +4357,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionParameter.actionIndex,
         );
       }
+      if (subSectionParameter?.code === "devicecategory" || subSectionParameter?.code === "devicesize") {
+        // Delete Width and Height parameters from temp
+        if (data.values === null || data.valueIds === null) {
+          temp = temp.filter(item => item.parameterCode !== "Width" && item.parameterCode !== "Height");
+        }
+      }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -4382,7 +4395,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               temp,
               subSectionParameter.actionIndex,
             );
-            temp.splice(findIndex, 1);
+            // temp.splice(findIndex, 1);
           }
         }
       } else {
@@ -4416,7 +4429,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
-      if (subSectionParameter) {
+      if (subSectionParameter && data?.values !== null && data?.valueIds !== null) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             let values = myparameter?.valuesConfigs?.filter(
