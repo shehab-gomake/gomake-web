@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { endOfYear, format } from "date-fns";
 import {
   useAgentsList,
   useCustomerDropDownList,
@@ -36,10 +36,9 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("sales-report-date")
-  );
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate(""));
+  const [toDate, setToDate] = useState<Date>(endOfYear(new Date()));
+
   const [dateList, setDateList] = useState<string[]>([]);
 
   function getMonthsArray(date: Date): string[] {
@@ -226,8 +225,7 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
       }
     );
     if (res?.success) {
-      // setTableData(res?.data?.data?.data?.salesReports); //!old
-      setTableData(res.data?.data?.data); //!new
+      setTableData(res.data?.data?.data);
       alertSuccessGetData();
       setShowTable(true);
     } else {
@@ -236,16 +234,16 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
     }
   }, [fromDate, toDate, agent, customer, documentType, displayByGroups]);
 
-  const handleDateChange = (value) => {
-    if (value && value.length === 2) {
-      localStorage.setItem("sales-report-date", value[0]);
-      setFromDate(value[0]);
-      setToDate(value[1]);
-    } else {
-      setFromDate(null);
-      setToDate(null);
-    }
-  };
+  // const handleDateChange = (value) => {
+  //   if (value && value.length === 2) {
+  //     localStorage.setItem("sales-report-date", value[0]);
+  //     setFromDate(value[0]);
+  //     setToDate(value[1]);
+  //   } else {
+  //     setFromDate(null);
+  //     setToDate(null);
+  //   }
+  // };
 
   const handleExportRows = async () => {
     if (!fromDate || !toDate) {
@@ -357,7 +355,6 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
     reportsTypeList,
     tableHeaders,
     getTotalTableDataRows,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,
@@ -366,6 +363,8 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
     handleExportRows,
     onClickExportExcelReport,
     isPurchaseReport,
+    setToDate,
+    setFromDate,
   };
 };
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
+import { endOfYear, format } from "date-fns";
 import {
   useCustomerDropDownList,
   useGomakeAxios,
@@ -45,15 +45,9 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
 
-  const startOfPreviousYear = () => {
-    const currentYear = new Date().getFullYear();
-    return new Date(currentYear - 1, 0, 1); // January 1st of the previous year
-  };
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate(""));
+  const [toDate, setToDate] = useState<Date>(endOfYear(new Date()));
 
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFromDate("ledger-report-date", startOfPreviousYear())
-  );
-  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
@@ -421,6 +415,8 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     isPurchaseReport,
     hasFetchedPaymentsOnce,
     isLoadingPayments,
+    setToDate,
+    setFromDate,
   };
 };
 

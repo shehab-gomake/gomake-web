@@ -63,6 +63,8 @@ const LedgerReportWidget = ({
     isPurchaseReport,
     hasFetchedPaymentsOnce,
     isLoadingPayments,
+    setToDate,
+    setFromDate,
   } = useLedgerReport({ customerId, clientType });
 
   useEffect(() => {
@@ -100,6 +102,8 @@ const LedgerReportWidget = ({
         customerId={customerId}
         isFetchingCustomers={isFetching}
         isPurchaseReport={isPurchaseReport}
+        setToDate={setToDate}
+        setFromDate={setFromDate}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -127,6 +131,7 @@ const LedgerReportWidget = ({
         selectedContactById={selectedContactById}
         onChangeUpdateClientContact={onChangeUpdateClientContact}
         SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
+        isAgingReport={false}
       />
       <AdjustmentsLedgerReportModal
         customerId={customerId || customer?.id}
