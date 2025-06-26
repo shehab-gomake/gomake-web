@@ -3,16 +3,27 @@ import { Divider } from "@mui/material";
 import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 
-const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsValue, setSelectedContactById, selectedContactById, onChangeUpdateClientContact, SendCustomerLedgerToMailApi }) => {
+const SendEmailLedgerReportModal = ({
+  openModal,
+  onCloseModal,
+  clientContactsValue,
+  setSelectedContactById,
+  selectedContactById,
+  onChangeUpdateClientContact,
+  SendCustomerLedgerToMailApi,
+  isAgingReport,
+}: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("reports.chooseEmailToSendCard")}
+        modalTitle={isAgingReport ? t("sales.quote.sendPayment") : t("reports.chooseEmailToSendCard")}
         onClose={onCloseModal}
         insideStyle={classes.insideStyle}
       >
