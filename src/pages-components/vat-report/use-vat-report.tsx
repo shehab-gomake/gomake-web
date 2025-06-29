@@ -1,26 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-    useAgentsList,
-    useGomakeAxios,
-} from "@/hooks";
+import { useCallback, useRef, useState } from "react";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
-import { DocumentsTypeReportList } from "@/enums";
-import { useClientTypesList } from "@/hooks/use-client-types";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useVatReport = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
+    const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
 
 
-    const { agent, agentsCategories, handleAgentChange } = useAgentsList();
-    const [selectDate, setSelectDate] = useState<string>(
-        new Date().toISOString().split("T")[0]
-    );
-
+    const [vatData, setVatData] = useState<any>({});
     const [showTable, setShowTable] = useState<boolean>(false);
 
     const [fromDate, setFromDate] = useState<Date>(startOfMonth(new Date()));
@@ -30,161 +20,39 @@ const useVatReport = () => {
 
     const onClickBtn1 = () => {
         setShowTable(false);
-        // getVatReportFilter(detailedReport);
+        getVatReportFilter();
     };
 
     const onClickBtn2 = () => {
         // ExportVatReportPDF();
     };
 
+    const getVatReportFilter = useCallback(async () => {
+        if (!fromDate || !toDate) {
+            alertFault("alerts.pleaseEnsureDatesSelected");
+            return;
+        }
 
+        // const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+        // const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
-    // const getVatReportFilter = useCallback(
-    //     async (expendedReport = false, vatReportByCreationDate = false, orderBy?, isDescOrder?) => {
-    //         if (!fromDate || !toDate) {
-    //             alertFault("alerts.pleaseEnsureDatesSelected");
-    //             return;
-    //         }
-
-    //         const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-    //         const formattedEndDate = format(toDate, "yyyy-MM-dd");
-
-    //         const res = await callApi(
-    //             EHttpMethod.POST,
-    //             `/v1/erp-service/reports/get-vat-report`,
-    //             {
-    //                 startDate: formattedStartDate,
-    //                 endDate: formattedEndDate,
-    //                 clientId: customer?.id,
-    //                 referDate: selectDate ? selectDate : new Date(),
-    //                 agentId: agent?.id,
-    //                 //byCreationDate: byReferenceDate,
-    //                 expendedReport: expendedReport,
-    //                 byCreationDate: vatReportByCreationDate,
-    //                 orderBy, //balanceDue  cardCode    cardName
-    //                 isDescOrder,
-    //                 cardType: isPurchaseReport
-    //                     ? CLIENT_TYPE.SUPPLIER
-    //                     : CLIENT_TYPE.CUSTOMER,
-    //             }
-    //         );
-    //         if (res?.success) {
-    //             setTableData(res?.data?.data?.data?.data);
-    //             setTableHeader(res?.data?.data?.data?.headers);
-    //             alertSuccessGetData();
-    //             setShowTable(true);
-    //         } else {
-    //             alertFaultGetData();
-    //             setShowTable(false);
-    //         }
-    //     },
-    //     [
-    //         fromDate,
-    //         toDate,
-    //         detailedReport,
-    //         agent,
-    //         customer,
-    //         selectDate,
-    //         byReferenceDate,
-    //     ]
-    // );
-
-    // const ExportVatReportPDF = useCallback(async () => {
-    //     if (!fromDate || !toDate) {
-    //         alertFault("alerts.pleaseEnsureDatesSelected");
-    //         return;
-    //     }
-
-    //     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-    //     const formattedEndDate = format(toDate, "yyyy-MM-dd");
-
-    //     const res = await callApi(
-    //         EHttpMethod.POST,
-    //         `/v1/erp-service/reports/export-vat-report-pdf`,
-    //         {
-    //             myBody: {
-    //                 startDate: formattedStartDate,
-    //                 endDate: formattedEndDate,
-    //                 clientId: customer?.id,
-    //                 referDate: selectDate ? selectDate : new Date(),
-    //                 agentId: agent?.id,
-    //                 byCreationDate: vatReportByCreationDate,
-    //                 expendedReport: detailedReport,
-    //                 orderBy,
-    //                 isDescOrder,
-    //                 cardType: isPurchaseReport
-    //                     ? CLIENT_TYPE.SUPPLIER
-    //                     : CLIENT_TYPE.CUSTOMER,
-    //             },
-    //         },
-    //         true,
-    //         null
-    //     );
-    //     const pdfLink = res?.data?.data?.data;
-    //     downloadPdf(pdfLink);
-    // }, [
-    //     fromDate,
-    //     toDate,
-    //     detailedReport,
-    //     agent,
-    //     selectDate,
-    //     byReferenceDate,
-    //     orderBy,
-    //     isDescOrder,
-    // ]);
-    // const downloadPdf = (url) => {
-    //     const anchor = document.createElement("a");
-    //     anchor.href = url;
-    //     anchor.target = "_blank";
-    //     anchor.addEventListener("click", () => {
-    //         setTimeout(() => {
-    //             anchor.remove();
-    //         }, 100);
-    //     });
-    //     anchor.click();
-    // };
-    // const ExportVatReportExcel = useCallback(async () => {
-    //     if (!fromDate || !toDate) {
-    //         alertFault("alerts.pleaseEnsureDatesSelected");
-    //         return;
-    //     }
-
-    //     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-    //     const formattedEndDate = format(toDate, "yyyy-MM-dd");
-
-    //     const res = await callApi(
-    //         EHttpMethod.POST,
-    //         `/v1/erp-service/reports/export-vat-report-excel`,
-    //         {
-    //             myBody: {
-    //                 startDate: formattedStartDate,
-    //                 endDate: formattedEndDate,
-    //                 clientId: customer?.id,
-    //                 referDate: selectDate ? selectDate : new Date(),
-    //                 agentId: agent?.id,
-    //                 byCreationDate: vatReportByCreationDate,
-    //                 expendedReport: detailedReport,
-    //                 cardType:  CLIENT_TYPE.CUSTOMER,
-    //             },
-    //         },
-    //         true,
-    //         null,
-    //         "blob"
-    //     );
-
-    //     const downloadLink = document.createElement("a");
-    //     const link = URL?.createObjectURL(res.data);
-    //     downloadLink.href = link;
-    //     downloadLink.download = `customer vat.xlsx`;
-    //     downloadLink.click();
-    // }, [
-    //     fromDate,
-    //     toDate,
-    //     detailedReport,
-    //     agent,
-    //     selectDate,
-    //     byReferenceDate,
-    // ]);
+        const res = await callApi(
+            EHttpMethod.POST,
+            `/v1/erp-service/reports/get-vat-report`,
+            {
+                startDate: fromDate,
+                endDate: toDate,
+            }
+        );
+        if (res?.success) {
+            setVatData(res.data?.data?.data);
+            alertSuccessGetData();
+            setShowTable(true);
+        } else {
+            alertFaultGetData();
+            setShowTable(false);
+        }
+    }, [fromDate, toDate]);
 
 
 
@@ -198,9 +66,6 @@ const useVatReport = () => {
     };
     return {
         t,
-        agent,
-        agentsCategories,
-        handleAgentChange,
         onClickBtn1,
         onClickBtn2,
         showTable,
@@ -210,7 +75,8 @@ const useVatReport = () => {
         setFromDate,
         setToDate,
         handleFromDateChange,
-        handleToDateChange
+        handleToDateChange,
+        vatData
     };
 };
 

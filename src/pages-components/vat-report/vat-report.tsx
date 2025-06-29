@@ -2,16 +2,10 @@ import { Divider } from "@mui/joy";
 import { VatReportHeaderWidget } from "./widgets/header-widget";
 import { VatReportButtonWidget } from "./widgets/button-widget";
 
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
-import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useStyle } from "./style";
 import { useVatReport } from "./use-vat-report";
-
-interface IProps {
-    clientType: CLIENT_TYPE;
-}
+import { GomakeTextInput } from "@/components";
 
 const VatReportWidget = () => {
     const {
@@ -25,8 +19,8 @@ const VatReportWidget = () => {
         setToDate,
         handleFromDateChange,
         handleToDateChange,
+        vatData
     } = useVatReport();
-
     const { classes } = useStyle();
 
     return (
@@ -36,7 +30,6 @@ const VatReportWidget = () => {
                 marginTop={"0px"}
                 marginBottom={"0px"}
             />
-
             <VatReportHeaderWidget
                 handleFromDateChange={handleFromDateChange}
                 handleToDateChange={handleToDateChange}
@@ -45,37 +38,50 @@ const VatReportWidget = () => {
                 setFromDate={setFromDate}
                 setToDate={setToDate}
             />
-
             <Divider />
-
             <VatReportButtonWidget
                 onClickBtn1={onClickBtn1}
                 onClickBtn2={onClickBtn2}
             />
+            {showTable && (
+                <div style={classes.vatReportContainer}>
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("taxOnTransactions")}</div>
+                        <GomakeTextInput value={vatData?.taxOnTransactions} disabled={true} />
+                    </div>
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("vatMustTransactions")}</div>
+                        <GomakeTextInput value={vatData?.vatMustTransactions} disabled={true} />
+                    </div>
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("vatExemptTransactions")}</div>
+                        <GomakeTextInput value={vatData?.vatExemptTransactions} disabled={true} />
+                    </div>
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("vatOnHoldings")}</div>
+                        <GomakeTextInput value={vatData?.vatOnHoldings} disabled={true} />
+                    </div>
 
-            {/* {showTable && (
-                <PrimaryTable
-                    rows={getTableDataRows(onClickOpenCustomerModal)}
-                    headers={transformedHeaders}
-                    maxHeight={"100vh"}
-                    stickyHeader={true}
-                    variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
-                    isDescOrder={isDescOrder}
-                />
-            )} */}
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("vatOnOtherPurchases")}</div>
+                        <GomakeTextInput value={vatData?.vatOnOtherPurchases} disabled={true} />
+                    </div>
+                    <div style={classes.vatReportItem}      >
+                        <div style={classes.vatReportItemTitle}>{t("vatPercents")}</div>
+                        <GomakeTextInput value={vatData?.vatPercents} disabled={true} />
+                    </div>
 
-            {/* <CustomerCardWidget
-                customerAction={CUSTOMER_ACTIONS.Edit}
-                typeClient={
-                    isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
-                }
-                codeFlag={true}
-                isgetAllCustomers={false}
-                openModal={showCustomerModal}
-                onClose={() => setShowCustomerModal(false)}
-                customer={customerForEdit}
-                setCustomer={setCustomerForEdit}
-            /> */}
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("totalVatToPay")}</div>
+                        <GomakeTextInput value={vatData?.totalVatToPay} disabled={true} />
+                    </div>
+
+                    <div style={classes.vatReportItem}>
+                        <div style={classes.vatReportItemTitle}>{t("totalVatToPay")}</div>
+                        <GomakeTextInput value={vatData?.totalVatToPay} disabled={true} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
