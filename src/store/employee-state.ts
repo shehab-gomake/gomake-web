@@ -1,11 +1,11 @@
 import { atom } from "recoil";
-import {IUserData} from "@/widgets/settings-users/users/interface/employee";
+import { IUserData } from "@/widgets/settings-users/users/interface/employee";
 
 export const initState: IUserData = {
   username: "",
   password: "",
   roleID: "",
-  email:"",
+  email: "",
   isCanLoginWithCode: false,
   allowedIPs: [],
   employee: {
@@ -28,14 +28,12 @@ export const initState: IUserData = {
     smsTemplatesGroupId: null,
     quoteLimitationType: null,
     quotePriceLimit: null,
-    mailProvider: null,
     pinCodeForLoginWithApplication: null,
-    actionIds:[],
-    stationsFilter: []
-  }
+    actionIds: [],
+    stationsFilter: [],
+  },
 };
 export const employeeState = atom<IUserData>({
   key: "employeeState",
   default: initState,
 });
-

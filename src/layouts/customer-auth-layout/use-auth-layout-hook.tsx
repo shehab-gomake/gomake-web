@@ -289,6 +289,12 @@ const useAuthLayoutHook = (
             path: "/credit-card-transactions",
             Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
           },
+          {
+            key: "vatReport",
+            title: "tabs.vatReport",
+            path: "/vat-report",
+            Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;

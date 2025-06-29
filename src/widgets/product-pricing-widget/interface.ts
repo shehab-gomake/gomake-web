@@ -139,6 +139,7 @@ export interface IOutput {
   materialLength: number;
   rectangles: IRectangle[];
   orginalName: string;
+  showInOutSourceAction?: boolean;
 }
 
 export interface IOutSourceSupplier {

@@ -330,7 +330,8 @@ const useCopyFromOrderModal = ({
         (item) =>
           item?.productName?.toLowerCase()?.includes(searchTerm) ||
           item?.details?.toLowerCase()?.includes(searchTerm) ||
-          item?.workName?.toLowerCase()?.includes(searchTerm)
+          item?.workName?.toLowerCase()?.includes(searchTerm) ||
+          item?.sourceDocumentNumber?.toLowerCase()?.includes(searchTerm)
       );
     }
 

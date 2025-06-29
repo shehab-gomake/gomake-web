@@ -437,7 +437,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             />
             {!isPurchaseJobs && (
               <ExcelMenu onExportTableClick={ExportJobsTableToExcel} />
-            )}{" "}
+            )}
           </div>
           <PrimaryTable
             stickyFirstCol={false}
