@@ -12,6 +12,7 @@ import {
   calculatedPriceProductItemValueState,
   calculationExceptionsLogsState,
   calculationProgressState,
+  calculationResultState,
   currentProductItemValuePriceState,
   lastProductItemValuePriceState,
   selectedWorkFlowState,
@@ -52,6 +53,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     lastProductItemValuePriceState
   );
   const calculationProgress = useRecoilValue(calculationProgressState);
+
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
   const calculatedPriceProductItemValue = useRecoilValue<number>(
@@ -67,6 +69,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [combinedData, setCombinedData] = useState<any>([]);
   const [products, setProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  const calculationResult = useRecoilValue(calculationResultState);
   const onSelectTab = (v) => {
     setSelectedTab(v);
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
@@ -233,14 +236,14 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
       );
-      if(quantityParam == null){
+      if (quantityParam == null) {
         quantityParam = {
-          values:["0"]
+          values: ["0"]
         }
       }
-      if(quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)){
+      if (quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)) {
         quantityParam.values = ["0"]
       }
       return quantityParam;
@@ -311,6 +314,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     errorColor,
     primaryColor,
     priceChangePercents,
+    calculationResult
   };
 };
 
