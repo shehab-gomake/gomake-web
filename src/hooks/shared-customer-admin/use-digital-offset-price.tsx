@@ -1084,14 +1084,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
-                  if (parameter?.code === "PiercingType") {
-                    debugger;
-                  }
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
-                  // when the parameter is required and the parameter is material select and if there is only one option select it automatically
-
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
@@ -1108,7 +1103,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           x.subSectionId === subSection.id &&
                           x.actionIndex === parameter?.actionIndex
                       );
-                    if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
+                    if (!existsSubProductParameter) {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -1154,7 +1149,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             x.actionIndex === parameter?.actionIndex
                         );
 
-                      if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
+                      if (!existsSubProductParameter) {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
@@ -1741,8 +1736,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
-                //parameter.isHidden = true;
-                //return;
+                // parameter.isHidden = true;
+                // return;
               }
             }
             if (parameter.materialPath && parameter.materialPath.length > 0) {
@@ -1879,6 +1874,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       !value &&
                       prevParameter.valuesConfigs.length == 1 &&
                       prevParameter.isRequired
+                      && !prevParameter?.isHidden
                     ) {
                       value = prevParameter.valuesConfigs[0];
                     }
