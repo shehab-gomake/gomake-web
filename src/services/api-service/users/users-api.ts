@@ -14,9 +14,15 @@ const GET_EMPLOYEES_WORKING_HOURS_URL = '/v1/crm-service/employee/get-employees-
 const UPDATE_EMPLOYEE_DEFAULT_WORKING_HOURS_URL = '/v1/crm-service/employee/update-default-employee-working-hours/';
 const UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/update-employee-day-working-hours';
 const RESET_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/reset-employee-day-working-hours';
+const GET_ALL_EMPLOYEES_URL = '/v1/crm-service/employee/get-all-employees-for-dropdown';
+
 
 const getAllUsersApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_URL, setState)
+}
+
+const getAllEmployeesApi: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_EMPLOYEES_URL, setState);
 }
 
 const getEmployeeApi: ICallAndSetData = async (callApi, setState, id: string) => {
@@ -64,5 +70,6 @@ export {
     getEmployeesWorkingHoursApi,
     updateEmployeesWorkingHoursApi,
     updateEmployeesDayWorkingHoursApi,
-    resetEmployeesDayWorkingHoursApi
+    resetEmployeesDayWorkingHoursApi,
+    getAllEmployeesApi
 };

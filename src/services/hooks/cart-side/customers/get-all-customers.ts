@@ -29,4 +29,17 @@ const getAndSetRecentCustomers = async (
   return returnResult(result, setState);
 };
 
-export { getAndSetAllCustomers, getAndSetRecentCustomers };
+const getAndSetPaginatedCustomersAndSuppliers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/crm-service/customer/get-paginated-customers-and-suppliers",
+    data,
+  );
+  return returnResult(result?.data, setState);
+};
+
+export { getAndSetAllCustomers, getAndSetRecentCustomers, getAndSetPaginatedCustomersAndSuppliers };
