@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {
   GoMakeAutoComplate,
+  GoMakeDeleteModal,
   GoMakeModal,
   GomakePrimaryButton,
   GomakeTextInput,
@@ -12,7 +13,8 @@ import { PlusIcon, ReOrderIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useSnackBar } from "@/hooks";
-import { EParameterTypes } from "@/enums";
+import { EParameterTypes, ModalType } from "@/enums";
+import { useModal } from "@/hooks/use-modal";
 
 const ChildParameterModal = ({
   openModal,
@@ -27,6 +29,7 @@ const ChildParameterModal = ({
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const { setSnackbarStateValue } = useSnackBar();
+  const openDeleteModal = useModal()
   const [state, setState] = useState({
     valuesConfigs: selectedParameter.valuesConfigs,
     childsParameters: selectedParameter.childsParameters,
@@ -316,32 +319,7 @@ const ChildParameterModal = ({
             <GomakePrimaryButton
               style={{ width: "50%", height: 40 }}
               onClick={() => {
-                const hasRepeatedNames = state.valuesConfigs.some(
-                  (item, index) => isUpdateNameRepeated(item?.updateName, index)
-                );
-                const hasUpdateNames = checkUpdateNames(state.valuesConfigs);
-                if (!hasRepeatedNames && hasUpdateNames) {
-                  updatedValuesConfigsForParameters(
-                    selectedSectonId,
-                    selectedSubSection,
-                    { ...selectedParameter, ...state }
-                  );
-                  onClose();
-                } else {
-                  if (!hasUpdateNames) {
-                    setSnackbarStateValue({
-                      state: true,
-                      message: t("products.offsetPrice.admin.fillValue"),
-                      type: "error",
-                    });
-                  } else {
-                    setSnackbarStateValue({
-                      state: true,
-                      message: t("products.offsetPrice.admin.valuesErrorMsg"),
-                      type: "error",
-                    });
-                  }
-                }
+                openDeleteModal.open();
               }}
             >
               {t("products.offsetPrice.admin.addValues")}
@@ -349,6 +327,41 @@ const ChildParameterModal = ({
           </div>
         </div>
       </GoMakeModal>
+      <GoMakeDeleteModal
+        openModal={openDeleteModal.isOpen}
+        onClose={() => openDeleteModal.close()}
+        modalType={ModalType.WARNING}
+        title={t("products.offsetPrice.admin.addValuesTitle")}
+        subTitle={t("products.offsetPrice.admin.addValuesSubTitle")}
+        onClickDelete={() => {
+          const hasRepeatedNames = state.valuesConfigs.some(
+            (item, index) => isUpdateNameRepeated(item?.updateName, index)
+          );
+          const hasUpdateNames = checkUpdateNames(state.valuesConfigs);
+          if (!hasRepeatedNames && hasUpdateNames) {
+            updatedValuesConfigsForParameters(
+              selectedSectonId,
+              selectedSubSection,
+              { ...selectedParameter, ...state }
+            );
+            onClose();
+          } else {
+            if (!hasUpdateNames) {
+              setSnackbarStateValue({
+                state: true,
+                message: t("products.offsetPrice.admin.fillValue"),
+                type: "error",
+              });
+            } else {
+              setSnackbarStateValue({
+                state: true,
+                message: t("products.offsetPrice.admin.valuesErrorMsg"),
+                type: "error",
+              });
+            }
+          }
+        }}
+      />
     </>
   );
 };
