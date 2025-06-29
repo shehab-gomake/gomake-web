@@ -2,10 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 
 export interface VatReportHeaderWidgetProps {
-    vatReportByCreationDate: any,
-    onChangeVatReportByCreationDate: any,
-    onChangeByReferenceDate: any;
-    handleDateChange?: any;
+    handleFromDateChange: any;
+    handleToDateChange: any;
     fromDate?: Date | null;
     toDate?: Date | null;
     isFetchingCustomers?: boolean;

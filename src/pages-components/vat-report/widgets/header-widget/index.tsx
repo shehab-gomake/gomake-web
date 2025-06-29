@@ -8,10 +8,14 @@ import { predefinedRanges } from "@/utils/dateRanges";
 import { useTranslation } from "react-i18next";
 import { createGlobalStyle } from "styled-components";
 
+import { DateField } from "@/components/date-picker/date-filed";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+
 const VatReportHeaderWidget = ({
     fromDate,
     toDate,
-    handleDateChange
+    handleFromDateChange,
+    handleToDateChange
 }: VatReportHeaderWidgetProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -28,15 +32,28 @@ const VatReportHeaderWidget = ({
     return (
         <div style={classes.mainContainer}>
             <div style={classes.date1FilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                <div style={{ width: "100%" }}>
-                    <GlobalStyle RTL={RTL} />
-                    <DateRangePicker
-                        onChange={handleDateChange}
-                        value={fromDate && toDate ? [fromDate, toDate] : null}
-                        ranges={predefinedRanges}
+                <Box display="flex" gap={2} width="100%">
+                    <DateField
+                        label={t("general.startDate")}
+                        date={formatDateToISOString(fromDate)}
+                        handleChange={handleFromDateChange}
+                        isEditable={true}
+                        withTime={false}
+                        inputWidth="100%"
+                        direction="column"
+                        compactMode={true}
                     />
-                </div>
+                    <DateField
+                        label={t("general.endDate")}
+                        date={formatDateToISOString(toDate)}
+                        handleChange={handleToDateChange}
+                        isEditable={true}
+                        withTime={false}
+                        inputWidth="100%"
+                        direction="column"
+                        compactMode={true}
+                    />
+                </Box>
             </div>
         </div>
     );

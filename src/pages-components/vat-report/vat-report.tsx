@@ -16,37 +16,15 @@ interface IProps {
 const VatReportWidget = () => {
     const {
         t,
-        handleClickSelectDate,
-        selectDate,
-        setSelectDate,
-        dateRef,
-        agent,
-        agentsCategories,
-        handleAgentChange,
         onClickBtn1,
         onClickBtn2,
-        onClickBtn3,
         showTable,
-        detailedReport,
-        getTableDataRows,
-        onChangeDetailedReport,
-        onChangeByReferenceDate,
-        transformedHeaders,
-        handleDateChange,
         fromDate,
         toDate,
-        showCustomerModal,
-        setShowCustomerModal,
-        customerForEdit,
-        setCustomerForEdit,
-        onClickOpenCustomerModal,
-        tableHeader,
-        handleSortVatReport,
-        isDescOrder,
         setFromDate,
         setToDate,
-        vatReportByCreationDate,
-        onChangeVatReportByCreationDate
+        handleFromDateChange,
+        handleToDateChange,
     } = useVatReport();
 
     const { classes } = useStyle();
@@ -60,11 +38,8 @@ const VatReportWidget = () => {
             />
 
             <VatReportHeaderWidget
-
-                vatReportByCreationDate={vatReportByCreationDate}
-                onChangeVatReportByCreationDate={onChangeVatReportByCreationDate}
-                onChangeByReferenceDate={onChangeByReferenceDate}
-                handleDateChange={handleDateChange}
+                handleFromDateChange={handleFromDateChange}
+                handleToDateChange={handleToDateChange}
                 fromDate={fromDate}
                 toDate={toDate}
                 setFromDate={setFromDate}
@@ -76,10 +51,9 @@ const VatReportWidget = () => {
             <VatReportButtonWidget
                 onClickBtn1={onClickBtn1}
                 onClickBtn2={onClickBtn2}
-                onClickBtn3={onClickBtn3}
             />
 
-            {showTable && (
+            {/* {showTable && (
                 <PrimaryTable
                     rows={getTableDataRows(onClickOpenCustomerModal)}
                     headers={transformedHeaders}
@@ -88,7 +62,7 @@ const VatReportWidget = () => {
                     variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
                     isDescOrder={isDescOrder}
                 />
-            )}
+            )} */}
 
             {/* <CustomerCardWidget
                 customerAction={CUSTOMER_ACTIONS.Edit}

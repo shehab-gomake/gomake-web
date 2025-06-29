@@ -6,9 +6,8 @@ import { useStyle } from "./style";
 export interface VatReportButtonWidgetProps {
     onClickBtn1: () => void;
     onClickBtn2: () => void;
-    onClickBtn3: () => void;
 }
-const VatReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: VatReportButtonWidgetProps) => {
+const VatReportButtonWidget = ({ onClickBtn1, onClickBtn2, }: VatReportButtonWidgetProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation()
 
