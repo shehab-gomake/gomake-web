@@ -1,12 +1,9 @@
-import { Autocomplete, Box, Select, Typography } from "@mui/material";
+import { Box, } from "@mui/material";
 import { useStyle } from "./style";
 import { VatReportHeaderWidgetProps } from "./use-header-widget";
 
 
-import { DateRangePicker } from "rsuite";
-import { predefinedRanges } from "@/utils/dateRanges";
 import { useTranslation } from "react-i18next";
-import { createGlobalStyle } from "styled-components";
 
 import { DateField } from "@/components/date-picker/date-filed";
 import { formatDateToISOString } from "@/components/date-time/date-time-component";
@@ -20,14 +17,7 @@ const VatReportHeaderWidget = ({
     const { classes } = useStyle();
     const { t } = useTranslation();
 
-    const dir: "rtl" | "ltr" = t("direction");
-    const RTL = dir === "rtl";
-    const GlobalStyle = createGlobalStyle`
-    .rs-picker-popup-daterange {
-      left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-      right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
-    }
-  `;
+
 
     return (
         <div style={classes.mainContainer}>

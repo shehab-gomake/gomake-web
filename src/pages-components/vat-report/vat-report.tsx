@@ -46,40 +46,36 @@ const VatReportWidget = () => {
             {showTable && (
                 <div style={classes.vatReportContainer}>
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("taxOnTransactions")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.taxOnTransactions")}</div>
                         <GomakeTextInput value={vatData?.taxOnTransactions} disabled={true} />
                     </div>
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("vatMustTransactions")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.vatMustTransactions")}</div>
                         <GomakeTextInput value={vatData?.vatMustTransactions} disabled={true} />
                     </div>
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("vatExemptTransactions")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.vatExemptTransactions")}</div>
                         <GomakeTextInput value={vatData?.vatExemptTransactions} disabled={true} />
                     </div>
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("vatOnHoldings")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.vatOnHoldings")}</div>
                         <GomakeTextInput value={vatData?.vatOnHoldings} disabled={true} />
                     </div>
 
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("vatOnOtherPurchases")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.vatOnOtherPurchases")}</div>
                         <GomakeTextInput value={vatData?.vatOnOtherPurchases} disabled={true} />
                     </div>
                     <div style={classes.vatReportItem}      >
-                        <div style={classes.vatReportItemTitle}>{t("vatPercents")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.vatPercents")}</div>
                         <GomakeTextInput value={vatData?.vatPercents} disabled={true} />
                     </div>
 
                     <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("totalVatToPay")}</div>
+                        <div style={classes.vatReportItemTitle}>{t("reports.totalVatToPay")}</div>
                         <GomakeTextInput value={vatData?.totalVatToPay} disabled={true} />
                     </div>
 
-                    <div style={classes.vatReportItem}>
-                        <div style={classes.vatReportItemTitle}>{t("totalVatToPay")}</div>
-                        <GomakeTextInput value={vatData?.totalVatToPay} disabled={true} />
-                    </div>
                 </div>
             )}
         </div>
