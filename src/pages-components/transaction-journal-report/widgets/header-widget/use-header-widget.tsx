@@ -9,13 +9,15 @@ export interface TransactionJournalReportHeaderWidgetProps {
   documentType: any;
   documentsTypeList: any;
   reportType: EReportType;
-  handleDateChange: any;
+  // handleDateChange?: any;
   fromDate: Date | null;
   toDate: Date | null;
+  setToDate?: any;
+  setFromDate?: any;
 }
 
 export interface AccountingTransactionReportHeaderProps {
-  handleDateChange: any;
+  // handleDateChange: any;
   filterState: FilterState;
   setFilterState: any;
   handleClickClear: () => void;

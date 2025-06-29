@@ -5,7 +5,6 @@ import { accountingInputs } from "../../inputs/accounting-inputs";
 import { useTranslation } from "react-i18next";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useEffect } from "react";
-import { EnumTermsPayment } from "@/enums/accounting-enums";
 
 interface IProps {
   clientType: string;
@@ -35,7 +34,7 @@ const AccountingTab = ({
     ) {
       onChangeInputs("termOfPayment", Number(defaultPaymentTerm));
     }
-  }, [defaultPaymentTerm, state?.termOfPayment, onChangeInputs]);
+  }, [defaultPaymentTerm, state?.termOfPayment]);
 
   return (
     <div style={classes.customerInfoStyle}>

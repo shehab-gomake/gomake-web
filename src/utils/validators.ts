@@ -1,5 +1,13 @@
 // Used for creating document
-export const validateDocument = (quoteItemValue: any): string | null => {
+export const validateDocument = (
+  quoteItemValue: any,
+  isCustomer: boolean = true
+): string | null => {
+  if (!quoteItemValue?.client) {
+    return `home.admin.${
+      isCustomer ? "pleaseSelectClient" : "pleaseSelectSupplier"
+    }`;
+  }
   if (
     !quoteItemValue?.documentItems ||
     quoteItemValue.documentItems.length === 0
@@ -38,7 +46,7 @@ export const validateDocument = (quoteItemValue: any): string | null => {
     if (item.finalPrice < 0) {
       return "alerts.itemWithNegativeTotalPrice";
     }*/
-    
+
     const itemKey = item.sourceDocumentItemId
       ? `id-${item.sourceDocumentItemId}`
       : `code-${item.code}-price-${item.price}-qty-${item.quantity}`;

@@ -36,11 +36,12 @@ const CreditCardTransactionsWidget = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
-    handleDateChange,
     fromDate,
     toDate,
     isFetching,
     initialPageSize,
+    setToDate,
+    setFromDate,
   } = useCreditCardTransactions();
 
   return (
@@ -58,10 +59,11 @@ const CreditCardTransactionsWidget = () => {
             renderOptions={renderOptions}
             checkWhatRenderArray={checkWhatRenderArray}
             handleCustomerChange={handleCustomerChange}
-            handleDateChange={handleDateChange}
             fromDate={fromDate}
             toDate={toDate}
             isFetchingCustomers={isFetching}
+            setToDate={setToDate}
+            setFromDate={setFromDate}
           />
           <PrimaryTable
             stickyFirstCol={false}

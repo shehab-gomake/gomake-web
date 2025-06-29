@@ -8,6 +8,9 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { predefinedRanges } from "@/utils/dateRanges";
+import { DateField } from "@/components/date-picker/date-filed";
+import { formatDateToISOString } from "@/components/date-time/date-time-component";
+import { Box } from "@mui/material";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   customer,
@@ -20,13 +23,22 @@ const CreditCardTransactionsReportHeaderWidget = ({
   onClickClearFilter,
   checkWhatRenderArray,
   handleCustomerChange,
-  handleDateChange,
   fromDate,
   toDate,
   isFetchingCustomers,
+  setToDate,
+  setFromDate,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+
+  const handleFromDateChange = (newDate) => {
+    setFromDate(newDate ? new Date(newDate) : null);
+  };
+
+  const handleToDateChange = (newDate) => {
+    setToDate(newDate ? new Date(newDate) : null);
+  };
 
   return (
     <>
@@ -75,18 +87,29 @@ const CreditCardTransactionsReportHeaderWidget = ({
           />
         </div>
         <div style={classes.date1FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>
-            {t("boardMissions.dateRange")}
-          </h3>
-          <div style={{ width: "100%" }}>
-            <DateRangePicker
-              onChange={handleDateChange}
-              value={fromDate && toDate ? [fromDate, toDate] : null}
-              ranges={predefinedRanges}
+          <Box display="flex" gap={2} width="100%">
+            <DateField
+              label={t("general.startDate")}
+              date={formatDateToISOString(fromDate)}
+              handleChange={handleFromDateChange}
+              isEditable={true}
+              withTime={false}
+              inputWidth="100%"
+              direction="column"
+              compactMode={true}
             />
-          </div>
+            <DateField
+              label={t("general.endDate")}
+              date={formatDateToISOString(toDate)}
+              handleChange={handleToDateChange}
+              isEditable={true}
+              withTime={false}
+              inputWidth="100%"
+              direction="column"
+              compactMode={true}
+            />
+          </Box>
         </div>
-
         <div style={classes.date3FilterContainer}>
           <SecondaryButton
             variant="contained"

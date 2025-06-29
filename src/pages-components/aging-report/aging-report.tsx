@@ -7,6 +7,7 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { SendEmailLedgerReportModal } from "../ledger-report/widgets/send-email-modal";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -29,6 +30,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     onClickBtn1,
     onClickBtn2,
     onClickBtn3,
+    onClickBtn4,
     showTable,
     detailedReport,
     getTableDataRows,
@@ -51,7 +53,14 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     setFromDate,
     setToDate,
     agingReportByCreationDate,
-    onChangeAgingReportByCreationDate
+    onChangeAgingReportByCreationDate,
+    isSendPaymentModal,
+    clientContactsValue,
+    setClientContactsValue,
+    selectedContactById,
+    setSelectedContactById,
+    onChangeUpdateClientContact,
+    sendPaymenttoClient
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -100,6 +109,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         onClickBtn1={onClickBtn1}
         onClickBtn2={onClickBtn2}
         onClickBtn3={onClickBtn3}
+        onClickBtn4={onClickBtn4}
       />
 
       {showTable && (
@@ -128,6 +138,19 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
       />
+
+      <SendEmailLedgerReportModal
+        openModal={isSendPaymentModal.isOpen}
+        onCloseModal={() => isSendPaymentModal.close()}
+        clientContactsValue={clientContactsValue}
+        setSelectedContactById={setSelectedContactById}
+        selectedContactById={selectedContactById}
+        onChangeUpdateClientContact={onChangeUpdateClientContact}
+        SendCustomerLedgerToMailApi={sendPaymenttoClient}
+        isAgingReport={true}
+      />
+
+
     </div>
   );
 };

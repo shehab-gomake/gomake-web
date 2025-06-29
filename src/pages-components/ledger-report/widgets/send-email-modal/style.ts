@@ -1,4 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -28,7 +29,7 @@ const useStyle = () => {
         alignItems: "center",
         gap:10,
         width: "100%",
-        marginBottom:25
+        marginBottom:25,
       },
       autoComplateStyle: {
         background: "#FFFFFF",
@@ -50,10 +51,22 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         width: "100%",
+        minWidth:340
       },
       sendBtnContainer:{
         height: 40,
-      }
+      },
+      date2FilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        width: "13%",
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
     };
   }, []);
   return {
