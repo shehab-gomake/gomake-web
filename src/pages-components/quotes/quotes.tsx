@@ -247,6 +247,7 @@ const QuotesListPageWidget = ({
     handlePaymentTypeChange,
     typeOfPayments,
     initialPageSize,
+    ExportDocumentTableToPdf,
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -731,6 +732,7 @@ const QuotesListPageWidget = ({
               <ExcelMenu
                 onGenerateReportClick={onOpenAddRuleModal}
                 onExportTableClick={ExportDocumentTableToExcel}
+                onExportTablePdfClick={ExportDocumentTableToPdf}
               />
             </div>
             {/* document table */}

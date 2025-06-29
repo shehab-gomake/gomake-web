@@ -9,11 +9,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 interface ExcelMenuProps {
   onGenerateReportClick?: () => void;
   onExportTableClick?: () => void;
+  onExportTablePdfClick?: () => void;
 }
 
 const ExcelMenu = ({
   onGenerateReportClick,
   onExportTableClick,
+  onExportTablePdfClick,
 }: ExcelMenuProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -69,7 +71,19 @@ const ExcelMenu = ({
             onExportTableClick();
           }}
         >
-          <div style={classes.rowTextStyle}>{t("sales.list.exportTable")}</div>
+          <div style={classes.rowTextStyle}>
+            {t("sales.list.exportTableExcel")}
+          </div>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            onExportTablePdfClick();
+          }}
+        >
+          <div style={classes.rowTextStyle}>
+            {t("sales.list.exportTablePdf")}
+          </div>
         </MenuItem>
       </Menu>
     </div>
@@ -77,73 +91,3 @@ const ExcelMenu = ({
 };
 
 export { ExcelMenu };
-
-// import { IconButton, Menu, MenuItem } from "@mui/material";
-// import { SettingsIcon } from "@/icons/settings";
-// import { DownloadExcelSheet } from "@/icons/material-tabs/download-excel-sheet";
-// import { useTranslation } from "react-i18next";
-// import { useStyle } from "./style";
-// import { useState } from "react";
-
-// interface IActionMenuProps {
-// onGenerateReportClick: () => void;
-// onExportTableClick?: () => void;
-// }
-
-// const ExcelMenuDraft = (props: IActionMenuProps) => {
-//   const { classes } = useStyle();
-//   const { t } = useTranslation();
-//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-//   const handleOpenMenu = (event) => {
-//     setAnchorEl(event.currentTarget);
-//   };
-
-//   const handleCloseMenu = () => {
-//     setAnchorEl(null);
-//   };
-
-//   return (
-//     <>
-//       <IconButton onClick={handleOpenMenu} size="small">
-//         <SettingsIcon stroke={"#7E7E7E"} width={25} height={25} />
-//       </IconButton>
-//       <Menu
-//         open={Boolean(anchorEl)}
-//         anchorEl={anchorEl}
-//         onClose={handleCloseMenu}
-//         transformOrigin={{ horizontal: "right", vertical: "top" }}
-//         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-//         onClick={handleCloseMenu}
-//       >
-//         <MenuItem
-//           style={classes.menuItemContainer}
-//           onClick={() => {
-//             handleCloseMenu();
-//             props?.onGenerateReportClick();
-//           }}
-//         >
-//           <div style={classes.actionIconStyle}>
-//             <DownloadExcelSheet />
-//           </div>
-//           <div style={classes.rowTextStyle}>{t("sales.list.generateReport")}</div>
-//         </MenuItem>
-
-//         <MenuItem
-//           style={classes.menuItemContainer}
-//           onClick={() => {
-//             handleCloseMenu();
-//             props?.onExportTableClick();
-//           }}
-//         >
-//           <div style={classes.actionIconStyle}>
-//             <DownloadExcelSheet />
-//           </div>
-//           <div style={classes.rowTextStyle}>{t("sales.list.exportTable")}</div>
-//         </MenuItem>
-//       </Menu>
-//     </>
-//   );
-// };
-
-// export { ExcelMenuDraft };
