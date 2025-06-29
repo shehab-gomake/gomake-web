@@ -351,33 +351,38 @@ const ActionContainerComponent = ({
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.PARAMETER &&
-      parameter?.htmlElementType === HtmlElementType.TEXT
+      parameter?.htmlElementType === HtmlElementType.TEXT &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TEXT
+      parameter?.htmlElementType === HtmlElementType.TEXT &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.IMAGE
+      parameter?.htmlElementType === HtmlElementType.IMAGE &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
 
   const textAreaOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
 
   const tableOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TABLE
+      parameter?.htmlElementType === HtmlElementType.TABLE &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     if (newValue === totalProductionTime?.values[0]?.toString()) {
