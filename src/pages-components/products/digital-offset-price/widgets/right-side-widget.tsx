@@ -110,6 +110,7 @@ const RightSideWidget = ({
     handleProductChange,
     primaryColor,
     priceChangePercents,
+    calculationResult
   } = useRightSideWidget({ includeVAT, widgetType });
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
@@ -523,6 +524,20 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+        {
+          template?.minimumPrice > 0 && !sliderCurrentProductItemValueTotalPrice && (
+            <div style={{ ...clasess.secondText, marginBottom: 10 }}>
+              {t("products.addProduct.admin.minimumPrice")} : {template?.minimumPrice}
+            </div>
+          )
+        }
+        {
+          template?.minimumPrice > 0 && sliderCurrentProductItemValueTotalPrice && (
+            <div style={{ ...clasess.secondText, marginBottom: 10 }}>
+              {t("dashboard.calculatedPrice")} : {calculationResult?.calculatedPrice}
+            </div>
+          )
+        }
         {/* Slider */}
         {priceChangePercents?.minPercent !== null &&
           priceChangePercents?.maxPercent !== null && (
