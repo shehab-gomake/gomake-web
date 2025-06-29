@@ -13,7 +13,7 @@ interface IProps {
     clientType: CLIENT_TYPE;
 }
 
-const VatReportWidget = ({ clientType }: IProps) => {
+const VatReportWidget = () => {
     const {
         t,
         handleClickSelectDate,
@@ -23,10 +23,6 @@ const VatReportWidget = ({ clientType }: IProps) => {
         agent,
         agentsCategories,
         handleAgentChange,
-        customer,
-        renderOptions,
-        checkWhatRenderArray,
-        handleCustomerChange,
         onClickBtn1,
         onClickBtn2,
         onClickBtn3,
@@ -44,53 +40,33 @@ const VatReportWidget = ({ clientType }: IProps) => {
         customerForEdit,
         setCustomerForEdit,
         onClickOpenCustomerModal,
-        isFetching,
         tableHeader,
         handleSortVatReport,
         isDescOrder,
-        isPurchaseReport,
         setFromDate,
         setToDate,
         vatReportByCreationDate,
         onChangeVatReportByCreationDate
-    } = useVatReport(clientType);
+    } = useVatReport();
 
     const { classes } = useStyle();
 
     return (
         <div style={classes.mainContainer}>
             <HeaderTitle
-                title={
-                    clientType === CLIENT_TYPE.SUPPLIER
-                        ? t("tabs.supplierVat")
-                        : t("tabs.vatReport")
-                }
+                title={t("tabs.vatReport")}
                 marginTop={"0px"}
                 marginBottom={"0px"}
             />
 
             <VatReportHeaderWidget
-                handleClickSelectDate={handleClickSelectDate}
-                selectDate={selectDate}
-                setSelectDate={setSelectDate}
-                dateRef={dateRef}
-                agent={agent}
-                agentsCategories={agentsCategories}
-                handleAgentChange={handleAgentChange}
-                customer={customer}
-                isFetchingCustomers={isFetching}
-                renderOptions={renderOptions}
-                checkWhatRenderArray={checkWhatRenderArray}
-                handleCustomerChange={handleCustomerChange}
-                detailedReport={detailedReport}
-                onChangeDetailedReport={onChangeDetailedReport}
+
                 vatReportByCreationDate={vatReportByCreationDate}
                 onChangeVatReportByCreationDate={onChangeVatReportByCreationDate}
                 onChangeByReferenceDate={onChangeByReferenceDate}
                 handleDateChange={handleDateChange}
                 fromDate={fromDate}
                 toDate={toDate}
-                isPurchaseReport={isPurchaseReport}
                 setFromDate={setFromDate}
                 setToDate={setToDate}
             />
@@ -114,7 +90,7 @@ const VatReportWidget = ({ clientType }: IProps) => {
                 />
             )}
 
-            <CustomerCardWidget
+            {/* <CustomerCardWidget
                 customerAction={CUSTOMER_ACTIONS.Edit}
                 typeClient={
                     isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
@@ -125,7 +101,7 @@ const VatReportWidget = ({ clientType }: IProps) => {
                 onClose={() => setShowCustomerModal(false)}
                 customer={customerForEdit}
                 setCustomer={setCustomerForEdit}
-            />
+            /> */}
         </div>
     );
 };

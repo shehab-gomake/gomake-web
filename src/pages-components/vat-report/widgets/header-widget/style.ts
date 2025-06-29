@@ -56,6 +56,24 @@ const useStyle = () => {
         padding: 8,
         fontSize: 14,
       },
+      date1FilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+      },
+      date2FilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        width: "13%",
+      },   
+         filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
     };
   }, []);
   return {

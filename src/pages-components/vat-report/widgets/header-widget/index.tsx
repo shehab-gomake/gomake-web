@@ -2,118 +2,43 @@ import { Autocomplete, Box, Select, Typography } from "@mui/material";
 import { useStyle } from "./style";
 import { VatReportHeaderWidgetProps } from "./use-header-widget";
 
+
+import { DateRangePicker } from "rsuite";
+import { predefinedRanges } from "@/utils/dateRanges";
+import { useTranslation } from "react-i18next";
+import { createGlobalStyle } from "styled-components";
+
 const VatReportHeaderWidget = ({
-    handleClickSelectDate,
-    selectDate,
-    setSelectDate,
-    dateRef,
-    agent,
-    agentsCategories,
-    handleAgentChange,
-    customer,
-    isFetchingCustomers,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    detailedReport,
-    onChangeDetailedReport,
-    vatReportByCreationDate,
-    onChangeVatReportByCreationDate,
-    onChangeByReferenceDate,
-    handleDateChange,
     fromDate,
     toDate,
-    isPurchaseReport,
-    setFromDate,
-    setToDate,
+    handleDateChange
 }: VatReportHeaderWidgetProps) => {
     const { classes } = useStyle();
+    const { t } = useTranslation();
+
+    const dir: "rtl" | "ltr" = t("direction");
+    const RTL = dir === "rtl";
+    const GlobalStyle = createGlobalStyle`
+    .rs-picker-popup-daterange {
+      left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
+      right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
+    }
+  `;
 
     return (
-        <Box style={classes.mainContainer}>
-            <Box style={classes.firstRow}>
-                <Box style={classes.dateContainer}>
-                    <Typography style={classes.dateLabel}>
-                        {isPurchaseReport ? "Supplier" : "Customer"}
-                    </Typography>
-                    {/* <Autocomplete
-                        options={renderOptions()}
-                        value={customer}
-                        onChange={handleCustomerChange}
-                        placeholder={
-                            isPurchaseReport
-                                ? "Select supplier..."
-                                : "Select customer..."
-                        }
-                        loading={isFetchingCustomers}
-                        style={classes.autoComplete}
-                    /> */}
-                </Box>
-
-                <Box style={classes.dateContainer}>
-                    <Typography style={classes.dateLabel}>Agent</Typography>
-                    {/* <Select
-                        options={agentsCategories}
-                        value={agent}
-                        onChange={handleAgentChange}
-                        placeholder="Select agent..."
-                        style={classes.select}
-                    /> */}
-                </Box>
-
-                <Box style={classes.dateContainer}>
-                    <Typography style={classes.dateLabel}>Date Range</Typography>
-                    {/* <DatePicker
-                        value={[fromDate, toDate]}
+        <div style={classes.mainContainer}>
+            <div style={classes.date1FilterContainer}>
+                <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                <div style={{ width: "100%" }}>
+                    <GlobalStyle RTL={RTL} />
+                    <DateRangePicker
                         onChange={handleDateChange}
-                        style={classes.datePicker}
-                    /> */}
-                </Box>
-
-                <Box style={classes.dateContainer}>
-                    <Typography style={classes.dateLabel}>Reference Date</Typography>
-                    <input
-                        type="date"
-                        ref={dateRef}
-                        value={selectDate}
-                        onChange={(e) => setSelectDate(e.target.value)}
-                        style={classes.dateInput}
+                        value={fromDate && toDate ? [fromDate, toDate] : null}
+                        ranges={predefinedRanges}
                     />
-                </Box>
-            </Box>
-
-            {/* <Box style={classes.secondRow}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={detailedReport}
-                            onChange={onChangeDetailedReport}
-                        />
-                    }
-                    label="Detailed Report"
-                />
-
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={vatReportByCreationDate}
-                            onChange={onChangeVatReportByCreationDate}
-                        />
-                    }
-                    label="By Creation Date"
-                />
-
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={false}
-                            onChange={onChangeByReferenceDate}
-                        />
-                    }
-                    label="By Reference Date"
-                />
-            </Box> */}
-        </Box>
+                </div>
+            </div>
+        </div>
     );
 };
 

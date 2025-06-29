@@ -14,17 +14,13 @@ const VatReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: VatRep
 
     const tabs = [
         {
-            name: t("reports.showVatReport"),
-            onclick: onClickBtn1
+            name: t("permissions.ShowReports"),
+            onclick: onClickBtn1,
         },
         {
-            name: t("reports.printVatReport"),
-            onclick: onClickBtn2
+            name: t("reports.printReport"),
+            onclick: onClickBtn2,
         },
-        {
-            name: t("reports.excelVatReport"),
-            onclick: onClickBtn3
-        }
     ]
     return (
         <div style={classes.mainContainer}>

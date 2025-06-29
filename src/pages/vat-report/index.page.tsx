@@ -7,7 +7,7 @@ export default function VatReportPage() {
         <CustomerAuthLayout staticPageTitle="vat report"
             className={`custom-scrollbar`}
         >
-            <VatReportWidget clientType={CLIENT_TYPE.CUSTOMER} />
+            <VatReportWidget />
         </CustomerAuthLayout>
     );
 } 
