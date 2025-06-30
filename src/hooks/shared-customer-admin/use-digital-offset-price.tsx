@@ -867,7 +867,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (
                 parameter?.isHidden &&
-                // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon &&
                 relatedParameters.some(
                   (relatedParam) =>
@@ -1615,7 +1614,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 subProductsParameter?.relatedParameters?.find(
                   (p) =>
                     p.parameterId === parameter.id &&
-                    p.actionIndex === parameter.actionIndex
+                    p.actionIndex === parameter.actionIndex &&
+                    !parameter?.isHiddenInSetting
                 )
             );
             if (relatedToParameter && relatedToParameter.isHidden) {
