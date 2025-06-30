@@ -125,7 +125,7 @@ export const ColumnSettingsMenu = () => {
 
   return (
     <>
-      <Tooltip title="Column visibility">
+      <Tooltip title={t("general.columnVisibility")}>
         <IconButton onClick={handleOpen}>
           <ViewColumnIcon />
         </IconButton>

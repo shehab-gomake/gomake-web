@@ -41,8 +41,7 @@ const GET_BOARD_MISSION_PDF =
   "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
 const GET_ORDER_BOARD_MISSION_PDF =
   "/v1/erp-service/documents/export-order-board-mission-pdf";
-const GET_ORDER_SUMMARY_PDF =
-  "/v1/erp-service/documents/get-order-print-node";
+const GET_ORDER_SUMMARY_PDF = "/v1/erp-service/documents/get-order-print-node";
 const GET_PRINTING_TICKET_PDF =
   "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
@@ -153,6 +152,13 @@ const SAVE_DRAFT_DOCUMENT_URL =
   "/v1/erp-service/documents/create-draft-document";
 const REMOVE_DRAFT_DOCUMENT_URL =
   "/v1/erp-service/documents/remove-draft-document";
+
+//!here
+const SAVE_DOCUMENT_TABLE_SETTINGS_URL =
+  "/v1/erp-service/documents/save-document-table-settings";
+
+const GET_SAVE_DOCUMENT_TABLE_SETTINGS_URL_TABLE_SETTINGS_URL =
+  "/v1/erp-service/documents/get-document-table-settings";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -896,7 +902,7 @@ const getOrderBoardMissionPDF: ICallAndSetData = async (
   );
 };
 
-const getOrderSummaryPDF: ICallAndSetData = async ( 
+const getOrderSummaryPDF: ICallAndSetData = async (
   callApi,
   setState,
   data: { documentId: string }
@@ -1273,6 +1279,36 @@ const removeDraftDocumentApi: ICallAndSetData = async (
   );
 };
 
+//!here
+const saveDocumentTableSettingsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SAVE_DOCUMENT_TABLE_SETTINGS_URL,
+    setState,
+    data
+  );
+};
+
+//!here
+const getDocumentTableSettingsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_SAVE_DOCUMENT_TABLE_SETTINGS_URL_TABLE_SETTINGS_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1357,4 +1393,7 @@ export {
   updateQuoteItemQuantityApi,
   saveDraftDocumentApi,
   removeDraftDocumentApi,
+  //!here
+  saveDocumentTableSettingsApi,
+  getDocumentTableSettingsApi,
 };
