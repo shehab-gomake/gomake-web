@@ -43,7 +43,7 @@ const AddStepModal = ({
                 style={clasess.textInputStyle}
                 value={value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setValue(parseInt(e.target.value, 10));
+                  setValue(parseFloat(e.target.value));
                 }}
                 type="number"
               />
@@ -55,7 +55,7 @@ const AddStepModal = ({
                 style={clasess.textInputStyle}
                 value={totalPrice}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTotalPrice(parseInt(e.target.value, 10));
+                  setTotalPrice(parseFloat(e.target.value));
                 }}
                 type="number"
               />
