@@ -20,7 +20,7 @@ import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/ge
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccessSend, alertFaultSend } = useSnackBar();
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
@@ -472,15 +472,11 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
         email: selectedContactById?.mail,
       }
     );
-    console.log("res", res);
     if (res?.success) {
-      setTableData(res?.data?.data?.data?.data);
-      setTableHeader(res?.data?.data?.data?.headers);
-      alertSuccessGetData();
-      setShowTable(true);
+      alertSuccessSend();
+      isSendPaymentModal.close()
     } else {
-      alertFaultGetData();
-      setShowTable(false);
+      alertFaultSend();
     }
   },
     [
@@ -491,6 +487,11 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       customer,
       selectDate,
       byReferenceDate,
+      selectedContactById,
+      orderBy,
+      isDescOrder,
+      agingReportByCreationDate,
+      isPurchaseReport,
     ]
   );
 
