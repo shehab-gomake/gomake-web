@@ -19,6 +19,7 @@ interface IProps {
   showTable?: boolean;
   profileState?: any;
   customerAction: CUSTOMER_ACTIONS;
+  ShipmentTypesList: { text: string; value: string }[];
 }
 
 const GeneralTab = ({
@@ -33,6 +34,7 @@ const GeneralTab = ({
   showTable,
   profileState,
   customerAction,
+  ShipmentTypesList,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -69,19 +71,23 @@ const GeneralTab = ({
   return (
     <div style={classes.tabsContainer} ref={divRef}>
       <div style={classes.customerInfoStyle}>
-        {generalInputs(typeClient, customer, languagesOptions, t).map(
-          (item) => (
-            <div style={{ marginBottom: 10 }}>
-              <FormInput
-                key={"general-input"}
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={false}
-                readonly={false}
-              />
-            </div>
-          )
-        )}
+        {generalInputs(
+          typeClient,
+          customer,
+          languagesOptions,
+          t,
+          ShipmentTypesList
+        ).map((item) => (
+          <div style={{ marginBottom: 10 }}>
+            <FormInput
+              key={"general-input"}
+              input={item as IInput}
+              changeState={onChangeInputs}
+              error={false}
+              readonly={false}
+            />
+          </div>
+        ))}
       </div>
       <div>
         <Stack
