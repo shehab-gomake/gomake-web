@@ -21,7 +21,7 @@ const CompanyCommunicationComponent = () => {
 
   useEffect(() => {
     if (!profile?.mailingProviderType) {
-      changeState("mailingProviderType", IMailProviders.GMAIL);
+      changeState("mailingProviderType", IMailProviders.SEND_GRID);
     }
   }, [profile?.mailingProviderType]);
 
@@ -35,7 +35,7 @@ const CompanyCommunicationComponent = () => {
             <FormInput
               input={input}
               changeState={changeState}
-              error={(input.required && !input.value) || !input.isValid}
+              error={!input.isValid}
             />
             {input.parameterKey === "mailServiceEmail" && (
               <div
