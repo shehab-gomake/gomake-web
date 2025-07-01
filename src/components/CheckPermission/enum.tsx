@@ -148,6 +148,7 @@ export enum Permissions {
   SHOW_DAILY_PAYMENT_REPORT = "ShowDailyPaymentsReport",
   SHOW_SALES_REPORT = "ShowSalesReport",
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
+  SHOW_VAT_REPORT = "ShowVatReport",
   SHOW_ACCOUNTING_TRANSACTION_REPORT = "ShowAccountingTransactionReport",
   SHOW_ADJUSTMENTS_REPORT = "ShowAdjustmentsReport",
   SHOW_HOME_PAGE_STATISTICS = "ShowHomePageStatistics",
@@ -157,6 +158,7 @@ export enum Permissions {
   SHOW_SUPPLIER_LEDGER_REPORT = "ShowSupplierLedgerReport",
   SHOW_SUPPLIER_PAYMENT_REPORT = "ShowSupplierPaymentsReport",
   SHOW_PURCHASES_REPORT = "ShowPurchasesReport",
+  SHOW_MAILING_LOGS = "ShowMailingLogs",
 }
 
 export const DocumentPermission = {

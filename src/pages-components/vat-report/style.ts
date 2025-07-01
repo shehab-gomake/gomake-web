@@ -21,7 +21,7 @@ const useStyle = () => {
       },
       vatReportContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 20,

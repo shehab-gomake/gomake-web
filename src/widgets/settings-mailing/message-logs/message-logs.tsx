@@ -29,7 +29,7 @@ const MessageLogs = () => {
   } = useMessageLogs();
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", padding: 20 }}>
       <Stack direction="column" gap="20px" paddingBottom="20px">
         <Stack direction="row" gap="20px" alignItems="center">
           <SearchInputComponent
@@ -79,7 +79,6 @@ const MessageLogs = () => {
         stickyHeader={true}
         rows={mailLogsTableRows}
         headers={tableHeaders}
-        maxHeight={"calc(100vh - 280px)"}
       />
       <GoMakePagination
         onChangePageNumber={handlePageNumberChange}
