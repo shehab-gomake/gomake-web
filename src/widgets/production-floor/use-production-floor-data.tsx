@@ -412,8 +412,8 @@ const useProductionFloorData = () => {
       search:
         patternSearchInput !== null &&
         patternSearchInput !== undefined &&
-        patternSearchInput !== "" &&
-        patternSearchInput,
+        patternSearchInput !== "" ?
+        patternSearchInput : "",
     };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
