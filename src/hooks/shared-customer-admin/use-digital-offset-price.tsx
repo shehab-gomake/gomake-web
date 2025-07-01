@@ -867,7 +867,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (
                 parameter?.isHidden &&
-                // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon &&
                 relatedParameters.some(
                   (relatedParam) =>
@@ -1615,7 +1614,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 subProductsParameter?.relatedParameters?.find(
                   (p) =>
                     p.parameterId === parameter.id &&
-                    p.actionIndex === parameter.actionIndex
+                    p.actionIndex === parameter.actionIndex &&
+                    !parameter?.isHiddenInSetting
                 )
             );
             if (relatedToParameter && relatedToParameter.isHidden) {
@@ -4383,16 +4383,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSectionType
           );
         } else {
-          if (widgetType == EWidgetProductType.CREATE) {
-            removeRelatedParametersFromSubProducts(
-              parameterId,
-              sectionId,
-              subSectionId,
-              temp,
-              subSectionParameter.actionIndex,
-            );
-            // temp.splice(findIndex, 1);
-          }
+          // if (widgetType == EWidgetProductType.CREATE) {
+          removeRelatedParametersFromSubProducts(
+            parameterId,
+            sectionId,
+            subSectionId,
+            temp,
+            subSectionParameter.actionIndex,
+          );
+          // temp.splice(findIndex, 1);
+          // }
         }
       } else {
         temp.push({
@@ -4425,6 +4425,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
+      console.log("tempdatadata", data);
       if (subSectionParameter && data?.values !== null && data?.valueIds !== null) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
