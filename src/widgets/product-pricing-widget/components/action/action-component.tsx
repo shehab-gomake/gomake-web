@@ -55,6 +55,7 @@ import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list"
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
+import { adaptLeft } from "@/utils/adapter";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -346,6 +347,7 @@ const ActionContainerComponent = ({
   const { secondColor } = useGomakeTheme();
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+  const direction = t("direction");
   const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter &&
@@ -1382,7 +1384,7 @@ const ActionContainerComponent = ({
                                 height: "40px",
                                 marginBottom: "10px",
                                 position: "absolute",
-                                right: 0,
+                                ...adaptLeft(direction, 0),
                                 bottom: 0,
                                 backgroundColor: "rgba(237, 2, 140, 1)",
                               }}
