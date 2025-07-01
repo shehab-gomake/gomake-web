@@ -27,6 +27,7 @@ import {
   SetupStepItem,
   StepStatus,
 } from "@/store/print-house-setup-state-state";
+import {isLoggedInState} from "@/store/token-expired-modal";
 
 const useCustomer = (
   permissionEnumValue?: Permissions,
@@ -62,7 +63,7 @@ const useCustomer = (
   const setIsUsPrintHouse = useSetRecoilState<any>(isUsPrintHouseState);
   const setVersionState = useSetRecoilState(versionState);
   const setShowSetupMenu = useSetRecoilState(setupGuideOpenState);
-
+  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const { i18n } = useTranslation();
   const logOut = useCallback(() => {
     setUser({});
@@ -87,6 +88,7 @@ const useCustomer = (
       setUser({ ...user, type: "user" });
       setUserType({ type: "user" });
       setUserProfile(validate?.data?.data?.customer);
+      setIsLoggedIn(true);
       setPrintHouseProfile(user.printHouseProfile);
       setPrintHouseCountry(user?.printHouseProfile?.country);
 
@@ -144,6 +146,7 @@ const useCustomer = (
       }
       return true;
     }
+    setIsLoggedIn(false);
     clearStorage();
     // navigate("/login");
     const currentPath = window.location.pathname + window.location.search;
