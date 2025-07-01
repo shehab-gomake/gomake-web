@@ -66,6 +66,7 @@ export interface ICalculatedWorkFlow {
   totalLaborCosts?: number;
   totalMaterialCosts?: number;
   totalOtherCosts?: number;
+  calculatedTotalPriceBeforeProductMinimumPriceCheck?: number;
 
   customer?: any;
   renderOptions?: () => any[];

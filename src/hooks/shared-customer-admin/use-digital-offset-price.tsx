@@ -4383,16 +4383,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSectionType
           );
         } else {
-          // if (widgetType == EWidgetProductType.CREATE) {
-          removeRelatedParametersFromSubProducts(
-            parameterId,
-            sectionId,
-            subSectionId,
-            temp,
-            subSectionParameter.actionIndex,
-          );
-          // temp.splice(findIndex, 1);
-          // }
+          if (subSectionParameter?.code !== "BothsideSameprintcolor") {
+            removeRelatedParametersFromSubProducts(
+              parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              subSectionParameter.actionIndex,
+            );
+          }
         }
       } else {
         temp.push({

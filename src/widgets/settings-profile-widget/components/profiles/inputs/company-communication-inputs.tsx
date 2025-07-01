@@ -34,7 +34,7 @@ const companyCommunicationInputs = (state: ICompanyProfile) => {
       })),
       value: state.mailingProviderType,
       machineInputType: "input",
-      isValid: !!state.mailingProviderType,
+      isValid: true,
     },
     {
       name: "serviceEmail",
@@ -48,21 +48,22 @@ const companyCommunicationInputs = (state: ICompanyProfile) => {
       machineInputType: "input",
       isValid: !!state.mailServiceEmail,
     },
-    state.mailingProviderType !== IMailProviders.AMAZON && {
-      name: "appPassword",
-      label: "profileSettings.appPassword",
-      type: "password",
-      placeholder: "profileSettings.appPassword",
-      required: true,
-      parameterKey: "appPassword",
-      options: [],
-      value: state.appPassword,
-      machineInputType: "input",
-      isValid: true,
-      // iconElement: (
-      //   <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
-      // ),
-    },
+    state.mailingProviderType !== IMailProviders.AMAZON &&
+      state.mailingProviderType && {
+        name: "appPassword",
+        label: "profileSettings.appPassword",
+        type: "password",
+        placeholder: "profileSettings.appPassword",
+        required: true,
+        parameterKey: "appPassword",
+        options: [],
+        value: state.appPassword,
+        machineInputType: "input",
+        isValid: true,
+        // iconElement: (
+        //   <AppPassInfoIcon youtubeUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+        // ),
+      },
   ].filter(Boolean);
 };
 

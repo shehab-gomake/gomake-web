@@ -43,8 +43,6 @@ const mailInputs1 = (state: ISMSTemplate, mailingProviderType, t) => {
         text: t(pro.text),
         value: pro.value,
       })),
-      // value: mailProviderOptions.find((op) => op.value === mailingProviderType)
-      //   .value,
       value: mailingProviderType,
       machineInputType: "input",
       readonly: true,
