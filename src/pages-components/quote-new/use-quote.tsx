@@ -662,7 +662,6 @@ const useQuoteNew = ({
       ) {
         return; // Skip the API call
       }
-
       getCalculateQuoteItem(
         updatedQuoteItemValue,
         4,
@@ -1204,6 +1203,7 @@ const useQuoteNew = ({
             totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
+            exchangeRate,
             documentItems: newQuoteItemValue.documentItems.map(
               (documentItem) => {
                 return {
