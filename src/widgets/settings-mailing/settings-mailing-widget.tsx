@@ -76,10 +76,10 @@ const SettingsMailingWidget = () => {
       title: t("mailingSettings.messageGroups"),
       component: <MessageGroups />,
     },
-    {
-      title: t("mailingSettings.messageLogs"),
-      component: <MessageLogs />,
-    },
+    // {
+    //   title: t("mailingSettings.messageLogs"),
+    //   component: <MessageLogs />,
+    // },
   ];
 
   useEffect(() => {
