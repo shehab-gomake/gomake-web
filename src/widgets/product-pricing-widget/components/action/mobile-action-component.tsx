@@ -41,7 +41,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
 import { ModalType } from "@/enums";
-import { _renderDeliveryDate } from "@/utils/helpers";
+import { _renderDeliveryDate, renderExceptionMessage } from "@/utils/helpers";
 import { formatValueWithUnit } from "@/utils/is-currency";
 
 interface IMobileActionContainerComponentProps extends IWorkFlowAction {
@@ -355,11 +355,7 @@ const MobileActionContainerComponent = ({
                   }}
                 >
                   {actionException?.exceptionKey && (
-                    <Tooltip
-                      title={t(
-                        "CalculationExceptions." + actionException?.exceptionKey
-                      )}
-                    >
+                    <Tooltip title={renderExceptionMessage(actionException?.exceptionKey, actionException?.values, t)}>
                       <IconButton>
                         {_renderIconLogs(
                           actionException?.exceptionType,
