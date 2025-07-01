@@ -295,6 +295,12 @@ const useAuthLayoutHook = (
             path: "/vat-report",
             Permission: Permissions.SHOW_VAT_REPORT,
           },
+          {
+            key: "mailingLogs",
+            title: "mailingSettings.messageLogs",
+            path: "/mailing-logs",
+            Permission: Permissions.SHOW_MAILING_LOGS,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;

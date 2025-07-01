@@ -158,6 +158,7 @@ export enum Permissions {
   SHOW_SUPPLIER_LEDGER_REPORT = "ShowSupplierLedgerReport",
   SHOW_SUPPLIER_PAYMENT_REPORT = "ShowSupplierPaymentsReport",
   SHOW_PURCHASES_REPORT = "ShowPurchasesReport",
+  SHOW_MAILING_LOGS = "ShowMailingLogs",
 }
 
 export const DocumentPermission = {
