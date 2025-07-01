@@ -123,6 +123,8 @@ const CustomerCardWidget = ({
     profileState,
     systemCurrency,
     defaultPaymentTerm,
+    getAllShipmentTypes,
+    shipmentTypes,
   } = useCustomerCard({
     t,
     customer,
@@ -230,6 +232,7 @@ const CustomerCardWidget = ({
           showTable={showTable}
           profileState={profileState}
           customerAction={customerAction}
+          ShipmentTypesList={shipmentTypes}
         />
       ),
     },
@@ -344,6 +347,10 @@ const CustomerCardWidget = ({
       ? t("customers.modal.editTitle")
       : t("customers.modal.addTitle");
   };
+
+  useEffect(() => {
+    getAllShipmentTypes();
+  }, []);
 
   return (
     <GoMakeModal
