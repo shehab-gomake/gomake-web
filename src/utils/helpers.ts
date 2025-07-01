@@ -424,3 +424,16 @@ export const validateUsAddressFields = (
     missingFields,
   };
 };
+
+
+export const renderExceptionMessage = (exceptionKey:any, values:any,t:any) => {
+  if (exceptionKey && values?.length > 0) {
+    return t("CalculationExceptions." + exceptionKey).replace(
+      /\{\{(\d+)\}\}/g,
+      (_, index) => values[index] || ""
+    );
+  } else if (exceptionKey) {
+    return t("CalculationExceptions." + exceptionKey);
+  }
+  return "";
+};
