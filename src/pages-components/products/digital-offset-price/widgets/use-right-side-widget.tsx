@@ -280,19 +280,33 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
 
   useEffect(() => {
     const uniqueArray = mergedArray.filter((item, index, self) => {
-      const itemValuesArray = JSON.parse(item.values || "[]");
+      let itemValuesArray = [];
+      try {
+        itemValuesArray = JSON.parse(item.values || "[]");
+      } catch (error) {
+        console.warn("Failed to parse item.values as JSON:", item.values);
+        itemValuesArray = [];
+      }
       const itemValuesSorted = itemValuesArray.sort().join(",");
       return (
         index ===
         self.findIndex(
-          (t) =>
-            t.actionName === item.actionName &&
-            t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
-            t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
-            JSON.parse(t.values || "[]")
-              .sort()
-              .join(",") === itemValuesSorted
+          (t) => {
+            let tValuesArray = [];
+            try {
+              tValuesArray = JSON.parse(t.values || "[]");
+            } catch (error) {
+              console.warn("Failed to parse t.values as JSON:", t.values);
+              tValuesArray = [];
+            }
+            return (
+              t.actionName === item.actionName &&
+              t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
+              t?.exception?.exceptionMessage ===
+              item?.exception?.exceptionMessage &&
+              tValuesArray.sort().join(",") === itemValuesSorted
+            );
+          }
         )
       );
     });
