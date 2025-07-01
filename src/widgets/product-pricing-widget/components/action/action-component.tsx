@@ -48,7 +48,7 @@ import {
 } from "@/store";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { _renderDeliveryDate } from "@/utils/helpers";
+import { _renderDeliveryDate, renderExceptionMessage } from "@/utils/helpers";
 import { ReloadPriceIcon } from "@/icons/reload-price";
 import { formatValueWithUnit } from "@/utils/is-currency";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -108,7 +108,6 @@ const Actions = ({
   isFetching,
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
-
   useEffect(() => {
     setActionsList(actions);
   }, [actions]);
@@ -1145,11 +1144,7 @@ const ActionContainerComponent = ({
                   }}
                 >
                   {actionException && (
-                    <Tooltip
-                      title={t(
-                        "CalculationExceptions." + actionException?.exceptionKey
-                      )}
-                    >
+                    <Tooltip title={renderExceptionMessage(actionException?.exceptionKey, actionException?.values, t)}>
                       <IconButton>
                         {_renderIconLogs(
                           actionException?.exceptionType,

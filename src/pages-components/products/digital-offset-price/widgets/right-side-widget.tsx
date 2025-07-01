@@ -14,6 +14,7 @@ import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { ReloadPriceIcon } from "@/icons/reload-price";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { formatValueWithUnit } from "@/utils/is-currency";
+import { renderExceptionMessage } from "@/utils/helpers";
 
 export const roundPrice = (price) => {
   try {
@@ -637,18 +638,6 @@ const RightSideWidget = ({
                 </div>
               )} */}
               {logsArray?.map((item) => {
-                const renderExceptionMessage = (exceptionKey, values) => {
-                  if (exceptionKey && values?.length > 0) {
-                    return t("CalculationExceptions." + exceptionKey).replace(
-                      /\{\{(\d+)\}\}/g,
-                      (_, index) => values[index] || ""
-                    );
-                  } else if (exceptionKey) {
-                    return t("CalculationExceptions." + exceptionKey);
-                  }
-                  return "";
-                };
-
                 const renderValues = (values) => {
                   if (!item?.exception?.exceptionKey && values?.length > 0) {
                     return values.join(", ");
@@ -682,8 +671,9 @@ const RightSideWidget = ({
                           {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
                             }${renderExceptionMessage(
                               item?.exception?.exceptionKey,
-                              item?.exception?.values
-                            )}${renderValues(item?.exception?.values)}`}
+                              item?.exception?.values,
+                              t
+                            )}${!item?.exception?.exceptionKey ? renderValues(item?.exception?.values) : ''}`}
                         </div>
                       </div>
                     </div>
@@ -713,8 +703,9 @@ const RightSideWidget = ({
                           {`${item?.exceptionMessage || " "
                             }${renderExceptionMessage(
                               item?.exceptionKey,
-                              item?.values
-                            )}${renderValues(item?.values)}`}
+                              item?.values,
+                              t
+                            )}${!item?.exceptionKey ? renderValues(item?.values) : ''}`}
                         </div>
                       </div>
                     </div>
