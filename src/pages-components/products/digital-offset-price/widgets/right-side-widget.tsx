@@ -1,30 +1,12 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import {
-  CheckboxCheckedIcon,
-  CheckboxIcon,
-  ReloadIcon,
-  WarningLogsIcon,
-} from "@/icons";
-import {
-  Checkbox,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-import { useEffect, useState } from "react";
 import { _renderIconLogs } from "@/utils/constants";
-import { useRouter } from "next/router";
-import { useClientTypesList } from "@/hooks/use-client-types";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { permissionsState, subProductsParametersState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
@@ -74,18 +56,14 @@ const RightSideWidget = ({
   priceRecovery,
   setSampleType,
   includeVAT,
-  setIncludeVAT,
   sampleType,
   errorMsg,
-  calculationServerErrorState,
-  canCalculation,
   calculationProduct,
   subProducts,
   setCanCalculation,
   showCalculationInCompletedAlert,
 }: any) => {
   const {
-    t,
     direction,
     isRtl,
     currentProductItemValueTotalPrice,
@@ -95,123 +73,34 @@ const RightSideWidget = ({
     systemCurrency,
     isLoading,
     quantity,
-    selectedWorkFlow,
-    calculationExceptionsLogs,
-    handleSliderChange,
     maxIncrease,
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
-    setSliderCurrentProductItemValueTotalPrice,
-    alertFault,
     priceIncludeVat,
-    setPriceIncludeVat,
     systemVAT,
     selectedProduct,
     combinedData,
-    handleProductChange,
-    primaryColor,
     priceChangePercents,
-    calculationResult
+    clientTypeDefaultValue,
+    clientDefaultValue,
+    documentNumberText,
+    workFlows,
+    additionalProductItems,
+    logsArray,
+    permissions,
+    router,
+    clientTypesCategories,
+    isRTL,
+    setSliderCurrentProductItemValueTotalPrice,
+    setClientTypeDefaultValue,
+    handleProductChange,
+    handleSliderChange,
+    setPriceIncludeVat,
+    setSubProducts,
+    primaryColor,
+    alertFault,
+    t,
   } = useRightSideWidget({ includeVAT, widgetType });
-  const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
-
-  const dir: "rtl" | "ltr" = t("direction");
-  const isRTL = dir === "rtl";
-
-  const additionalProductItems = useRecoilValue(additionalProductItemsState);
-  const mergedArray = [
-    ...(selectedWorkFlow?.exceptions || []),
-    ...(calculationExceptionsLogs || []),
-  ];
-  const [logsArray, setLogsArray] = useState(mergedArray);
-  const permissions = useRecoilValue(permissionsState);
-
-  useEffect(() => {
-    const uniqueArray = mergedArray.filter((item, index, self) => {
-      console.log("item", item);
-      let itemValuesArray = [];
-      try {
-        itemValuesArray = JSON.parse(item.values || "[]");
-      } catch (error) {
-        console.warn("Failed to parse item.values as JSON:", item.values, error);
-        itemValuesArray = [];
-      }
-      const itemValuesSorted = itemValuesArray.sort().join(",");
-      return (
-        index ===
-        self.findIndex(
-          (t) => {
-            let tValuesArray = [];
-            try {
-              tValuesArray = JSON.parse(t.values || "[]");
-            } catch (error) {
-              console.warn("Failed to parse t.values as JSON:", t.values, error);
-              tValuesArray = [];
-            }
-            return (
-              t.actionName === item.actionName &&
-              t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
-              t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
-              tValuesArray.sort().join(",") === itemValuesSorted
-            );
-          }
-        )
-      );
-    });
-    if (uniqueArray) {
-      setLogsArray(uniqueArray);
-    }
-  }, [selectedWorkFlow, calculationExceptionsLogs]);
-
-  const router = useRouter();
-  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>();
-  const [clientDefaultValue, setClientDefaultValue] = useState<any>();
-  const { clientTypesCategories, getClientTypesCategories } =
-    useClientTypesList();
-
-  useEffect(() => {
-    getClientTypesCategories();
-  }, []);
-
-  useEffect(() => {
-    if (router?.query?.clientTypeId) {
-      clientTypesCategories &&
-        setClientTypeDefaultValue(
-          clientTypesCategories?.find(
-            (item: any) => item?.id === router?.query?.clientTypeId
-          )
-        );
-    }
-    if (router?.query?.customerId && router?.query?.customerName) {
-      const customerName = Array.isArray(router?.query?.customerName)
-        ? router.query.customerName[0]
-        : router?.query?.customerName;
-      const decodedCustomerName = customerName
-        ? decodeURIComponent(customerName)
-        : "";
-      setClientDefaultValue({
-        id: router?.query?.customerId,
-        label: decodedCustomerName,
-      });
-    }
-  }, [clientTypesCategories]);
-
-  const docType = Array.isArray(router?.query?.documentType)
-    ? 0
-    : Number(router?.query?.documentType) ?? 0;
-
-  const documentNumberText =
-    docType === DOCUMENT_TYPE.quote
-      ? t("sales.quote.quoteNumber")
-      : t("sales.quote.orderNumber");
-
-  useEffect(() => {
-    setSliderCurrentProductItemValueTotalPrice(
-      currentProductItemValueTotalPrice
-    );
-  }, [currentProductItemValueTotalPrice]);
-
 
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -548,9 +437,9 @@ const RightSideWidget = ({
           )
         }
         {
-          template?.minimumPrice > 0 && sliderCurrentProductItemValueTotalPrice && (
+          template?.minimumPrice > 0 && sliderCurrentProductItemValueTotalPrice && workFlows?.length > 0 && (
             <div style={{ ...clasess.secondText, marginBottom: 10 }}>
-              {t("dashboard.calculatedPrice")} : {calculationResult?.calculatedPrice}
+              {t("dashboard.calculatedPrice")} : {workFlows[0]?.calculatedTotalPriceBeforeProductMinimumPriceCheck}
             </div>
           )
         }

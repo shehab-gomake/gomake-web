@@ -26,7 +26,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
-import { ModalType, UNIT_TYPE } from "@/enums";
+import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
@@ -54,15 +54,12 @@ const PricingWidget = ({
     view,
     setView,
     setSelectedTab,
-    selectedTab,
     updateProductItemValue,
     setIsChangeView,
     selectedWorkFlow,
     getWorkFlowsActions,
     selectedWorkFlowsByTabList,
-    settledWorkFlowsByTabList,
     pageSize,
-    handleTabClick,
     handleScroll,
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
