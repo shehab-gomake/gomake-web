@@ -293,7 +293,7 @@ const useAuthLayoutHook = (
             key: "vatReport",
             title: "tabs.vatReport",
             path: "/vat-report",
-            Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
+            Permission: Permissions.SHOW_VAT_REPORT,
           },
           {
             key: "mailingLogs",
