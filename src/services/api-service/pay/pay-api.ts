@@ -15,6 +15,9 @@ const CREATE_DEBTS_PAYMENT_TRANSACTION_URL =
 const GET_DEBTS_PAYMENT_BY_ID_URL =
   "/v1/erp-service/pay/get-debts-payment-by-id";
 
+const GET_DOCUMENT_PDF_BY_NUMBER_URL =
+  "/v1/erp-service/documents/get-document-pdf-by-number";
+
 const sendDocumentToClientForPaymentApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -133,6 +136,20 @@ const createDebitsPaymentTransactionApi: ICallAndSetData = async (
   );
 };
 
+const getDocumentPdfByNumberApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DOCUMENT_PDF_BY_NUMBER_URL,
+    setState,
+    data
+  );
+};
+
 export {
   sendDocumentToClientForPaymentApi,
   getDocumentContactApi,
@@ -142,4 +159,5 @@ export {
   createPaymentTransactionApi,
   getDebtsPaymentByIdApi,
   createDebitsPaymentTransactionApi,
+  getDocumentPdfByNumberApi,
 };

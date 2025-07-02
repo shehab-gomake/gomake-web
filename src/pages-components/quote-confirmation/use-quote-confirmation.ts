@@ -14,11 +14,16 @@ import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import {
   getDebtsPaymentByIdApi,
+  getDocumentPdfByNumberApi,
   getPrePaymentByIdApi,
 } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
+import {
+  ERPDocumentsTypesEnum,
+  mapERPTypeToDocumentType,
+} from "@/enums/document-type-enum";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -123,7 +128,8 @@ const useQuoteConfirmation = ({
           ],
         };
         setQuoteConfirm(modifiedQuote);
-        quote.clientLang && i18n.changeLanguage(quote.clientLang);
+        const clientLanguage = quote?.client?.clientLang;
+        clientLanguage && i18n.changeLanguage(clientLanguage);
       }
     };
     await getDebtsPaymentByIdApi(callApi, callBack, {
@@ -278,6 +284,24 @@ const useQuoteConfirmation = ({
     await getCompanyLoginLogo(callApi, callBack);
   };
 
+  const getDocumentPdfByNumber = async (
+    documentNumber: string | number,
+    erpDocumentType: ERPDocumentsTypesEnum
+  ) => {
+    const documentType = mapERPTypeToDocumentType(erpDocumentType);
+
+    const callBack = (res: any) => {
+      if (res.success && res.data) {
+        window.open(res.data, "_blank");
+      }
+    };
+
+    await getDocumentPdfByNumberApi(callApi, callBack, {
+      documentNumber,
+      documentType,
+    });
+  };
+
   return {
     t,
     getQuoteConfirmation,
@@ -297,6 +321,7 @@ const useQuoteConfirmation = ({
     getCompanyLogo,
     getDebtsPaymentById,
     handleDebtItemCheck,
+    getDocumentPdfByNumber,
   };
 };
 

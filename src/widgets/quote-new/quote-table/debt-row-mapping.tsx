@@ -1,5 +1,5 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Button, Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
@@ -12,7 +12,8 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
   const { classes } = useStyle({ headerHeight });
   const { formatISODateTime } = useDateFormat();
   const columnWidths = ["10%", "22%"];
-  const { handleDebtItemCheck, quoteConfirm } = useQuoteConfirmation();
+  const { getDocumentPdfByNumber, handleDebtItemCheck, quoteConfirm } =
+    useQuoteConfirmation();
 
   return (
     <TableRow
@@ -58,7 +59,13 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
           color: "#000",
         }}
       >
-        {item?.docNum}
+        <Button
+          onClick={() => getDocumentPdfByNumber(item?.docNum, item?.type)}
+          variant="text"
+          style={classes.documentNum}
+        >
+          {item?.docNum}
+        </Button>
       </PrimaryTableCell>
 
       <PrimaryTableCell
