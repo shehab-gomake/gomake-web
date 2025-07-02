@@ -6,6 +6,7 @@ import { useCreditCardPaySection } from "./use-credit-card-pay-section";
 import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const CreditCardPaySection = ({
   isFromBigScreen = false,
@@ -51,6 +52,7 @@ const CreditCardPaySection = ({
         </div>
       ) : (
         <>
+          <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{t("payment.creditCardDetails")}</div>
           <div style={classes.creditCardInputsContainer}>
             <CreditCardIcon sx={{ color: "#2e3092" }} />
             <input
@@ -76,15 +78,17 @@ const CreditCardPaySection = ({
               value={paymentDetailsState?.cvv}
             />
           </div>
+          <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{t("payment.personalIDNumber")}</div>
           <input
             style={classes.creditSecondCardInputs}
-            placeholder={t("partners.headers.id")}
+            placeholder={t("payment.personalIDNumber")}
             value={paymentDetailsState?.holderID}
             onChange={(e) => handleChangeInputs("holderID", e.target.value)}
           />
+          <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{t("payment.paymentAmount")}</div>
           <input
             style={classes.creditSecondCardInputs}
-            placeholder={t("sales.quote.total")}
+            placeholder={t("payment.paymentAmount")}
             value={paymentDetailsState?.transactionSum}
             onChange={(e) =>
               handleChangeInputs("transactionSum", e.target.value)
@@ -92,6 +96,7 @@ const CreditCardPaySection = ({
             readOnly
           />
           <div style={{ width: customWidth }}>
+            <div style={{ ...FONT_FAMILY.Lexend(600, 14), marginBottom: 10 }}>{t("payment.paymentType")}</div>
             <GoMakeAutoComplate
               key={"transactionType"}
               value={transactionTypes.find(
@@ -100,7 +105,7 @@ const CreditCardPaySection = ({
               )}
               style={classes.selectInputs}
               options={transactionTypes}
-              placeholder={t("payment.transactionType")}
+              placeholder={t("payment.paymentType")}
               onChange={(e, value) =>
                 handleChangeInputs("transactionType", value?.value)
               }
