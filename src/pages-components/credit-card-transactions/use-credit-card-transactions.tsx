@@ -10,14 +10,18 @@ import {
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { format, endOfToday, endOfYear } from "date-fns";
-import { initialFromDate } from "@/utils/helpers";
+import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useListPagination } from "@/hooks/use-list-pagination";
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
-    useSnackBar();
+  const {
+    alertSuccessUpdate,
+    alertFaultUpdate,
+    alertFaultGetData,
+    alertFault,
+  } = useSnackBar();
   const {
     customer,
     setCustomer,
@@ -49,6 +53,7 @@ const useCreditCardTransactions = () => {
   const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">();
   const [receiptNumber, setReceiptNumber] = useState<string>();
+  const [cardNumber, setCardNumber] = useState<string>();
 
   const tableHeaders = [
     t("creditCardTransactions.CreationDate"),
@@ -87,6 +92,10 @@ const useCreditCardTransactions = () => {
   };
 
   const getAllCreditCardTransactions = async (isClear: boolean = false) => {
+    if (!areDatesValid(fromDate, toDate)) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
@@ -126,7 +135,8 @@ const useCreditCardTransactions = () => {
           }
         : {
             clientId: customer?.id,
-            receiptNumber: receiptNumber,
+            receiptNumber,
+            cardNumber,
             sum: transactionAmount && transactionAmount,
             startDate: formattedStartDate,
             endDate: formattedEndDate,
@@ -223,11 +233,12 @@ const useCreditCardTransactions = () => {
 
   const onClickClearFilter = () => {
     setCustomer(null);
-    setFromDate(null);
-    setToDate(null);
+    setFromDate(initialFromDate(""));
+    setToDate(endOfYear(new Date()));
     setResetDatePicker(true);
     setTransactionAmount("");
     setReceiptNumber("");
+    setCardNumber("");
     getAllCreditCardTransactions(true);
   };
 
@@ -241,6 +252,10 @@ const useCreditCardTransactions = () => {
 
   const handleReceiptNumberChange = (event) => {
     setReceiptNumber(event.target.value);
+  };
+
+  const handleCardNumberChange = (event) => {
+    setCardNumber(event.target.value);
   };
 
   // const handleDateChange = (value) => {
@@ -281,12 +296,14 @@ const useCreditCardTransactions = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
+    handleCardNumberChange,
     fromDate,
     toDate,
     isFetching,
     initialPageSize,
     setToDate,
     setFromDate,
+    cardNumber,
   };
 };
 
