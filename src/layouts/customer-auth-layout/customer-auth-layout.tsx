@@ -152,14 +152,14 @@ const CustomerAuthLayout = ({
               onClose={() => setIsTokenExpired(false)}
               onClickConfirm={() => {
                 setIsTokenExpired(false);
-                // window.open("/login", "_blank");
-                const currentPath =
+                 window.open("/login", "_blank");
+                /*const currentPath =
                   window.location.pathname + window.location.search;
                 const loginUrl =
                   currentPath && currentPath !== "/"
                     ? `/login?redirect=${encodeURIComponent(currentPath)}`
                     : "/login";
-                navigate(loginUrl);
+                navigate(loginUrl);*/
               }}
               subTitle="modal.alertTokenExpired"
               yesBtn="login.login"
