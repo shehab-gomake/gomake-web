@@ -6,7 +6,13 @@ enum DiscountType {
   bySku,
 }
 
-const generalInputs = (typeClient, state, languagesOptions, t) => {
+const generalInputs = (
+  typeClient,
+  state,
+  languagesOptions,
+  t,
+  ShipmentTypesList
+) => {
   const DiscountTypesList: { value: number; text: string }[] = [
     {
       value: DiscountType.byProduct,
@@ -96,6 +102,17 @@ const generalInputs = (typeClient, state, languagesOptions, t) => {
       options: [],
       optionsUrl: "/v1/employee/get-all-agents",
       value: state?.agentId,
+      isValid: true,
+    },
+    {
+      name: "defaultDelivery",
+      label: "customers.modal.defaultDelivery",
+      type: "select",
+      placeholder: "customers.modal.defaultDelivery",
+      required: false,
+      parameterKey: "shipmentTypeId",
+      options: ShipmentTypesList,
+      value: state?.shipmentTypeId,
       isValid: true,
     },
     {
