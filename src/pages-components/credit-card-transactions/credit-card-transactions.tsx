@@ -36,12 +36,14 @@ const CreditCardTransactionsWidget = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
+    handleCardNumberChange,
     fromDate,
     toDate,
     isFetching,
     initialPageSize,
     setToDate,
     setFromDate,
+    cardNumber,
   } = useCreditCardTransactions();
 
   return (
@@ -53,6 +55,7 @@ const CreditCardTransactionsWidget = () => {
             receiptNumber={receiptNumber}
             handleTransactionAmountChange={handleTransactionAmountChange}
             handleReceiptNumberChange={handleReceiptNumberChange}
+            handleCardNumberChange={handleCardNumberChange}
             onClickSearchFilter={onClickSearchFilter}
             onClickClearFilter={onClickClearFilter}
             customer={customer}
@@ -64,6 +67,7 @@ const CreditCardTransactionsWidget = () => {
             isFetchingCustomers={isFetching}
             setToDate={setToDate}
             setFromDate={setFromDate}
+            cardNumber={cardNumber}
           />
           <PrimaryTable
             stickyFirstCol={false}

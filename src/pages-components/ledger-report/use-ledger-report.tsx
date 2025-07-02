@@ -11,7 +11,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { endOfToday, startOfYear } from "date-fns";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { getAndSetClientContacts } from "@/services/hooks";
-import { initialFromDate } from "@/utils/helpers";
+import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
@@ -192,10 +192,11 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     }
   };
   const ExportLedgerReportPDF = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
+
     if (!customerId && !customer) {
       alertFault("reports.pleaseSelectCustomer");
       return;
@@ -233,7 +234,7 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
   };
 
   const getAgingReportFilter = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -322,10 +323,11 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
   }, [customer, customerId]);
 
   const SendCustomerLedgerToMailApi = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
+
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
