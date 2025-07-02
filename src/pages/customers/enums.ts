@@ -6,6 +6,7 @@ export enum CLIENT_TYPE_Id {
 export enum CLIENT_TYPE {
   CUSTOMER = "C",
   SUPPLIER = "S",
+  All ="all"
 }
 
 export enum DEFAULT_VALUES {
