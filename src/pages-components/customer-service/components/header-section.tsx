@@ -9,6 +9,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 const IssuesHeaderSection = ({
+  isAdmin,
   handleClean,
   printHouses,
   onChangePrintHouse,
@@ -25,30 +26,32 @@ const IssuesHeaderSection = ({
   return (
     <div style={classes.subHeaderContainer}>
       <div style={classes.filterContainer}>
-        <PermissionCheck
-          userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}
-        >
-          {printHouses?.length > 0 ? (
-            <div style={classes.filterSectionContainer}>
-              <div style={classes.labelFilterStyle}>
-                {t("customerService.printHouses")}
+        {isAdmin && (
+          <PermissionCheck
+            userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}
+          >
+            {printHouses?.length > 0 ? (
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("customerService.printHouses")}
+                </div>
+                <GoMakeAutoComplate
+                  key={`print-house-select-${
+                    selectedPrintHouse?.value || "null"
+                  }`}
+                  value={selectedPrintHouse || null}
+                  options={printHouses}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customerService.selectPrintHouse")}
+                  onChange={onChangePrintHouse}
+                  withArrow={true}
+                />
               </div>
-              <GoMakeAutoComplate
-                key={`print-house-select-${
-                  selectedPrintHouse?.value || "null"
-                }`}
-                value={selectedPrintHouse || null}
-                options={printHouses}
-                style={classes.dropDownListStyle}
-                placeholder={t("customerService.selectPrintHouse")}
-                onChange={onChangePrintHouse}
-                withArrow={true}
-              />
-            </div>
-          ) : (
-            <Skeleton variant="rectangular" width={200} height={40} />
-          )}
-        </PermissionCheck>
+            ) : (
+              <Skeleton variant="rectangular" width={200} height={40} />
+            )}
+          </PermissionCheck>
+        )}
 
         {statuses?.length > 0 ? (
           <div style={classes.filterSectionContainer}>

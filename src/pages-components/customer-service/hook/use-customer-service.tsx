@@ -108,7 +108,9 @@ const useCustomerService = (isAdmin: boolean) => {
         return false;
 
       // Filter by status
-      if (statusFilter && issue[6] !== statusFilter?.label) return false;
+      // if (statusFilter && issue[6] !== statusFilter?.label) return false;
+      if (statusFilter && issue[6]?.props?.children !== statusFilter?.label)
+        return false;
 
       // Search input filter by title/description
       if (
@@ -159,6 +161,13 @@ const useCustomerService = (isAdmin: boolean) => {
     { label: t("customerService.backlog"), value: "Backlog" },
     { label: t("customerService.new"), value: "New" },
   ];
+
+  const statusColors = {
+    Done: "green",
+    "Working on it": "orange",
+    "Waiting for Response": "orange",
+    "Under Review with R&D": "orange",
+  };
 
   const ticketTypeList = [
     {
@@ -433,6 +442,12 @@ const useCustomerService = (isAdmin: boolean) => {
             statuses.find((status) => status.value === columnData.status)
               ?.label || null;
 
+          const matchingStatusVal =
+            statuses.find((status) => status.value === columnData.status)
+              ?.value || null;
+
+          const statusColor = statusColors[matchingStatusVal] || "inherit";
+
           const matchingType =
             ticketTypeList.find((type) => type.value === columnData.status_11)
               ?.label || null;
@@ -452,7 +467,9 @@ const useCustomerService = (isAdmin: boolean) => {
             columnData.long_text,
             matchingType,
             id, // consider this issue number
-            matchingStatus,
+            // matchingStatus,
+            <div style={{ color: statusColor }}>{matchingStatus}</div>,
+            ,
           ];
         });
 
