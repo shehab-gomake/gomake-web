@@ -23,7 +23,7 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
 
     const { t } = useTranslation();
     useEffect(() => {
-        callApi('GET', '/v1/printhouse-config/actions/get-all-actions').then((res) => {
+        callApi('GET', '/v1/printhouse-config/actions/get-all-actions?includeOutSourceAction=true').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
                     const data = res?.data?.data?.data;
