@@ -67,7 +67,7 @@ const UpdateValueAutoComplete = ({
             paddingLeft: "4px",
             paddingRight: "2px",
             display: "inline-flex",
-            width: 150,
+            width: 250,
             height: "26px",
             border: "1px solid " + secondColor(400),
             boxShadow: "none",
