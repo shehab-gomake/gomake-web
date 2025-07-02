@@ -28,6 +28,8 @@ import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/
 import { validateDocument } from "@/utils/validators";
 import { CloseOrderNotesModal } from "@/pages-components/products/profits-new/widgets/close-order-notes-modal";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -170,6 +172,28 @@ const ButtonsContainer = ({
   useEffect(() => {
     setOpenReceiptCreationModal(false);
   }, [setOpenReceiptCreationModal]);
+
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
+  const isNeedDeliveryDate = CheckPreferenceValue(EPreferences.DELIVERY_DATE_REQUIRED_IN_DOC);
+
+  const checkIsAgentRequired = CheckPreferenceValue(EPreferences.AGENT_REQUIRED_IN_DOC);
+  const isAgentEmpty = !quoteItemValue?.agentId || quoteItemValue?.agentId === "00000000-0000-0000-0000-000000000000";
+
+  const handleOrderNowClick = () => {
+    if (checkIsAgentRequired && isAgentEmpty) {
+      alertFault(t("sales.cart.addExitingItems"));
+    }
+    else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
+      alertFault("Delivery date is required for this document");
+    }
+    else {
+      onClickOpenOrderNowModal(false)
+    }
+  };
+
+
+
 
   return (
     <div style={classes.writeCommentContainer}>
@@ -337,14 +361,14 @@ const ButtonsContainer = ({
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
           (isPurchaseOrder &&
             quoteItemValue?.documentStatus !==
-              PURCHASE_ORDER_STATUSES.Canceled)) && (
-          <GomakePrimaryButton
-            style={classes.btnSecondContainer}
-            onClick={handleCancelBtnClick}
-          >
-            {t("materials.buttons.cancel")}
-          </GomakePrimaryButton>
-        )}
+            PURCHASE_ORDER_STATUSES.Canceled)) && (
+            <GomakePrimaryButton
+              style={classes.btnSecondContainer}
+              onClick={handleCancelBtnClick}
+            >
+              {t("materials.buttons.cancel")}
+            </GomakePrimaryButton>
+          )}
         {isReceipt &&
           !!canCancelReceipt &&
           !isNewCreation &&
@@ -441,17 +465,18 @@ const ButtonsContainer = ({
               onClick={() =>
                 quoteItemValue?.isNeedApproval
                   ? onClickOpenMangerApprovalModal()
-                  : onClickOpenOrderNowModal(false)
+                  :
+                  handleOrderNowClick()
+
               }
             >
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${
-                      quoteItemValue?.isUsedStripe
-                        ? "placeOrder"
-                        : "orderNowTitle"
-                    }`
+                  : `sales.quote.${quoteItemValue?.isUsedStripe
+                    ? "placeOrder"
+                    : "orderNowTitle"
+                  }`
               )}
             </GomakePrimaryButton>
           </>
@@ -587,7 +612,7 @@ const ButtonsContainer = ({
           cancelBtn={t("sales.modals.proceedWithoutPayment")}
           openModal={CheckoutModalOpen.isOpen}
           withClose={false}
-          onClose={() => {}}
+          onClose={() => { }}
           onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
           onClickCancel={() => {
             if (checkoutModalData) {
