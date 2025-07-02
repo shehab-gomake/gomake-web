@@ -2,6 +2,7 @@ import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media
 import {mediaLoadingLoss} from "@/widgets/machines/utils/attributes/media-inputs/media-loading-loss";
 import {mediaImageSizeSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-image-size-settings";
 import {mediaMinMarginWidth} from "@/widgets/machines/utils/attributes/media-inputs/media-min-margin-width";
+import { availableCylinders } from "./available-cylinders";
 
 const rollDigitalPrinting = (state: Record<string, any>) => {
     return [
@@ -9,7 +10,8 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
         ...mediaLoadingLoss(state),
         ...mediaMinMarginWidth(state),
         ...mediaDimensionsSettings(state),
-        ...mediaImageSizeSettings(state)
+        ...mediaImageSizeSettings(state),
+        ...availableCylinders(state)
     ]
 }
 
