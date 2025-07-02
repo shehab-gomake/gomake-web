@@ -4,6 +4,9 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeAutoComplate } from "@/components";
 import { Stack } from "@mui/material";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { useCustomerDropDownList } from "@/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const MessageLogs = () => {
   const {
@@ -23,10 +26,13 @@ const MessageLogs = () => {
     users,
     handleUserChange,
     userId,
-    listClient,
-    handleCustomerChange,
-    clientId
+    customerId,
+    setCustomerId
   } = useMessageLogs();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList({
+      clientType: CLIENT_TYPE.All
+    });
 
   return (
     <div style={{ position: "relative", padding: 20 }}>
@@ -54,24 +60,34 @@ const MessageLogs = () => {
             onChange={handleUserChange}
             value={users.find(option => option.id === userId) || null}
           />
-          <GoMakeAutoComplate
-            options={listClient}
-            style={{ width: "200px" }}
-            getOptionLabel={(option: any) => option.name}
-            placeholder="Select client"
-            onChange={handleCustomerChange}
-            value={listClient.find(option => option.id === clientId) || null}
-          />
-          {/* <ClientAutocomplete
-            key={customer?.id}
-            options={renderOptions()}
-            onChangeTextField={checkWhatRenderArray}
-            getOptionLabel={(option: any) => `${option.name}`}
-            style={{ width: "200px" }}
-            onChange={handleCustomerChange}
-            value={customer}
-            loading={isFetching}
-          /> */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column" as "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            gap: 10,
+            minWidth: "fit-content",
+            width: "200px",
+            borderBottom: customerId?.id ? "2px solid rgb(67,195,232)" : "2px solid rgb(237, 2, 140)",
+            borderRadius: 4
+          }}>
+
+            <ClientAutocomplete
+              key={customerId?.id}
+              clientType={CLIENT_TYPE.All}
+              options={renderOptions() ? renderOptions() : []}
+              getOptionLabel={(option: any) =>
+                `${option.name}`
+              }
+              onChangeTextField={checkWhatRenderArray}
+              style={{ width: "100%", border: "none" }}
+              onChange={(e: any, value: any) => {
+                setCustomerId(value);
+              }}
+              value={customerId}
+              loading={isFetching}
+            />
+          </div>
         </Stack>
       </Stack>
 
