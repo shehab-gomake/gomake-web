@@ -7,6 +7,7 @@ import { useRecoilValue } from "recoil";
 import { createGlobalStyle } from "styled-components";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   onChange: (value: string) => void;
@@ -16,6 +17,7 @@ interface IProps {
   defaultCountry?: string;
   variant?: "default" | "circular";
   placeholder?: string;
+  labelText?: string
 }
 
 const PhoneInputComponent = ({
@@ -26,6 +28,7 @@ const PhoneInputComponent = ({
   defaultCountry,
   variant = "default",
   placeholder = "",
+  labelText = ""
 }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -40,11 +43,10 @@ const PhoneInputComponent = ({
   };
 
   const inputHeight = customStyle?.height
-    ? `${
-        typeof customStyle.height === "number"
-          ? customStyle.height + "px"
-          : customStyle.height
-      } !important`
+    ? `${typeof customStyle.height === "number"
+      ? customStyle.height + "px"
+      : customStyle.height
+    } !important`
     : "40px !important";
 
   const GlobalStyleCircular = createGlobalStyle`
@@ -98,6 +100,10 @@ const PhoneInputComponent = ({
   return (
     <div onKeyPress={handleKeyPress}>
       {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
+      {
+        labelText &&
+        <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
+      }
       <PhoneInput
         key={defaultCountry}
         defaultCountry={
