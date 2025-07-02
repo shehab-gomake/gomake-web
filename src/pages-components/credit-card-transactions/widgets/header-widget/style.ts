@@ -83,6 +83,7 @@ const useStyle = () => {
       filtersContainer: {
         display: "flex",
         flexDirection: "row" as "row",
+        flexWrap: "wrap" as "wrap",
         alignItems: "flex-end",
         gap: 20,
         width: "100%",

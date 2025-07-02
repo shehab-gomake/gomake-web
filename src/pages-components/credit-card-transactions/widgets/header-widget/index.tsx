@@ -16,8 +16,10 @@ const CreditCardTransactionsReportHeaderWidget = ({
   customer,
   transactionAmount,
   receiptNumber,
+  cardNumber,
   handleTransactionAmountChange,
   handleReceiptNumberChange,
+  handleCardNumberChange,
   renderOptions,
   onClickSearchFilter,
   onClickClearFilter,
@@ -86,6 +88,19 @@ const CreditCardTransactionsReportHeaderWidget = ({
             onChange={handleReceiptNumberChange}
           />
         </div>
+
+        <div style={classes.date2FilterContainer}>
+          <h3 style={classes.filterLabelStyle}>
+            {t("creditCardTransactions.CardNumber")}
+          </h3>
+          <GomakeTextInput
+            style={classes.textInputStyle}
+            value={cardNumber}
+            placeholder={t("creditCardTransactions.CardNumber")}
+            onChange={handleCardNumberChange}
+          />
+        </div>
+
         <div style={classes.date1FilterContainer}>
           <Box display="flex" gap={2} width="100%">
             <DateField
