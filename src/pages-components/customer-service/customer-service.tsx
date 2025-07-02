@@ -86,7 +86,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
         </div>
-        {isAdmin && (
+        {
           <IssuesHeaderSection
             isAdmin={isAdmin}
             printHouses={printHouses}
@@ -99,7 +99,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             setPatternSearch={setPatternSearch}
             patternSearch={patternSearch}
           />
-        )}
+        }
         <PrimaryTable
           stickyHeader={true}
           columnWidths={columnWidths}
