@@ -15,9 +15,9 @@ const useStyle = () => {
         height: "100%",
       },
       insideStyle: {
-        width: "30%",
+        width: 550,
         borderRadius: 5,
-        height: 400,
+        height: "fit-content",
         zIndex:9999999999999
       },
       inputsStyle:{
