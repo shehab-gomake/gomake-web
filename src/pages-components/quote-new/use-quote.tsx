@@ -652,7 +652,9 @@ const useQuoteNew = ({
       );
     } else if ((isInvoice || isDeliveryNote) && isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.fromCurrency = quoteItemValue.currency;
       updatedQuoteItemValue.currency = currency;
+
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateCurrency(null);
 
@@ -662,7 +664,6 @@ const useQuoteNew = ({
       ) {
         return; // Skip the API call
       }
-
       getCalculateQuoteItem(
         updatedQuoteItemValue,
         4,
@@ -1186,6 +1187,7 @@ const useQuoteNew = ({
             data: data,
             calculationType: calculationType,
             currency: newQuoteItemValue?.currency,
+            fromCurrency: newQuoteItemValue?.fromCurrency,
           },
         },
         false
@@ -1204,6 +1206,7 @@ const useQuoteNew = ({
             totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
+            exchangeRate,
             documentItems: newQuoteItemValue.documentItems.map(
               (documentItem) => {
                 return {
