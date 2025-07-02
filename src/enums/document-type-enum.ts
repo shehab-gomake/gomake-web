@@ -97,6 +97,29 @@ export enum ERPDocumentsTypesEnum {
   supplierPayment,
 }
 
+export const mapERPTypeToDocumentType = (
+  erpType: ERPDocumentsTypesEnum
+): DocumentTypeEnums | undefined => {
+  const mapping: Partial<Record<ERPDocumentsTypesEnum, DocumentTypeEnums>> = {
+    [ERPDocumentsTypesEnum.quote]: DocumentTypeEnums.Quote,
+    [ERPDocumentsTypesEnum.order]: DocumentTypeEnums.Order,
+    [ERPDocumentsTypesEnum.deliveryNote]: DocumentTypeEnums.DeliveryNote,
+    [ERPDocumentsTypesEnum.invoice]: DocumentTypeEnums.Invoice,
+    [ERPDocumentsTypesEnum.receipt]: DocumentTypeEnums.Receipt,
+    [ERPDocumentsTypesEnum.deliveryNoteRefund]:
+      DocumentTypeEnums.DeliveryNoteRefund,
+    [ERPDocumentsTypesEnum.invoiceRefund]: DocumentTypeEnums.InvoiceRefund,
+    [ERPDocumentsTypesEnum.journalEntry]: DocumentTypeEnums.GeneralLedgerReport,
+    [ERPDocumentsTypesEnum.purchase]: DocumentTypeEnums.PurchaseOrder,
+    [ERPDocumentsTypesEnum.purchaseInvoice]: DocumentTypeEnums.PurchaseInvoice,
+    [ERPDocumentsTypesEnum.purchaseInvoiceRefund]:
+      DocumentTypeEnums.PurchaseInvoiceRefund,
+    [ERPDocumentsTypesEnum.boardMission]: DocumentTypeEnums.BoardMission,
+  };
+
+  return mapping[erpType];
+};
+
 export enum ORDER_STATUSES {
   Open = 0,
   Canceled,
@@ -139,14 +162,12 @@ export enum DocumentCalculationType {
   VAT,
 }
 
-export enum DocumentPreferencesEnum
-        {
-          ShowPrice,
-          ShowDetails,
-          ShowGraphicsItems,
-          ShowDeliveryItems,
-          ApplyAutomaticDiscount,
-          ShowDiscountItems,
-          HideItemDiscountColumn,
-
-        }
+export enum DocumentPreferencesEnum {
+  ShowPrice,
+  ShowDetails,
+  ShowGraphicsItems,
+  ShowDeliveryItems,
+  ApplyAutomaticDiscount,
+  ShowDiscountItems,
+  HideItemDiscountColumn,
+}
