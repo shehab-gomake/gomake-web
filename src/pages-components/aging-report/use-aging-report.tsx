@@ -6,13 +6,13 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { endOfYear, format, } from "date-fns";
+import { endOfYear, format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
-import { initialFromDate } from "@/utils/helpers";
+import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
@@ -20,7 +20,13 @@ import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/ge
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccessSend, alertFaultSend } = useSnackBar();
+  const {
+    alertFault,
+    alertFaultGetData,
+    alertSuccessGetData,
+    alertSuccessSend,
+    alertFaultSend,
+  } = useSnackBar();
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
@@ -37,7 +43,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   );
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
-  const [agingReportByCreationDate, setAgingReportByCreationDate] = useState<boolean>(false);
+  const [agingReportByCreationDate, setAgingReportByCreationDate] =
+    useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
@@ -67,7 +74,12 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
     setIsDescOrder(!isDescOrder);
-    getAgingReportFilter(detailedReport, agingReportByCreationDate, key, isDescOrder);
+    getAgingReportFilter(
+      detailedReport,
+      agingReportByCreationDate,
+      key,
+      isDescOrder
+    );
   };
 
   const handleDateChange = (value) => {
@@ -248,12 +260,16 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   };
 
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false, agingReportByCreationDate = false, orderBy?, isDescOrder?) => {
-      if (!fromDate || !toDate) {
+    async (
+      expendedReport = false,
+      agingReportByCreationDate = false,
+      orderBy?,
+      isDescOrder?
+    ) => {
+      if (!areDatesValid(fromDate, toDate)) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
       }
-
       const formattedStartDate = format(fromDate, "yyyy-MM-dd");
       const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
@@ -297,7 +313,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   );
 
   const ExportAgingReportPDF = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -352,7 +368,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     anchor.click();
   };
   const ExportAgingReportExcel = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -416,8 +432,6 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
 
-
-
   const onChangeUpdateClientContact = useCallback(
     (filedName: string, value: any) => {
       setSelectedContactById((prev) => {
@@ -429,7 +443,6 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     },
     [selectedContactById]
   );
-
 
   const getAllClientContacts = useCallback(async () => {
     await getAndSetClientContacts(callApi, setClientContactsValue, {
@@ -443,9 +456,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     }
   }, [customer?.id, getAllClientContacts]);
 
-
   const sendPaymenttoClient = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -474,26 +486,24 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     );
     if (res?.success) {
       alertSuccessSend();
-      isSendPaymentModal.close()
+      isSendPaymentModal.close();
     } else {
       alertFaultSend();
     }
-  },
-    [
-      fromDate,
-      toDate,
-      detailedReport,
-      agent,
-      customer,
-      selectDate,
-      byReferenceDate,
-      selectedContactById,
-      orderBy,
-      isDescOrder,
-      agingReportByCreationDate,
-      isPurchaseReport,
-    ]
-  );
+  }, [
+    fromDate,
+    toDate,
+    detailedReport,
+    agent,
+    customer,
+    selectDate,
+    byReferenceDate,
+    selectedContactById,
+    orderBy,
+    isDescOrder,
+    agingReportByCreationDate,
+    isPurchaseReport,
+  ]);
 
   return {
     t,
@@ -545,7 +555,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     selectedContactById,
     setSelectedContactById,
     onChangeUpdateClientContact,
-    sendPaymenttoClient
+    sendPaymenttoClient,
   };
 };
 

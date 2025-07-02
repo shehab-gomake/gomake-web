@@ -54,7 +54,7 @@ import {
   calculatedPriceProductItemValueState,
   calculationExceptionsLogsState,
   calculationProgressState,
-  calculationResultState,
+  calculationResultState, currentCalculatedTotalPriceState,
   currentCalculationSessionIdState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
@@ -345,6 +345,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [
+    currentCalculatedTotalPrice,
+    setCurrentCalculatedTotalPrice,
+  ] = useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
     if (widgetType == EWidgetProductType.CREATE) {
       let copy = lodashClonedeep(subProducts);
@@ -407,6 +411,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setCurrentCalculatedTotalPrice(null);
       setCalculationExceptionsLogs(null);
       setCalculationExceptionsLogs(null);
       setCurrentProductItemValueTotalWorkFlows(null);
@@ -437,7 +442,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows(result.productItemValue.workFlows);
       setCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
       setSliderCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
-
+      setCurrentCalculatedTotalPrice(parseFloat(result.calculatedPrice));
       setJobActions(result?.productItemValue.actions);
       setCalculationResult(result);
       if (
@@ -592,6 +597,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
       setCalculationProgress({
@@ -2112,6 +2118,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setLastProductItemValueTotalPrice(null);
       setUrgentOrder(null);
       setWorkFlows([]);
@@ -5806,6 +5813,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
       setCalculationProgress({

@@ -96,7 +96,10 @@ export const sliderCurrentProductItemValuePriceState = atom<number>({
   key: "sliderCurrentProductItemValuePriceState",
   default: null,
 });
-
+export const currentCalculatedTotalPriceState = atom<number>({
+  key: "currentCalculatedTotalPriceState",
+  default: null,
+});
 //!new
 export const calculatedPriceProductItemValueState = atom<number>({
   key: "calculatedPriceProductItemValueState",

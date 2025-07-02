@@ -9,7 +9,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
         ...mediaLoadingLoss(state),
         ...mediaMinMarginWidth(state),
         ...mediaDimensionsSettings(state),
-        ...mediaImageSizeSettings(state)
+        ...mediaImageSizeSettings(state),
     ]
 }
 

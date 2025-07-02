@@ -50,6 +50,7 @@ import {
 } from "@/widgets/machines/utils/attributes/machine-material-categories/advertising-products-categories";
 import {letterSidesBendingMachine} from "@/widgets/machines/utils/attributes/media-inputs/letter-sides-bending-machine";
 import {lightBoxes} from "@/widgets/machines/utils/attributes/media-inputs/light-boxes";
+import {flexMachine} from "@/widgets/machines/utils/attributes/media-inputs/flex-machine";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -62,7 +63,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.ROLL_DIGITAL_PRINTING:
             return rollDigitalPrinting(state);
         case ECategoryId.FLEXO_PRINTING:
-            return rollDigitalPrinting(state);
+            return flexMachine(state);
         case ECategoryId.ROLL_WIDE_PRINTING:
             return widePrinting(state);
         case ECategoryId.FLATBED_WIDE_PRINTING:

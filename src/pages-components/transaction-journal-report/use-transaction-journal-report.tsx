@@ -16,7 +16,7 @@ import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
-import { initialFromDate } from "@/utils/helpers";
+import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useListPagination } from "@/hooks/use-list-pagination";
 
@@ -242,11 +242,10 @@ const useTransactionJournalReport = ({
   };
 
   const ExportLedgerReportPDF = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
-
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
@@ -280,7 +279,7 @@ const useTransactionJournalReport = ({
   };
 
   const getTransactionJournalReportFilter = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -314,7 +313,7 @@ const useTransactionJournalReport = ({
   }, [fromDate, toDate, documentType, reportType]);
 
   const getAccountingTransactionReportFilter = useCallback(async () => {
-    if (!filterState.startDate || !filterState.endDate) {
+    if (!areDatesValid(filterState.startDate, filterState.endDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -398,10 +397,11 @@ const useTransactionJournalReport = ({
   }, [reportType, pageNumber, pageSize, customer]);
 
   const ExportAccountingReportPDF = useCallback(async () => {
-    if (!filterState.startDate || !filterState.endDate) {
+    if (!areDatesValid(filterState.startDate, filterState.endDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
+
     const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
     const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
 
@@ -593,7 +593,7 @@ const useTransactionJournalReport = ({
   }, [customer]);
 
   const onClickExportAccountingReportExcel = useCallback(async () => {
-    if (!filterState.startDate || !filterState.endDate) {
+    if (!areDatesValid(filterState.startDate, filterState.endDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
@@ -634,10 +634,11 @@ const useTransactionJournalReport = ({
   }, [reportType, filterState, pageNumber, pageSize]);
 
   const onClickExportJournalExcelReport = useCallback(async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
+
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
@@ -692,6 +693,11 @@ const useTransactionJournalReport = ({
   }, []);
 
   const onClickDownloadMovingFiles = async () => {
+    if (!areDatesValid(filterState.startDate, filterState.endDate)) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
     const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
     const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
 
@@ -713,11 +719,10 @@ const useTransactionJournalReport = ({
     });
   };
   const onClickExportJournalPDFReport = async () => {
-    if (!fromDate || !toDate) {
+    if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
-
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 

@@ -2,6 +2,7 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { styled } from "@mui/material";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (propName: any) =>
@@ -98,6 +99,7 @@ const GomakeTextInput = ({
   helperText,
   direction,
   sx,
+  labelText
 }: {
   labelText?: string;
   value?: any;
@@ -141,34 +143,41 @@ const GomakeTextInput = ({
   };
 
   return (
-    <StyledTextField
-      autoComplete="off"
-      autoFocus={autoFocus}
-      value={value}
-      onChange={handleChange}
-      style={style}
-      sx={sx}
-      error={error}
-      type={type}
-      disabled={disabled}
-      placeholder={placeholder}
-      onKeyDown={onKeyDown}
-      multiline={multiline}
-      InputProps={InputProps}
-      // @ts-ignore
-      secondColor={secondColor}
-      primaryColor={primaryColor}
-      errorColor={errorColor}
-      onMouseLeave={onMouseLeave}
-      defaultValue={defaultValue}
-      onBlur={onBlur}
-      onClick={onClick}
-      onFocus={onFocus}
-      id={id}
-      helperText={helperText}
-      dir={direction}
-      onWheel={handleWheel}
-    />
+    <>
+      {
+        labelText &&
+        <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
+      }
+      <StyledTextField
+        autoComplete="off"
+        autoFocus={autoFocus}
+        value={value}
+        onChange={handleChange}
+        style={style}
+        sx={sx}
+        error={error}
+        type={type}
+        disabled={disabled}
+        placeholder={placeholder}
+        onKeyDown={onKeyDown}
+        multiline={multiline}
+        InputProps={InputProps}
+        // @ts-ignore
+        secondColor={secondColor}
+        primaryColor={primaryColor}
+        errorColor={errorColor}
+        onMouseLeave={onMouseLeave}
+        defaultValue={defaultValue}
+        onBlur={onBlur}
+        onClick={onClick}
+        onFocus={onFocus}
+        id={id}
+        helperText={helperText}
+        dir={direction}
+        onWheel={handleWheel}
+      />
+    </>
+
   );
 };
 

@@ -3,7 +3,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { GomakePrimaryButton } from "@/components";
-import { WastebasketNew2 } from "@/icons";
+import { AddNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 import { useState } from "react";
@@ -124,6 +124,22 @@ const AddContactNewWidget = ({
             }
           }}
           onChangeTextField={(e) => setNewContactName(e.target.value)}
+          renderOption={(props: any, option: any) => (
+            <li
+              {...props}
+              style={{
+                ...props.style,
+                backgroundColor: option.id === "new" ? "#2E3092" : "transparent",
+                color: option.id === "new" ? "white" : "inherit",
+                fontWeight: option.id === "new" ? "500" : "normal",
+                minWidth: 200,
+                gap: 10
+              }}
+            >
+              <AddNewIcon color="white" />
+              {option.text}
+            </li>
+          )}
           filterOptions={(options, state) => {
             const filtered = options.filter((opt) =>
               opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())
