@@ -215,14 +215,14 @@ const useAdjustmentsModal = ({
       name: t("reports.match"),
       onclick: onClickMatchItems,
     },
-    {
-      name: t("reports.balanceCancellation"),
-      onclick: onClickOpenDeleteModal,
-    },
-    {
-      name: t("reports.transferBalance"),
-      onclick: onClickOpenTransferModal,
-    },
+    // {
+    //   name: t("reports.balanceCancellation"),
+    //   onclick: onClickOpenDeleteModal,
+    // },
+    // {
+    //   name: t("reports.transferBalance"),
+    //   onclick: onClickOpenTransferModal,
+    // },
   ];
 
   const cancelTransactionsApi = useCallback(async () => {

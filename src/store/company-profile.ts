@@ -85,6 +85,7 @@ export enum IMailProviders {
 }
 
 export const mailProviderOptions = [
+  { text: "profileSettings.sendGrid", value: IMailProviders.SEND_GRID },
   { text: "profileSettings.aws", value: IMailProviders.AMAZON },
   { text: "profileSettings.gmail", value: IMailProviders.GMAIL },
   { text: "profileSettings.outlook", value: IMailProviders.OUTLOOK },
