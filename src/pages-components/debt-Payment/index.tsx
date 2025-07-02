@@ -68,7 +68,7 @@ const DebtPaymentWidget = ({ documentType, isMobile = false }: IProps) => {
                   uiType="updated"
                   value={quoteConfirm?.client?.name}
                   isUpdate={false}
-                  setIsUpdate={() => {}}
+                  setIsUpdate={() => { }}
                   getOptionLabel={(item) => item.text}
                   isFromCartPage={true}
                   options={[]}
