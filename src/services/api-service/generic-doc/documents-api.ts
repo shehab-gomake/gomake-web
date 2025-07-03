@@ -156,10 +156,10 @@ const REMOVE_DRAFT_DOCUMENT_URL =
 
 //!here
 const SAVE_DOCUMENT_TABLE_SETTINGS_URL =
-  "/v1/erp-service/documents/save-document-table-settings";
+  "/v1/erp-service/documents-table-settings/save-document-table-settings";
 
 const GET_SAVE_DOCUMENT_TABLE_SETTINGS_URL_TABLE_SETTINGS_URL =
-  "/v1/erp-service/documents/get-document-table-settings";
+  "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
