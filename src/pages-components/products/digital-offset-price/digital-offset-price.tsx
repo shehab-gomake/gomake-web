@@ -444,14 +444,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 setIncludeVAT={setIncludeVAT}
                 sampleType={sampleType}
                 errorMsg={errorMsg}
-                calculationServerErrorState={calculationServerErrorState}
-                canCalculation={canCalculation}
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
-                setCanCalculation={setCanCalculation}
-                showCalculationInCompletedAlert={
-                  showCalculationInCompletedAlert
-                }
+                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
               />
             )}
           </div>

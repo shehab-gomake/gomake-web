@@ -48,13 +48,14 @@ import {
 } from "@/store";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { _renderDeliveryDate } from "@/utils/helpers";
+import { _renderDeliveryDate, renderExceptionMessage } from "@/utils/helpers";
 import { ReloadPriceIcon } from "@/icons/reload-price";
 import { formatValueWithUnit } from "@/utils/is-currency";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
+import { adaptLeft } from "@/utils/adapter";
 
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -107,7 +108,6 @@ const Actions = ({
   isFetching,
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
-
   useEffect(() => {
     setActionsList(actions);
   }, [actions]);
@@ -347,37 +347,43 @@ const ActionContainerComponent = ({
   const { secondColor } = useGomakeTheme();
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+  const direction = t("direction");
   const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.PARAMETER &&
-      parameter?.htmlElementType === HtmlElementType.TEXT
+      parameter?.htmlElementType === HtmlElementType.TEXT &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TEXT
+      parameter?.htmlElementType === HtmlElementType.TEXT &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.IMAGE
+      parameter?.htmlElementType === HtmlElementType.IMAGE &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
 
   const textAreaOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
 
   const tableOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TABLE
+      parameter?.htmlElementType === HtmlElementType.TABLE &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     if (newValue === totalProductionTime?.values[0]?.toString()) {
@@ -1138,11 +1144,7 @@ const ActionContainerComponent = ({
                   }}
                 >
                   {actionException && (
-                    <Tooltip
-                      title={t(
-                        "CalculationExceptions." + actionException?.exceptionKey
-                      )}
-                    >
+                    <Tooltip title={renderExceptionMessage(actionException?.exceptionKey, actionException?.values, t)}>
                       <IconButton>
                         {_renderIconLogs(
                           actionException?.exceptionType,
@@ -1382,7 +1384,7 @@ const ActionContainerComponent = ({
                                 height: "40px",
                                 marginBottom: "10px",
                                 position: "absolute",
-                                right: 0,
+                                ...adaptLeft(direction, 0),
                                 bottom: 0,
                                 backgroundColor: "rgba(237, 2, 140, 1)",
                               }}

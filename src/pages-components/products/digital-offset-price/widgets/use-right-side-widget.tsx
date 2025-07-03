@@ -1,6 +1,7 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   isLoadgingState,
+  permissionsState,
   subProductsParametersState,
   systemCurrencyState,
   systemVATState,
@@ -9,28 +10,30 @@ import { exampleTypeState } from "@/store/example-type";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
-  calculatedPriceProductItemValueState,
+  additionalProductItemsState,
   calculationExceptionsLogsState,
-  calculationProgressState,
+  calculationProgressState, currentCalculatedTotalPriceState,
   currentProductItemValuePriceState,
   lastProductItemValuePriceState,
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
+  workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { EWidgetProductType } from "../enums";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
-  const { errorColor, primaryColor } = useGomakeTheme();
+  const { primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRtl = direction === "rtl";
@@ -44,33 +47,20 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesSymbols);
-  const [
-    currentProductItemValueTotalPrice,
-    setCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(currentProductItemValuePriceState);
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(
-    lastProductItemValuePriceState
-  );
+  const currentProductItemValueTotalPrice = useRecoilValue<number>(currentProductItemValuePriceState);
+  const currentCalculatedTotalPrice = useRecoilValue<number>(currentCalculatedTotalPriceState);
+  const lastProductItemValueTotalPrice = useRecoilValue<number>(lastProductItemValuePriceState);
   const calculationProgress = useRecoilValue(calculationProgressState);
+
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
-  const calculatedPriceProductItemValue = useRecoilValue<number>(
-    calculatedPriceProductItemValueState
-  );
-  const [
-    sliderCurrentProductItemValueTotalPrice,
-    setSliderCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [sliderCurrentProductItemValueTotalPrice, setSliderCurrentProductItemValueTotalPrice] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [combinedData, setCombinedData] = useState<any>([]);
   const [products, setProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
-  const onSelectTab = (v) => {
-    setSelectedTab(v);
-    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
-  };
   useEffect(() => {
     if (combinedData?.length > 0) {
       const products = combinedData?.find(
@@ -233,14 +223,14 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
       );
-      if(quantityParam == null){
+      if (quantityParam == null) {
         quantityParam = {
-          values:["0"]
+          values: ["0"]
         }
       }
-      if(quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)){
+      if (quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)) {
         quantityParam.values = ["0"]
       }
       return quantityParam;
@@ -248,12 +238,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   }, [subProducts]);
 
   /* Slider */
-  const priceToUse = currentProductItemValueTotalPrice;
-  /*widgetType === EWidgetProductType.EDIT ||
-    widgetType === EWidgetProductType.DUPLICATE
-      ? calculatedPriceProductItemValue
-      : currentProductItemValueTotalPrice;*/
-
+  const priceToUse = currentCalculatedTotalPrice;
   const minDiscount =
     priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;
 
@@ -280,8 +265,104 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
+
+  const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
+  const workFlows = useRecoilValue(workFlowsState);
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
+  const additionalProductItems = useRecoilValue(additionalProductItemsState);
+  const mergedArray = [
+    ...(selectedWorkFlow?.exceptions || []),
+    ...(calculationExceptionsLogs || []),
+  ];
+  const [logsArray, setLogsArray] = useState(mergedArray);
+  const permissions = useRecoilValue(permissionsState);
+
+  useEffect(() => {
+    const uniqueArray = mergedArray.filter((item, index, self) => {
+      let itemValuesArray = [];
+      try {
+        itemValuesArray = JSON.parse(item.values || "[]");
+      } catch (error) {
+        console.warn("Failed to parse item.values as JSON:", item.values);
+        itemValuesArray = [];
+      }
+      const itemValuesSorted = itemValuesArray.sort().join(",");
+      return (
+        index ===
+        self.findIndex(
+          (t) => {
+            let tValuesArray = [];
+            try {
+              tValuesArray = JSON.parse(t.values || "[]");
+            } catch (error) {
+              console.warn("Failed to parse t.values as JSON:", t.values);
+              tValuesArray = [];
+            }
+            return (
+              t.actionName === item.actionName &&
+              t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
+              t?.exception?.exceptionMessage ===
+              item?.exception?.exceptionMessage &&
+              tValuesArray.sort().join(",") === itemValuesSorted
+            );
+          }
+        )
+      );
+    });
+    if (uniqueArray) {
+      setLogsArray(uniqueArray);
+    }
+  }, [selectedWorkFlow, calculationExceptionsLogs]);
+
+  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>();
+  const [clientDefaultValue, setClientDefaultValue] = useState<any>();
+  const { clientTypesCategories, getClientTypesCategories } =
+    useClientTypesList();
+
+  useEffect(() => {
+    getClientTypesCategories();
+  }, []);
+
+  useEffect(() => {
+    if (router?.query?.clientTypeId) {
+      clientTypesCategories &&
+        setClientTypeDefaultValue(
+          clientTypesCategories?.find(
+            (item: any) => item?.id === router?.query?.clientTypeId
+          )
+        );
+    }
+    if (router?.query?.customerId && router?.query?.customerName) {
+      const customerName = Array.isArray(router?.query?.customerName)
+        ? router.query.customerName[0]
+        : router?.query?.customerName;
+      const decodedCustomerName = customerName
+        ? decodeURIComponent(customerName)
+        : "";
+      setClientDefaultValue({
+        id: router?.query?.customerId,
+        label: decodedCustomerName,
+      });
+    }
+  }, [clientTypesCategories]);
+
+  const docType = Array.isArray(router?.query?.documentType)
+    ? 0
+    : Number(router?.query?.documentType) ?? 0;
+
+  const documentNumberText =
+    docType === DOCUMENT_TYPE.quote
+      ? t("sales.quote.quoteNumber")
+      : t("sales.quote.orderNumber");
+
+  useEffect(() => {
+    setSliderCurrentProductItemValueTotalPrice(
+      currentProductItemValueTotalPrice
+    );
+  }, [currentProductItemValueTotalPrice]);
   return {
-    t,
     direction,
     isRtl,
     currentProductItemValueTotalPrice,
@@ -291,26 +372,33 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     systemCurrency,
     isLoading,
     quantity,
-    selectedWorkFlow,
-    calculationExceptionsLogs,
-    setCurrentProductItemValueTotalPrice,
-    handleSliderChange,
     maxIncrease,
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
-    setSliderCurrentProductItemValueTotalPrice,
-    alertFault,
     priceIncludeVat,
-    setPriceIncludeVat,
     systemVAT,
     selectedProduct,
     combinedData,
-    handleProductChange,
-    selectedTab,
-    onSelectTab,
-    errorColor,
-    primaryColor,
     priceChangePercents,
+    clientTypeDefaultValue,
+    clientDefaultValue,
+    documentNumberText,
+    workFlows,
+    additionalProductItems,
+    logsArray,
+    permissions,
+    router,
+    clientTypesCategories,
+    isRTL,
+    setSliderCurrentProductItemValueTotalPrice,
+    setClientTypeDefaultValue,
+    handleProductChange,
+    handleSliderChange,
+    setPriceIncludeVat,
+    setSubProducts,
+    primaryColor,
+    alertFault,
+    t,
   };
 };
 

@@ -14,6 +14,7 @@ import PageNotFound from "@/pages/404.page";
 import { QuoteConfirmationMobileSkeltonWidget } from "@/widgets/quote-confirmation-mobile/components/quote-confirmation-mobile-skelton";
 import { useTranslation } from "react-i18next";
 import { DebtPaymentWidget } from "../debt-Payment";
+import router from "next/router";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -57,6 +58,9 @@ const QuoteConfirmationPageWidget = ({
   };
 
   useEffect(() => {
+    if(router.isReady == false){
+      return;
+    }
     const handlePrePaymentPage = async () => {
       if (isDebtPayments) {
         removeTempUserTokenStorage();

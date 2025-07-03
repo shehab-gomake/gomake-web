@@ -128,7 +128,8 @@ const UPDATE_DOCUMENT_TITLE_URL =
   "/v1/erp-service/documents/update-document-title";
 const EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL =
   "/v1/erp-service/documents/export-document-table-to-excel";
-
+const EXPORT_DOCUMENT_TABLE_TO_PDF_URL =
+  "/v1/erp-service/documents/export-document-table-to-PDF";
 const SEND_RECEIPIT_TO_CLIENT_URL =
   "/v1/erp-service/receipt/send-receipt-to-client";
 const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL =
@@ -1127,6 +1128,20 @@ const ExportDocumentTableToExcelApi: ICallAndSetData = async (
   );
 };
 
+const ExportDocumentTableToPdfApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_DOCUMENT_TABLE_TO_PDF_URL,
+    setState,
+    data
+  );
+};
+
 const OpenCanceledDocumentApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1393,6 +1408,7 @@ export {
   updateQuoteItemQuantityApi,
   saveDraftDocumentApi,
   removeDraftDocumentApi,
+  ExportDocumentTableToPdfApi,
   //!here
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,

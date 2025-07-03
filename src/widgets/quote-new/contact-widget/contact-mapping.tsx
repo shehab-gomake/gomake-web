@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
-import { PlusNewIcon, WastebasketNew2 } from "@/icons";
+import { AddNewIcon, PlusNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
@@ -175,6 +175,22 @@ const ContactMapping = ({
                 setIsUpdateContactName(null);
               }
             }}
+            renderOption={(props: any, option: any) => (
+              <li
+                {...props}
+                style={{
+                  ...props.style,
+                  backgroundColor: option.id === "new" ? "#2E3092" : "transparent",
+                  color: option.id === "new" ? "white" : "inherit",
+                  fontWeight: option.id === "new" ? "500" : "normal",
+                  minWidth: 200,
+                  gap: 10
+                }}
+              >
+                <AddNewIcon color="white" />
+                {option.text}
+              </li>
+            )}
             filterOptions={(options, state) => {
               const filtered = options.filter((opt) =>
                 opt.text?.toLowerCase().includes(state.inputValue.toLowerCase())

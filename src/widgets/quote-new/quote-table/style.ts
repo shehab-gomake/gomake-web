@@ -64,8 +64,16 @@ const useStyle = ({ headerHeight }) => {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "center"
-      }
+        alignItems: "center",
+      },
+      documentNum: {
+        minWidth: 0,
+        padding: 0,
+        textTransform: "none" as "none",
+        color: "inherit" as "inherit",
+        cursor: "pointer",
+        display: "inline-block",
+      },
     };
   }, []);
   return {

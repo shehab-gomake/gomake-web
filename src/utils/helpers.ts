@@ -400,6 +400,15 @@ export const initialFromDate = (key: string, defaultDate?: Date) => {
     : startOfPreviousYear();
 };
 
+export const areDatesValid = (startDate, endDate) => {
+  return (
+    startDate &&
+    !isNaN(new Date(startDate).getTime()) &&
+    endDate &&
+    !isNaN(new Date(endDate).getTime())
+  );
+};
+
 export const areAllItemsChecked = (quoteConfirm) => {
   if (!quoteConfirm?.documentItems?.length) return false;
   return quoteConfirm.documentItems.every((item) => item.isChecked === false);
@@ -423,4 +432,20 @@ export const validateUsAddressFields = (
     isValid: missingFields.length === 0,
     missingFields,
   };
+};
+
+export const renderExceptionMessage = (
+  exceptionKey: any,
+  values: any,
+  t: any
+) => {
+  if (exceptionKey && values?.length > 0) {
+    return t("CalculationExceptions." + exceptionKey).replace(
+      /\{\{(\d+)\}\}/g,
+      (_, index) => values[index] || ""
+    );
+  } else if (exceptionKey) {
+    return t("CalculationExceptions." + exceptionKey);
+  }
+  return "";
 };

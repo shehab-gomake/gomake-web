@@ -66,6 +66,7 @@ export interface ICalculatedWorkFlow {
   totalLaborCosts?: number;
   totalMaterialCosts?: number;
   totalOtherCosts?: number;
+  calculatedTotalPriceBeforeProductMinimumPriceCheck?: number;
 
   customer?: any;
   renderOptions?: () => any[];
@@ -139,6 +140,7 @@ export interface IOutput {
   materialLength: number;
   rectangles: IRectangle[];
   orginalName: string;
+  showInOutSourceAction?: boolean;
 }
 
 export interface IOutSourceSupplier {

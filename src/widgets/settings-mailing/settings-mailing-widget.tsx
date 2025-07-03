@@ -28,6 +28,7 @@ import { useStyle } from "./style";
 import { ModalType } from "@/enums";
 import { MessageGroups } from "./messageGroups/message-groups";
 import Head from "next/head";
+import { MessageLogs } from "./message-logs/message-logs";
 
 const SettingsMailingWidget = () => {
   const { t } = useTranslation();
@@ -75,6 +76,10 @@ const SettingsMailingWidget = () => {
       title: t("mailingSettings.messageGroups"),
       component: <MessageGroups />,
     },
+    // {
+    //   title: t("mailingSettings.messageLogs"),
+    //   component: <MessageLogs />,
+    // },
   ];
 
   useEffect(() => {

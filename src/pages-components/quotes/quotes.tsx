@@ -257,6 +257,7 @@ const QuotesListPageWidget = ({
     handlePaymentTypeChange,
     typeOfPayments,
     initialPageSize,
+    ExportDocumentTableToPdf,
     //!here
 
     tableKey,
@@ -783,15 +784,17 @@ const QuotesListPageWidget = ({
                 value={patternSearch}
                 inputRef={searchInputRef}
               />
+    
               <Stack direction={"row"} gap={1}>
                 <DocumentsColumnSettingsMenu
                   tableKey={tableKey}
                   documentType={documentType}
                 />
-                <ExcelMenu
-                  onGenerateReportClick={onOpenAddRuleModal}
-                  onExportTableClick={ExportDocumentTableToExcel}
-                />
+                  <ExcelMenu
+                      onGenerateReportClick={onOpenAddRuleModal}
+                      onExportTableClick={ExportDocumentTableToExcel}
+                      onExportTablePdfClick={ExportDocumentTableToPdf}
+                  />
               </Stack>
             </div>
             {/* document table */}

@@ -3,7 +3,9 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
   onClickClearFilter: any;
   customer: any;
   receiptNumber: any;
+  cardNumber: any;
   handleReceiptNumberChange: (value) => void;
+  handleCardNumberChange: (value) => void;
   transactionAmount: any;
   handleTransactionAmountChange: (value) => void;
   renderOptions: () => any[];

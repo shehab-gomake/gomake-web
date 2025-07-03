@@ -23,6 +23,7 @@ export interface IInput {
   defaultInDocsTypes?: any;
   secondValue?: string;
   isRequired?: boolean;
+  iconElement?: React.ReactNode;
 }
 export interface IFormInput {
   input: IInput;

@@ -25,6 +25,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { userProfileState } from "@/store/user-profile";
 import { printHouseCountryState } from "@/store/print-house-country";
 import { EPreferences } from "@/enums/prefernces";
+import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
 
 const useCustomerCard = ({
   t,
@@ -60,6 +61,9 @@ const useCustomerCard = ({
     usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
+  const [shipmentTypes, setShipmentTypes] = useState<
+    { value: string; text: string }[]
+  >([]);
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -110,6 +114,21 @@ const useCustomerCard = ({
     };
 
     await getAllSimilarCustomerApi(callApi, handleResponse, customer);
+  };
+
+  const getAllShipmentTypes = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        let types = res?.data.map((item) => ({
+          value: item.id,
+          text: item.title,
+        }));
+
+        setShipmentTypes(types);
+      }
+    };
+
+    await getAllShipmentTypesApi(callApi, callBack);
   };
 
   const mapCustomerData = (customer) => {
@@ -645,6 +664,8 @@ const useCustomerCard = ({
     profileState,
     systemCurrency,
     defaultPaymentTerm,
+    getAllShipmentTypes,
+    shipmentTypes,
   };
 };
 

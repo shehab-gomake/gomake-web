@@ -54,7 +54,7 @@ import {
   calculatedPriceProductItemValueState,
   calculationExceptionsLogsState,
   calculationProgressState,
-  calculationResultState,
+  calculationResultState, currentCalculatedTotalPriceState,
   currentCalculationSessionIdState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
@@ -345,6 +345,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [
+    currentCalculatedTotalPrice,
+    setCurrentCalculatedTotalPrice,
+  ] = useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
     if (widgetType == EWidgetProductType.CREATE) {
       let copy = lodashClonedeep(subProducts);
@@ -407,6 +411,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setCurrentCalculatedTotalPrice(null);
       setCalculationExceptionsLogs(null);
       setCalculationExceptionsLogs(null);
       setCurrentProductItemValueTotalWorkFlows(null);
@@ -437,7 +442,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows(result.productItemValue.workFlows);
       setCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
       setSliderCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
-
+      setCurrentCalculatedTotalPrice(parseFloat(result.calculatedPrice));
       setJobActions(result?.productItemValue.actions);
       setCalculationResult(result);
       if (
@@ -592,6 +597,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
       setCalculationProgress({
@@ -867,7 +873,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (
                 parameter?.isHidden &&
-                // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon &&
                 relatedParameters.some(
                   (relatedParam) =>
@@ -1084,14 +1089,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
-                  if (parameter?.code === "PiercingType") {
-                    debugger;
-                  }
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
-                  // when the parameter is required and the parameter is material select and if there is only one option select it automatically
-
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
@@ -1108,7 +1108,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           x.subSectionId === subSection.id &&
                           x.actionIndex === parameter?.actionIndex
                       );
-                    if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
+                    if (!existsSubProductParameter) {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -1154,7 +1154,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             x.actionIndex === parameter?.actionIndex
                         );
 
-                      if (!existsSubProductParameter && parameter?.code !== "FlatbedColor") {
+                      if (!existsSubProductParameter) {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
@@ -1620,7 +1620,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 subProductsParameter?.relatedParameters?.find(
                   (p) =>
                     p.parameterId === parameter.id &&
-                    p.actionIndex === parameter.actionIndex
+                    p.actionIndex === parameter.actionIndex &&
+                    !parameter?.isHiddenInSetting
                 )
             );
             if (relatedToParameter && relatedToParameter.isHidden) {
@@ -1741,8 +1742,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
-                //parameter.isHidden = true;
-                //return;
+                // parameter.isHidden = true;
+                // return;
               }
             }
             if (parameter.materialPath && parameter.materialPath.length > 0) {
@@ -1879,6 +1880,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       !value &&
                       prevParameter.valuesConfigs.length == 1 &&
                       prevParameter.isRequired
+                      && !prevParameter?.isHidden
                     ) {
                       value = prevParameter.valuesConfigs[0];
                     }
@@ -2116,6 +2118,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setLastProductItemValueTotalPrice(null);
       setUrgentOrder(null);
       setWorkFlows([]);
@@ -4387,7 +4390,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSectionType
           );
         } else {
-          if (widgetType == EWidgetProductType.CREATE) {
+          if (subSectionParameter?.code !== "BothsideSameprintcolor") {
             removeRelatedParametersFromSubProducts(
               parameterId,
               sectionId,
@@ -4395,7 +4398,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               temp,
               subSectionParameter.actionIndex,
             );
-            // temp.splice(findIndex, 1);
           }
         }
       } else {
@@ -4429,6 +4431,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
+      console.log("tempdatadata", data);
       if (subSectionParameter && data?.values !== null && data?.valueIds !== null) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
@@ -5810,6 +5813,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
       setCalculationProgress({

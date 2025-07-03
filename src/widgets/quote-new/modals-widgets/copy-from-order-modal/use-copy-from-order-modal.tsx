@@ -85,6 +85,19 @@ const useCopyFromOrderModal = ({
     }
   };
 
+  const noDocumentData = () => {
+    switch (copyFromDocumentType) {
+      case DOCUMENT_TYPE.order:
+        return t("sales.cart.noOrders");
+      case DOCUMENT_TYPE.deliveryNote:
+        return t("sales.cart.noDeliveryNotes");
+      case DOCUMENT_TYPE.purchaseOrder:
+        return t("sales.cart.noOrders");
+      default:
+        return "";
+    }
+  };
+
   const buttonLabel = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.invoice:
@@ -177,7 +190,14 @@ const useCopyFromOrderModal = ({
     );
   };
 
+  const [isLoadingPayments, setIsLoadingPayments] = useState<boolean>(false);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
+
   const getClientOrderItems = async () => {
+    setIsLoadingPayments(true);
+    setHasFetchedOnce(false);
+
+    debugger;
     let docType;
     if (copyFromDocumentType === DOCUMENT_TYPE.order) {
       docType = DOCUMENT_TYPE.order;
@@ -214,6 +234,9 @@ const useCopyFromOrderModal = ({
       documentType: docType,
       clientId: quoteItemValue?.customerID,
     });
+
+    setIsLoadingPayments(false);
+    setHasFetchedOnce(true);
   };
 
   const calculateDocument = useCallback(async () => {
@@ -300,6 +323,8 @@ const useCopyFromOrderModal = ({
   useEffect(() => {
     if (openModal) {
       getClientOrderItems();
+    } else {
+      setHasFetchedOnce(false);
     }
   }, [quoteItemValue, openModal]);
 
@@ -330,7 +355,8 @@ const useCopyFromOrderModal = ({
         (item) =>
           item?.productName?.toLowerCase()?.includes(searchTerm) ||
           item?.details?.toLowerCase()?.includes(searchTerm) ||
-          item?.workName?.toLowerCase()?.includes(searchTerm)
+          item?.workName?.toLowerCase()?.includes(searchTerm) ||
+          item?.sourceDocumentNumber?.toLowerCase()?.includes(searchTerm)
       );
     }
 
@@ -362,6 +388,9 @@ const useCopyFromOrderModal = ({
 
     showReadyJobs,
     setShowReadyJobs,
+    isLoadingPayments,
+    hasFetchedOnce,
+    noDocumentData,
   };
 };
 
