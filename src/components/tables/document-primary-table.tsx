@@ -229,7 +229,7 @@ export const DocumentPrimaryTable = ({
                   colSpan={headers.length}
                   style={{ padding: "20px" }}
                 >
-                  {t("common.noData")}
+                  {t("skeleton.noData")}
                 </StyledTableCell>
               </StyledTableRow>
             )}
