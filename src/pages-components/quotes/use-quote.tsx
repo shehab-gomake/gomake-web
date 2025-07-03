@@ -494,50 +494,49 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
+  const ExportDocumentTableToPdf = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        let fileUrl =
+          typeof res.data === "string"
+            ? res.data
+            : URL.createObjectURL(res.data);
 
-    const ExportDocumentTableToPdf = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                let fileUrl =
-                    typeof res.data === "string"
-                        ? res.data
-                        : URL.createObjectURL(res.data);
-
-                if (fileUrl) {
-                    window.open(fileUrl, "_blank");
-                } else alertFaultGetData();
-            } else {
-                alertFaultGetData();
-            }
-        };
-        await ExportDocumentTableToPdfApi(callApi, callBack, {
-            documentType: docType,
-            data: {
-                model: {
-                    pageNumber: page,
-                    pageSize: pageSize,
-                },
-                statusId: quoteStatusId?.value || statusId?.value,
-                approvalStatus: approvalStatusId?.value,
-                closeStatus: accountingStatus?.value,
-                productionStatus: productionStatus?.value,
-                // deliveryStatus: deliveryStatus?.value,
-                patternSearch: finalPatternSearch,
-                customerId: customerId?.id,
-                dateRange,
-                agentId: agentId?.id,
-                minPrice: minPrice,
-                maxPrice: maxPrice,
-                productList: productIds,
-                isCanceled: isCanceledState,
-                isPaused: isPausedOrders,
-                isOrderInTracking: isOrdersTracking,
-                fromDate: fromDate && GetDateFormat(fromDate),
-                toDate: toDate && GetDateFormat(toDate),
-            },
-        });
+        if (fileUrl) {
+          window.open(fileUrl, "_blank");
+        } else alertFaultGetData();
+      } else {
+        alertFaultGetData();
+      }
     };
-    
+    await ExportDocumentTableToPdfApi(callApi, callBack, {
+      documentType: docType,
+      data: {
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+        },
+        statusId: quoteStatusId?.value || statusId?.value,
+        approvalStatus: approvalStatusId?.value,
+        closeStatus: accountingStatus?.value,
+        productionStatus: productionStatus?.value,
+        // deliveryStatus: deliveryStatus?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        productList: productIds,
+        isCanceled: isCanceledState,
+        isPaused: isPausedOrders,
+        isOrderInTracking: isOrdersTracking,
+        fromDate: fromDate && GetDateFormat(fromDate),
+        toDate: toDate && GetDateFormat(toDate),
+      },
+    });
+  };
+
   const getAllQuotesOld = useCallback(
     async (order?: any) => {
       // Use the provided order parameter or fall back to the current sort order
@@ -1440,6 +1439,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   //!here get all quotes new
   const getAllQuotes = useCallback(
     async (order?: any) => {
+      const sortOrder = order || currentSortOrder;
+
       const callBack = (res) => {
         if (res?.success) {
           const data = res?.data?.data;
@@ -1812,7 +1813,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           model: {
             pageNumber: currentPageNumber || page,
             pageSize: pageSize,
-            order: order,
+            order: sortOrder,
           },
         });
       } else {
@@ -1822,7 +1823,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             model: {
               pageNumber: currentPageNumber || page,
               pageSize: pageSize,
-              order: order,
+              order: sortOrder,
             },
             dateRange,
             customerId: currentCustomerId || customerId?.id,
@@ -3874,78 +3875,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return card ? card.value : "0";
   };
 
-  // const [isDescOrderBE, setIsDescOrderBE] = useState(false);
-  // const columnMappings = {
-  //   [DOCUMENT_TYPE.quote]: {
-  //     [t("sales.quote.createdDate")]: 0,
-  //     [t("sales.quote.client")]: 1,
-  //     [t("documentingDesign.TableSetting.number")]: 2,
-  //     [t("sales.quote.totalPrice")]: 3,
-  //     [t("sales.quote.orderNumber")]: 4,
-  //   },
-  //   [DOCUMENT_TYPE.order]: {
-  //     [t("sales.quote.createdDate")]: 0,
-  //     [t("sales.quote.orderNumber")]: 1,
-  //     [t("sales.quote.client")]: 2,
-  //     [t("sales.quote.purchaseNumber")]: 3,
-  //     [t("sales.quote.jobs")]: 4,
-  //     [t("sales.quote.worksName")]: 5,
-  //     [t("sales.quote.cost")]: 6,
-  //     [t("sales.quote.totalPrice")]: 7,
-  //   },
-  //   [DOCUMENT_TYPE.deliveryNote]: {
-  //     [t("sales.quote.createdDate")]: 0,
-  //     [t("sales.quote.orderNumber")]: 1,
-  //     [t("sales.quote.client")]: 1,
-  //     [t("sales.quote.worksName")]: 3,
-  //     [t("sales.quote.notes")]: 6,
-  //     [t("sales.quote.totalPrice")]: 7,
-  //     [t("sales.documentDeliveries.deliveryStatus")]: 8,
-  //     [t("sales.quote.status")]: 9,
-  //   },
-  //   default: {
-  //     [t("sales.quote.createdDate")]: 0,
-  //     [t("sales.quote.orderNumber")]: 1,
-  //     [t("sales.quote.client")]: 2,
-  //     [t("sales.quote.worksName")]: 3,
-  //     [t("sales.quote.notes")]: 6,
-  //     [t("sales.quote.totalPrice")]: 7,
-  //     [t("sales.documentDeliveries.deliveryStatus")]: 8,
-  //     [t("sales.quote.status")]: 9,
-  //   },
-  // };
-  // const isHeaderSortable = (docType: string, header: string) => {
-  //   const headers = columnMappings[docType] || columnMappings.default;
-  //   return headers.hasOwnProperty(header);
-  // };
-  // const handleSortBE = (key: string) => {
-  //   const direction = isDescOrderBE ? "desc" : "asc";
-  //
-  //
-  //   // Define a mapping of keys to column indices for each document type
-  //
-  //   // Determine the column index based on the document type and key
-  //   const columnIndex =
-  //     columnMappings[docType]?.[key] ?? columnMappings.default[key];
-  //
-  //   if (columnIndex !== undefined) {
-  //     const sortOrder = [
-  //       {
-  //         column: columnIndex,
-  //         dir: direction,
-  //       },
-  //     ];
-  //
-  //     // Save the sort order to state
-  //     setCurrentSortOrder(sortOrder);
-  //
-  //     getAllQuotes(sortOrder);
-  //     setIsDescOrderBE(!isDescOrderBE);
-  //   } else {
-  //     console.error("Invalid key for sorting:", key);
-  //   }
-  // };
-
   // Alert mail not verified modal
   const alertNotVerifiedMailModal = useModal();
   const [alertNotVerifiedModalState, setAlertModalState] = useState<{
@@ -4022,6 +3951,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       cost: 6,
       totalPrice: 7,
     },
+    [DOCUMENT_TYPE.deliveryNote]: {
+      creationDate: 0,
+      orderNumber: 1,
+      client: 1,
+      worksName: 3,
+      notes: 6,
+      totalPrice: 7,
+      deliveryStatus: 8,
+      status: 9,
+    },
     default: {
       creationDate: 0,
       orderNumber: 1,
@@ -4041,7 +3980,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // Backend Sort Handler
-  const handleSortBE = (key: string) => {
+  const handleSortBEOldLama = (key: string) => {
     const direction = isDescOrderBE ? "desc" : "asc";
 
     const columnIndex =
@@ -4054,6 +3993,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           dir: direction,
         },
       ]);
+      setIsDescOrderBE(!isDescOrderBE);
+    } else {
+      console.error("Invalid key for sorting:", key);
+    }
+  };
+
+  const handleSortBE = (key: string) => {
+    const direction = isDescOrderBE ? "desc" : "asc";
+
+    const columnIndex =
+      columnMappings[docType]?.[key] ?? columnMappings.default[key];
+
+    if (columnIndex !== undefined) {
+      const sortOrder = [
+        {
+          column: columnIndex,
+          dir: direction,
+        },
+      ];
+
+      // Save the sort order to state
+      setCurrentSortOrder(sortOrder);
+
+      getAllQuotes(sortOrder);
       setIsDescOrderBE(!isDescOrderBE);
     } else {
       console.error("Invalid key for sorting:", key);
