@@ -12,7 +12,7 @@ import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
   additionalProductItemsState,
   calculationExceptionsLogsState,
-  calculationProgressState,
+  calculationProgressState, currentCalculatedTotalPriceState,
   currentProductItemValuePriceState,
   lastProductItemValuePriceState,
   selectedWorkFlowState,
@@ -48,6 +48,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesSymbols);
   const currentProductItemValueTotalPrice = useRecoilValue<number>(currentProductItemValuePriceState);
+  const currentCalculatedTotalPrice = useRecoilValue<number>(currentCalculatedTotalPriceState);
   const lastProductItemValueTotalPrice = useRecoilValue<number>(lastProductItemValuePriceState);
   const calculationProgress = useRecoilValue(calculationProgressState);
 
@@ -237,7 +238,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   }, [subProducts]);
 
   /* Slider */
-  const priceToUse = currentProductItemValueTotalPrice;
+  const priceToUse = currentCalculatedTotalPrice;
   const minDiscount =
     priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;
 
