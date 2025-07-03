@@ -258,8 +258,6 @@ const QuotesListPageWidget = ({
     typeOfPayments,
     initialPageSize,
     ExportDocumentTableToPdf,
-    //!here
-
     tableKey,
     visibleHeaders,
     columnsReady,
@@ -387,17 +385,13 @@ const QuotesListPageWidget = ({
     }
   }, [router.query.deliveryOrderId]);
 
-  //!here new and not testing
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(
-          callApi,
-          () => {},
-          documentType
-        );
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+          documentType,
+        });
         const saved: ColumnSetting[] = res?.data;
-
         const allColumnKeys = documentColumnKeys[tableKey];
 
         if (saved && saved.length > 0) {
@@ -421,7 +415,7 @@ const QuotesListPageWidget = ({
     };
 
     loadDocumentColumnSettings();
-  }, [callApi, documentType, setColumnOrder, setColumnVisibility, tableKey]);
+  }, [documentType, tableKey]);
 
   return (
     <>
@@ -784,17 +778,19 @@ const QuotesListPageWidget = ({
                 value={patternSearch}
                 inputRef={searchInputRef}
               />
-    
+
               <Stack direction={"row"} gap={1}>
-                <DocumentsColumnSettingsMenu
-                  tableKey={tableKey}
-                  documentType={documentType}
-                />
-                  <ExcelMenu
-                      onGenerateReportClick={onOpenAddRuleModal}
-                      onExportTableClick={ExportDocumentTableToExcel}
-                      onExportTablePdfClick={ExportDocumentTableToPdf}
+                {columnsReady && (
+                  <DocumentsColumnSettingsMenu
+                    tableKey={tableKey}
+                    documentType={documentType}
                   />
+                )}
+                <ExcelMenu
+                  onGenerateReportClick={onOpenAddRuleModal}
+                  onExportTableClick={ExportDocumentTableToExcel}
+                  onExportTablePdfClick={ExportDocumentTableToPdf}
+                />
               </Stack>
             </div>
             {/* document table */}

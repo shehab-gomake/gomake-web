@@ -32,7 +32,6 @@ interface DragItem {
   index: number;
 }
 
-//!here new main component
 export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -76,7 +75,6 @@ export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
     setTempColumnOrder([...updated]);
   }, []);
 
-  //!here impo
   const handleSave = async () => {
     const updatedVisibility = Object.fromEntries(
       allKeys.map((key) => [key, !!tempColumnVisibility[key]])

@@ -4244,7 +4244,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     initialPageSize,
     ExportDocumentTableToPdf,
     currentSortOrder,
-    //!here
     tableKey,
     visibleHeaders,
     columnsReady,

@@ -154,11 +154,10 @@ const SAVE_DRAFT_DOCUMENT_URL =
 const REMOVE_DRAFT_DOCUMENT_URL =
   "/v1/erp-service/documents/remove-draft-document";
 
-//!here
 const SAVE_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/save-document-table-settings";
 
-const GET_SAVE_DOCUMENT_TABLE_SETTINGS_URL_TABLE_SETTINGS_URL =
+const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const getDocumentApi: ICallAndSetData = async (
@@ -1294,7 +1293,6 @@ const removeDraftDocumentApi: ICallAndSetData = async (
   );
 };
 
-//!here
 const saveDocumentTableSettingsApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1309,7 +1307,6 @@ const saveDocumentTableSettingsApi: ICallAndSetData = async (
   );
 };
 
-//!here
 const getDocumentTableSettingsApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1318,7 +1315,7 @@ const getDocumentTableSettingsApi: ICallAndSetData = async (
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_SAVE_DOCUMENT_TABLE_SETTINGS_URL_TABLE_SETTINGS_URL,
+    GET_DOCUMENT_TABLE_SETTINGS_URL,
     setState,
     data
   );
@@ -1409,7 +1406,6 @@ export {
   saveDraftDocumentApi,
   removeDraftDocumentApi,
   ExportDocumentTableToPdfApi,
-  //!here
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
 };
