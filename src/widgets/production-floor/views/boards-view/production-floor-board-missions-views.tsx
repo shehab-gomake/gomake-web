@@ -12,6 +12,7 @@ import { Skeleton } from "@mui/material";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
+import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
 
 const ProductionFloorBoardMissionsViews = ({
   connectionId,
@@ -24,12 +25,23 @@ const ProductionFloorBoardMissionsViews = ({
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
+
+  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
+
   useEffect(() => {
     if (!!connectionId) {
       setLoading(true);
       getData(connectionId).then(() => setLoading(false));
     }
   }, [connectionId]);
+
+  useEffect(() => {
+    if (!!isSocketUpdateJobsTable) {
+      setLoading(true);
+      getData(connectionId).then(() => setLoading(false));
+      setIsSocketUpdateJobsTable(false)
+    }
+  }, [connectionId, isSocketUpdateJobsTable]);
 
   return (
     <>
