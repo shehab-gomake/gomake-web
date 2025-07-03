@@ -5,7 +5,7 @@ import {
   Paper,
   Stack,
   Table,
-  TableBody,
+  TableBody, TableCell,
   TableContainer,
   TableHead,
 } from "@mui/material";
@@ -22,10 +22,10 @@ import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback, useEffect, useState } from "react";
+import React, {ChangeEvent, memo, useCallback, useEffect, useState} from "react";
 import {
   GoMakeAutoComplate,
-  GoMakeDeleteModal,
+  GoMakeDeleteModal, GomakeTextInput,
   ThreeOptionsModal,
 } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -46,6 +46,11 @@ import {
   columnVisibilityState,
   getCustomWidth,
 } from "../../state/production-floor-coulmns-table-settings";
+import { FixedSizeList as List } from 'react-window';
+import {
+  IQuantityTypesValue
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
+import {useTranslation} from "react-i18next";
 
 interface IProps {
   status: IProductionStatus;
@@ -197,7 +202,7 @@ const StatusTableComponent = ({
   //   }, [boards, search]);
 
   const getBoards = useCallback(() => {
-    return !!search
+   return !!search
       ? boards?.filter(
           (board) =>
             `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
@@ -219,7 +224,35 @@ const StatusTableComponent = ({
 
   const columnOrder = useRecoilValue(columnOrderState);
   const columnVisibility = useRecoilValue(columnVisibilityState);
+  interface RowProps {
+    index: number;
+    style: React.CSSProperties;
+    data: {
+      boardMissions: IBoardMissions[]
+    };
+  }
 
+  const Row = memo(({ index, style, data }: RowProps) => {
+    const { boardMissions } = data;
+    const boardMission = boardMissions[index];
+    return (
+        <TableRowComponent
+            key={"status" + status.id + boardMission.id + index}
+            boardMission={boardMission}
+            status={status}
+            onClickDone={tryMoveBoardMissionsToDone}
+            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+            index={index}
+            onClickClient={onClickClient}
+            isMobileScreen={isMobileScreen}
+            isRTL={RTL}
+            isUrgentWork={hasUrgentOrApproval}
+            onUpdateJobDueDate={updateJobDueDate}
+            employeesCategories={employeesCategories}
+            visibleColumns={visibleColumns}
+        />
+    );
+  });
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
       <Stack
@@ -254,7 +287,7 @@ const StatusTableComponent = ({
         </Button>
         {status.index === 1 && <ColumnSettingsMenu />}
       </Stack>
-
+      
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper>
@@ -348,27 +381,16 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {(() => {
-                    return [...getBoards()]
-                      ?.sort((a, b) => a.priority - b.priority)
-                      ?.map((boardMission, index) => (
-                        <TableRowComponent
-                          key={"status" + status.id + boardMission.id + index}
-                          boardMission={boardMission}
-                          status={status}
-                          onClickDone={tryMoveBoardMissionsToDone}
-                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                          index={index}
-                          onClickClient={onClickClient}
-                          isMobileScreen={isMobileScreen}
-                          isRTL={RTL}
-                          isUrgentWork={hasUrgentOrApproval}
-                          onUpdateJobDueDate={updateJobDueDate}
-                          employeesCategories={employeesCategories}
-                          visibleColumns={visibleColumns}
-                        />
-                      ));
-                  })()}
+                  <List
+                      height={295} // Ensure this is a number
+                      width={"100%"} // Add the width property
+                      itemCount={boards.length}
+                      itemSize={10}
+                      itemData={{boardMissions:[...getBoards()]?.sort((a, b) => a.priority - b.priority)}} // Pass data explicitly to avoid unnecessary re-renders
+                  >
+                    {Row}
+                  </List>
+                  
                 </TableBody>
               </Table>
             </TableContainer>
