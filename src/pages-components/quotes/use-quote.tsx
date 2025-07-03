@@ -2216,8 +2216,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       pathname: router.pathname,
       query: { ...query },
     });
-
-    // await getAllQuotes(); // move to useEffect
   };
 
   const onClickClearFilter = () => {
@@ -3258,7 +3256,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ));
   }, [quantityOfPackages, packageQuantities]);
 
-  /* hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee */
   const updateCancelQuote = async (quoteStatus: number) => {
     const callBack = (res) => {
       if (res?.success) {

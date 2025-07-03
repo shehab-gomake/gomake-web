@@ -99,7 +99,6 @@ const QuotesListPageWidget = ({
     onOpenAddRuleModal,
     navigate,
     onClickQuotePdf,
-    tableHeaders,
     allQuotes,
     quoteStatuses,
     agentsCategories,
