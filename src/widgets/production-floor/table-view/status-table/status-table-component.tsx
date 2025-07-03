@@ -22,7 +22,7 @@ import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import React, {ChangeEvent, memo, useCallback, useEffect, useState} from "react";
+import React, { ChangeEvent, memo, useCallback, useEffect, useState } from "react";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal, GomakeTextInput,
@@ -50,7 +50,7 @@ import { FixedSizeList as List } from 'react-window';
 import {
   IQuantityTypesValue
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   status: IProductionStatus;
@@ -202,23 +202,23 @@ const StatusTableComponent = ({
   //   }, [boards, search]);
 
   const getBoards = useCallback(() => {
-   return !!search
+    return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
@@ -236,7 +236,96 @@ const StatusTableComponent = ({
     const { boardMissions } = data;
     const boardMission = boardMissions[index];
     return (
-        <TableRowComponent
+      <>
+        {index == 0 && <TableHead style={{ backgroundColor: status.backgroundColor }}>
+          <SecondaryTableRow>
+            {tableHeaders(status.id)?.map((header, index) => {
+              const key = columnOrder.filter(
+                (k) => columnVisibility[k]
+              )[index];
+              const width = getCustomWidth(key);
+
+              return (
+                <SecondaryTableCell
+                  style={{
+                    backgroundColor: "#F9FAFB",
+                    placeItems: "center",
+                    minWidth: width,
+                    maxWidth: width,
+                    width,
+                    // Spread the mobile styles conditionally
+                    ...(isMobileScreen && {
+                      position: index <= 1 ? "sticky" : "relative",
+                      [RTL ? "right" : "left"]:
+                        index === 0 ? 0 : index === 1 ? 48 : "auto",
+                      zIndex: index <= 1 ? 2 : 1,
+                      background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
+                    }),
+                  }}
+                  key={"statusTable" + status.id + index}
+                  align={"center"}
+                  sx={
+                    header === t("productionFloor.currentStation")
+                      ? currentStationOrdering ===
+                        CurrentStationOrderingEnum.NONE
+                        ? {
+                          "& .sort-icon": { opacity: 0 },
+                          "&:hover .sort-icon": { opacity: 1 },
+                        }
+                        : {
+                          "& .sort-icon": { opacity: 1 },
+                        }
+                      : undefined
+                  }
+                >
+                  <div
+                    style={{
+                      width: "max-content",
+                      minWidth: "max-content",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    {header}
+                    {header === t("productionFloor.currentStation") && (
+                      <IconButton
+                        className="sort-icon"
+                        onClick={() => {
+                          setSortConfig({
+                            key: t("productionFloor.currentStation"),
+                            direction:
+                              currentStationOrdering ===
+                                CurrentStationOrderingEnum.NONE
+                                ? CurrentStationOrderingEnum.ASC
+                                : CurrentStationOrderingEnum.NONE,
+                          });
+                          setCurrentStationOrdering(
+                            currentStationOrdering ===
+                              CurrentStationOrderingEnum.NONE
+                              ? CurrentStationOrderingEnum.ASC
+                              : CurrentStationOrderingEnum.NONE
+                          );
+                          reSortingCurrentStation(
+                            currentStationOrdering ===
+                              CurrentStationOrderingEnum.NONE
+                              ? CurrentStationOrderingEnum.ASC
+                              : CurrentStationOrderingEnum.NONE
+                          );
+                        }}
+                      >
+                        {<ArrowUpward sx={{ fontSize: "18px" }} />}
+                      </IconButton>
+                    )}
+                  </div>
+                </SecondaryTableCell>
+              );
+            })}
+          </SecondaryTableRow>
+        </TableHead>}
+        <TableBody>
+          <TableRowComponent
             key={"status" + status.id + boardMission.id + index}
             boardMission={boardMission}
             status={status}
@@ -250,9 +339,26 @@ const StatusTableComponent = ({
             onUpdateJobDueDate={updateJobDueDate}
             employeesCategories={employeesCategories}
             visibleColumns={visibleColumns}
-        />
+          />
+        </TableBody>
+      </>
+
+
     );
   });
+
+  const _renderList = () => {
+    return <List
+      height={295}
+      width={"100%"}
+      itemCount={boards.length}
+      itemSize={10}
+      itemData={{ boardMissions: [...getBoards()]?.sort((a, b) => a.priority - b.priority) }}
+    >
+
+      {Row}
+    </List>
+  }
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
       <Stack
@@ -279,124 +385,30 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${
-            !status.isGroup
-              ? t("productionStatuses." + status.name)
-              : status.name
-          } (${getBoards().length})`}
+          {`${!status.isGroup
+            ? t("productionStatuses." + status.name)
+            : status.name
+            } (${getBoards().length})`}
         </Button>
         {status.index === 1 && <ColumnSettingsMenu />}
       </Stack>
-      
+
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper>
             <TableContainer>
               <Table stickyHeader={false}>
-                <TableHead style={{ backgroundColor: status.backgroundColor }}>
-                  <SecondaryTableRow>
-                    {tableHeaders(status.id)?.map((header, index) => {
-                      const key = columnOrder.filter(
-                        (k) => columnVisibility[k]
-                      )[index];
-                      const width = getCustomWidth(key);
 
-                      return (
-                        <SecondaryTableCell
-                          style={{
-                            backgroundColor: "#F9FAFB",
-                            placeItems: "center",
-                            minWidth: width,
-                            maxWidth: width,
-                            width,
-                            // Spread the mobile styles conditionally
-                            ...(isMobileScreen && {
-                              position: index <= 1 ? "sticky" : "relative",
-                              [RTL ? "right" : "left"]:
-                                index === 0 ? 0 : index === 1 ? 48 : "auto",
-                              zIndex: index <= 1 ? 2 : 1,
-                              background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                            }),
-                          }}
-                          key={"statusTable" + status.id + index}
-                          align={"center"}
-                          sx={
-                            header === t("productionFloor.currentStation")
-                              ? currentStationOrdering ===
-                                CurrentStationOrderingEnum.NONE
-                                ? {
-                                    "& .sort-icon": { opacity: 0 },
-                                    "&:hover .sort-icon": { opacity: 1 },
-                                  }
-                                : {
-                                    "& .sort-icon": { opacity: 1 },
-                                  }
-                              : undefined
-                          }
-                        >
-                          <div
-                            style={{
-                              width: "max-content",
-                              minWidth: "max-content",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "5px",
-                            }}
-                          >
-                            {header}
-                            {header === t("productionFloor.currentStation") && (
-                              <IconButton
-                                className="sort-icon"
-                                onClick={() => {
-                                  setSortConfig({
-                                    key: t("productionFloor.currentStation"),
-                                    direction:
-                                      currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                        ? CurrentStationOrderingEnum.ASC
-                                        : CurrentStationOrderingEnum.NONE,
-                                  });
-                                  setCurrentStationOrdering(
-                                    currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
-                                  );
-                                  reSortingCurrentStation(
-                                    currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
-                                  );
-                                }}
-                              >
-                                {<ArrowUpward sx={{ fontSize: "18px" }} />}
-                              </IconButton>
-                            )}
-                          </div>
-                        </SecondaryTableCell>
-                      );
-                    })}
-                  </SecondaryTableRow>
-                </TableHead>
-                <TableBody>
-                  <List
-                      height={295} // Ensure this is a number
-                      width={"100%"} // Add the width property
-                      itemCount={boards.length}
-                      itemSize={10}
-                      itemData={{boardMissions:[...getBoards()]?.sort((a, b) => a.priority - b.priority)}} // Pass data explicitly to avoid unnecessary re-renders
-                  >
-                    {Row}
-                  </List>
-                  
-                </TableBody>
+
+                {_renderList()}
+
               </Table>
             </TableContainer>
           </Paper>
         </Collapse>
       )}
+
+
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -416,12 +428,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -482,12 +494,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
