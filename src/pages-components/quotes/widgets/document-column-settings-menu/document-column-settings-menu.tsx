@@ -23,7 +23,7 @@ import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
   documentColumnKeys,
-} from "../../states/documents-coulmns-settings-state";
+} from "../../states/documents-columns-settings-state";
 import { saveDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { useStyle } from "./style";
 

@@ -59,7 +59,7 @@ import {
   documentColumnKeys,
   getDocumentCustomWidth,
   parseSavedColumnSettings,
-} from "./states/documents-coulmns-settings-state";
+} from "./states/documents-columns-settings-state";
 import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
 import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";

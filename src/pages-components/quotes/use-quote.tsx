@@ -100,7 +100,12 @@ import { useListPagination } from "@/hooks/use-list-pagination";
 import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
-} from "./states/documents-coulmns-settings-state";
+} from "./states/documents-columns-settings-state";
+import {
+  DeliveryNotesTableColumns,
+  OrdersTableColumns,
+  QuotesTableColumns,
+} from "./enums/document-table-columns-enum";
 
 type PaymentTypeOption = {
   label: string;
@@ -537,906 +542,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const getAllQuotesOld = useCallback(
-    async (order?: any) => {
-      // Use the provided order parameter or fall back to the current sort order
-      const sortOrder = order || currentSortOrder;
-
-      const callBack = (res) => {
-        if (res?.success) {
-          const data = res?.data?.data;
-          const totalItems = res?.data?.totalItems;
-          const mapData = data?.map((quote: any) => {
-            if (isPurchaseOrder) {
-              return [
-                formatCustomDateTime(quote?.creationDate),
-                quote?.number,
-                quote?.orderNumber,
-                quote?.supplierName,
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => onClickOpenCustomerModal(quote?.clientId)}
-                >
-                  {quote?.clientName}
-                </div>,
-                quote?.itemsNumber,
-                isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice,
-                quote?.notes,
-                _renderStatus(docType, quote, t),
-                <MoreMenuWidget
-                  quote={quote}
-                  documentType={docType}
-                  onClickPdf={onClickQuotePdf}
-                  onClickLoggers={onClickDocumentLogs}
-                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                  onClickOpenChangeProductionStatusModal={
-                    onClickOpenChangeProductionStatusModal
-                  }
-                  onClickSendPayment={onClickSendPayment}
-                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                  onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-                />,
-              ];
-            } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
-              const purchaseOrderNumbers = quote?.orderNumbers
-                ? quote?.orderNumbers.join(", ")
-                : "";
-              return [
-                formatCustomDateTime(quote?.createdDate),
-                quote?.number,
-                quote?.invoiceNumber,
-                purchaseOrderNumbers,
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-                >
-                  {quote?.customerName}
-                </div>,
-                quote?.itemsNumber,
-                isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice,
-                quote?.notes,
-                isInvoice && quote?.isDraft ? (
-                  <span style={{ color: "#e77676" }}>
-                    {t("sales.quote.draft")}
-                  </span>
-                ) : (
-                  _renderStatus(docType, quote, t)
-                ),
-                <MoreMenuWidget
-                  quote={quote}
-                  documentType={docType}
-                  onClickPdf={onClickQuotePdf}
-                  onClickLoggers={onClickDocumentLogs}
-                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                  onClickOpenChangeProductionStatusModal={
-                    onClickOpenChangeProductionStatusModal
-                  }
-                  onClickSendPayment={onClickSendPayment}
-                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-                />,
-              ];
-            } else if (isQuote) {
-              return [
-                formatCustomDateTime(quote?.createdDate),
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-                >
-                  {quote?.customerName}
-                </div>,
-                quote?.agentName,
-                quote?.number,
-                quote?.worksNames,
-                isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice,
-                quote?.notes,
-                _renderStatus(docType, quote, t),
-                <MoreMenuWidget
-                  quote={quote}
-                  documentType={docType}
-                  onClickEditQuote={onClickEditQuote}
-                  onClickPdf={onClickQuotePdf}
-                  onClickDuplicate={onClickDocumentDuplicate}
-                  onClickLoggers={onClickDocumentLogs}
-                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                  onClickOpenChangeProductionStatusModal={
-                    onClickOpenChangeProductionStatusModal
-                  }
-                  onClickSendPayment={onClickSendPayment}
-                />,
-              ];
-            } else if (isOrder) {
-              const jobsElement = CheckPermission(
-                Permissions.SHOW_BOARD_MISSIONS
-              ) ? (
-                <a
-                  style={{
-                    cursor: "pointer",
-                    color: "inherit",
-                    textDecoration: "unset",
-                  }}
-                  href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-                >
-                  {quote?.jobs}
-                </a>
-              ) : (
-                quote?.jobs
-              );
-
-              const statusPayment = `${
-                isRTL
-                  ? quote?.sumApplied +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.sumApplied
-              }/${
-                isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice
-              }`;
-
-              return [
-                formatCustomDateTime(quote?.createdDate),
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-                >
-                  {quote?.customerName}
-                </div>,
-                quote?.agentName,
-                quote?.number,
-                quote?.sourceDocumentNumber?.map((item, index) => {
-                  return (
-                    <span key={index}>
-                      {item?.documentNumber}
-                      <br />
-                    </span>
-                  );
-                }),
-                quote?.purchaseNumber,
-                quote?.productionStatus === true
-                  ? t("boardMissions.done")
-                  : t("boardMissions.inProduction"),
-                jobsElement,
-                ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
-                  ? [quote?.cost]
-                  : []),
-                quote?.worksNames,
-                isOrdersTracking
-                  ? statusPayment
-                  : isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice,
-                quote?.notes,
-                <ClickableStatusButton
-                  id={quote?.id}
-                  document={quote}
-                  documentType={docType}
-                />,
-                _renderStatus(docType, quote, t),
-                <MoreMenuWidget
-                  quote={quote}
-                  documentType={docType}
-                  onClickPdf={onClickQuotePdf}
-                  onClickDuplicate={onClickDocumentDuplicate}
-                  onClickLoggers={onClickDocumentLogs}
-                  onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-                  onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
-                  onClickOpenPriceModal={onClickOpenPriceModal}
-                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                  onClickOpenCloseOrderNotesModal={
-                    onClickOpenCloseOrderNotesModal
-                  }
-                  onClickSendPayment={onClickSendPayment}
-                  onClickMakePayment={onClickMakePayment}
-                  onClickCloseAndTrack={onClickOpenTrackModal}
-                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                  onClickOpenChangeProductionStatusModal={
-                    onClickOpenChangeProductionStatusModal
-                  }
-                  onClickPauseOrResume={onClickPauseOrResume}
-                  onOpenDuplicateModal={onOpenDuplicateModal}
-                  onClickStartProduction={onClickOpenStartProductionModal}
-                  onClickReopenDocument={onClickOpenReopenDocumentModal}
-                  onClickOpenMoveOrderToReadyModal={
-                    onClickOpenMoveOrderToReadyModal
-                  }
-                  onOpenPackagesModal={onOpenPackagesModal}
-                />,
-              ];
-            } else {
-              return [
-                formatCustomDateTime(quote?.createdDate),
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-                >
-                  {quote?.customerName}
-                </div>,
-                quote?.agentName,
-                quote?.number,
-                quote?.sourceDocumentNumber?.map((item, index) => {
-                  return (
-                    <a
-                      key={index}
-                      href={`${renderURLDocumentType(
-                        item?.sourceDocumentType,
-                        item.documentId
-                      )}`}
-                      style={{
-                        cursor: "pointer",
-                        color: "inherit",
-                        textDecoration: "unset",
-                      }}
-                    >
-                      {t(
-                        renderDocumentTypeForSourceDocumentNumber(
-                          item?.sourceDocumentType
-                        )
-                      )}
-                      :{item?.documentNumber}
-                      <br />
-                    </a>
-                  );
-                }),
-                quote?.worksNames,
-                isRTL
-                  ? quote?.totalPrice +
-                    " " +
-                    getCurrencyUnitText(quote?.currency)
-                  : getCurrencyUnitText(quote?.currency) +
-                    " " +
-                    quote?.totalPrice,
-                quote?.notes,
-
-                isInvoice || isDeliveryNote ? (
-                  <ClickableStatusButton
-                    id={quote?.id}
-                    document={quote}
-                    documentType={docType}
-                  />
-                ) : (
-                  <div>—</div>
-                ),
-                isInvoice && quote?.isDraft ? (
-                  <span style={{ color: "#e77676" }}>
-                    {t("sales.quote.draft")}
-                  </span>
-                ) : (
-                  _renderStatus(docType, quote, t)
-                ),
-                <MoreMenuWidget
-                  quote={quote}
-                  documentType={docType}
-                  onClickPdf={onClickQuotePdf}
-                  onClickDuplicate={onClickDocumentDuplicate}
-                  onClickLoggers={onClickDocumentLogs}
-                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                  onClickOpenCloseOrderNotesModal={
-                    onClickOpenCloseOrderNotesModal
-                  }
-                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                  onClickOpenChangeProductionStatusModal={
-                    onClickOpenChangeProductionStatusModal
-                  }
-                  onClickSendPayment={onClickSendPayment}
-                  onClickReopenDocument={onClickOpenReopenDocumentModal}
-                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-                  handleGetTaxConfirmNo={handleGetTaxConfirmNo}
-                />,
-              ];
-            }
-          });
-
-          const mapReceiptData = data?.map((quote: any) => [
-            formatCustomDateTime(quote?.creationDate).split(" ")[0],
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-            >
-              {quote?.customerName}
-            </div>,
-            quote?.agentName,
-            quote?.number,
-            _renderPaymentType(quote?.paymentType),
-            isRTL
-              ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-              : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice,
-            quote?.notes,
-            t(`documentStatus.${quote?.status}`),
-            <MoreMenuWidget
-              quote={quote}
-              documentType={docType}
-              onClickPdf={onOpenExportReceiptPdfModal}
-              onClickDuplicate={onClickDocumentDuplicate}
-              onClickLoggers={onClickDocumentLogs}
-              onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-              onOpenCancelReceiptModal={onOpenCancelReceiptModal}
-              onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-              onClickOpenChangeProductionStatusModal={
-                onClickOpenChangeProductionStatusModal
-              }
-              onClickSendPayment={onClickSendPayment}
-            />,
-          ]);
-          setAllQuotes(
-            isReceipt || isSupplierPayments ? mapReceiptData : mapData
-          );
-          setPagesCount(Math.ceil(totalItems / pageSize));
-
-          setAllStatistics({
-            documentStatisticsList: res?.data?.documentStatisticsList ?? [],
-            totalItems: totalItems ?? 0,
-          });
-        }
-      };
-      if (!router.isReady) {
-        return;
-      }
-      const currentPageNumber = router.query.pageNumber;
-      const currentStatusId = router.query.statusId;
-      const currentFinalPatternSearch = router.query.finalPatternSearch;
-      const currentCustomerId = router.query.customerId;
-      const currentAgentId = router.query.agentId;
-      const currentApprovalStatusId = router.query.approvalStatusId;
-      const currentMinPrice = router.query.minPrice || minPrice;
-      const currentMaxPrice = router.query.maxPrice || maxPrice;
-      const currentFromDate = router.query.fromDate
-        ? new Date(
-            Array.isArray(router.query.fromDate)
-              ? router.query.fromDate[0]
-              : router.query.fromDate
-          )
-        : null;
-      const currentToDate = router.query.toDate
-        ? new Date(
-            Array.isArray(router.query.toDate)
-              ? router.query.toDate[0]
-              : router.query.toDate
-          )
-        : null;
-
-      const currentAccountingStatus = router.query.accountingStatus
-        ? accountingStatuses.find(
-            (status) => status.value === Number(router.query.accountingStatus)
-          )
-        : null;
-
-      const currentDeliveryStatusStatus = router.query.deliveryStatus
-        ? deliveryStatuses.find(
-            (status) => status.value === Number(router.query.deliveryStatus)
-          )
-        : null;
-
-      const currentProductionStatus = router.query.productionStatus
-        ? productionStatuses.find(
-            (status) => status.value === Number(router.query.productionStatus)
-          )
-        : null;
-
-      const currentIsCanceled = router.query.isCanceled;
-      const currentIsPaused = router.query.isPaused;
-
-      const currentProductsIds = Array.isArray(router.query.productsIds)
-        ? router.query.productsIds
-        : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
-
-      const currentPaymentType = router.query.paymentType
-        ? typeOfPayments.find(
-            (type) => type.value === Number(router.query.paymentType)
-          )
-        : null;
-
-      if (isReceipt || isSupplierPayments) {
-        await getAllReceiptsApi(callApi, callBack, {
-          ...(!isReceipt && {
-            isOutgoingPayments: true,
-          }),
-          clientId: currentCustomerId || customerId?.id,
-          agentId: currentAgentId || agentId?.id,
-          status: currentAccountingStatus?.value ?? accountingStatus?.value,
-          paymentType: currentPaymentType?.value ?? paymentType?.value,
-          patternSearch:
-            finalPatternSearch !== null &&
-            finalPatternSearch !== undefined &&
-            finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-
-          ...(currentFromDate
-            ? { fromDate: GetDateFormat(currentFromDate) }
-            : {}),
-          ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
-
-          ...(currentMinPrice && currentMinPrice !== ""
-            ? { minPrice: currentMinPrice }
-            : {}),
-          ...(currentMaxPrice && currentMaxPrice !== ""
-            ? { maxPrice: currentMaxPrice }
-            : {}),
-
-          model: {
-            pageNumber: currentPageNumber || page,
-            pageSize: pageSize,
-            order: sortOrder,
-          },
-        });
-      } else {
-        await getAllDocumentsApi(callApi, callBack, {
-          documentType: docType,
-          data: {
-            model: {
-              pageNumber: currentPageNumber || page,
-              pageSize: pageSize,
-              order: sortOrder,
-            },
-            dateRange,
-            customerId: currentCustomerId || customerId?.id,
-            agentId: currentAgentId || agentId?.id,
-            statusId:
-              quoteStatusId?.value || currentStatusId || statusId?.value,
-            approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
-
-            ...(currentMinPrice && currentMinPrice !== ""
-              ? { minPrice: currentMinPrice }
-              : {}),
-            ...(currentMaxPrice && currentMaxPrice !== ""
-              ? { maxPrice: currentMaxPrice }
-              : {}),
-
-            patternSearch:
-              finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-
-            ...(currentFromDate
-              ? { fromDate: GetDateFormat(currentFromDate) }
-              : {}),
-            ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
-
-            ...(currentProductsIds?.length
-              ? { productList: currentProductsIds }
-              : {}),
-
-            closeStatus:
-              currentAccountingStatus?.value ?? accountingStatus?.value,
-            deliveryStatus:
-              currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
-            productionStatus:
-              currentProductionStatus?.value ?? productionStatus?.value,
-
-            isCanceled: currentIsCanceled || isCanceledState,
-            isPaused: currentIsPaused || isPausedOrders,
-            isOrderInTracking: isOrdersTracking,
-          },
-        });
-      }
-    },
-    [
-      docType,
-      callApi,
-      finalPatternSearch,
-      customerId,
-      agentId,
-      isReceipt,
-      isSupplierPayments,
-      page,
-      pageSize,
-      statusId,
-      approvalStatusId,
-      quoteStatusId,
-      accountingStatus,
-      deliveryStatus,
-      productionStatus,
-      dateRange,
-      minPrice,
-      maxPrice,
-      productIds,
-      isCanceledState,
-      isPausedOrders,
-      fromDate,
-      toDate,
-      onClickOpenModal,
-      onClickQuotePdf,
-      onClickDocumentLogs,
-      paymentType,
-      currentSortOrder,
-    ]
-  );
-
-  const getAllQuotesInitialOld = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        const data = res?.data?.data;
-        const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((quote: any) => {
-          if (isPurchaseOrder) {
-            return [
-              formatCustomDateTime(quote?.creationDate),
-              quote?.number,
-              quote?.orderNumber,
-              quote?.supplierName,
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.clientId)}
-              >
-                {quote?.clientName}
-              </div>,
-              quote?.itemsNumber,
-              isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) +
-                  " " +
-                  quote?.totalPrice,
-              quote?.notes,
-              _renderStatus(docType, quote, t),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-              />,
-            ];
-          } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
-            const purchaseOrderNumbers = quote?.orderNumbers
-              ? quote?.orderNumbers.join(", ")
-              : "";
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              quote?.number,
-              quote?.invoiceNumber,
-              purchaseOrderNumbers,
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.itemsNumber,
-              isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) +
-                  " " +
-                  quote?.totalPrice,
-              quote?.notes,
-              quote?.isDraft ? (
-                <span style={{ color: "#e77676" }}>
-                  {t("sales.quote.draft")}
-                </span>
-              ) : (
-                _renderStatus(docType, quote, t)
-              ),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-              />,
-            ];
-          } else if (isQuote) {
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.worksNames,
-              isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) +
-                  " " +
-                  quote?.totalPrice,
-              quote?.notes,
-              _renderStatus(docType, quote, t),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickEditQuote={onClickEditQuote}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-              />,
-            ];
-          } else if (isOrder) {
-            const jobsElement = CheckPermission(
-              Permissions.SHOW_BOARD_MISSIONS
-            ) ? (
-              <a
-                style={{
-                  cursor: "pointer",
-                  color: "inherit",
-                  textDecoration: "unset",
-                }}
-                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-              >
-                {quote?.jobs}
-              </a>
-            ) : (
-              quote?.jobs
-            );
-
-            const statusPayment = `${
-              isRTL
-                ? quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) + " " + quote?.sumApplied
-            }/${
-              isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice
-            }`;
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.sourceDocumentNumber?.map((item, index) => {
-                return (
-                  <span key={index}>
-                    {item?.documentNumber}
-                    <br />
-                  </span>
-                );
-              }),
-              quote?.purchaseNumber,
-              quote?.productionStatus === true
-                ? t("boardMissions.done")
-                : t("boardMissions.inProduction"),
-              jobsElement,
-              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
-                ? [quote?.cost]
-                : []),
-              quote?.worksNames,
-              isOrdersTracking
-                ? statusPayment
-                : isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) +
-                  " " +
-                  quote?.totalPrice,
-              quote?.notes,
-              <ClickableStatusButton
-                id={quote?.id}
-                document={quote}
-                documentType={docType}
-              />,
-              _renderStatus(docType, quote, t),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
-                onClickOpenPriceModal={onClickOpenPriceModal}
-                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={
-                  onClickOpenCloseOrderNotesModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickMakePayment={onClickMakePayment}
-                onClickCloseAndTrack={onClickOpenTrackModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickPauseOrResume={onClickPauseOrResume}
-                onOpenDuplicateModal={onOpenDuplicateModal}
-                onClickStartProduction={onClickOpenStartProductionModal}
-                onClickReopenDocument={onClickOpenReopenDocumentModal}
-                onClickOpenMoveOrderToReadyModal={
-                  onClickOpenMoveOrderToReadyModal
-                }
-                onOpenPackagesModal={onOpenPackagesModal}
-              />,
-            ];
-          } else {
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.sourceDocumentNumber?.map((item, index) => {
-                return (
-                  <a
-                    key={index}
-                    href={`${renderURLDocumentType(
-                      item?.sourceDocumentType,
-                      item.documentId
-                    )}`}
-                    style={{
-                      cursor: "pointer",
-                      color: "inherit",
-                      textDecoration: "unset",
-                    }}
-                  >
-                    {t(
-                      renderDocumentTypeForSourceDocumentNumber(
-                        item?.sourceDocumentType
-                      )
-                    )}
-                    :{item?.documentNumber}
-                    <br />
-                  </a>
-                );
-              }),
-              quote?.worksNames,
-              isRTL
-                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-                : getCurrencyUnitText(quote?.currency) +
-                  " " +
-                  quote?.totalPrice,
-              quote?.notes,
-              isInvoice || isDeliveryNote ? (
-                <ClickableStatusButton
-                  id={quote?.id}
-                  document={quote}
-                  documentType={docType}
-                />
-              ) : (
-                <div>—</div>
-              ),
-              quote?.isDraft && isInvoice ? (
-                <span style={{ color: "#e77676" }}>
-                  {t("sales.quote.draft")}
-                </span>
-              ) : (
-                _renderStatus(docType, quote, t)
-              ),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={
-                  onClickOpenCloseOrderNotesModal
-                }
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickReopenDocument={onClickOpenReopenDocumentModal}
-                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
-              />,
-            ];
-          }
-        });
-        const mapReceiptData = data?.map((quote: any) => [
-          formatCustomDateTime(quote?.creationDate).split(" ")[0],
-          <div
-            style={{ cursor: "pointer" }}
-            onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-          >
-            {quote?.customerName}
-          </div>,
-          quote?.agentName,
-          quote?.number,
-          _renderPaymentType(quote?.paymentType),
-          isRTL
-            ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-            : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice,
-          quote?.notes,
-          t(`documentStatus.${quote?.status}`),
-          <MoreMenuWidget
-            quote={quote}
-            documentType={docType}
-            onClickPdf={onOpenExportReceiptPdfModal}
-            onClickDuplicate={onClickDocumentDuplicate}
-            onClickLoggers={onClickDocumentLogs}
-            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-            onOpenCancelReceiptModal={onOpenCancelReceiptModal}
-            onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-            onClickOpenChangeProductionStatusModal={
-              onClickOpenChangeProductionStatusModal
-            }
-            onClickSendPayment={onClickSendPayment}
-          />,
-        ]);
-        setAllQuotes(
-          isReceipt || isSupplierPayments ? mapReceiptData : mapData
-        );
-        setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics({
-          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
-          totalItems: totalItems ?? 0,
-        });
-      }
-    };
-    if (!router.isReady) {
-      return;
-    }
-    if (isReceipt || isSupplierPayments) {
-      await getAllReceiptsApi(callApi, callBack, {
-        model: {
-          pageNumber: page,
-          pageSize: pageSize,
-        },
-        ...(!isReceipt && {
-          isOutgoingPayments: true,
-        }),
-      });
-    } else {
-      await getAllDocumentsApi(callApi, callBack, {
-        documentType: docType,
-        data: {
-          isOrderInTracking: isOrdersTracking,
-          model: {
-            pageNumber: page,
-            pageSize: pageSize,
-          },
-        },
-      });
-    }
-  };
-
-  //!here get all quotes new
   const getAllQuotes = useCallback(
     async (order?: any) => {
       const sortOrder = order || currentSortOrder;
@@ -1465,6 +570,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               agent: quote?.agentName,
               number: quote?.number,
               worksName: quote?.worksNames,
+              discount: quote?.discount,
+              totalPriceWithoutVat: isRTL
+                ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
+                    quote?.currency
+                  )}`
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPriceWithoutVat
+                  }`,
+
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${
@@ -1900,7 +1014,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ]
   );
 
-  //!here get all quotes initial new
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1925,6 +1038,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             agent: quote?.agentName,
             number: quote?.number,
             worksName: quote?.worksNames,
+            discount: quote?.discount,
+            totalPriceWithoutVat: isRTL
+              ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
+                  quote?.currency
+                )}`
+              : `${getCurrencyUnitText(quote?.currency)} ${
+                  quote?.totalPriceWithoutVat
+                }`,
+
             totalPrice: isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
@@ -2298,7 +1420,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       pathname: router.pathname,
       query: query,
     });
-    // getAllQuotesInitial(); // move to useEffect
   };
 
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
@@ -2319,7 +1440,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [pageSize, router.query]);
 
-  //!here old
   const tableHeaders = isPurchaseOrder
     ? [
         t("sales.quote.creationDate"),
@@ -3935,31 +3055,47 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isDescOrderBE, setIsDescOrderBE] = useState(false);
   const columnMappings = {
     [DOCUMENT_TYPE.quote]: {
-      creationDate: 0,
-      client: 1,
-      number: 2,
-      totalPrice: 3,
-      orderNumber: 4,
+      creationDate: QuotesTableColumns.CreationDate,
+      client: QuotesTableColumns.ClientName,
+      number: QuotesTableColumns.Number,
+      totalPrice: QuotesTableColumns.TotalPrice,
+      orderNumber: QuotesTableColumns.OrderNumber,
+      totalPriceWithoutVat: QuotesTableColumns.TotalPriceWithoutVat,
+      discount: QuotesTableColumns.Discount,
     },
     [DOCUMENT_TYPE.order]: {
-      creationDate: 0,
-      orderNumber: 1,
-      client: 2,
-      purchaseNumber: 3,
-      jobs: 4,
-      worksName: 5,
-      cost: 6,
-      totalPrice: 7,
+      creationDate: OrdersTableColumns.CreationDate,
+      orderNumber: OrdersTableColumns.Number,
+      client: OrdersTableColumns.ClientName,
+      purchaseNumber: OrdersTableColumns.PurchaseNumber,
+      jobs: OrdersTableColumns.OrderItemsNumber,
+      worksName: OrdersTableColumns.WorksNames,
+      cost: OrdersTableColumns.Cost,
+      totalPrice: OrdersTableColumns.TotalPrice,
+      totalPriceWithoutVat: OrdersTableColumns.TotalPriceWithoutVat,
+      discount: OrdersTableColumns.Discount,
     },
     [DOCUMENT_TYPE.deliveryNote]: {
-      creationDate: 0,
-      orderNumber: 1,
-      client: 1,
-      worksName: 3,
-      notes: 6,
-      totalPrice: 7,
-      deliveryStatus: 8,
-      status: 9,
+      creationDate: DeliveryNotesTableColumns.CreationDate,
+      client: DeliveryNotesTableColumns.ClientName,
+      worksName: DeliveryNotesTableColumns.WorksNames,
+      notes: DeliveryNotesTableColumns.Notes,
+      totalPrice: DeliveryNotesTableColumns.TotalPrice,
+      deliveryStatus: DeliveryNotesTableColumns.DeliveryStatus,
+      status: DeliveryNotesTableColumns.Status,
+      totalPriceWithoutVat: DeliveryNotesTableColumns.TotalPriceWithoutVat,
+      discount: DeliveryNotesTableColumns.Discount,
+    },
+    [DOCUMENT_TYPE.invoice]: {
+      creationDate: DeliveryNotesTableColumns.CreationDate,
+      client: DeliveryNotesTableColumns.ClientName,
+      worksName: DeliveryNotesTableColumns.WorksNames,
+      notes: DeliveryNotesTableColumns.Notes,
+      totalPrice: DeliveryNotesTableColumns.TotalPrice,
+      deliveryStatus: DeliveryNotesTableColumns.DeliveryStatus,
+      status: DeliveryNotesTableColumns.Status,
+      totalPriceWithoutVat: DeliveryNotesTableColumns.TotalPriceWithoutVat,
+      discount: DeliveryNotesTableColumns.Discount,
     },
     default: {
       creationDate: 0,
@@ -3977,26 +3113,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isHeaderSortable = (docType: string, header: string) => {
     const headers = columnMappings[docType] || columnMappings.default;
     return headers.hasOwnProperty(header);
-  };
-
-  // Backend Sort Handler
-  const handleSortBEOldLama = (key: string) => {
-    const direction = isDescOrderBE ? "desc" : "asc";
-
-    const columnIndex =
-      columnMappings[docType]?.[key] ?? columnMappings.default[key];
-
-    if (columnIndex !== undefined) {
-      getAllQuotes([
-        {
-          column: columnIndex,
-          dir: direction,
-        },
-      ]);
-      setIsDescOrderBE(!isDescOrderBE);
-    } else {
-      console.error("Invalid key for sorting:", key);
-    }
   };
 
   const handleSortBE = (key: string) => {
