@@ -447,6 +447,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
                 showCalculationInCompletedAlert={showCalculationInCompletedAlert}
+                setCanCalculation={setCanCalculation}
               />
             )}
           </div>
