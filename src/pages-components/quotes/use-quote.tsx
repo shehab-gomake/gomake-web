@@ -447,6 +447,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isOrdersTracking = pathname === "/ordersTracking";
 
   const ExportDocumentTableToExcel = async () => {
+    const sortOrder = currentSortOrder;
     const callBack = (res) => {
       if (res?.success) {
         const downloadLink = document.createElement("a");
@@ -467,6 +468,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         model: {
           pageNumber: page,
           pageSize: pageSize,
+          order: sortOrder,
         },
         statusId: quoteStatusId?.value || statusId?.value,
         approvalStatus: approvalStatusId?.value,
@@ -490,6 +492,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const ExportDocumentTableToPdf = async () => {
+    const sortOrder = currentSortOrder;
     const callBack = (res) => {
       if (res?.success) {
         let fileUrl =
@@ -510,6 +513,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         model: {
           pageNumber: page,
           pageSize: pageSize,
+          order: sortOrder,
         },
         statusId: quoteStatusId?.value || statusId?.value,
         approvalStatus: approvalStatusId?.value,
