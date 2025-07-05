@@ -416,8 +416,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, [pageSize, router]);
 
-  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
-    useJobsTableSocketIo();
+  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
 
   useEffect(() => {
     if (isSocketUpdateJobsTable) {
