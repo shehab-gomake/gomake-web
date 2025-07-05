@@ -51,6 +51,7 @@ import {
   IQuantityTypesValue
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { useTranslation } from "react-i18next";
+import {TableVirtuoso} from "react-virtuoso";
 
 interface IProps {
   status: IProductionStatus;
@@ -226,106 +227,15 @@ const StatusTableComponent = ({
   const columnVisibility = useRecoilValue(columnVisibilityState);
   interface RowProps {
     index: number;
-    style: React.CSSProperties;
     data: {
       boardMissions: IBoardMissions[]
     };
   }
 
-  const Row = memo(({ index, style, data }: RowProps) => {
-    const { boardMissions } = data;
-    const boardMission = boardMissions[index];
+  const Row = (index:number,boardMission:IBoardMissions) => {
     return (
-      <>
-        {index == 0 && <TableHead style={{ backgroundColor: status.backgroundColor }}>
-          <SecondaryTableRow>
-            {tableHeaders(status.id)?.map((header, index) => {
-              const key = columnOrder.filter(
-                (k) => columnVisibility[k]
-              )[index];
-              const width = getCustomWidth(key);
-
-              return (
-                <SecondaryTableCell
-                  style={{
-                    backgroundColor: "#F9FAFB",
-                    placeItems: "center",
-                    minWidth: width,
-                    maxWidth: width,
-                    width,
-                    // Spread the mobile styles conditionally
-                    ...(isMobileScreen && {
-                      position: index <= 1 ? "sticky" : "relative",
-                      [RTL ? "right" : "left"]:
-                        index === 0 ? 0 : index === 1 ? 48 : "auto",
-                      zIndex: index <= 1 ? 2 : 1,
-                      background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                    }),
-                  }}
-                  key={"statusTable" + status.id + index}
-                  align={"center"}
-                  sx={
-                    header === t("productionFloor.currentStation")
-                      ? currentStationOrdering ===
-                        CurrentStationOrderingEnum.NONE
-                        ? {
-                          "& .sort-icon": { opacity: 0 },
-                          "&:hover .sort-icon": { opacity: 1 },
-                        }
-                        : {
-                          "& .sort-icon": { opacity: 1 },
-                        }
-                      : undefined
-                  }
-                >
-                  <div
-                    style={{
-                      width: "max-content",
-                      minWidth: "max-content",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "5px",
-                    }}
-                  >
-                    {header}
-                    {header === t("productionFloor.currentStation") && (
-                      <IconButton
-                        className="sort-icon"
-                        onClick={() => {
-                          setSortConfig({
-                            key: t("productionFloor.currentStation"),
-                            direction:
-                              currentStationOrdering ===
-                                CurrentStationOrderingEnum.NONE
-                                ? CurrentStationOrderingEnum.ASC
-                                : CurrentStationOrderingEnum.NONE,
-                          });
-                          setCurrentStationOrdering(
-                            currentStationOrdering ===
-                              CurrentStationOrderingEnum.NONE
-                              ? CurrentStationOrderingEnum.ASC
-                              : CurrentStationOrderingEnum.NONE
-                          );
-                          reSortingCurrentStation(
-                            currentStationOrdering ===
-                              CurrentStationOrderingEnum.NONE
-                              ? CurrentStationOrderingEnum.ASC
-                              : CurrentStationOrderingEnum.NONE
-                          );
-                        }}
-                      >
-                        {<ArrowUpward sx={{ fontSize: "18px" }} />}
-                      </IconButton>
-                    )}
-                  </div>
-                </SecondaryTableCell>
-              );
-            })}
-          </SecondaryTableRow>
-        </TableHead>}
-        <TableBody>
-          <TableRowComponent
+      <React.Fragment>
+        <TableRowComponent
             key={"status" + status.id + boardMission.id + index}
             boardMission={boardMission}
             status={status}
@@ -339,25 +249,117 @@ const StatusTableComponent = ({
             onUpdateJobDueDate={updateJobDueDate}
             employeesCategories={employeesCategories}
             visibleColumns={visibleColumns}
-          />
-        </TableBody>
-      </>
+        />
+      </React.Fragment>
 
 
     );
-  });
-
+  };
+  const calculateHeight = ()=>{
+    const items = [...getBoards()]?.sort((a, b) => a.priority - b.priority);
+    if(items.length > 20){
+      return "700px";
+    }
+    return `${140*items.length}px`;
+  }
   const _renderList = () => {
-    return <List
-      height={295}
-      width={"100%"}
-      itemCount={boards.length}
-      itemSize={10}
-      itemData={{ boardMissions: [...getBoards()]?.sort((a, b) => a.priority - b.priority) }}
-    >
+    return <TableVirtuoso
+        style={{ height: calculateHeight() }}
+        data={ [...getBoards()]?.sort((a, b) => a.priority - b.priority)}
+        fixedHeaderContent={() => (
+            <React.Fragment >
+              {tableHeaders(status.id)?.map((header, index) => {
+                const key = columnOrder.filter(
+                    (k) => columnVisibility[k]
+                )[index];
+                const width = getCustomWidth(key);
 
-      {Row}
-    </List>
+                return (
+                    <SecondaryTableCell
+                        style={{
+                          backgroundColor: "#F9FAFB",
+                          placeItems: "center",
+                          minWidth: width,
+                          maxWidth: width,
+                          width,
+                          // Spread the mobile styles conditionally
+                          ...(isMobileScreen && {
+                            position: index <= 1 ? "sticky" : "relative",
+                            [RTL ? "right" : "left"]:
+                                index === 0 ? 0 : index === 1 ? 48 : "auto",
+                            zIndex: index <= 1 ? 2 : 1,
+                            background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
+                          }),
+                        }}
+                        key={"statusTable" + status.id + index}
+                        align={"center"}
+                        sx={
+                          header === t("productionFloor.currentStation")
+                              ? currentStationOrdering ===
+                              CurrentStationOrderingEnum.NONE
+                                  ? {
+                                    "& .sort-icon": { opacity: 0 },
+                                    "&:hover .sort-icon": { opacity: 1 },
+                                  }
+                                  : {
+                                    "& .sort-icon": { opacity: 1 },
+                                  }
+                              : undefined
+                        }
+                    >
+                      <div
+                          style={{
+                            width: "max-content",
+                            minWidth: "max-content",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "5px",
+                          }}
+                      >
+                        {header}
+                        {header === t("productionFloor.currentStation") && (
+                            <IconButton
+                                className="sort-icon"
+                                onClick={() => {
+                                  setSortConfig({
+                                    key: t("productionFloor.currentStation"),
+                                    direction:
+                                        currentStationOrdering ===
+                                        CurrentStationOrderingEnum.NONE
+                                            ? CurrentStationOrderingEnum.ASC
+                                            : CurrentStationOrderingEnum.NONE,
+                                  });
+                                  setCurrentStationOrdering(
+                                      currentStationOrdering ===
+                                      CurrentStationOrderingEnum.NONE
+                                          ? CurrentStationOrderingEnum.ASC
+                                          : CurrentStationOrderingEnum.NONE
+                                  );
+                                  reSortingCurrentStation(
+                                      currentStationOrdering ===
+                                      CurrentStationOrderingEnum.NONE
+                                          ? CurrentStationOrderingEnum.ASC
+                                          : CurrentStationOrderingEnum.NONE
+                                  );
+                                }}
+                            >
+                              {<ArrowUpward sx={{ fontSize: "18px" }} />}
+                            </IconButton>
+                        )}
+                      </div>
+                    </SecondaryTableCell>
+                );
+              })}
+            </React.Fragment>
+        )}
+        itemContent={(index, boardMission) => (
+            <>
+              {Row(index,boardMission)}
+            </>
+            
+        )}
+    />
   }
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -395,16 +397,7 @@ const StatusTableComponent = ({
 
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
-          <Paper>
-            <TableContainer>
-              <Table stickyHeader={false}>
-
-
-                {_renderList()}
-
-              </Table>
-            </TableContainer>
-          </Paper>
+          {_renderList()}
         </Collapse>
       )}
 
