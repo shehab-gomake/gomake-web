@@ -2,6 +2,7 @@ import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/s
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
 import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-max-input";
+import { acceptedSets } from "../connection-inputs/accepted-sets";
 
 const bookletMachine = (state: Record<string, any>) => {
     return [
@@ -32,6 +33,7 @@ const bookletMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true,
         },
+        ...acceptedSets(state),
     ]
 }
 
