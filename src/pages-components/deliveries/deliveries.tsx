@@ -7,6 +7,7 @@ import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
   GomakePrimaryButton,
+  ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeMenu } from "@/components";
@@ -61,6 +62,10 @@ const DeliveriesPageWidget = () => {
     customerId,
     documentNumber,
     initialPageSize,
+    MoveOrderToReady,
+    onClickCloseMoveOrderToReadyModal,
+    onClickOpenMoveOrderToReadyModal,
+    moveOrderToReady,
   } = useDeliveries();
 
   const {
@@ -276,7 +281,21 @@ const DeliveriesPageWidget = () => {
         documentType={DOCUMENT_TYPE.order}
         documentId={orderId?.toString()}
         documentNumber={documentNumber?.toString()}
+        onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
       />
+
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickYes={() => moveOrderToReady(true)}
+        onClickNo={() => moveOrderToReady(false)}
+      />
+
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
         openModal={openDeleteModal}
