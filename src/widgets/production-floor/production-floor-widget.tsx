@@ -169,6 +169,7 @@ const ProductionFloorWidget = () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
+        console.log("res", res);
         // setIsOpenModal(true);
       } else {
         setScanResult("Invalid QR Code or No Board Mission Found");
@@ -280,7 +281,7 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
         {isScanning && isScanningFlag && !!boardMissionsId && (
-          <Box display="flex" justifyContent="center" >
+          <Box display="flex" justifyContent="center" style={{ display: "none" }} >
             <QrReader
               delay={300}
               facingMode="environment"
