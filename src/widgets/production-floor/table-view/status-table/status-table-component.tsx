@@ -260,7 +260,7 @@ const StatusTableComponent = ({
     if(items.length > 20){
       return "700px";
     }
-    return `${140*items.length}px`;
+    return `${100*items.length}px`;
   }
   const _renderList = () => {
     return <TableVirtuoso
