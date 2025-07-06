@@ -1335,7 +1335,8 @@ const ActionContainerComponent = ({
                 )}
                 {(outputsParameters?.length > 0 ||
                   textAreaOutputs?.length > 0) &&
-                  source === EWorkSource.INTERNAL && (
+                  // source === EWorkSource.INTERNAL &&
+                  (
                     <>
                       <Divider />
                       <Stack
