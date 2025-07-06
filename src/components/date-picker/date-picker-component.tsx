@@ -92,7 +92,6 @@ const GoMakeDatepicker = ({
           },
         });
       }
-
     }
   }, [value]);
 
@@ -104,6 +103,7 @@ const GoMakeDatepicker = ({
     const endDate = dateStringFormat(new Date(state.selection.endDate));
     return !!endDate && !!startDate ? `${startDate} - ${endDate}` : "";
   }, [state]);
+
   return (
     <div style={style}>
       <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
@@ -111,7 +111,7 @@ const GoMakeDatepicker = ({
           disabled={false}
           style={{ height: "40px", cursor: "pointer" }}
           value={dateString()}
-          labelText={"select"}
+          // labelText={"select"}
           placeholder={placeholder}
           onClick={handleInputClick}
         />
