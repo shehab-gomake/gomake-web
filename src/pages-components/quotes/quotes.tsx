@@ -244,7 +244,6 @@ const QuotesListPageWidget = ({
     removeDraftModal,
     onCloseOpenRemoveDraftModal,
     MoveOrderToReady,
-    onClickCloseMoveOrderToReadyModal,
     onClickPrintPackagingSlip,
     handleQuantityPerPackageChange,
     handleQuantityOfPackagesChange,
@@ -265,6 +264,8 @@ const QuotesListPageWidget = ({
     setColumnOrder,
     setColumnVisibility,
     callApi,
+    onClickCloseMoveOrderToReadyModal,
+    onClickOpenMoveOrderToReadyModal,
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -1144,6 +1145,7 @@ const QuotesListPageWidget = ({
         documentType={DOCUMENT_TYPE.order}
         documentId={deliveryOrderId?.toString()}
         documentNumber={deliveryOrderNumber?.toString()}
+        onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
@@ -1164,7 +1166,6 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseMoveOrderToReadyModal}
         onClickDelete={moveOrderToReady}
       /> */}
-
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
