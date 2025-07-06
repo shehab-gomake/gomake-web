@@ -15,7 +15,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { Button, Skeleton, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Skeleton, Stack } from "@mui/material";
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
@@ -53,11 +53,22 @@ import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list"
 import CloseOrderNote from "./widgets/general/close-order-note";
 import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
 import { predefinedRanges } from "@/utils/dateRanges";
+import { ColumnSettingsMenu } from "@/widgets/production-floor/table-view/components/column-settings-menu";
+import { DocumentsColumnSettingsMenu } from "./widgets/document-column-settings-menu/document-column-settings-menu";
+import {
+  documentColumnKeys,
+  getDocumentCustomWidth,
+  parseSavedColumnSettings,
+} from "./states/documents-columns-settings-state";
+import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
+import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
+import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
 }
+
 const QuotesListPageWidget = ({
   documentType,
   isFromHomePage = false,
@@ -88,7 +99,6 @@ const QuotesListPageWidget = ({
     onOpenAddRuleModal,
     navigate,
     onClickQuotePdf,
-    tableHeaders,
     allQuotes,
     quoteStatuses,
     agentsCategories,
@@ -248,6 +258,13 @@ const QuotesListPageWidget = ({
     typeOfPayments,
     initialPageSize,
     ExportDocumentTableToPdf,
+    tableKey,
+    visibleHeaders,
+    columnsReady,
+    setColumnsReady,
+    setColumnOrder,
+    setColumnVisibility,
+    callApi,
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -367,6 +384,38 @@ const QuotesListPageWidget = ({
       handleOpenDeliveryModal(deliveryOrderId);
     }
   }, [router.query.deliveryOrderId]);
+
+  useEffect(() => {
+    const loadDocumentColumnSettings = async () => {
+      try {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+          documentType,
+        });
+        const saved: ColumnSetting[] = res?.data;
+        const allColumnKeys = documentColumnKeys[tableKey];
+
+        if (saved && saved.length > 0) {
+          const { order, visibility } = parseSavedColumnSettings(
+            saved,
+            allColumnKeys
+          );
+          setColumnOrder(order);
+          setColumnVisibility(visibility);
+        } else {
+          setColumnOrder(allColumnKeys);
+          setColumnVisibility(
+            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load document column settings", error);
+      } finally {
+        setColumnsReady(true);
+      }
+    };
+
+    loadDocumentColumnSettings();
+  }, [documentType, tableKey]);
 
   return (
     <>
@@ -729,86 +778,50 @@ const QuotesListPageWidget = ({
                 value={patternSearch}
                 inputRef={searchInputRef}
               />
-              <ExcelMenu
-                onGenerateReportClick={onOpenAddRuleModal}
-                onExportTableClick={ExportDocumentTableToExcel}
-                onExportTablePdfClick={ExportDocumentTableToPdf}
-              />
+
+              <Stack direction={"row"} gap={1}>
+                {columnsReady && (
+                  <DocumentsColumnSettingsMenu
+                    tableKey={tableKey}
+                    documentType={documentType}
+                  />
+                )}
+                <ExcelMenu
+                  onGenerateReportClick={onOpenAddRuleModal}
+                  onExportTableClick={ExportDocumentTableToExcel}
+                  onExportTablePdfClick={ExportDocumentTableToPdf}
+                />
+              </Stack>
             </div>
             {/* document table */}
-            <PrimaryTable
-              stickyFirstCol={false}
-              stickyHeader={true}
-              maxHeight={"calc(100vh - 265px)"}
-              rows={allQuotes}
-              headers={tableHeaders}
-              withSortBE={true}
-              onClickSortBE={handleSortBE}
-              isDescOrderBE={isDescOrderBE}
-              isHeaderSortable={isHeaderSortable}
-              docType={documentType}
-              columnWidths={
-                isQuote
-                  ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
-                  : isOrder
-                  ? [
-                      "6%",
-                      "5%",
-                      "5%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "8%",
-                      "3%",
-                      "10%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "10%",
-                      "5%",
-                      "5%",
-                    ]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : isReceipt || isSupplierPayments
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : [
-                      "10%",
-                      "8%",
-                      "8%",
-                      "8%",
-                      "10%",
-                      "23%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "3%",
-                    ]
-              }
-            />
+            <>
+              {columnsReady ? (
+                <DocumentPrimaryTable
+                  stickyFirstCol={false}
+                  stickyHeader={true}
+                  maxHeight={"calc(100vh - 265px)"}
+                  rows={allQuotes}
+                  headers={visibleHeaders}
+                  withSortBE={true}
+                  onClickSortBE={handleSortBE}
+                  isDescOrderBE={isDescOrderBE}
+                  isHeaderSortable={isHeaderSortable}
+                  docType={documentType}
+                  columnWidths={visibleHeaders.map((key) =>
+                    getDocumentCustomWidth(tableKey, key)
+                  )}
+                />
+              ) : (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                >
+                  <CircularProgress />
+                </Box>
+              )}
+            </>
           </div>
           <GoMakePagination
             onChangePageNumber={(event, value) => {
