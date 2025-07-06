@@ -12,12 +12,13 @@ import { useIsMobile } from "@/hooks/use-responsive";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getDeliveriesTableApi } from "@/services/api-service/document-deliveries/get-deliveries-table";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { useDebounce } from "@/utils/use-debounce";
 import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-io";
 import { useListPagination } from "@/hooks/use-list-pagination";
+import { useModal } from "@/hooks/use-modal";
+import { moveOrderToReadyApi } from "@/services/api-service/generic-doc/documents-api";
 
 interface Query {
   customerId?: string;
@@ -31,7 +32,7 @@ const useDeliveries = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertFaultUpdate } = useSnackBar();
   const router = useRouter();
   const { query } = useRouter();
   const { orderId, customerId, documentNumber } = query;
@@ -263,6 +264,34 @@ const useDeliveries = () => {
     );
   };
 
+  const MoveOrderToReady = useModal();
+  const [selectedDocument, setSelectedDocument] = useState<any>({});
+
+  const onClickOpenMoveOrderToReadyModal = (order) => {
+    // Assume orderId is already being extracted from the URL query ( scanning case )
+    setSelectedDocument(order?.id ? order : { id: orderId });
+    MoveOrderToReady.open();
+  };
+
+  const onClickCloseMoveOrderToReadyModal = () => {
+    setSelectedDocument({});
+    MoveOrderToReady.close();
+  };
+
+  const moveOrderToReady = async (isSendMessage: boolean = false) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getDeliveriesTable();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveOrderToReadyApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+      isSendMessage: isSendMessage,
+    });
+  };
+
   const allDeliveries = useMemo(() => {
     return rawDeliveriesData?.map((item: any) =>
       isMobile
@@ -278,6 +307,9 @@ const useDeliveries = () => {
               }}
               documentType={DOCUMENT_TYPE.order}
               openModalOnClick={true}
+              onClickOpenMoveOrderToReadyModal={
+                onClickOpenMoveOrderToReadyModal
+              }
             />,
             formatCustomDateTime(item?.createdDate).split(" ")[0],
             item?.agentName ?? "-",
@@ -305,6 +337,9 @@ const useDeliveries = () => {
               }}
               documentType={DOCUMENT_TYPE.order}
               openModalOnClick={true}
+              onClickOpenMoveOrderToReadyModal={
+                onClickOpenMoveOrderToReadyModal
+              }
             />,
             item?.isSelfCollection
               ? t("sales.documentDeliveries.selfCollection")
@@ -458,6 +493,10 @@ const useDeliveries = () => {
     customerId,
     documentNumber,
     initialPageSize,
+    MoveOrderToReady,
+    onClickCloseMoveOrderToReadyModal,
+    onClickOpenMoveOrderToReadyModal,
+    moveOrderToReady,
   };
 };
 

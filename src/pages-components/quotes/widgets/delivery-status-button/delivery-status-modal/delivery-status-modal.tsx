@@ -27,6 +27,7 @@ const UpdateDeliveryStatusModal = ({
   documentType,
   documentId,
   documentNumber,
+  onClickOpenMoveOrderToReadyModal,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const isMobile = useIsMobile();
@@ -184,6 +185,7 @@ const UpdateDeliveryStatusModal = ({
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
         onCloseAllModals={handleCloseSignModal}
+        document={document}
         documentId={documentId}
         documentType={documentType}
         selectedItems={selectedItems}
@@ -193,6 +195,7 @@ const UpdateDeliveryStatusModal = ({
         setDocumentItems={setDocumentItems}
         deliveryState={deliveryState}
         isMobile={isMobile}
+        onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
       />
     </GoMakeModal>
   );

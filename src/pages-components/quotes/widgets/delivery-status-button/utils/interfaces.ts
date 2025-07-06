@@ -5,6 +5,7 @@ export interface ITaskCategoryLabelProps {
   document: any;
   documentType: DOCUMENT_TYPE;
   openModalOnClick?: boolean;
+  onClickOpenMoveOrderToReadyModal: any;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
@@ -19,6 +20,7 @@ export interface IUpdateDeliveryStatusModalProps {
   setDocumentItems?: any;
   clientContacts?: any;
   documentType: DOCUMENT_TYPE;
+  onClickOpenMoveOrderToReadyModal: any;
 }
 
 export interface DeliveryStateDetails {
