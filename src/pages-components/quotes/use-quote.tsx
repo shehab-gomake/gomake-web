@@ -731,6 +731,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     id={quote?.id}
                     document={quote}
                     documentType={docType}
+                    onClickOpenMoveOrderToReadyModal={
+                      onClickOpenMoveOrderToReadyModal
+                    }
                   />
                 ),
               };
@@ -768,6 +771,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     id={quote?.id}
                     document={quote}
                     documentType={docType}
+                    onClickOpenMoveOrderToReadyModal={
+                      onClickOpenMoveOrderToReadyModal
+                    }
                   />
                 ) : (
                   <div>—</div>
@@ -1189,6 +1195,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   id={quote?.id}
                   document={quote}
                   documentType={docType}
+                  onClickOpenMoveOrderToReadyModal={
+                    onClickOpenMoveOrderToReadyModal
+                  }
                 />
               ),
             };
@@ -1224,6 +1233,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   id={quote?.id}
                   document={quote}
                   documentType={docType}
+                  onClickOpenMoveOrderToReadyModal={
+                    onClickOpenMoveOrderToReadyModal
+                  }
                 />
               ) : (
                 <div>—</div>
@@ -2290,8 +2302,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const MoveOrderToReady = useModal();
+
   const onClickOpenMoveOrderToReadyModal = (order) => {
-    setSelectedDocument(order);
+    // Assume deliveryOrderId is already being extracted from the URL query ( scanning case )
+    setSelectedDocument(order?.id ? order : { id: deliveryOrderId });
     MoveOrderToReady.open();
   };
 
@@ -3371,6 +3385,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setColumnOrder,
     setColumnVisibility,
     callApi,
+    onClickOpenMoveOrderToReadyModal,
   };
 };
 
