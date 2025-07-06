@@ -45,6 +45,9 @@ const UPDATE_BOARD_MISSIONS_ACTION_MACHINE =
   "/v1/erp-service/board-missions-actions/update-action-machine";
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL =
   "/v1/erp-service/board-missions-actions/toggle-timer/";
+const MOVE_BOARD_MISSION_ACTION_TO_DONE_USING_BARCODE_URL =
+  "/v1/erp-service/board-missions-actions/move-board-mission-action-to-done-using-barcode/";
+
 const BOARD_MISSIONS_ADD_NOTE_URL = "/v1/erp-service/board-missions/add-note";
 const BOARD_MISSIONS_DELETE_NOTE_URL =
   "/v1/erp-service/board-missions/delete-note";
@@ -373,6 +376,21 @@ const toggleBoardMissionsActionTimer: ICallAndSetData = async (
     EHttpMethod.GET,
     TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL +
       data.boardMissionsActionId +
+      (data.productType ? "?productType=" + data.productType : ""),
+    callBack
+  );
+};
+
+const moveBoardMissionActionToDoneUsingBarcodeApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string; productType: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    MOVE_BOARD_MISSION_ACTION_TO_DONE_USING_BARCODE_URL +
+      data.boardMissionId +
       (data.productType ? "?productType=" + data.productType : ""),
     callBack
   );
@@ -806,6 +824,7 @@ export {
   getBoardsMissionsStations,
   cancelBoardMissionsActionDone,
   toggleBoardMissionsActionTimer,
+  moveBoardMissionActionToDoneUsingBarcodeApi,
   boardMissionsAddNote,
   boardMissionsDeleteNote,
   getAllBoardMissionsActivities,

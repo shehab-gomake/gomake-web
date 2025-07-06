@@ -26,7 +26,7 @@ import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-import { getBoardMissionsIdByQrCodeApi, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { getBoardMissionsIdByQrCodeApi, moveBoardMissionActionToDoneUsingBarcodeApi, toggleBoardMissionsActionTimer, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
@@ -165,18 +165,32 @@ const ProductionFloorWidget = () => {
 
   const handleScan = async (data: { text: string } | null) => {
     if (!data) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        // setIsOpenModal(true);
+      } else {
+        setScanResult("Invalid QR Code or No Board Mission Found");
+      }
+    };
     try {
-      await getBoardMissionsIdByQrCodeApi(
-        callApi,
-        (res) => {
-          if (res?.success) {
-            setIsOpenModal(true);
-          } else {
-            setScanResult("Invalid QR Code or No Board Mission Found");
-          }
-        },
-        data.text
-      );
+
+      await moveBoardMissionActionToDoneUsingBarcodeApi(callApi, callBack, {
+        boardMissionId: boardMissionsId?.toString(),
+        productType: productType?.toString(),
+      });
+      // await getBoardMissionsIdByQrCodeApi(
+      //   callApi,
+      //   (res) => {
+      //     if (res?.success) {
+      //       setIsOpenModal(true);
+      //     } else {
+      //       setScanResult("Invalid QR Code or No Board Mission Found");
+      //     }
+      //   },
+      //   data.text
+      // );
 
     } catch (error) {
       console.error("QR Scan error:", error);
@@ -265,7 +279,7 @@ const ProductionFloorWidget = () => {
         </Stack>
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
-        {isScanning && isScanningFlag && isMobile && !!boardMissionsId && (
+        {isScanning && isScanningFlag && !!boardMissionsId && (
           <Box display="flex" justifyContent="center" >
             <QrReader
               delay={300}
