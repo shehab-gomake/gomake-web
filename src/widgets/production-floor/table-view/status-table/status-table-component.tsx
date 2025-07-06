@@ -257,6 +257,9 @@ const StatusTableComponent = ({
   };
   const calculateHeight = ()=>{
     const items = [...getBoards()]?.sort((a, b) => a.priority - b.priority);
+    if(items.length == 1){
+      return "140px";
+    }
     if(items.length > 20){
       return "700px";
     }
