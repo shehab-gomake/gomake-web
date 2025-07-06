@@ -2,7 +2,7 @@ import { GoMakeModal } from "@/components";
 import { useStyle } from "../style";
 import { Button, Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { DeleteIcon, SaveIcon, SendIcon, WArrowIcon } from "../../utils/icons";
+import { DeleteIcon, WArrowIcon } from "../../utils/icons";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useRef } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -22,7 +22,9 @@ export interface ISignatureModalProps {
   setEditableQuantities?: any;
   setDocumentItems?: any;
   deliveryState?: any;
-  isMobile?:boolean;
+  isMobile?: boolean;
+  onClickOpenMoveOrderToReadyModal: any;
+  document: any;
 }
 
 const SignatureModal = ({
@@ -37,7 +39,9 @@ const SignatureModal = ({
   setEditableQuantities,
   setDocumentItems,
   deliveryState,
-  isMobile=false
+  isMobile = false,
+  onClickOpenMoveOrderToReadyModal,
+  document,
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -69,11 +73,15 @@ const SignatureModal = ({
 
     const callBack = (res) => {
       if (res.success) {
+        const isShowMoveToReadyModal = res?.data?.isShowMoveToReadyModal;
         setEditableQuantities({});
         setSelectedItems([]);
-        setDocumentItems(res.data);
+        setDocumentItems(res.data?.data);
         alertSuccessUpdate();
         onCloseAllModals();
+        setTimeout(() => {
+          isShowMoveToReadyModal && onClickOpenMoveOrderToReadyModal(document);
+        }, 500);
       } else {
         alertFaultUpdate();
       }
@@ -87,11 +95,15 @@ const SignatureModal = ({
     });
   };
 
-  
   return (
     <GoMakeModal
       modalTitle={t("sales.documentDeliveries.signature")}
-      insideStyle={{ width: "640px", maxWidth: "90vw", height:isMobile ? "unset":"fit-content" ,minHeight: "auto"}}
+      insideStyle={{
+        width: "640px",
+        maxWidth: "90vw",
+        height: isMobile ? "unset" : "fit-content",
+        minHeight: "auto",
+      }}
       openModal={openModal}
       onClose={onCloseModal}
       modalTitleStyle={classes.modalTitle}

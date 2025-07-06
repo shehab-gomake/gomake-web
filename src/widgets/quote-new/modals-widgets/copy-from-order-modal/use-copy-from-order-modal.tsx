@@ -1,5 +1,5 @@
 import { ERPDocumentsTypesEnum } from "@/enums";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { getClientDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
@@ -190,14 +190,13 @@ const useCopyFromOrderModal = ({
     );
   };
 
+  const { alertFaultGetData } = useSnackBar();
   const [isLoadingPayments, setIsLoadingPayments] = useState<boolean>(false);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 
   const getClientOrderItems = async () => {
     setIsLoadingPayments(true);
     setHasFetchedOnce(false);
-
-    debugger;
     let docType;
     if (copyFromDocumentType === DOCUMENT_TYPE.order) {
       docType = DOCUMENT_TYPE.order;
@@ -226,7 +225,8 @@ const useCopyFromOrderModal = ({
           });
         setDocumentItems(updatedData);
       } else {
-        setDocumentItems(null);
+        setDocumentItems([]);
+        alertFaultGetData();
       }
     };
 

@@ -15,6 +15,7 @@ const ClickableStatusButton = ({
   document,
   documentType,
   openModalOnClick = false,
+  onClickOpenMoveOrderToReadyModal,
 }: ITaskCategoryLabelProps) => {
   const {
     t,
@@ -101,6 +102,7 @@ const ClickableStatusButton = ({
         clientContacts={clientContacts}
         documentType={documentType}
         documentId={document?.id}
+        onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}

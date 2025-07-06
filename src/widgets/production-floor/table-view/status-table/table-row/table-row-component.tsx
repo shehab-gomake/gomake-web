@@ -45,6 +45,8 @@ import { boardMissionsStationsState } from "@/widgets/production-floor/views/boa
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
+import React from "react";
+import {getCustomWidth} from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -235,45 +237,45 @@ const TableRowComponent = ({
 
   const renderCell = useCallback(
     (key: string) => {
+
+      const width = getCustomWidth(key);  
       const commonStyle = {
         backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+          minWidth: width,
+          maxWidth: width,
+          width,
+          padding:5,
       };
 
       switch (key) {
         case "checkbox":
           return (
-            <PermissionCheck
-              userPermission={
-                Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-              }
-            >
               <SecondaryTableCell
-                align={"center"}
-                style={{
-                  ...commonStyle,
-                  ...(isMobileScreen && {
-                    position: "sticky",
-                    [isRTL ? "right" : "left"]: 0,
-                    zIndex: 11,
-                  }),
-                }}
-              >
-                <Checkbox
-                  checked={selectedIdsSet.has(boardMission.id)}
-                  onChange={(a) => {
-                    onSelectBoardMissions(boardMission.id, a.target.checked);
+                  align={"center"}
+                  style={{
+                      ...commonStyle,
+                      ...(isMobileScreen && {
+                          position: "sticky",
+                          [isRTL ? "right" : "left"]: 0,
+                          zIndex: 11,
+                      }),
                   }}
-                  icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
-                  checkedIcon={
-                    <CheckboxCheckedIcon
-                      fill="#2E3092"
-                      width="20"
-                      height="20"
-                    />
-                  }
-                />
+              >
+                  <Checkbox
+                      checked={selectedIdsSet.has(boardMission.id)}
+                      onChange={(a) => {
+                          onSelectBoardMissions(boardMission.id, a.target.checked);
+                      }}
+                      icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+                      checkedIcon={
+                          <CheckboxCheckedIcon
+                              fill="#2E3092"
+                              width="20"
+                              height="20"
+                          />
+                      }
+                  />
               </SecondaryTableCell>
-            </PermissionCheck>
           );
 
         case "job_order":
@@ -338,6 +340,7 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
+                 ...commonStyle,
                 backgroundColor: boardMission.jobDeliveryTimeAlertColor
                   ? boardMission.jobDeliveryTimeAlertColor
                   : index % 2 === 0
@@ -386,9 +389,6 @@ const TableRowComponent = ({
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
-                    maxWidth: isUrgentWork ? "50px" : null,
-                    minWidth: isUrgentWork ? "50px" : null,
-                    width: isUrgentWork ? "50px" : null,
                   }}
                 >
                   {boardMission.showGraphicsApprovalAlert && (
@@ -418,7 +418,6 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "20px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
@@ -434,7 +433,6 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "15px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
@@ -449,7 +447,6 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                padding: "0px 10px",
                 ...commonStyle,
               }}
             >
@@ -477,7 +474,7 @@ const TableRowComponent = ({
           return (
             <SecondaryTableCell
               align="center"
-              style={{ ...commonStyle, maxWidth: "180px", padding: "8px" }}
+              style={{ ...commonStyle }}
             >
               <ProductionFloorNote
                 key={boardMission.id}
@@ -529,6 +526,7 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
+                  ...commonStyle,
                 backgroundColor: boardMission?.currentStationColor
                   ? boardMission?.currentStationColor
                   : index % 2 === 0
@@ -589,49 +587,8 @@ const TableRowComponent = ({
   );
 
   return (
-    <>
-      <TableRow>
-        <TableCell
-          colSpan={10}
-          style={{ padding: 0, transition: "padding 1s" }}
-        >
-          {
-            <Collapse
-              in={
-                selectedIds.length === 0 &&
-                isOver &&
-                dropArea === EDropArea.BEFORE
-              }
-            >
-              <Skeleton height={"50px"} />
-            </Collapse>
-          }
-        </TableCell>
-      </TableRow>
-      <TableRow
-        ref={ref}
-        style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px" }}
-      >
+    <React.Fragment>
         {visibleColumns.map((key) => renderCell(key))}
-      </TableRow>
-      <TableRow>
-        <TableCell
-          colSpan={10}
-          style={{ padding: 0, transition: "padding 1s" }}
-        >
-          {
-            <Collapse
-              in={
-                selectedIds.length === 0 &&
-                isOver &&
-                dropArea === EDropArea.AFTER
-              }
-            >
-              <Skeleton height={"50px"} />
-            </Collapse>
-          }
-        </TableCell>
-      </TableRow>
       <GoMakeDeleteModal
         title={t("sales.quote.simpleApproveMail")}
         yesBtn={t("modal.yes")}
@@ -656,7 +613,7 @@ const TableRowComponent = ({
           setStuckReason={setStuckReason}
         />
       </GoMakeDeleteModal>
-    </>
+    </React.Fragment>
   );
 };
 
