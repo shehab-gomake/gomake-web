@@ -620,6 +620,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenCloseOrderNotesModal={
                     onClickOpenCloseOrderNotesModal
                   }
+                  onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
                 />
               ),
@@ -1092,6 +1093,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenCloseOrderNotesModal={
                   onClickOpenCloseOrderNotesModal
                 }
+                onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />
             ),
@@ -1284,6 +1286,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal
               }
               onClickSendPayment={onClickSendPayment}
+              onOpenDuplicateModal={onOpenDuplicateModal}
             />
           ),
         }));
@@ -1783,6 +1786,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal
               }
               onOpenPackagesModal={onOpenPackagesModal}
+              onOpenDuplicateModal={onOpenDuplicateModal}
             />
           );
 
