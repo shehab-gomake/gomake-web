@@ -28,7 +28,7 @@ const OrderTableWidget = ({
 
   const filteredDocumentItems = useMemo(() => {
     return documentItems
-      .map((documentItem) => {
+      ?.map((documentItem) => {
         const filteredItems = filterItems(
           documentItem?.isReady,
           documentItem.orderItems
