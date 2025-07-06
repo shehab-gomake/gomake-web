@@ -1759,7 +1759,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote={document}
               documentType={docType}
               onClickEditQuote={onClickEditQuote}
-              onClickPdf={onClickQuotePdf}
+              onClickPdf={
+                isReceipt || isSupplierPayments
+                  ? onOpenExportReceiptPdfModal
+                  : onClickQuotePdf
+              }
               onClickDuplicate={onClickDocumentDuplicate}
               onClickLoggers={onClickDocumentLogs}
               onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
