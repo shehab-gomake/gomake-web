@@ -12,7 +12,8 @@ import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
   additionalProductItemsState,
   calculationExceptionsLogsState,
-  calculationProgressState, currentCalculatedTotalPriceState,
+  calculationProgressState,
+  currentCalculatedTotalPriceState,
   currentProductItemValuePriceState,
   lastProductItemValuePriceState,
   selectedWorkFlowState,
@@ -47,14 +48,23 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesSymbols);
-  const currentProductItemValueTotalPrice = useRecoilValue<number>(currentProductItemValuePriceState);
-  const currentCalculatedTotalPrice = useRecoilValue<number>(currentCalculatedTotalPriceState);
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(lastProductItemValuePriceState);
+  const currentProductItemValueTotalPrice = useRecoilValue<number>(
+    currentProductItemValuePriceState
+  );
+  const currentCalculatedTotalPrice = useRecoilValue<number>(
+    currentCalculatedTotalPriceState
+  );
+  const lastProductItemValueTotalPrice = useRecoilValue<number>(
+    lastProductItemValuePriceState
+  );
   const calculationProgress = useRecoilValue(calculationProgressState);
 
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
-  const [sliderCurrentProductItemValueTotalPrice, setSliderCurrentProductItemValueTotalPrice] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [
+    sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -227,11 +237,14 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       );
       if (quantityParam == null) {
         quantityParam = {
-          values: ["0"]
-        }
+          values: ["0"],
+        };
       }
-      if (quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)) {
-        quantityParam.values = ["0"]
+      if (
+        quantityParam &&
+        (quantityParam.values == null || quantityParam.values.length == 0)
+      ) {
+        quantityParam.values = ["0"];
       }
       return quantityParam;
     }
@@ -291,24 +304,22 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       const itemValuesSorted = itemValuesArray.sort().join(",");
       return (
         index ===
-        self.findIndex(
-          (t) => {
-            let tValuesArray = [];
-            try {
-              tValuesArray = JSON.parse(t.values || "[]");
-            } catch (error) {
-              console.warn("Failed to parse t.values as JSON:", t.values);
-              tValuesArray = [];
-            }
-            return (
-              t.actionName === item.actionName &&
-              t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
-              t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
-              tValuesArray.sort().join(",") === itemValuesSorted
-            );
+        self.findIndex((t) => {
+          let tValuesArray = [];
+          try {
+            tValuesArray = JSON.parse(t.values || "[]");
+          } catch (error) {
+            console.warn("Failed to parse t.values as JSON:", t.values);
+            tValuesArray = [];
           }
-        )
+          return (
+            t.actionName === item.actionName &&
+            t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
+            t?.exception?.exceptionMessage ===
+              item?.exception?.exceptionMessage &&
+            tValuesArray.sort().join(",") === itemValuesSorted
+          );
+        })
       );
     });
     if (uniqueArray) {
