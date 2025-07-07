@@ -374,7 +374,7 @@ const ButtonParameterWidget = ({
         }
         return acc;
       }, []);
-      const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds[0]);
+      const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds?.[0]);
       // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
       const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
