@@ -81,7 +81,6 @@
     "react-responsive": "^10.0.0",
     "react-signature-canvas": "^1.0.6",
     "react-test-renderer": "^18.2.0",
-    "react-virtuoso": "^4.13.0",
     "react-window": "^1.8.10",
     "recoil": "^0.7.7",
     "rsuite": "^5.70.2",
