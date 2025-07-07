@@ -5,7 +5,10 @@ const exampleTypeSelector = selector({
   key: "mySelectorExampleType",
   get: async ({ get }) => {
     const { callApi } = useGomakeAxios();
-    const res = await callApi("Get", "/v1/enum/get-enums/ExampleType");
+    const res = await callApi(
+      "Get",
+      "/v1/erp-service/product-item-value-drafts/get-proof-types"
+    );
     return res?.data?.data?.data;
   },
 });

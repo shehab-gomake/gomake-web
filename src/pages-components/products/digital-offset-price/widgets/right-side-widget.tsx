@@ -1,6 +1,12 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -18,7 +24,6 @@ import { renderExceptionMessage } from "@/utils/helpers";
 
 export const roundPrice = (price) => {
   try {
-
     if (typeof price === "string" && /[a-zA-Z]/.test(price)) {
       return NaN;
     }
@@ -39,7 +44,6 @@ export const roundPrice = (price) => {
     return price;
   }
 };
-
 
 const RightSideWidget = ({
   clasess,
@@ -293,7 +297,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-          calculationProgress.totalWorkFlowsCount && (
+            calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -324,19 +328,19 @@ const RightSideWidget = ({
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                    ((quantity &&
-                      quantity.values &&
-                      quantity.values.length &&
-                      quantity?.values[0]) ||
-                      1)
+                      ((quantity &&
+                        quantity.values &&
+                        quantity.values.length &&
+                        quantity?.values[0]) ||
+                        1)
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                    ((quantity &&
-                      quantity.values &&
-                      quantity.values.length &&
-                      quantity?.values[0]) ||
-                      1)
+                        ((quantity &&
+                          quantity.values &&
+                          quantity.values.length &&
+                          quantity?.values[0]) ||
+                          1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -381,7 +385,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE ? (
+        widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -431,20 +435,21 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
-        {
-          template?.minimumPrice > 0 && !sliderCurrentProductItemValueTotalPrice && (
+        {template?.minimumPrice > 0 &&
+          !sliderCurrentProductItemValueTotalPrice && (
             <div style={{ ...clasess.secondText, marginBottom: 10 }}>
-              {t("products.addProduct.admin.minimumPrice")} : {template?.minimumPrice}
+              {t("products.addProduct.admin.minimumPrice")} :{" "}
+              {template?.minimumPrice}
             </div>
-          )
-        }
-        {
-          template?.minimumPrice > 0 && sliderCurrentProductItemValueTotalPrice && workFlows?.length > 0 && (
+          )}
+        {template?.minimumPrice > 0 &&
+          sliderCurrentProductItemValueTotalPrice &&
+          workFlows?.length > 0 && (
             <div style={{ ...clasess.secondText, marginBottom: 10 }}>
-              {t("dashboard.calculatedPrice")} : {workFlows[0]?.calculatedTotalPriceBeforeProductMinimumPriceCheck}
+              {t("dashboard.calculatedPrice")} :{" "}
+              {workFlows[0]?.calculatedTotalPriceBeforeProductMinimumPriceCheck}
             </div>
-          )
-        }
+          )}
         {/* Slider */}
         {priceChangePercents?.minPercent !== null &&
           priceChangePercents?.maxPercent !== null && (
@@ -595,13 +600,12 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={sampleType}
-                  options={exampleTypeValues.map((option) => ({
-                    ...option,
-                    text:
-                      option.value === "Full"
-                        ? t("products.offsetPrice.admin.Physical")
-                        : t("products.offsetPrice.admin.Digital"),
-                  }))}
+                  options={
+                    exampleTypeValues?.map((option) => ({
+                      value: option.key,
+                      text: t(option.value),
+                    })) || []
+                  }
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.proof")}
                   style={clasess.dropDownListStyle}
@@ -668,12 +672,17 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exception?.exceptionKey,
-                              item?.exception?.values,
-                              t
-                            )}${!item?.exception?.exceptionKey ? renderValues(item?.exception?.values) : ''}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${
+                            item?.exception?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exception?.exceptionKey,
+                            item?.exception?.values,
+                            t
+                          )}${
+                            !item?.exception?.exceptionKey
+                              ? renderValues(item?.exception?.values)
+                              : ""
+                          }`}
                         </div>
                       </div>
                     </div>
@@ -700,12 +709,17 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exceptionKey,
-                              item?.values,
-                              t
-                            )}${!item?.exceptionKey ? renderValues(item?.values) : ''}`}
+                          {`${
+                            item?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exceptionKey,
+                            item?.values,
+                            t
+                          )}${
+                            !item?.exceptionKey
+                              ? renderValues(item?.values)
+                              : ""
+                          }`}
                         </div>
                       </div>
                     </div>
