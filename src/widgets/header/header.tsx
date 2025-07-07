@@ -1,33 +1,28 @@
-import { useTranslation } from "react-i18next";
-import { Avatar, IconButton, MenuItem, Stack } from "@mui/material";
-import { EditIcon } from "@/icons";
+import { Avatar, Badge, IconButton, MenuItem, Stack } from "@mui/material";
+import { EditIcon, Notifications } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
 import { ColoredCycle, GoMakeMenu } from "@/components";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
-import { showTourModalState } from "@/store/tour-state";
 import { HelpIcon } from "@/icons/help-icon";
-import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
-import { useRouter } from "next/router";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
-import { PrimaryButton } from "@/components/button/primary-button";
-import { CalendarToday } from "@mui/icons-material";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 
 const HeaderWidget = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const { primaryColor, successColor, warningColor } = useGomakeTheme();
   const {
+    t,
     user,
     open,
     anchorEl,
@@ -37,12 +32,9 @@ const HeaderWidget = () => {
     openNotify,
     anchorNotifyEl,
     handleCloseNotify,
-    handleClickSupport,
-    openSupport,
-    anchorSupportEl,
-    handleCloseSupport,
+    handleClickNotify,
   } = useHeader();
-  const setShowTourModal = useSetRecoilState(showTourModalState);
+
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
       <Avatar style={classes.avatarProps} src={userProfile.imagePath} />
@@ -57,9 +49,6 @@ const HeaderWidget = () => {
       </Avatar>
     );
   };
-
-  const currentPath = useRecoilValue(currentPathState);
-  const router = useRouter();
 
   return (
     <div style={classes.container}>
@@ -79,21 +68,12 @@ const HeaderWidget = () => {
         {t("Book a demo")}
       </a> */}
 
-      {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
-        {/*<IconButton style={{ padding: "2px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
-        {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
-        {/*</IconButton>*/}
         <MessengerNotifications />
         <SystemNotifications />
-        <IconButton
-          style={{ padding: "2px" }}
-          data-tour={"start-tour-btn"}
-          onClick={handleClickSupport}
-        >
-          <HelpIcon width={32} height={32} />
-        </IconButton>
+        <SystemHelp />
+
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
             style={classes.iconBtnContainer}
@@ -102,12 +82,7 @@ const HeaderWidget = () => {
             <CartIcon width={32} height={32} />
           </IconButton>
         )}
-        {/* <IconButton>
-          <Messages />
-        </IconButton> */}
-        {/* <IconButton onClick={handleClickNotify}>
-          <Notifications />
-        </IconButton> */}
+
         <div style={classes.profileContainer}>
           <IconButton style={{ padding: "2px" }} onClick={handleClick}>
             {userAvatar()}
@@ -155,7 +130,9 @@ const HeaderWidget = () => {
           </MenuItem>
         </div>
       </GoMakeMenu>
-      <GoMakeMenu
+
+      {/* nice Menu */}
+      {/* <GoMakeMenu
         handleClose={handleCloseNotify}
         open={openNotify}
         anchorEl={anchorNotifyEl}
@@ -245,39 +222,7 @@ const HeaderWidget = () => {
             <MarkIcon />
           </MenuItem>
         </div>
-      </GoMakeMenu>
-      <GoMakeMenu
-        handleClose={handleCloseSupport}
-        open={openSupport}
-        anchorEl={anchorSupportEl}
-      >
-        <div style={classes.mainMenuContainer}>
-          <MenuItem
-            style={classes.logoutContainer}
-            onClick={() =>
-              navigate(
-                `/customer-service?from=${encodeURIComponent(currentPath)}`
-              )
-            }
-          >
-            <div style={classes.logoutContainer}>
-              {t("header.customerSupport")}
-            </div>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem
-            style={classes.logoutContainer}
-            onClick={() => {
-              // setShowTourModal(true);
-              window.open("https://gomake.document360.io", "_blank");
-            }}
-          >
-            <div style={classes.logoutContainer}>
-              {t("header.guideAndTutorial")}
-            </div>
-          </MenuItem>
-        </div>
-      </GoMakeMenu>
+      </GoMakeMenu> */}
     </div>
   );
 };
