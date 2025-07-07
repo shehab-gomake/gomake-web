@@ -206,6 +206,44 @@ const ProductionFloorWidget = () => {
     setIsScanningFlag(true); // Show the scanner again
   };
 
+  const [barcode, setBarcode] = useState('');
+  const [scanBuffer, setScanBuffer] = useState('');
+  const [timeoutId, setTimeoutId] = useState(null);
+  console.log("scanBuffer", { scanBuffer, barcode });
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Clear previous timeout if exists
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      // Detect Enter key for scan completion
+      if (event.keyCode === 13 && scanBuffer.length > 0) {
+        setBarcode(scanBuffer);
+        setScanBuffer(''); // Clear buffer for next scan
+        return;
+      }
+
+      // Append character to buffer
+      setScanBuffer((prevBuffer) => prevBuffer + String.fromCharCode(event.keyCode));
+
+      // Set timeout to detect human typing
+      const newTimeoutId = setTimeout(() => {
+        setScanBuffer(''); // Clear buffer if no further keys are pressed
+      }, 100); // Adjust timeout as needed
+      setTimeoutId(newTimeoutId);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [scanBuffer, timeoutId]);
+
   return (
     <Stack
       padding={"0 20px"}
