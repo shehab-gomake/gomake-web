@@ -143,7 +143,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -1557,6 +1556,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       productTemplate?.productItemValue?.itemParmetersValues?.length > 0 &&
       subProducts?.length == 0
     ) {
+      const sizeParameterFromTemplate = findParameterByCode(productTemplate, "size");
+      const sizeParameterFromTemplateFilterdValues = sizeParameterFromTemplate?.valuesConfigs?.filter(
+        (item) => !item.isHidden
+      );
       setSubProducts((prev) => {
         return prev.map((subProduct) => {
           const filteredParameters = productTemplate?.productItemValue?.itemParmetersValues?.filter(
@@ -1565,15 +1568,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           // Add isDisabled logic for size parameters
           const processedParameters = filteredParameters?.map((item) => {
-            // Check if there's a size parameter with values[0] !== "custom"
+            // Check if there's a size parameter
             const sizeParameter = filteredParameters?.find(param => param.parameterCode === "size");
-            const shouldDisableWidthHeight = sizeParameter &&
-              sizeParameter.values &&
-              sizeParameter.values.length > 0 &&
-              sizeParameter.values[0] !== 'اختياري' &&
-              sizeParameter.values[0] !== 'custom'
 
-            // Disable Width and Height parameters when size parameter has non-custom value
+            let shouldDisableWidthHeight = false;
+
+            if (sizeParameter && sizeParameter.valueIds && sizeParameter.valueIds.length > 0) {
+              // Find the item from sizeParameterFromTemplateFilterdValues where id === valueIds[0]
+              const selectedSizeItem = sizeParameterFromTemplateFilterdValues?.find(
+                templateItem => templateItem.id === sizeParameter.valueIds[0]
+              );
+
+              // Check if the found item has values !== {}
+              if (selectedSizeItem && Object.keys(selectedSizeItem.values || {}).length > 0) {
+                shouldDisableWidthHeight = true;
+              }
+            }
+
+            // Disable Width and Height parameters when size parameter has predefined values
             if ((item.parameterCode === "Width" || item.parameterCode === "Height") && shouldDisableWidthHeight) {
               return {
                 ...item,
@@ -4431,7 +4443,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
-      console.log("tempdatadata", data);
       if (subSectionParameter && data?.values !== null && data?.valueIds !== null) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
