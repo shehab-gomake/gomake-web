@@ -89,7 +89,7 @@ const PaymentModal = ({
       onClose={handleModalClose}
     >
       <div style={classes.boxStyle}>
-        <div style={classes.firstSection}>
+        <div className={`custom-scroller`} style={classes.firstSection}>
           <PrimaryTabsComponent
             tabs={tabs}
             selectedTabIndex={selectedTab}
