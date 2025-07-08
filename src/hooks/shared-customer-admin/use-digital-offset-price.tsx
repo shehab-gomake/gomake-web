@@ -5897,8 +5897,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
             });
           }
-          //const docType = +(router?.query?.documentType || 0);
-          //const documentItemId = router?.query?.documentItemId;
+          const docType = +(router?.query?.documentType || 0);
+          const documentItemId = router?.query?.documentItemId;
           const conn = generateConnectionId(connectionId);
           setCurrentSignalRConnectionId(conn);
           const res: any = await callApi(
