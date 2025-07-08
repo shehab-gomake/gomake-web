@@ -40,6 +40,7 @@ const useCustomerCard = ({
   isgetAllCustomers,
   isFromCartPage,
   onChangeSelectBusiness,
+  openModal
 }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
@@ -581,8 +582,10 @@ const useCustomerCard = ({
   };
 
   useEffect(() => {
-    getClientsGroups();
-  }, []);
+    if (openModal) {
+      getClientsGroups();
+    }
+  }, [openModal]);
 
   const [newGroupId, setNewGroupId] = useState("");
   const addGroupName = useCallback(async (data: string) => {

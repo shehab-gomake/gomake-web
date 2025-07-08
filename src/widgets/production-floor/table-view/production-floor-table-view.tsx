@@ -107,18 +107,18 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const matchSearch = (mission) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-          search
-        ) ||
-          `${mission.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${mission.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          mission.automatedTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          ) ||
-          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        search
+      ) ||
+      `${mission.clientName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      `${mission.productName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(search.toLowerCase())
+      ) ||
+      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(
@@ -165,7 +165,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
   useEffect(() => {
     const loadColumnSettings = async () => {
       try {
-        const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+        const res = await getProductionFloorTableSettingsApi(callApi, () => { });
         const saved: ColumnSetting[] = res?.data;
 
         if (saved && saved.length > 0) {
