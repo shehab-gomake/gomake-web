@@ -113,11 +113,9 @@ const useStyle = () => {
         width: "100%",
       },
       firstSection: {
-        // minHeight: "65%",
-        // height: "65%",
-        // overflow: "hidden" as "hidden",
-        height: "calc(100vh - 500px)",
-        overflow: "scroll",
+        minHeight: "65%",
+        height: "65%",
+        overflow: "auto",
       },
       iconStyle: {
         width: 62,
