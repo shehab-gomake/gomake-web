@@ -52,28 +52,11 @@ const HeaderWidget = () => {
 
   return (
     <div style={classes.container}>
-      {/* <a
-        href="https://calendly.com/gomakeinc/intro-to-gomake?month=2025-04"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={classes.bookADemo}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFC107"; // hover effect
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFF";
-        }}
-      >
-        <CalendarToday style={{ fontSize: 18 }} />
-        {t("Book a demo")}
-      </a> */}
-
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
         <MessengerNotifications />
         <SystemNotifications />
         <SystemHelp />
-
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
             style={classes.iconBtnContainer}
@@ -82,7 +65,6 @@ const HeaderWidget = () => {
             <CartIcon width={32} height={32} />
           </IconButton>
         )}
-
         <div style={classes.profileContainer}>
           <IconButton style={{ padding: "2px" }} onClick={handleClick}>
             {userAvatar()}
@@ -130,99 +112,6 @@ const HeaderWidget = () => {
           </MenuItem>
         </div>
       </GoMakeMenu>
-
-      {/* nice Menu */}
-      {/* <GoMakeMenu
-        handleClose={handleCloseNotify}
-        open={openNotify}
-        anchorEl={anchorNotifyEl}
-      >
-        <div style={classes.mainMenuContainer2}>
-          <div style={classes.notificationTextStyle}>{t("Notifications")}</div>
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={successColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  Follow up for jobs that you started it
-                </h3>
-              </div>
-              <Stack direction="row" gap={"8px"} padding={"0px 0px 0px 64px"}>
-                <SecondaryButton
-                  variant="contained"
-                  style={classes.acceptBtnStyle}
-                >
-                  Accept
-                </SecondaryButton>
-                <SecondaryButton
-                  variant="outlined"
-                  style={classes.rejectBtnStyle}
-                >
-                  Reject
-                </SecondaryButton>
-              </Stack>
-              <h3 style={classes.subTextStyle}>Today at 9:42 AM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={successColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  Your quote just has been{" "}
-                  <span style={{ color: successColor(500) }}>approved</span>,
-                  you can move to next step
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={warningColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  your newest quotes is waiting for payment, check your quote
-                  process
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={primaryColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  a quote that you created it need for manager approval, stay
-                  tuned for new events
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.footerItemContainer}>
-            <div style={classes.footerTextStyle}>{t("Mark all as read")}</div>
-            <MarkIcon />
-          </MenuItem>
-        </div>
-      </GoMakeMenu> */}
     </div>
   );
 };

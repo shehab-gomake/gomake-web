@@ -16,7 +16,12 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(600),
         gap: "8px",
+        paddingTop: "12px",
+        paddingBottom: "12px",
+        paddingLeft: "16px",
+        paddingRight: "16px",
       },
+
       lineContainer: {
         display: "flex",
         width: "100%",

@@ -14,6 +14,18 @@ const SystemHelp = () => {
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
   const currentPath = useRecoilValue(currentPathState);
+  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
+    null
+  );
+  const openSupport = Boolean(anchorSupportEl);
+
+  const handleClickSupport = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorSupportEl(event.currentTarget);
+  };
+
+  const handleCloseSupport = () => {
+    setAnchorSupportEl(null);
+  };
 
   const helpMenuList = [
     {
@@ -34,18 +46,6 @@ const SystemHelp = () => {
     },
   ];
 
-  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
-    null
-  );
-  const openSupport = Boolean(anchorSupportEl);
-
-  const handleClickSupport = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorSupportEl(event.currentTarget);
-  };
-
-  const handleCloseSupport = () => {
-    setAnchorSupportEl(null);
-  };
   return (
     <Badge
       color="error"
@@ -64,6 +64,7 @@ const SystemHelp = () => {
         handleClose={handleCloseSupport}
         open={openSupport}
         anchorEl={anchorSupportEl}
+        noListPadding={true}
       >
         {helpMenuList?.map((item, index) => {
           return (
