@@ -9,11 +9,17 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useStyle } from "../style";
 import QuestionMarkRoundedIcon from "@mui/icons-material/QuestionMarkRounded";
 import { CustomTooltip } from "../../header";
+import { WhatsNewModal } from "./whats-new-modal";
+import { useModal } from "@/hooks/use-modal";
+import { lastVersionState } from "@/store/last-version-state";
 
 const SystemHelp = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
+  const whatsNewModal = useModal();
+  const version = useRecoilValue(lastVersionState);
+
   const currentPath = useRecoilValue(currentPathState);
   const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
     null
@@ -42,8 +48,8 @@ const SystemHelp = () => {
     },
     {
       key: "whatsNew",
-      name: t("What's New"),
-      onclick: () => {},
+      name: t("header.whatsNew"),
+      onclick: () => whatsNewModal.open(),
     },
   ];
 
@@ -52,7 +58,7 @@ const SystemHelp = () => {
       color="error"
       overlap="circular"
       variant="dot"
-      // invisible={!isShowCustomerBadge}
+      invisible={!version?.isShowWhatsNewBadge}
     >
       <CustomTooltip title={t("header.help")} arrow>
         <IconButton
@@ -80,7 +86,8 @@ const SystemHelp = () => {
                 <div style={classes.logoutContainer}>{item?.name}</div>
                 {item?.key === "whatsNew" && (
                   <Badge
-                    badgeContent="5+"
+                    invisible={!version?.isShowWhatsNewBadge}
+                    badgeContent={version?.whatsNewBadgeCount}
                     color="error"
                     sx={{
                       "& .MuiBadge-badge": {
@@ -102,6 +109,10 @@ const SystemHelp = () => {
           );
         })}
       </GoMakeMenu>
+      <WhatsNewModal
+        open={whatsNewModal.isOpen}
+        onClose={whatsNewModal.close}
+      />
     </Badge>
   );
 };
