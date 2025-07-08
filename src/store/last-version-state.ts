@@ -16,6 +16,12 @@ export interface ILastVersionState {
   whatsNewBadgeCount: number;
 }
 
+export enum ChangeType {
+  BugFix = 1,
+  Improvement = 2,
+  Feature = 3,
+}
+
 export const lastVersionState = atom<ILastVersionState | null>({
   key: "lastVersionState",
   default: null,

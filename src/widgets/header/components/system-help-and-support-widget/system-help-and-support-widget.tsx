@@ -1,8 +1,8 @@
 import { Badge, IconButton, MenuItem } from "@mui/material";
 import { useState } from "react";
-import { useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { GoMakeMenu } from "@/components";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -12,13 +12,15 @@ import { CustomTooltip } from "../../header";
 import { WhatsNewModal } from "./whats-new-modal";
 import { useModal } from "@/hooks/use-modal";
 import { lastVersionState } from "@/store/last-version-state";
+import { updateUserVersionApi } from "@/services/api-service/gomake-versioning/gomake-versioning-endpoint";
 
 const SystemHelp = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
   const whatsNewModal = useModal();
-  const version = useRecoilValue(lastVersionState);
+  const [version, setVersion] = useRecoilState(lastVersionState);
+  const { callApi } = useGomakeAxios();
 
   const currentPath = useRecoilValue(currentPathState);
   const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
@@ -34,6 +36,22 @@ const SystemHelp = () => {
     setAnchorSupportEl(null);
   };
 
+  const updateUserVersion = async () => {
+    await updateUserVersionApi(callApi, (res) => {});
+  };
+
+  const handleWhatsNewClick = async () => {
+    if (version?.isShowWhatsNewBadge) {
+      await updateUserVersion();
+      setVersion({
+        ...version,
+        isShowWhatsNewBadge: false,
+        whatsNewBadgeCount: 0,
+      });
+    }
+    whatsNewModal.open();
+  };
+
   const helpMenuList = [
     {
       name: t("header.customerSupport"),
@@ -47,9 +65,8 @@ const SystemHelp = () => {
       },
     },
     {
-      key: "whatsNew",
       name: t("header.whatsNew"),
-      onclick: () => whatsNewModal.open(),
+      onclick: handleWhatsNewClick,
     },
   ];
 
@@ -84,10 +101,14 @@ const SystemHelp = () => {
                 style={classes.menuItem}
               >
                 <div style={classes.logoutContainer}>{item?.name}</div>
-                {item?.key === "whatsNew" && (
+                {index === 2 && (
                   <Badge
                     invisible={!version?.isShowWhatsNewBadge}
-                    badgeContent={version?.whatsNewBadgeCount}
+                    badgeContent={
+                      version?.whatsNewBadgeCount > 1
+                        ? `${version.whatsNewBadgeCount}+`
+                        : version?.whatsNewBadgeCount
+                    }
                     color="error"
                     sx={{
                       "& .MuiBadge-badge": {
@@ -112,6 +133,7 @@ const SystemHelp = () => {
       <WhatsNewModal
         open={whatsNewModal.isOpen}
         onClose={whatsNewModal.close}
+        version={version}
       />
     </Badge>
   );
