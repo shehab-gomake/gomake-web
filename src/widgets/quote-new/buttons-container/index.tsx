@@ -182,10 +182,10 @@ const ButtonsContainer = ({
 
   const handleOrderNowClick = () => {
     if (checkIsAgentRequired && isAgentEmpty) {
-      alertFault(t("sales.cart.addExitingItems"));
+      alertFault(t("sales.cart.agentIsRequired"));
     }
     else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
-      alertFault("Delivery date is required for this document");
+      alertFault("sales.cart.deliveryDateIsRequired");
     }
     else {
       onClickOpenOrderNowModal(false)
