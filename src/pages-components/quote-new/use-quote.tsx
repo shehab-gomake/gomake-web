@@ -658,12 +658,13 @@ const useQuoteNew = ({
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateCurrency(null);
 
-      if (
-        !quoteItemValue?.documentItems ||
-        quoteItemValue.documentItems.length === 0
-      ) {
-        return; // Skip the API call
-      }
+      // if (
+      //   !quoteItemValue?.documentItems ||
+      //   quoteItemValue.documentItems.length === 0
+      // ) {
+      //   return; // Skip the API call
+      // }
+
       getCalculateQuoteItem(
         updatedQuoteItemValue,
         4,
