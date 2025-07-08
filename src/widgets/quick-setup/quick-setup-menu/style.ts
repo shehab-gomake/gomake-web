@@ -22,7 +22,7 @@ const useStyle = (isRtl: boolean) => {
         position: "fixed",
         top: 9,
         [isRtl ? "left" : "right"]: 1,
-        [isRtl ? "marginLeft" : "marginRight"]: "230px",
+        [isRtl ? "marginLeft" : "marginRight"]: "265px",
         display: "flex",
         alignItems: "center",
         gap: 1.5,

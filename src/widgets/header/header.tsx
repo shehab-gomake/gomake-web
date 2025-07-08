@@ -1,39 +1,46 @@
-import { Avatar, Badge, IconButton, MenuItem, Stack } from "@mui/material";
-import { EditIcon, Notifications } from "@/icons";
+import {
+  Avatar,
+  IconButton,
+  MenuItem,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+} from "@mui/material";
+import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
-import { ColoredCycle, GoMakeMenu } from "@/components";
+import { GoMakeMenu } from "@/components";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import { MarkIcon } from "@/icons/mark-icon";
-import { HelpIcon } from "@/icons/help-icon";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
+
+export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#2f2f2f",
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 500,
+    padding: "6px 10px",
+    borderRadius: 6,
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "#2f2f2f",
+  },
+}));
 
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
-  const { primaryColor, successColor, warningColor } = useGomakeTheme();
-  const {
-    t,
-    user,
-    open,
-    anchorEl,
-    handleClick,
-    handleClose,
-    navigate,
-    openNotify,
-    anchorNotifyEl,
-    handleCloseNotify,
-    handleClickNotify,
-  } = useHeader();
+  const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
+    useHeader();
 
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
@@ -56,20 +63,26 @@ const HeaderWidget = () => {
       <div style={classes.rightSideContainer}>
         <MessengerNotifications />
         <SystemNotifications />
-        <SystemHelp />
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
-            style={classes.iconBtnContainer}
+            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
             onClick={() => navigate("/quote")}
           >
-            <CartIcon width={32} height={32} />
+            <CartIcon />
           </IconButton>
         )}
+        <SystemHelp />
+        <div style={classes.verticalDivider} />
         <div style={classes.profileContainer}>
-          <IconButton style={{ padding: "2px" }} onClick={handleClick}>
-            {userAvatar()}
-          </IconButton>
-          {/* <div style={classes.userNameStyle}>{user?.displayName}</div> */}
+          <CustomTooltip
+            title={`${user?.firstName} ${user?.lastName}`}
+            arrow
+            placement={"bottom-start"}
+          >
+            <IconButton style={{ padding: "2px" }} onClick={handleClick}>
+              {userAvatar()}
+            </IconButton>
+          </CustomTooltip>
         </div>
       </div>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>

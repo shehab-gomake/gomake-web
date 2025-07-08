@@ -4,10 +4,11 @@ import { useGomakeRouter } from "@/hooks";
 import { GoMakeMenu } from "@/components";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
-import { HelpIcon } from "@/icons/help-icon";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStyle } from "../style";
+import QuestionMarkRoundedIcon from "@mui/icons-material/QuestionMarkRounded";
+import { CustomTooltip } from "../../header";
 
 const SystemHelp = () => {
   const { t } = useTranslation();
@@ -53,13 +54,15 @@ const SystemHelp = () => {
       variant="dot"
       // invisible={!isShowCustomerBadge}
     >
-      <IconButton
-        style={{ padding: "2px" }}
-        data-tour={"start-tour-btn"}
-        onClick={handleClickSupport}
-      >
-        <HelpIcon width={32} height={32} />
-      </IconButton>
+      <CustomTooltip title={t("header.help")} arrow>
+        <IconButton
+          style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+          data-tour={"start-tour-btn"}
+          onClick={handleClickSupport}
+        >
+          <QuestionMarkRoundedIcon style={{ width: 22, height: 22 }} />
+        </IconButton>
+      </CustomTooltip>
       <GoMakeMenu
         handleClose={handleCloseSupport}
         open={openSupport}
