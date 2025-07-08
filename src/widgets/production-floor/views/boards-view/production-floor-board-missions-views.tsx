@@ -29,7 +29,7 @@ const ProductionFloorBoardMissionsViews = ({
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
 
   useEffect(() => {
-    if (!!connectionId) {
+    if (!!connectionId && !isSocketUpdateJobsTable) {
       setLoading(true);
       getData(connectionId).then(() => setLoading(false));
     }
@@ -37,8 +37,8 @@ const ProductionFloorBoardMissionsViews = ({
 
   useEffect(() => {
     if (!!isSocketUpdateJobsTable) {
-      setLoading(true);
-      getData(connectionId).then(() => setLoading(false));
+      // setLoading(true);
+      getData(connectionId);
       setIsSocketUpdateJobsTable(false)
     }
   }, [connectionId, isSocketUpdateJobsTable]);

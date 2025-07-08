@@ -28,8 +28,6 @@ import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-repo
 import { ClientBalance } from "./components/client-balance/client-balance";
 import { ClientTypeModal } from "../client-types/components/add-edit-client-type-modal";
 import { PlusIcon } from "@/icons";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   customerAction: CUSTOMER_ACTIONS;
@@ -138,6 +136,7 @@ const CustomerCardWidget = ({
     isgetAllCustomers,
     isFromCartPage,
     onChangeSelectBusiness,
+    openModal
   });
   const [inputValue, setInputValue] = useState("");
 
@@ -349,8 +348,10 @@ const CustomerCardWidget = ({
   };
 
   useEffect(() => {
-    getAllShipmentTypes();
-  }, []);
+    if (openModal) {
+      getAllShipmentTypes();
+    }
+  }, [openModal]);
 
   return (
     <GoMakeModal
@@ -455,12 +456,12 @@ const CustomerCardWidget = ({
                       ) || inputValue === ""
                         ? clientGroupList
                         : [
-                            {
-                              groupName: `Add "${inputValue}" as a new group`,
-                              id: "new",
-                            },
-                            ...clientGroupList,
-                          ]
+                          {
+                            groupName: `Add "${inputValue}" as a new group`,
+                            id: "new",
+                          },
+                          ...clientGroupList,
+                        ]
                     }
                     placeholder={t("products.profits.exceptions.groupBy")}
                     style={classes.dropDownListStyle}

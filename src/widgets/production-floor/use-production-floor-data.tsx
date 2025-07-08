@@ -86,7 +86,6 @@ const useProductionFloorData = () => {
     selectedGroupIdState
   );
   const view = useRecoilValue(productionFloorViewState);
-
   const getData = async (connectionId?: string) => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
       getDataByGroups(connectionId, filtersState).then();
@@ -411,9 +410,9 @@ const useProductionFloorData = () => {
       pageSize: pageSizeInput ?? pageSize,
       search:
         patternSearchInput !== null &&
-        patternSearchInput !== undefined &&
-        patternSearchInput !== "" ?
-        patternSearchInput : "",
+          patternSearchInput !== undefined &&
+          patternSearchInput !== "" ?
+          patternSearchInput : "",
     };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
