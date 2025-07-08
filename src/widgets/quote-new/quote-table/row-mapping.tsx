@@ -160,7 +160,7 @@ const RowMappingWidget = ({
             {!item?.childsDocumentItems && (
               <div style={{ width: "32px", height: "32px" }} />
             )}
-            {!item?.isClosed &&
+            {
               <Checkbox
                 icon={<CheckboxIcon />}
                 checkedIcon={
@@ -169,7 +169,7 @@ const RowMappingWidget = ({
                   />
                 }
                 checked={isSelected}
-                disabled={item?.isConfirmedByClient ? true : false}
+                disabled={item?.isConfirmedByClient || item?.isClosed ? true : false}
                 onChange={(e) =>
                   handleChangeSelectedItem(e.target.checked, item?.id)
                 }
