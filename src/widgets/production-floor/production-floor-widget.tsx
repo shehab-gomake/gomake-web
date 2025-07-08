@@ -26,7 +26,7 @@ import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-import { getBoardMissionsIdByQrCodeApi, moveBoardMissionActionToDoneUsingBarcodeApi, toggleBoardMissionsActionTimer, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { getBoardMissionsIdByQrCodeApi, handleBoardMissionsBarcodeActions, moveBoardMissionActionToDoneUsingBarcodeApi, toggleBoardMissionsActionTimer, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
@@ -206,10 +206,24 @@ const ProductionFloorWidget = () => {
     setIsScanningFlag(true); // Show the scanner again
   };
 
+  const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
+    barcode = barcode.replace(/½/g, '-');
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await handleBoardMissionsBarcodeActions(callApi, callBack, {
+      barcode
+    });
+  };
+
   const [barcode, setBarcode] = useState('');
   const [scanBuffer, setScanBuffer] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
-  console.log("scanBuffer", { scanBuffer, barcode });
+  console.log("scanBuffer", { scanBuffer, barcode, timeoutId });
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Clear previous timeout if exists
@@ -220,6 +234,7 @@ const ProductionFloorWidget = () => {
       // Detect Enter key for scan completion
       if (event.keyCode === 13 && scanBuffer.length > 0) {
         setBarcode(scanBuffer);
+        handleBoardMissionsBarcodeActionsApi(scanBuffer);
         setScanBuffer(''); // Clear buffer for next scan
         return;
       }

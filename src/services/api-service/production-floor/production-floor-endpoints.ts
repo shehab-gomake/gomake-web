@@ -41,6 +41,8 @@ const CANCEL_BOARD_MISSIONS_ACTION_DONE =
   "/v1/erp-service/board-missions-actions/back-to-in-process/";
 const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE =
   "/v1/erp-service/board-missions-actions/update-action-employee";
+const HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS =
+  "/v1/erp-service/board-missions-actions/handle-board-missions-barcode-actions";
 const UPDATE_BOARD_MISSIONS_ACTION_MACHINE =
   "/v1/erp-service/board-missions-actions/update-action-machine";
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL =
@@ -593,6 +595,20 @@ const boardMissionsUpdateActionEmployee: ICallAndSetData = async (
   );
 };
 
+const handleBoardMissionsBarcodeActions: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS,
+    callBack,
+    data
+  );
+};
+
 const boardMissionsUpdateActionMachine: ICallAndSetData = async (
   callApi,
   callBack,
@@ -807,6 +823,7 @@ const updateProductionFloorNotesApi: ICallAndSetData = async (
 
 export {
   boardMissionsUpdateActionEmployee,
+  handleBoardMissionsBarcodeActions,
   boardMissionsUpdateActionMachine,
   getProductionFloorData,
   updateBoardsMissionsStatusApi,
