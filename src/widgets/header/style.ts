@@ -22,12 +22,12 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        paddingBottom: 7,
-        paddingTop: 10,
+        paddingBottom: 5,
+        paddingTop: 5,
         // height: convertHeightToVH(HEADER_HEIGHT),
         // maxHeight: convertHeightToVH(HEADER_HEIGHT),
         backgroundColor: "#FFFFFF",
-        paddingLeft: 20,
+        paddingLeft: 12,
         paddingRight: 12,
         marginBottom: 20,
       },
@@ -57,6 +57,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 14,
+        // marginLeft: 10,
       },
       userNameStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
@@ -141,8 +142,8 @@ const useStyle = () => {
         backgroundColor: "#cccccc",
       },
       avatarProps: {
-        width: 32,
-        height: 32,
+        width: 34,
+        height: 34,
         fontSize: "11px",
       },
       menuItemTextStyle: {
@@ -205,6 +206,12 @@ const useStyle = () => {
         fontSize: "14px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         transition: "all 0.2s ease",
+      },
+      verticalDivider: {
+        width: "1px",
+        height: "24px",
+        backgroundColor: "#D0D5DD",
+        margin: "0 8px",
       },
     };
   }, [i18next.language, t]);
