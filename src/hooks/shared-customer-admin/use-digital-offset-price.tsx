@@ -349,6 +349,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts, widgetType]);
   const [isCanGetSelected, setIsCanGetSelected] = useState(false);
+  const [isFirstTimeEnterPageWhenEdit, setIsFirstTimeEnterPageWhenEdit] = useState(true);
   useEffect(() => {
     if (
       widgetType == EWidgetProductType.EDIT ||
@@ -363,7 +364,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       calculationResult.productItemValueDraftId ===
         currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
-      !productTemplate?.isHaveFixedAction
+      !productTemplate?.isHaveFixedAction &&
+      !isFirstTimeEnterPageWhenEdit
     ) {
       getSelectedWorkFlow(
         calculationResult.signalRConnectionId,
@@ -374,7 +376,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         calculationResult?.isNeedPriceUpdate
       );
     }
-    if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
+    if (productTemplate?.isHaveFixedAction && isCanGetSelected && !isFirstTimeEnterPageWhenEdit) {
       getSelectedWorkFlow(
         calculationResult.signalRConnectionId,
         calculationResult?.isNeedPriceUpdate
@@ -5387,6 +5389,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       removeHiddenParameters(temp2, productTemplateCopy);
       setupdatedProductTemplate(updatedProductTemplate);
       setCanCalculation(true);
+      setIsFirstTimeEnterPageWhenEdit(false);
     }
   };
   const onCloseMakeShape = () => {
