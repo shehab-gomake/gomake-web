@@ -165,7 +165,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryOrderNumber,
     deliveryCustomerId,
   } = query;
-  const { errorColor } = useGomakeTheme();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
     useDateFormat();
 
@@ -2692,8 +2692,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const [moveToReadyOption, setMoveToReadyOption] = useState<
+    "withMessage" | "withoutMessage"
+  >("withoutMessage");
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMoveToReadyOption(
+      event.target.value as "withMessage" | "withoutMessage"
+    );
+  };
+
   const handleCheckboxChange = () => {
-    setIsMoveToReady(!isMoveToReady);
+    const newValue = !isMoveToReady;
+    setIsMoveToReady(newValue);
+
+    if (newValue) {
+      setMoveToReadyOption("withoutMessage"); // default to "without message" when checked
+    }
   };
 
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
@@ -3417,6 +3432,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setColumnVisibility,
     callApi,
     onClickOpenMoveOrderToReadyModal,
+    moveToReadyOption,
+    setMoveToReadyOption,
+    handleRadioChange,
+    primaryColor,
   };
 };
 
