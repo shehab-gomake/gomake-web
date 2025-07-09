@@ -332,21 +332,11 @@ const PricingWidget = ({
           {
             calculationResult?.tabs?.length > 1 &&
             <Tooltip title={t("compare workFlows")}>
-              <IconButton onClick={() => setIsCompareMode(true)}>
+              <IconButton onClick={() => setIsCompareMode(!isCompareMode)}>
                 <CompareIcon style={{ color: "#2E3092" }} />
               </IconButton>
             </Tooltip>
           }
-          {isCompareMode && (
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => setIsCompareMode(false)}
-              style={{ marginLeft: 8 }}
-            >
-              {t("Cancel")}
-            </Button>
-          )}
           {deliveryDate && workFlows.length > 0 && selectedWorkFlow && (
             <Stack
               direction={"row"}
