@@ -1,7 +1,7 @@
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export enum EAccountType {
@@ -9,7 +9,7 @@ export enum EAccountType {
   CREDIT = 1,
 }
 
-const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
+const useCreateNewTransaction = ({ onCloseModal }) => {
   const { t } = useTranslation();
   const dateRef = useRef(null);
   const dueDateRef = useRef(null);
@@ -18,12 +18,36 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
   const { alertFaultAdded, alertSuccessAdded, alertRequiredFields } =
     useSnackBar();
 
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList({
-      clientType: isPurchaseReport
+  const [fromAccountType, setFromAccountType] = useState<string>();
+  const [toAccountType, setToAccountType] = useState<string>();
+
+  const {
+    renderOptions: fromRenderOptions,
+    checkWhatRenderArray: fromCheckWhatRenderArray,
+    isFetching: isFetchingFrom,
+  } = useCustomerDropDownList({
+    clientType:
+      fromAccountType === "supplier"
         ? CLIENT_TYPE.SUPPLIER
         : CLIENT_TYPE.CUSTOMER,
-    });
+    shouldRenderOnMount:
+      fromAccountType === "supplier" || fromAccountType === "client",
+    isUseRecoilState: false,
+  });
+
+  const {
+    renderOptions: toRenderOptions,
+    checkWhatRenderArray: toCheckWhatRenderArray,
+    isFetching: isFetchingTo,
+  } = useCustomerDropDownList({
+    clientType:
+      toAccountType === "supplier"
+        ? CLIENT_TYPE.SUPPLIER
+        : CLIENT_TYPE.CUSTOMER,
+    shouldRenderOnMount:
+      toAccountType === "supplier" || toAccountType === "client",
+    isUseRecoilState: false,
+  });
 
   const accountTypeList: { id: number; name: string }[] = [
     { id: EAccountType.DEBIT, name: t("reports.debit") },
@@ -92,8 +116,6 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
     setDescription("");
   };
 
-  const [fromAccountType, setFromAccountType] = useState<string>();
-  const [toAccountType, setToAccountType] = useState<string>();
   const [fromClientId, setFromClientId] = useState<string | null>(null);
   const [toClientId, setToClientId] = useState<string | null>(null);
   const [fromAccountCode, setFromAccountCode] = useState<string | null>(null);
@@ -118,12 +140,6 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
       dueDate: selectedDueDate,
       description,
     };
-
-    // if (toAccountCode !== null) transObject.toAccountCode = toAccountCode;
-    // if (fromAccountCode !== null) transObject.fromAccountCode = fromAccountCode;
-
-    // if (toClientId !== null) transObject.toClientId = toClientId;
-    // if (fromClientId !== null) transObject.fromClientId = fromClientId;
 
     if (fromAccountCode !== null) transObject.debitId = fromAccountCode;
 
@@ -160,15 +176,15 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
   const accountTypeOptions = useMemo(
     () => [
       { label: t("reports.client"), value: "client" },
+      { label: t("reports.supplier"), value: "supplier" },
       { label: t("reports.account"), value: "account" },
     ],
     [t]
   );
 
   const handleFromChange = (e: any, value: any) => {
-    if (fromAccountType === "client") {
-      // setFromClientId(value?.id ?? null);
-      setFromClientId(value?.code ?? null);
+    if (fromAccountType === "client" || fromAccountType === "supplier") {
+      setFromClientId(value?.code ?? null); // Assuming 'code' is what backend expects
       setFromAccountCode(null);
     } else if (fromAccountType === "account") {
       setFromAccountCode(value?.code ?? null);
@@ -177,8 +193,7 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
   };
 
   const handleToChange = (e: any, value: any) => {
-    if (toAccountType === "client") {
-      // setToClientId(value?.id ?? null);
+    if (toAccountType === "client" || toAccountType === "supplier") {
       setToClientId(value?.code ?? null);
       setToAccountCode(null);
     } else if (toAccountType === "account") {
@@ -201,9 +216,6 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
 
   return {
     t,
-    // erpAccountsList,
-    renderOptions,
-    checkWhatRenderArray,
     accountTypeList,
     handleClickSelectDate,
     selectDate,
@@ -217,7 +229,6 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
     onChangePrice,
     createTransactionsApi,
     onCloseAndRemoveState,
-    isFetching,
     accountTypeOptions,
     toAccountCode,
     fromAccountCode,
@@ -231,6 +242,12 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
     handleFromTypeChange,
     onChangeDescription,
     description,
+    fromRenderOptions,
+    fromCheckWhatRenderArray,
+    isFetchingFrom,
+    toRenderOptions,
+    toCheckWhatRenderArray,
+    isFetchingTo,
   };
 };
 

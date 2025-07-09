@@ -10,21 +10,16 @@ interface CreateNewTransactionModalProps {
   openModal: boolean;
   onCloseModal: () => void;
   erpAccountsList?: any;
-  isPurchaseReport?: boolean;
 }
 
 const CreateNewTransactionModal = ({
   openModal,
   onCloseModal,
   erpAccountsList,
-  isPurchaseReport,
 }: CreateNewTransactionModalProps) => {
   const { classes } = useStyle();
   const {
     t,
-    // erpAccountsList,
-    renderOptions,
-    checkWhatRenderArray,
     handleClickSelectDate,
     selectDate,
     setSelectDate,
@@ -33,7 +28,6 @@ const CreateNewTransactionModal = ({
     onChangePrice,
     createTransactionsApi,
     onCloseAndRemoveState,
-    isFetching,
     accountTypeOptions,
     toAccountCode,
     fromAccountCode,
@@ -51,12 +45,19 @@ const CreateNewTransactionModal = ({
     dueDateRef,
     onChangeDescription,
     description,
-  } = useCreateNewTransaction({ onCloseModal, isPurchaseReport });
+    fromRenderOptions,
+    fromCheckWhatRenderArray,
+    isFetchingFrom,
+    toRenderOptions,
+    toCheckWhatRenderArray,
+    isFetchingTo,
+  } = useCreateNewTransaction({ onCloseModal });
 
   const getFromSelectedValue = () => {
-    if (fromAccountType === "client") {
+    if (fromAccountType === "client" || fromAccountType === "supplier") {
       return (
-        renderOptions()?.find((option) => option?.id === fromClientId) || null
+        fromRenderOptions()?.find((option) => option?.id === fromClientId) ||
+        null
       );
     }
     return (
@@ -66,9 +67,9 @@ const CreateNewTransactionModal = ({
   };
 
   const getToSelectedValue = () => {
-    if (toAccountType === "client") {
+    if (toAccountType === "client" || toAccountType === "supplier") {
       return (
-        renderOptions()?.find((option) => option?.id === toClientId) || null
+        toRenderOptions()?.find((option) => option?.id === toClientId) || null
       );
     }
     return (
@@ -116,31 +117,35 @@ const CreateNewTransactionModal = ({
                   {fromAccountType && (
                     <div style={classes.date2FilterContainer}>
                       <h3 style={classes.filterLabelStyle}>
-                        {fromAccountType === "client"
+                        {fromAccountType === "client" ||
+                        fromAccountType === "supplier"
                           ? t(
                               `sales.quote.${
-                                isPurchaseReport
+                                fromAccountType === "supplier"
                                   ? "chooseSupplier"
                                   : "chooseCustomer"
                               }`
                             )
                           : t("reports.selectAccountCode")}
                       </h3>
-                      {fromAccountType === "client" ? (
+                      {fromAccountType === "client" ||
+                      fromAccountType === "supplier" ? (
                         <ClientAutocomplete
                           key={fromAccountType}
                           value={getFromSelectedValue()}
                           clientType={
-                            isPurchaseReport
+                            fromAccountType === "supplier"
                               ? CLIENT_TYPE.SUPPLIER
                               : CLIENT_TYPE.CUSTOMER
                           }
-                          options={renderOptions() ? renderOptions() : []}
+                          options={
+                            fromRenderOptions() ? fromRenderOptions() : []
+                          }
                           getOptionLabel={(option: any) => `${option.name}`}
-                          onChangeTextField={checkWhatRenderArray}
+                          onChangeTextField={fromCheckWhatRenderArray}
                           style={classes.textInputStyle}
                           onChange={handleFromChange}
-                          loading={isFetching}
+                          loading={isFetchingFrom}
                         />
                       ) : (
                         <GoMakeAutoComplate
@@ -176,31 +181,33 @@ const CreateNewTransactionModal = ({
                   {toAccountType && (
                     <div style={classes.date2FilterContainer}>
                       <h3 style={classes.filterLabelStyle}>
-                        {toAccountType === "client"
+                        {toAccountType === "client" ||
+                        toAccountType === "supplier"
                           ? t(
                               `sales.quote.${
-                                isPurchaseReport
+                                toAccountType === "supplier"
                                   ? "chooseSupplier"
                                   : "chooseCustomer"
                               }`
                             )
                           : t("reports.selectAccountCode")}
                       </h3>
-                      {toAccountType === "client" ? (
+                      {toAccountType === "client" ||
+                      toAccountType === "supplier" ? (
                         <ClientAutocomplete
                           key={toAccountType}
                           value={getToSelectedValue()}
                           clientType={
-                            isPurchaseReport
+                            toAccountType === "supplier"
                               ? CLIENT_TYPE.SUPPLIER
                               : CLIENT_TYPE.CUSTOMER
                           }
-                          options={renderOptions() ? renderOptions() : []}
+                          options={toRenderOptions() ? toRenderOptions() : []}
                           getOptionLabel={(option: any) => `${option.name}`}
-                          onChangeTextField={checkWhatRenderArray}
+                          onChangeTextField={toCheckWhatRenderArray}
                           style={classes.textInputStyle}
                           onChange={handleToChange}
-                          loading={isFetching}
+                          loading={isFetchingTo}
                         />
                       ) : (
                         <GoMakeAutoComplate
