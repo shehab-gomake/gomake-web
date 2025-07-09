@@ -584,7 +584,7 @@ const useProductionFloorFilters = ({
     if (isFetching) {
       getActions();
     }
-  }, [isFetching]);
+  }, []);
 
   return {
     t,
