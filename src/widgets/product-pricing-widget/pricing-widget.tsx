@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, Divider, Box, Tooltip, IconButton } from "@mui/material";
+import { Stack, ButtonGroup, Divider, Box, Tooltip, IconButton, Button } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
@@ -102,6 +102,14 @@ const PricingWidget = ({
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [isCompareMode, setIsCompareMode] = useState(false);
+  const [compareTargetIndex, setCompareTargetIndex] = useState<number | null>(null);
+
+  // Add this function for compare logic
+  const handleCompareTab = (section: any) => {
+    // TODO: Implement your compare logic here
+    console.log('Comparing with section:', section);
+  };
 
   const [openModalMachine, setOpenModalMachine] = useRecoilState(
     openModalMachineState
@@ -205,53 +213,54 @@ const PricingWidget = ({
                 {workFlows.length > 0 && selectedWorkFlow && calculationResult &&
                   !isMobileScreen &&
                   calculationResult?.tabs?.map((section, index) => (
-                    <PrimaryButton
-                      key={index}
-                      data-tour="allWorkflowsBtn"
-                      onClick={() => {
-                        if (section.isSelected) {
-                          return;
+                    <div style={{ position: "relative", display: "inline-block" }} key={index}>
+                      <PrimaryButton
+                        key={index}
+                        data-tour="allWorkflowsBtn"
+                        onClick={() => {
+                          if (section.isSelected) return;
+                          if (isCompareMode) {
+                            handleCompareTab(section);
+                            setIsCompareMode(false);
+                            return;
+                          }
+                          SelectWorkFlowById(section);
+                          if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
+                            setView(EPricingViews.SELECTED_WORKFLOW);
+                          }
+                          setSelectedTab(section);
+                        }}
+                        sx={classes.button}
+                        style={{
+                          letterSpacing: "0em",
+                          transition: "0s",
+                        }}
+                        variant={
+                          section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
+                            ? "contained"
+                            : "outlined"
                         }
-                        SelectWorkFlowById(section);
-                        if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
-                          setView(EPricingViews.SELECTED_WORKFLOW);
-                        }
-                        setSelectedTab(section);
-
-                      }}
-                      sx={classes.button}
-                      style={{
-                        letterSpacing: "0em",
-                        transition: "0s",
-
-
-                      }}
-                      variant={
-                        section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
-                          ? "contained"
-                          : "outlined"
-                      }
-                    >
-                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
-                        {
-                          section.isRecommendedBySystem &&
-                          <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
-                            <BestSellerWhiteIcon />
+                        disabled={isCompareMode && section.isSelected}
+                      >
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
+                          {section.isRecommendedBySystem && (
+                            <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
+                              <BestSellerWhiteIcon />
+                            </div>
+                          )}
+                          <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
+                            {section.isNeedTranslation
+                              ? t("workFlowTabs." + section.name)
+                              : section.name}
                           </div>
-                        }
-                        <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
-                          {section.isNeedTranslation
-                            ? t("workFlowTabs." + section.name)
-                            : section.name}
+                          {section.isSelected && (
+                            <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                              <CheckBoxAccordion />
+                            </div>
+                          )}
                         </div>
-                        {
-                          section.isSelected &&
-                          <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
-                            <CheckBoxAccordion />
-                          </div>
-                        }
-                      </div>
-                    </PrimaryButton>
+                      </PrimaryButton>
+                    </div>
                   ))}
               </ButtonGroup>
 
@@ -261,8 +270,6 @@ const PricingWidget = ({
               style={{
                 letterSpacing: "0em",
                 transition: "0s",
-
-
               }}
               variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
@@ -271,15 +278,14 @@ const PricingWidget = ({
                 updateProductItemValue(EWorkSource.OUT);
                 setIsChangeView(false);
               }}
-
+              disabled={isCompareMode}
             >
               {t("products.actions.outSource")}
-              {
-                view === EPricingViews.OUTSOURCE_WORKFLOW &&
+              {view === EPricingViews.OUTSOURCE_WORKFLOW && (
                 <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
                   <CheckBoxAccordion />
                 </div>
-              }
+              )}
             </PrimaryButton>}
             {/* Right Arrow Button */}
             {canScrollRight && (
@@ -326,11 +332,21 @@ const PricingWidget = ({
           {
             calculationResult?.tabs?.length > 1 &&
             <Tooltip title={t("compare workFlows")}>
-              <IconButton>
+              <IconButton onClick={() => setIsCompareMode(true)}>
                 <CompareIcon style={{ color: "#2E3092" }} />
               </IconButton>
             </Tooltip>
           }
+          {isCompareMode && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setIsCompareMode(false)}
+              style={{ marginLeft: 8 }}
+            >
+              {t("Cancel")}
+            </Button>
+          )}
           {deliveryDate && workFlows.length > 0 && selectedWorkFlow && (
             <Stack
               direction={"row"}
