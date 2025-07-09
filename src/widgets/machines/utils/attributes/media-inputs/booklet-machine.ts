@@ -5,6 +5,7 @@ import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-
 import { acceptedSets } from "../connection-inputs/accepted-sets";
 
 const bookletMachine = (state: Record<string, any>) => {
+    console.log("state", state);
     return [
         ...setupTimeInput(state),
         ...minMaxInput(state, 'width', 'widthInRunningDirection', EMeasurementUnits.CM),
@@ -32,6 +33,20 @@ const bookletMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: true,
+        },
+        {
+            name: "delayBetweenUnitTime",
+            label: "machineAttributes.delayBetweenUnitTime",
+            type: "number",
+            placeholder: "machineAttributes.delayBetweenUnitTime",
+            required: false,
+            parameterKey: "delayBetweenUnitTime",
+            options: [],
+            value: state?.attributes?.delayBetweenUnitTime,
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.delayBetweenUnitTime,
+            disabled: !state?.attributes?.squareSpineOption,
+            unit: EMeasurementUnits.SECOND
         },
         ...acceptedSets(state),
     ]
