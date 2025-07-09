@@ -276,9 +276,7 @@ const QuotesListPageWidget = ({
     setColumnOrder,
     setColumnVisibility,
     callApi,
-
     moveToReadyOption,
-    setMoveToReadyOption,
     handleRadioChange,
     primaryColor,
   } = useQuotes(documentType, isFromHomePage);
@@ -1036,7 +1034,6 @@ const QuotesListPageWidget = ({
         onClose={onCloseCancelReceiptModal}
         onClickDelete={onClickCancelReceipt}
       />
-      {/* !here */}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={
