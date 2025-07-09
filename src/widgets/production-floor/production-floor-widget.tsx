@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, Typography, Button } from "@mui/material";
+import { Box, IconButton, Stack, Typography, Button, CardContent, Card } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -26,7 +26,7 @@ import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-import { getBoardMissionsIdByQrCodeApi, handleBoardMissionsBarcodeActions, moveBoardMissionActionToDoneUsingBarcodeApi, toggleBoardMissionsActionTimer, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { handleBoardMissionsBarcodeActions, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
@@ -40,11 +40,6 @@ const ProductionFloorWidget = () => {
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
-
-  // const setFiles = useSetRecoilState(boardMissionsFilesState);
-  // const setStations = useSetRecoilState(boardMissionsStationsState);
-  // const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
-  // const setActivities = useSetRecoilState(boardMissionsActivitiesState);
 
   const {
     filterGroups,
@@ -76,11 +71,6 @@ const ProductionFloorWidget = () => {
     }
   }, [groupsId, boardMissionsId, step]);
 
-  /*useEffect(() => {
-    return () => {
-      closeConnection();
-    };
-  }, []);*/
   const setAbortControllerStation = useSetRecoilState(abortControllerStationState);
   const setAbortControllerFiles = useSetRecoilState(abortControllerFilesState);
   const setAbortControllerActivities = useSetRecoilState(abortControllerActivitiesState);
@@ -157,8 +147,6 @@ const ProductionFloorWidget = () => {
     );
   };
 
-
-
   const handleScan = (data: { text: string } | null) => {
     if (!data) return;
     setIsScanningFlag(false);
@@ -195,7 +183,6 @@ const ProductionFloorWidget = () => {
   const [barcode, setBarcode] = useState('');
   const [scanBuffer, setScanBuffer] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
-  console.log("scanBuffer", { scanBuffer, barcode, timeoutId });
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Clear previous timeout if exists
@@ -306,39 +293,87 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
         {isScanning && isScanningFlag && !!boardMissionsId && (
-          <Box display="flex" justifyContent="center">
-            <QrReader
-              delay={300}
-              facingMode="environment"
-              style={{
-                width: "100%",
-                borderRadius: "20px",
-                border: "4px solid #2e3092",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-                padding: "10px",
-                height: "auto",
-                objectFit: "contain",
-              }}
-              onScan={handleScan}
-              onError={handleError}
-            />
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100vh"
+            bgcolor="#f7f7f7"
+            p={3}
+          >
+            <Card sx={{
+              width: "100%",
+              maxWidth: 400,
+              borderRadius: "15px",
+              boxShadow: 3,
+            }}>
+              <CardContent>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  align="center"
+                  sx={{ mb: 2, fontWeight: "bold", color: "#2e3092" }}
+                >
+                  {t("productionFloor.QRScanner")}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  align="center"
+                  color="textSecondary"
+                  sx={{ mb: 3, fontWeight: "500" }}
+                >
+                  {t("productionFloor.scanQRCodeToProceed")}
+                </Typography>
+                {/* Conditionally render the QR scanner */}
+                {isScanning && (
+                  <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
+                    <QrReader
+                      delay={300}
+                      facingMode="environment"
+                      constraints={{
+                        video: {
+                          facingMode: "environment",
+                          width: { ideal: 1280 },
+                          height: { ideal: 720 }
+                        }
+                      }}
+                      style={{
+                        width: "100%",
+                        maxWidth: "400px",
+                        borderRadius: "20px",
+                        border: "4px solid #2e3092",
+                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                        padding: "10px",
+                        height: "auto",
+                        objectFit: "contain",
+                      }}
+                      onScan={handleScan}
+                      onError={handleError}
+                    />
+                  </Box>
+                )}
+                {scanResult && (
+                  <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
+                    <Typography variant="body1" color="primary">
+                      Scanned QR Code: {scanResult}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleScanAgain}
+                      sx={{ mt: 2 }}
+                    >
+                      Scan Again
+                    </Button>
+                  </Box>
+                )}
+
+              </CardContent>
+            </Card>
           </Box>
         )}
-        {scanResult && (
-          <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
-            <Typography variant="body1" color="primary">
-              Scanned QR Code: {scanResult}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleScanAgain}
-              sx={{ mt: 2 }}
-            >
-              Scan Again
-            </Button>
-          </Box>
-        )}
+
       </Drawer>
       <GoMakeDeleteModal
         hideIcon={true}
