@@ -22,7 +22,7 @@ import {
 import { useRef, useEffect, useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
@@ -38,19 +38,9 @@ import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { CheckBoxAccordion } from "@/icons";
 import CompareIcon from '@mui/icons-material/Compare';
-import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
 import { keyframes } from "@mui/system";
-const borderPulse = keyframes`
-  0% { box-shadow: 0 0 8px 2px #2E3092; }
-  100% { box-shadow: 0 0 16px 4px #2E3092; }
-`;
-const rotateBorder = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
-const borderMove = keyframes`
-  100% { background-position: 200% 0; }
-`;
+import { useModal } from "@/hooks/use-modal";
+import { getCompareWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -102,6 +92,8 @@ const PricingWidget = ({
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    getCompareWorkFlows,
+    isOpenCompareModal
   } = usePricingWidget({
     workFlows,
     getOutSourcingSuppliers,
@@ -116,10 +108,12 @@ const PricingWidget = ({
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
   const [isCompareMode, setIsCompareMode] = useState(false);
-  const [compareTargetIndex, setCompareTargetIndex] = useState<number | null>(null);
+  const [selectedCompareWorkFlow, setSelectedCompareWorkFlow] = useState<any>(null);
+
 
   // Add this function for compare logic
   const handleCompareTab = (section: any) => {
+    getCompareWorkFlows(section)
     // TODO: Implement your compare logic here
     console.log('Comparing with section:', section);
   };
@@ -236,6 +230,7 @@ const PricingWidget = ({
                           if (section.isSelected) return;
                           if (isCompareMode) {
                             handleCompareTab(section);
+                            setSelectedCompareWorkFlow(section);
                             setIsCompareMode(false);
                             return;
                           }
@@ -650,7 +645,18 @@ const PricingWidget = ({
         yesBtn={t("modal.confirm")}
         onClickDelete={updateWorkFlowForMaterials}
       />
+      <GoMakeModal
+        openModal={isOpenCompareModal.isOpen}
+        onClose={isOpenCompareModal.close}
+        modalTitle={`Comparison: ${selectedWorkFlow?.tabName} vs ${selectedCompareWorkFlow?.name}`}
+        insideStyle={{
+          width: "70%",
+          height: "500px",
+          padding: "10px",
+        }}
+      />
     </Stack>
+
   );
 };
 export { PricingWidget };

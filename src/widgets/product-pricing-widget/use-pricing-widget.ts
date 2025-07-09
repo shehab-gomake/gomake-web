@@ -13,7 +13,6 @@ import {
 import {
   actionListForWorkFlow,
   currentCalculationConnectionId,
-  foldOptionsState,
   productItemValueByEditState,
   userState,
   viewPricingTab,
@@ -30,14 +29,14 @@ import {
 } from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
 import {
+  getCompareWorkFlowsApi,
   getWorkFlowsActionsApi,
   getWorkFlowsApi,
-  selectWorkflowByIdApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
+import { useModal } from "@/hooks/use-modal";
 
 const usePricingWidget = ({
   getOutSourcingSuppliers,
@@ -449,6 +448,23 @@ const usePricingWidget = ({
   };
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+  const isOpenCompareModal = useModal()
+
+
+  const getCompareWorkFlows = async (data) => {
+    const callBack = (res) => {
+
+      if (res?.success) {
+        console.log("res", res)
+        isOpenCompareModal.open()
+      } else {
+      }
+    };
+    await getCompareWorkFlowsApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      workFlowId: data?.workflowId,
+    });
+  }
 
   const {
     customer,
@@ -513,6 +529,8 @@ const usePricingWidget = ({
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    getCompareWorkFlows,
+    isOpenCompareModal
   };
 };
 

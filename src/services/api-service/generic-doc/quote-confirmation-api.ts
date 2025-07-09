@@ -12,6 +12,8 @@ const GET_WORK_FLOWS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flow
 const GET_WORK_FLOWS_ACTIONS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flow-actions";
 const SELECT_WORKFLOW_BY_ID_URL = "/v1/erp-service/productItemValueDrafts/select-workflow-by-id/:signalRConnectionId";
 
+const GET_COMPARE_WORK_FLOWS_URL = "/v1/erp-service/productItemValueDrafts/compare-workflow-with-selected-work-flow";
+
 
 const getDocumentByIdApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -42,6 +44,8 @@ const getWorkFlowsActionsApi: ICallAndSetData = async (callApi, setState, data) 
     data
   );
 };
+
+
 
 const selectWorkflowByIdApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -98,6 +102,17 @@ const calculateSelectedItemsApi: ICallAndSetData = async (callApi, setState, dat
   );
 };
 
+const getCompareWorkFlowsApi: ICallAndSetData = async (callApi, setState, data) => {
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_COMPARE_WORK_FLOWS_URL,
+    setState,
+    data
+  );
+};
+
 export {
     getDocumentByIdApi,
     approveDocumentItemsApi,
@@ -106,5 +121,6 @@ export {
     calculateSelectedItemsApi,
     getWorkFlowsApi,
     getWorkFlowsActionsApi,
-    selectWorkflowByIdApi
+    selectWorkflowByIdApi,
+    getCompareWorkFlowsApi
 };
