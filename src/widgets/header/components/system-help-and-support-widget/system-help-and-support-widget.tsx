@@ -91,6 +91,7 @@ const SystemHelp = () => {
         open={openSupport}
         anchorEl={anchorSupportEl}
         noListPadding={true}
+        menuOffsetY={1}
       >
         {helpMenuList?.map((item, index) => {
           return (
