@@ -14,6 +14,7 @@ import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { getLastVersionApi } from "@/services/api-service/gomake-versioning/gomake-versioning-endpoint";
 import { useStyle } from "./style";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
+import { useRouter } from "next/router";
 
 const useCustomerAuthLayout = (
   permissionEnumValue: any,
@@ -24,6 +25,8 @@ const useCustomerAuthLayout = (
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { classes } = useStyle({ isHover: false, navStatus: null, customGap });
+  const router = useRouter();
+  const isHomePage = router.pathname === "/home" || router.pathname === "/";
 
   const alertNewVersion = useModal();
   const { openAlertModal, setOpenAlertModal } =
@@ -69,6 +72,7 @@ const useCustomerAuthLayout = (
     navigate,
     classes,
     getLastVersion,
+    isHomePage,
   };
 };
 
