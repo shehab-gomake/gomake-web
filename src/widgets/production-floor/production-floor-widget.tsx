@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Stack, Typography, Button } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -122,9 +122,11 @@ const ProductionFloorWidget = () => {
   const { t } = useTranslation();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenFirstTime, setIsOpenFirstTime] = useState(false);
+  const [scanResult, setScanResult] = useState<string | null>(null);
+  const [isScanningFlag, setIsScanningFlag] = useState(true);
 
   useEffect(() => {
-    if (isScanning && !isOpenFirstTime) {
+    if (!isOpenFirstTime && isScanning) {
       setIsOpenModal(true);
     }
   }, [isScanning, isOpenFirstTime]);
@@ -155,55 +157,24 @@ const ProductionFloorWidget = () => {
     );
   };
 
-  const [scanResult, setScanResult] = useState<string | null>(null);
-  const [isScanningFlag, setIsScanningFlag] = useState(false);
-  useEffect(() => {
-    if (!isScanningFlag) {
-      handleScanAgain();
-    }
-  }, [isScanningFlag]);
 
-  const handleScan = async (data: { text: string } | null) => {
+
+  const handleScan = (data: { text: string } | null) => {
     if (!data) return;
-
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        console.log("res", res);
-        // setIsOpenModal(true);
-      } else {
-        setScanResult("Invalid QR Code or No Board Mission Found");
-      }
-    };
-    try {
-
-      await moveBoardMissionActionToDoneUsingBarcodeApi(callApi, callBack, {
-        boardMissionId: boardMissionsId?.toString(),
-        productType: productType?.toString(),
-      });
-      // await getBoardMissionsIdByQrCodeApi(
-      //   callApi,
-      //   (res) => {
-      //     if (res?.success) {
-      //       setIsOpenModal(true);
-      //     } else {
-      //       setScanResult("Invalid QR Code or No Board Mission Found");
-      //     }
-      //   },
-      //   data.text
-      // );
-
-    } catch (error) {
-      console.error("QR Scan error:", error);
-    }
+    setIsScanningFlag(false);
+    setScanResult(data.text || String(data));
+    handleBoardMissionsBarcodeActionsApi(data.text);
+    console.log("QR SCAN RESULT:", data);
   };
+
   const handleError = (err: any) => {
     console.error("QR Scan error:", err);
+    setIsScanningFlag(true);
   };
 
   const handleScanAgain = () => {
     setScanResult(null);
-    setIsScanningFlag(true); // Show the scanner again
+    setIsScanningFlag(true);
   };
 
   const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
@@ -211,6 +182,7 @@ const ProductionFloorWidget = () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
+        setIsScanningFlag(true);
       } else {
         alertFaultUpdate();
       }
@@ -334,13 +306,10 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
         {isScanning && isScanningFlag && !!boardMissionsId && (
-          <Box display="flex" justifyContent="center" style={{ display: "none" }} >
+          <Box display="flex" justifyContent="center">
             <QrReader
               delay={300}
               facingMode="environment"
-              constraints={{
-                video: { facingMode: { exact: "environment" } },
-              }}
               style={{
                 width: "100%",
                 borderRadius: "20px",
@@ -353,6 +322,21 @@ const ProductionFloorWidget = () => {
               onScan={handleScan}
               onError={handleError}
             />
+          </Box>
+        )}
+        {scanResult && (
+          <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
+            <Typography variant="body1" color="primary">
+              Scanned QR Code: {scanResult}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleScanAgain}
+              sx={{ mt: 2 }}
+            >
+              Scan Again
+            </Button>
           </Box>
         )}
       </Drawer>
