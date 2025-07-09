@@ -278,7 +278,7 @@ const QuotesListPageWidget = ({
     onClickOpenMoveOrderToReadyModal,
     moveToReadyOption,
     handleRadioChange,
-    primaryColor,
+    primaryColor
   } = useQuotes(documentType, isFromHomePage);
 
   const {
