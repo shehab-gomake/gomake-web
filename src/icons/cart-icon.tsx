@@ -1,21 +1,47 @@
 import { IIconProps } from "@/components/icons/interface";
 
 const CartIcon = (props: IIconProps) => {
-    return (
-        <svg
-            width= {props?.width || "30" }
-            height={props?.height || "30" }
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <circle cx="20" cy="20" r="20" fill="#F135A3" />
-            <path d="M9.75 10H11.4465C12.4995 10 13.3283 10.93 13.2405 12L12.4313 21.96C12.2948 23.59 13.5525 24.99 15.1515 24.99H25.5353C26.9393 24.99 28.1678 23.81 28.275 22.38L28.8015 14.88C28.9185 13.22 27.69 11.87 26.0617 11.87H13.4745" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M23.6438 30C24.3169 30 24.8625 29.4404 24.8625 28.75C24.8625 28.0596 24.3169 27.5 23.6438 27.5C22.9707 27.5 22.425 28.0596 22.425 28.75C22.425 29.4404 22.9707 30 23.6438 30Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M15.8438 30C16.5168 30 17.0625 29.4404 17.0625 28.75C17.0625 28.0596 16.5168 27.5 15.8438 27.5C15.1707 27.5 14.625 28.0596 14.625 28.75C14.625 29.4404 15.1707 30 15.8438 30Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M16.575 16H28.275" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-    )
-}
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1.83337 1.8335H3.42838C4.41838 1.8335 5.19754 2.686 5.11504 3.66683L4.35421 12.7968C4.22587 14.291 5.40837 15.5743 6.9117 15.5743H16.6742C17.9942 15.5743 19.1492 14.4927 19.25 13.1818L19.745 6.30683C19.855 4.78517 18.7 3.54766 17.1692 3.54766H5.33505"
+        stroke="#ed028c"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M14.8958 20.1667C15.5287 20.1667 16.0417 19.6537 16.0417 19.0208C16.0417 18.388 15.5287 17.875 14.8958 17.875C14.263 17.875 13.75 18.388 13.75 19.0208C13.75 19.6537 14.263 20.1667 14.8958 20.1667Z"
+        stroke="#ed028c"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M7.56246 20.1667C8.19529 20.1667 8.70829 19.6537 8.70829 19.0208C8.70829 18.388 8.19529 17.875 7.56246 17.875C6.92963 17.875 6.41663 18.388 6.41663 19.0208C6.41663 19.6537 6.92963 20.1667 7.56246 20.1667Z"
+        stroke="#ed028c"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M8.25 7.3335H19.25"
+        stroke="#ed028c"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
 export { CartIcon };
-

@@ -41,10 +41,15 @@ const CANCEL_BOARD_MISSIONS_ACTION_DONE =
   "/v1/erp-service/board-missions-actions/back-to-in-process/";
 const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE =
   "/v1/erp-service/board-missions-actions/update-action-employee";
+const HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS =
+  "/v1/erp-service/board-missions-actions/handle-board-missions-barcode-actions";
 const UPDATE_BOARD_MISSIONS_ACTION_MACHINE =
   "/v1/erp-service/board-missions-actions/update-action-machine";
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL =
   "/v1/erp-service/board-missions-actions/toggle-timer/";
+const MOVE_BOARD_MISSION_ACTION_TO_DONE_USING_BARCODE_URL =
+  "/v1/erp-service/board-missions-actions/move-board-mission-action-to-done-using-barcode/";
+
 const BOARD_MISSIONS_ADD_NOTE_URL = "/v1/erp-service/board-missions/add-note";
 const BOARD_MISSIONS_DELETE_NOTE_URL =
   "/v1/erp-service/board-missions/delete-note";
@@ -378,6 +383,21 @@ const toggleBoardMissionsActionTimer: ICallAndSetData = async (
   );
 };
 
+const moveBoardMissionActionToDoneUsingBarcodeApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string; productType: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    MOVE_BOARD_MISSION_ACTION_TO_DONE_USING_BARCODE_URL +
+      data.boardMissionId +
+      (data.productType ? "?productType=" + data.productType : ""),
+    callBack
+  );
+};
+
 const boardMissionsAddNote: ICallAndSetData = async (
   callApi,
   callBack,
@@ -570,6 +590,20 @@ const boardMissionsUpdateActionEmployee: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE,
+    callBack,
+    data
+  );
+};
+
+const handleBoardMissionsBarcodeActions: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS,
     callBack,
     data
   );
@@ -789,6 +823,7 @@ const updateProductionFloorNotesApi: ICallAndSetData = async (
 
 export {
   boardMissionsUpdateActionEmployee,
+  handleBoardMissionsBarcodeActions,
   boardMissionsUpdateActionMachine,
   getProductionFloorData,
   updateBoardsMissionsStatusApi,
@@ -806,6 +841,7 @@ export {
   getBoardsMissionsStations,
   cancelBoardMissionsActionDone,
   toggleBoardMissionsActionTimer,
+  moveBoardMissionActionToDoneUsingBarcodeApi,
   boardMissionsAddNote,
   boardMissionsDeleteNote,
   getAllBoardMissionsActivities,
