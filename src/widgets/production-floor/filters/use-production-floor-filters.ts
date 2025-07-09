@@ -41,8 +41,9 @@ import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
-import { actionsListState } from "../state/actions-list";
+import { actionsListState, sourceOfActionsListState } from "../state/actions-list";
 import moment from "moment";
+import { Source } from "./select/actions-select/use-actions-list";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -437,7 +438,6 @@ const useProductionFloorFilters = ({
     id,
     selectedView: EProductionFloorView
   ) => {
-    console.log("id", id);
     if (id === "all") {
       setData([]);
       await getDataByGroups(connectionId, filters, true);
@@ -556,7 +556,7 @@ const useProductionFloorFilters = ({
     }).then();
   };
   const [actions, setActions] = useRecoilState(actionsListState);
-
+  const sourceOfActionsList = useRecoilValue(sourceOfActionsListState);
   const handleAgentChange = (selectedAgents) => {
     setFilters(
       {
@@ -578,7 +578,7 @@ const useProductionFloorFilters = ({
         setActions(res?.data);
       }
     };
-    await getPrintHouseActions(callApi, callBack, false);
+    await getPrintHouseActions(callApi, callBack, sourceOfActionsList === Source.USERS);
   };
   useEffect(() => {
     if (isFetching) {

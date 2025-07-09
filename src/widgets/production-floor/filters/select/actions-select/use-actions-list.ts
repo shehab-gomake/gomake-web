@@ -4,6 +4,7 @@ import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   actionsListState,
   IActionMachines,
+  sourceOfActionsListState,
 } from "@/widgets/production-floor/state/actions-list";
 import { getPrintHouseActions } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -42,6 +43,7 @@ const useActionsList = ({
   setFilterGroups,
   onClickApply,
 }: IUseActionsList) => {
+  const setSourceOfActionsList = useSetRecoilState(sourceOfActionsListState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [filter, setFilter] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
@@ -61,6 +63,9 @@ const useActionsList = ({
   const handleClick = () => {
     setOpen(!open);
   };
+  useEffect(() => {
+    setSourceOfActionsList(source);
+  }, [source]);
 
   useEffect(() => {
     if (source === Source.DASHBOARD) {
