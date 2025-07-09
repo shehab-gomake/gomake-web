@@ -38,6 +38,19 @@ import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { CheckBoxAccordion } from "@/icons";
 import CompareIcon from '@mui/icons-material/Compare';
+import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
+import { keyframes } from "@mui/system";
+const borderPulse = keyframes`
+  0% { box-shadow: 0 0 8px 2px #2E3092; }
+  100% { box-shadow: 0 0 16px 4px #2E3092; }
+`;
+const rotateBorder = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+const borderMove = keyframes`
+  100% { background-position: 200% 0; }
+`;
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -148,6 +161,8 @@ const PricingWidget = ({
     }
   }, [calculationResult?.tabs]);
 
+
+
   const scrollToStart = () => {
     if (buttonGroupRef.current) {
       buttonGroupRef.current.scrollTo({
@@ -230,7 +245,66 @@ const PricingWidget = ({
                           }
                           setSelectedTab(section);
                         }}
-                        sx={classes.button}
+                        sx={{
+                          minWidth: "fit-content",
+                          width: "fit-content",
+                          borderRadius: 0,
+                          border: 0,
+                          flex: "1 1 auto",
+                          whiteSpace: "nowrap",
+                          letterSpacing: "0em",
+                          transition: "0s",
+                          position: "relative",
+                          zIndex: 1,
+                          "&:hover": {
+                            minWidth: "fit-content",
+                            flex: "1 1 auto",
+                            borderRadius: 0,
+                            letterSpacing: "0em",
+                            transition: "0s",
+                            border: "2px solid #2E3092",
+                          },
+                          ...(isCompareMode && !section.isSelected && {
+                            border: "1px solid transparent",
+                            position: "relative",
+                            overflow: "hidden",
+                            "&::before": {
+                              content: '""',
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: "linear-gradient(90deg, #2E3092, #fff, #2E3092, #fff, #2E3092)",
+                              backgroundSize: "300% 300%",
+                              borderRadius: "inherit",
+                              zIndex: -1,
+                              animation: "borderAnimation 2s linear infinite",
+                            },
+                            "&::after": {
+                              content: '""',
+                              position: "absolute",
+                              top: "2px",
+                              left: "2px",
+                              right: "2px",
+                              bottom: "2px",
+                              background: "white", // or your button's background color
+                              borderRadius: "inherit",
+                              zIndex: -1,
+                            },
+                            "@keyframes borderAnimation": {
+                              "0%": {
+                                backgroundPosition: "0% 50%",
+                              },
+                              "50%": {
+                                backgroundPosition: "100% 50%",
+                              },
+                              "100%": {
+                                backgroundPosition: "0% 50%",
+                              },
+                            },
+                          }),
+                        }}
                         style={{
                           letterSpacing: "0em",
                           transition: "0s",
@@ -331,9 +405,9 @@ const PricingWidget = ({
         >
           {
             calculationResult?.tabs?.length > 1 &&
-            <Tooltip title={t("compare workFlows")}>
+            <Tooltip title={t("Start comparison")} style={{ backgroundColor: "white" }}>
               <IconButton onClick={() => setIsCompareMode(!isCompareMode)}>
-                <CompareIcon style={{ color: "#2E3092" }} />
+                <CompareIcon style={{ color: "rgb(236,3,141)" }} />
               </IconButton>
             </Tooltip>
           }
