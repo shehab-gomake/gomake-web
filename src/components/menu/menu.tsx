@@ -9,6 +9,8 @@ interface GoMakeMenuProps {
   children: ReactElement | ReactElement[]; // Define the type of children
   style?: React.CSSProperties;
   sx?: object;
+  noListPadding?: boolean;
+  menuOffsetY?: number | string;
 }
 
 const GoMakeMenu = ({
@@ -18,6 +20,8 @@ const GoMakeMenu = ({
   children,
   style,
   sx,
+  noListPadding = false,
+  menuOffsetY,
 }: GoMakeMenuProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -40,8 +44,20 @@ const GoMakeMenu = ({
       }
       style={style}
       sx={sx}
+      {...(noListPadding && {
+        MenuListProps: {
+          sx: {
+            padding: 0,
+          },
+        },
+      })}
+      PaperProps={{
+        sx: {
+          ...(menuOffsetY !== undefined && { mt: menuOffsetY }), // 👈 only apply if defined
+        },
+      }}
     >
-    {Children.map(children, (child) =>
+      {Children.map(children, (child) =>
         isValidElement(child)
           ? cloneElement(child as ReactElement, {
               onKeyDown: (event: React.KeyboardEvent) => {

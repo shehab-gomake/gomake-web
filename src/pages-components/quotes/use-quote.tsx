@@ -165,7 +165,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryOrderNumber,
     deliveryCustomerId,
   } = query;
-  const { errorColor } = useGomakeTheme();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
     useDateFormat();
 
@@ -1990,6 +1990,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         return `${t("logs.MOVE_JOB_TO_READY", {
           jobNumber: values[0],
         })}`;
+      case LogActionType[31]:
+        return `${t("logs.CURRENCY_UPDATE", {
+          from: values[0],
+          to: values[1],
+        })}`;
 
       default:
         return "";
@@ -2323,8 +2328,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickPrintPackagingSlip = async () => {
-    debugger;
-    const lama = selectedDocument;
     if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
       alertFault("boardMissions.alertQuantity");
       return;
@@ -2334,6 +2337,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const pdfLink = res.data;
         downloadPdf(pdfLink);
         onClosePackagesModal();
+        openPathAfterPackageModal();
       } else {
         alertFaultGetData();
       }
@@ -2345,14 +2349,33 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
-  const onOpenPackagesModal = (order: any) => {
+  const [triggeredFromMoveOrderToReady, setTriggeredFromMoveOrderToReady] =
+    useState(false);
+
+  const onOpenPackagesModal = (order: any, fromMoveOrderToReady = false) => {
     setSelectedDocument(order);
+    setTriggeredFromMoveOrderToReady(fromMoveOrderToReady);
     setOpenPackagesModal(true);
   };
 
   const onClosePackagesModal = () => {
     setSelectedDocument({});
     setOpenPackagesModal(false);
+    openPathAfterPackageModal();
+  };
+
+  //  opening the path in new tab when closing order as invoice/delivery note after opening package slip modal
+  const openPathAfterPackageModal = () => {
+    if (!triggeredFromMoveOrderToReady) return;
+
+    const path = isSelectedCLoseAsDeliveryNote
+      ? `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+      : isOrder
+      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+
+    window.open(path, "_blank");
+    setTriggeredFromMoveOrderToReady(false);
   };
 
   useEffect(() => {
@@ -2669,8 +2692,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const [moveToReadyOption, setMoveToReadyOption] = useState<
+    "withMessage" | "withoutMessage"
+  >("withoutMessage");
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMoveToReadyOption(
+      event.target.value as "withMessage" | "withoutMessage"
+    );
+  };
+
   const handleCheckboxChange = () => {
-    setIsMoveToReady(!isMoveToReady);
+    const newValue = !isMoveToReady;
+    setIsMoveToReady(newValue);
+
+    if (newValue) {
+      setMoveToReadyOption("withoutMessage"); // default to "without message" when checked
+    }
   };
 
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
@@ -2918,7 +2956,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (res?.success) {
         getAllQuotes();
         if (isOrder) {
-          onOpenPackagesModal(selectedDocument);
+          onOpenPackagesModal(selectedDocument, true);
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {
@@ -3394,6 +3432,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setColumnVisibility,
     callApi,
     onClickOpenMoveOrderToReadyModal,
+    moveToReadyOption,
+    setMoveToReadyOption,
+    handleRadioChange,
+    primaryColor,
   };
 };
 

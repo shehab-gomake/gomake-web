@@ -86,7 +86,8 @@ export enum LogActionType {
   PAYMENT_LINK_GENERATED,
   PAYMENT_SUCCESS,
   PAYMENT_FAILED,
-  MOVE_JOB_TO_READY
+  MOVE_JOB_TO_READY,
+  CURRENCY_UPDATE,
 }
 
 export enum ApprovalStatus {

@@ -92,6 +92,7 @@ import cloneDeep from "lodash.clonedeep";
 import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export enum MessageType {
   Email = 0,
@@ -131,6 +132,7 @@ const useQuoteNew = ({
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { primaryColor } = useGomakeTheme();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
@@ -371,10 +373,25 @@ const useQuoteNew = ({
     setOpenUpdateDeliveryModal(false);
   };
 
-  const [isMoveToReady, setIsMoveToReady] = useState(false);
   const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(true);
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const [moveToReadyOption, setMoveToReadyOption] = useState<
+    "withMessage" | "withoutMessage"
+  >("withoutMessage");
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMoveToReadyOption(
+      event.target.value as "withMessage" | "withoutMessage"
+    );
+  };
+
   const handleCheckboxChange = () => {
-    setIsMoveToReady(!isMoveToReady);
+    const newValue = !isMoveToReady;
+    setIsMoveToReady(newValue);
+
+    if (newValue) {
+      setMoveToReadyOption("withoutMessage"); // default to "without message" when checked
+    }
   };
 
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
@@ -658,12 +675,13 @@ const useQuoteNew = ({
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateCurrency(null);
 
-      if (
-        !quoteItemValue?.documentItems ||
-        quoteItemValue.documentItems.length === 0
-      ) {
-        return; // Skip the API call
-      }
+      // if (
+      //   !quoteItemValue?.documentItems ||
+      //   quoteItemValue.documentItems.length === 0
+      // ) {
+      //   return; // Skip the API call
+      // }
+
       getCalculateQuoteItem(
         updatedQuoteItemValue,
         4,
@@ -2304,7 +2322,7 @@ const useQuoteNew = ({
   const showVatListInSettingIconNew =
     isNewCreation && (isDeliveryNote || isInvoice) && quoteItemValue.client;
 
-  const moveOrderToReady = async () => {
+  const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         if (isSelectedCLoseAsDeliveryNote) {
@@ -2324,7 +2342,7 @@ const useQuoteNew = ({
     };
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
-      isSendMessage: false,
+      isSendMessage: isSendMessage,
     });
   };
 
@@ -2690,6 +2708,11 @@ const useQuoteNew = ({
     receiptSendModal,
     renderCreateNewButton,
     isNewCreation,
+
+    primaryColor,
+    moveToReadyOption,
+    setMoveToReadyOption,
+    handleRadioChange,
   };
 };
 

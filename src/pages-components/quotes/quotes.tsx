@@ -15,7 +15,16 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { Box, Button, CircularProgress, Skeleton, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Skeleton,
+  Stack,
+} from "@mui/material";
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
@@ -63,6 +72,7 @@ import {
 import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
 import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -257,8 +267,6 @@ const QuotesListPageWidget = ({
     typeOfPayments,
     initialPageSize,
     ExportDocumentTableToPdf,
-    onClickCloseMoveOrderToReadyModal,
-    onClickOpenMoveOrderToReadyModal,
     tableKey,
     visibleHeaders,
     columnsReady,
@@ -266,6 +274,11 @@ const QuotesListPageWidget = ({
     setColumnOrder,
     setColumnVisibility,
     callApi,
+    onClickCloseMoveOrderToReadyModal,
+    onClickOpenMoveOrderToReadyModal,
+    moveToReadyOption,
+    handleRadioChange,
+    primaryColor
   } = useQuotes(documentType, isFromHomePage);
 
   const {
@@ -1036,23 +1049,23 @@ const QuotesListPageWidget = ({
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={
-          isMoveToReady
-            ? () => moveOrderToReady(false)
-            : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                } else {
-                  const path = isOrder
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                }
-              }
-        }
+        onClickDelete={() => {
+          if (isMoveToReady) {
+            moveOrderToReady(moveToReadyOption === "withMessage");
+          } else {
+            if (isSelectedCLoseAsDeliveryNote) {
+              const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+              window.open(path, "_blank");
+            } else {
+              const path = isOrder
+                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+              window.open(path, "_blank");
+            }
+          }
+        }}
       >
-        <Stack alignItems={"center"}>
+        <Stack alignItems={"center"} spacing={2}>
           <div
             style={{
               ...classes.inputLbl,
@@ -1065,7 +1078,45 @@ const QuotesListPageWidget = ({
             />
             {t("sales.moveToReadyAndCloseOrder")}
           </div>
-
+          {isMoveToReady && (
+            <RadioGroup
+              row
+              value={moveToReadyOption}
+              onChange={handleRadioChange}
+              style={{ marginTop: 8 }}
+            >
+              <FormControlLabel
+                value="withoutMessage"
+                control={
+                  <Radio
+                    sx={{ transform: "scale(0.8)", p: 0.5 }}
+                    style={{ color: primaryColor(300) }}
+                  />
+                }
+                label={t("sales.moveToReadyWithoutMessage")}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    ...FONT_FAMILY.Lexend(500, 13),
+                  },
+                }}
+              />
+              <FormControlLabel
+                value="withMessage"
+                control={
+                  <Radio
+                    sx={{ transform: "scale(0.8)", p: 0.5 }}
+                    style={{ color: primaryColor(300) }}
+                  />
+                }
+                label={t("sales.moveToReadyWithMessage")}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    ...FONT_FAMILY.Lexend(500, 13),
+                  },
+                }}
+              />
+            </RadioGroup>
+          )}
           <CloseOrderNote note={selectedDocument?.closeOrderNotes} />
         </Stack>
       </GoMakeDeleteModal>
