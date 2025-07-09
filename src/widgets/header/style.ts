@@ -27,7 +27,7 @@ const useStyle = () => {
         // height: convertHeightToVH(HEADER_HEIGHT),
         // maxHeight: convertHeightToVH(HEADER_HEIGHT),
         backgroundColor: "#FFFFFF",
-        paddingLeft: 20,
+        paddingLeft: 12,
         paddingRight: 12,
         marginBottom: 20,
       },
