@@ -5,6 +5,11 @@ export const actionsListState = atom<IActionMachines[]>({
     default: []
 });
 
+export const sourceOfActionsListState = atom<any>({
+    key: "sourceOfActionsListState",
+    default: 0
+});
+
 
 export interface IActionMachines {
     actionName: string;
