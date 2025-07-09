@@ -70,6 +70,19 @@ const SystemHelp = () => {
     },
   ];
 
+  const testVersion = version
+    ? {
+        ...version,
+        changes: [
+          ...version.changes,
+          ...version.changes,
+          ...version.changes,
+          ...version.changes,
+          ...version.changes,
+        ], // 3x repeat
+      }
+    : null;
+
   return (
     <Badge
       color="error"
@@ -133,7 +146,7 @@ const SystemHelp = () => {
       <WhatsNewModal
         open={whatsNewModal.isOpen}
         onClose={whatsNewModal.close}
-        version={version}
+        version={testVersion}
       />
     </Badge>
   );
