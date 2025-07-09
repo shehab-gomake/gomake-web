@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, Divider, Box } from "@mui/material";
+import { Stack, ButtonGroup, Divider, Box, Tooltip, IconButton } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
@@ -37,7 +37,7 @@ import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/component
 import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { CheckBoxAccordion } from "@/icons";
-
+import CompareIcon from '@mui/icons-material/Compare';
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -323,6 +323,14 @@ const PricingWidget = ({
           alignItems={"center"}
           style={{ display: "flex", width: "30%", justifyContent: "flex-end" }}
         >
+          {
+            calculationResult?.tabs?.length > 1 &&
+            <Tooltip title={t("compare workFlows")}>
+              <IconButton>
+                <CompareIcon style={{ color: "#2E3092" }} />
+              </IconButton>
+            </Tooltip>
+          }
           {deliveryDate && workFlows.length > 0 && selectedWorkFlow && (
             <Stack
               direction={"row"}
