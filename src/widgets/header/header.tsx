@@ -85,7 +85,12 @@ const HeaderWidget = () => {
           </CustomTooltip>
         </div>
       </div>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+      <GoMakeMenu
+        handleClose={handleClose}
+        open={open}
+        anchorEl={anchorEl}
+        menuOffsetY={1}
+      >
         <div style={classes.mainMenuContainer}>
           <div style={classes.accountTextStyle}>{t("login.account")}</div>
           <div style={classes.imgNameContainer}>

@@ -7,12 +7,14 @@ import {
   Typography,
   Divider,
   Box,
+  IconButton,
 } from "@mui/material";
 import { ChangeType, ILastVersionState } from "@/store/last-version-state";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import { useTranslation } from "react-i18next";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 
 interface WhatsNewModalProps {
   open: boolean;
@@ -107,9 +109,20 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({
       //   sx: { maxHeight: "70vh", overflowY: "auto" },
       // }}
     >
-      <DialogTitle>{`${t(
-        "header.whatsNewLabel"
-      )} ${`(v${version?.versionNumber})`}`}</DialogTitle>
+      <DialogTitle
+        id="go-make-dialog-title"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {`${t("header.whatsNewLabel")} ${`(v${version?.versionNumber})`}`}
+        <IconButton onClick={onClose} size="small">
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+
       <DialogContent>
         {Object.values(ChangeType)
           .filter((v) => !isNaN(Number(v)))

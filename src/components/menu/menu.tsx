@@ -10,6 +10,7 @@ interface GoMakeMenuProps {
   style?: React.CSSProperties;
   sx?: object;
   noListPadding?: boolean;
+  menuOffsetY?: number | string;
 }
 
 const GoMakeMenu = ({
@@ -20,6 +21,7 @@ const GoMakeMenu = ({
   style,
   sx,
   noListPadding = false,
+  menuOffsetY,
 }: GoMakeMenuProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -49,6 +51,11 @@ const GoMakeMenu = ({
           },
         },
       })}
+      PaperProps={{
+        sx: {
+          ...(menuOffsetY !== undefined && { mt: menuOffsetY }), // 👈 only apply if defined
+        },
+      }}
     >
       {Children.map(children, (child) =>
         isValidElement(child)

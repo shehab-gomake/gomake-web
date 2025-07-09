@@ -70,19 +70,6 @@ const SystemHelp = () => {
     },
   ];
 
-  const testVersion = version
-    ? {
-        ...version,
-        changes: [
-          ...version.changes,
-          ...version.changes,
-          ...version.changes,
-          ...version.changes,
-          ...version.changes,
-        ], // 3x repeat
-      }
-    : null;
-
   return (
     <Badge
       color="error"
@@ -104,6 +91,7 @@ const SystemHelp = () => {
         open={openSupport}
         anchorEl={anchorSupportEl}
         noListPadding={true}
+        menuOffsetY={1}
       >
         {helpMenuList?.map((item, index) => {
           return (
@@ -146,7 +134,7 @@ const SystemHelp = () => {
       <WhatsNewModal
         open={whatsNewModal.isOpen}
         onClose={whatsNewModal.close}
-        version={testVersion}
+        version={version}
       />
     </Badge>
   );
