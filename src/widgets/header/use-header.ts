@@ -7,50 +7,30 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
 import { userQuoteState } from "@/store";
 import { useEffect, useState } from "react";
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useTranslation } from "react-i18next";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 
 const useHeader = () => {
+  const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { user } = useCustomer();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorNotifyEl, setAnchorNotifyEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [QuoteIfExist, setQuoteIfExist] =
-    useRecoilState<any>(QuoteIfExistState);
-  const { callApi } = useGomakeAxios();
   const open = Boolean(anchorEl);
-  const openNotify = Boolean(anchorNotifyEl);
-  const openSupport = Boolean(anchorSupportEl);
+
+  const [userQuote, setUserQuote] = useState<any>(null);
+  const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
+  const setUserQuoteIfExist = useSetRecoilState<boolean>(userQuoteState);
+  const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+  const resetSelectedClient = useResetRecoilState(selectedClientState);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClickSupport = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorSupportEl(event.currentTarget);
-  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleCloseSupport = () => {
-    setAnchorSupportEl(null);
-  };
-
-  const handleClickNotify = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorNotifyEl(event.currentTarget);
-  };
-  const handleCloseNotify = () => {
-    setAnchorNotifyEl(null);
-  };
-
-  const handleClickQuoteExist = () => {
-    navigate(`/quote`);
-  };
-  const [userQuote, setUserQuote] = useState<any>(null);
-  const [userQuoteIfExist, setUserQuoteIfExist] =
-    useRecoilState<boolean>(userQuoteState);
 
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
@@ -66,9 +46,6 @@ const useHeader = () => {
     getAndSetExistQuote();
   }, []);
 
-  const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
-  const resetSelectedClient = useResetRecoilState(selectedClientState);
-
   useEffect(() => {
     if (window.location.pathname != "/home") {
       if (userQuote) {
@@ -83,21 +60,13 @@ const useHeader = () => {
   }, [userQuote]);
 
   return {
+    t,
     user,
     open,
     anchorEl,
     handleClick,
     handleClose,
     navigate,
-    handleClickQuoteExist,
-    openNotify,
-    anchorNotifyEl,
-    handleClickNotify,
-    handleCloseNotify,
-    handleClickSupport,
-    openSupport,
-    anchorSupportEl,
-    handleCloseSupport,
   };
 };
 

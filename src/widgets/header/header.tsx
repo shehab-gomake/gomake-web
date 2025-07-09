@@ -1,48 +1,47 @@
-import { useTranslation } from "react-i18next";
-import { Avatar, IconButton, MenuItem, Stack } from "@mui/material";
+import {
+  Avatar,
+  IconButton,
+  MenuItem,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+} from "@mui/material";
 import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
-import { ColoredCycle, GoMakeMenu } from "@/components";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { GoMakeMenu } from "@/components";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import { MarkIcon } from "@/icons/mark-icon";
-import { showTourModalState } from "@/store/tour-state";
-import { HelpIcon } from "@/icons/help-icon";
-import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
-import { useRouter } from "next/router";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
-import { PrimaryButton } from "@/components/button/primary-button";
-import { CalendarToday } from "@mui/icons-material";
+import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
+
+export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#2f2f2f",
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 500,
+    padding: "6px 10px",
+    borderRadius: 6,
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "#2f2f2f",
+  },
+}));
 
 const HeaderWidget = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
-  const { primaryColor, successColor, warningColor } = useGomakeTheme();
-  const {
-    user,
-    open,
-    anchorEl,
-    handleClick,
-    handleClose,
-    navigate,
-    openNotify,
-    anchorNotifyEl,
-    handleCloseNotify,
-    handleClickSupport,
-    openSupport,
-    anchorSupportEl,
-    handleCloseSupport,
-  } = useHeader();
-  const setShowTourModal = useSetRecoilState(showTourModalState);
+  const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
+    useHeader();
+
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
       <Avatar style={classes.avatarProps} src={userProfile.imagePath} />
@@ -58,64 +57,40 @@ const HeaderWidget = () => {
     );
   };
 
-  const currentPath = useRecoilValue(currentPathState);
-  const router = useRouter();
-
   return (
     <div style={classes.container}>
-      {/* <a
-        href="https://calendly.com/gomakeinc/intro-to-gomake?month=2025-04"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={classes.bookADemo}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFC107"; // hover effect
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFF";
-        }}
-      >
-        <CalendarToday style={{ fontSize: 18 }} />
-        {t("Book a demo")}
-      </a> */}
-
-      {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
-        {/*<IconButton style={{ padding: "2px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
-        {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
-        {/*</IconButton>*/}
         <MessengerNotifications />
         <SystemNotifications />
-        <IconButton
-          style={{ padding: "2px" }}
-          data-tour={"start-tour-btn"}
-          onClick={handleClickSupport}
-        >
-          <HelpIcon width={32} height={32} />
-        </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
-            style={classes.iconBtnContainer}
+            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
             onClick={() => navigate("/quote")}
           >
-            <CartIcon width={32} height={32} />
+            <CartIcon />
           </IconButton>
         )}
-        {/* <IconButton>
-          <Messages />
-        </IconButton> */}
-        {/* <IconButton onClick={handleClickNotify}>
-          <Notifications />
-        </IconButton> */}
+        <SystemHelp />
+        <div style={classes.verticalDivider} />
         <div style={classes.profileContainer}>
-          <IconButton style={{ padding: "2px" }} onClick={handleClick}>
-            {userAvatar()}
-          </IconButton>
-          {/* <div style={classes.userNameStyle}>{user?.displayName}</div> */}
+          <CustomTooltip
+            title={`${user?.firstName} ${user?.lastName}`}
+            arrow
+            placement={"bottom-start"}
+          >
+            <IconButton style={{ padding: "2px" }} onClick={handleClick}>
+              {userAvatar()}
+            </IconButton>
+          </CustomTooltip>
         </div>
       </div>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+      <GoMakeMenu
+        handleClose={handleClose}
+        open={open}
+        anchorEl={anchorEl}
+        menuOffsetY={1}
+      >
         <div style={classes.mainMenuContainer}>
           <div style={classes.accountTextStyle}>{t("login.account")}</div>
           <div style={classes.imgNameContainer}>
@@ -152,129 +127,6 @@ const HeaderWidget = () => {
             }}
           >
             <div style={classes.logoutContainer}>{t("login.logOut")}</div>
-          </MenuItem>
-        </div>
-      </GoMakeMenu>
-      <GoMakeMenu
-        handleClose={handleCloseNotify}
-        open={openNotify}
-        anchorEl={anchorNotifyEl}
-      >
-        <div style={classes.mainMenuContainer2}>
-          <div style={classes.notificationTextStyle}>{t("Notifications")}</div>
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={successColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  Follow up for jobs that you started it
-                </h3>
-              </div>
-              <Stack direction="row" gap={"8px"} padding={"0px 0px 0px 64px"}>
-                <SecondaryButton
-                  variant="contained"
-                  style={classes.acceptBtnStyle}
-                >
-                  Accept
-                </SecondaryButton>
-                <SecondaryButton
-                  variant="outlined"
-                  style={classes.rejectBtnStyle}
-                >
-                  Reject
-                </SecondaryButton>
-              </Stack>
-              <h3 style={classes.subTextStyle}>Today at 9:42 AM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={successColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  Your quote just has been{" "}
-                  <span style={{ color: successColor(500) }}>approved</span>,
-                  you can move to next step
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={warningColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  your newest quotes is waiting for payment, check your quote
-                  process
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.menuItemContainer}>
-            <ColoredCycle
-              backgroundColor={primaryColor(400)}
-              size={"8px"}
-            ></ColoredCycle>
-            <Stack direction="column" gap={"8px"} width={"95%"}>
-              <div style={classes.menuItemTextStyle}>
-                <h3 style={classes.textStyle}>
-                  a quote that you created it need for manager approval, stay
-                  tuned for new events
-                </h3>
-              </div>
-              <h3 style={classes.subTextStyle}>Yesterday at 11:42 PM</h3>
-            </Stack>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem style={classes.footerItemContainer}>
-            <div style={classes.footerTextStyle}>{t("Mark all as read")}</div>
-            <MarkIcon />
-          </MenuItem>
-        </div>
-      </GoMakeMenu>
-      <GoMakeMenu
-        handleClose={handleCloseSupport}
-        open={openSupport}
-        anchorEl={anchorSupportEl}
-      >
-        <div style={classes.mainMenuContainer}>
-          <MenuItem
-            style={classes.logoutContainer}
-            onClick={() =>
-              navigate(
-                `/customer-service?from=${encodeURIComponent(currentPath)}`
-              )
-            }
-          >
-            <div style={classes.logoutContainer}>
-              {t("header.customerSupport")}
-            </div>
-          </MenuItem>
-          <div style={classes.lineContainer} />
-          <MenuItem
-            style={classes.logoutContainer}
-            onClick={() => {
-              // setShowTourModal(true);
-              window.open("https://gomake.document360.io", "_blank");
-            }}
-          >
-            <div style={classes.logoutContainer}>
-              {t("header.guideAndTutorial")}
-            </div>
           </MenuItem>
         </div>
       </GoMakeMenu>

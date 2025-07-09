@@ -1,9 +1,12 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { useMemo } from "react";
+import { useRecoilState } from "recoil";
 
 const useStyle = (isRtl: boolean) => {
   const { primaryColor, theme, grayColor } = useGomakeTheme();
+  const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
+
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -22,7 +25,10 @@ const useStyle = (isRtl: boolean) => {
         position: "fixed",
         top: 9,
         [isRtl ? "left" : "right"]: 1,
-        [isRtl ? "marginLeft" : "marginRight"]: "230px",
+        [isRtl ? "marginLeft" : "marginRight"]:
+          !QuoteIfExist || window.location.pathname === "/quote"
+            ? "215px"
+            : "260px",
         display: "flex",
         alignItems: "center",
         gap: 1.5,
@@ -88,7 +94,7 @@ const useStyle = (isRtl: boolean) => {
         },
       },
     };
-  }, [theme, isRtl]);
+  }, [theme, isRtl, QuoteIfExist]);
 
   return {
     classes,

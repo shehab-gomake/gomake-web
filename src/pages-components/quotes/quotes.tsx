@@ -267,8 +267,6 @@ const QuotesListPageWidget = ({
     typeOfPayments,
     initialPageSize,
     ExportDocumentTableToPdf,
-    onClickCloseMoveOrderToReadyModal,
-    onClickOpenMoveOrderToReadyModal,
     tableKey,
     visibleHeaders,
     columnsReady,
@@ -276,9 +274,11 @@ const QuotesListPageWidget = ({
     setColumnOrder,
     setColumnVisibility,
     callApi,
+    onClickCloseMoveOrderToReadyModal,
+    onClickOpenMoveOrderToReadyModal,
     moveToReadyOption,
     handleRadioChange,
-    primaryColor,
+    primaryColor
   } = useQuotes(documentType, isFromHomePage);
 
   const {
