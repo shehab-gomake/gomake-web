@@ -203,11 +203,11 @@ const useActionsList = ({
       }));
   }, [actionsList]);
 
-  useEffect(() => {
-    if (source !== Source.DASHBOARD) {
-      getActions().then();
-    }
-  }, [source]);
+  // useEffect(() => {
+  //   if (source !== Source.DASHBOARD) {
+  //     getActions().then();
+  //   }
+  // }, [source]);
 
   const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
   const onClickOpenDepartmentModal = () => {
