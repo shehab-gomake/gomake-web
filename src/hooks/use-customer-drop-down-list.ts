@@ -14,16 +14,21 @@ import { clientListState } from "@/store/clients-list-state";
 interface UseCustomerDropDownListProps {
   clientType?: CLIENT_TYPE;
   shouldRenderOnMount?: boolean;
+  isUseRecoilState?: boolean;
 }
 
 const useCustomerDropDownList = ({
   clientType = CLIENT_TYPE.CUSTOMER,
   shouldRenderOnMount = true,
+  isUseRecoilState = true,
 }: UseCustomerDropDownListProps) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   // const [listClient, setListClient] = useState([]);
-  const [listClient, setListClient] = useRecoilState(clientListState);
+  const [listClient, setListClient] = isUseRecoilState
+    ? useRecoilState(clientListState) // not dynamic
+    : useState([]);
+
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [customer, setCustomer] = useState<{
     name: string;

@@ -147,7 +147,6 @@ const LedgerReportWidget = ({
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isopenCreateTransactionModal}
         erpAccountsList={erpAccountsList}
-        isPurchaseReport={isPurchaseReport}
       />
     </div>
   );
