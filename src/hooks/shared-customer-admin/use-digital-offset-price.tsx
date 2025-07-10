@@ -364,8 +364,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       calculationResult.productItemValueDraftId ===
         currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
-      !productTemplate?.isHaveFixedAction &&
-      !isFirstTimeEnterPageWhenEdit
+      !productTemplate?.isHaveFixedAction
     ) {
       getSelectedWorkFlow(
         calculationResult.signalRConnectionId,
