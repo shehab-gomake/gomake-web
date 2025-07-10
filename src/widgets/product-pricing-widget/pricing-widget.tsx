@@ -649,14 +649,19 @@ const PricingWidget = ({
       <GoMakeModal
         openModal={isOpenCompareModal.isOpen}
         onClose={isOpenCompareModal.close}
-        modalTitle={`Comparison: ${selectedWorkFlow?.tabName} vs ${selectedCompareWorkFlow?.name}`}
+        modalTitle={compareWorkFlowsData?.title ? compareWorkFlowsData?.title : t("pricingWidget.dynamicTable.compareModalTitle", {
+          tabName: selectedWorkFlow?.tabName,
+          name: selectedCompareWorkFlow?.name
+        })}
         insideStyle={{
           width: "70%",
-          height: "500px",
+          height: "600px",
           padding: "10px",
         }}
       >
-        <DynamicTable data={compareWorkFlowsData} />
+        <div style={{ padding: 20 }}>
+          <DynamicTable data={compareWorkFlowsData} />
+        </div>
       </GoMakeModal>
     </Stack>
 

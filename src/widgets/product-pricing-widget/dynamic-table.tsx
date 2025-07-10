@@ -1,16 +1,18 @@
 import React from 'react';
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useDynamicTableStyle } from './style-table';
+import { useTranslation } from 'react-i18next';
 
 const DynamicTable = ({ data }) => {
   const { classes } = useDynamicTableStyle();
-
+  const { t } = useTranslation();
   // Helper function to render cell values with proper formatting
   const renderCellValues = (values) => {
     if (!values || values.length === 0) return null;
 
     return values.map((valueObj, index) => {
-      const { value, surfix, bold, color } = valueObj;
+      const { value, surfix, bold, color, needTranslation } = valueObj;
+      const translatedValue = needTranslation ? t(`pricingWidget.dynamicTable.${value}`) : value;
 
       const style = {
         color: color || '#000000',
@@ -20,7 +22,7 @@ const DynamicTable = ({ data }) => {
 
       return (
         <span key={index} style={style}>
-          {value}
+          {translatedValue}
           {surfix && surfix}
         </span>
       );

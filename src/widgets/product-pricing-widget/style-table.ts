@@ -241,7 +241,7 @@ const useDynamicTableStyle = () => {
         cursor: "pointer",
       },
       tableBoldBottomRow: {
-        borderBottom: `3px solid ${primaryColor(500)}`,
+        borderBottom: `2px solid #000`,
       },
     };
   }, [theme, direction, neutralColor, primaryColor]);
