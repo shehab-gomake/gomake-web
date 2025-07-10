@@ -38,9 +38,7 @@ import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { CheckBoxAccordion } from "@/icons";
 import CompareIcon from '@mui/icons-material/Compare';
-import { keyframes } from "@mui/system";
-import { useModal } from "@/hooks/use-modal";
-import { getCompareWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import DynamicTable from "./dynamic-table";
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -93,14 +91,17 @@ const PricingWidget = ({
     checkWhatRenderArray,
     isFetching,
     getCompareWorkFlows,
-    isOpenCompareModal
+    isOpenCompareModal,
+    compareWorkFlowsData
   } = usePricingWidget({
     workFlows,
     getOutSourcingSuppliers,
     widgetType,
     selectedWorkFlowCalculatedIsLoaded,
     getSelectedWorkFlow,
+
   });
+  console.log("compareWorkFlowsData", compareWorkFlowsData)
   const isHasSubWorkFlowsOrProductTypeActions =
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
@@ -654,7 +655,9 @@ const PricingWidget = ({
           height: "500px",
           padding: "10px",
         }}
-      />
+      >
+        <DynamicTable data={compareWorkFlowsData} />
+      </GoMakeModal>
     </Stack>
 
   );

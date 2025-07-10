@@ -449,13 +449,13 @@ const usePricingWidget = ({
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
   const isOpenCompareModal = useModal()
-
+  const [compareWorkFlowsData, setCompareWorkFlowsData] = useState<any>([]);
 
   const getCompareWorkFlows = async (data) => {
     const callBack = (res) => {
 
       if (res?.success) {
-        console.log("res", res)
+        setCompareWorkFlowsData(res?.data)
         isOpenCompareModal.open()
       } else {
       }
@@ -530,7 +530,8 @@ const usePricingWidget = ({
     checkWhatRenderArray,
     isFetching,
     getCompareWorkFlows,
-    isOpenCompareModal
+    isOpenCompareModal,
+    compareWorkFlowsData
   };
 };
 
