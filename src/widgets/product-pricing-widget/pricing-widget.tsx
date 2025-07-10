@@ -646,7 +646,7 @@ const PricingWidget = ({
         yesBtn={t("modal.confirm")}
         onClickDelete={updateWorkFlowForMaterials}
       />
-      <GoMakeModal
+       <GoMakeModal
         openModal={isOpenCompareModal.isOpen}
         onClose={isOpenCompareModal.close}
         modalTitle={compareWorkFlowsData?.title ? compareWorkFlowsData?.title : t("pricingWidget.dynamicTable.compareModalTitle", {
