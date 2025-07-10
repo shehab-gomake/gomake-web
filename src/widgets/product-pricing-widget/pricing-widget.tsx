@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, Divider, Box } from "@mui/material";
+import { Stack, ButtonGroup, Divider, Box, Tooltip, IconButton, Button } from "@mui/material";
 
 import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
 import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
@@ -22,7 +22,7 @@ import {
 import { useRef, useEffect, useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
@@ -37,7 +37,8 @@ import { HeaderLeftArrowIcon, HeaderRightArrowIcon } from "../partners/component
 import { BestSellerWhiteIcon } from "@/icons/best-seller-white";
 import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 import { CheckBoxAccordion } from "@/icons";
-
+import CompareIcon from '@mui/icons-material/Compare';
+import DynamicTable from "./dynamic-table";
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -89,19 +90,34 @@ const PricingWidget = ({
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    getCompareWorkFlows,
+    isOpenCompareModal,
+    compareWorkFlowsData
   } = usePricingWidget({
     workFlows,
     getOutSourcingSuppliers,
     widgetType,
     selectedWorkFlowCalculatedIsLoaded,
     getSelectedWorkFlow,
+
   });
+  console.log("compareWorkFlowsData", compareWorkFlowsData)
   const isHasSubWorkFlowsOrProductTypeActions =
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [isCompareMode, setIsCompareMode] = useState(false);
+  const [selectedCompareWorkFlow, setSelectedCompareWorkFlow] = useState<any>(null);
+
+
+  // Add this function for compare logic
+  const handleCompareTab = (section: any) => {
+    getCompareWorkFlows(section)
+    // TODO: Implement your compare logic here
+    console.log('Comparing with section:', section);
+  };
 
   const [openModalMachine, setOpenModalMachine] = useRecoilState(
     openModalMachineState
@@ -139,6 +155,8 @@ const PricingWidget = ({
       return () => buttonGroup.removeEventListener('scroll', checkScrollButtons);
     }
   }, [calculationResult?.tabs]);
+
+
 
   const scrollToStart = () => {
     if (buttonGroupRef.current) {
@@ -205,53 +223,114 @@ const PricingWidget = ({
                 {workFlows.length > 0 && selectedWorkFlow && calculationResult &&
                   !isMobileScreen &&
                   calculationResult?.tabs?.map((section, index) => (
-                    <PrimaryButton
-                      key={index}
-                      data-tour="allWorkflowsBtn"
-                      onClick={() => {
-                        if (section.isSelected) {
-                          return;
+                    <div style={{ position: "relative", display: "inline-block" }} key={index}>
+                      <PrimaryButton
+                        key={index}
+                        data-tour="allWorkflowsBtn"
+                        onClick={() => {
+                          if (section.isSelected) return;
+                          if (isCompareMode) {
+                            handleCompareTab(section);
+                            setSelectedCompareWorkFlow(section);
+                            setIsCompareMode(false);
+                            return;
+                          }
+                          SelectWorkFlowById(section);
+                          if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
+                            setView(EPricingViews.SELECTED_WORKFLOW);
+                          }
+                          setSelectedTab(section);
+                        }}
+                        sx={{
+                          minWidth: "fit-content",
+                          width: "fit-content",
+                          borderRadius: 0,
+                          border: 0,
+                          flex: "1 1 auto",
+                          whiteSpace: "nowrap",
+                          letterSpacing: "0em",
+                          transition: "0s",
+                          position: "relative",
+                          zIndex: 1,
+                          "&:hover": {
+                            minWidth: "fit-content",
+                            flex: "1 1 auto",
+                            borderRadius: 0,
+                            letterSpacing: "0em",
+                            transition: "0s",
+                            border: "2px solid #2E3092",
+                          },
+                          ...(isCompareMode && !section.isSelected && {
+                            border: "1px solid transparent",
+                            position: "relative",
+                            overflow: "hidden",
+                            "&::before": {
+                              content: '""',
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: "linear-gradient(90deg, #2E3092, #fff, #2E3092, #fff, #2E3092)",
+                              backgroundSize: "300% 300%",
+                              borderRadius: "inherit",
+                              zIndex: -1,
+                              animation: "borderAnimation 2s linear infinite",
+                            },
+                            "&::after": {
+                              content: '""',
+                              position: "absolute",
+                              top: "2px",
+                              left: "2px",
+                              right: "2px",
+                              bottom: "2px",
+                              background: "white", // or your button's background color
+                              borderRadius: "inherit",
+                              zIndex: -1,
+                            },
+                            "@keyframes borderAnimation": {
+                              "0%": {
+                                backgroundPosition: "0% 50%",
+                              },
+                              "50%": {
+                                backgroundPosition: "100% 50%",
+                              },
+                              "100%": {
+                                backgroundPosition: "0% 50%",
+                              },
+                            },
+                          }),
+                        }}
+                        style={{
+                          letterSpacing: "0em",
+                          transition: "0s",
+                        }}
+                        variant={
+                          section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
+                            ? "contained"
+                            : "outlined"
                         }
-                        SelectWorkFlowById(section);
-                        if (view === EPricingViews.OUTSOURCE_WORKFLOW) {
-                          setView(EPricingViews.SELECTED_WORKFLOW);
-                        }
-                        setSelectedTab(section);
-
-                      }}
-                      sx={classes.button}
-                      style={{
-                        letterSpacing: "0em",
-                        transition: "0s",
-
-
-                      }}
-                      variant={
-                        section.isSelected && view !== EPricingViews.OUTSOURCE_WORKFLOW
-                          ? "contained"
-                          : "outlined"
-                      }
-                    >
-                      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
-                        {
-                          section.isRecommendedBySystem &&
-                          <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
-                            <BestSellerWhiteIcon />
+                        disabled={isCompareMode && section.isSelected}
+                      >
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "4px", width: "100%" }}>
+                          {section.isRecommendedBySystem && (
+                            <div style={{ position: "absolute", ...adaptRight(t("direction"), 0), margin: 5 }}>
+                              <BestSellerWhiteIcon />
+                            </div>
+                          )}
+                          <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
+                            {section.isNeedTranslation
+                              ? t("workFlowTabs." + section.name)
+                              : section.name}
                           </div>
-                        }
-                        <div style={{ position: "relative", ...adaptPaddingRight(direction, 20), ...adaptPaddingLeft(direction, 20) }}>
-                          {section.isNeedTranslation
-                            ? t("workFlowTabs." + section.name)
-                            : section.name}
+                          {section.isSelected && (
+                            <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
+                              <CheckBoxAccordion />
+                            </div>
+                          )}
                         </div>
-                        {
-                          section.isSelected &&
-                          <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
-                            <CheckBoxAccordion />
-                          </div>
-                        }
-                      </div>
-                    </PrimaryButton>
+                      </PrimaryButton>
+                    </div>
                   ))}
               </ButtonGroup>
 
@@ -261,8 +340,6 @@ const PricingWidget = ({
               style={{
                 letterSpacing: "0em",
                 transition: "0s",
-
-
               }}
               variant={view === EPricingViews.OUTSOURCE_WORKFLOW ? "contained" : "outlined"}
               onClick={() => {
@@ -271,15 +348,14 @@ const PricingWidget = ({
                 updateProductItemValue(EWorkSource.OUT);
                 setIsChangeView(false);
               }}
-
+              disabled={isCompareMode}
             >
               {t("products.actions.outSource")}
-              {
-                view === EPricingViews.OUTSOURCE_WORKFLOW &&
+              {view === EPricingViews.OUTSOURCE_WORKFLOW && (
                 <div style={{ position: "absolute", ...adaptLeft(t("direction"), 3), margin: 5, marginTop: 3 }}>
                   <CheckBoxAccordion />
                 </div>
-              }
+              )}
             </PrimaryButton>}
             {/* Right Arrow Button */}
             {canScrollRight && (
@@ -323,6 +399,14 @@ const PricingWidget = ({
           alignItems={"center"}
           style={{ display: "flex", width: "30%", justifyContent: "flex-end" }}
         >
+          {
+            calculationResult?.tabs?.length > 1 &&
+            <Tooltip title={t("Start comparison")} style={{ backgroundColor: "white" }}>
+              <IconButton onClick={() => setIsCompareMode(!isCompareMode)}>
+                <CompareIcon style={{ color: "rgb(236,3,141)" }} />
+              </IconButton>
+            </Tooltip>
+          }
           {deliveryDate && workFlows.length > 0 && selectedWorkFlow && (
             <Stack
               direction={"row"}
@@ -562,7 +646,25 @@ const PricingWidget = ({
         yesBtn={t("modal.confirm")}
         onClickDelete={updateWorkFlowForMaterials}
       />
+      <GoMakeModal
+        openModal={isOpenCompareModal.isOpen}
+        onClose={isOpenCompareModal.close}
+        modalTitle={compareWorkFlowsData?.title ? compareWorkFlowsData?.title : t("pricingWidget.dynamicTable.compareModalTitle", {
+          tabName: selectedWorkFlow?.tabName,
+          name: selectedCompareWorkFlow?.name
+        })}
+        insideStyle={{
+          width: "70%",
+          height: "600px",
+          padding: "10px",
+        }}
+      >
+        <div style={{ padding: 20 }}>
+          <DynamicTable data={compareWorkFlowsData} />
+        </div>
+      </GoMakeModal>
     </Stack>
+
   );
 };
 export { PricingWidget };
