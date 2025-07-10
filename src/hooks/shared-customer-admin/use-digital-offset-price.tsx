@@ -376,7 +376,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         calculationResult?.isNeedPriceUpdate
       );
     }
-    if (productTemplate?.isHaveFixedAction && isCanGetSelected && !isFirstTimeEnterPageWhenEdit) {
+    if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
       getSelectedWorkFlow(
         calculationResult.signalRConnectionId,
         calculationResult?.isNeedPriceUpdate
