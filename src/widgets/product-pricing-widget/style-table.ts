@@ -9,7 +9,8 @@ const useDynamicTableStyle = () => {
   const { theme, neutralColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
-  
+  const isRTL = direction === "rtl";
+
   const classes = useMemo(() => {
     return {
       detailTitle: {
@@ -216,7 +217,7 @@ const useDynamicTableStyle = () => {
         backgroundColor: "#F9FAFB",
         border: `1px solid ${neutralColor(200)}`,
         padding: "12px 16px",
-        textAlign: "left" as const,
+        textAlign: isRTL ? "right" as const : "left" as const,
         verticalAlign: "top" as const,
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
@@ -224,7 +225,7 @@ const useDynamicTableStyle = () => {
       tableBodyCell: {
         border: `1px solid ${neutralColor(200)}`,
         padding: "12px 16px",
-        textAlign: "left" as const,
+        textAlign: isRTL ? "right" as const : "left" as const,
         verticalAlign: "top" as const,
         backgroundColor: "#FFF",
       },

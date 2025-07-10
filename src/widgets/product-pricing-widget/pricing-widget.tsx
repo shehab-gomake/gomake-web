@@ -646,7 +646,7 @@ const PricingWidget = ({
         yesBtn={t("modal.confirm")}
         onClickDelete={updateWorkFlowForMaterials}
       />
-      <GoMakeModal
+       <GoMakeModal
         openModal={isOpenCompareModal.isOpen}
         onClose={isOpenCompareModal.close}
         modalTitle={compareWorkFlowsData?.title ? compareWorkFlowsData?.title : t("pricingWidget.dynamicTable.compareModalTitle", {
@@ -654,14 +654,12 @@ const PricingWidget = ({
           name: selectedCompareWorkFlow?.name
         })}
         insideStyle={{
-          width: "70%",
-          height: "600px",
-          padding: "10px",
+          width: "75%",
+          height: "750px",
+          padding: "20px",
         }}
       >
-        <div style={{ padding: 20 }}>
-          <DynamicTable data={compareWorkFlowsData} />
-        </div>
+        <DynamicTable data={compareWorkFlowsData} />
       </GoMakeModal>
     </Stack>
 
