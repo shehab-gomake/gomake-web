@@ -654,14 +654,12 @@ const PricingWidget = ({
           name: selectedCompareWorkFlow?.name
         })}
         insideStyle={{
-          width: "70%",
-          height: "600px",
-          padding: "10px",
+          width: "75%",
+          height: "750px",
+          padding: "20px",
         }}
       >
-        <div style={{ padding: 20 }}>
-          <DynamicTable data={compareWorkFlowsData} />
-        </div>
+        <DynamicTable data={compareWorkFlowsData} />
       </GoMakeModal>
     </Stack>
 
