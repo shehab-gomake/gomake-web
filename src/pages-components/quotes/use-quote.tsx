@@ -1054,6 +1054,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             totalPrice: isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
+            estimatedProductionDate: quote?.estimatedProductionDate ? quote?.estimatedProductionDate.split("T")[0] : "-",
             notes: quote?.notes,
             status: _renderStatus(docType, quote, t),
             more: (
