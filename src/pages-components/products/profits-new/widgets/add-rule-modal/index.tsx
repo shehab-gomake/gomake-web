@@ -97,7 +97,6 @@ const AddRuleModal = ({
     openModal,
     getProductHotFolderRules,
   });
-
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -134,19 +133,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: `${value?.manufacturer} - ${value?.model}`,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: `${value?.nickName}`,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -444,9 +443,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -587,19 +586,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.nickName}`,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.nickName}`,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -651,19 +650,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -799,10 +798,10 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                      rules[index]?.statement2?.type === 5 ||
-                      rules[index]?.statement2?.type === 4 ||
-                      rules[index]?.statement2?.type === 10 ||
-                      rules[index]?.statement2?.type === 11 ? (
+                        rules[index]?.statement2?.type === 5 ||
+                        rules[index]?.statement2?.type === 4 ||
+                        rules[index]?.statement2?.type === 10 ||
+                        rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
