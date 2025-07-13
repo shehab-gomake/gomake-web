@@ -14,7 +14,8 @@ const MultiParameterModal = ({
   isParameterSettings = false,
   setSettingParameters,
   getProductById,
-  setCanCalculation
+  setCanCalculation,
+  setIsFirstTimeEnterPageWhenEdit
 }: any) => {
   const { clasess } = useStyle();
   const { parameterLists, onClickSaveParameter, t, closeModal, onClickSaveParameterForSettings } = useMultiParameterModal({
@@ -22,7 +23,8 @@ const MultiParameterModal = ({
     onClose,
     isParameterSettings,
     getProductById,
-    setCanCalculation
+    setCanCalculation,
+    setIsFirstTimeEnterPageWhenEdit
   });
   return (
     <>
