@@ -14,6 +14,11 @@ import {
 } from "@/services/api-service/monday/monday-apis";
 import { userProfileState } from "@/store/user-profile";
 
+interface SortContext {
+  statuses: { label: string; value: string }[];
+  statusPriority: Record<string, number>;
+}
+
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -509,7 +514,6 @@ const useCustomerService = (isAdmin: boolean) => {
             columnData.long_text,
             matchingType,
             id, // consider this issue number
-            // matchingStatus,
             <div style={{ color: statusColor }}>{matchingStatus}</div>,
             ,
           ];
@@ -524,35 +528,61 @@ const useCustomerService = (isAdmin: boolean) => {
                 item[0] + "/" === printHouseProfileState?.domain
             );
 
-        const sortedData = filteredFormattedData.sort((a, b) => {
-          const statusA =
-            statuses.find((s) => s.label === a[6]?.props?.children)?.value ||
-            "";
-          const statusB =
-            statuses.find((s) => s.label === b[6]?.props?.children)?.value ||
-            "";
+        // const sortedData = filteredFormattedData.sort((a, b) => {
+        //   const statusA =
+        //     statuses.find((s) => s.label === a[6]?.props?.children)?.value ||
+        //     "";
+        //   const statusB =
+        //     statuses.find((s) => s.label === b[6]?.props?.children)?.value ||
+        //     "";
 
-          const priorityA = statusPriority[statusA] ?? 99;
-          const priorityB = statusPriority[statusB] ?? 99;
+        //   const priorityA = statusPriority[statusA] ?? 99;
+        //   const priorityB = statusPriority[statusB] ?? 99;
 
-          if (priorityA !== priorityB) {
-            return priorityA - priorityB;
-          }
+        //   if (priorityA !== priorityB) {
+        //     return priorityA - priorityB;
+        //   }
 
-          const nameA = (a[2] || "").toLowerCase();
-          const nameB = (b[2] || "").toLowerCase();
+        //   const nameA = (a[2] || "").toLowerCase();
+        //   const nameB = (b[2] || "").toLowerCase();
 
-          return nameA.localeCompare(nameB);
-        });
+        //   return nameA.localeCompare(nameB);
+        // });
+        // setAllIssues(sortedData);
 
-        setAllIssues(sortedData);
-        // setAllIssues(filteredFormattedData);
+        setAllIssues(filteredFormattedData);
       } else {
         alertFaultGetData();
       }
     };
     await getAllMondayIssuesApi(callApi, callBack, data);
   };
+
+  // Sorts table rows by status priority, then by name.
+  const statusThenNameSort =
+    ({ statuses, statusPriority }: SortContext) =>
+    (a: any[], b: any[]) => {
+      const getStatusValue = (val: any) =>
+        typeof val === "string" ? val : val?.props?.children ?? "";
+
+      const statusA =
+        statuses.find((s) => s.label === getStatusValue(a[6]))?.value || "";
+      const statusB =
+        statuses.find((s) => s.label === getStatusValue(b[6]))?.value || "";
+
+      const priorityA = statusPriority[statusA] ?? 99;
+      const priorityB = statusPriority[statusB] ?? 99;
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // Sort by name (column 2) as fallback
+      const nameA = (a[2] || "").toLowerCase();
+      const nameB = (b[2] || "").toLowerCase();
+
+      return nameA.localeCompare(nameB);
+    };
 
   return {
     tableHeaders,
@@ -591,6 +621,8 @@ const useCustomerService = (isAdmin: boolean) => {
     statusFilters,
     onToggleAllStatuses,
     onToggleStatus,
+    statusPriority,
+    statusThenNameSort,
   };
 };
 

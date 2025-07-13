@@ -44,10 +44,11 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     selectedModalPrintHouse,
     onChangeInputs,
     sendToMonday,
-
     statusFilters,
     onToggleAllStatuses,
     onToggleStatus,
+    statusPriority,
+    statusThenNameSort,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -110,6 +111,10 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
           withSort={true}
+          // Custom sort for column 6 (status): sort by status priority)
+          customSortFns={{
+            6: statusThenNameSort({ statuses, statusPriority }),
+          }}
         />
         <CreateIssueModal
           isAdmin={isAdmin}
