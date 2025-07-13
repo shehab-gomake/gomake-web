@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   styled,
   tableCellClasses,
 } from "@mui/material";
@@ -37,6 +39,7 @@ const QuoteForPriceTable = ({
   changeDocumentItemsChild,
   documentType,
   getQuote,
+  reCalculateItem,
   isQuoteConfirmation = false,
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
@@ -69,7 +72,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-      {}
+    {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -79,8 +82,8 @@ const QuoteForPriceTable = ({
     }));
   };
 
-  const _renderIconcalculationStatus = (calculationStatus) => {
-    if (calculationStatus === ECalculationStatus.Calculating) {
+  const _renderIconcalculationStatus = (item) => {
+    if (item === ECalculationStatus.Calculating) {
       return (
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
           <CalculatingIcon />
@@ -88,7 +91,7 @@ const QuoteForPriceTable = ({
         </div>
       );
     }
-    if (calculationStatus === ECalculationStatus.Failed) {
+    if (item?.calculationStatus === ECalculationStatus.Failed) {
       return (
         <div
           style={{
@@ -98,7 +101,11 @@ const QuoteForPriceTable = ({
             color: "#344054",
           }}
         >
-          <NotCalculatingIcon />
+          <Tooltip title={item?.exceptionsKey}>
+            <IconButton style={{ padding: 0 }}>
+              <NotCalculatingIcon />
+            </IconButton>
+          </Tooltip>
           {t("general.error")}!
           <span
             style={{
@@ -106,7 +113,7 @@ const QuoteForPriceTable = ({
               textDecoration: "underline",
               cursor: "pointer",
             }}
-            onClick={() => getQuote()}
+            onClick={() => reCalculateItem(item?.id)}
           >
             {t("general.tryAgain")}
           </span>
@@ -259,3 +266,6 @@ const QuoteForPriceTable = ({
 };
 
 export { QuoteForPriceTable };
+
+
+
