@@ -395,7 +395,7 @@ const RowMappingWidget = ({
                   onInputChange={(e) => onInputChangeFinalPrice(e)}
                 />
               ) : (
-                _renderIconcalculationStatus(item?.calculationStatus)
+                _renderIconcalculationStatus(item)
               )}
             </>
           )}
