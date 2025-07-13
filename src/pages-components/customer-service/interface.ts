@@ -51,9 +51,11 @@ export interface IIssuesHeaderSectionProps {
   handleClean?: () => void;
   statuses: any;
   onChangeStatus: any;
-  selectedStatus: any;
   setPatternSearch: Dispatch<SetStateAction<string>>;
   patternSearch: string;
+  statusFilters: any;
+  onToggleAllStatuses?: any;
+  onToggleStatus?: any;
 }
 export interface TicketTypeList {
   label: string;

@@ -7,7 +7,7 @@ export type TABLE_TYPE =
 
 export interface ITableProps {
   rows: ReactNode[][];
-  headers:any;
+  headers: any;
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
   maxHeight?: any;
@@ -30,6 +30,9 @@ export interface ITableProps {
   isDescOrderBE?: boolean;
   isHeaderSortable?: any;
   docType?: any;
+  customSortFns?: {
+    [key: number]: (a: any, b: any) => number;
+  };
 }
 
 export interface ISecondaryTableProps {
