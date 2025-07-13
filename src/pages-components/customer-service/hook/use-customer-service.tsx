@@ -31,7 +31,7 @@ const useCustomerService = (isAdmin: boolean) => {
   const [selectedModalPrintHouse, setSelectedModalPrintHouse] =
     useState<any>("");
   const [filteredIssues, setFilteredIssues] = useState([]);
-  const [statusFilter, setStatusFilter] = useState(null);
+
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
   const [file, setFile] = useState<File | null>(null);
   const { alertFault, alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
@@ -95,51 +95,9 @@ const useCustomerService = (isAdmin: boolean) => {
     await getAllPrintHousesApi(callApi, callBack);
   }, [callApi]);
 
-  const onChangeStatus = useCallback((e, value) => {
-    setStatusFilter(value || null);
-  }, []);
-
-  const filterIssues = useCallback(() => {
-    const lowercasedSearch = debouncedPatternSearch.trim().toLowerCase();
-
-    const filtered = AllIssues.filter((issue) => {
-      // Filter by selected print house
-      if (selectedPrintHouse && issue[0] !== selectedPrintHouse?.label)
-        return false;
-
-      // Filter by status
-      // if (statusFilter && issue[6] !== statusFilter?.label) return false;
-      if (statusFilter && issue[6]?.props?.children !== statusFilter?.label)
-        return false;
-
-      // Search input filter by title/description
-      if (
-        lowercasedSearch &&
-        !issue[2]?.toLowerCase().includes(lowercasedSearch) &&
-        !issue[3]?.toLowerCase().includes(lowercasedSearch)
-      )
-        return false;
-
-      return true;
-    });
-
-    setFilteredIssues(filtered);
-  }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
-
-  useEffect(() => {
-    filterIssues();
-  }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
-
-  const tableHeaders = [
-    isAdmin ? t("customerService.printHouses") : null,
-    t("customerService.CreatedAt"),
-    t("customerService.title"),
-    t("customerService.description"),
-    t("customerService.issueType"),
-    t("customerService.issueNumber"),
-    t("customerService.status"),
-    isAdmin ? "" : null,
-  ];
+  // const onChangeStatus = useCallback((e, value) => {
+  //   setStatusFilter(value || null);
+  // }, []);
 
   const statuses = [
     {
@@ -160,6 +118,77 @@ const useCustomerService = (isAdmin: boolean) => {
     },
     { label: t("customerService.backlog"), value: "Backlog" },
     { label: t("customerService.new"), value: "New" },
+  ];
+
+  const [statusFilters, setStatusFilters] = useState<string[]>(
+    statuses.filter((s) => s.value !== "Done").map((s) => s.value)
+  );
+
+  const onToggleStatus = useCallback((id: string) => {
+    setStatusFilters((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  }, []);
+
+  const onToggleAllStatuses = useCallback(() => {
+    const allIds = statuses.map((s) => s.value);
+
+    const isAllSelected = allIds.every((id) => statusFilters.includes(id));
+    setStatusFilters(isAllSelected ? [] : allIds);
+  }, [statuses, statusFilters]);
+
+  // const onChangeStatus = useCallback((e, values) => {
+  //   setStatusFilters(values.map((v) => v.label));
+  // }, []);
+
+  const onChangeStatus = (updatedValues: string[]) => {
+    setStatusFilters(updatedValues);
+  };
+
+  const filterIssues = useCallback(() => {
+    const lowercasedSearch = debouncedPatternSearch.trim().toLowerCase();
+
+    const filtered = AllIssues.filter((issue) => {
+      // Filter by selected print house
+      if (selectedPrintHouse && issue[0] !== selectedPrintHouse?.label)
+        return false;
+
+      // Filter by status
+      const statusValue = statuses.find(
+        (status) => status.label === issue[6]?.props?.children
+      )?.value;
+
+      if (statusFilters.length > 0 && !statusFilters.includes(statusValue)) {
+        return false;
+      }
+
+      // Search input filter by title/description
+      if (
+        lowercasedSearch &&
+        !issue[2]?.toLowerCase().includes(lowercasedSearch) &&
+        !issue[3]?.toLowerCase().includes(lowercasedSearch)
+      )
+        return false;
+
+      return true;
+    });
+
+    setFilteredIssues(filtered);
+  }, [AllIssues, selectedPrintHouse, statusFilters, debouncedPatternSearch]);
+
+  useEffect(() => {
+    filterIssues();
+  }, [AllIssues, selectedPrintHouse, statusFilters, debouncedPatternSearch]);
+
+  const tableHeaders = [
+    isAdmin ? t("customerService.printHouses") : null,
+    t("customerService.CreatedAt"),
+    t("customerService.title"),
+    t("customerService.description"),
+    t("customerService.issueType"),
+    t("customerService.issueNumber"),
+    t("customerService.status"),
+    isAdmin ? "" : null,
   ];
 
   const statusColors = {
@@ -205,8 +234,12 @@ const useCustomerService = (isAdmin: boolean) => {
   };
 
   const handleClean = useCallback(() => {
+    const allIds = statuses.map((s) => s.value);
+    const allExceptDone = allIds.filter((id) => id !== "Done");
+
     setSelectedPrintHouse(null);
-    setStatusFilter(null);
+    setStatusFilters(allExceptDone);
+    // setStatusFilters([]);
   }, []);
 
   useEffect(() => {
@@ -505,7 +538,6 @@ const useCustomerService = (isAdmin: boolean) => {
     setSelectedPrintHouse,
     statuses,
     onChangeStatus,
-    statusFilter,
     filteredIssues,
     columnWidths,
     onChangeInputs,
@@ -525,6 +557,9 @@ const useCustomerService = (isAdmin: boolean) => {
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
     sendToMonday,
+    statusFilters,
+    onToggleAllStatuses,
+    onToggleStatus,
   };
 };
 

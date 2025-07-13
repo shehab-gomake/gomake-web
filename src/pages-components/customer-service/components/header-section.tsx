@@ -7,6 +7,8 @@ import { IIssuesHeaderSectionProps } from "../interface";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop-down";
+import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 
 const IssuesHeaderSection = ({
   isAdmin,
@@ -15,10 +17,12 @@ const IssuesHeaderSection = ({
   onChangePrintHouse,
   selectedPrintHouse,
   statuses,
-  onChangeStatus,
-  selectedStatus,
   setPatternSearch,
   patternSearch,
+  statusFilters,
+  onToggleAllStatuses,
+  onToggleStatus,
+  onChangeStatus,
 }: IIssuesHeaderSectionProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -58,14 +62,19 @@ const IssuesHeaderSection = ({
             <div style={classes.labelFilterStyle}>
               {t("customerService.status")}
             </div>
-            <GoMakeAutoComplate
-              key={`status-select-${selectedStatus || "null"}`}
-              options={statuses}
-              style={classes.dropDownListStyle}
-              placeholder={t("customerService.selectStatus")}
+            {/* <MultiSelectDropdown
+              items={statuses.map((s) => ({ id: s.value, label: s.label }))}
+              selectedIds={statusFilters}
+              onToggle={onToggleStatus}
+              onToggleAll={onToggleAllStatuses}
+              buttonLabel={t("customerService.status")}
+              withSearch={false}
+            /> */}
+            <GoMakeMultiSelect
               onChange={onChangeStatus}
-              value={selectedStatus}
-              withArrow={true}
+              options={statuses}
+              values={statusFilters}
+              placeholder={t("customerService.selectStatus")}
             />
           </div>
         ) : (
