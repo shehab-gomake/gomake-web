@@ -14,7 +14,7 @@ import lodashClonedeep from "lodash.clonedeep";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 
-const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings ,getProductById,setCanCalculation}) => {
+const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings ,getProductById,setCanCalculation,setIsFirstTimeEnterPageWhenEdit}) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
@@ -55,6 +55,7 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
 
   const onClickSaveParameter = () => {
     setCanCalculation(true)
+    setIsFirstTimeEnterPageWhenEdit(false)
     let copy = lodashClonedeep(subProductsCopy);
     setSubProducts(copy)
     setSubProductsCopy(copy)
