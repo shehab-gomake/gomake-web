@@ -92,72 +92,87 @@ const SystemNotifications = () => {
     }
   };
 
-  return (
+  const renderIconButton = () => (
+    <CustomTooltip title={t("header.notifications")} arrow>
+      <IconButton
+        style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+        onClick={handelClick}
+      >
+        <NotificationsNoneOutlinedIcon style={{ color: "#2e3092" }} />
+      </IconButton>
+    </CustomTooltip>
+  );
+
+  const renderMenu = () => (
+    <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+      <Stack width="auto" padding="10px 20px 0 20px" height="fit-content">
+        <Stack gap="10px">
+          {notifications?.map((notification) => (
+            <Stack gap="10px" key={notification.id}>
+              <Stack
+                style={{ cursor: "pointer" }}
+                onClick={() => markNotificationAsRead(notification.id)}
+                direction="row"
+                alignItems="center"
+                gap="10px"
+              >
+                <div
+                  style={{
+                    borderRadius: "50%",
+                    backgroundColor: getNotificationStatusColor(
+                      notification.type
+                    ),
+                    height: "15px",
+                    width: "15px",
+                  }}
+                />
+                <Stack gap="5px">
+                  <NotificationMessageComponent {...notification} />
+                  <MessageDateTimeComponent
+                    date={new Date(notification.createdDate)}
+                  />
+                </Stack>
+              </Stack>
+              <Divider flexItem orientation="horizontal" />
+            </Stack>
+          ))}
+        </Stack>
+        <PrimaryButton
+          onClick={markNotificationsASRead}
+          style={{
+            color: primaryColor(200),
+            padding: 0,
+            fontSize: 12,
+          }}
+        >
+          {t("notifications.markAsRead")}
+        </PrimaryButton>
+      </Stack>
+    </GoMakeMenu>
+  );
+
+  return notifications.length > 0 ? (
     <Badge
       style={{ padding: "2px" }}
       badgeContent={notifications.length}
-      color={"warning"}
-      invisible={notifications.length === 0}
+      color="warning"
+      componentsProps={{
+        badge: {
+          style: {
+            right: "-5px",
+            transform: "none",
+          },
+        },
+      }}
     >
-      <CustomTooltip title={t("header.notifications")} arrow>
-        <IconButton
-          style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
-          onClick={handelClick}
-        >
-          <NotificationsNoneOutlinedIcon style={{ color: "#2e3092" }} />
-        </IconButton>
-      </CustomTooltip>
-
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <Stack
-          width={"auto"}
-          padding={"10px 20px 0 20px"}
-          height={"fit-content"}
-        >
-          <Stack gap={"10px"}>
-            {notifications?.map((notification) => (
-              <Stack gap={"10px"}>
-                <Stack
-                  style={{ cursor: "pointer" }}
-                  onClick={() => markNotificationAsRead(notification.id)}
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={"10px"}
-                >
-                  <div
-                    style={{
-                      borderRadius: "50%",
-                      backgroundColor: getNotificationStatusColor(
-                        notification.type
-                      ),
-                      height: "15px",
-                      width: "15px",
-                    }}
-                  />
-                  <Stack gap={"5px"}>
-                    <NotificationMessageComponent {...notification} />
-                    <MessageDateTimeComponent
-                      date={new Date(notification.createdDate)}
-                    />
-                  </Stack>
-                </Stack>
-                <Divider flexItem orientation={"horizontal"} />
-              </Stack>
-            ))}
-          </Stack>
-          <PrimaryButton
-            onClick={markNotificationsASRead}
-            style={{
-              color: primaryColor(200),
-              padding: 0,
-              fontSize: 12,
-            }}
-          >
-            {t("notifications.markAsRead")}
-          </PrimaryButton>
-        </Stack>
-      </GoMakeMenu>
+      {renderIconButton()}
+      {renderMenu()}
     </Badge>
+  ) : (
+    <>
+      {renderIconButton()}
+      {renderMenu()}
+    </>
   );
 };
 export { SystemNotifications };
