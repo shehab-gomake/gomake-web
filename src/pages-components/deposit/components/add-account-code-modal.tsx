@@ -100,7 +100,11 @@ const AddAccountCodeModal = ({
             />
           </div>
           <div style={classes.addClientTypeBtnContainer}>
-            <PrimaryButton variant="contained" onClick={handleAddAccountCode}>
+            <PrimaryButton
+              disabled={!accountState.code || !accountState.name}
+              variant="contained"
+              onClick={handleAddAccountCode}
+            >
               {t("deposits.addAccount")}
             </PrimaryButton>
           </div>
