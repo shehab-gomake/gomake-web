@@ -113,7 +113,9 @@ const SystemHelp = () => {
                     color="error"
                     sx={{
                       "& .MuiBadge-badge": {
-                        right: 10,
+                        ...(t("direction") === "rtl"
+                          ? { right: -10 }
+                          : { right: 10 }),
                         ...FONT_FAMILY.Lexend(400, 13),
                         height: "18px",
                         minWidth: "18px",
