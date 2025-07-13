@@ -39,6 +39,7 @@ import {
 } from "@/widgets/quote-new/receipts-table/states";
 import { loadingWithShadowState, quoteItemState } from "@/store";
 import { useRouter } from "next/router";
+import { createAccountCodeApi } from "@/services/api-service/generic-doc/deposits-api";
 
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
@@ -46,12 +47,15 @@ const usePaymentMethodsTabs = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
-  const { alertSuccessUpdate, alertFault } = useSnackBar();
+  const { alertSuccessUpdate, alertFault, alertFaultAdded } = useSnackBar();
   const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
   const [totalChecks, setTotalChecks] =
     useRecoilState<number>(totalChecksState);
   const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
+  // const quoteItemValue: any = useRecoilValue(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue]: any =
+    useRecoilState(quoteItemState);
+
   const resetTotalBit = useResetRecoilState(totalBitState);
   const resetTotalTransfer = useResetRecoilState(totalTransferState);
   const resetTransferTabState = useResetRecoilState(transferTabState);
@@ -561,6 +565,42 @@ const usePaymentMethodsTabs = () => {
     setTransactionSelected(value);
   };
 
+  const [openAccountCode, setOpenAccountCode] = useState(false);
+  const onClickOpenAccountCode = () => {
+    setOpenAccountCode(true);
+  };
+  const onClickCloseAccountCode = () => {
+    setOpenAccountCode(false);
+  };
+
+  const addNewAccountCode = async (account: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const newAccount = {
+          id: res?.data?.id,
+          code: account?.code,
+          name: account?.name,
+          isSelected: false,
+        };
+
+        if (newAccount) {
+          const updatedAccounts = [
+            ...(quoteItemValue.transferAccounts || []),
+            newAccount,
+          ];
+
+          setQuoteItemValue({
+            ...quoteItemValue,
+            transferAccounts: updatedAccounts,
+          });
+        }
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await createAccountCodeApi(callApi, callBack, account);
+  };
+
   return {
     t,
     data,
@@ -600,6 +640,10 @@ const usePaymentMethodsTabs = () => {
     errors,
     validateCreditCardForm,
     alertFault,
+    openAccountCode,
+    onClickOpenAccountCode,
+    onClickCloseAccountCode,
+    addNewAccountCode,
   };
 };
 
