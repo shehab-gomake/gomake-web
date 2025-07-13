@@ -120,6 +120,15 @@ const useCustomerService = (isAdmin: boolean) => {
     { label: t("customerService.new"), value: "New" },
   ];
 
+  const statusPriority: Record<string, number> = {
+    New: 0,
+    Backlog: 1,
+    "Waiting for Response": 2,
+    "Working on it": 3,
+    "Under Review with R&D": 4,
+    Done: 5,
+  };
+
   const [statusFilters, setStatusFilters] = useState<string[]>(
     statuses.filter((s) => s.value !== "Done").map((s) => s.value)
   );
@@ -515,7 +524,29 @@ const useCustomerService = (isAdmin: boolean) => {
                 item[0] + "/" === printHouseProfileState?.domain
             );
 
-        setAllIssues(filteredFormattedData);
+        const sortedData = filteredFormattedData.sort((a, b) => {
+          const statusA =
+            statuses.find((s) => s.label === a[6]?.props?.children)?.value ||
+            "";
+          const statusB =
+            statuses.find((s) => s.label === b[6]?.props?.children)?.value ||
+            "";
+
+          const priorityA = statusPriority[statusA] ?? 99;
+          const priorityB = statusPriority[statusB] ?? 99;
+
+          if (priorityA !== priorityB) {
+            return priorityA - priorityB;
+          }
+
+          const nameA = (a[2] || "").toLowerCase();
+          const nameB = (b[2] || "").toLowerCase();
+
+          return nameA.localeCompare(nameB);
+        });
+
+        setAllIssues(sortedData);
+        // setAllIssues(filteredFormattedData);
       } else {
         alertFaultGetData();
       }
