@@ -44,10 +44,8 @@ const CustomerAuthLayout = ({
   } = useCustomerAuthLayout(permissionEnumValue, allowAnonymous, customGap);
 
   useEffect(() => {
-    if (isHomePage) {
-      getLastVersion();
-    }
-  }, [isHomePage]);
+    getLastVersion();
+  }, []);
 
   useEffect(() => {
     setPageTitle(staticPageTitle);
