@@ -6,10 +6,17 @@ import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import { useRecoilState } from "recoil";
 import { transferTabState } from "../../states";
 import { useEffect, useState } from "react";
+import { AddAccountCodeModal } from "@/pages-components/deposit/components/add-account-code-modal";
 
 const TransferTab = () => {
-  const { transferAccountsOptions, handleTotalTransferChange } =
-    usePaymentMethodsTabs();
+  const {
+    transferAccountsOptions,
+    handleTotalTransferChange,
+    openAccountCode,
+    onClickOpenAccountCode,
+    onClickCloseAccountCode,
+    addNewAccountCode,
+  } = usePaymentMethodsTabs();
   const [state, setState] = useRecoilState(transferTabState);
   const [renderInputs, setRenderInputs] = useState(false);
 
@@ -40,46 +47,61 @@ const TransferTab = () => {
   }, [transferAccountsOptions, state]);
 
   return (
-    <Stack direction="row">
-      <Stack
-        padding="0 5px"
-        direction="column"
-        alignItems="flex-start"
-        gap="20px"
-      >
-        {renderInputs &&
-          TransferInputs(state, transferAccountsOptions)
-            .slice(0, 2)
-            .map((item) => (
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeTransferInputs}
-                error={false}
-                readonly={!!item.readOnly}
-                key={item.name}
-              />
-            ))}
+    <>
+      <Stack direction="row">
+        <Stack
+          padding="0 5px"
+          direction="column"
+          alignItems="flex-start"
+          gap="20px"
+        >
+          {renderInputs &&
+            TransferInputs(
+              state,
+              transferAccountsOptions,
+              onClickOpenAccountCode
+            )
+              .slice(0, 2)
+              .map((item) => (
+                <FormInput
+                  input={item as IInput}
+                  changeState={onChangeTransferInputs}
+                  error={false}
+                  readonly={!!item.readOnly}
+                  key={item.name}
+                />
+              ))}
+        </Stack>
+        <Stack
+          padding="0 5px"
+          direction="column"
+          alignItems="flex-start"
+          gap="20px"
+        >
+          {renderInputs &&
+            TransferInputs(
+              state,
+              transferAccountsOptions,
+              onClickOpenAccountCode
+            )
+              .slice(2)
+              .map((item) => (
+                <FormInput
+                  input={item as IInput}
+                  changeState={onChangeTransferInputs}
+                  error={false}
+                  readonly={!!item.readOnly}
+                  key={item.name}
+                />
+              ))}
+        </Stack>
       </Stack>
-      <Stack
-        padding="0 5px"
-        direction="column"
-        alignItems="flex-start"
-        gap="20px"
-      >
-        {renderInputs &&
-          TransferInputs(state, transferAccountsOptions)
-            .slice(2)
-            .map((item) => (
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeTransferInputs}
-                error={false}
-                readonly={!!item.readOnly}
-                key={item.name}
-              />
-            ))}
-      </Stack>
-    </Stack>
+      <AddAccountCodeModal
+        openModal={openAccountCode}
+        onClose={onClickCloseAccountCode}
+        addNewAccountCode={addNewAccountCode}
+      />
+    </>
   );
 };
 export { TransferTab };
