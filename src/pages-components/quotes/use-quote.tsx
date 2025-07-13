@@ -17,6 +17,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import {
   agentsCategoriesState,
+  closeAsInvoiceState,
   isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -689,11 +690,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               );
 
               const paymentStatus = `${isRTL
-                ? `${quote?.sumApplied} ${getCurrencyUnitText(
-                  quote?.currency
-                )}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
-                }`
+                  ? `${quote?.sumApplied} ${getCurrencyUnitText(
+                    quote?.currency
+                  )}`
+                  : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
+                  }`
                 }/${isRTL
                   ? `${quote?.totalPrice} ${getCurrencyUnitText(
                     quote?.currency
@@ -1158,8 +1159,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             );
 
             const paymentStatus = `${isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+                ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
               }/${isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
@@ -2938,12 +2939,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [router, agentsCategories]);
 
+  const closeAsInvoice = useRecoilValue(closeAsInvoiceState);
+
   const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
         if (isOrder) {
-          onOpenPackagesModal(selectedDocument, true);
+          onOpenPackagesModal(selectedDocument, closeAsInvoice ? true : false);
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {

@@ -163,16 +163,14 @@ const PrimaryTable = ({
   isDescOrderBE = false,
   isHeaderSortable,
   docType,
+  customSortFns, // Optional. Provide column-specific sort functions (by column index). Defaults to basic comparison if not passed.
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
-  const [isHovered, setIsHovered] = useState(false);
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
 
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
   // State for sorting
   const [sortConfig, setSortConfig] = useState<{
     key: number;
@@ -210,31 +208,36 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-        ? RoundTableCell
-        : PrimaryTableCell;
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-        ? OddEvenTableRow
-        : variant === "RoundTable"
-          ? RoundTableRow
-          : PrimaryTableRow;
+      ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
+      : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
     if (!sortConfig) return rows;
 
-    return [...rows].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
+    const { key, direction } = sortConfig;
+    const sortFn = customSortFns?.[key];
 
-      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
+    return [...rows].sort((a, b) => {
+      const result = sortFn
+        ? sortFn(a, b)
+        : a[key] < b[key]
+        ? -1
+        : a[key] > b[key]
+        ? 1
+        : 0;
+      return direction === "asc" ? result : -result;
     });
-  }, [rows, sortConfig]);
+  }, [rows, sortConfig, customSortFns]);
 
   const handleSort = (index: number) => {
     setSortConfig((prev) => {
@@ -311,18 +314,18 @@ const PrimaryTable = ({
                     {(withSort || withSortBE) && isAgingeport
                       ? header?.name
                       : header !== "" &&
-                      sortConfig?.key === index && (
-                        <IconButton
-                          size="small"
-                          style={{ ...adaptMarginRight(dir, 4) }}
-                        >
-                          {sortConfig.direction === "asc" ? (
-                            <ArrowUpward sx={{ fontSize: "18px" }} />
-                          ) : (
-                            <ArrowDownward sx={{ fontSize: "18px" }} />
-                          )}
-                        </IconButton>
-                      )}
+                        sortConfig?.key === index && (
+                          <IconButton
+                            size="small"
+                            style={{ ...adaptMarginRight(dir, 4) }}
+                          >
+                            {sortConfig.direction === "asc" ? (
+                              <ArrowUpward sx={{ fontSize: "18px" }} />
+                            ) : (
+                              <ArrowDownward sx={{ fontSize: "18px" }} />
+                            )}
+                          </IconButton>
+                        )}
                     {isAgingeport &&
                       (header?.key === "cardName" ||
                         header?.key === "cardCode" ||
@@ -345,7 +348,8 @@ const PrimaryTable = ({
                         size="small"
                         style={{
                           ...adaptMarginRight(dir, 4),
-                          visibility: hoveredColumn === header ? 'visible' : 'hidden',
+                          visibility:
+                            hoveredColumn === header ? "visible" : "hidden",
                         }}
                       >
                         {!isDescOrderBE ? (
@@ -370,8 +374,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                        ? "#EFDDFF"
-                        : "inherit",
+                      ? "#EFDDFF"
+                      : "inherit",
                 }}
               >
                 {enableCheckboxes && (
