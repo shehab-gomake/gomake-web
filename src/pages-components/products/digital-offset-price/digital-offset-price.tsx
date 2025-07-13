@@ -650,7 +650,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         openModal={saveCurrentStation}
         onClose={onClickCloseCurrentStationModal}
         insideStyle={{
-          width: "fit-content",
+          width: "55%",
           height: "fit-content",
           textAlign: "center",
           padding: 30,
