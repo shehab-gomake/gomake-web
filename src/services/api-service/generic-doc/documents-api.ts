@@ -160,6 +160,8 @@ const SAVE_DOCUMENT_TABLE_SETTINGS_URL =
 const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
+const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+
 const getDocumentApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1321,6 +1323,20 @@ const getDocumentTableSettingsApi: ICallAndSetData = async (
   );
 };
 
+const reCalculateItemApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    RE_CALCULATE_ITEM_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1408,4 +1424,5 @@ export {
   ExportDocumentTableToPdfApi,
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
+  reCalculateItemApi,
 };
