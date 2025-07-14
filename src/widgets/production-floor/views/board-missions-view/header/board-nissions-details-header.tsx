@@ -52,6 +52,7 @@ const HeaderDividerComponent = () => {
 };
 
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
+  console.log("boardMissionsDetails", boardMissionsDetails);
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const [jobDueDate, setJobDueDate] = useState(
@@ -90,7 +91,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
                       .utc()
                       .format("YYYY-MM-DD HH:mm:ss");
                     setJobDueDate(formattedDueDate);
-                    updateJobDueDateApi(callApi, () => {}, {
+                    updateJobDueDateApi(callApi, () => { }, {
                       boardMissionId: boardMissionsDetails.boardMissionId,
                       dueDate: utcDueDate,
                     }).then();
@@ -144,7 +145,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const statusLabels = [
     {
       condition: boardMissionsDetails?.isNeedExample,
-      label: t("boardMissions.sampleRequired"),
+      label: t("boardMissions.sampleRequired") + " : " + (boardMissionsDetails?.exampleType === 1 ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")),
       background: "#BE0270",
     },
     {
@@ -363,9 +364,8 @@ const BoardMissionsDetailsHeader = () => {
                     />
                     <HeaderDividerComponent />
                     <HeaderTitleComponent
-                      title={`${boardMissionsDetails.boardMissionNumber}/${
-                        boardMissionsDetails.orderNumber
-                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                      title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber
+                        }${!!boardMissionsDetails.productType ? "/" : ""}`}
                     />
                     <span style={classes.productType}>
                       {boardMissionsDetails.sectionName}
