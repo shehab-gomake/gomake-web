@@ -24,6 +24,7 @@ import {
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
+import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 
 const FormInput = ({
   input,
@@ -229,31 +230,43 @@ const FormInput = ({
         >
           {!hideLabel && (
             <div style={classes.inputLbl}>
-              {
-                <Stack
-                  direction={"row"}
-                  gap={"7px"}
-                  alignItems={"flex-end"}
-                  padding={"0 5px"}
-                >
-                  <span>{t(input.label)}</span>
+              <Stack
+                direction={"row"}
+                gap={"7px"}
+                alignItems={"center"}
+                padding={"0 5px"}
+              >
+                <span>{t(input.label)}</span>
 
-                  {input.unit && (
-                    <small>{`${t(
+                {input.unit && (
+                  <small>
+                    {`${t(
                       `measurementUnits.${
                         translateUnit && input.unit
                           ? units[input.unit]?.imperialUnit
                           : input.unit
                       }`
-                    )}`}</small>
-                  )}
-                  {/* Render Icon if Provided */}
-                  {input.iconElement && <span>{input.iconElement}</span>}
-                </Stack>
-              }
+                    )}`}
+                  </small>
+                )}
+
+                {input.iconElement && <span>{input.iconElement}</span>}
+
+                {input.note && (
+                  <Tooltip title={t(input.note)}>
+                    <HelpOutlineRoundedIcon
+                      fontSize="small"
+                      color="action"
+                      style={{ cursor: "pointer", marginTop: "2px" }}
+                    />
+                  </Tooltip>
+                )}
+              </Stack>
+
               {input.required && <span style={classes.required}>*</span>}
             </div>
           )}
+
           <div style={classes.inputs}>
             {input.type === "imageFile" ? (
               <GoMakeImageFiled

@@ -43,6 +43,10 @@ const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE =
   "/v1/erp-service/board-missions-actions/update-action-employee";
 const HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS =
   "/v1/erp-service/board-missions-actions/handle-board-missions-barcode-actions";
+
+const HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS_URL =
+  "/v1/jobs-service/board-missions-actions/handle-board-missions-qr-actions";
+
 const UPDATE_BOARD_MISSIONS_ACTION_MACHINE =
   "/v1/erp-service/board-missions-actions/update-action-machine";
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL =
@@ -821,6 +825,20 @@ const updateProductionFloorNotesApi: ICallAndSetData = async (
   );
 };
 
+const handleBoardMissionsBarcodeActionsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   boardMissionsUpdateActionEmployee,
   handleBoardMissionsBarcodeActions,
@@ -869,5 +887,6 @@ export {
   updateProductionFloorNotesApi,
   sendJobExampleConfirmationToClientApi,
   getAllStuckJobsApi,
-  getAllStuckJobsByAgentIdApi
+  getAllStuckJobsByAgentIdApi,
+  handleBoardMissionsBarcodeActionsApi
 };

@@ -37,6 +37,7 @@ import {
   getWhatsAppMessageApi,
   getWhatsAppMessageForReceiptApi,
   moveOrderToReadyApi,
+  reCalculateItemApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
   removeDraftDocumentApi,
@@ -413,18 +414,18 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1185,7 +1186,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-              (isPrintHouseMaterialItem || selectedFirstMaterial)
+                (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1428,7 +1429,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1814,7 +1815,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2451,6 +2452,21 @@ const useQuoteNew = ({
     </Button>
   );
 
+  const reCalculateItem = async (itemId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await reCalculateItemApi(callApi, callBack, {
+      documentType: docType,
+      documentItemId: itemId,
+    });
+  };
+
   return {
     dateRef,
     taxDateRef,
@@ -2713,6 +2729,7 @@ const useQuoteNew = ({
     moveToReadyOption,
     setMoveToReadyOption,
     handleRadioChange,
+    reCalculateItem
   };
 };
 

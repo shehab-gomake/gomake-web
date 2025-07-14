@@ -71,10 +71,10 @@ const RowMappingChildWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+    );
 
   return (
     <TableRow
@@ -195,7 +195,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.quantity}
               onBlur={onBlurAmount}
@@ -217,7 +217,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.price}
               onBlur={onBlurPrice}
@@ -239,7 +239,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.discount ? item.discount : "0"}
               onBlur={onBlurDiscount}
@@ -261,7 +261,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.finalPrice}
               onBlur={onBlurFinalPrice}
@@ -270,7 +270,7 @@ const RowMappingChildWidget = ({
               onInputChange={(e) => onInputChangeFinalPrice(e)}
             />
           ) : (
-            _renderIconcalculationStatus(item?.calculationStatus)
+            _renderIconcalculationStatus(item)
           )}
         </div>
       </PrimaryTableCell>

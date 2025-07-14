@@ -68,32 +68,28 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({
             {t(`header.${label}`)}
           </Typography>
         </Box>
-        <Box
-          sx={{
-            maxHeight: "125px",
-            overflowY: "auto",
-            ...(isLTR ? { pl: 1 } : { pr: 1 }),
-          }}
-          className="custom-scroller"
-        >
-          <List dense>
-            {filtered.map((change) => (
-              <ListItem key={change.id} disableGutters>
-                <Typography
-                  variant="body2"
-                  dir={dir}
-                  sx={{ display: "inline" }}
-                >
-                  <strong style={{ direction: "ltr", unicodeBidi: "isolate" }}>
-                    {change.title}
-                  </strong>
-                  {" : "}
-                  {change.name}
-                </Typography>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+        {/* <Box
+        sx={{
+          maxHeight: "125px",
+          overflowY: "auto",
+          ...(isLTR ? { pl: 1 } : { pr: 1 }),
+        }}
+        className="custom-scroller"
+        > */}
+        <List dense>
+          {filtered.map((change) => (
+            <ListItem key={change.id} disableGutters>
+              <Typography variant="body2" dir={dir} sx={{ display: "inline" }}>
+                <strong style={{ direction: "ltr", unicodeBidi: "isolate" }}>
+                  {change.title}
+                </strong>
+                {" : "}
+                {change.name}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
+        {/* </Box> */}
         <Divider />
       </Box>
     );
@@ -105,9 +101,9 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      // PaperProps={{
-      //   sx: { maxHeight: "70vh", overflowY: "auto" },
-      // }}
+      PaperProps={{
+        sx: { maxHeight: "70vh", overflowY: "auto" },
+      }}
     >
       <DialogTitle
         id="go-make-dialog-title"
@@ -123,7 +119,7 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent className="custom-scroller">
         {Object.values(ChangeType)
           .filter((v) => !isNaN(Number(v)))
           .map((type) => renderSection(Number(type)))}

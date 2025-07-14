@@ -234,7 +234,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
     t("boardMissions.missionNumber"),
-    t("mailingSettings.orderNumber"),
+    t("sales.quote.relatedDocuments"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
@@ -244,6 +244,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
+    t("tableHeaders.estimatedProductionDate"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more"),
   ].filter(Boolean); // This filters out falsy values
@@ -657,6 +658,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
+            mission?.estimatedProductionDate ? mission?.estimatedProductionDate.split("T")[0] : "-",
             <div style={{ whiteSpace: "break-spaces" }}>
               {getJobStatus(mission)}
             </div>,

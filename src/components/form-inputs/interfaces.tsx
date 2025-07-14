@@ -24,6 +24,7 @@ export interface IInput {
   secondValue?: string;
   isRequired?: boolean;
   iconElement?: React.ReactNode;
+  note?: string;
 }
 export interface IFormInput {
   input: IInput;

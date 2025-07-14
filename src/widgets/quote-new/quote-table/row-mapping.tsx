@@ -57,6 +57,10 @@ const RowMappingWidget = ({
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
+
+  useEffect(() => {
+    setIsSelected(item?.isSelected);
+  }, [item?.isSelected]);
   const { getCurrencyUnitText } = useQuoteGetData();
 
   const handleChangeSelectedItem = (checked, itemId) => {
@@ -169,7 +173,7 @@ const RowMappingWidget = ({
                   />
                 }
                 checked={isSelected}
-                disabled={item?.isConfirmedByClient || item?.isClosed ? true : false}
+                disabled={item?.relatedWorkTypeItemId?.length > 0 || item?.isConfirmedByClient || item?.isClosed ? true : false}
                 onChange={(e) =>
                   handleChangeSelectedItem(e.target.checked, item?.id)
                 }
@@ -395,7 +399,7 @@ const RowMappingWidget = ({
                   onInputChange={(e) => onInputChangeFinalPrice(e)}
                 />
               ) : (
-                _renderIconcalculationStatus(item?.calculationStatus)
+                _renderIconcalculationStatus(item)
               )}
             </>
           )}

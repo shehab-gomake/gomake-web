@@ -603,7 +603,7 @@ const RightSideWidget = ({
                   options={
                     exampleTypeValues?.map((option) => ({
                       value: option.key,
-                      text: t(option.value),
+                      text: option.key === "1" ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital"),
                     })) || []
                   }
                   getOptionLabel={(option: any) => option.text}

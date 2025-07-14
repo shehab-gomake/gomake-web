@@ -13,6 +13,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { PrimaryCheckbox } from "../check-box/primary-check-box";
 
 interface Item {
   id: string;
@@ -126,7 +127,10 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             <FormControlLabel
               label={t("deposits.selectAll")}
               control={
-                <Checkbox checked={isAllSelected} onChange={onToggleAll} />
+                <PrimaryCheckbox
+                  checked={isAllSelected}
+                  onChange={onToggleAll}
+                />
               }
             />
           </MenuItem>
@@ -139,7 +143,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                 <FormControlLabel
                   label={item.label}
                   control={
-                    <Checkbox
+                    <PrimaryCheckbox
                       checked={selectedIds.includes(item.id)}
                       onChange={() => onToggle(item.id)}
                     />

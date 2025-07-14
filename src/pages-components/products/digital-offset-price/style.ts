@@ -991,21 +991,29 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         height: 35,
         lineHeight: "10px",
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 10),
+        ...FONT_FAMILY.Lexend(500, 16),
         color: "#FFFFFF",
       },
       cancelBtn: {
         //  width: "50%",
         height: 35,
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 10),
+        ...FONT_FAMILY.Lexend(500, 16),
         color: "#FFFFFF",
       },
       modalTitleForMission: {
-        margin: 15,
-        marginTop: 0,
-        color: primaryColor(500),
-        ...FONT_FAMILY.Lexend(700, 16),
+        display: "flex",
+        ...FONT_FAMILY.Inter(600, 20),
+        textAlign: "center" as "center",
+        color: "var(--colors-text-text-primary-900, #101828)",
+        lineHeight: "28px",
+      },
+      modalSubTitleForMission: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#475467",
+        textAlign: "center" as "center",
+        padding: "0px 30px",
       },
       modalCloseForMission: { position: "absolute", right: 0, top: 0 },
       mainContainerForMission: {
@@ -1014,7 +1022,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         gap: 10,
       },
       missionItemContainer: {
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500, 16),
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
@@ -1039,7 +1047,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         cursor: "pointer",
       },
       checkboxLabelStyle: {
-        ...FONT_FAMILY.Lexend(600, 14),
+        ...FONT_FAMILY.Lexend(600, 16),
       },
       reloadTotalPrice: {
         ...FONT_FAMILY.Inter(600, 12),
