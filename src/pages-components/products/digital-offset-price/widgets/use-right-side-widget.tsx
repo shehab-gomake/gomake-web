@@ -60,6 +60,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const calculationProgress = useRecoilValue(calculationProgressState);
 
   const exampleTypeValues = useRecoilValue(exampleTypeState);
+  console.log("exampleTypeValues", exampleTypeValues);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
   const [
     sliderCurrentProductItemValueTotalPrice,
@@ -316,7 +317,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             tValuesArray.sort().join(",") === itemValuesSorted
           );
         })
