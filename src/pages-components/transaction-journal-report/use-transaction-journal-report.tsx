@@ -28,6 +28,12 @@ export interface FilterState {
   accountCode?: string;
 }
 
+interface IDataTableStatistics {
+  totalCredit: number;
+  totalDebit: number;
+  totalRecords: number;
+}
+
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
   clientType?: CLIENT_TYPE;
@@ -83,6 +89,9 @@ const useTransactionJournalReport = ({
   const [toDate, setToDate] = useState<Date>(defaultEndDate);
 
   const [dataTable, setDataTable] = useState<any>([]);
+  const [dataTableStatistics, setDataTableStatistics] =
+    useState<IDataTableStatistics | null>(null);
+
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
   const {
@@ -337,7 +346,11 @@ const useTransactionJournalReport = ({
       const tableData = res.data?.data?.data;
       setDataTable(tableData.data);
       setPagesCount(Math.ceil(tableData.totalRecords / pageSize));
-
+      setDataTableStatistics({
+        totalCredit: tableData.totalCredit,
+        totalDebit: tableData.totalDebit,
+        totalRecords: tableData.totalRecords,
+      });
       alertSuccessGetData();
     } else {
       alertFaultGetData();
@@ -807,6 +820,7 @@ const useTransactionJournalReport = ({
     initialPageSize,
     setToDate,
     setFromDate,
+    dataTableStatistics,
   };
 };
 
