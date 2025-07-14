@@ -25,7 +25,6 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     selectedPrintHouse,
     statuses,
     onChangeStatus,
-    statusFilter,
     filteredIssues,
     columnWidths,
     ticketState,
@@ -45,6 +44,11 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     selectedModalPrintHouse,
     onChangeInputs,
     sendToMonday,
+    statusFilters,
+    onToggleAllStatuses,
+    onToggleStatus,
+    statusPriority,
+    statusThenNameSort,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -86,20 +90,20 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
         </div>
-        {
-          <IssuesHeaderSection
-            isAdmin={isAdmin}
-            printHouses={printHouses}
-            onChangePrintHouse={onChangePrintHouse}
-            selectedPrintHouse={selectedPrintHouse}
-            handleClean={handleClean}
-            statuses={statuses}
-            onChangeStatus={onChangeStatus}
-            selectedStatus={statusFilter}
-            setPatternSearch={setPatternSearch}
-            patternSearch={patternSearch}
-          />
-        }
+        <IssuesHeaderSection
+          isAdmin={isAdmin}
+          printHouses={printHouses}
+          onChangePrintHouse={onChangePrintHouse}
+          selectedPrintHouse={selectedPrintHouse}
+          handleClean={handleClean}
+          statuses={statuses}
+          onChangeStatus={onChangeStatus}
+          statusFilters={statusFilters}
+          setPatternSearch={setPatternSearch}
+          patternSearch={patternSearch}
+          onToggleAllStatuses={onToggleAllStatuses}
+          onToggleStatus={onToggleStatus}
+        />
         <PrimaryTable
           stickyHeader={true}
           columnWidths={columnWidths}
@@ -107,6 +111,10 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
           withSort={true}
+          // Custom sort for column 6 (status): sort by status priority)
+          customSortFns={{
+            6: statusThenNameSort({ statuses, statusPriority }),
+          }}
         />
         <CreateIssueModal
           isAdmin={isAdmin}

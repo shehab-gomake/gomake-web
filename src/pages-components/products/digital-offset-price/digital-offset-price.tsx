@@ -110,7 +110,8 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     setShowCalculationInCompletedModal,
     currentSignalRConnectionId,
     deliveryDate,
-    SelectWorkFlowById
+    SelectWorkFlowById,
+    setIsFirstTimeEnterPageWhenEdit
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -448,6 +449,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 subProducts={subProducts}
                 showCalculationInCompletedAlert={showCalculationInCompletedAlert}
                 setCanCalculation={setCanCalculation}
+                setIsFirstTimeEnterPageWhenEdit={setIsFirstTimeEnterPageWhenEdit}
               />
             )}
           </div>
@@ -650,7 +652,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         openModal={saveCurrentStation}
         onClose={onClickCloseCurrentStationModal}
         insideStyle={{
-          width: "fit-content",
+          width: "55%",
           height: "fit-content",
           textAlign: "center",
           padding: 30,
