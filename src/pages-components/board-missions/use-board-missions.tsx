@@ -234,7 +234,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
     t("boardMissions.missionNumber"),
-    t("mailingSettings.orderNumber"),
+    t("sales.quote.relatedDocuments"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
