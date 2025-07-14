@@ -14,6 +14,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useRouter } from "next/router";
 
 const UpdateDeliveryStatusModal = ({
   document,
@@ -68,12 +69,11 @@ const UpdateDeliveryStatusModal = ({
         extractDeliveryStatus(item[4]) === DocumentDeliveryStatuses.NotDelivered
     );
   };
-
+  const router = useRouter();
   return (
     <GoMakeModal
-      modalTitle={`${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${
-        documentNumber ?? document?.number
-      }`}
+      modalTitle={router.query.isComeFromQR ? `${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${router.query.orderNumber}` : `${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${documentNumber ?? document?.number
+        }`}
       insideStyle={{
         width: isMobile ? "95vw" : "70%",
         height: isMobile ? "unset" : "fit-content",

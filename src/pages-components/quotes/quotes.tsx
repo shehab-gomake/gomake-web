@@ -29,7 +29,7 @@ import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -44,7 +44,7 @@ import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
 import { DotIcon } from "@/icons";
-import { ModalType } from "@/enums";
+import { ModalType, QrCodeAction } from "@/enums";
 import TuneIcon from "@mui/icons-material/Tune";
 import {
   ItemsCountIcon,
@@ -73,6 +73,8 @@ import { DocumentPrimaryTable } from "@/components/tables/document-primary-table
 import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -303,6 +305,16 @@ const QuotesListPageWidget = ({
       setPatternSearch(router.query.documentNumber as string);
     }
   }, [router]);
+  useEffect(() => {
+    if (router.query.isComeFromQR) {
+      getDocumentDeliveryItems(DOCUMENT_TYPE.order, router.query.orderId);
+      getClientContacts(router.query.clientId);
+    }
+  }, [router]);
+
+
+
+
 
   useEffect(() => {
     !isFromHomePage && getAllProducts();
@@ -402,7 +414,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -430,6 +442,72 @@ const QuotesListPageWidget = ({
 
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
+
+
+  // const handleBoardMissionsQRCodeAction = async (barcode: string) => {
+  //   barcode = barcode.replace(/½/g, '-');
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //       if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
+  //         const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
+  //         router.push(url);
+  //       } else {
+  //         getDocumentDeliveryItems(DOCUMENT_TYPE.order, res?.data?.orderId);
+  //         getClientContacts(res?.data?.clientId);
+  //         const url = `/orders?deliveryOrderNumber=${res?.data?.orderNumber}`;
+  //         router.push(url);
+  //       }
+  //     }
+
+  //   };
+  //   await handleBoardMissionsBarcodeActionsApi(callApi, callBack, {
+  //     barcode
+  //   });
+  // };
+
+  // const [scanBuffer, setScanBuffer] = useState('');
+  // const [timeoutId, setTimeoutId] = useState(null);
+  // useEffect(() => {
+  //   if (documentType === DOCUMENT_TYPE.order) {
+  //     const handleKeyDown = (event) => {
+  //       // Clear previous timeout if exists
+  //       if (timeoutId) {
+  //         clearTimeout(timeoutId);
+  //       }
+
+  //       // Detect Enter key for scan completion
+  //       if (event.keyCode === 13 && scanBuffer.length > 0) {
+  //         setBarcode(scanBuffer);
+  //         handleBoardMissionsQRCodeAction(scanBuffer);
+  //         setScanBuffer(''); // Clear buffer for next scan
+  //         return;
+  //       }
+
+  //       // Append character to buffer
+  //       setScanBuffer((prevBuffer) => prevBuffer + String.fromCharCode(event.keyCode));
+
+  //       // Set timeout to detect human typing
+  //       const newTimeoutId = setTimeout(() => {
+  //         setScanBuffer(''); // Clear buffer if no further keys are pressed
+  //       }, 100); // Adjust timeout as needed
+  //       setTimeoutId(newTimeoutId);
+  //     };
+
+  //     document.addEventListener('keydown', handleKeyDown);
+
+  //     return () => {
+  //       document.removeEventListener('keydown', handleKeyDown);
+  //       if (timeoutId) {
+  //         clearTimeout(timeoutId);
+  //       }
+  //     };
+  //   }
+
+  // }, [scanBuffer, timeoutId, documentType]);
+
+
+  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.QUOTES })
+
 
   return (
     <>
@@ -465,8 +543,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        ? () => navigate(`/${documentPath}`)
+                        : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -488,12 +566,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -639,7 +717,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -701,7 +779,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{

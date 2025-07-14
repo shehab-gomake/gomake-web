@@ -6,7 +6,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
-  GoMakeModal,
   GomakePrimaryButton,
   ThreeOptionsModal,
 } from "@/components";
@@ -15,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType } from "@/enums";
+import { DuplicateType, ModalType, QrCodeAction } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -38,7 +37,6 @@ import { createGlobalStyle } from "styled-components";
 import {
   addOrderBoardMissionsToFileUploaderApi,
   getInitialOrderFoldersData,
-  printNodeModalCancelLog,
   printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
@@ -51,6 +49,8 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
+import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -148,7 +148,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openQuoteModal,
     ExportJobsTableToExcel,
     selectedMission,
-    onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
     cancelPrintNodeModal,
@@ -231,6 +230,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     top: 420px !important;
   }
 `;
+
+  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS })
   return (
     <>
       <Stack

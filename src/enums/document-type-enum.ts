@@ -171,3 +171,10 @@ export enum DocumentPreferencesEnum {
   ShowDiscountItems,
   HideItemDiscountColumn,
 }
+
+export enum QrCodeAction
+{
+    START = 1,
+    FINISH,
+    DELIVERY
+}
