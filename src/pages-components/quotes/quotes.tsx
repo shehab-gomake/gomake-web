@@ -303,6 +303,14 @@ const QuotesListPageWidget = ({
       setPatternSearch(router.query.documentNumber as string);
     }
   }, [router]);
+  useEffect(() => {
+    if (router.query.isComeFromQR) {
+      getDocumentDeliveryItems(DOCUMENT_TYPE.order, router.query.orderId);
+      getClientContacts(router.query.clientId);
+    }
+  }, [router]);
+
+
 
   useEffect(() => {
     !isFromHomePage && getAllProducts();
@@ -402,7 +410,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -465,8 +473,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        ? () => navigate(`/${documentPath}`)
+                        : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -488,12 +496,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -639,7 +647,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -701,7 +709,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
