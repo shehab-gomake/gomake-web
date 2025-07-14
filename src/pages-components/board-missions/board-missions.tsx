@@ -6,7 +6,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
-  GoMakeModal,
   GomakePrimaryButton,
   ThreeOptionsModal,
 } from "@/components";
@@ -38,10 +37,9 @@ import { createGlobalStyle } from "styled-components";
 import {
   addOrderBoardMissionsToFileUploaderApi,
   getInitialOrderFoldersData,
-  printNodeModalCancelLog,
   printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
@@ -52,6 +50,7 @@ import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -149,7 +148,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openQuoteModal,
     ExportJobsTableToExcel,
     selectedMission,
-    onOpenMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     openMarkReadyModalForHasJobs,
     cancelPrintNodeModal,
@@ -233,64 +231,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   }
 `;
 
-  const handleBoardMissionsQRCodeAction = async (barcode: string) => {
-    barcode = barcode.replace(/½/g, '-');
-    const callBack = (res) => {
-      2
-      console.log("resresresres", res);
-      if (res?.success) {
-        if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-          const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
-          router.push(url);
-        } else {
-          const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-          router.push(url);
-        }
-      }
-
-    };
-    await handleBoardMissionsBarcodeActionsApi(callApi, callBack, {
-      barcode
-    });
-  };
-
-  const [barcode, setBarcode] = useState('');
-  const [scanBuffer, setScanBuffer] = useState('');
-  const [timeoutId, setTimeoutId] = useState(null);
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // Clear previous timeout if exists
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-
-      // Detect Enter key for scan completion
-      if (event.keyCode === 13 && scanBuffer.length > 0) {
-        setBarcode(scanBuffer);
-        handleBoardMissionsQRCodeAction(scanBuffer);
-        setScanBuffer(''); // Clear buffer for next scan
-        return;
-      }
-
-      // Append character to buffer
-      setScanBuffer((prevBuffer) => prevBuffer + String.fromCharCode(event.keyCode));
-
-      // Set timeout to detect human typing
-      const newTimeoutId = setTimeout(() => {
-        setScanBuffer(''); // Clear buffer if no further keys are pressed
-      }, 100); // Adjust timeout as needed
-      setTimeoutId(newTimeoutId);
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [scanBuffer, timeoutId]);
+  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS })
   return (
     <>
       <Stack
