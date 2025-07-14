@@ -32,6 +32,7 @@ import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
 import { useGomakeRouter } from "@/hooks";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -180,43 +181,10 @@ const ProductionFloorWidget = () => {
     });
   };
 
-  const [barcode, setBarcode] = useState('');
-  const [scanBuffer, setScanBuffer] = useState('');
-  const [timeoutId, setTimeoutId] = useState(null);
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // Clear previous timeout if exists
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
 
-      // Detect Enter key for scan completion
-      if (event.keyCode === 13 && scanBuffer.length > 0) {
-        setBarcode(scanBuffer);
-        handleBoardMissionsBarcodeActionsApi(scanBuffer);
-        setScanBuffer(''); // Clear buffer for next scan
-        return;
-      }
 
-      // Append character to buffer
-      setScanBuffer((prevBuffer) => prevBuffer + String.fromCharCode(event.keyCode));
+  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
 
-      // Set timeout to detect human typing
-      const newTimeoutId = setTimeout(() => {
-        setScanBuffer(''); // Clear buffer if no further keys are pressed
-      }, 100); // Adjust timeout as needed
-      setTimeoutId(newTimeoutId);
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [scanBuffer, timeoutId]);
 
   return (
     <Stack
