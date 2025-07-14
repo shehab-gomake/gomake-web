@@ -101,7 +101,7 @@ const QuoteForPriceTable = ({
             color: "#344054",
           }}
         >
-          <Tooltip title={item?.exceptionsKey}>
+          <Tooltip title={t("CalculationExceptions." + item?.exceptionsKey)}>
             <IconButton style={{ padding: 0 }}>
               <NotCalculatingIcon />
             </IconButton>
