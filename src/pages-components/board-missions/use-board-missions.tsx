@@ -244,7 +244,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
-    t("tableHeaders.estimatedProductionDate"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more"),
   ].filter(Boolean); // This filters out falsy values
@@ -658,7 +657,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.estimatedProductionDate ? mission?.estimatedProductionDate.split("T")[0] : "-",
             <div style={{ whiteSpace: "break-spaces" }}>
               {getJobStatus(mission)}
             </div>,
