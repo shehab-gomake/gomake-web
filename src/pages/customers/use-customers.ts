@@ -322,7 +322,13 @@ const useCustomers = (
       const result = await callApi(
         EHttpMethod.GET,
         "/v1/crm-service/customer/export-client",
-        { clientType: clientType, exportWithContacts: exportWithContacts },
+        {
+          clientType,
+          exportWithContacts,
+          ClientTypeId,
+          agentId,
+          isActive,
+        },
         true,
         null,
         "blob"
