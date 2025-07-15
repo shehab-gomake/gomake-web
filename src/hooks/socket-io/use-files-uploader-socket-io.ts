@@ -19,8 +19,7 @@ const useFilesUploaderSocketIO = () => {
 
 
   useEffect(()=>{
-    // const socket = io(config.api_server);
-    const socket = io("https://ui-backend.staging.gomake.net");
+    const socket = io(config.api_server);
     socket.on("UpdateFileUploader", (newData) => {
       setFiles(newData);
       setData(newData);
