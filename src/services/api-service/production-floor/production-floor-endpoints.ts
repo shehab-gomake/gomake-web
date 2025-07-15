@@ -63,6 +63,9 @@ const ADD_BOARD_MISSIONS_COMMENT_URL =
   "/v1/erp-service/board-missions-comments/add-comment";
 const MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/move-board-mission-to-done";
+
+  const MOVE_BOARD_MISSION_LIST_TO_DONE_URL = "/v1/jobs-service/board-missions/move-board-mission-list-to-done" 
+
 const BACK_TO_PROCESS_URL = "/v1/erp-service/board-missions/back-to-process";
 const SAVE_UPLOADED_FILE_URL =
   "/v1/erp-service/board-missions/save-uploaded-file";
@@ -517,6 +520,20 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (
   );
 };
 
+const moveBoardMissionListToDoneApi: ICallAndSetData = async (  
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    MOVE_BOARD_MISSION_LIST_TO_DONE_URL,
+    setState,
+    data
+  );
+};
+
 const backToProcessApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -865,6 +882,7 @@ export {
   getAllBoardMissionsActivities,
   addBoardMissionsComment,
   moveBoardMissionToDoneApi,
+  moveBoardMissionListToDoneApi,
   backToProcessApi,
   saveUploadedFile,
   getAllBoardMissionsUploadedFiles,

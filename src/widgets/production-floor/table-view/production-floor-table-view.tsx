@@ -32,6 +32,10 @@ import { getProductionFloorTableSettingsApi } from "@/services/api-service/produ
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { Paper, Skeleton } from "@mui/material";
 import { useListPagination } from "@/hooks/use-list-pagination";
+import { selectedBoardsMissionsState } from "../state/boards";
+import { FloatingBulkActionsMenu } from "./status-table/floating-bulk-actions-menu";
+import { moveBoardMissionListToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useSnackBar } from "@/hooks/use-snack-bar";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -56,7 +60,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
-
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const { initialPageSize } = useListPagination();
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
@@ -188,6 +192,88 @@ const ProductionFloorTableView = ({ connectionId }) => {
     loadColumnSettings();
   }, []);
 
+  const [selectedIds, setSelectedIds] = useRecoilState(
+    selectedBoardsMissionsState
+  );
+
+  const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
+    // try {
+    //   // Use your existing updateStatus function from useProductionFloorData
+    //   await updateStatus(selectedJobs, statusId);
+    //   setSelectedIds([]); // Clear selection after update
+    // } catch (error) {
+    //   console.error('Error updating status:', error);
+    // }
+  };
+  const handleBulkMoveToNextStation = async (selectedJobs) => {
+    // try {
+    //   // Implement logic to move jobs to next station
+    //   // This will mark current station as done and move to next station
+    //   for (const job of selectedJobs) {
+    //     // You'll need to implement this API call based on your backend
+    //     // For now, you can use the existing station completion logic
+    //     // await moveJobToNextStation(job.id, job.productType);
+    //   }
+    //   setSelectedIds([]); // Clear selection after move
+    // } catch (error) {
+    //   console.error('Error moving to next station:', error);
+    // }
+  };
+
+  // const handleBulkMoveToDone = async (selectedJobs) => {
+  //   // try {
+  //   //   // Use your existing tryMoveBoardMissionsToDone function
+  //   //   for (const job of selectedJobs) {
+  //   //     await tryMoveBoardMissionsToDone(job);
+  //   //   }
+  //   //   setSelectedIds([]); // Clear selection after move
+  //   // } catch (error) {
+  //   //   console.error('Error moving to done:', error);
+  //   // }
+  // };
+
+  const handleBulkMoveToDone = async (selectedJobs) => {
+    try {
+      // Use your bulk API for moving multiple jobs to done
+      const callBack = (res) => {
+        if (res?.success) {
+          // alertSuccessUpdate(); // Uncomment if you have this function
+          setSelectedIds([]); // Clear selection after successful move
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      // Format the data for your API
+      const jobsData = selectedJobs.map(job => ({
+        boardMissionId: job.id,
+        productType: job.productType
+      }));
+
+      await moveBoardMissionListToDoneApi(callApi, callBack, {
+        sendMessage: false, // You can modify this based on your needs
+        storage: "", // You might want to add storage selection logic
+        data: jobsData
+      });
+    } catch (error) {
+      console.error('Error moving to done:', error);
+      alertFaultUpdate();
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds([]);
+  };
+  // Get status options from your data
+  const statusOptions = useMemo(() => {
+    return filteredDataByMachine.map((statusBoard: any) => ({
+      id: statusBoard.boardMissionStatus.id,
+      name: statusBoard.boardMissionStatus.boardMissionStatus,
+      backgroundColor: statusBoard.boardMissionStatus.backgroundColor,
+      textColor: statusBoard.boardMissionStatus.textColor,
+    }));
+  }, [filteredDataByMachine]);
+
   return (
     <Stack gap={"20px"}>
       {view === EProductionFloorView.DONE_JOBS ? (
@@ -272,6 +358,15 @@ const ProductionFloorTableView = ({ connectionId }) => {
         onClose={() => setOpenCustomerModal(false)}
         customer={customer}
         setCustomer={setCustomer}
+      />
+      <FloatingBulkActionsMenu
+        selectedJobs={selectedIds}
+        onUpdateStatus={handleBulkUpdateStatus}
+        onMoveToNextStation={handleBulkMoveToNextStation}
+        onMoveToDone={handleBulkMoveToDone}
+        onClearSelection={handleClearSelection}
+        statusOptions={statusOptions}
+        t={t}
       />
     </Stack>
   );
