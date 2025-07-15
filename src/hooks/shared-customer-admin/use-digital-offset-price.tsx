@@ -358,42 +358,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsCanGetSelected(true);
     }
   }, []);
-
-  const [isSecondTimeEnterPageWhenEdit, setIsSecondTimeEnterPageWhenEdit] = useState(false);
   useEffect(() => {
-    if (isFirstTimeEnterPageWhenEdit) {
-      setIsSecondTimeEnterPageWhenEdit(true);
+    if (
+      calculationResult &&
+      calculationResult.productItemValueDraftId ===
+      currentCalculationSessionId &&
+      calculationResult.signalRConnectionId === currentSignalRConnectionId &&
+      !productTemplate?.isHaveFixedAction
+    ) {
+      getSelectedWorkFlow(
+        calculationResult.signalRConnectionId,
+        calculationResult?.isNeedPriceUpdate
+      );
+      getSelectedWorkFlowDeliveryDate(
+        calculationResult.signalRConnectionId,
+        calculationResult?.isNeedPriceUpdate
+      );
     }
-    else if (isSecondTimeEnterPageWhenEdit) {
-      if (
-        calculationResult &&
-        calculationResult.productItemValueDraftId ===
-        currentCalculationSessionId &&
-        calculationResult.signalRConnectionId === currentSignalRConnectionId &&
-        !productTemplate?.isHaveFixedAction
-      ) {
-        getSelectedWorkFlow(
-          calculationResult.signalRConnectionId,
-          calculationResult?.isNeedPriceUpdate
-        );
-        getSelectedWorkFlowDeliveryDate(
-          calculationResult.signalRConnectionId,
-          calculationResult?.isNeedPriceUpdate
-        );
-      }
-      if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-        getSelectedWorkFlow(
-          calculationResult.signalRConnectionId,
-          calculationResult?.isNeedPriceUpdate
-        );
-        getSelectedWorkFlowDeliveryDate(
-          calculationResult.signalRConnectionId,
-          calculationResult?.isNeedPriceUpdate
-        );
-      }
+    if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
+      getSelectedWorkFlow(
+        calculationResult.signalRConnectionId,
+        calculationResult?.isNeedPriceUpdate
+      );
+      getSelectedWorkFlowDeliveryDate(
+        calculationResult.signalRConnectionId,
+        calculationResult?.isNeedPriceUpdate
+      );
     }
-
-  }, [calculationResult, currentCalculationSessionId, priceRecovery, isSecondTimeEnterPageWhenEdit]);
+  }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -774,6 +766,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const removeSection = (item) => {
+    // setCanCalculation(true);
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     initProduct(temp, allMaterials);
@@ -784,6 +777,70 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSubProducts(updatedSubProducts);
     calculationProduct(updatedSubProducts);
   };
+
+
+  // Function to check if a parameter should be visible based on related parameters
+  function isParameterVisible(parameter, subProduct, section, subSection) {
+    // Check if this parameter is controlled by any related parameters
+    const controllingParameters = [];
+
+    // Find all parameters in the current subSection that have this parameter as a related parameter
+    subSection.parameters.forEach(parentParam => {
+      if (parentParam.relatedParameters && parentParam.relatedParameters.length > 0) {
+        parentParam.relatedParameters.forEach(relatedParam => {
+          if (relatedParam.parameterId === parameter.id) {
+            controllingParameters.push({
+              parentParameter: parentParam,
+              relatedConfig: relatedParam
+            });
+          }
+        });
+      }
+    });
+
+    // If no controlling parameters found, the parameter is visible
+    if (controllingParameters.length === 0) {
+      return true;
+    }
+
+    // Check each controlling parameter
+    for (const controller of controllingParameters) {
+      const { parentParameter, relatedConfig } = controller;
+
+      // Find the parent parameter's current selection in subProduct
+      const parentSelection = subProduct?.parameters?.find(
+        (x) =>
+          x.parameterId === parentParameter.id &&
+          x.sectionId === section.id &&
+          x.subSectionId === subSection.id &&
+          x.actionIndex === parentParameter.actionIndex
+      );
+
+      // If parent parameter is not selected, this parameter should be hidden
+      if (!parentSelection || !parentSelection.valueIds || parentSelection.valueIds.length === 0) {
+        return false;
+      }
+
+      // Check if the parent parameter's selected value should activate this parameter
+      if (relatedConfig.activateByAllValues) {
+        // If activateByAllValues is true, any selection of parent activates this parameter
+        continue;
+      } else {
+        // Check if the selected value is in the selectedValueIds
+        const hasMatchingValue = parentSelection.valueIds.some(selectedValueId =>
+          relatedConfig.selectedValueIds.includes(selectedValueId)
+        );
+
+        if (!hasMatchingValue) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+
 
   const duplicateParameters = (mySubSection) => {
     let temp = cloneDeep(productTemplate);
@@ -1029,10 +1086,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       });
                     }
                   }
-                } else if (
+                }
+                else if (
                   parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
                   parameter?.parameterType === EParameterTypes.MACHINES_SELECT
                 ) {
+
+                  if (!isParameterVisible(parameter, subProduct, section, subSection)) {
+                    return; // Skip this parameter if it should be hidden
+                  }
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
@@ -5430,7 +5492,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false);
   const handleTabClick = (index: number) => {
-    setIsFirstTimeEnterPageWhenEdit(false)
     if (!firstEnter) {
       setActiveIndex(index);
     }
@@ -5585,7 +5646,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           let checkParameter = validateParameters(subProducts);
           if (checkParameter) {
             setCanCalculation(true);
-            setIsFirstTimeEnterPageWhenEdit(false)
           } else {
             setCanCalculation(false);
           }
@@ -5605,7 +5665,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           let checkParameter = validateParameters(subProducts);
           if (checkParameter) {
             setCanCalculation(true);
-            setIsFirstTimeEnterPageWhenEdit(false)
           } else {
             setCanCalculation(false);
           }
@@ -6731,7 +6790,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentSignalRConnectionId,
     deliveryDate,
     SelectWorkFlowById,
-    setIsFirstTimeEnterPageWhenEdit
   };
 };
 
