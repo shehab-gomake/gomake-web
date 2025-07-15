@@ -66,7 +66,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }) => {
   const [scanBuffer, setScanBuffer] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    /*const handleKeyDown = (event) => {
       // Clear previous timeout if exists
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -97,7 +97,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-    };
+    };*/
   }, [scanBuffer, timeoutId]);
 
   return {
