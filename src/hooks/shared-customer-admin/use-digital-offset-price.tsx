@@ -1098,8 +1098,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
-                  console.log("parameter", { parameter, value, relatedParameters })
-
                   if (value) {
                     const data = materialsEnumsValues.find((item) => {
                       return compareStrings(
