@@ -77,7 +77,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         marginTop={"0px"}
         marginBottom={"0px"}
       />
-
       <Stack
         direction={"row"}
         width={"100%"}
@@ -110,7 +109,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           setFromDate={setFromDate}
           setToDate={setToDate}
         />
-
         <AgingReportButtonWidget
           onClickBtn1={onClickBtn1}
           onClickBtn2={onClickBtn2}
@@ -118,16 +116,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           onClickBtn4={onClickBtn4}
         />
       </Stack>
-
       <Divider />
-
-      {/* <AgingReportButtonWidget
-        onClickBtn1={onClickBtn1}
-        onClickBtn2={onClickBtn2}
-        onClickBtn3={onClickBtn3}
-        onClickBtn4={onClickBtn4}
-      /> */}
-
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
