@@ -2,17 +2,15 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-
   const classes = useMemo(() => {
     return {
-      mainContainer:{
+      mainContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        width: "100%",
-        gap:20,
-        
+        width: "80%",
+        gap: 20,
       },
       date1FilterContainer: {
         display: "flex",
@@ -36,48 +34,48 @@ const useStyle = () => {
         width: "100%",
         border: "none",
       },
-      inputsForQuotesContainer:{
+      inputsForQuotesContainer: {
         display: "flex",
-        flexDirection: "row" as "row", 
-        justifyContent: "flex-start", 
-        alignItems: "center", 
-        gap: 20
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 20,
       },
       dateStyle: {
         display: "flex",
         position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
-        alignItems : "center",
-        justifyContent: "center"
+        alignItems: "center",
+        justifyContent: "center",
       },
       datePickerContainer: {
-        width:"50%",
+        width: "50%",
         display: "flex",
         position: "absolute" as "absolute",
         top: 0,
         right: 100,
         visibility: "hidden" as "hidden",
       },
-      datePickerinvidualContainer:{ 
-       display: "flex",
-       background: "#FFF", 
-       boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)", 
-       height: 40, 
-       width: "100%", 
-       paddingLeft: 10,
-       cursor: "pointer"
-       },
-       checkboxStyle:{
+      datePickerinvidualContainer: {
+        display: "flex",
+        background: "#FFF",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        height: 40,
+        width: "100%",
+        paddingLeft: 10,
+        cursor: "pointer",
+      },
+      checkboxStyle: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-       },
-       labelSwichStyle:{
-        ...FONT_FAMILY.Lexend(500,12)
-       }
+      },
+      labelSwichStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+      },
     };
   }, []);
   return {
@@ -85,5 +83,3 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-
-

@@ -1,6 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { SecondaryButton } from "@/components/button/secondary-button";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { PrintIcon } from "@/icons";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { Button } from "@mui/material";
+import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 
 export interface SalesReportButtonWidgetProps {
   onClickBtn1: () => void;
@@ -14,35 +18,50 @@ const SalesReportButtonWidget = ({
 }: SalesReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
 
-  const tabs = [
+  const primaryActions = [
     {
       name: t("permissions.ShowReports"),
       onclick: onClickBtn1,
     },
+  ];
+
+  const menuActions = [
     {
       name: t("reports.printReport"),
       onclick: onPrintClick,
+      icon: <PrintIcon stroke={primaryColor(300)} />,
     },
     {
       name: t("reports.excelReport"),
       onclick: onClickExportExcelReport,
+      icon: <FileDownloadOutlinedIcon style={{ color: primaryColor(300) }} />,
     },
   ];
+
   return (
     <div style={classes.mainContainer}>
-      {tabs.map((tab, index) => {
-        return (
-          <SecondaryButton
-            variant="contained"
-            key={index}
-            onClick={tab.onclick}
-            style={classes.btnContainer}
-          >
-            {tab.name}
-          </SecondaryButton>
-        );
-      })}
+      {primaryActions.map((action, index) => (
+        <Button
+          key={index}
+          variant={"contained"}
+          onClick={action.onclick}
+          sx={classes.primaryButton}
+        >
+          {action.name}
+        </Button>
+      ))}
+
+      {menuActions.length > 0 && (
+        <ReportActionsMenu
+          actions={menuActions.map((action) => ({
+            name: action.name,
+            icon: action.icon,
+            onClick: action.onclick,
+          }))}
+        />
+      )}
     </div>
   );
 };

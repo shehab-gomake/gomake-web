@@ -35,6 +35,17 @@ const useStyle = () => {
           border: "1px solid #D0D5DD",
         },
       },
+      primaryButton: {
+        ...FONT_FAMILY.Inter(600, 16),
+        borderRadius: "8px",
+        height: "40px",
+        backgroundColor: "#2E3092",
+        color: "#FFF",
+        textTransform: "capitalize",
+        "&:hover": {
+          backgroundColor: "#1F217A",
+        },
+      },
     };
   }, []);
   return {

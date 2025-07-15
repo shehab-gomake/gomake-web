@@ -7,8 +7,10 @@ const useStyle = () => {
       mainContainer: {
         display: "flex",
         flexDirection: "row" as "row",
+        justifyContent: "flex-end",
         alignItems: "center",
         gap: 15,
+        //width: "100%",
       },
       btnContainer: {
         width: "fit-content",

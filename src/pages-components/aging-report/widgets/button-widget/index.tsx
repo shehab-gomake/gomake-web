@@ -57,9 +57,9 @@ const AgingReportButtonWidget = ({
       {primaryActions.map((action, index) => (
         <Button
           key={index}
-          variant={"outlined"}
+          variant={index === 0 ? "contained" : "outlined"}
           onClick={action.onclick}
-          sx={classes.optionsButtons}
+          sx={index === 0 ? classes.primaryButton : classes.optionsButtons}
         >
           {action.name}
         </Button>

@@ -6,7 +6,6 @@ import { useStyle } from "./style";
 import { Button } from "@mui/material";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 
-//!here start
 const LedgerReportButtonWidget = ({
   onClickCreateNewTransaction,
   onClickPrintCard,
