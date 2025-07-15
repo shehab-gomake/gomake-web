@@ -21,6 +21,7 @@ const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
+  
 
 const UPDATE_BOARD_MISSION_STUCK_REASON_URL =
   "/v1/erp-service/board-missions/update-board-mission-stuck-reason";
@@ -65,6 +66,8 @@ const MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/move-board-mission-to-done";
 
   const MOVE_BOARD_MISSION_LIST_TO_DONE_URL = "/v1/jobs-service/board-missions/move-board-mission-list-to-done" 
+
+  const UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL = "/v1/jobs-service/board-missions/update-board-mission-list-current-station"
 
 const BACK_TO_PROCESS_URL = "/v1/erp-service/board-missions/back-to-process";
 const SAVE_UPLOADED_FILE_URL =
@@ -534,6 +537,20 @@ const moveBoardMissionListToDoneApi: ICallAndSetData = async (
   );
 };
 
+const updateBoardMissionListCurrentStationApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL,
+    setState,
+    data
+  );
+};
+
 const backToProcessApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -883,6 +900,7 @@ export {
   addBoardMissionsComment,
   moveBoardMissionToDoneApi,
   moveBoardMissionListToDoneApi,
+  updateBoardMissionListCurrentStationApi,
   backToProcessApi,
   saveUploadedFile,
   getAllBoardMissionsUploadedFiles,

@@ -34,8 +34,12 @@ import { Paper, Skeleton } from "@mui/material";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { selectedBoardsMissionsState } from "../state/boards";
 import { FloatingBulkActionsMenu } from "./status-table/floating-bulk-actions-menu";
-import { moveBoardMissionListToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { moveBoardMissionListToDoneApi, updateBoardMissionListCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useSnackBar } from "@/hooks/use-snack-bar";
+import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-modal";
+import { ModalType } from "@/enums";
+import { useModal } from "@/hooks/use-modal";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -197,62 +201,54 @@ const ProductionFloorTableView = ({ connectionId }) => {
   );
 
   const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
-    // try {
-    //   // Use your existing updateStatus function from useProductionFloorData
-    //   await updateStatus(selectedJobs, statusId);
-    //   setSelectedIds([]); // Clear selection after update
-    // } catch (error) {
-    //   console.error('Error updating status:', error);
-    // }
+
   };
+
+
   const handleBulkMoveToNextStation = async (selectedJobs) => {
-    // try {
-    //   // Implement logic to move jobs to next station
-    //   // This will mark current station as done and move to next station
-    //   for (const job of selectedJobs) {
-    //     // You'll need to implement this API call based on your backend
-    //     // For now, you can use the existing station completion logic
-    //     // await moveJobToNextStation(job.id, job.productType);
-    //   }
-    //   setSelectedIds([]); // Clear selection after move
-    // } catch (error) {
-    //   console.error('Error moving to next station:', error);
-    // }
-  };
-
-  // const handleBulkMoveToDone = async (selectedJobs) => {
-  //   // try {
-  //   //   // Use your existing tryMoveBoardMissionsToDone function
-  //   //   for (const job of selectedJobs) {
-  //   //     await tryMoveBoardMissionsToDone(job);
-  //   //   }
-  //   //   setSelectedIds([]); // Clear selection after move
-  //   // } catch (error) {
-  //   //   console.error('Error moving to done:', error);
-  //   // }
-  // };
-
-  const handleBulkMoveToDone = async (selectedJobs) => {
     try {
-      // Use your bulk API for moving multiple jobs to done
+
       const callBack = (res) => {
         if (res?.success) {
-          // alertSuccessUpdate(); // Uncomment if you have this function
-          setSelectedIds([]); // Clear selection after successful move
+          setSelectedIds([]);
         } else {
           alertFaultUpdate();
         }
       };
+      const jobsData = selectedJobs.map(job => ({
+        boardMissionId: job.id,
+        productType: job.productType
+      }));
 
-      // Format the data for your API
+      await updateBoardMissionListCurrentStationApi(callApi, callBack, {
+        stationId: null,
+        data: jobsData
+      });
+    }
+    catch (error) {
+      console.error('Error moving to done:', error);
+      alertFaultUpdate();
+    }
+  };
+
+
+  const handleBulkMoveToDone = async (selectedJobs, sendMessage) => {
+    try {
+      const callBack = (res) => {
+        if (res?.success) {
+          setSelectedIds([]);
+        } else {
+          alertFaultUpdate();
+        }
+      };
       const jobsData = selectedJobs.map(job => ({
         boardMissionId: job.id,
         productType: job.productType
       }));
 
       await moveBoardMissionListToDoneApi(callApi, callBack, {
-        sendMessage: false, // You can modify this based on your needs
-        storage: "", // You might want to add storage selection logic
+        sendMessage: sendMessage,
+        storage: inputValue,
         data: jobsData
       });
     } catch (error) {
@@ -273,6 +269,10 @@ const ProductionFloorTableView = ({ connectionId }) => {
       textColor: statusBoard.boardMissionStatus.textColor,
     }));
   }, [filteredDataByMachine]);
+
+  const moveToDone = useModal()
+  const moveToNextStation = useModal()
+
 
   return (
     <Stack gap={"20px"}>
@@ -362,11 +362,71 @@ const ProductionFloorTableView = ({ connectionId }) => {
       <FloatingBulkActionsMenu
         selectedJobs={selectedIds}
         onUpdateStatus={handleBulkUpdateStatus}
-        onMoveToNextStation={handleBulkMoveToNextStation}
-        onMoveToDone={handleBulkMoveToDone}
+        onMoveToNextStation={moveToNextStation.open}
+        onMoveToDone={moveToDone.open}
         onClearSelection={handleClearSelection}
         statusOptions={statusOptions}
         t={t}
+      />
+
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={moveToDone.isOpen}
+        onClose={moveToDone.close}
+        onClickYes={() => handleBulkMoveToDone(selectedIds, true)}
+        onClickNo={() => handleBulkMoveToDone(selectedIds, false)}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{ width: "100%", border: "none", height: 45 }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </ThreeOptionsModal>
+
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("customers.modal.nextStationModalTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={moveToNextStation.isOpen}
+        onClose={moveToNextStation.close}
+        onClickDelete={() => {
+          handleBulkMoveToNextStation(selectedIds);
+        }}
       />
     </Stack>
   );
