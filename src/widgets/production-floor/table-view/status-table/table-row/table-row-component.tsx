@@ -207,6 +207,17 @@ const TableRowComponent = ({
 
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
 
+  // const onSelectBoardMissions = (id: string, checked: boolean) => {
+  //   setSelectedIds(
+  //     checked
+  //       ? [...selectedIds, boardMission]
+  //       : selectedIds.filter(
+  //           (selectedBoard) =>
+  //             selectedBoard.id !== id &&
+  //             selectedBoard.productType === boardMission.productType
+  //         )
+  //   );
+  // };
 
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(

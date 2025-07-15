@@ -41,7 +41,7 @@ import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
-const ProductionFloorTableView = ({ connectionId }) => {
+const ProductionFloorTableView = ({ connectionId, updateStatus }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
     data,
@@ -200,8 +200,26 @@ const ProductionFloorTableView = ({ connectionId }) => {
     selectedBoardsMissionsState
   );
 
-  const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
+  // const handleBulkUpdateStatus = async () => {
 
+  // };
+
+  const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
+    try {
+      // Use your existing updateStatus function with multiple jobs
+      const callBack = (res) => {
+        if (res?.success) {
+          setSelectedIds([]);
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await updateStatus(selectedJobs, statusId, callBack);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alertFaultUpdate();
+    }
   };
 
 
@@ -263,12 +281,13 @@ const ProductionFloorTableView = ({ connectionId }) => {
   // Get status options from your data
   const statusOptions = useMemo(() => {
     return filteredDataByMachine.map((statusBoard: any) => ({
-      id: statusBoard.boardMissionStatus.id,
-      name: statusBoard.boardMissionStatus.boardMissionStatus,
-      backgroundColor: statusBoard.boardMissionStatus.backgroundColor,
-      textColor: statusBoard.boardMissionStatus.textColor,
+      id: statusBoard.boardMissionStatus.boardMissionStatus?.id,
+      name: statusBoard.boardMissionStatus.boardMissionStatus?.name,
+      backgroundColor: statusBoard.boardMissionStatus.boardMissionStatus?.backgroundColor,
+      textColor: statusBoard.boardMissionStatus.boardMissionStatus?.textColor,
     }));
   }, [filteredDataByMachine]);
+
 
   const moveToDone = useModal()
   const moveToNextStation = useModal()
