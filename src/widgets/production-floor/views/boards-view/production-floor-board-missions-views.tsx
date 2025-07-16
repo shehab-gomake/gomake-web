@@ -59,7 +59,7 @@ const ProductionFloorBoardMissionsViews = ({
       ) : view === EProductionFloorView.TABLE ||
         view === EProductionFloorView.FILTER_GROUPS ||
         view === EProductionFloorView.DONE_JOBS ? (
-        <ProductionFloorTableView connectionId={connectionId} updateStatus={updateStatus} />
+        <ProductionFloorTableView connectionId={connectionId} updateStatus={updateStatus} getData={getData} />
       ) : view === EProductionFloorView.KANBAN ? (
         <ProductionFloorKanbanBoard />
       ) : (

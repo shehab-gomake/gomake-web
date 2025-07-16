@@ -47,6 +47,7 @@ const FloatingBulkActionsMenu = ({
   const handleUpdateStatus = (statusId) => {
     onUpdateStatus(selectedJobs, statusId);
     handleStatusMenuClose();
+    setIsVisible(false);
   };
 
   if (!isVisible) return null;
