@@ -41,7 +41,7 @@ import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
-const ProductionFloorTableView = ({ connectionId, updateStatus }) => {
+const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
     data,
@@ -200,22 +200,10 @@ const ProductionFloorTableView = ({ connectionId, updateStatus }) => {
     selectedBoardsMissionsState
   );
 
-  // const handleBulkUpdateStatus = async () => {
-
-  // };
-
   const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
     try {
-      // Use your existing updateStatus function with multiple jobs
-      const callBack = (res) => {
-        if (res?.success) {
-          setSelectedIds([]);
-        } else {
-          alertFaultUpdate();
-        }
-      };
-
-      await updateStatus(selectedJobs, statusId, callBack);
+      await updateStatus(selectedJobs, statusId);
+      setSelectedIds([]);
     } catch (error) {
       console.error('Error updating status:', error);
       alertFaultUpdate();
@@ -229,6 +217,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus }) => {
       const callBack = (res) => {
         if (res?.success) {
           setSelectedIds([]);
+          getData();
         } else {
           alertFaultUpdate();
         }
