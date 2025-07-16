@@ -20,7 +20,7 @@ const ProductionFloorBoardMissionsViews = ({
   connectionId: string;
 }) => {
   const [view] = useRecoilState(productionFloorViewState);
-  const { getData } = useProductionFloorData();
+  const { getData, updateStatus } = useProductionFloorData();
   const [loading, setLoading] = useState<boolean>(false);
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
@@ -59,7 +59,7 @@ const ProductionFloorBoardMissionsViews = ({
       ) : view === EProductionFloorView.TABLE ||
         view === EProductionFloorView.FILTER_GROUPS ||
         view === EProductionFloorView.DONE_JOBS ? (
-        <ProductionFloorTableView connectionId={connectionId} />
+        <ProductionFloorTableView connectionId={connectionId} updateStatus={updateStatus} />
       ) : view === EProductionFloorView.KANBAN ? (
         <ProductionFloorKanbanBoard />
       ) : (
