@@ -1,6 +1,6 @@
 export interface IDocument {
   id?: string;
-  docType: number;
+  docType: number | string;
   documentName: string;
   prefix: string;
   value: number;
