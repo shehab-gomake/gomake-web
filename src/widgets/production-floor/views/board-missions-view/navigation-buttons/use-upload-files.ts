@@ -13,8 +13,10 @@ import {
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
 import { useState } from "react";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
-const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean,productType?:string) => {
+const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean,productType?:string,isOpenPrintingModal?:any) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -22,6 +24,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
   const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const [fileId, setFileId] = useState<string>("");
+  const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const { callApi } = useGomakeAxios();
 
@@ -220,6 +223,9 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       );
 
       const data = await response.json();
+      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)){
+        isOpenPrintingModal?.open();
+      }
       return data;
     } catch (error) {
       console.error("Error uploading chunk:", error);
