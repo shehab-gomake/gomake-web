@@ -5,12 +5,14 @@ import { useStyle } from "./style";
 import { Stack, Tooltip } from "@mui/material";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { useDocumentNumbers } from "./use-documents-numbers";
 import {
   editDocumentInputs,
   editDocumentInputs1,
 } from "./inputs/edit-modal-inputs";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { useDocumentNumbers } from "./use-documents-numbers";
+import { FONT_FAMILY } from "@/utils/font-family";
+
 const DocumentNumbering = () => {
   const { classes } = useStyle();
   const {
@@ -43,6 +45,7 @@ const DocumentNumbering = () => {
           headerPadding={15}
           openModal={openModal}
           onClose={handleOnClose}
+          modalTitleStyle={{ ...FONT_FAMILY.Lexend(500, 22) }}
           modalTitle={
             t("documentingSettings.editDefinition") +
             " - " +
