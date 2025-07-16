@@ -110,7 +110,7 @@ const UpdateValueAutoComplete = ({
             loading={loading} // Pass loading prop to show spinner
             popupIcon={
               RTL ? (
-                <div style={{ position: "absolute", left: -130 }}>
+                <div style={{ position: "absolute", left: -225 }}>
                   <ArrowUpIcon />
                 </div>
               ) : (
