@@ -67,9 +67,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     getAllBoardMissionsFiles,
   });
 
-  //!here
   useEffect(() => {
-    debugger;
     if (!!boardMissionsId) {
       getBoardMissions(boardMissionsId, productType).then();
     }
