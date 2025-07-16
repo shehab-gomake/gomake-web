@@ -244,6 +244,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       const callBack = (res) => {
         if (res?.success) {
           setSelectedIds([]);
+          getData();
         } else {
           alertFaultUpdate();
         }
