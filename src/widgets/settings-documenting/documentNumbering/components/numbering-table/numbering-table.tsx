@@ -1,25 +1,15 @@
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { useDocumentNumbers } from "../../use-documents-numbers";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 
 const NumberingTable = () => {
-    const { getAllDocumentsNumbers, documentsNumbers, tableHeaders } = useDocumentNumbers();
+  const { tabs, getAllDocumentsNumbers } = useDocumentNumbers();
 
-    useEffect(() => {
-        getAllDocumentsNumbers()
-    }, []);
+  useEffect(() => {
+    getAllDocumentsNumbers();
+  }, []);
 
-    return (
-        <>
-            <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={true}
-                rows={documentsNumbers}
-                headers={tableHeaders}
-                maxHeight={"calc(100vh - 213px)"}
-            />
-        </>
-    );
-}
+  return <PrimaryTabsComponent tabs={tabs} selectedColor={"secondary"} />;
+};
 
-export { NumberingTable }
+export { NumberingTable };
