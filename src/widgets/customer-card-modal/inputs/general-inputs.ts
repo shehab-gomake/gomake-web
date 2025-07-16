@@ -1,3 +1,5 @@
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { emailRegex } from "@/utils/regex";
 
 enum DiscountType {
@@ -13,6 +15,8 @@ const generalInputs = (
   t,
   ShipmentTypesList
 ) => {
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   const DiscountTypesList: { value: number; text: string }[] = [
     {
       value: DiscountType.byProduct,
@@ -97,7 +101,9 @@ const generalInputs = (
       label: "customers.modal.agent",
       type: "select",
       placeholder: "customers.modal.agent",
-      required: false,
+      required: CheckPreferenceValue(
+        EPreferences.IS_AGENT_REQUIRED_IN_CUSTOMERS
+      ),
       parameterKey: "agentId",
       options: [],
       optionsUrl: "/v1/employee/get-all-agents",
