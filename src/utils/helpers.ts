@@ -108,6 +108,20 @@ export const isValidCustomer = (
     missingFields.push("customers.modal.vatNO");
   }
 
+  if (
+    CheckPreferenceValue(EPreferences.IS_AGENT_REQUIRED_IN_CUSTOMERS) &&
+    !customer?.agentId
+  ) {
+    missingFields.push("customers.modal.agent");
+  }
+
+  if (
+    CheckPreferenceValue(EPreferences.IS_PAYMENT_TERMS_REQUIRED_IN_CUSTOMERS) &&
+    !customer?.termOfPayment
+  ) {
+    missingFields.push("accounting.paymentTerms");
+  }
+
   // Validate contacts
   if (filteredContacts?.some((contact) => !contact.firstName)) {
     missingFields.push("customers.modal.firstName");

@@ -4,8 +4,10 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
-const GET_ALL_STUCK_JOBS_URL = "/v1/erp-service/board-missions/get-number-of-stuck-jobs";
-const GET_ALL_STUCK_JOBS_BY_AGENT_ID_URL = "/v1/erp-service/board-missions/get-number-of-stuck-jobs-by-agent-id";
+const GET_ALL_STUCK_JOBS_URL =
+  "/v1/erp-service/board-missions/get-number-of-stuck-jobs";
+const GET_ALL_STUCK_JOBS_BY_AGENT_ID_URL =
+  "/v1/erp-service/board-missions/get-number-of-stuck-jobs-by-agent-id";
 const UPDATE_WORK_JOB_STATUS_URL =
   "/v1/erp-service/board-missions/update-board-missions-status";
 const UPDATE_BOARD_MISSIONS_ORDER_URL =
@@ -21,6 +23,7 @@ const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
+  
 
 const UPDATE_BOARD_MISSION_STUCK_REASON_URL =
   "/v1/erp-service/board-missions/update-board-mission-stuck-reason";
@@ -63,6 +66,11 @@ const ADD_BOARD_MISSIONS_COMMENT_URL =
   "/v1/erp-service/board-missions-comments/add-comment";
 const MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/move-board-mission-to-done";
+
+  const MOVE_BOARD_MISSION_LIST_TO_DONE_URL = "/v1/jobs-service/board-missions/move-board-mission-list-to-done" 
+
+  const UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL = "/v1/jobs-service/board-missions/update-board-mission-list-current-station"
+
 const BACK_TO_PROCESS_URL = "/v1/erp-service/board-missions/back-to-process";
 const SAVE_UPLOADED_FILE_URL =
   "/v1/erp-service/board-missions/save-uploaded-file";
@@ -124,21 +132,18 @@ const getProductionFloorData: ICallAndSetData = async (
   );
 };
 
-const getAllStuckJobsApi: ICallAndSetData = async (
-  callApi,
-  setState,
-) => {
+const getAllStuckJobsApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_ALL_STUCK_JOBS_URL,
-    setState,
+    setState
   );
 };
 
 const getAllStuckJobsByAgentIdApi: ICallAndSetData = async (
   callApi,
-  setState,
+  setState
 ) => {
   return await getSetApiData(
     callApi,
@@ -211,19 +216,16 @@ const setBoardFiltersApi: ICallAndSetData = async (
 const getBoardMissionsById: ICallAndSetData = async (
   callApi,
   callBack,
-  { id, connectionId, productType },
+  { id, productType },
   lock = false,
   abortController
 ) => {
+  const url = `${GET_BOARDS_MISSIONS_BY_ID_URL}${id}?productType=${productType}`;
+
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_BOARDS_MISSIONS_BY_ID_URL +
-      id +
-      "/" +
-      connectionId +
-      "?productType=" +
-      productType,
+    url,
     callBack,
     {},
     lock,
@@ -253,7 +255,7 @@ const moveBoardMissionStatusToWaitingApi: ICallAndSetData = async (
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    MOVE_BOARD_MISSION_STATUS_TO_WAITING_URL ,
+    MOVE_BOARD_MISSION_STATUS_TO_WAITING_URL,
     callBack,
     data
   );
@@ -267,7 +269,8 @@ const sendJobExampleConfirmationToClientApi: ICallAndSetData = async (
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL + `?boardMissionId=${data.boardMissionId}`,
+    SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL +
+      `?boardMissionId=${data.boardMissionId}`,
     callBack
   );
 };
@@ -512,6 +515,34 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     MOVE_BOARD_MISSION_TO_DONE_URL,
+    setState,
+    data
+  );
+};
+
+const moveBoardMissionListToDoneApi: ICallAndSetData = async (  
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    MOVE_BOARD_MISSION_LIST_TO_DONE_URL,
+    setState,
+    data
+  );
+};
+
+const updateBoardMissionListCurrentStationApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL,
     setState,
     data
   );
@@ -865,6 +896,8 @@ export {
   getAllBoardMissionsActivities,
   addBoardMissionsComment,
   moveBoardMissionToDoneApi,
+  moveBoardMissionListToDoneApi,
+  updateBoardMissionListCurrentStationApi,
   backToProcessApi,
   saveUploadedFile,
   getAllBoardMissionsUploadedFiles,
@@ -888,5 +921,5 @@ export {
   sendJobExampleConfirmationToClientApi,
   getAllStuckJobsApi,
   getAllStuckJobsByAgentIdApi,
-  handleBoardMissionsBarcodeActionsApi
+  handleBoardMissionsBarcodeActionsApi,
 };

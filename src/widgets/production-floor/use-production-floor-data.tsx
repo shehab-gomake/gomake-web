@@ -119,6 +119,7 @@ const useProductionFloorData = () => {
           }))
         );
       }
+      getStationFilterGroups();
     };
     if (abortController) {
       abortController.abort();
