@@ -1,10 +1,13 @@
 export interface IDocument {
   id?: string;
-  docType: string;
+  docType: number;
   documentName: string;
   prefix: string;
   value: number;
   nextValue: number;
+  templateId?: string;
+  recordID?: number;
+  tabKey?: number;
 }
 
 export enum DocumentsTypeEnum {
