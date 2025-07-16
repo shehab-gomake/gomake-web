@@ -6,6 +6,7 @@ import { SalesReportButtonWidget } from "./widgets/button-widget";
 import { useSalesReport } from "./use-sales-report";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { Stack } from "@mui/material";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -53,32 +54,40 @@ const SalesReportWidget = ({ clientType }: IProps) => {
         marginTop={"0px"}
         marginBottom={"0px"}
       />
-      <SalesReportHeaderWidget
-        agent={agent}
-        agentsCategories={agentsCategories}
-        handleAgentChange={handleAgentChange}
-        customer={customer}
-        renderOptions={renderOptions}
-        checkWhatRenderArray={checkWhatRenderArray}
-        handleCustomerChange={handleCustomerChange}
-        displayByGroups={displayByGroups}
-        onChangeDisplayByGroups={onChangeDisplayByGroups}
-        reportsTypeList={reportsTypeList}
-        handleDocumentTypeChange={handleDocumentTypeChange}
-        documentType={documentType}
-        fromDate={fromDate}
-        toDate={toDate}
-        isFetchingCustomers={isFetching}
-        isPurchaseReport={isPurchaseReport}
-        setToDate={setToDate}
-        setFromDate={setFromDate}
-      />
+      <Stack
+        width={"100%"}
+        justifyContent={"space-between"}
+        direction={"row"}
+        flexWrap={"wrap"}
+        rowGap={"8px"}
+      >
+        <SalesReportHeaderWidget
+          agent={agent}
+          agentsCategories={agentsCategories}
+          handleAgentChange={handleAgentChange}
+          customer={customer}
+          renderOptions={renderOptions}
+          checkWhatRenderArray={checkWhatRenderArray}
+          handleCustomerChange={handleCustomerChange}
+          displayByGroups={displayByGroups}
+          onChangeDisplayByGroups={onChangeDisplayByGroups}
+          reportsTypeList={reportsTypeList}
+          handleDocumentTypeChange={handleDocumentTypeChange}
+          documentType={documentType}
+          fromDate={fromDate}
+          toDate={toDate}
+          isFetchingCustomers={isFetching}
+          isPurchaseReport={isPurchaseReport}
+          setToDate={setToDate}
+          setFromDate={setFromDate}
+        />
+        <SalesReportButtonWidget
+          onClickBtn1={onClickBtn1}
+          onPrintClick={handleExportRows}
+          onClickExportExcelReport={onClickExportExcelReport}
+        />
+      </Stack>
       <Divider />
-      <SalesReportButtonWidget
-        onClickBtn1={onClickBtn1}
-        onPrintClick={handleExportRows}
-        onClickExportExcelReport={onClickExportExcelReport}
-      />
       {showTable &&
         (Array.isArray(tableData) ? tableData : []).map((item) => {
           return (

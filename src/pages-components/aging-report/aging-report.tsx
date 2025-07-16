@@ -8,6 +8,7 @@ import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { SendEmailLedgerReportModal } from "../ledger-report/widgets/send-email-modal";
+import { Stack } from "@mui/material";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -60,7 +61,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     selectedContactById,
     setSelectedContactById,
     onChangeUpdateClientContact,
-    sendPaymenttoClient
+    sendPaymenttoClient,
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -76,42 +77,46 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         marginTop={"0px"}
         marginBottom={"0px"}
       />
-
-      <AgingReportHeaderWidget
-        handleClickSelectDate={handleClickSelectDate}
-        selectDate={selectDate}
-        setSelectDate={setSelectDate}
-        dateRef={dateRef}
-        agent={agent}
-        agentsCategories={agentsCategories}
-        handleAgentChange={handleAgentChange}
-        customer={customer}
-        isFetchingCustomers={isFetching}
-        renderOptions={renderOptions}
-        checkWhatRenderArray={checkWhatRenderArray}
-        handleCustomerChange={handleCustomerChange}
-        detailedReport={detailedReport}
-        onChangeDetailedReport={onChangeDetailedReport}
-        agingReportByCreationDate={agingReportByCreationDate}
-        onChangeAgingReportByCreationDate={onChangeAgingReportByCreationDate}
-        onChangeByReferenceDate={onChangeByReferenceDate}
-        handleDateChange={handleDateChange}
-        fromDate={fromDate}
-        toDate={toDate}
-        isPurchaseReport={isPurchaseReport}
-        setFromDate={setFromDate}
-        setToDate={setToDate}
-      />
-
+      <Stack
+        direction={"row"}
+        width={"100%"}
+        justifyContent={"space-between"}
+        flexWrap={"wrap"}
+        rowGap={"8px"}
+      >
+        <AgingReportHeaderWidget
+          handleClickSelectDate={handleClickSelectDate}
+          selectDate={selectDate}
+          setSelectDate={setSelectDate}
+          dateRef={dateRef}
+          agent={agent}
+          agentsCategories={agentsCategories}
+          handleAgentChange={handleAgentChange}
+          customer={customer}
+          isFetchingCustomers={isFetching}
+          renderOptions={renderOptions}
+          checkWhatRenderArray={checkWhatRenderArray}
+          handleCustomerChange={handleCustomerChange}
+          detailedReport={detailedReport}
+          onChangeDetailedReport={onChangeDetailedReport}
+          agingReportByCreationDate={agingReportByCreationDate}
+          onChangeAgingReportByCreationDate={onChangeAgingReportByCreationDate}
+          onChangeByReferenceDate={onChangeByReferenceDate}
+          handleDateChange={handleDateChange}
+          fromDate={fromDate}
+          toDate={toDate}
+          isPurchaseReport={isPurchaseReport}
+          setFromDate={setFromDate}
+          setToDate={setToDate}
+        />
+        <AgingReportButtonWidget
+          onClickBtn1={onClickBtn1}
+          onClickBtn2={onClickBtn2}
+          onClickBtn3={onClickBtn3}
+          onClickBtn4={onClickBtn4}
+        />
+      </Stack>
       <Divider />
-
-      <AgingReportButtonWidget
-        onClickBtn1={onClickBtn1}
-        onClickBtn2={onClickBtn2}
-        onClickBtn3={onClickBtn3}
-        onClickBtn4={onClickBtn4}
-      />
-
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
@@ -149,8 +154,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         SendCustomerLedgerToMailApi={sendPaymenttoClient}
         isAgingReport={true}
       />
-
-
     </div>
   );
 };

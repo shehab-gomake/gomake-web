@@ -55,6 +55,13 @@ const useStyle = () => {
         width: "100%",
         border: "none",
       },
+      headerStyle: {
+        display: "flex",
+        flexWrap: "wrap" as "wrap",
+        gap: 10,
+        justifyContent: "space-between",
+        width: "100%",
+      },
     };
   }, []);
   return {

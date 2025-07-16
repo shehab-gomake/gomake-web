@@ -2,16 +2,15 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-
   const classes = useMemo(() => {
     return {
-      mainContainer:{
+      mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "100%",
-        gap:20,
+        // width: "100%",
+        gap: 20,
       },
       firstRow: {
         display: "flex",
@@ -70,8 +69,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 10,
         width: "13%",
-      },   
-         filterLabelStyle: {
+      },
+      filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
       },
     };
@@ -80,4 +79,4 @@ const useStyle = () => {
     classes,
   };
 };
-export { useStyle }; 
+export { useStyle };

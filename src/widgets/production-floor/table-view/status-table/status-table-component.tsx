@@ -192,28 +192,25 @@ const StatusTableComponent = ({
     [status, boards]
   );
 
-  //   const getBoards = useCallback(() => {
-  //     return !!search ? boards?.filter((board) => `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search)) : boards;
-  //   }, [boards, search]);
 
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
@@ -246,11 +243,10 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${
-            !status.isGroup
-              ? t("productionStatuses." + status.name)
-              : status.name
-          } (${getBoards().length})`}
+          {`${!status.isGroup
+            ? t("productionStatuses." + status.name)
+            : status.name
+            } (${getBoards().length})`}
         </Button>
         {status.index === 1 && <ColumnSettingsMenu />}
       </Stack>
@@ -292,12 +288,12 @@ const StatusTableComponent = ({
                               ? currentStationOrdering ===
                                 CurrentStationOrderingEnum.NONE
                                 ? {
-                                    "& .sort-icon": { opacity: 0 },
-                                    "&:hover .sort-icon": { opacity: 1 },
-                                  }
+                                  "& .sort-icon": { opacity: 0 },
+                                  "&:hover .sort-icon": { opacity: 1 },
+                                }
                                 : {
-                                    "& .sort-icon": { opacity: 1 },
-                                  }
+                                  "& .sort-icon": { opacity: 1 },
+                                }
                               : undefined
                           }
                         >
@@ -320,7 +316,7 @@ const StatusTableComponent = ({
                                     key: t("productionFloor.currentStation"),
                                     direction:
                                       currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
+                                        CurrentStationOrderingEnum.NONE
                                         ? CurrentStationOrderingEnum.ASC
                                         : CurrentStationOrderingEnum.NONE,
                                   });
@@ -394,12 +390,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -460,12 +456,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

@@ -14,8 +14,9 @@ import { useEffect } from "react";
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
-import { GoMakeAutoComplate } from "@/components";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { TransactionSummaryCards } from "./widgets/transction-report-summery/transction-report-summery";
+import { Stack } from "@mui/material";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -84,6 +85,7 @@ const TransactionJournalReportWidget = ({
     initialPageSize,
     setToDate,
     setFromDate,
+    dataTableStatistics,
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -116,60 +118,73 @@ const TransactionJournalReportWidget = ({
           : { ...classes.mainContainer, marginBottom: 20 }
       }
     >
-      <HeaderTitle title={label} marginTop={"0px"} marginBottom={"0px"} />
-      {isAdjustmentsReport && (
-        <div
-          style={{
-            ...classes.date1FilterContainer,
-            width: "18%",
-            maxWidth: "200px",
-          }}
-        >
-          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-          <ClientAutocomplete
-            key={customer?.id}
-            options={renderOptions()}
-            onChangeTextField={checkWhatRenderArray}
-            getOptionLabel={(option: any) => `${option.name}`}
-            style={classes.textInputStyle}
-            onChange={handleCustomerChange}
-            value={customer}
-            loading={isFetching}
+      <div style={classes.headerStyle}>
+        <HeaderTitle title={label} marginTop={"0px"} marginBottom={"0px"} />
+        {isAccountingTransaction && (
+          <TransactionSummaryCards data={dataTableStatistics} />
+        )}
+      </div>
+
+      <Stack direction={"row"} width={"100%"}>
+        {isAdjustmentsReport && (
+          <div
+            style={{
+              ...classes.date1FilterContainer,
+              width: "18%",
+              maxWidth: "200px",
+            }}
+          >
+            <h3 style={classes.filterLabelStyle}>
+              {t("sales.quote.customer")}
+            </h3>
+            <ClientAutocomplete
+              key={customer?.id}
+              options={renderOptions()}
+              onChangeTextField={checkWhatRenderArray}
+              getOptionLabel={(option: any) => `${option.name}`}
+              style={classes.textInputStyle}
+              onChange={handleCustomerChange}
+              value={customer}
+              loading={isFetching}
+            />
+          </div>
+        )}
+        {isAccountingTransaction && (
+          <AccountingTransactionReportHeader
+            filterState={filterState}
+            setFilterState={setFilterState}
+            handleClickClear={handleClearFilters}
+            erpAccountsList={erpAccountsList}
           />
-        </div>
-      )}
-      {isAccountingTransaction && (
-        <AccountingTransactionReportHeader
-          filterState={filterState}
-          setFilterState={setFilterState}
-          handleClickClear={handleClearFilters}
-          erpAccountsList={erpAccountsList}
-        />
-      )}
-      {!isAdjustmentsReport && !isAccountingTransaction && (
-        <TransactionJournalReportHeaderWidget
-          handleDocumentTypeChange={handleDocumentTypeChange}
-          documentType={documentType}
-          documentsTypeList={documentsTypeList}
+        )}
+        {!isAdjustmentsReport && !isAccountingTransaction && (
+          <TransactionJournalReportHeaderWidget
+            handleDocumentTypeChange={handleDocumentTypeChange}
+            documentType={documentType}
+            documentsTypeList={documentsTypeList}
+            reportType={reportType}
+            fromDate={fromDate}
+            toDate={toDate}
+            setToDate={setToDate}
+            setFromDate={setFromDate}
+          />
+        )}
+        <LedgerReportButtonWidget
+          onClickPrintCard={onClickPrintCard}
+          onClickShowCard={onClickShowCard}
+          onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
+          onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
+          onClickExportAccountingReportExcel={
+            onClickExportAccountingReportExcel
+          }
+          onClickExportJournalExcelReport={onClickExportJournalExcelReport}
+          onClickDownloadMovingFiles={onClickDownloadMovingFiles}
+          onClickExportJournalPDFReport={onClickExportJournalPDFReport}
           reportType={reportType}
-          fromDate={fromDate}
-          toDate={toDate}
-          setToDate={setToDate}
-          setFromDate={setFromDate}
         />
-      )}
+      </Stack>
       <Divider />
-      <LedgerReportButtonWidget
-        onClickPrintCard={onClickPrintCard}
-        onClickShowCard={onClickShowCard}
-        onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
-        onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
-        onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
-        onClickExportJournalExcelReport={onClickExportJournalExcelReport}
-        onClickDownloadMovingFiles={onClickDownloadMovingFiles}
-        onClickExportJournalPDFReport={onClickExportJournalPDFReport}
-        reportType={reportType}
-      />
+
       {isAdjustmentsReport && (
         <CollapsibleTable
           rows={rows}

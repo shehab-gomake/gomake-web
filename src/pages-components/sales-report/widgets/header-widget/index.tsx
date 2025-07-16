@@ -33,7 +33,6 @@ const SalesReportHeaderWidget = ({
   setFromDate,
 }: SalesReportHeaderWidgetProps) => {
   const { classes, t } = useSalesReportHeader();
-  const dir: "rtl" | "ltr" = t("direction");
 
   const handleFromDateChange = (newDate) => {
     setFromDate(newDate ? new Date(newDate) : null);

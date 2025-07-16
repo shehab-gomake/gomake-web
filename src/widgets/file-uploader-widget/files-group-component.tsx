@@ -14,6 +14,11 @@ import { useRouter } from "next/router";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { OpenUploadFileIcon } from "./icons";
+import { GoMakeDeleteModal } from "@/components";
+import { useModal } from "@/hooks/use-modal";
+import { ModalType } from "@/enums/tabs-icon-enums";
+import { useGomakeAxios } from "@/hooks";
+import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
 
 const FilesGroupComponent = ({
   title,
@@ -28,16 +33,21 @@ const FilesGroupComponent = ({
   const { primaryColor } = useGomakeTheme();
   const [isOverGraphics, setIsOverGraphics] = useState(false);
   const [isOverPrinting, setIsOverPrinting] = useState(false);
+  const isOpenPrintingModal = useModal();
+  const { callApi } = useGomakeAxios();
+
   const { handleFileUpload } = useUploadFiles(
     orderItemId,
     filePath,
     graphicsFilePath,
     isComplexProduct,
-    productType
+    productType,
+    isOpenPrintingModal
   );
   const { push, pathname } = useRouter();
   const fileInputRef = useRef(null);
   const { t } = useTranslation();
+
 
   const handleGraphicsDrop = async (event) => {
     event.preventDefault();
@@ -94,7 +104,16 @@ const FilesGroupComponent = ({
     [...e.target.files].forEach(async (file) => {
       await handleFileUpload(file, fileType);
     });
+
   };
+  const printJobUsingPrintNode = async (jobId: string) => {
+    const callBack = (res) => {
+      if (res.success) {
+      }
+    };
+    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+  };
+
 
   return (
     <Stack minHeight={"50px"} position={"relative"} width={"500px"}>
@@ -266,6 +285,16 @@ const FilesGroupComponent = ({
         onChange={handleFileSelect}
         hidden={true}
         ref={fileInputRef}
+      />
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.printJobModaTitle")}
+        subTitle={" "}
+        yesBtn={t("sales.quote.print")}
+        openModal={isOpenPrintingModal.isOpen}
+        onClose={isOpenPrintingModal.close}
+        onClickDelete={() => { printJobUsingPrintNode(boardMissionId).then() }}
       />
     </Stack>
   );

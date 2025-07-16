@@ -9,7 +9,9 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        width: "100%",
+        // width: "100%",
+        // width: "80%",
+
         gap: 10,
       },
       date1FilterContainer: {
@@ -18,7 +20,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        // width: "18%",
       },
       checkBoxContainer: {
         display: "flex",
@@ -26,7 +27,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         alignSelf: "flex-end",
-        width: "18%",
       },
       date2FilterContainer: {
         display: "flex",
@@ -34,7 +34,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "13%",
+        width: "180px",
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
