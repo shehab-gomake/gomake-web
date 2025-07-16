@@ -67,12 +67,15 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     getAllBoardMissionsFiles,
   });
 
+  //!here
   useEffect(() => {
     if (!!boardMissionsId && !!connectionId) {
       getBoardMissions(boardMissionsId, connectionId, productType).then();
     }
     return () => {
-      initStates();
+      if (!boardMissionsId || !connectionId) {
+        initStates();
+      }
     };
   }, [boardMissionsId, connectionId, productType]);
 
@@ -140,22 +143,22 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
             {isLoadingStations
               ? renderMobileSkeletons()
               : productDetails?.length > 0 &&
-              productDetails.map((section, index) => (
-                <ProductDetailsSection
-                  key={index}
-                  name={section?.name}
-                  productionFloorSubSections={
-                    section?.productionFloorSubSections
-                  }
-                  withHeader={index === 0}
-                  header={
-                    index === 0
-                      ? t("productionFloor.productDetails")
-                      : undefined
-                  }
-                  style={{ background: "#F6F6F6" }}
-                />
-              ))}
+                productDetails.map((section, index) => (
+                  <ProductDetailsSection
+                    key={index}
+                    name={section?.name}
+                    productionFloorSubSections={
+                      section?.productionFloorSubSections
+                    }
+                    withHeader={index === 0}
+                    header={
+                      index === 0
+                        ? t("productionFloor.productDetails")
+                        : undefined
+                    }
+                    style={{ background: "#F6F6F6" }}
+                  />
+                ))}
             {productWorksTypes?.length > 0 && (
               <CardContainer
                 label={t("productionFloor.types")}
@@ -279,7 +282,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
                     style={{
                       overflowY:
                         relatedOrderItems?.length > 0 ||
-                          productWorksTypes?.length > 0
+                        productWorksTypes?.length > 0
                           ? "auto"
                           : "visible",
 
