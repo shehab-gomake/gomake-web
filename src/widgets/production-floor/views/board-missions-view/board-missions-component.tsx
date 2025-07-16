@@ -59,7 +59,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     renderMobileSkeletons,
   } = useBoardMissions();
 
-  const { connectionId } = useJobModalSocketIO({
+  const {} = useJobModalSocketIO({
     boardMissionId: boardMissionsId,
     getBoardMissions,
     getStations,
@@ -67,17 +67,19 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     getAllBoardMissionsFiles,
   });
 
-  //!here
   useEffect(() => {
-    if (!!boardMissionsId && !!connectionId) {
-      getBoardMissions(boardMissionsId, connectionId, productType).then();
+    if (!!boardMissionsId) {
+      getBoardMissions(boardMissionsId, productType).then();
     }
+    // return () => {
+    //   if (!boardMissionsId ) {
+    //     initStates();
+    //   }
+    // };
     return () => {
-      if (!boardMissionsId || !connectionId) {
-        initStates();
-      }
+      initStates();
     };
-  }, [boardMissionsId, connectionId, productType]);
+  }, [boardMissionsId, productType]);
 
   useEffect(() => {
     const updateHeight = () => {
