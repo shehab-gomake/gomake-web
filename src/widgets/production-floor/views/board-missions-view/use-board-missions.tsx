@@ -16,7 +16,10 @@ import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
-import { getBoardMissionsByIdState, relatedOrderItemsComponentState } from "./stations/state";
+import {
+  getBoardMissionsByIdState,
+  relatedOrderItemsComponentState,
+} from "./stations/state";
 import { useIsMobile } from "@/hooks/use-responsive";
 
 const useBoardMissions = () => {
@@ -57,17 +60,16 @@ const useBoardMissions = () => {
   );
   const isLoadingStations = stations?.length === 0;
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
-  const [abortControllergetBoardMissionsById, setAbortControllergetBoardMissionsById] = useRecoilState(getBoardMissionsByIdState);
+  const [
+    abortControllergetBoardMissionsById,
+    setAbortControllergetBoardMissionsById,
+  ] = useRecoilState(getBoardMissionsByIdState);
   const initStates = () => {
     resetDetails();
     resetProductDetails();
   };
 
-  const getBoardMissions = async (
-    id: string,
-    connectionId,
-    productType: string
-  ) => {
+  const getBoardMissions = async (id: string, productType: string) => {
     if (abortControllergetBoardMissionsById) {
       abortControllergetBoardMissionsById.abort();
     }
@@ -81,11 +83,13 @@ const useBoardMissions = () => {
         setBoardMissionsDetails(res.data);
       }
     };
-    await getBoardMissionsById(callApi, callBack, {
-      id,
-      connectionId,
-      productType,
-    },
+    await getBoardMissionsById(
+      callApi,
+      callBack,
+      {
+        id,
+        productType,
+      },
       false,
       newRequestAbortController
     );

@@ -7,11 +7,7 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 
 interface IUseJobModalSocketIOProps {
   boardMissionId: string;
-  getBoardMissions: (
-    id: string,
-    connectionId: string | null,
-    productType: string
-  ) => Promise<void>;
+  getBoardMissions: (id: string, productType: string) => Promise<void>;
   getStations: () => void;
   getAllActivities: () => void;
   getAllBoardMissionsFiles: () => void;
@@ -35,7 +31,6 @@ const useJobModalSocketIO = ({
       getAllActivities();
       getBoardMissions(
         boardMissionId,
-        connectionId,
         !!productType ? productType.toString() : ""
       );
       getStations();
