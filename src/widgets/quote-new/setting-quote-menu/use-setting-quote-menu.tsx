@@ -1,4 +1,4 @@
-import { SortByTypes } from "@/enums";
+import { ShowDocumentDetailsEnum, ShowPricesEnum, SortByTypes } from "@/enums";
 import { useTranslation } from "react-i18next";
 import { DiscountType } from "@/enums";
 import { DocumentPreferencesEnum } from "@/enums";
@@ -15,10 +15,53 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi } = useCompanyProfile();
-  const [detailsView, setDetailsView] = useState(
-    quoteStateValue?.isShowDetails
+
+  const [detailsView, setDetailsView] = useState<ShowDocumentDetailsEnum>(
+    quoteStateValue?.showDetails ?? ShowDocumentDetailsEnum.All
   );
-  const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
+
+  const [showPrices, setShowPrices] = useState<ShowPricesEnum>(
+    quoteStateValue?.showPrices ?? ShowPricesEnum.All
+  );
+
+  const onBlurShowPrices = async () => {
+    setIsUpdateShowPrices(null);
+  };
+  const [isUpdateShowPrices, setIsUpdateShowPrices] = useState<number | null>(
+    null
+  );
+
+  const onBlurShowDetails = async () => {
+    setIsUpdateShowDetails(null);
+  };
+  const [isUpdateShowDetails, setIsUpdateShowDetails] = useState<number | null>(
+    null
+  );
+
+  const showDetailsOptions = [
+    {
+      value: ShowDocumentDetailsEnum.All,
+      text: t("sales.quote.showAllDetails"),
+    },
+    {
+      value: ShowDocumentDetailsEnum.ShowJobNameOnly,
+      text: t("sales.quote.showJobNameOnly"),
+    },
+    {
+      value: ShowDocumentDetailsEnum.HideDetails,
+      text: t("sales.quote.hideDetails"),
+    },
+  ];
+
+  const showPricesOptions = [
+    { value: ShowPricesEnum.All, text: t("sales.quote.showAllPrices") },
+    {
+      value: ShowPricesEnum.HideTotalPriceOnly,
+      text: t("sales.quote.hideTotalOnly"),
+    },
+    { value: ShowPricesEnum.HidePrices, text: t("sales.quote.hideAllPrices") },
+  ];
+
   const [showGraphics, setShowGraphics] = useState(
     quoteStateValue?.isShowGraphicsItems
   );
@@ -34,6 +77,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const matchingCurrency = currencies.find(
     (currency) => currency.value === quoteStateValue?.currency
   )?.label;
+
   const vatStatusList: { value: number; text: string }[] = Object.values(
     EnumVATStatus
   )
@@ -56,15 +100,16 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     useState<null | HTMLElement>(null);
   const openTableSorting = Boolean(anchorElTableSorting);
   const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
+
   useEffect(() => {
-    setDetailsView(quoteStateValue?.isShowDetails);
-    setShowPrices(quoteStateValue?.isShowPrice);
+    setDetailsView(quoteStateValue?.showDetails);
+    setShowPrices(quoteStateValue?.showPrices);
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
     setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
   }, [
-    quoteStateValue?.isShowDetails,
-    quoteStateValue?.isShowPrice,
+    quoteStateValue?.showDetails,
+    quoteStateValue?.showPrices,
     quoteStateValue?.isShowGraphicsItems,
     quoteStateValue?.isShowDeliveryItems,
     quoteStateValue?.hideItemDiscountColumn,
@@ -77,24 +122,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   useEffect(() => {
     getCurrenciesApi();
   }, []);
-
-  const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-    setDetailsView(event.target.checked);
-    updateDocumentPreference(
-      event.target.checked,
-      DocumentPreferencesEnum.ShowDetails
-    );
-  };
-
-  const handleSwitchCheckForShowPrice = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setShowPrices(event.target.checked);
-    updateDocumentPreference(
-      event.target.checked,
-      DocumentPreferencesEnum.ShowPrice
-    );
-  };
 
   const handleSwitchCheckForShowGraphics = (
     event: ChangeEvent<HTMLInputElement>
@@ -164,16 +191,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   };
 
   const switchConfigs = [
-    {
-      label: t("sales.quote.details"),
-      checked: detailsView,
-      onChange: handleSwitchCheck,
-    },
-    {
-      label: t("sales.quote.showPrices"),
-      checked: showPrices,
-      onChange: handleSwitchCheckForShowPrice,
-    },
     // {
     //   label: t("sales.quote.showGraphics"),
     //   checked: showGraphics,
@@ -211,6 +228,18 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setExchangeRate,
     t,
     CheckPreferenceValue,
+    showDetailsOptions,
+    showPricesOptions,
+    setShowPrices,
+    setDetailsView,
+    showPrices,
+    detailsView,
+    isUpdateShowPrices,
+    setIsUpdateShowPrices,
+    onBlurShowPrices,
+    isUpdateShowDetails,
+    setIsUpdateShowDetails,
+    onBlurShowDetails,
   };
 };
 

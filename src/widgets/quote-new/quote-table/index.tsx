@@ -17,10 +17,15 @@ import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { NotCalculatingIcon } from "@/icons";
-import { ECalculationStatus } from "@/enums";
+import {
+  ECalculationStatus,
+  ShowDocumentDetailsEnum,
+  ShowPricesEnum,
+} from "@/enums";
 import { CalculatingIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { DebtRowMappingWidget } from "./debt-row-mapping";
+import { EPreferences } from "@/enums/prefernces";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -58,9 +63,7 @@ const QuoteForPriceTable = ({
       },
     };
   });
-  const adjustedColumnWidths = quoteItems?.isShowDetails
-    ? columnWidths
-    : ["2%", "8%", "12%", "8%", "8%", "8%", "8%", "8%"];
+
   const isDeliveryNote =
     documentType === DOCUMENT_TYPE.deliveryNote ||
     documentType === DOCUMENT_TYPE.deliveryNoteRefund;
@@ -72,7 +75,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-    {}
+      {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -154,8 +157,8 @@ const QuoteForPriceTable = ({
                       style={{
                         width:
                           (isInvoice || isDeliveryNote) && index === 3
-                            ? adjustedColumnWidths[index - 1]
-                            : adjustedColumnWidths[index],
+                            ? columnWidths[index - 1]
+                            : columnWidths[index],
                         ...classes.tableHeaderStyle,
                       }}
                     >
@@ -185,7 +188,7 @@ const QuoteForPriceTable = ({
                       item={item}
                       index={index}
                       parentIndex={parentIndex}
-                      columnWidths={adjustedColumnWidths}
+                      columnWidths={columnWidths}
                       headerHeight={headerHeight}
                       changeDocumentItems={changeDocumentItems}
                       getCalculateQuoteItem={getCalculateQuoteItem}
@@ -224,7 +227,7 @@ const QuoteForPriceTable = ({
                             item={childItem}
                             parentItem={item}
                             index={indexs}
-                            columnWidths={adjustedColumnWidths}
+                            columnWidths={columnWidths}
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
@@ -252,20 +255,18 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {quoteItems?.isShowPrice && quoteItems?.documentItems?.length > 0 && (
-        <TotalPriceComp
-          documentType={documentType}
-          getCalculateQuote={getCalculateQuote}
-          quoteItems={quoteItems}
-          changeQuoteItems={changeQuoteItems}
-          isQuoteConfirmation={isQuoteConfirmation}
-        />
-      )}
+      {quoteItems?.showPrices === ShowPricesEnum.All &&
+        quoteItems?.documentItems?.length > 0 && (
+          <TotalPriceComp
+            documentType={documentType}
+            getCalculateQuote={getCalculateQuote}
+            quoteItems={quoteItems}
+            changeQuoteItems={changeQuoteItems}
+            isQuoteConfirmation={isQuoteConfirmation}
+          />
+        )}
     </div>
   );
 };
 
 export { QuoteForPriceTable };
-
-
-

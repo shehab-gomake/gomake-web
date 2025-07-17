@@ -17,6 +17,7 @@ interface CharacterDetailsProps {
   workName?: string;
 }
 
+//!here should change
 const CharacterDetails = ({
   details,
   getQuote,
@@ -50,6 +51,7 @@ const CharacterDetails = ({
     documentType,
     workName,
   });
+
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
   return (

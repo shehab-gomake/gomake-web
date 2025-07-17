@@ -7,7 +7,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, workName }) => {
+const useCharacterDetails = ({
+  details,
+  getQuote,
+  documentItemId,
+  documentType,
+  workName,
+}) => {
   const router = useRouter();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -37,11 +43,11 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
   };
   const formatContent = (str: string) => {
     // First replace closing </p> tags with <br/>
-    let formatted = str.replace(/<\/p>/g, '<br/>');
+    let formatted = str.replace(/<\/p>/g, "<br/>");
     // Then remove remaining <p> tags
-    formatted = formatted.replace(/<p>/g, '');
+    formatted = formatted.replace(/<p>/g, "");
     // Keep <strong> tags and <br/> tags, remove any other HTML tags
-    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, '');
+    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, "");
     return formatted;
   };
 
@@ -71,8 +77,7 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
           documentItems: updatedDocumentItems,
         });
       }
-    }
-    else {
+    } else {
       const callBack = (res) => {
         const updatedQuoteItemValue = { ...quoteItemValue };
         const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -87,7 +92,16 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
           alertSuccessUpdate();
           setQuoteItemValue({
             ...updatedQuoteItemValue,
-            documentItems: [...updatedQuoteItemValue.documentItems.slice(0, documentItemIndex), updatedDocumentItem, ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1)],
+            documentItems: [
+              ...updatedQuoteItemValue.documentItems.slice(
+                0,
+                documentItemIndex
+              ),
+              updatedDocumentItem,
+              ...updatedQuoteItemValue.documentItems.slice(
+                documentItemIndex + 1
+              ),
+            ],
           });
           // getQuote();
         } else {
@@ -103,7 +117,6 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
         },
       });
     }
-
   };
 
   const handleClose = () => {
@@ -112,17 +125,17 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
     }
     setIsEdit(false);
   };
+
+  //!here !!!!!!!!!!! save details
   const handleSave = () => {
     if (jobName != workName) {
       updateDocumentItemContent(jobName);
-    }
-    else {
+    } else {
       if (isValueChanged) {
         updateDocumentItemContent();
         setOriginalValue(data);
       }
     }
-
 
     setIsEdit(false);
   };
@@ -151,9 +164,8 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
     handleClose,
     handleSave,
     jobName,
-    setJobName
+    setJobName,
   };
 };
-
 
 export { useCharacterDetails };
