@@ -213,15 +213,18 @@ const CreditCardTab = ({
                 )}
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
-                <input
-                  style={classes.creditSecondCardInputs}
-                  placeholder="Id"
-                  maxLength={9}
-                  value={creditCard?.holderID}
-                  onChange={(e) =>
-                    handleChangeInputs("holderID", e.target.value)
-                  }
-                />
+                <Stack style={{ width: "45%" }} >
+                  <input
+                    style={classes.creditSecondCardInputs}
+                    placeholder="Id"
+                    maxLength={9}
+                    value={creditCard?.holderID}
+                    onChange={(e) =>
+                      handleChangeInputs("holderID", e.target.value)
+                    }
+                  />
+                  <FormErrorMessage error={errors.holderID} />
+                </Stack>
                 <Stack style={{ width: "45%" }}>
                   <input
                     key={"Total-1"}
