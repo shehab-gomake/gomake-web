@@ -77,14 +77,10 @@ const MoreActionsButton = ({ isMobile = false }) => {
 
   const handleClickEdit = () => {
     push(
-      `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${
-        boardMissions.clientId
-      }&customerName=${boardMissions.clientName}&productId=${
-        boardMissions.productId
-      }&documentItemId=${
-        boardMissions.orderItemId
-      }&documentType=${1}&documentNumber=${
-        boardMissions?.orderNumber
+      `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId
+      }&customerName=${boardMissions.clientName}&productId=${boardMissions.productId
+      }&documentItemId=${boardMissions.orderItemId
+      }&documentType=${1}&documentNumber=${boardMissions?.orderNumber
       }&documentId=${boardMissions.orderId}`
     ).then();
   };
@@ -135,8 +131,14 @@ const MoreActionsButton = ({ isMobile = false }) => {
                 {t("productionFloor.uploadFile")}
               </MenuItem>
             )}
-            <MenuItem onClick={handleClickEdit}>
-              {t("productionFloor.edit")}
+            <MenuItem>
+              <a style={{ textDecoration: "none", color: "inherit" }} href={`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId
+                }&customerName=${boardMissions.clientName}&productId=${boardMissions.productId
+                }&documentItemId=${boardMissions.orderItemId
+                }&documentType=${1}&documentNumber=${boardMissions?.orderNumber
+                }&documentId=${boardMissions.orderId}`}>
+                {t("productionFloor.edit")}
+              </a>
             </MenuItem>
             <MenuItem onClick={getDocumentContacts}>
               {t("productionFloor.sendGraphicsApprove")}
