@@ -150,6 +150,25 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     };
     await getProductSizesApi(callApi, callBack, { productId: quoteItem?.productID });
   };
+
+  // Function to check if all available parameters are already added to a group
+  const areAllParametersUsed = (groupIndex) => {
+    const availableParameters = [
+      "a330193f-492c-40a8-86f3-8edf5c8f0d5e", // Job Name
+      "4991945c-5e07-4773-8f11-2e3483b70b53", // Quantity
+      "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"  // Size
+    ];
+
+    const group = groups[groupIndex];
+    if (!group) return true;
+
+    const usedParameters = group.parameters
+      .map(param => param?.name?.value)
+      .filter(value => value && value !== "");
+
+    return availableParameters.every(paramId => usedParameters.includes(paramId));
+  };
+
   useEffect(() => {
     // Only scroll if the number of groups has increased (duplicate/add action)
     if (lastGroupRef.current && groups.length > prevGroupsLength.current) {
@@ -157,6 +176,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     }
     prevGroupsLength.current = groups.length;
   }, [groups.length]);
+
   return {
     groups,
     setGroups,
@@ -171,7 +191,8 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     setIsRelatedJobs,
     getProductSizes,
     productSizes,
-    lastGroupRef
+    lastGroupRef,
+    areAllParametersUsed
   };
 };
 
