@@ -67,55 +67,62 @@ const useActions = () => {
           {t("usersSettings.inactive")}
         </div>
       ),
-      <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
-        <PrimaryButton
-          data-tour={
-            action?.id === PRINTING_ACTION_ID ? "editPrintingAction" : undefined
-          }
-          startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
-          }
-          onClick={() =>
-            navigate(
-              `/products/profits?actionId=${action?.actionId}&&actionName=${action?.name}`
-            )
-          }
-          variant={"text"}
-        >
-          {t("materials.buttons.edit")}
-        </PrimaryButton>
-      </PermissionCheck>,
-      <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
-        <PrimaryButton
-          startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
-          }
-          onClick={() =>
-            navigate(
-              `/products/profits?actionId=${action?.actionId}&actionName=${action?.name}&isOutSource=true`
-            )
-          }
-          variant={"text"}
-        >
-          {t("materials.buttons.edit")}
-        </PrimaryButton>
-      </PermissionCheck>,
+      <a style={{ textDecoration: "none", color: "inherit" }} href={`/products/profits?actionId=${action?.actionId}&&actionName=${action?.name}`}>
+        <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
 
-      <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES}>
-        <PrimaryButton
-          startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
-          }
-          onClick={() =>
-            navigate(
-              `/properties?actionId=${action?.actionId}&actionName=${action?.name}`
-            )
-          }
-          variant={"text"}
-        >
-          {t("materials.buttons.edit")}
-        </PrimaryButton>
-      </PermissionCheck>,
+          <PrimaryButton
+            data-tour={
+              action?.id === PRINTING_ACTION_ID ? "editPrintingAction" : undefined
+            }
+            startIcon={
+              <EditIcon color={primaryColor(500)} width={20} height={20} />
+            }
+            onClick={() =>
+              navigate(
+                `/products/profits?actionId=${action?.actionId}&&actionName=${action?.name}`
+              )
+            }
+            variant={"text"}
+          >
+            {t("materials.buttons.edit")}
+          </PrimaryButton>
+        </PermissionCheck>
+      </a>,
+      <a style={{ textDecoration: "none", color: "inherit" }} href={`/products/profits?actionId=${action?.actionId}&&actionName=${action?.name}&isOutSource=true`}>
+        <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
+          <PrimaryButton
+            startIcon={
+              <EditIcon color={primaryColor(500)} width={20} height={20} />
+            }
+            onClick={() =>
+              navigate(
+                `/products/profits?actionId=${action?.actionId}&actionName=${action?.name}&isOutSource=true`
+              )
+            }
+            variant={"text"}
+          >
+            {t("materials.buttons.edit")}
+          </PrimaryButton>
+        </PermissionCheck>
+      </a>,
+
+      <a style={{ textDecoration: "none", color: "inherit" }} href={`/properties?actionId=${action?.actionId}&actionName=${action?.name}`}>
+        <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES}>
+          <PrimaryButton
+            startIcon={
+              <EditIcon color={primaryColor(500)} width={20} height={20} />
+            }
+            onClick={() =>
+              navigate(
+                `/properties?actionId=${action?.actionId}&actionName=${action?.name}`
+              )
+            }
+            variant={"text"}
+          >
+            {t("materials.buttons.edit")}
+          </PrimaryButton>
+        </PermissionCheck>
+      </a>,
     ]);
     setAllActions(mapData);
   }, []);
