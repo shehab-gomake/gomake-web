@@ -273,12 +273,11 @@ const RowMappingWidget = ({
           }}
         >
           <CharacterDetails
-            // details={item?.details} //!here
             details={
               quoteItems?.showDetails === ShowDocumentDetailsEnum.All
                 ? item?.details
                 : item?.workName
-            } //!here
+            }
             getQuote={getQuote}
             documentItemId={item?.id}
             canUpdate={canUpdate}

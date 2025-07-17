@@ -1,3 +1,4 @@
+import { ShowDocumentDetailsEnum } from "@/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { updateDocumentItemContentApi } from "@/services/api-service/generic-doc/documents-api";
@@ -33,6 +34,8 @@ const useCharacterDetails = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
+  const canNotEditWhenShowJobNameOnly =
+    quoteItemValue?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly;
 
   const handleShowMore = () => {
     setShowAll(true);
@@ -126,7 +129,6 @@ const useCharacterDetails = ({
     setIsEdit(false);
   };
 
-  //!here !!!!!!!!!!! save details
   const handleSave = () => {
     if (jobName != workName) {
       updateDocumentItemContent(jobName);
@@ -165,6 +167,7 @@ const useCharacterDetails = ({
     handleSave,
     jobName,
     setJobName,
+    canNotEditWhenShowJobNameOnly,
   };
 };
 

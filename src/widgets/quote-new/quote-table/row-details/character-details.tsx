@@ -17,7 +17,6 @@ interface CharacterDetailsProps {
   workName?: string;
 }
 
-//!here should change
 const CharacterDetails = ({
   details,
   getQuote,
@@ -44,6 +43,7 @@ const CharacterDetails = ({
     jobName,
     setJobName,
     truncatedDetails,
+    canNotEditWhenShowJobNameOnly,
   } = useCharacterDetails({
     details,
     getQuote,
@@ -54,12 +54,14 @@ const CharacterDetails = ({
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
+  const canEditDetails = canUpdate && !canNotEditWhenShowJobNameOnly;
+
   return (
     <>
       <div
-        onClick={canUpdate ? () => setIsEdit(true) : undefined}
+        onClick={canEditDetails ? () => setIsEdit(true) : undefined}
         style={{
-          cursor: canUpdate ? "pointer" : "default",
+          cursor: canEditDetails ? "pointer" : "default",
           position: "relative",
           textAlign: isRTL ? "right" : "left",
           ...detailsStyle,
@@ -81,7 +83,7 @@ const CharacterDetails = ({
           )}
         </div>
 
-        {canUpdate && (
+        {canEditDetails && (
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
