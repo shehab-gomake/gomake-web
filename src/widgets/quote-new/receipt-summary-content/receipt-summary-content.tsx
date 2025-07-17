@@ -10,9 +10,6 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { useDateFormat } from "@/hooks/use-date-format";
 import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 import { useReceiptSummaryContent } from "./use-receipt-summary-content";
 
