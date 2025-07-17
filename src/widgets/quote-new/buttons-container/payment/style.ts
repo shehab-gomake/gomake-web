@@ -99,7 +99,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         border: `1.5px solid ${primaryColor(300)}`,
         borderRadius: "4px",
-        width: "45%",
+        width: "100%",
         padding: "4px",
         height: "fit-content",
       },

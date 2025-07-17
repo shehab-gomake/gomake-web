@@ -172,9 +172,20 @@ export enum DocumentPreferencesEnum {
   HideItemDiscountColumn,
 }
 
-export enum QrCodeAction
-{
-    START = 1,
-    FINISH,
-    DELIVERY
+export enum QrCodeAction {
+  START = 1,
+  FINISH,
+  DELIVERY,
+}
+
+export enum ShowDocumentDetailsEnum {
+  All = 0,
+  ShowJobNameOnly = 1,
+  HideDetails = 2,
+}
+
+export enum ShowPricesEnum {
+  All = 0,
+  HideTotalPriceOnly = 1,
+  HidePrices = 2,
 }

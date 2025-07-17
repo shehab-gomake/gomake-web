@@ -7,12 +7,14 @@ const ShowDocumentData = (
   primaryColor: string,
   setOpenModal: (value: boolean) => void,
   setDocument: (document: IDocument) => void,
-  textEdit: string
+  textEdit: string,
+  tabKey: number
 ) => {
   const handleEditClick = () => {
     setDocument({
       ...document,
       value: document.nextValue + 1,
+      tabKey,
     });
     setOpenModal(true);
   };

@@ -15,6 +15,8 @@ import { useSnackBar } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { DocumentTypesListEnum, IDocument } from "./interface/document";
 import { useState } from "react";
+import { ITab } from "@/components/tabs/interface";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 const useDocumentNumbers = () => {
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
@@ -34,32 +36,53 @@ const useDocumentNumbers = () => {
 
   const [documentsNumbers, setDocumentsNumbers] =
     useRecoilState<[][]>(documentsArrayState);
+
+  const [tabs, setTabs] = useState<ITab[]>([]);
+
   const getAllDocumentsNumbers = () => {
-    const callBackFunction = (data) => {
-      if (data.success) {
-        const tableRows = data.data?.map((document) => [
-          document.docType == 17
-            ? document.documentName
-            : t(
-                `documentingNumbering.${
-                  DocumentTypesListEnum[document.docType]
-                }`
-              ),
-          document.prefix,
-          document.value,
-          document.nextValue,
-          ShowDocumentData(
-            document,
-            primaryColor(500),
-            setOpenModal,
-            setDocument,
-            t("documentingSettings.edit")
-          ),
-        ]);
-        setDocumentsNumbers(tableRows);
+    const callback = (data) => {
+      if (data.success && Array.isArray(data.data)) {
+        const newTabs: ITab[] = data.data.map((tabData) => {
+          const rows = tabData.data.map((document) => [
+            document.docType === 17
+              ? document.documentName
+              : t(
+                  `documentingNumbering.${
+                    DocumentTypesListEnum[document.docType]
+                  }`
+                ),
+            document.prefix,
+            document.value,
+            document.nextValue,
+            ShowDocumentData(
+              document,
+              primaryColor(500),
+              setOpenModal,
+              setDocument,
+              t("documentingSettings.edit"),
+              tabData.tabKey
+            ),
+          ]);
+
+          return {
+            title: t(`documentingNumbering.${tabData.tabName}`),
+            component: (
+              <PrimaryTable
+                stickyFirstCol={false}
+                stickyHeader={true}
+                rows={rows}
+                headers={tableHeaders}
+                maxHeight={"calc(100vh - 253px)"}
+              />
+            ),
+          };
+        });
+
+        setTabs(newTabs);
       }
     };
-    getAllDocumentNumbersApi(callApi, callBackFunction).then();
+
+    getAllDocumentNumbersApi(callApi, callback).then();
   };
 
   const [document, setDocument] = useRecoilState<IDocument>(documentState);
@@ -82,6 +105,7 @@ const useDocumentNumbers = () => {
   };
 
   return {
+    t,
     getAllDocumentsNumbers,
     documentsNumbers,
     setDocumentsNumbers,
@@ -94,6 +118,7 @@ const useDocumentNumbers = () => {
     handleOnClose,
     showTooltip,
     setShowTooltip,
+    tabs,
   };
 };
 

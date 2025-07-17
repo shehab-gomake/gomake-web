@@ -52,22 +52,27 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
           <MoreCircleIcon />
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-          <MenuItem
-            onClick={() =>
-              router?.query?.isSubProducts ?
-                navigate(
-                  `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true`
-                ) :
-                navigate(
-                  `/settings/products/edit/${item?.id}?productName=${item?.name}`
-                )
-            }
-          >
-            <div style={clasess.menuRowStyle}>
-              <EditingIcon />
-              <div style={clasess.rowTextStyle}>{t("remainWords.editing")}</div>
-            </div>
-          </MenuItem>
+          <a style={{ textDecoration: "none", color: "inherit" }} href={router?.query?.isSubProducts ?
+            `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true` :
+            `/settings/products/edit/${item?.id}?productName=${item?.name}`}>
+
+            <MenuItem
+              onClick={() =>
+                router?.query?.isSubProducts ?
+                  navigate(
+                    `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true`
+                  ) :
+                  navigate(
+                    `/settings/products/edit/${item?.id}?productName=${item?.name}`
+                  )
+              }
+            >
+              <div style={clasess.menuRowStyle}>
+                <EditingIcon />
+                <div style={clasess.rowTextStyle}>{t("remainWords.editing")}</div>
+              </div>
+            </MenuItem>
+          </a>
           <MenuItem onClick={() => updatedProductInside(item)}>
             <div style={clasess.menuRowStyle}>
               <ConvertIcon />
@@ -88,23 +93,27 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
                   </div>
                 </div>
               </MenuItem>
-              <MenuItem>
-                <div
-                  style={clasess.menuRowStyle}
-                  onClick={(e: any) =>
-                    setAllProducts?.length > 0
-                      ? navigate(
-                        `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
-                      )
-                      : handleClickPopover(e)
-                  }
-                >
-                  <DocumentIcon />
-                  <div style={clasess.rowTextStyle}>
-                    {t("remainWords.goToSubProducts")}
+              <a style={{ textDecoration: "none", color: "inherit" }} href={setAllProducts?.length > 0 &&
+                `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
+              }>
+                <MenuItem>
+                  <div
+                    style={clasess.menuRowStyle}
+                    onClick={(e: any) =>
+                      setAllProducts?.length > 0
+                        ? navigate(
+                          `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
+                        )
+                        : handleClickPopover(e)
+                    }
+                  >
+                    <DocumentIcon />
+                    <div style={clasess.rowTextStyle}>
+                      {t("remainWords.goToSubProducts")}
+                    </div>
                   </div>
-                </div>
-              </MenuItem>
+                </MenuItem>
+              </a>
 
             </>
           )}
