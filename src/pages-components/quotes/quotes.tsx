@@ -282,7 +282,7 @@ const QuotesListPageWidget = ({
     handleRadioChange,
     primaryColor
   } = useQuotes(documentType, isFromHomePage);
-
+  console.log("tableKey", { tableKey, columnsReady });
   const {
     openDeliveryModal,
     onCloseDeliveryModal,
@@ -419,6 +419,7 @@ const QuotesListPageWidget = ({
         });
         const saved: ColumnSetting[] = res?.data;
         const allColumnKeys = documentColumnKeys[tableKey];
+        console.log("allColumnKeys", { allColumnKeys, saved });
 
         if (saved && saved.length > 0) {
           const { order, visibility } = parseSavedColumnSettings(
