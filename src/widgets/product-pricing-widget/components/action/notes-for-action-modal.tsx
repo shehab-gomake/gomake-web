@@ -70,7 +70,7 @@ const NotesForActionModal = ({
   const handleTextChange = useCallback(
     (value: string) => {
       setMyValue(value);
-      //setValue(value);
+      setValue(value);
     },
     [setValue]
   );
