@@ -94,6 +94,7 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -410,31 +411,46 @@ const useQuoteNew = ({
     setOpenChangeProductionStatusModal(true);
   };
   const { CheckPreferenceValue } = usePrintHousePreferences();
+
+  const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+  const showDetails =
+    source?.showDetails !== ShowDocumentDetailsEnum.HideDetails;
+
+  const showPrices = source?.showPrices !== ShowPricesEnum.HidePrices;
+
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
-    isQuoteConfirmation
-      ? quoteConfirm?.isShowDetails
-        ? t("products.profits.details")
-        : null
-      : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      t("products.profits.itemName"),
+    showDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
-    t("products.profits.pricingListWidget.unitPrice"),
-    t("sales.quote.discount"),
-    t("products.offsetPrice.admin.finalPrice"),
+    showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
+    showPrices ? t("sales.quote.discount") : null,
+    showPrices ? t("products.offsetPrice.admin.finalPrice") : null,
     t("products.profits.more"),
   ].filter(Boolean);
 
-  // const columnWidths = ["5%", "8%", "12%", "20%", "8%", "8%", "8%", "8%"];
-  const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
+  const columnWidths = [
+    "5%", // "#"
+    isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+      ? "12%"
+      : null, // Item Code
+    "25%", // Item Name
+    showDetails ? "10%" : null, // Details column (optional)
+    "10%", // Amount
+    showPrices ? "10%" : null, // Unit Price
+    showPrices ? "10%" : null, // Discount
+    showPrices ? "10%" : null, // Final Price
+    "10%", // More
+  ].filter(Boolean);
+
+  // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
 
   const updateDueDate = async () => {
@@ -1186,7 +1202,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-                (isPrintHouseMaterialItem || selectedFirstMaterial)
+              (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1429,7 +1445,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1815,7 +1831,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2456,8 +2472,7 @@ const useQuoteNew = ({
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-      }
-      else {
+      } else {
         alertFaultUpdate();
       }
     };
@@ -2729,7 +2744,7 @@ const useQuoteNew = ({
     moveToReadyOption,
     setMoveToReadyOption,
     handleRadioChange,
-    reCalculateItem
+    reCalculateItem,
   };
 };
 
