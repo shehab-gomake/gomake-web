@@ -45,7 +45,7 @@ const ActionPageWidget = () => {
       position: "bottom",
     },
   ];
-  const {} = useGoMakeTour(actionsSteps, [allActions, materilasSearched]);
+  const { } = useGoMakeTour(actionsSteps, [allActions, materilasSearched]);
 
   return (
     <div style={clasess.mainContainer}>
