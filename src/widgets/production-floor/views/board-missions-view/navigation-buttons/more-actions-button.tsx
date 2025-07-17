@@ -131,15 +131,16 @@ const MoreActionsButton = ({ isMobile = false }) => {
                 {t("productionFloor.uploadFile")}
               </MenuItem>
             )}
-            <MenuItem>
-              <a style={{ textDecoration: "none", color: "inherit" }} href={`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId
-                }&customerName=${boardMissions.clientName}&productId=${boardMissions.productId
-                }&documentItemId=${boardMissions.orderItemId
-                }&documentType=${1}&documentNumber=${boardMissions?.orderNumber
-                }&documentId=${boardMissions.orderId}`}>
+            <a style={{ textDecoration: "none", color: "inherit" }} href={`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId
+              }&customerName=${boardMissions.clientName}&productId=${boardMissions.productId
+              }&documentItemId=${boardMissions.orderItemId
+              }&documentType=${1}&documentNumber=${boardMissions?.orderNumber
+              }&documentId=${boardMissions.orderId}`}>
+              <MenuItem>
                 {t("productionFloor.edit")}
-              </a>
-            </MenuItem>
+              </MenuItem>
+            </a>
+
             <MenuItem onClick={getDocumentContacts}>
               {t("productionFloor.sendGraphicsApprove")}
             </MenuItem>
