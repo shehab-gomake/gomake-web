@@ -86,6 +86,7 @@ const QuoteConfirmationPageWidget = ({
           setIsPageNotFound(true);
         }
       } else {
+        removeTempUserTokenStorage();
         const userToken = await getTempUserToken();
         if (!userToken) {
           setIsPageNotFound(true);
