@@ -1,3 +1,4 @@
+import { ShowDocumentDetailsEnum } from "@/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { updateDocumentItemContentApi } from "@/services/api-service/generic-doc/documents-api";
@@ -7,7 +8,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, workName }) => {
+const useCharacterDetails = ({
+  details,
+  getQuote,
+  documentItemId,
+  documentType,
+  workName,
+}) => {
   const router = useRouter();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -27,6 +34,8 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
+  const canNotEditWhenShowJobNameOnly =
+    quoteItemValue?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly;
 
   const handleShowMore = () => {
     setShowAll(true);
@@ -37,11 +46,11 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
   };
   const formatContent = (str: string) => {
     // First replace closing </p> tags with <br/>
-    let formatted = str.replace(/<\/p>/g, '<br/>');
+    let formatted = str.replace(/<\/p>/g, "<br/>");
     // Then remove remaining <p> tags
-    formatted = formatted.replace(/<p>/g, '');
+    formatted = formatted.replace(/<p>/g, "");
     // Keep <strong> tags and <br/> tags, remove any other HTML tags
-    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, '');
+    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, "");
     return formatted;
   };
 
@@ -71,8 +80,7 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
           documentItems: updatedDocumentItems,
         });
       }
-    }
-    else {
+    } else {
       const callBack = (res) => {
         const updatedQuoteItemValue = { ...quoteItemValue };
         const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -87,7 +95,16 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
           alertSuccessUpdate();
           setQuoteItemValue({
             ...updatedQuoteItemValue,
-            documentItems: [...updatedQuoteItemValue.documentItems.slice(0, documentItemIndex), updatedDocumentItem, ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1)],
+            documentItems: [
+              ...updatedQuoteItemValue.documentItems.slice(
+                0,
+                documentItemIndex
+              ),
+              updatedDocumentItem,
+              ...updatedQuoteItemValue.documentItems.slice(
+                documentItemIndex + 1
+              ),
+            ],
           });
           // getQuote();
         } else {
@@ -103,7 +120,6 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
         },
       });
     }
-
   };
 
   const handleClose = () => {
@@ -112,17 +128,16 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
     }
     setIsEdit(false);
   };
+
   const handleSave = () => {
     if (jobName != workName) {
       updateDocumentItemContent(jobName);
-    }
-    else {
+    } else {
       if (isValueChanged) {
         updateDocumentItemContent();
         setOriginalValue(data);
       }
     }
-
 
     setIsEdit(false);
   };
@@ -151,9 +166,9 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
     handleClose,
     handleSave,
     jobName,
-    setJobName
+    setJobName,
+    canNotEditWhenShowJobNameOnly,
   };
 };
-
 
 export { useCharacterDetails };

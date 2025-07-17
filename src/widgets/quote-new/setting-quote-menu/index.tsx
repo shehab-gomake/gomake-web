@@ -12,6 +12,7 @@ import { TableSortingMenu } from "../table-sorting-menu";
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { EPreferences } from "@/enums/prefernces";
+import { DocumentPreferencesEnum } from "@/enums";
 
 const SettingQuoteMenu = ({
   handleClose,
@@ -56,6 +57,18 @@ const SettingQuoteMenu = ({
     setExchangeRate,
     t,
     CheckPreferenceValue,
+    showDetailsOptions,
+    showPricesOptions,
+    setShowPrices,
+    setDetailsView,
+    showPrices,
+    detailsView,
+    isUpdateShowPrices,
+    setIsUpdateShowPrices,
+    onBlurShowPrices,
+    isUpdateShowDetails,
+    setIsUpdateShowDetails,
+    onBlurShowDetails,
   } = useSttingsQuoteMenu({ updateDocumentPreference });
 
   return (
@@ -127,6 +140,53 @@ const SettingQuoteMenu = ({
               <Divider />
             </React.Fragment>
           ))}
+
+          <div style={classes.menuRowStyle}>
+            <div style={classes.menuTabStyle}>{t("sales.quote.details")}</div>
+            <AutoCompleteUpdatedValue
+              value={
+                showDetailsOptions.find((opt) => opt.value === detailsView)
+                  ?.text || t("sales.quote.showAllDetails")
+              }
+              options={showDetailsOptions}
+              onBlur={onBlurShowDetails}
+              isUpdate={isUpdateShowDetails}
+              setIsUpdate={setIsUpdateShowDetails}
+              getOptionLabel={(item) => item.text}
+              onChange={(e, value) => {
+                setIsUpdateShowDetails(null);
+                setDetailsView(value?.value);
+                updateDocumentPreference(
+                  value?.value,
+                  DocumentPreferencesEnum.ShowDetails
+                );
+              }}
+            />
+          </div>
+
+          <div style={classes.menuRowStyle}>
+            <div style={classes.menuTabStyle}>{t("sales.quote.prices")}</div>
+            <AutoCompleteUpdatedValue
+              value={
+                showPricesOptions.find((opt) => opt.value === showPrices)
+                  ?.text || t("sales.quote.showAllPrices")
+              }
+              options={showPricesOptions}
+              onBlur={onBlurShowPrices}
+              isUpdate={isUpdateShowPrices}
+              setIsUpdate={setIsUpdateShowPrices}
+              getOptionLabel={(item) => item.text}
+              onChange={(e, value) => {
+                setIsUpdateShowPrices(null);
+                setShowPrices(value?.value);
+                updateDocumentPreference(
+                  value?.value,
+                  DocumentPreferencesEnum.ShowPrice
+                );
+              }}
+            />
+          </div>
+
           {quoteStateValue?.isForeignCurrency && (
             <>
               <Divider />
