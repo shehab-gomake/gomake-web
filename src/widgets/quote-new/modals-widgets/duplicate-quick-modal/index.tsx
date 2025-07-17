@@ -38,7 +38,8 @@ const DuplicateQuickModal = ({
     setIsRelatedJobs,
     getProductSizes,
     productSizes,
-    lastGroupRef
+    lastGroupRef,
+    areAllParametersUsed
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
   useEffect(() => {
     if (quoteItem?.productID && openModal) {
@@ -192,9 +193,9 @@ const DuplicateQuickModal = ({
                     }
                   </div>
                   <div style={clasess.groupParameterAddContainer}>
-                    {!isAddQuantity ? <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
+                    {!isAddQuantity && !areAllParametersUsed(groupIndex) && <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
                       <AddModalIcon />
-                    </div> : <div style={clasess.groupParameterAdd2} />}
+                    </div>}
                     {group.parameters.length > 1 && (
                       <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
                         <DeleteModalIcon width="40" height="40" />
