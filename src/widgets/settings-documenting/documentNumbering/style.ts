@@ -16,10 +16,8 @@ const useStyle = () => {
         position: "sticky" as "sticky",
         top: 0,
         width: "100%",
-        // backgroundColor: '#FFF',
         zIndex: 1,
         padding: 0,
-        paddingTop: 20,
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
