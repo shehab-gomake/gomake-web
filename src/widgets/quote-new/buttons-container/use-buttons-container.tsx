@@ -419,6 +419,20 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     await createReceiptApi(callApi, callBack, { newReceiptItem });
   };
 
+  const handleOpenReceiptSummary = () => {
+    if (!quoteItemValue?.client?.id) {
+      alertFault(t("home.admin.pleaseSelectClient"));
+      return;
+    }
+
+    if (finalTotalPayment === 0) {
+      alertFault(t("alerts.totalPaymentZero"));
+      return;
+    }
+
+    ReceiptSummeryModal.open();
+  };
+
   const onClickCancelReceipt = async (refundCredit: boolean) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -714,6 +728,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     ReceiptSummeryModal,
     filteredReceiptItems,
     finalTotalPayment,
+    handleOpenReceiptSummary,
   };
 };
 

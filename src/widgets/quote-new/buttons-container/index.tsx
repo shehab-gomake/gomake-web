@@ -142,6 +142,7 @@ const ButtonsContainer = ({
     ReceiptSummeryModal,
     filteredReceiptItems,
     finalTotalPayment,
+    handleOpenReceiptSummary,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -412,7 +413,7 @@ const ButtonsContainer = ({
                 }
               }
               if (isReceipt) {
-                ReceiptSummeryModal.open();
+                handleOpenReceiptSummary();
               } else if (isInvoice) {
                 if (
                   quoteItemValue?.client?.closeOrderNotes &&
