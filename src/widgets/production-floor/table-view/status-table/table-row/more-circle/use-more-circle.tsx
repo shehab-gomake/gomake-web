@@ -71,8 +71,8 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
         onClick: () => handleGetBoardMissionData("edit"),
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
-        isLink: true, // Mark this as a link
-        getUrl: getEditUrl // Function to get the URL
+        //isLink: true, // Mark this as a link
+        //getUrl: getEditUrl // Function to get the URL
       },
       {
         condition: true,
