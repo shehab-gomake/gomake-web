@@ -503,11 +503,11 @@ const CreditCardTab = ({
         yesBtn={t("payment.makeNewPayment")}
         openModal={alertExistTransactionModal.isOpen}
         onClose={() => {
+          alertExistTransactionModal.close();
           handleSaveAndClose({
             creditCardTransactionID: existingTransactionId,
             creditCardSum: totalCreditCard,
           });
-          alertExistTransactionModal.close();
         }}
         onClickDelete={() => {
           onClickMakePayment(handleSaveAndClose, thirdWidget, true);
