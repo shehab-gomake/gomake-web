@@ -207,15 +207,25 @@ const TableRowComponent = ({
 
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
 
+  // const onSelectBoardMissions = (id: string, checked: boolean) => {
+  //   setSelectedIds(
+  //     checked
+  //       ? [...selectedIds, boardMission]
+  //       : selectedIds.filter(
+  //           (selectedBoard) =>
+  //             selectedBoard.id !== id &&
+  //             selectedBoard.productType === boardMission.productType
+  //         )
+  //   );
+  // };
+
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
-        ? [...selectedIds, boardMission]
+        ? [...selectedIds, boardMission] // Add the full object, not just the ID
         : selectedIds.filter(
-            (selectedBoard) =>
-              selectedBoard.id !== id &&
-              selectedBoard.productType === boardMission.productType
-          )
+          (selectedBoard) => selectedBoard.id !== id
+        )
     );
   };
   const onClickOpenDatePicker = () => {
@@ -341,8 +351,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission.jobDeliveryTimeAlertColor
                   ? boardMission.jobDeliveryTimeAlertColor
                   : index % 2 === 0
-                  ? "#FFFFFF"
-                  : "#F9F9F9",
+                    ? "#FFFFFF"
+                    : "#F9F9F9",
               }}
             >
               <div
@@ -532,8 +542,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission?.currentStationColor
                   ? boardMission?.currentStationColor
                   : index % 2 === 0
-                  ? "#FFFFFF"
-                  : "#F9F9F9",
+                    ? "#FFFFFF"
+                    : "#F9F9F9",
               }}
             >
               <CurrentStationComponent

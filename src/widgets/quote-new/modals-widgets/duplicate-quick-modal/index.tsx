@@ -38,25 +38,58 @@ const DuplicateQuickModal = ({
     setIsRelatedJobs,
     getProductSizes,
     productSizes,
-    lastGroupRef
+    lastGroupRef,
+    areAllParametersUsed
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
   useEffect(() => {
     if (quoteItem?.productID && openModal) {
       getProductSizes()
     }
-    if (isAddQuantity && openModal) {
+
+    const initialParameters = [
+      {
+        name: {
+          label: t("boardMissions.jobName"),
+          value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
+        },
+        value: ""
+      },
+      {
+        name: {
+          label: t("boardMissions.quantity"),
+          value: "4991945c-5e07-4773-8f11-2e3483b70b53"
+        },
+        value: ""
+      },
+      {
+        name: {
+          label: t("machineAttributes.size"),
+          value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
+        },
+        value: null,
+        width: "",
+        length: ""
+      }
+    ];
+
+    const initialParametersForAddQuantity = [
+      {
+        name: {
+          label: t("boardMissions.quantity"),
+          value: "4991945c-5e07-4773-8f11-2e3483b70b53"
+        },
+        value: ""
+      }
+    ]
+
+    if (openModal && quoteItem) {
+
       setGroups([{
         id: 1,
-        parameters: [{
-          name: {
-            label: t("boardMissions.quantity"),
-            value: "4991945c-5e07-4773-8f11-2e3483b70b53"
-          },
-          value: ""
-        }]
+        parameters: isAddQuantity ? initialParametersForAddQuantity : initialParameters
       }])
     }
-  }, [quoteItem, openModal])
+  }, [quoteItem, openModal, isAddQuantity])
 
   return (
     <>
@@ -160,9 +193,9 @@ const DuplicateQuickModal = ({
                     }
                   </div>
                   <div style={clasess.groupParameterAddContainer}>
-                    {!isAddQuantity ? <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
+                    {!isAddQuantity && !areAllParametersUsed(groupIndex) && <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
                       <AddModalIcon />
-                    </div> : <div style={clasess.groupParameterAdd2} />}
+                    </div>}
                     {group.parameters.length > 1 && (
                       <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
                         <DeleteModalIcon width="40" height="40" />

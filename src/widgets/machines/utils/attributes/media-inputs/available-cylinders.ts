@@ -11,24 +11,14 @@ const availableCylinders = (state: Record<string, any>) => {
             isValid: state.attributes?.availableCylinders?.length > 0,
             inputs: [
                 {
-                    name: "width",
-                    label: "machineAttributes.width",
+                    name: "teethNumber",
+                    label: "machineAttributes.teethNumber",
                     type: "number",
-                    placeholder: "machineAttributes.width",
+                    placeholder: "machineAttributes.teethNumber",
                     required: true,
-                    parameterKey: "width",
-                    options: [],
-                    unit:EMeasurementUnits.CM
-                },
-                {
-                    name: "length",
-                    label: "machineAttributes.length",
-                    type: "number",
-                    placeholder: "machineAttributes.length",
-                    required: true,
-                    parameterKey: "length",
-                    options: [],
-                    unit:EMeasurementUnits.CM
+                    parameterKey: "teethNumber",
+                    value: state.attributes?.availableCylinders?.teethNumber ? state.attributes?.availableCylinders?.teethNumber : '',
+                    options: []
                 },
             ]
         },

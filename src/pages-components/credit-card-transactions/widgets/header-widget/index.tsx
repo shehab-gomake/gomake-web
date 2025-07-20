@@ -11,6 +11,7 @@ import { predefinedRanges } from "@/utils/dateRanges";
 import { DateField } from "@/components/date-picker/date-filed";
 import { formatDateToISOString } from "@/components/date-time/date-time-component";
 import { Box } from "@mui/material";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   customer,
@@ -126,20 +127,20 @@ const CreditCardTransactionsReportHeaderWidget = ({
           </Box>
         </div>
         <div style={classes.date3FilterContainer}>
-          <SecondaryButton
+          <PrimaryButton
             variant="contained"
             style={classes.searchBtnStyle}
             onClick={onClickSearchFilter}
           >
             {t("sales.quote.search")}
-          </SecondaryButton>
-          <SecondaryButton
+          </PrimaryButton>
+          <PrimaryButton
             variant="outlined"
             style={classes.clearBtnStyle}
             onClick={onClickClearFilter}
           >
             {t("sales.quote.clear")}
-          </SecondaryButton>
+          </PrimaryButton>
         </div>
       </div>
     </>

@@ -1,7 +1,11 @@
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { SecondaryButton } from "@/components/button/secondary-button";
-
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { PrintIcon } from "@/icons";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { Button } from "@mui/material";
+import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
+import ForwardToInboxRoundedIcon from "@mui/icons-material/ForwardToInboxRounded";
 
 export interface AgingReportButtonWidgetProps {
   onClickBtn1: () => void;
@@ -9,35 +13,67 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn3: () => void;
   onClickBtn4: () => void;
 }
-const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3, onClickBtn4 }: AgingReportButtonWidgetProps) => {
+const AgingReportButtonWidget = ({
+  onClickBtn1,
+  onClickBtn2,
+  onClickBtn3,
+  onClickBtn4,
+}: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
 
-  const tabs = [
+  const primaryActions = [
     {
       name: t("reports.showDebtCollection"),
-      onclick: onClickBtn1
+      onclick: onClickBtn1,
     },
+  ];
+
+  const menuActions = [
     {
       name: t("reports.printDebtCollection"),
-      onclick: onClickBtn2
+      onclick: onClickBtn2,
+      icon: <PrintIcon stroke={primaryColor(300)} />,
     },
     {
       name: t("reports.excelDebtCollection"),
-      onclick: onClickBtn3
+      onclick: onClickBtn3,
+      icon: <FileDownloadOutlinedIcon style={{ color: primaryColor(300) }} />,
     },
     {
       name: t("sales.quote.sendPayment"),
-      onclick: onClickBtn4
-    }
-  ]
+      onclick: onClickBtn4,
+      icon: (
+        <ForwardToInboxRoundedIcon
+          style={{ color: primaryColor(300), fontSize: "22px" }}
+        />
+      ),
+    },
+  ];
+
   return (
     <div style={classes.mainContainer}>
-      {tabs.map((tab, index) => {
-        return (
-          <SecondaryButton variant={"contained"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
-        )
-      })}
+      {primaryActions.map((action, index) => (
+        <Button
+          key={index}
+          variant={index === 0 ? "contained" : "outlined"}
+          onClick={action.onclick}
+          sx={index === 0 ? classes.primaryButton : classes.optionsButtons}
+        >
+          {action.name}
+        </Button>
+      ))}
+
+      {menuActions.length > 0 && (
+        <ReportActionsMenu
+          actions={menuActions.map((action) => ({
+            name: action.name,
+            icon: action.icon,
+            onClick: action.onclick,
+          }))}
+        />
+      )}
     </div>
   );
 };

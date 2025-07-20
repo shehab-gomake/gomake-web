@@ -10,6 +10,7 @@ import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
 import { useEffect } from "react";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { Stack } from "@mui/material";
 
 interface LedgerReportWidgetProps {
   clientType: CLIENT_TYPE;
@@ -89,30 +90,40 @@ const LedgerReportWidget = ({
           marginBottom={"0px"}
         />
       )}
-      <LedgerReportHeaderWidget
-        customer={customer}
-        renderOptions={renderOptions}
-        checkWhatRenderArray={checkWhatRenderArray}
-        handleCustomerChange={handleCustomerChange}
-        isExtended={isExtended}
-        onChangeIsExtended={onChangeIsExtended}
-        handleDateChange={handleDateChange}
-        fromDate={fromDate}
-        toDate={toDate}
-        customerId={customerId}
-        isFetchingCustomers={isFetching}
-        isPurchaseReport={isPurchaseReport}
-        setToDate={setToDate}
-        setFromDate={setFromDate}
-      />
+      <Stack
+        direction={"row"}
+        width={"100%"}
+        justifyContent={"space-between"}
+        flexWrap={"wrap"}
+        rowGap={"8px"}
+      >
+        <LedgerReportHeaderWidget
+          customer={customer}
+          renderOptions={renderOptions}
+          checkWhatRenderArray={checkWhatRenderArray}
+          handleCustomerChange={handleCustomerChange}
+          isExtended={isExtended}
+          onChangeIsExtended={onChangeIsExtended}
+          handleDateChange={handleDateChange}
+          fromDate={fromDate}
+          toDate={toDate}
+          customerId={customerId}
+          isFetchingCustomers={isFetching}
+          isPurchaseReport={isPurchaseReport}
+          setToDate={setToDate}
+          setFromDate={setFromDate}
+        />
+
+        <LedgerReportButtonWidget
+          onClickCreateNewTransaction={onClickCreateNewTransaction}
+          onClickSendingTicketByEmail={onClickSendingTicketByEmail}
+          onClickPrintCard={onClickPrintCard}
+          onClickShowCard={onClickShowCard}
+          onClickAdjustments={onClickAdjustments}
+        />
+      </Stack>
       <Divider />
-      <LedgerReportButtonWidget
-        onClickCreateNewTransaction={onClickCreateNewTransaction}
-        onClickSendingTicketByEmail={onClickSendingTicketByEmail}
-        onClickPrintCard={onClickPrintCard}
-        onClickShowCard={onClickShowCard}
-        onClickAdjustments={onClickAdjustments}
-      />
+
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows()}

@@ -4,8 +4,12 @@ import {
   EnumTermsPayment,
   EnumVATStatus,
 } from "@/enums/accounting-enums";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const accountingInputs = (state, isSupplier, t) => {
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   const allPaymentTerms = Object.values(EnumTermsPayment).filter(
     (value) => typeof value === "number"
   ) as number[];
@@ -84,7 +88,9 @@ const accountingInputs = (state, isSupplier, t) => {
       label: "accounting.paymentTerms",
       type: "select",
       placeholder: "accounting.paymentTerms",
-      required: false,
+      required: CheckPreferenceValue(
+        EPreferences.IS_PAYMENT_TERMS_REQUIRED_IN_CUSTOMERS
+      ),
       parameterKey: "termOfPayment",
       options: paymentTermsList,
       value: state?.termOfPayment,

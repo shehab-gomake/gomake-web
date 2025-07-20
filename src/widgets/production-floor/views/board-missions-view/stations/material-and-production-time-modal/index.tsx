@@ -163,8 +163,7 @@ const MaterialsAndProductionTimeModalWidget = ({
                 >
                   <div style={{ width: "50%" }}>
                     <h3 style={classes.filterLabelStyle}>
-                      {`${material?.materialKey} (${MaterialStockUnit[material?.unit]
-                        })`}
+                      {`${material?.materialKey} (${t(`boardMissions.${MaterialStockUnit[material?.unit]}`)})`}
                     </h3>
                   </div>
 

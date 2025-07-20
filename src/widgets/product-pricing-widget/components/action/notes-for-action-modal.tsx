@@ -150,7 +150,7 @@ const NotesForActionModal = ({
                 marginBottom: 10,
               }}
             >
-              <div>Enter Job Name</div>
+              <span>{t("sales.quote.enterJobName")}</span>
               <GomakeTextInput
                 placeholder={t("sales.cart.jobName")}
                 onChange={(e: any) => {
