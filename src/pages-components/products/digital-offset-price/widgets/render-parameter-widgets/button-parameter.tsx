@@ -385,7 +385,6 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
-  console.log("selectedShape", { selectedShape, hasDieCutOrDieKissCut, isSelectedShape });
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
@@ -444,9 +443,6 @@ const ButtonParameterWidget = ({
           configData = selectedConfig;
           const nameAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "name");
           const imageAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "image");
-
-          console.log("Selected Name:", nameAttr?.value);
-          console.log("Selected Image:", imageAttr?.value);
         }
       }
 
