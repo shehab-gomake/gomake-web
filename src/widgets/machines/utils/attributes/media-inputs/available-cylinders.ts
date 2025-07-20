@@ -18,8 +18,7 @@ const availableCylinders = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "teethNumber",
                     value: state.attributes?.availableCylinders?.teethNumber ? state.attributes?.availableCylinders?.teethNumber : '',
-                    options: [],
-                    unit:EMeasurementUnits.CM
+                    options: []
                 },
             ]
         },
