@@ -385,6 +385,8 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
+  console.log("selectedShape", { selectedShape, hasDieCutOrDieKissCut, isSelectedShape });
+
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
@@ -422,15 +424,47 @@ const ButtonParameterWidget = ({
       );
     }
 
-    else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
-      const image = selectedShape?.rowData?.image?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "image")?.value
-      const name = selectedShape?.rowData?.name?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "name")?.value
+    else if ((isSelectedShape || selectedShape) && hasDieCutOrDieKissCut) {
+      let configData = selectedShape;
+
+      if (!selectedShape && isSelectedShape) {
+        debugger
+        const selectedValues = isSelectedShape.values; // ["A4 - two Cases"]
+        const selectedValueIds = isSelectedShape.valueIds; // ["06a1cd24-e47d-4234-b5b2-70dbb6bfaacb"]
+
+        // Since "A4 - two Cases" doesn't match any config name exactly,
+        // you might need to find the config differently
+        // Option 1: Use the first available config as fallback
+        const selectedConfig = isSelectedShape.valuesConfigs.find(config => {
+          const nameAttribute = config.additionalAttribute?.find(attr => attr.valueId === "name");
+          return nameAttribute && selectedValues.includes(nameAttribute.value);
+        })
+
+        if (selectedConfig) {
+          configData = selectedConfig;
+          const nameAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "name");
+          const imageAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "image");
+
+          console.log("Selected Name:", nameAttr?.value);
+          console.log("Selected Image:", imageAttr?.value);
+        }
+      }
+
+      // Simplified image and name extraction
+      const image = configData?.rowData?.image?.value ||
+        configData?.additionalAttribute?.find(attr => attr.valueId === "image")?.value ||
+        isSelectedShape?.valuesConfigs?.[0]?.additionalAttribute?.find(attr => attr.valueId === "image")?.value;
+
+      const name = configData?.rowData?.name?.value ||
+        configData?.additionalAttribute?.find(attr => attr.valueId === "name")?.value ||
+        isSelectedShape?.values?.[0];
 
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
           <img
             src={image}
             style={{ width: 24, height: 24 }}
+            alt={name}
           />
           <div style={clasess?.btnSelectedTextStyle}>
             {name}
