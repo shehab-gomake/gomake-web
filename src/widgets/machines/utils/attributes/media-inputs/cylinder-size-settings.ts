@@ -29,8 +29,7 @@ const cylinderSizeSettings = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "minTeethNumber",
                     options: [],
-                    value: state.attributes?.cylinderMaxSize?.minTeethNumber ? state.attributes?.cylinderMaxSize?.minTeethNumber  : '',
-                    unit: EMeasurementUnits.MM
+                    value: state.attributes?.cylinderMaxSize?.minTeethNumber ? state.attributes?.cylinderMaxSize?.minTeethNumber  : ''
                 },
                 {
                     name: "maxTeethNumber",
@@ -40,8 +39,7 @@ const cylinderSizeSettings = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxTeethNumber",
                     options: [],
-                    value: state.attributes?.cylinderMaxSize?.maxTeethNumber ? state.attributes?.cylinderMaxSize?.maxTeethNumber  : '',
-                    unit: EMeasurementUnits.MM
+                    value: state.attributes?.cylinderMaxSize?.maxTeethNumber ? state.attributes?.cylinderMaxSize?.maxTeethNumber  : ''
                 },
             ]
         },
