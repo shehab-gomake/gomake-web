@@ -40,6 +40,17 @@ const useStyle = () => {
         marginTop: 10,
         marginBottom: 20,
       },
+      totalWithBalanceStyle: {
+        ...FONT_FAMILY.Lexend(700, 14),
+        color: primaryColor(500),
+        paddingRight: 5,
+        display: "flex",
+        alignItems: "right",
+        justifyContent: "space-between",
+        width: "100%",
+        marginTop: 10,
+        marginBottom: 20,
+      },
       date1FilterContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -54,6 +65,16 @@ const useStyle = () => {
       textInputStyle: {
         width: "100%",
         border: "none",
+      },
+      balanceInput: {
+        width: "100%",
+        border: "none",
+        height: "30px",
+      },
+      submitStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "fit-content",
+        padding: "0px",
       },
       headerStyle: {
         display: "flex",
