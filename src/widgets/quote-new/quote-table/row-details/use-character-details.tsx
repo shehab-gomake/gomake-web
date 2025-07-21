@@ -24,6 +24,10 @@ const useCharacterDetails = ({
   const [showAll, setShowAll] = useState(false);
   const [originalValue, setOriginalValue] = useState(details);
   const [data, setData] = useState(details);
+  useEffect(() => {
+    setData(details);
+  }, [details]);
+  console.log("data", data);
   const [jobName, setJobName] = useState(workName);
   useEffect(() => {
     setJobName(workName);
@@ -54,7 +58,7 @@ const useCharacterDetails = ({
     return formatted;
   };
 
-  const updateDocumentItemContent = async (jobName?: string) => {
+  const updateDocumentItemContent = async (jobName?: string, data?: string) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -129,14 +133,12 @@ const useCharacterDetails = ({
     setIsEdit(false);
   };
 
-  const handleSave = () => {
+  const handleSave = (data: string) => {
     if (jobName != workName) {
       updateDocumentItemContent(jobName);
     } else {
-      if (isValueChanged) {
-        updateDocumentItemContent();
-        setOriginalValue(data);
-      }
+      updateDocumentItemContent(null, data);
+      setOriginalValue(data);
     }
 
     setIsEdit(false);
