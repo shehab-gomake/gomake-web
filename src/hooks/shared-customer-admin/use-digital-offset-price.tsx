@@ -1583,7 +1583,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           return {
             ...subProduct,
-            parameters: subProduct.parameters
+            parameters: subProduct.parameters.filter(parameter => parameter.values && parameter.values.length > 0
+              && parameter.values[0] !== null && parameter.values[0] !== undefined && parameter.values[0] !== "")
               .map((parameter) => {
                 if (
                   hasDieCutOrKissCut &&
