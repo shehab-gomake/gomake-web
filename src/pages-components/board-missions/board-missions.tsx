@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType, QrCodeAction } from "@/enums";
+import { DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -49,7 +49,6 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
-import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {

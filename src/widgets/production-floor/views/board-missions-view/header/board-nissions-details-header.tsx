@@ -52,7 +52,6 @@ const HeaderDividerComponent = () => {
 };
 
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
-  console.log("boardMissionsDetails", boardMissionsDetails);
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const [jobDueDate, setJobDueDate] = useState(
