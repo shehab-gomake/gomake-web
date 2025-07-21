@@ -5,15 +5,23 @@ import { useGomakeMachines } from "@/hooks";
 import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { IStation } from "@/widgets/production-floor/interfaces/filters";
+import { useEffect } from "react";
 
 const MachineList = ({}: IMachineList) => {
-  const { setMachines } = useGomakeMachines();
+  const { setMachines, getMachinesList } = useGomakeMachines();
+
   const onUpdateMachines = (stations: IStation[]) => {
     const machinesIds = stations.flatMap((station) => station.machineIds);
     setMachines((prevState) =>
       prevState.map((m) => ({ ...m, checked: machinesIds.includes(m.id) }))
     );
   };
+
+  //!here
+  useEffect(() => {
+    getMachinesList();
+  }, []);
+
   return (
     <ActionsListComponent
       source={Source.DASHBOARD}
