@@ -6,6 +6,10 @@ import { generalInputs, lastOrderInputs } from "../../inputs/general-inputs";
 import { useStyle } from "../../style";
 import { useEffect, useRef } from "react";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   codeFlag: any;
@@ -39,6 +43,8 @@ const GeneralTab = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const divRef = useRef(null);
+  const user = useRecoilValue<any>(userState);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
 
   useEffect(() => {
     if (divRef.current && showTable) {
@@ -66,6 +72,23 @@ const GeneralTab = ({
         isActive: true,
       }));
     }
+  }, [customerAction]);
+
+  const autoAssignAgent = () => {
+    if (
+      customerAction === CUSTOMER_ACTIONS.Add &&
+      user?.isAgent &&
+      CheckPreferenceValue(EPreferences.SET_CURRENT_USER_AS_CLIENT_AGENT)
+    ) {
+      setCustomer((prev) => ({
+        ...prev,
+        agentId: user?.employeeId,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    autoAssignAgent();
   }, [customerAction]);
 
   return (
