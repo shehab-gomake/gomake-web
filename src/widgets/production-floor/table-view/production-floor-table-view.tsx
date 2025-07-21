@@ -282,6 +282,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const moveToDone = useModal()
   const moveToNextStation = useModal()
 
+  const handleGroupJobs = (selectedJobIds) => {
+    // Your logic to group the selected jobs
+    console.log('Grouping jobs:', selectedJobIds);
+    // Call your API or service to group the jobs
+  };
+
 
   return (
     <Stack gap={"20px"}>
@@ -360,6 +366,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         </>
       )}
 
+
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
         typeClient={CLIENT_TYPE.CUSTOMER}
@@ -372,6 +379,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         selectedJobs={selectedIds}
         onUpdateStatus={handleBulkUpdateStatus}
         onMoveToNextStation={moveToNextStation.open}
+        onGroupJobs={handleGroupJobs} // Add this new prop
         onMoveToDone={moveToDone.open}
         onClearSelection={handleClearSelection}
         statusOptions={statusOptions}
