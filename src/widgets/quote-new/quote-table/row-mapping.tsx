@@ -288,7 +288,7 @@ const RowMappingWidget = ({
       )}
       <PrimaryTableCell
         style={{
-          width: columnWidths[4],
+          width: columnWidths[5],
           ...classes.cellContainerStyle,
           borderBottom: item?.childsDocumentItems && "none",
         }}

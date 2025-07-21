@@ -439,10 +439,14 @@ const useQuoteNew = ({
     "5%", // "#"
     isDeliveryNote || isInvoice ? "10%" : null, // Document Number
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-      ? "12%"
+      ? "10%"
       : null, // Item Code
-    "25%", // Item Name
-    showDetails ? "10%" : null, // Details column (optional)
+    "12%", // Item Name
+    source?.showDetails === ShowDocumentDetailsEnum.All
+      ? "25%"
+      : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+      ? "10%"
+      : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount

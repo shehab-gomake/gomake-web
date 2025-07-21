@@ -155,10 +155,7 @@ const QuoteForPriceTable = ({
                     <PrimaryTableCell
                       key={index}
                       style={{
-                        width:
-                          (isInvoice || isDeliveryNote) && index === 3
-                            ? columnWidths[index - 1]
-                            : columnWidths[index],
+                        width: columnWidths[index],
                         ...classes.tableHeaderStyle,
                       }}
                     >
