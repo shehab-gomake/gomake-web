@@ -20,6 +20,13 @@ import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useListPagination } from "@/hooks/use-list-pagination";
 
+export enum AccountCodesEnum {
+  CASH_ACCOUNT = "71101",
+  CREDIT_CARD = "73601",
+  BANK_ACCOUNT_1 = "123412",
+  BANK_ACCOUNT_2 = "1234",
+}
+
 export interface FilterState {
   fromAccount: string;
   toAccount: string;
@@ -71,8 +78,14 @@ const useTransactionJournalReport = ({
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const isDailyReport = reportType === EReportType.DailyPayments;
 
-  const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
-    useSnackBar();
+  const {
+    alertFault,
+    alertFaultGetData,
+    alertSuccessGetData,
+    alertSuccess,
+    alertFaultUpdate,
+    alertSuccessUpdate,
+  } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { formatISODateTime } = useDateFormat();
@@ -691,6 +704,21 @@ const useTransactionJournalReport = ({
     }
   }, [fromDate, toDate, documentType, reportType]);
 
+  const [balanceInput, setBalanceInput] = useState<number>();
+
+  const submitBalance = useCallback(async (balanceSum) => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/set-balance-to-cash-account`,
+      { balanceSum }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+    } else {
+      alertFaultUpdate();
+    }
+  }, []);
+
   const [erpAccountsList, setErpAccountsList] = useState([]);
 
   const getErpAccountsList = useCallback(async () => {
@@ -762,6 +790,7 @@ const useTransactionJournalReport = ({
       alertFaultGetData();
     }
   };
+
   return {
     t,
     handleDocumentTypeChange,
@@ -821,6 +850,9 @@ const useTransactionJournalReport = ({
     setToDate,
     setFromDate,
     dataTableStatistics,
+    submitBalance,
+    setBalanceInput,
+    balanceInput,
   };
 };
 
