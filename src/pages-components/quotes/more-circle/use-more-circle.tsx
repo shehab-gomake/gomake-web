@@ -23,7 +23,10 @@ import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { closeAsInvoiceState, isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
+import {
+  closeAsInvoiceState,
+  isSelectedCLoseAsDeliveryNoteState,
+} from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
@@ -43,11 +46,15 @@ import { TagIcon } from "@/icons/tag-icon";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 import { PackageIcon } from "@/icons/package-icon";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
   );
@@ -95,8 +102,9 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -172,6 +180,10 @@ const useMoreCircle = () => {
         receiptId,
       });
     };
+
+    const askToPrintWithPricesInDeliveryNotes = CheckPreferenceValue(
+      EPreferences.ASK_TO_PRINT_WITH_PRICES_IN_DELIVERY_NOTES
+    );
 
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
@@ -291,10 +303,14 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && isDeliveryNote,
-        onClick: () => onClickOpenPrintPDFModal(quote),
+        onClick: () =>
+          askToPrintWithPricesInDeliveryNotes
+            ? onClickOpenPrintPDFModal(quote)
+            : onClickPdf(quote?.id, null),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
+
       {
         condition: !isPauseOrder && !isDeliveryNote,
         onClick: () =>
@@ -437,7 +453,7 @@ const useMoreCircle = () => {
         condition: !isPauseOrder && isOrder && !quote?.productionStatus,
         onClick: () => {
           setCloseAsInvoice(false);
-          onClickOpenMoveOrderToReadyModal(quote)
+          onClickOpenMoveOrderToReadyModal(quote);
         },
         icon: (
           <AlarmOnRoundedIcon style={{ color: "#8283BE", fontSize: "20px" }} />
@@ -519,8 +535,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-              onClickOpenCloseOrderModal(quote)
-            )
+                onClickOpenCloseOrderModal(quote)
+              )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),
@@ -571,8 +587,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -614,7 +630,8 @@ const useMoreCircle = () => {
           onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
         icon: <MailIcon />,
         name: t(
-          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          `sales.quote.${
+            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
           }`
         ),
       },
