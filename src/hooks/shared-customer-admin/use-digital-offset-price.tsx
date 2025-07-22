@@ -851,7 +851,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationProduct(updatedSubProducts);
   };
 
-
   // Function to check if a parameter should be visible based on related parameters
   function isParameterVisible(parameter, subProduct, section, subSection) {
     // Check if this parameter is controlled by any related parameters
@@ -873,6 +872,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     // If no controlling parameters found, the parameter is visible
     if (controllingParameters.length === 0) {
+      console.log("No controlling parameters found, parameter is visible");
       return true;
     }
 
@@ -880,36 +880,83 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     for (const controller of controllingParameters) {
       const { parentParameter, relatedConfig } = controller;
 
+      console.log("Checking controlling parameter:", {
+        parentParameterName: parentParameter.name,
+        parentParameterId: parentParameter.id,
+        relatedConfig
+      });
+
       // Find the parent parameter's current selection in subProduct
       const parentSelection = subProduct?.parameters?.find(
-        (x) =>
-          x.parameterId === parentParameter.id &&
+        (x) => x.parameterId === parentParameter.id &&
           x.sectionId === section.id &&
           x.subSectionId === subSection.id &&
           x.actionIndex === parentParameter.actionIndex
       );
 
-      // If parent parameter is not selected, this parameter should be hidden
-      if (!parentSelection || !parentSelection.valueIds || parentSelection.valueIds.length === 0) {
-        return false;
-      }
+      // Special handling for boolean parameters (parameterType 3)
+      if (parentParameter.parameterType === 3) {
+        // For boolean parameters, check if there's a selection or use the default value
+        let booleanValue = null;
 
-      // Check if the parent parameter's selected value should activate this parameter
-      if (relatedConfig.activateByAllValues) {
-        // If activateByAllValues is true, any selection of parent activates this parameter
-        continue;
-      } else {
-        // Check if the selected value is in the selectedValueIds
-        const hasMatchingValue = parentSelection.valueIds.some(selectedValueId =>
-          relatedConfig.selectedValueIds.includes(selectedValueId)
-        );
+        if (parentSelection && parentSelection.valueIds && parentSelection.valueIds.length > 0) {
+          // Use the selected value
+          booleanValue = parentSelection.valueIds[0];
+        } else if (parentParameter.defaultValue !== null && parentParameter.defaultValue !== undefined) {
+          // Use the default value if no selection exists
+          booleanValue = parentParameter.defaultValue;
+        }
 
-        if (!hasMatchingValue) {
+        console.log("Boolean parameter value:", {
+          parentParameterName: parentParameter.name,
+          booleanValue,
+          requiredValues: relatedConfig.selectedValueIds
+        });
+
+        // If no value found (neither selection nor default), hide the dependent parameter
+        if (booleanValue === null) {
+          console.log("No boolean value found, hiding parameter");
           return false;
+        }
+
+        // Check if the boolean value matches the required value
+        if (!relatedConfig.activateByAllValues) {
+          // Convert boolean value to string for comparison if needed
+          const valueToCheck = String(booleanValue);
+          const hasMatchingValue = relatedConfig.selectedValueIds.includes(valueToCheck);
+
+          if (!hasMatchingValue) {
+            console.log("Boolean value doesn't match required values, hiding parameter");
+            return false;
+          }
+        }
+      } else {
+        // For non-boolean parameters, use the original logic
+        // If parent parameter is not selected, this parameter should be hidden
+        if (!parentSelection || !parentSelection.valueIds || parentSelection.valueIds.length === 0) {
+          console.log("Parent parameter not selected, hiding parameter");
+          return false;
+        }
+
+        // Check if the parent parameter's selected value should activate this parameter
+        if (relatedConfig.activateByAllValues) {
+          // If activateByAllValues is true, any selection of parent activates this parameter
+          continue;
+        } else {
+          // Check if the selected value is in the selectedValueIds
+          const hasMatchingValue = parentSelection.valueIds.some(selectedValueId =>
+            relatedConfig.selectedValueIds.includes(selectedValueId)
+          );
+
+          if (!hasMatchingValue) {
+            console.log("Selected value doesn't match required values, hiding parameter");
+            return false;
+          }
         }
       }
     }
 
+    console.log("All conditions met, parameter is visible");
     return true;
   }
 
