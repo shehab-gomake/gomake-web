@@ -30,6 +30,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialDataFilter, setMaterialDataFilter] = useState("");
+  console.log("materialDataFilter", materialDataFilter)
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -187,12 +188,42 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   };
   const searchByNameOrType = (items, searchText) => {
     searchText = searchText?.toLowerCase();
-    const result = items?.filter((item) =>
-      item.rowData.name.value.toLowerCase().includes(searchText) ||
-      (Array.isArray(item?.rowData?.type?.value) && item?.rowData?.type?.value.some(type => type?.toLowerCase().includes(searchText))) ||
-      item?.category?.toLowerCase()?.includes(searchText) ||
-      item?.rowData?.code?.value?.toLowerCase().includes(searchText)  // Added filter for description
-    );
+
+    const result = items?.filter((item) => {
+      // Existing searches
+      const nameMatch = item.rowData.name.value.toLowerCase().includes(searchText);
+      const typeMatch = Array.isArray(item?.rowData?.type?.value) &&
+        item?.rowData?.type?.value.some(type => type?.toLowerCase().includes(searchText));
+      const categoryMatch = item?.category?.toLowerCase()?.includes(searchText);
+      const codeMatch = item?.rowData?.code?.value?.toLowerCase().includes(searchText);
+
+      // New search for unitWidth x unitLength combination
+      const unitWidth = item?.rowData?.unitWidth?.value;
+      const unitLength = item?.rowData?.unitLength?.value;
+      let dimensionMatch = false;
+
+      if (unitWidth && unitLength) {
+        // Create different possible combinations
+        const dimensionCombinations = [
+          `${unitWidth}x${unitLength}`,
+          `${unitWidth}X${unitLength}`,
+          `${unitLength}x${unitWidth}`,
+          `${unitLength}X${unitWidth}`,
+          // Handle formats with different decimal places
+          `${parseFloat(unitWidth)}x${parseFloat(unitLength)}`,
+          `${parseFloat(unitWidth)}X${parseFloat(unitLength)}`,
+          `${parseFloat(unitLength)}x${parseFloat(unitWidth)}`,
+          `${parseFloat(unitLength)}X${parseFloat(unitWidth)}`
+        ];
+
+        dimensionMatch = dimensionCombinations.some(combo =>
+          combo.toLowerCase().includes(searchText) ||
+          searchText.includes(combo.toLowerCase())
+        );
+      }
+
+      return nameMatch || typeMatch || categoryMatch || codeMatch || dimensionMatch;
+    });
 
     return result;
   }
