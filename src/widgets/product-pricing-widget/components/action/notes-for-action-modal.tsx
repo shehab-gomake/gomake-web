@@ -13,11 +13,11 @@ import {
   useMemo,
   useState,
 } from "react";
-import { debounce } from "@mui/material";
 import dynamic from "next/dynamic";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 interface NotesForActionModalProps {
   onClose: () => void;
   openModal: boolean;
@@ -54,26 +54,23 @@ const NotesForActionModal = ({
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
+  // Initialize local state with the prop value when modal opens
   useEffect(() => {
-    setMyValue(value);
-  }, [value]);
-
-  // If you need to use the debounced version again, please let me know, Lama.
-  // const handleTextChange = useCallback(
-  //   debounce((value: string) => {
-  //     setMyValue(value);
-  //     setValue(value);
-  //   }, 300),
-  //   [setValue]
-  // );
-
-  const handleTextChange = useCallback(
-    (value: string) => {
+    if (openModal) {
       setMyValue(value);
-      setValue(value);
-    },
-    [setValue]
-  );
+    }
+  }, [openModal]);
+
+  // Only update local state, NOT the parent state
+  const handleTextChange = useCallback((newValue: string) => {
+    setMyValue(newValue);
+  }, []);
+
+  // Handle save - update parent state and call onSend
+  const handleSave = useCallback(() => {
+    setValue(myValue); // Update parent state only when saving
+    onSend(myValue);
+  }, [myValue, setValue, onSend, value]);
 
   const style: CSSProperties = {
     display: "flex",
@@ -109,8 +106,8 @@ const NotesForActionModal = ({
           border-top: 0.5px solid #ccc;
           box-shadow: none;
           height: 145px !important;
-             direction: ${dir};
-                text-align: ${isRTL ? "right" : "left"};
+          direction: ${dir};
+          text-align: ${isRTL ? "right" : "left"};
         }
       `;
       document.head.appendChild(style);
@@ -119,7 +116,7 @@ const NotesForActionModal = ({
         document.head.removeChild(style);
       };
     }
-  }, []);
+  }, [dir, isRTL]);
 
   return (
     <GoMakeModal
@@ -154,7 +151,7 @@ const NotesForActionModal = ({
               <GomakeTextInput
                 placeholder={t("sales.cart.jobName")}
                 onChange={(e: any) => {
-                  setJobName(e.target.value);
+                  setJobName?.(e.target.value);
                 }}
                 value={jobName}
               />
@@ -167,15 +164,12 @@ const NotesForActionModal = ({
               formats={formats}
               style={style}
               value={myValue}
-              // onChange={handleTextChange}
-              onChange={(value) => handleTextChange(value)}
+              onChange={handleTextChange} // Only updates local state
               id={`editor-quill-${id || "default"}`}
               placeholder={t("textEditor.placeholder")}
             />
             <GomakePrimaryButton
-              onClick={() => {
-                onSend(myValue);
-              }}
+              onClick={handleSave} // Use the new handleSave function
               style={{
                 width: "fit-content",
                 height: 35,

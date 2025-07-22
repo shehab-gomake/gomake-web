@@ -24,6 +24,9 @@ const useCharacterDetails = ({
   const [showAll, setShowAll] = useState(false);
   const [originalValue, setOriginalValue] = useState(details);
   const [data, setData] = useState(details);
+  useEffect(() => {
+    setData(details);
+  }, [details]);
   const [jobName, setJobName] = useState(workName);
   useEffect(() => {
     setJobName(workName);
@@ -54,7 +57,7 @@ const useCharacterDetails = ({
     return formatted;
   };
 
-  const updateDocumentItemContent = async (jobName?: string) => {
+  const updateDocumentItemContent = async (jobName?: string, data?: string) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -129,16 +132,25 @@ const useCharacterDetails = ({
     setIsEdit(false);
   };
 
-  const handleSave = () => {
-    if (jobName != workName) {
-      updateDocumentItemContent(jobName);
-    } else {
-      if (isValueChanged) {
-        updateDocumentItemContent();
-        setOriginalValue(data);
-      }
+  const handleSave = (data: string) => {
+    const hasDataChanged = data !== originalValue;
+    const hasJobNameChanged = jobName !== workName;
+
+    // Early return if nothing has changed
+    if (!hasDataChanged && !hasJobNameChanged) {
+      setIsEdit(false);
+      return;
     }
 
+    // Only update if something has actually changed
+    if (hasJobNameChanged) {
+      updateDocumentItemContent(jobName, data);
+    } else if (hasDataChanged) {
+      updateDocumentItemContent(null, data);
+    }
+
+    // Update the original value only after successful change
+    setOriginalValue(data);
     setIsEdit(false);
   };
 
