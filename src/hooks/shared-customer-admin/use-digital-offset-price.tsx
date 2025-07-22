@@ -872,20 +872,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     // If no controlling parameters found, the parameter is visible
     if (controllingParameters.length === 0) {
-      console.log("No controlling parameters found, parameter is visible");
       return true;
     }
 
     // Check each controlling parameter
     for (const controller of controllingParameters) {
       const { parentParameter, relatedConfig } = controller;
-
-      console.log("Checking controlling parameter:", {
-        parentParameterName: parentParameter.name,
-        parentParameterId: parentParameter.id,
-        relatedConfig
-      });
-
       // Find the parent parameter's current selection in subProduct
       const parentSelection = subProduct?.parameters?.find(
         (x) => x.parameterId === parentParameter.id &&
@@ -907,15 +899,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           booleanValue = parentParameter.defaultValue;
         }
 
-        console.log("Boolean parameter value:", {
-          parentParameterName: parentParameter.name,
-          booleanValue,
-          requiredValues: relatedConfig.selectedValueIds
-        });
-
         // If no value found (neither selection nor default), hide the dependent parameter
         if (booleanValue === null) {
-          console.log("No boolean value found, hiding parameter");
           return false;
         }
 
@@ -926,7 +911,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const hasMatchingValue = relatedConfig.selectedValueIds.includes(valueToCheck);
 
           if (!hasMatchingValue) {
-            console.log("Boolean value doesn't match required values, hiding parameter");
             return false;
           }
         }
@@ -934,7 +918,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         // For non-boolean parameters, use the original logic
         // If parent parameter is not selected, this parameter should be hidden
         if (!parentSelection || !parentSelection.valueIds || parentSelection.valueIds.length === 0) {
-          console.log("Parent parameter not selected, hiding parameter");
           return false;
         }
 
@@ -949,14 +932,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
 
           if (!hasMatchingValue) {
-            console.log("Selected value doesn't match required values, hiding parameter");
             return false;
           }
         }
       }
     }
-
-    console.log("All conditions met, parameter is visible");
     return true;
   }
 
