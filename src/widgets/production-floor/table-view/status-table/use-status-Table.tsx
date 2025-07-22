@@ -52,66 +52,31 @@ const useStatusTable = () => {
     );
   const { CheckPermission } = useUserPermission();
 
-  const tableHeadersOld = (statusId: string) => {
-    return [
-      CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) && (
-        <Checkbox
-          checked={status(statusId).boardMissions.every((b) =>
-            selectedBoards?.find(
-              (sb) => sb.id === b.id && sb.productType === b.productType
-            )
-          )}
-          onChange={(e, checked) => {
-            onChangeHeaderCheckBox(statusId, checked);
-          }}
-          icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
-          checkedIcon={
-            <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
-          }
-        />
-      ),
-      `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
-      t("sales.quote.deliveryDate"),
-      t("productionFloor.customer"),
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) &&
-        t("productionFloor.agent"),
-      CheckPreferenceValue(
-        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
-      ) && t("sales.quote.productName"),
-      CheckPreferenceValue(
-        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
-      ) && t("sales.documentDeliveries.description"),
-      CheckPreferenceValue(
-        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
-      ) && t("sales.quote.notes"),
-      t("productionFloor.status"),
-      t("productionFloor.currentStation"),
-      t("productionFloor.nextStation"),
-      " ",
-    ].filter(Boolean);
-  };
-
   const columnOrder = useRecoilValue(columnOrderState);
   const columnVisibility = useRecoilValue(columnVisibilityState);
 
   const tableHeaders = (statusId: string) => {
     const headerMap = {
-      checkbox: (
-        <Checkbox
-          checked={status(statusId).boardMissions.every((b) =>
-            selectedBoards?.find(
-              (sb) => sb.id === b.id && sb.productType === b.productType
-            )
-          )}
-          onChange={(e, checked) => {
-            onChangeHeaderCheckBox(statusId, checked);
-          }}
-          icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
-          checkedIcon={
-            <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
-          }
-        />
-      ),
+      ...(CheckPermission(
+        Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+      ) && {
+        checkbox: (
+          <Checkbox
+            checked={status(statusId).boardMissions.every((b) =>
+              selectedBoards?.find(
+                (sb) => sb.id === b.id && sb.productType === b.productType
+              )
+            )}
+            onChange={(e, checked) => {
+              onChangeHeaderCheckBox(statusId, checked);
+            }}
+            icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+            checkedIcon={
+              <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
+            }
+          />
+        ),
+      }),
       job_order: `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
       deliveryDate: t("sales.quote.deliveryDate"),
       customer: t("productionFloor.customer"),
@@ -126,7 +91,7 @@ const useStatusTable = () => {
     };
 
     return columnOrder
-      .filter((key) => columnVisibility[key])
+      .filter((key) => columnVisibility[key] && headerMap[key])
       .map((key) => headerMap[key]);
   };
 
