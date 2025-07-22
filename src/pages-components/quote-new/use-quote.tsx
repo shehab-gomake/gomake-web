@@ -451,7 +451,7 @@ const useQuoteNew = ({
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
     showPrices ? "10%" : null, // Final Price
-    "10%", // More
+    "8%", // More
   ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
