@@ -53,6 +53,7 @@ const RowMappingWidget = ({
   isShowChilds,
   setIsShowChilds,
   _renderIconcalculationStatus,
+  updateItemStatus
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
@@ -116,17 +117,17 @@ const RowMappingWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+    );
   const canUpdateDeliveryPrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+    );
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
@@ -145,9 +146,9 @@ const RowMappingWidget = ({
         }}
       >
         {!isPrePaymentPage &&
-        isQuoteConfirmation &&
-        !quoteConfirm?.isConfirmed &&
-        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+          isQuoteConfirmation &&
+          !quoteConfirm?.isConfirmed &&
+          quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
           <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -178,8 +179,8 @@ const RowMappingWidget = ({
                 checked={isSelected}
                 disabled={
                   item?.relatedWorkTypeItemId?.length > 0 ||
-                  item?.isConfirmedByClient ||
-                  item?.isClosed
+                    item?.isConfirmedByClient ||
+                    item?.isClosed
                     ? true
                     : false
                 }
@@ -207,10 +208,9 @@ const RowMappingWidget = ({
           <span style={{ display: "block", color: "#5859A8" }}>
             {item?.sourceDocumentType
               ? `${t(
-                  `SourceDocument.${
-                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
-                  }`
-                )} ${t("general.shortForNum")}`
+                `SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                }`
+              )} ${t("general.shortForNum")}`
               : ""}
           </span>
           <span style={{ display: "block" }}>
@@ -221,32 +221,32 @@ const RowMappingWidget = ({
       {!CheckPreferenceValue(
         EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART
       ) && (
-        <>
-          <PrimaryTableCell
-            style={{
-              width: columnWidths[1],
-              ...classes.cellContainerStyle,
-              color: "#000000",
-              borderBottom: item?.childsDocumentItems && "none",
-            }}
-          >
-            {item?.code || item?.productCode || "000"}
-          </PrimaryTableCell>
-          <PrimaryTableCell
-            style={{
-              width: columnWidths[2],
-              ...FONT_FAMILY.Inter(600, 14),
-              color: "#5859A8",
-              ...classes.cellContainerStyle,
-              borderBottom: item?.childsDocumentItems && "none",
-            }}
-          >
-            {item?.productName === "Delivery"
-              ? t("home.tabs.Delivery")
-              : item?.productName}
-          </PrimaryTableCell>
-        </>
-      )}
+          <>
+            <PrimaryTableCell
+              style={{
+                width: columnWidths[1],
+                ...classes.cellContainerStyle,
+                color: "#000000",
+                borderBottom: item?.childsDocumentItems && "none",
+              }}
+            >
+              {item?.code || item?.productCode || "000"}
+            </PrimaryTableCell>
+            <PrimaryTableCell
+              style={{
+                width: columnWidths[2],
+                ...FONT_FAMILY.Inter(600, 14),
+                color: "#5859A8",
+                ...classes.cellContainerStyle,
+                borderBottom: item?.childsDocumentItems && "none",
+              }}
+            >
+              {item?.productName === "Delivery"
+                ? t("home.tabs.Delivery")
+                : item?.productName}
+            </PrimaryTableCell>
+          </>
+        )}
       {CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && (
         <>
           <PrimaryTableCell
@@ -295,8 +295,8 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === undefined ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === undefined ||
+            item?.calculationStatus === ECalculationStatus.Done ? (
             isQuoteConfirmation ? (
               <InputUpdatedValues
                 value={item?.quantity}
@@ -331,8 +331,8 @@ const RowMappingWidget = ({
         >
           <div style={classes.cellTextInputStyle}>
             {item?.calculationStatus === null ||
-            item?.calculationStatus === undefined ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+              item?.calculationStatus === undefined ||
+              item?.calculationStatus === ECalculationStatus.Done ? (
               <InputUpdatedValues
                 value={item.price}
                 onBlur={onBlurPrice}
@@ -359,8 +359,8 @@ const RowMappingWidget = ({
         >
           <div style={classes.cellTextInputStyle}>
             {item?.calculationStatus === null ||
-            item?.calculationStatus === undefined ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+              item?.calculationStatus === undefined ||
+              item?.calculationStatus === ECalculationStatus.Done ? (
               <InputUpdatedValues
                 value={item.discount ? item.discount : "0"}
                 onBlur={onBlurDiscount}
@@ -405,8 +405,8 @@ const RowMappingWidget = ({
             ) : (
               <>
                 {item?.calculationStatus === null ||
-                item?.calculationStatus === undefined ||
-                item?.calculationStatus === ECalculationStatus.Done ? (
+                  item?.calculationStatus === undefined ||
+                  item?.calculationStatus === ECalculationStatus.Done ? (
                   <InputUpdatedValues
                     value={item.finalPrice}
                     onBlur={onBlurFinalPrice}
@@ -419,7 +419,7 @@ const RowMappingWidget = ({
                     onInputChange={(e) => onInputChangeFinalPrice(e)}
                   />
                 ) : (
-                  _renderIconcalculationStatus(item)
+                  _renderIconcalculationStatus(item, updateItemStatus)
                 )}
               </>
             )}
