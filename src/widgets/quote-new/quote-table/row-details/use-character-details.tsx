@@ -27,7 +27,6 @@ const useCharacterDetails = ({
   useEffect(() => {
     setData(details);
   }, [details]);
-  console.log("data", data);
   const [jobName, setJobName] = useState(workName);
   useEffect(() => {
     setJobName(workName);
@@ -134,13 +133,24 @@ const useCharacterDetails = ({
   };
 
   const handleSave = (data: string) => {
-    if (jobName != workName) {
-      updateDocumentItemContent(jobName);
-    } else {
-      updateDocumentItemContent(null, data);
-      setOriginalValue(data);
+    const hasDataChanged = data !== originalValue;
+    const hasJobNameChanged = jobName !== workName;
+
+    // Early return if nothing has changed
+    if (!hasDataChanged && !hasJobNameChanged) {
+      setIsEdit(false);
+      return;
     }
 
+    // Only update if something has actually changed
+    if (hasJobNameChanged) {
+      updateDocumentItemContent(jobName, data);
+    } else if (hasDataChanged) {
+      updateDocumentItemContent(null, data);
+    }
+
+    // Update the original value only after successful change
+    setOriginalValue(data);
     setIsEdit(false);
   };
 

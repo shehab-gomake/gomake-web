@@ -68,7 +68,6 @@ const NotesForActionModal = ({
 
   // Handle save - update parent state and call onSend
   const handleSave = useCallback(() => {
-    console.log("myValue", myValue);
     setValue(myValue); // Update parent state only when saving
     onSend(myValue);
   }, [myValue, setValue, onSend, value]);
