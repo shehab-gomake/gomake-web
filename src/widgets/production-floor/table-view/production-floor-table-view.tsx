@@ -40,8 +40,12 @@ import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-moda
 import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
+  const { CheckPermission } = useUserPermission();
+
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
     data,
@@ -170,20 +174,32 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const setColumnOrder = useSetRecoilState(columnOrderState);
 
   const [columnsReady, setColumnsReady] = useState(false);
+
   useEffect(() => {
     const loadColumnSettings = async () => {
       try {
         const res = await getProductionFloorTableSettingsApi(callApi, () => { });
         const saved: ColumnSetting[] = res?.data;
 
+        const filteredKeys = allColumnKeys.filter(
+          (key) =>
+            key !== "checkbox" ||
+            CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+        );
+
         if (saved && saved.length > 0) {
-          const { order, visibility } = parseSavedColumnSettings(saved);
+          const { order, visibility } = parseSavedColumnSettings(
+            saved,
+            filteredKeys
+          );
           setColumnOrder(order);
           setColumnVisibility(visibility);
         } else {
-          setColumnOrder(allColumnKeys);
+          // setColumnOrder(allColumnKeys);
+
+          setColumnOrder(filteredKeys);
           setColumnVisibility(
-            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+            Object.fromEntries(filteredKeys.map((key) => [key, true]))
           );
         }
       } catch (e) {
@@ -205,15 +221,13 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       await updateStatus(selectedJobs, statusId);
       setSelectedIds([]);
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error("Error updating status:", error);
       alertFaultUpdate();
     }
   };
 
-
   const handleBulkMoveToNextStation = async (selectedJobs) => {
     try {
-
       const callBack = (res) => {
         if (res?.success) {
           setSelectedIds([]);
@@ -222,22 +236,20 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           alertFaultUpdate();
         }
       };
-      const jobsData = selectedJobs.map(job => ({
+      const jobsData = selectedJobs.map((job) => ({
         boardMissionId: job.id,
-        productType: job.productType
+        productType: job.productType,
       }));
 
       await updateBoardMissionListCurrentStationApi(callApi, callBack, {
         stationId: null,
-        data: jobsData
+        data: jobsData,
       });
-    }
-    catch (error) {
-      console.error('Error moving to done:', error);
+    } catch (error) {
+      console.error("Error moving to done:", error);
       alertFaultUpdate();
     }
   };
-
 
   const handleBulkMoveToDone = async (selectedJobs, sendMessage) => {
     try {
@@ -249,18 +261,18 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           alertFaultUpdate();
         }
       };
-      const jobsData = selectedJobs.map(job => ({
+      const jobsData = selectedJobs.map((job) => ({
         boardMissionId: job.id,
-        productType: job.productType
+        productType: job.productType,
       }));
 
       await moveBoardMissionListToDoneApi(callApi, callBack, {
         sendMessage: sendMessage,
         storage: inputValue,
-        data: jobsData
+        data: jobsData,
       });
     } catch (error) {
-      console.error('Error moving to done:', error);
+      console.error("Error moving to done:", error);
       alertFaultUpdate();
     }
   };
@@ -273,14 +285,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     return filteredDataByMachine.map((statusBoard: any) => ({
       id: statusBoard.boardMissionStatus.boardMissionStatus?.id,
       name: statusBoard.boardMissionStatus.boardMissionStatus?.name,
-      backgroundColor: statusBoard.boardMissionStatus.boardMissionStatus?.backgroundColor,
+      backgroundColor:
+        statusBoard.boardMissionStatus.boardMissionStatus?.backgroundColor,
       textColor: statusBoard.boardMissionStatus.boardMissionStatus?.textColor,
     }));
   }, [filteredDataByMachine]);
 
-
-  const moveToDone = useModal()
-  const moveToNextStation = useModal()
   const isOpenGroupJobsModal = useModal()
 
   const handleCheckIfCanMakeGroupedBoardMissions = async (selectedJobIds) => {
@@ -318,6 +328,8 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     await groupJobsApi(callApi, callBack, selectedJobsIdsList);
   };
 
+  const moveToDone = useModal();
+  const moveToNextStation = useModal();
 
   return (
     <Stack gap={"20px"}>

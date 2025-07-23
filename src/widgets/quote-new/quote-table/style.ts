@@ -63,7 +63,7 @@ const useStyle = ({ headerHeight }) => {
       checkBoxContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
       },
       documentNum: {

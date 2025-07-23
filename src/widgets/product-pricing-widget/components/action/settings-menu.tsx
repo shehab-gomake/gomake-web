@@ -49,7 +49,7 @@ const SettingsMenu = ({
     handleClose();
   };
   const onClickOsSettings = () => {
-    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}&isOutSource=true`;
+    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&isOutSource=true`;
     window.open(uri, "_blank");
     handleClose();
   };

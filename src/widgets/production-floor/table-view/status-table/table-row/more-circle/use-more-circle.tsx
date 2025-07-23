@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import { MachineIcon } from "./icons/machine-icon";
 import { getBoardMissionDataForMenuApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { ExpandIcon } from "@/icons/expand-icon";
-import { DotIcon, LeftArrowIcon, MoreCircleIcon, SearchIcon } from "@/icons";
+import {ExpandIcon} from "@/icons/expand-icon";
+import {DotIcon, LeftArrowIcon, MoreCircleIcon, SearchIcon} from "@/icons";
 
 const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickPrintDTicket }) => {
   const { push } = useRouter();
@@ -31,32 +31,11 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
     await getBoardMissionDataForMenuApi(callApi, callBack, { boardMissionId: boardMission?.id, });
   }
 
-  const openJobModal = () => {
+  const openJobModal = ()=>{
     push(
-      `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
+        `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
     ).then();
   }
-
-  const buildEditUrl = (result) => {
-    return `/products/edit?clientTypeId=${result.clientTypeId}&customerId=${result.clientId}&customerName=${result.clientName}&productId=${result?.productId}&documentItemId=${result?.orderItemId}&documentType=${1}&documentNumber=${boardMission?.orderNumber}&documentId=${result.orderId}`;
-  };
-
-  // New function to get edit URL (returns promise)
-  const getEditUrl = async () => {
-    return new Promise((resolve, reject) => {
-      const callBack = (res) => {
-        if (res.success) {
-          const result = res?.data;
-          const url = buildEditUrl(result);
-          resolve(url);
-        } else {
-          alertFaultGetData();
-          reject(new Error('Failed to get board mission data'));
-        }
-      };
-      getBoardMissionDataForMenuApi(callApi, callBack, { boardMissionId: boardMission?.id });
-    });
-  };
 
   const getMenuList = () => {
     return [
@@ -70,9 +49,7 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
         condition: true,
         onClick: () => handleGetBoardMissionData("edit"),
         icon: <EditingIcon />,
-        name: t("sales.quote.edit"),
-        isLink: true, // Mark this as a link
-        getUrl: getEditUrl // Function to get the URL
+        name: t("sales.quote.edit")
       },
       {
         condition: true,

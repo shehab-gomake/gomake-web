@@ -46,7 +46,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
-  console.log("activeFilter", activeFilter);
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const {
     openPriceModal,

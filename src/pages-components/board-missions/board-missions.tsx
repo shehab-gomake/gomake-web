@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType, QrCodeAction } from "@/enums";
+import { DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -49,7 +49,6 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
-import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
@@ -152,6 +151,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openMarkReadyModalForHasJobs,
     cancelPrintNodeModal,
     initialPageSize,
+    isHeaderSortable,
+    isDescOrderBE,
+    handleSortBE,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -190,7 +192,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -206,7 +208,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -231,7 +233,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   }
 `;
 
-  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS })
+  const {} = useQrCodeListener({
+    qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS,
+  });
   return (
     <>
       <Stack
@@ -269,12 +273,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (key) => key !== "pageNumber"
                       ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                        <div
+                          style={{ position: "absolute", top: -5, right: -1 }}
+                        >
+                          <DotIcon />
+                        </div>
+                      )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -446,59 +450,63 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             maxHeight={"calc(100vh - 250px)"}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
+            withSortBE={true}
+            onClickSortBE={handleSortBE}
+            isDescOrderBE={isDescOrderBE}
+            isHeaderSortable={isHeaderSortable}
             columnWidths={
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>
@@ -555,12 +563,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -601,12 +609,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -665,7 +673,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -727,12 +735,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

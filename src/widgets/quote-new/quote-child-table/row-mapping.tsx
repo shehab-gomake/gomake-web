@@ -32,6 +32,7 @@ const RowMappingChildWidget = ({
   quoteItems,
   getQuote,
   _renderIconcalculationStatus,
+  updateItemStatus,
 }: any) => {
   const { classes } = useStyle({ headerHeight });
   const {
@@ -270,7 +271,7 @@ const RowMappingChildWidget = ({
               onInputChange={(e) => onInputChangeFinalPrice(e)}
             />
           ) : (
-            _renderIconcalculationStatus(item)
+            _renderIconcalculationStatus(item, updateItemStatus)
           )}
         </div>
       </PrimaryTableCell>

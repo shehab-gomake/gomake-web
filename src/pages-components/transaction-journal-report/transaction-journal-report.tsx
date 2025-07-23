@@ -1,7 +1,10 @@
 import { Divider } from "@mui/joy";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { LedgerReportButtonWidget } from "./widgets/button-widget";
-import { useTransactionJournalReport } from "./use-transaction-journal-report";
+import {
+  AccountCodesEnum,
+  useTransactionJournalReport,
+} from "./use-transaction-journal-report";
 import { useStyle } from "./style";
 import { TransactionJournalReportHeaderWidget } from "./widgets/header-widget";
 import { DocumentsTypeReportList, EReportType } from "@/enums";
@@ -10,13 +13,15 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { TransactionSummaryCards } from "./widgets/transction-report-summery/transction-report-summery";
 import { Stack } from "@mui/material";
+import { GomakeTextInput } from "@/components";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -86,6 +91,9 @@ const TransactionJournalReportWidget = ({
     setToDate,
     setFromDate,
     dataTableStatistics,
+    submitBalance,
+    setBalanceInput,
+    balanceInput,
   } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
@@ -109,6 +117,20 @@ const TransactionJournalReportWidget = ({
   useEffect(() => {
     getErpAccountsList();
   }, []);
+
+  useEffect(() => {
+    if (dataTable?.length) {
+      const cashAccount = dataTable.find(
+        (item) => item.accountCode === AccountCodesEnum.CASH_ACCOUNT
+      );
+      if (cashAccount?.data?.length) {
+        const openBalance = cashAccount?.openBalance;
+        if (typeof openBalance === "number") {
+          setBalanceInput(openBalance);
+        }
+      }
+    }
+  }, [dataTable]);
 
   return (
     <div
@@ -226,6 +248,9 @@ const TransactionJournalReportWidget = ({
             <div>
               {showTable &&
                 dataTable?.map((item) => {
+                  const isCashAccount =
+                    item.accountCode === AccountCodesEnum.CASH_ACCOUNT;
+
                   return (
                     <div style={classes.tableTitleContainer}>
                       <div style={classes.titleStyle}>
@@ -240,7 +265,32 @@ const TransactionJournalReportWidget = ({
                         maxHeight={400}
                         variant="OddEvenTable"
                       />
-                      <div style={classes.totalStyle}>
+                      <div
+                        style={
+                          isCashAccount
+                            ? classes.totalWithBalanceStyle
+                            : classes.totalStyle
+                        }
+                      >
+                        {isCashAccount && (
+                          <Stack direction={"row"} gap={"8px"}>
+                            <GomakeTextInput
+                              value={balanceInput}
+                              style={classes.balanceInput}
+                              placeholder={t("payment.balance")}
+                              type="number"
+                              onChange={(e: any) =>
+                                setBalanceInput(e.target.value)
+                              }
+                            />
+                            <PrimaryButton
+                              style={classes.submitStyle}
+                              onClick={() => submitBalance(balanceInput)}
+                            >
+                              {t("reports.submit")}
+                            </PrimaryButton>
+                          </Stack>
+                        )}
                         {t("deposits.total")} : {item.total.toFixed(2)}
                       </div>
                     </div>
