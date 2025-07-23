@@ -72,6 +72,7 @@ import { DocumentPrimaryTable } from "@/components/tables/document-primary-table
 import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import {
   QR_CODE_LISTENER_FROM,
   useQrCodeListener,
@@ -438,11 +439,7 @@ const QuotesListPageWidget = ({
 
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
-
-
   const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.QUOTES })
-
-
   return (
     <>
       {!isFromHomePage && (

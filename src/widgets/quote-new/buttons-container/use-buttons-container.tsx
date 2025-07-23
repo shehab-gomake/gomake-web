@@ -51,6 +51,7 @@ import {
   openOrderModalState,
   shouldReopenOrderModalState,
 } from "@/store/order-modal-states";
+import { checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi, getGroupJobsUsingOrderIdApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -118,7 +119,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
   };
 
   const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
@@ -254,18 +255,22 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     orderId: string;
     orderNumber: string;
   } | null>(null);
+  const [pendingOrderData, setPendingOrderData] = useState(null);
 
-  const handleOrderConfirmation = async (
-    sendMessage: boolean,
-    isPrepaymentClient: boolean = false,
-    totalPrePaymentAmount: number = 0,
-    isStripeCash: boolean = false
-  ) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        onClickCloseOrderNowModal();
 
+  const handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId = async (orderId, res, sendMessage, isPrepaymentClient, isStripeCash) => {
+
+    const callBack = (result) => {
+      if (result?.success) {
+        setPendingOrderData({
+          orderId: orderId,
+          res: res,
+          sendMessage: sendMessage,
+          isPrepaymentClient: isPrepaymentClient,
+          isStripeCash: isStripeCash
+        })
+        isOpenGroupJobsModal.open()
+      } else {
         if (quoteItemValue?.isUsedStripe) {
           if (!sendMessage) {
             navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
@@ -281,6 +286,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
         } else {
+          console.log("res.data", res.data);
           if (res.data.isShowCheckoutModal) {
             setCheckoutModalData({
               orderId: res.data.orderID,
@@ -293,6 +299,76 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             navigate(`/jobs?orderNumber=${res?.data?.number}`);
           }
         }
+      }
+    };
+
+    await checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi(callApi, callBack, orderId);
+  };
+
+  const handleGetGroupJobsUsingOrderId = async (pendingOrderData) => {
+    const callBack = (result) => {
+      if (result?.success) {
+        isOpenGroupJobsModal.close()
+
+        if (quoteItemValue?.isUsedStripe) {
+          if (!pendingOrderData?.sendMessage) {
+            navigate(`/orders?finalPatternSearch=${pendingOrderData?.res?.data?.number}`);
+          } else {
+            if (pendingOrderData?.isStripeCash) {
+              navigate(`/orders?finalPatternSearch=${pendingOrderData?.res?.data?.number}`);
+            } else if (pendingOrderData?.res?.data?.paymentLink) {
+              window.open(pendingOrderData?.res?.data?.paymentLink, "_self");
+            } else {
+              alertFaultGetData();
+            }
+          }
+          setPendingOrderData(null)
+
+        } else if (pendingOrderData?.isPrepaymentClient) {
+          navigate(`/orders?finalPatternSearch=${pendingOrderData?.res?.data?.number}`);
+          setPendingOrderData(null)
+
+        } else {
+          if (pendingOrderData?.res?.data?.isShowCheckoutModal) {
+            setCheckoutModalData({
+              orderId: pendingOrderData?.res?.data?.orderID,
+              orderNumber: pendingOrderData?.res?.data?.number,
+            });
+
+            CheckoutModalOpen.open();
+          } else {
+            setShowPrintJobsModal(pendingOrderData?.res?.data?.orderID);
+            navigate(`/jobs?orderNumber=${pendingOrderData?.res?.data?.number}`);
+          }
+          setPendingOrderData(null)
+        }
+
+      } else {
+        isOpenGroupJobsModal.close()
+        setPendingOrderData(null)
+        alertFaultUpdate();
+
+      }
+    };
+
+    await getGroupJobsUsingOrderIdApi(callApi, callBack, pendingOrderData?.orderId);
+  };
+  const isOpenGroupJobsModal = useModal();
+
+  const handleOrderConfirmation = async (
+    sendMessage: boolean,
+    isPrepaymentClient: boolean = false,
+    totalPrePaymentAmount: number = 0,
+    isStripeCash: boolean = false
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onClickCloseOrderNowModal();
+        handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId(res?.data?.orderID, res, sendMessage, isPrepaymentClient, isStripeCash);
+
+
+
       } else {
         alertFaultUpdate();
       }
@@ -540,10 +616,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         isOrder
           ? navigate("/orders")
           : isDeliveryNote
-          ? navigate("/deliveryNotes")
-          : isInvoice
-          ? navigate("/invoices")
-          : navigate("/purchaseOrders");
+            ? navigate("/deliveryNotes")
+            : isInvoice
+              ? navigate("/invoices")
+              : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }
@@ -725,6 +801,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setShowPrintJobsModal,
     handleProcessCheckout,
     router,
+    handleGetGroupJobsUsingOrderId,
+    isOpenGroupJobsModal,
+    pendingOrderData,
+    setPendingOrderData,
     ReceiptSummeryModal,
     filteredReceiptItems,
     finalTotalPayment,

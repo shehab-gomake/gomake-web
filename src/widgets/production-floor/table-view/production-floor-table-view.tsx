@@ -34,10 +34,7 @@ import { Paper, Skeleton } from "@mui/material";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { selectedBoardsMissionsState } from "../state/boards";
 import { FloatingBulkActionsMenu } from "./status-table/floating-bulk-actions-menu";
-import {
-  moveBoardMissionListToDoneApi,
-  updateBoardMissionListCurrentStationApi,
-} from "@/services/api-service/production-floor/production-floor-endpoints";
+import { checkIfCanMakeGroupedBoardMissionsApi, groupJobsApi, moveBoardMissionListToDoneApi, updateBoardMissionListCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-modal";
 import { ModalType } from "@/enums";
@@ -122,18 +119,18 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const matchSearch = (mission) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-          search
-        ) ||
-          `${mission.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${mission.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          mission.automatedTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          ) ||
-          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        search
+      ) ||
+      `${mission.clientName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      `${mission.productName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(search.toLowerCase())
+      ) ||
+      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(
@@ -181,7 +178,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   useEffect(() => {
     const loadColumnSettings = async () => {
       try {
-        const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+        const res = await getProductionFloorTableSettingsApi(callApi, () => { });
         const saved: ColumnSetting[] = res?.data;
 
         const filteredKeys = allColumnKeys.filter(
@@ -294,6 +291,43 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     }));
   }, [filteredDataByMachine]);
 
+  const isOpenGroupJobsModal = useModal()
+
+  const handleCheckIfCanMakeGroupedBoardMissions = async (selectedJobIds) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        if (res?.data) {
+          isOpenGroupJobsModal.open()
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    const selectedJobsIdsList = selectedJobIds.map(job => job.id);
+
+
+    await checkIfCanMakeGroupedBoardMissionsApi(callApi, callBack, {
+      selectedJobsIdsList
+    });
+  };
+  console.log("selectedIds", selectedIds);
+  const handleGroupJobs = async (selectedJobIds) => {
+    const selectedJobsIdsList = selectedJobIds.map(job => job.id);
+
+    const callBack = (res) => {
+
+      if (res?.success) {
+        setSelectedIds([]);
+        getData();
+
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await groupJobsApi(callApi, callBack, selectedJobsIdsList);
+  };
+
   const moveToDone = useModal();
   const moveToNextStation = useModal();
 
@@ -374,6 +408,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         </>
       )}
 
+
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
         typeClient={CLIENT_TYPE.CUSTOMER}
@@ -386,6 +421,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         selectedJobs={selectedIds}
         onUpdateStatus={handleBulkUpdateStatus}
         onMoveToNextStation={moveToNextStation.open}
+        onGroupJobs={handleCheckIfCanMakeGroupedBoardMissions} // Add this new prop
         onMoveToDone={moveToDone.open}
         onClearSelection={handleClearSelection}
         statusOptions={statusOptions}
@@ -411,12 +447,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -449,6 +485,18 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         onClose={moveToNextStation.close}
         onClickDelete={() => {
           handleBulkMoveToNextStation(selectedIds);
+        }}
+      />
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("customers.modal.groupJobsModalTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={isOpenGroupJobsModal.isOpen}
+        onClose={isOpenGroupJobsModal.close}
+        onClickDelete={() => {
+          handleGroupJobs(selectedIds);
         }}
       />
     </Stack>

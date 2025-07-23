@@ -139,6 +139,10 @@ const ButtonsContainer = ({
     CheckoutModalOpen,
     handleProcessCheckout,
     router,
+    handleGetGroupJobsUsingOrderId,
+    isOpenGroupJobsModal,
+    pendingOrderData,
+    setPendingOrderData,
     ReceiptSummeryModal,
     filteredReceiptItems,
     finalTotalPayment,
@@ -367,14 +371,14 @@ const ButtonsContainer = ({
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
           (isPurchaseOrder &&
             quoteItemValue?.documentStatus !==
-              PURCHASE_ORDER_STATUSES.Canceled)) && (
-          <GomakePrimaryButton
-            style={classes.btnSecondContainer}
-            onClick={handleCancelBtnClick}
-          >
-            {t("materials.buttons.cancel")}
-          </GomakePrimaryButton>
-        )}
+            PURCHASE_ORDER_STATUSES.Canceled)) && (
+            <GomakePrimaryButton
+              style={classes.btnSecondContainer}
+              onClick={handleCancelBtnClick}
+            >
+              {t("materials.buttons.cancel")}
+            </GomakePrimaryButton>
+          )}
         {isReceipt &&
           !!canCancelReceipt &&
           !isNewCreation &&
@@ -477,11 +481,10 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${
-                      quoteItemValue?.isUsedStripe
-                        ? "placeOrder"
-                        : "orderNowTitle"
-                    }`
+                  : `sales.quote.${quoteItemValue?.isUsedStripe
+                    ? "placeOrder"
+                    : "orderNowTitle"
+                  }`
               )}
             </GomakePrimaryButton>
           </>
@@ -616,7 +619,7 @@ const ButtonsContainer = ({
           cancelBtn={t("sales.modals.proceedWithoutPayment")}
           openModal={CheckoutModalOpen.isOpen}
           withClose={false}
-          onClose={() => {}}
+          onClose={() => { }}
           onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
           onClickCancel={() => {
             if (checkoutModalData) {
@@ -631,6 +634,19 @@ const ButtonsContainer = ({
               CheckoutModalOpen.close();
             }
           }}
+        />
+        <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          style={{ width: "fit-content" }}
+          title={t("sales.modals.groupJobsModalTitle")}
+          subTitle={t("sales.modals.groupJobsModalSubTitle")}
+          yesBtn={t("sales.quote.yesBtn")}
+          cancelBtn={t("modal.no")}
+          openModal={isOpenGroupJobsModal.isOpen}
+          onClose={() => {
+            isOpenGroupJobsModal.close()
+          }}
+          onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
         />
         <GoMakeDeleteModal
           insideStyle={{ width: "100%" }}
