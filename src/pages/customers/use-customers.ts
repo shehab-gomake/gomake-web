@@ -352,6 +352,7 @@ const useCustomers = (
 
   const [value, setValue] = useState(0);
   const [openClientTypeModal, setOpenClientTypeModal] = useState(false);
+  const [openClientGroupModal, setOpenClientGroupModal] = useState(false);
 
   const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
     printHouseSetupStepsState
@@ -418,6 +419,8 @@ const useCustomers = (
     addSupplierStep,
     addCustomerStep,
     initialPageSize,
+    openClientGroupModal,
+    setOpenClientGroupModal,
   };
 };
 export { useCustomers };

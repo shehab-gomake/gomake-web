@@ -725,6 +725,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   }
 
+
   const duplicateSection = (item) => {
     let defaultProductTemplateCopy = cloneDeep(defaultProductTemplate);
     const productTemplateCopy = cloneDeep(productTemplate);
@@ -734,24 +735,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     const sectionCopy = cloneDeep(section);
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
+
     const numberOfCopies = productTemplateCopy.sections.filter(
       (x) => x.duplicatedFromSectionId === item.id
     ).length;
+
     if (!numberOfCopies) {
-      //section.name = section.name + " 1";
       section.index = 0;
     }
+
     sectionCopy.index = numberOfCopies + 1;
     sectionCopy.name = sectionCopy.name + " " + (sectionCopy.index + 1);
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
+
+    // Update subsection IDs and types
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
-      sub.id = sub.id;
+      sub.id = sub.id; // Generate new ID for duplicated subsection
       if (sub.type) {
         sub.type = sub.type + numberOfCopies + 1;
       }
     });
+
+    // Add section to productTemplate
     const sectionsArr = [];
     productTemplateCopy.sections.forEach((sec) => {
       sectionsArr.push(sec);
@@ -762,14 +769,80 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     });
     productTemplateCopy.sections = sectionsArr;
-    initProduct(productTemplateCopy, allMaterials);
-  };
 
+    // Add section to subProducts manually
+    if (subProducts && subProducts.length > 0) {
+      const subProductsCopy = cloneDeep(subProducts);
+
+      // Create a single subProduct entry for the duplicated section
+      // Find the original subProduct entry that matches this section
+      const originalSubProduct = subProducts.find(sub => sub.sectionId === item.id);
+
+      if (originalSubProduct) {
+        // Create new subProduct entry based on the original
+        const newSubProductEntry = {
+          type: sectionCopy.subSections[0]?.type || originalSubProduct.type, // Use the new type from duplicated section
+          sectionId: sectionCopy.id,
+          sectionName: sectionCopy.name,
+          parameters: []
+        };
+
+        // Copy all parameters from the original subProduct and update their IDs
+        if (originalSubProduct.parameters) {
+          originalSubProduct.parameters.forEach((param) => {
+            // Find the corresponding subsection in the duplicated section
+            const matchingSubSection = sectionCopy.subSections.find(sub =>
+              sub.duplicatedFromSubSectionId === param.subSectionId
+            );
+
+            if (matchingSubSection) {
+              const paramCopy = cloneDeep(param);
+              paramCopy.sectionId = sectionCopy.id;
+              paramCopy.subSectionId = matchingSubSection.id;
+              newSubProductEntry.parameters.push(paramCopy);
+            }
+          });
+        }
+
+        // Find the position to insert the new entry
+        let insertIndex = subProductsCopy.length; // Default to end
+
+        // Find the position after the last duplicate of this section
+        for (let i = 0; i < subProductsCopy.length; i++) {
+          if (subProductsCopy[i].sectionId === item.id) {
+            // Found original section, look for the last duplicate
+            let lastIndex = i;
+            for (let j = i + 1; j < subProductsCopy.length; j++) {
+              // Check if this is a duplicate of the same original section
+              const checkSection = productTemplateCopy.sections.find(s => s.id === subProductsCopy[j].sectionId);
+              if (checkSection && checkSection.duplicatedFromSectionId === item.id) {
+                lastIndex = j;
+              } else {
+                break;
+              }
+            }
+            insertIndex = lastIndex + 1;
+            break;
+          }
+        }
+
+        // Insert the new entry
+        subProductsCopy.splice(insertIndex, 0, newSubProductEntry);
+
+        // Update subProducts state
+        setSubProducts(subProductsCopy);
+      }
+    }
+
+    // Update productTemplate
+    setProductTemplate(productTemplateCopy);
+  };
   const removeSection = (item) => {
     // setCanCalculation(true);
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
-    initProduct(temp, allMaterials);
+    // initProduct(temp, allMaterials);
+    setProductTemplate(temp);
     const updatedSubProducts = subProducts.filter(
       (subProduct) => subProduct.sectionId !== item.id
     );
@@ -1583,7 +1656,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           return {
             ...subProduct,
-            parameters: subProduct.parameters
+            parameters: subProduct.parameters.filter(parameter => parameter.values && parameter.values.length > 0
+              && parameter.values[0] !== null && parameter.values[0] !== undefined && parameter.values[0] !== "")
               .map((parameter) => {
                 if (
                   hasDieCutOrKissCut &&

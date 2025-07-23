@@ -78,6 +78,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     alertFaultGetData,
   } = useSnackBar();
   const AlertAddCustomerModal = useModal();
+  const ReceiptSummeryModal = useModal();
+
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] =
@@ -383,22 +385,17 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const allocatedSums = useRecoilValue(allocatedSumsState);
 
+  const filteredReceiptItems = Object.keys(checkedItemsIds)
+    .map((key) => {
+      const item = quoteItemValue.receiptItems.find(
+        (item) => item.id === checkedItemsIds[key]
+      );
+      const sumApplied = allocatedSums[key] || 0;
+      return item ? { ...item, sumApplied } : null;
+    })
+    .filter(Boolean);
+
   const onClickCreateNewReceipt = async () => {
-    // const filteredReceiptItems = Object.values(checkedItemsIds)
-    //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
-    //   .filter(Boolean);
-    const filteredReceiptItems = Object.keys(checkedItemsIds)
-      .map((key) => {
-        const item = quoteItemValue.receiptItems.find(
-          (item) => item.id === checkedItemsIds[key]
-        );
-
-        const sumApplied = allocatedSums[key] || 0;
-
-        return item ? { ...item, sumApplied } : null;
-      })
-      .filter(Boolean);
-
     const newReceiptItem = {
       ...quoteItemValue,
       receiptItems: filteredReceiptItems,
@@ -420,6 +417,20 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       }
     };
     await createReceiptApi(callApi, callBack, { newReceiptItem });
+  };
+
+  const handleOpenReceiptSummary = () => {
+    if (!quoteItemValue?.client?.id) {
+      alertFault(t("home.admin.pleaseSelectClient"));
+      return;
+    }
+
+    if (finalTotalPayment === 0) {
+      alertFault(t("alerts.totalPaymentZero"));
+      return;
+    }
+
+    ReceiptSummeryModal.open();
   };
 
   const onClickCancelReceipt = async (refundCredit: boolean) => {
@@ -714,6 +725,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setShowPrintJobsModal,
     handleProcessCheckout,
     router,
+    ReceiptSummeryModal,
+    filteredReceiptItems,
+    finalTotalPayment,
+    handleOpenReceiptSummary,
   };
 };
 
