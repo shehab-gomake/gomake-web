@@ -1,3 +1,8 @@
+export enum JobsTableColumns {
+  CreationDate = 0,
+  DueDate = 1,
+}
+
 export enum QuotesTableColumns {
   CreationDate = 0,
   ClientName,
