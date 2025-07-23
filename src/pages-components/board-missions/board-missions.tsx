@@ -49,11 +49,7 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
-import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {
-  QR_CODE_LISTENER_FROM,
-  useQrCodeListener,
-} from "@/hooks/use-qr-code-listener";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
