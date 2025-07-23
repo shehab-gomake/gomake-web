@@ -1,24 +1,48 @@
-import {ICallAndSetData} from "@/services/api-service/interface";
-import {getSetApiData} from "@/services/api-service/get-set-api-data";
-import {EHttpMethod} from "@/services/api-service/enums";
+import { ICallAndSetData } from "@/services/api-service/interface";
+import { getSetApiData } from "@/services/api-service/get-set-api-data";
+import { EHttpMethod } from "@/services/api-service/enums";
 
-const GET_PRINT_HOUSE_SUPPLIERS_URL = '/v1/suppliers/get-suppliers';
-const GET_OUTSOURCING_SUPPLIERS_URL = '/v1/erp-service/outsource/get-suppliers';
+const GET_PRINT_HOUSE_SUPPLIERS_URL = "/v1/suppliers/get-suppliers";
+const GET_OUTSOURCING_SUPPLIERS_URL = "/v1/erp-service/outsource/get-suppliers";
+const GET_CLIENTS_GROUPS_URL = "/v1/customers/get-clients-groups";
 
-const GET_CLIENTS_GROUOPS_URL = '/v1/customers/get-clients-groups';
+const getPrintHouseSuppliersListApi: ICallAndSetData = async (
+  callApi,
+  setState
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_PRINT_HOUSE_SUPPLIERS_URL,
+    setState
+  );
+};
 
+const getClientsGroupsApi: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_CLIENTS_GROUPS_URL,
+    setState
+  );
+};
 
-const getPrintHouseSuppliersListApi: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_SUPPLIERS_URL, setState);
-}
+const getOutsourcingSuppliersListApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_OUTSOURCING_SUPPLIERS_URL,
+    setState,
+    data
+  );
+};
 
-const getClientsGroupstApi: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_CLIENTS_GROUOPS_URL, setState);
-}
-
-const getOutsourcingSuppliersListApi: ICallAndSetData = async (callApi, setState, data) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, GET_OUTSOURCING_SUPPLIERS_URL, setState, data);
-}
-
-
-export {getPrintHouseSuppliersListApi, getOutsourcingSuppliersListApi,getClientsGroupstApi}
+export {
+  getPrintHouseSuppliersListApi,
+  getOutsourcingSuppliersListApi,
+  getClientsGroupsApi,
+};
