@@ -31,7 +31,6 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
-import { useGomakeRouter } from "@/hooks";
 import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 
 const ProductionFloorWidget = () => {
@@ -154,11 +153,9 @@ const ProductionFloorWidget = () => {
     setIsScanningFlag(false);
     setScanResult(data.text || String(data));
     handleBoardMissionsBarcodeActionsApi(data.text);
-    console.log("QR SCAN RESULT:", data);
   };
 
   const handleError = (err: any) => {
-    console.error("QR Scan error:", err);
     setIsScanningFlag(true);
   };
 
