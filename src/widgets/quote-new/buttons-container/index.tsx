@@ -138,6 +138,10 @@ const ButtonsContainer = ({
     CheckoutModalOpen,
     handleProcessCheckout,
     router,
+    handleGetGroupJobsUsingOrderId,
+    isOpenGroupJobsModal,
+    pendingOrderData,
+    setPendingOrderData
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -627,6 +631,19 @@ const ButtonsContainer = ({
               CheckoutModalOpen.close();
             }
           }}
+        />
+        <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          style={{ width: "fit-content" }}
+          title={t("sales.modals.groupJobsModalTitle")}
+          subTitle={t("sales.modals.groupJobsModalSubTitle")}
+          yesBtn={t("sales.quote.yesBtn")}
+          cancelBtn={t("modal.no")}
+          openModal={isOpenGroupJobsModal.isOpen}
+          onClose={() => {
+            isOpenGroupJobsModal.close()
+          }}
+          onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
         />
       </div>
     </div>

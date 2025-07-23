@@ -111,6 +111,13 @@ const DELETE_JOB_FILE_UR =
 const UPDATE_PRODUCTION_FLOOR_NOTE_URL =
   "/v1/erp-service/board-missions/update-production-floor-note";
 
+  const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL = "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions";
+  const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL = "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions-using-order-id";
+  const GROUP_JOBS_URL = "/v1/jobs-service/board-missions/group-jobs";
+  const GROUP_JOBS_USING_ORDER_ID_URL = "/v1/jobs-service/board-missions/group-jobs-using-order-id";
+  const UNGROUP_JOBS_URL = "/v1/jobs-service/board-missions/ungroup-jobs";
+
+
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
   setState,
@@ -870,6 +877,77 @@ const handleBoardMissionsBarcodeActionsApi: ICallAndSetData = async (
   );
 };
 
+const checkIfCanMakeGroupedBoardMissionsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.POST, 
+    CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL, 
+    callBack, 
+    data
+  );
+};
+
+// 2. Check If Can Make Grouped Board Missions Using Order Id
+const checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  orderId
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.GET, 
+    `${CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL}/${orderId}`, 
+    callBack
+  );
+};
+
+// 3. Group Jobs
+const groupJobsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.POST, 
+    GROUP_JOBS_URL, 
+    callBack, 
+    data
+  );
+};
+
+// 4. Get Group Jobs Using Order Id
+const getGroupJobsUsingOrderIdApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  orderId
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.GET, 
+    `${GROUP_JOBS_USING_ORDER_ID_URL}/${orderId}`, 
+    callBack
+  );
+};
+
+// 5. Ungroup Jobs
+const ungroupJobsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  groupId
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.DELETE, 
+    `${UNGROUP_JOBS_URL}/${groupId}`, 
+    callBack
+  );
+};
+
 export {
   boardMissionsUpdateActionEmployee,
   handleBoardMissionsBarcodeActions,
@@ -922,4 +1000,9 @@ export {
   getAllStuckJobsApi,
   getAllStuckJobsByAgentIdApi,
   handleBoardMissionsBarcodeActionsApi,
+  checkIfCanMakeGroupedBoardMissionsApi,
+  checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi,
+  groupJobsApi,
+  getGroupJobsUsingOrderIdApi,
+  ungroupJobsApi
 };
