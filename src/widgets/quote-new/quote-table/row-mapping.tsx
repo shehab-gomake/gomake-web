@@ -31,6 +31,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { QuoteQuantityCell } from "./quantity-cell";
 
 const RowMappingWidget = ({
   item,
@@ -298,33 +299,22 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={classes.cellTextInputStyle}>
-          {item?.calculationStatus === null ||
-            item?.calculationStatus === undefined ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
-            isQuoteConfirmation ? (
-              <InputUpdatedValues
-                value={item?.quantity}
-                onBlur={onBlurApproveAmount}
-                isUpdate={
-                  quoteItems?.isCanUpdateQuantity && isUpdateApproveAmount
-                }
-                setIsUpdate={setIsUpdateApproveAmount}
-                onInputChange={(e) => onInputChangeAmount(e)}
-              />
-            ) : (
-              <InputUpdatedValues
-                value={item?.quantity}
-                onBlur={onBlurAmount}
-                isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
-                setIsUpdate={setIsUpdateAmount}
-                onInputChange={(e) => onInputChangeAmount(e)}
-              />
-            )
-          ) : (
-            "-"
-          )}
-        </div>
+
+        <QuoteQuantityCell
+          classes={classes}
+          item={item}
+          isQuoteConfirmation={isQuoteConfirmation}
+          quoteItems={quoteItems}
+          onBlurApproveAmount={onBlurApproveAmount}
+          isUpdateApproveAmount={isUpdateApproveAmount}
+          setIsUpdateApproveAmount={setIsUpdateApproveAmount}
+          onInputChangeAmount={onInputChangeAmount}
+          canUpdatePricesBasedOnType={canUpdatePricesBasedOnType}
+          isUpdateAmount={isUpdateAmount}
+          setIsUpdateAmount={setIsUpdateAmount}
+          onBlurAmount={onBlurAmount}
+          t={t}
+        />
       </PrimaryTableCell>
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
@@ -457,3 +447,6 @@ const RowMappingWidget = ({
   );
 };
 export { RowMappingWidget };
+
+
+
