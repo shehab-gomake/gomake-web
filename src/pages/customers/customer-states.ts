@@ -5,6 +5,11 @@ export const clientTypesCategoriesState = atom<any>({
   default: [],
 });
 
+export const clientGroupsCategoriesState = atom<any>({
+  key: "clientGroupsCategoriesState",
+  default: [],
+});
+
 export const agentsCategoriesState = atom<[]>({
   key: "agentsCategoriesState",
   default: [],

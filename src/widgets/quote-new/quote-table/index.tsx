@@ -75,7 +75,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-      {}
+    {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -84,9 +84,21 @@ const QuoteForPriceTable = ({
       [parentIndex]: !prev[parentIndex], // Toggle the visibility
     }));
   };
-
-  const _renderIconcalculationStatus = (item) => {
-    if (item === ECalculationStatus.Calculating) {
+  const [itemPriceList, setItemPriceList] = useState(documentItems)
+  useEffect(() => {
+    setItemPriceList(documentItems)
+  }, [documentItems])
+  const updateItemStatus = (itemId, newStatus) => {
+    setItemPriceList(prevItems =>
+      prevItems.map(item =>
+        item.id === itemId
+          ? { ...item, calculationStatus: newStatus }
+          : item
+      )
+    );
+  };
+  const _renderIconcalculationStatus = (item, setItemStatus) => {
+    if (item?.calculationStatus === ECalculationStatus.Calculating) {
       return (
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
           <CalculatingIcon />
@@ -104,7 +116,16 @@ const QuoteForPriceTable = ({
             color: "#344054",
           }}
         >
-          <Tooltip title={t("CalculationExceptions." + item?.exceptionsKey)}>
+          <Tooltip title={
+            <>
+              {item?.exceptionsKey?.map((key, index) => (
+                <React.Fragment key={index}>
+                  {t(`CalculationExceptions.${key}`)}
+                  {index < item.exceptionsKey.length - 1 && <br />}
+                </React.Fragment>
+              ))}
+            </>
+          }>
             <IconButton style={{ padding: 0 }}>
               <NotCalculatingIcon />
             </IconButton>
@@ -116,7 +137,12 @@ const QuoteForPriceTable = ({
               textDecoration: "underline",
               cursor: "pointer",
             }}
-            onClick={() => reCalculateItem(item?.id)}
+            onClick={() => {
+              // Update the status to Calculating
+              setItemStatus(item?.id, ECalculationStatus.Calculating);
+              // Then call the recalculate function
+              reCalculateItem(item?.id);
+            }}
           >
             {t("general.tryAgain")}
           </span>
@@ -124,6 +150,7 @@ const QuoteForPriceTable = ({
       );
     }
   };
+
 
   const tableContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -166,7 +193,7 @@ const QuoteForPriceTable = ({
             </TableRow>
           </TableHead>
           <TableBody style={{ border: "1px solid #EAECF0" }}>
-            {documentItems?.map((item: any, index: number) => {
+            {itemPriceList?.map((item: any, index: number) => {
               indexs++;
               const parentIndex = indexs;
               return (
@@ -210,6 +237,7 @@ const QuoteForPriceTable = ({
                       _renderIconcalculationStatus={
                         _renderIconcalculationStatus
                       }
+                      updateItemStatus={updateItemStatus}
                     />
                   )}
 
@@ -242,6 +270,7 @@ const QuoteForPriceTable = ({
                             _renderIconcalculationStatus={
                               _renderIconcalculationStatus
                             }
+                            updateItemStatus={updateItemStatus}
                           />
                         );
                       }

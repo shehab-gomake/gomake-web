@@ -28,6 +28,8 @@ import { ITab } from "@/components/tabs/interface";
 import { AddButton } from "@/components/button/add-button";
 import { ClientTypeModal } from "@/widgets/client-types/components/add-edit-client-type-modal";
 import { StepStatus } from "@/store/print-house-setup-state-state";
+import { ClientGroupsList } from "@/widgets/client-groups/client-groups-list";
+import { ClientGroupModal } from "@/widgets/client-groups/components/add-edit-client-group-modal";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -83,6 +85,8 @@ export default function Home() {
     addSupplierStep,
     pageSize,
     initialPageSize,
+    setOpenClientGroupModal,
+    openClientGroupModal,
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
 
   const activeText = t("usersSettings.active");
@@ -132,6 +136,14 @@ export default function Home() {
           style={{ width: "fit-content", alignSelf: "flex-end" }}
           onClick={() => setOpenClientTypeModal(!openClientTypeModal)}
           label={t("suppliers.addSupplierType")}
+        />
+      );
+    } else if (activeTabTitle === t("customers.supplierGroups")) {
+      return (
+        <AddButton
+          style={{ width: "fit-content", alignSelf: "flex-end" }}
+          onClick={() => setOpenClientGroupModal(!openClientTypeModal)}
+          label={t("customers.addCustomerGroup")}
         />
       );
     }
@@ -218,7 +230,10 @@ export default function Home() {
       title: t("suppliers.supplierTypes"),
       component: <ClientTypesList clientType={CLIENT_TYPE.SUPPLIER} />,
     },
-    ,
+    {
+      title: t("customers.supplierGroups"),
+      component: <ClientGroupsList />,
+    },
   ];
 
   return (
@@ -242,6 +257,14 @@ export default function Home() {
           onClose={() => setOpenClientTypeModal(false)}
           modalTitle={t("suppliers.addSupplierType")}
           cardTypeId={CLIENT_TYPE_Id.SUPPLIER}
+          actionType="add"
+        />
+      )}
+      {openClientGroupModal && (
+        <ClientGroupModal
+          openModal={openClientGroupModal}
+          onClose={() => setOpenClientGroupModal(false)}
+          modalTitle={t("customers.addSupplierGroup")}
           actionType="add"
         />
       )}

@@ -54,6 +54,7 @@ const RowMappingWidget = ({
   isShowChilds,
   setIsShowChilds,
   _renderIconcalculationStatus,
+  updateItemStatus
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
@@ -131,6 +132,11 @@ const RowMappingWidget = ({
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
+  const hasChilds = quoteItems?.documentItems.some(
+    (q) =>
+      q.childsDocumentItems && Object.keys(q.childsDocumentItems).length > 0
+  );
+
   return (
     <TableRow
       key={item.id}
@@ -165,7 +171,7 @@ const RowMappingWidget = ({
                 {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
               </IconButton>
             )}
-            {!item?.childsDocumentItems && (
+            {!item?.childsDocumentItems && hasChilds && (
               <div style={{ width: "32px", height: "32px" }} />
             )}
             {
@@ -293,6 +299,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
+
         <QuoteQuantityCell
           classes={classes}
           item={item}
@@ -407,7 +414,7 @@ const RowMappingWidget = ({
                     onInputChange={(e) => onInputChangeFinalPrice(e)}
                   />
                 ) : (
-                  _renderIconcalculationStatus(item)
+                  _renderIconcalculationStatus(item, updateItemStatus)
                 )}
               </>
             )}
