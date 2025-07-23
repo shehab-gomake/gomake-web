@@ -4469,6 +4469,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+  console.log("subProducts", { subProducts, productTemplate });
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -4540,18 +4541,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       if (
         subSectionParameter?.code === "BothsideSameprintcolor" &&
-        data.values === "true" &&
-        widgetType == EWidgetProductType.CREATE
+        data.values === "true"
       ) {
-        temp.splice(findIndex, 1);
-        removeRelatedParametersFromSubProducts(
-          parameterId,
-          sectionId,
-          subSectionId,
-          temp,
-          subSectionParameter.actionIndex
+        const productTemplateCopy2 = cloneDeep(productTemplate);
+        const section2 = productTemplateCopy2.sections.find(
+          (section) => section.id === sectionId
         );
+        const subSection2 = section2?.subSections.find(
+          (sub) => sub.id === subSectionId
+        );
+        const paramDef = subSection2?.parameters.find(
+          (param) => param.id === parameterId && param.actionIndex == actionIndex
+        );
+
+        if (paramDef && paramDef.relatedParameters) {
+          paramDef.relatedParameters.forEach((relatedParam) => {
+            removeRelatedParametersFromSubProducts(
+              relatedParam.parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              relatedParam.actionIndex !== undefined
+                ? relatedParam.actionIndex
+                : actionIndex
+            );
+          });
+        }
       }
+
       if (
         subSectionParameter?.code === "devicecategory" ||
         subSectionParameter?.code === "devicesize"
