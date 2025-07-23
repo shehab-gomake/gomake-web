@@ -14,7 +14,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 
 const CompanyBasicInfoComponent = () => {
   const { t } = useTranslation();
-  const { profile, profileChange, updateProfileChanges, currencies } =
+  const { profile, profileChange, updateProfileChanges, currencies ,changeCompanyLoginImage , changeCompanyProfileImage} =
     useCompanyProfile();
 
   const changeState = (key: string, value: any) => {
@@ -36,12 +36,12 @@ const CompanyBasicInfoComponent = () => {
     <div className="custom-scrollbar" style={{ paddingTop: "30px" }}>
       <Stack direction="row" gap="57px">
         <ProfileAvatar
-          onUploadImage={(img) => changeState("loginLogo", img)}
+          onUploadImage={(img) => changeCompanyLoginImage(img)}
           src={profile.loginLogo}
           title={t("profileSettings.loginLogo")}
         />
         <ProfileAvatar
-          onUploadImage={(img) => changeState("logo", img)}
+          onUploadImage={(img) => changeCompanyProfileImage(img)}
           src={profile.logo}
           title={t("profileSettings.companyLogo")}
         />
