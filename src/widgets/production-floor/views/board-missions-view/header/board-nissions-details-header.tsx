@@ -29,8 +29,6 @@ import moment from "moment/moment";
 import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { ModalType } from "@/enums";
-import { exampleTypeState } from "@/store/example-type";
-import { useRecoilValue } from "recoil";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -63,9 +61,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-  const getExampleType = () => {
-    return exampleTypeValues?.find(x => x.key === boardMissionsDetails?.exampleType)
-  }
+
 
   const fieldMappings = useMemo(
     () => [
