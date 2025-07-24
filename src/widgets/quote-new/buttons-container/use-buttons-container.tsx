@@ -292,14 +292,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
     const callBack = (result) => {
       if (result?.success) {
-        setPendingOrderData({
-          orderId: orderId,
-          res: res,
-          sendMessage: sendMessage,
-          isPrepaymentClient: isPrepaymentClient,
-          isStripeCash: isStripeCash
-        })
-        isOpenGroupJobsModal.open()
+        if (result?.data?.item1) {
+          setPendingOrderData({
+            orderId: orderId,
+            res: res,
+            sendMessage: sendMessage,
+            isPrepaymentClient: isPrepaymentClient,
+            isStripeCash: isStripeCash
+          })
+          isOpenGroupJobsModal.open()
+        }
+        else {
+          alertFault(result?.data?.item2);
+          sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
+
+        }
       } else {
         sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
       }
