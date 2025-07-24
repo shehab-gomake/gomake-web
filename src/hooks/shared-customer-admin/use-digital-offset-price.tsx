@@ -727,13 +727,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
   const duplicateSection = (item) => {
-    let defaultProductTemplateCopy = cloneDeep(defaultProductTemplate);
+    let defaultProductTemplateCopy = cloneDeep(productTemplate);
     const productTemplateCopy = cloneDeep(productTemplate);
 
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
-    const sectionCopy = cloneDeep(section);
+    let sectionCopy = cloneDeep(section);
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
 
     const numberOfCopies = productTemplateCopy.sections.filter(
@@ -749,10 +749,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
-    // Update subsection IDs and types
+    sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
-      sub.id = sub.id; // Generate new ID for duplicated subsection
+      sub.id = sub.id; // Keep the same ID as requested
       if (sub.type) {
         sub.type = sub.type + numberOfCopies + 1;
       }
@@ -797,8 +797,58 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
             if (matchingSubSection) {
               const paramCopy = cloneDeep(param);
+
+              // Keep the same parameter ID as requested
               paramCopy.sectionId = sectionCopy.id;
               paramCopy.subSectionId = matchingSubSection.id;
+
+              // Ensure isHidden value is preserved from the original
+              // This is important - we're explicitly preserving the isHidden state
+              paramCopy.isHidden = param.isHidden;
+
+              // Update relatedParameters section references and validate them
+              if (paramCopy.relatedParameters && paramCopy.relatedParameters.length > 0) {
+                // First, update section references
+                let updatedRelatedParameters = paramCopy.relatedParameters.map((relParam) => {
+                  const relParamCopy = cloneDeep(relParam);
+
+                  // Update section ID if it matches the original section
+                  if (relParam.sectionId === item.id) {
+                    relParamCopy.sectionId = sectionCopy.id;
+                  }
+
+                  // Keep the same subsection ID since we're not changing them
+                  // Keep the same parameter ID since we're not changing them
+
+                  return relParamCopy;
+                });
+
+                // Now validate that the related parameters exist in the corresponding subsection
+                let validatedRelatedParameters = [];
+
+                updatedRelatedParameters.forEach((relatedParameter) => {
+                  // Find the subsection that contains this related parameter
+                  const targetSubSection = sectionCopy.subSections.find(
+                    sub => sub.id === relatedParameter.subSectionId
+                  );
+
+                  if (targetSubSection && targetSubSection.parameters) {
+                    // Check if the relatedParameter's parameterId exists in the target subsection's parameters
+                    const isParameterIdExisting = targetSubSection.parameters.some(
+                      (p) => p.id === relatedParameter.parameterId
+                    );
+
+                    if (isParameterIdExisting) {
+                      validatedRelatedParameters.push(relatedParameter);
+                    }
+                    // If the parameter doesn't exist, we skip it (don't add to validated array)
+                  }
+                });
+
+                // Update the paramCopy with only valid related parameters
+                paramCopy.relatedParameters = validatedRelatedParameters;
+              }
+
               newSubProductEntry.parameters.push(paramCopy);
             }
           });
@@ -833,21 +883,128 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setSubProducts(subProductsCopy);
       }
     }
-
     // Update productTemplate
     setProductTemplate(productTemplateCopy);
+
+    // Instead of adding to existing relatedParameters, rebuild the entire array
+    // This matches the logic in initProduct
+    let allRelatedParametersArray = [];
+    let allUnderParameterIdsArray = [];
+
+    productTemplateCopy.sections.forEach((section) => {
+      section.subSections.forEach((subSection) => {
+        subSection.parameters.forEach((parameter) => {
+          // Handle relatedParameters
+          if (parameter.relatedParameters && parameter.relatedParameters.length > 0) {
+            parameter.relatedParameters.forEach((relatedParameter) => {
+              // Check if the relatedParameter's parameterId exists in parameters
+              const isParameterIdExisting = subSection.parameters.some(
+                (p) => p.id === relatedParameter.parameterId
+              );
+              if (isParameterIdExisting) {
+                // Create a new related parameter with proper section/subsection context
+                const relParamWithContext = {
+                  ...relatedParameter,
+                  sectionId: section.id,
+                  subSectionId: subSection.id,
+                  actionIndex: parameter.actionIndex || 0
+                };
+                allRelatedParametersArray.push(relParamWithContext);
+              }
+            });
+          }
+
+          // Handle underParameterIds
+          if (parameter.isUnderParameterId !== null && parameter.isUnderParameterId !== undefined) {
+            allUnderParameterIdsArray.push({
+              underParameterId: parameter.isUnderParameterId,
+              myParameter: parameter,
+              sectionId: section.id,
+              subSectionId: subSection.id,
+            });
+          }
+        });
+      });
+    });
+
+    // Replace the entire relatedParameters state with the rebuilt array
+    setRelatedParameters(allRelatedParametersArray);
+
+    // Replace the entire underParameterIds state with the rebuilt array
+    setUnderParameterIds(allUnderParameterIdsArray);
   };
   const removeSection = (item) => {
     // setCanCalculation(true);
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
-    // initProduct(temp, allMaterials);
     setProductTemplate(temp);
+
     const updatedSubProducts = subProducts.filter(
       (subProduct) => subProduct.sectionId !== item.id
     );
 
     setSubProducts(updatedSubProducts);
+
+    // Rebuild relatedParameters and underParameterIds arrays after section removal
+    let allRelatedParametersArray = [];
+    let allUnderParameterIdsArray = [];
+
+    // Iterate through ALL remaining sections to rebuild related parameters and underParameterIds
+    temp.sections.forEach((section) => {
+      section.subSections.forEach((subSection) => {
+        subSection.parameters.forEach((parameter) => {
+          // Handle relatedParameters
+          if (parameter.relatedParameters && parameter.relatedParameters.length > 0) {
+            parameter.relatedParameters.forEach((relatedParameter) => {
+              // Check if the relatedParameter's parameterId exists in parameters
+              const isParameterIdExisting = subSection.parameters.some(
+                (p) => p.id === relatedParameter.parameterId
+              );
+              if (isParameterIdExisting) {
+                // Only add if the related parameter doesn't reference the removed section
+                if (relatedParameter.sectionId !== item.id) {
+                  // Create a new related parameter with proper section/subsection context
+                  const relParamWithContext = {
+                    ...relatedParameter,
+                    sectionId: section.id,
+                    subSectionId: subSection.id,
+                    actionIndex: parameter.actionIndex || 0
+                  };
+                  allRelatedParametersArray.push(relParamWithContext);
+                }
+              }
+            });
+          }
+
+          // Handle underParameterIds
+          if (parameter.isUnderParameterId !== null && parameter.isUnderParameterId !== undefined) {
+            // Check if the underParameterId references a parameter in the removed section
+            let shouldInclude = true;
+
+            // Find if the referenced parameter exists in any remaining section
+            const referencedParamExists = temp.sections.some(sec =>
+              sec.subSections.some(sub =>
+                sub.parameters.some(p => p.id === parameter.isUnderParameterId)
+              )
+            );
+
+            if (referencedParamExists) {
+              allUnderParameterIdsArray.push({
+                underParameterId: parameter.isUnderParameterId,
+                myParameter: parameter,
+                sectionId: section.id,
+                subSectionId: subSection.id,
+              });
+            }
+          }
+        });
+      });
+    });
+
+    // Update the states with the rebuilt arrays
+    setRelatedParameters(allRelatedParametersArray);
+    setUnderParameterIds(allUnderParameterIdsArray);
+
     calculationProduct(updatedSubProducts);
   };
 
@@ -967,7 +1124,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     });
     setProductTemplate(temp);
-    // initProduct(temp, allMaterials);
   };
 
   useEffect(() => {
@@ -3038,37 +3194,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
-    // else if (
-    //   parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
-    // ) {
-    //   Comp = (
-    //     <div
-    //       style={{
-    //         display: "flex",
-    //         flexDirection: "row",
-    //         alignItems: "center",
-    //         justifyContent: "space-between",
-    //         width: "100%",
-    //       }}
-    //     >
-    //       <AdvertisingProductCategoryParameterWidget
-    //         parameter={parameter}
-    //         clasess={clasess}
-    //         index={index}
-    //         temp={temp}
-    //         onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-    //         subSection={subSection}
-    //         section={section}
-    //         selectedValueConfig={selectedValueConfig}
-    //         inModal={inModal}
-    //         setSelectedValueConfig={setSelectedValueConfig}
-    //         onOpeneMultiParameterModal={onOpeneMultiParameterModal}
-    //         subSectionParameters={subSectionParameters}
-    //         list={list}
-    //       />
-    //     </div>
-    //   );
-    // }
     else if (
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
     ) {
@@ -4540,18 +4665,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       if (
         subSectionParameter?.code === "BothsideSameprintcolor" &&
-        data.values === "true" &&
-        widgetType == EWidgetProductType.CREATE
+        data.values === "true"
       ) {
-        temp.splice(findIndex, 1);
-        removeRelatedParametersFromSubProducts(
-          parameterId,
-          sectionId,
-          subSectionId,
-          temp,
-          subSectionParameter.actionIndex
+        const productTemplateCopy2 = cloneDeep(productTemplate);
+        const section2 = productTemplateCopy2.sections.find(
+          (section) => section.id === sectionId
         );
+        const subSection2 = section2?.subSections.find(
+          (sub) => sub.id === subSectionId
+        );
+        const paramDef = subSection2?.parameters.find(
+          (param) => param.id === parameterId && param.actionIndex == actionIndex
+        );
+
+        if (paramDef && paramDef.relatedParameters) {
+          paramDef.relatedParameters.forEach((relatedParam) => {
+            removeRelatedParametersFromSubProducts(
+              relatedParam.parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              relatedParam.actionIndex !== undefined
+                ? relatedParam.actionIndex
+                : actionIndex
+            );
+          });
+        }
       }
+
       if (
         subSectionParameter?.code === "devicecategory" ||
         subSectionParameter?.code === "devicesize"
