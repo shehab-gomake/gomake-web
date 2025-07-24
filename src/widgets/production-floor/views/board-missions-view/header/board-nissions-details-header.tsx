@@ -56,7 +56,6 @@ const HeaderDividerComponent = () => {
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [jobDueDate, setJobDueDate] = useState(
     boardMissionsDetails.dueDate?.toString()
   );
@@ -67,6 +66,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const getExampleType = () => {
     return exampleTypeValues?.find(x => x.key === boardMissionsDetails?.exampleType)
   }
+
   const fieldMappings = useMemo(
     () => [
       {
@@ -158,7 +158,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const statusLabels = [
     {
       condition: boardMissionsDetails?.isNeedExample,
-      label: getExampleType() ? t(`products.proofTypes.${getExampleType()}`) : "",
+      label: t("boardMissions.sampleRequired") + " : " + (boardMissionsDetails?.exampleType === 1 ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")),
       background: "#BE0270",
     },
     {
