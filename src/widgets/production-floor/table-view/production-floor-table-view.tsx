@@ -68,7 +68,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
   const { initialPageSize } = useListPagination();
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
@@ -296,8 +296,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const handleCheckIfCanMakeGroupedBoardMissions = async (selectedJobIds) => {
     const callBack = (res) => {
       if (res?.success) {
-        if (res?.data) {
+        if (res?.data?.item1) {
           isOpenGroupJobsModal.open()
+        }
+        else {
+          alertFault(res?.data?.item2);
         }
       } else {
         alertFaultUpdate();
@@ -310,7 +313,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       selectedJobsIdsList
     });
   };
-  console.log("selectedIds", selectedIds);
   const handleGroupJobs = async (selectedJobIds) => {
     const selectedJobsIdsList = selectedJobIds.map(job => job.id);
 
