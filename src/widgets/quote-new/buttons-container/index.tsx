@@ -143,6 +143,7 @@ const ButtonsContainer = ({
     isOpenGroupJobsModal,
     pendingOrderData,
     setPendingOrderData,
+    sendBodyCommingFromOrder,
     ReceiptSummeryModal,
     filteredReceiptItems,
     finalTotalPayment,
@@ -644,7 +645,9 @@ const ButtonsContainer = ({
           cancelBtn={t("modal.no")}
           openModal={isOpenGroupJobsModal.isOpen}
           onClose={() => {
+            sendBodyCommingFromOrder(pendingOrderData?.res, pendingOrderData?.sendMessage, pendingOrderData?.isPrepaymentClient, pendingOrderData?.isStripeCash);
             isOpenGroupJobsModal.close()
+
           }}
           onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
         />

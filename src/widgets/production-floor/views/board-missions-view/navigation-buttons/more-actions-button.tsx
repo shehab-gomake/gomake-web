@@ -22,13 +22,14 @@ import {
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
+import { ungroupJobsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
   const direction = t("direction");
   const { callApi } = useGomakeAxios();
   const { query, push } = useRouter();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [loading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -77,14 +78,10 @@ const MoreActionsButton = ({ isMobile = false }) => {
 
   const handleClickEdit = () => {
     push(
-      `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${
-        boardMissions.clientId
-      }&customerName=${boardMissions.clientName}&productId=${
-        boardMissions.productId
-      }&documentItemId=${
-        boardMissions.orderItemId
-      }&documentType=${1}&documentNumber=${
-        boardMissions?.orderNumber
+      `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId
+      }&customerName=${boardMissions.clientName}&productId=${boardMissions.productId
+      }&documentItemId=${boardMissions.orderItemId
+      }&documentType=${1}&documentNumber=${boardMissions?.orderNumber
       }&documentId=${boardMissions.orderId}`
     ).then();
   };
@@ -97,6 +94,20 @@ const MoreActionsButton = ({ isMobile = false }) => {
       }
     };
     await getDocumentContactsApi(callApi, callBack, boardMissions.orderId);
+  };
+
+  const handleClickUnGroupJob = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        handleClose();
+
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await ungroupJobsApi(callApi, callBack, boardMissions.boardMissionId);
   };
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -137,6 +148,9 @@ const MoreActionsButton = ({ isMobile = false }) => {
             )}
             <MenuItem onClick={handleClickEdit}>
               {t("productionFloor.edit")}
+            </MenuItem>
+            <MenuItem onClick={handleClickUnGroupJob}>
+              {t("productionFloor.unGroupJob")}
             </MenuItem>
             <MenuItem onClick={getDocumentContacts}>
               {t("productionFloor.sendGraphicsApprove")}
