@@ -29,6 +29,8 @@ import moment from "moment/moment";
 import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { ModalType } from "@/enums";
+import {exampleTypeState} from "@/store/example-type";
+import {useRecoilValue} from "recoil";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -54,6 +56,7 @@ const HeaderDividerComponent = () => {
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [jobDueDate, setJobDueDate] = useState(
     boardMissionsDetails.dueDate?.toString()
   );
@@ -61,7 +64,9 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-
+  const getExampleType = () => {
+    return  exampleTypeValues?.find(x=>x.key === boardMissionsDetails?.exampleType)
+  }
   const fieldMappings = useMemo(
     () => [
       {
@@ -144,7 +149,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const statusLabels = [
     {
       condition: boardMissionsDetails?.isNeedExample,
-      label: t("boardMissions.sampleRequired") + " : " + (boardMissionsDetails?.exampleType === 1 ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")),
+      label: getExampleType() ? t(`products.proofTypes.${getExampleType()}`) : "",
       background: "#BE0270",
     },
     {
