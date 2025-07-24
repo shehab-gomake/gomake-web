@@ -29,8 +29,8 @@ import moment from "moment/moment";
 import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { ModalType } from "@/enums";
-import {exampleTypeState} from "@/store/example-type";
-import {useRecoilValue} from "recoil";
+import { exampleTypeState } from "@/store/example-type";
+import { useRecoilValue } from "recoil";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -54,6 +54,7 @@ const HeaderDividerComponent = () => {
 };
 
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
+  console.log("boardMissionsDetails", boardMissionsDetails);
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const exampleTypeValues = useRecoilValue(exampleTypeState);
@@ -65,7 +66,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
   const getExampleType = () => {
-    return  exampleTypeValues?.find(x=>x.key === boardMissionsDetails?.exampleType)
+    return exampleTypeValues?.find(x => x.key === boardMissionsDetails?.exampleType)
   }
   const fieldMappings = useMemo(
     () => [
@@ -75,6 +76,15 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
         value: DateHourFormatterShort(
           convertUtcToLocalIsoString(
             boardMissionsDetails.createdDate?.toString()
+          )
+        ),
+      },
+      {
+        condition: boardMissionsDetails?.estimatedProductionDate !== null,
+        label: t("sales.quote.estimatedProductionDate"),
+        value: DateHourFormatterShort(
+          convertUtcToLocalIsoString(
+            boardMissionsDetails?.estimatedProductionDate?.toString()
           )
         ),
       },
