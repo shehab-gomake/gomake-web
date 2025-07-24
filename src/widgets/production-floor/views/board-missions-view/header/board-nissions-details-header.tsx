@@ -61,7 +61,6 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-
   const fieldMappings = useMemo(
     () => [
       {
