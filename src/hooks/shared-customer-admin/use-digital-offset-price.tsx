@@ -727,13 +727,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
   const duplicateSection = (item) => {
-    let defaultProductTemplateCopy = cloneDeep(defaultProductTemplate);
+    let defaultProductTemplateCopy = cloneDeep(productTemplate);
     const productTemplateCopy = cloneDeep(productTemplate);
 
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
-    const sectionCopy = cloneDeep(section);
+    let sectionCopy = cloneDeep(section);
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
 
     const numberOfCopies = productTemplateCopy.sections.filter(
@@ -749,10 +749,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
-    // Update subsection IDs and types
+    sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
-      sub.id = sub.id; // Generate new ID for duplicated subsection
+      sub.id = sub.id; // Keep the same ID as requested
       if (sub.type) {
         sub.type = sub.type + numberOfCopies + 1;
       }
@@ -797,8 +797,32 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
             if (matchingSubSection) {
               const paramCopy = cloneDeep(param);
+
+              // Keep the same parameter ID as requested
               paramCopy.sectionId = sectionCopy.id;
               paramCopy.subSectionId = matchingSubSection.id;
+
+              // Ensure isHidden value is preserved from the original
+              // This is important - we're explicitly preserving the isHidden state
+              paramCopy.isHidden = param.isHidden;
+
+              // Update relatedParameters section references only
+              if (paramCopy.relatedParameters && paramCopy.relatedParameters.length > 0) {
+                paramCopy.relatedParameters = paramCopy.relatedParameters.map((relParam) => {
+                  const relParamCopy = cloneDeep(relParam);
+
+                  // Update section ID if it matches the original section
+                  if (relParam.sectionId === item.id) {
+                    relParamCopy.sectionId = sectionCopy.id;
+                  }
+
+                  // Keep the same subsection ID since we're not changing them
+                  // Keep the same parameter ID since we're not changing them
+
+                  return relParamCopy;
+                });
+              }
+
               newSubProductEntry.parameters.push(paramCopy);
             }
           });
