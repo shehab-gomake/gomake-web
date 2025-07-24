@@ -62,7 +62,6 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
 
-
   const fieldMappings = useMemo(
     () => [
       {
