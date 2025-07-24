@@ -4,12 +4,12 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 
-const MoreMenuWidget = ({boardMission , onClickDone ,onClickPrintJob ,onClickPrintDTicket}) => {
+const MoreMenuWidget = ({ boardMission, onClickDone, onClickPrintJob, onClickPrintDTicket, onClickUnGroupJob }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { getMenuList } = useMoreCircle({t, boardMission ,onClickDone , onClickPrintJob , onClickPrintDTicket});
+  const { getMenuList } = useMoreCircle({ t, boardMission, onClickDone, onClickPrintJob, onClickPrintDTicket, onClickUnGroupJob });
   const menuList = getMenuList();
-  
+
   return (
     <OptionsButton withCircle={false}>
       {menuList.map((item, index) => (

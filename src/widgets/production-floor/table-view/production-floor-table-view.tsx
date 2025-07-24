@@ -490,7 +490,8 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       <GoMakeDeleteModal
         hideIcon={true}
         modalType={ModalType.WARNING}
-        title={t("customers.modal.groupJobsModalTitle")}
+        title={t("sales.modals.groupJobsModalTitle")}
+        subTitle={t("sales.modals.groupJobsModalSubTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("modal.no")}
         openModal={isOpenGroupJobsModal.isOpen}
