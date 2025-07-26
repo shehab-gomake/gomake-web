@@ -48,7 +48,7 @@ const companyCommunicationInputs = (state: ICompanyProfile) => {
       machineInputType: "input",
       isValid: !!state.mailServiceEmail,
     },
-    state.mailingProviderType !== IMailProviders.AMAZON &&
+    (state.mailingProviderType === IMailProviders.GMAIL || state.mailingProviderType === IMailProviders.OUTLOOK) &&
       state.mailingProviderType && {
         name: "appPassword",
         label: "profileSettings.appPassword",

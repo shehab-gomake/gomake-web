@@ -82,6 +82,7 @@ export enum IMailProviders {
   AMAZON,
   GMAIL,
   OUTLOOK,
+  OUTLOOK_GRAPH_API
 }
 
 export const mailProviderOptions = [
@@ -89,4 +90,5 @@ export const mailProviderOptions = [
   { text: "profileSettings.aws", value: IMailProviders.AMAZON },
   { text: "profileSettings.gmail", value: IMailProviders.GMAIL },
   { text: "profileSettings.outlook", value: IMailProviders.OUTLOOK },
+  { text: "profileSettings.outlookApi", value: IMailProviders.OUTLOOK_GRAPH_API },
 ];
