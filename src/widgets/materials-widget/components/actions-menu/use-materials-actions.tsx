@@ -365,6 +365,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
         setMaterialCategoryData(
           materialCategoryData.filter((material) => !material.checked)
         )
+        getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          [],
+          supplierId
+        ).then();
       }
       else {
         setMaterialCategoryData(

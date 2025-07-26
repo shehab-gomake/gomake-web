@@ -19,7 +19,7 @@ const mailingInputs = (state: Employee, mailingProviderType, t) => {
       machineInputType: "input",
       readonly: true,
     },
-    mailingProviderType !== IMailProviders.AMAZON &&
+    (mailingProviderType === IMailProviders.GMAIL || mailingProviderType === IMailProviders.OUTLOOK) &&
       mailingProviderType && {
         name: "appPassword",
         label: "profileSettings.appPassword",

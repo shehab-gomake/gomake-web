@@ -525,6 +525,10 @@ const AddRuleModal = ({
                               placeholder={t("properties.statment")}
                               value={rule.statement2}
                               onChange={(e, value) => {
+                                // Check if the same option is selected
+                                if (rule.statement2?.id === value?.id) {
+                                  return;
+                                }
                                 handleChange(index, "statement2", value);
                                 handleChange(index, "condition", null);
                                 handleChange(index, "statement", null);
@@ -550,6 +554,10 @@ const AddRuleModal = ({
                               placeholder={t("properties.statment")}
                               value={rule.statement2}
                               onChange={(e, value) => {
+                                // Check if the same option is selected
+                                if (rule.statement2?.id === value?.id) {
+                                  return;
+                                }
                                 handleChange(index, "statement2", value);
                                 handleChange(index, "condition", null);
                                 handleChange(index, "statement", null);

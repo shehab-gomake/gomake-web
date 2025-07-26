@@ -58,7 +58,7 @@ const mailInputs1 = (state: ISMSTemplate, mailingProviderType, t) => {
       value: state?.sendFrom,
       isValid: true,
     },
-    mailingProviderType !== IMailProviders.AMAZON &&
+    (mailingProviderType === IMailProviders.GMAIL || mailingProviderType === IMailProviders.OUTLOOK) &&
       mailingProviderType && {
         name: "appPassword",
         label: "profileSettings.appPassword",

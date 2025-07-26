@@ -4,13 +4,14 @@ import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { CSSProperties, useEffect } from "react";
 import { adaptPaddingRight } from "@/utils/adapter";
 import { getItem, setItem } from "@/services/storage-data";
 import { error } from "console";
 import { Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 interface FormErrorMessageProps {
   error?: string;
@@ -70,6 +71,9 @@ const CreditCardTab = ({
     errors,
     validateCreditCardForm,
     alertFault,
+
+    alertExistTransactionModal,
+    existingTransactionId,
   } = usePaymentMethodsTabs();
 
   useEffect(() => {
@@ -213,7 +217,7 @@ const CreditCardTab = ({
                 )}
               </div>
               <div style={classes.creditCardSecondInputsContainer}>
-                <Stack style={{ width: "45%" }} >
+                <Stack style={{ width: "45%" }}>
                   <input
                     style={classes.creditSecondCardInputs}
                     placeholder="Id"
@@ -492,6 +496,23 @@ const CreditCardTab = ({
           </div>
         </div>
       )}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("payment.existingTransactionMessageError")}
+        subTitle={" "}
+        yesBtn={t("payment.makeNewPayment")}
+        openModal={alertExistTransactionModal.isOpen}
+        onClose={() => {
+          alertExistTransactionModal.close();
+          handleSaveAndClose({
+            creditCardTransactionID: existingTransactionId,
+            creditCardSum: totalCreditCard,
+          });
+        }}
+        onClickDelete={() => {
+          onClickMakePayment(handleSaveAndClose, thirdWidget, true);
+        }}
+      />
     </div>
   );
 };

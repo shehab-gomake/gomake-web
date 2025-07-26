@@ -40,6 +40,7 @@ import {
 import { loadingWithShadowState, quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { createAccountCodeApi } from "@/services/api-service/generic-doc/deposits-api";
+import { useModal } from "@/hooks/use-modal";
 
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
@@ -496,6 +497,7 @@ const usePaymentMethodsTabs = () => {
     const newErrors: any = {};
     const messages: string[] = [];
 
+    debugger;
     if (creditCard.transactionSum <= 0) {
       newErrors.transactionSumSec = "alerts.totalPaymentZero";
       messages.push("alerts.totalPaymentZero");
@@ -505,7 +507,13 @@ const usePaymentMethodsTabs = () => {
     return messages;
   };
 
-  const onClickMakePayment = async (handleSaveAndClose, isPinPadUsed) => {
+  const [existingTransactionId, setExistingTransactionId] = useState(null);
+  const alertExistTransactionModal = useModal();
+  const onClickMakePayment = async (
+    handleSaveAndClose,
+    isPinPadUsed,
+    isForce = false
+  ) => {
     if (isFirstWidget) {
       const errorMessages = validateCreditCardForm();
       if (errorMessages.length > 0) {
@@ -533,14 +541,23 @@ const usePaymentMethodsTabs = () => {
           creditCardTransactionID: res?.data,
           creditCardSum: totalCreditCard,
         });
+      } else if (
+        res?.errors?.ErrorStatus === 409 &&
+        res?.errors?.ExistingTransactionId
+      ) {
+        setExistingTransactionId(res?.errors?.ExistingTransactionId);
+        alertExistTransactionModal.open();
       } else {
         alertFault(res?.message || "payment.makePaymentError");
       }
+
       setLoadingWithLockScreen(false);
     };
+
     await createCreditTransactionApi(callApi, callBack, {
       ClientID: quoteItemValue?.client?.id,
       creditCard,
+      ...(isForce && { isForce }),
       ...(isPinPadUsed && { isPinPadUsed }),
     });
   };
@@ -644,6 +661,8 @@ const usePaymentMethodsTabs = () => {
     onClickOpenAccountCode,
     onClickCloseAccountCode,
     addNewAccountCode,
+    alertExistTransactionModal,
+    existingTransactionId,
   };
 };
 

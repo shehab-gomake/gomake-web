@@ -102,8 +102,14 @@ const GoMakeDeleteModal = ({
             {subTitle ? t(subTitle) : _renderSubTitle(modalType)}
           </div>
 
-          {children && <div style={classes.children}>{children}</div>}
-          <div style={{ ...classes.btnsContainer, ...props.btnsContainerStyle }}>
+          {children && (
+            <div style={{ ...classes.children, ...insideStyle }}>
+              {children}
+            </div>
+          )}
+          <div
+            style={{ ...classes.btnsContainer, ...props.btnsContainerStyle }}
+          >
             <GomakePrimaryButton
               style={{ ...classes.confirmBtn, ...props.confirmBtnStyle }}
               onClick={() => {

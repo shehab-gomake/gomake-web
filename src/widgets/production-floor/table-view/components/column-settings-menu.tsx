@@ -15,11 +15,9 @@ import { useTranslation } from "react-i18next";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-
 import { SecondSwitch } from "@/components";
 import React from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { updateCpaManagerMailApi } from "@/services/api-service/settings/finance-api";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { saveProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
@@ -28,6 +26,8 @@ import {
   columnOrderState,
   columnVisibilityState,
 } from "../../state/production-floor-coulmns-table-settings";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 interface DragItem {
   id: string;
@@ -35,6 +35,12 @@ interface DragItem {
 }
 
 export const ColumnSettingsMenu = () => {
+  const { CheckPermission } = useUserPermission();
+  const filteredKeys = allColumnKeys.filter(
+    (key) =>
+      key !== "checkbox" ||
+      CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+  );
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -74,7 +80,7 @@ export const ColumnSettingsMenu = () => {
 
   const handleSave = async () => {
     const updatedVisibility = Object.fromEntries(
-      allColumnKeys.map((key) => [key, !!tempColumnVisibility[key]])
+      filteredKeys.map((key) => [key, !!tempColumnVisibility[key]])
     );
 
     const updatedColumns = tempColumnOrder.map((key) => ({
@@ -104,17 +110,17 @@ export const ColumnSettingsMenu = () => {
   };
 
   const handleHideAll = () => {
-    const hidden = Object.fromEntries(allColumnKeys.map((key) => [key, false]));
+    const hidden = Object.fromEntries(filteredKeys.map((key) => [key, false]));
     setTempColumnVisibility(hidden);
   };
 
   const handleShowAll = () => {
-    const shown = Object.fromEntries(allColumnKeys.map((key) => [key, true]));
+    const shown = Object.fromEntries(filteredKeys.map((key) => [key, true]));
     setTempColumnVisibility(shown);
   };
 
   const handleResetOrder = () => {
-    setTempColumnOrder([...allColumnKeys]);
+    setTempColumnOrder([...filteredKeys]);
   };
 
   useEffect(() => {
