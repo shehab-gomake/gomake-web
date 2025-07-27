@@ -445,7 +445,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               inputRef={searchInputRef}
             />
             {!isPurchaseJobs && (
-              <ExcelMenu onExportTableClick={ExportJobsTableToExcel} />
+              <ExcelMenu onExportTableClick={ExportJobsTableToExcel} documentType={null} />
             )}
           </div>
           <PrimaryTable

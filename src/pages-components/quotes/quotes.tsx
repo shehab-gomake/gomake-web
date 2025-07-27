@@ -813,6 +813,7 @@ const QuotesListPageWidget = ({
                   onGenerateReportClick={onOpenAddRuleModal}
                   onExportTableClick={ExportDocumentTableToExcel}
                   onExportTablePdfClick={ExportDocumentTableToPdf}
+                  documentType={documentType}
                 />
               </Stack>
             </div>
