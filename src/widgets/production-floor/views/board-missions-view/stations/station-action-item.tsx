@@ -252,6 +252,7 @@ const BoardMissionsStationActionItem = ({
       boardMissionActionId,
       machineId,
       machineName: machineName,
+      workFlowActionId: id,
     });
   };
 

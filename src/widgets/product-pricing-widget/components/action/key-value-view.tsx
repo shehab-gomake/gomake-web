@@ -74,13 +74,13 @@ const ParametersMapping = ({
               {isLastElement
                 ? keyValueComponent
                 : [
-                    keyValueComponent,
-                    <Divider
-                      key={`divider-${index}`}
-                      orientation="vertical"
-                      flexItem
-                    />,
-                  ]}
+                  keyValueComponent,
+                  <Divider
+                    key={`divider-${index}`}
+                    orientation="vertical"
+                    flexItem
+                  />,
+                ]}
             </PermissionCheck>
           );
         } else if (isWorkFlows) {
@@ -92,26 +92,26 @@ const ParametersMapping = ({
                 {isLastElement
                   ? keyValueComponent
                   : [
-                      keyValueComponent,
-                      <Divider
-                        key={`divider-${index}`}
-                        orientation="vertical"
-                        flexItem
-                      />,
-                    ]}
+                    keyValueComponent,
+                    <Divider
+                      key={`divider-${index}`}
+                      orientation="vertical"
+                      flexItem
+                    />,
+                  ]}
               </PermissionCheck>
             );
           } else {
             return isLastElement
               ? keyValueComponent
               : [
-                  keyValueComponent,
-                  <Divider
-                    key={`divider-${index}`}
-                    orientation="vertical"
-                    flexItem
-                  />,
-                ];
+                keyValueComponent,
+                <Divider
+                  key={`divider-${index}`}
+                  orientation="vertical"
+                  flexItem
+                />,
+              ];
           }
         } else if (unitType === 2 && !isWorkFlows) {
           return (
@@ -121,26 +121,26 @@ const ParametersMapping = ({
               {isLastElement
                 ? keyValueComponent
                 : [
-                    keyValueComponent,
-                    <Divider
-                      key={`divider-${index}`}
-                      orientation="vertical"
-                      flexItem
-                    />,
-                  ]}
+                  keyValueComponent,
+                  <Divider
+                    key={`divider-${index}`}
+                    orientation="vertical"
+                    flexItem
+                  />,
+                ]}
             </PermissionCheck>
           );
         } else {
           return isLastElement
             ? keyValueComponent
             : [
-                keyValueComponent,
-                <Divider
-                  key={`divider-${index}`}
-                  orientation="vertical"
-                  flexItem
-                />,
-              ];
+              keyValueComponent,
+              <Divider
+                key={`divider-${index}`}
+                orientation="vertical"
+                flexItem
+              />,
+            ];
         }
       })}
     </>
@@ -175,13 +175,13 @@ const TextAreaActionsMapping = ({
         return isLastElement
           ? keyValueComponent
           : [
-              keyValueComponent,
-              <Divider
-                key={`divider-${index}`}
-                orientation="vertical"
-                flexItem
-              />,
-            ];
+            keyValueComponent,
+            <Divider
+              key={`divider-${index}`}
+              orientation="vertical"
+              flexItem
+            />,
+          ];
       })}
     </>
   );
@@ -250,7 +250,7 @@ const KeyValueViewComponent = ({
         actionId,
         supplierId,
         key: EOutSoucrceUpdateKey.Outputs,
-        value,
+        value: comment,
         OutputId: id,
       });
     } else {
@@ -411,14 +411,14 @@ const KeyValueViewComponent = ({
           style={
             valueColor
               ? {
-                  ...(htmlElementType === HtmlElementType.TEXT_AREA
-                    ? classes.textAreaDetailValue
-                    : classes.detailValue),
-                  color: valueColor,
-                }
+                ...(htmlElementType === HtmlElementType.TEXT_AREA
+                  ? classes.textAreaDetailValue
+                  : classes.detailValue),
+                color: valueColor,
+              }
               : htmlElementType === HtmlElementType.TEXT_AREA
-              ? classes.textAreaDetailValue
-              : classes.detailValue
+                ? classes.textAreaDetailValue
+                : classes.detailValue
           }
         >
           {formatValueWithUnit(truncateText(removeTags(value)), defaultUnit)}
@@ -537,9 +537,9 @@ const EditableKeyValueViewComponent = ({
           style={
             valueColor
               ? {
-                  ...classes.detailValue,
-                  color: valueColor,
-                }
+                ...classes.detailValue,
+                color: valueColor,
+              }
               : classes.detailValue
           }
         >
