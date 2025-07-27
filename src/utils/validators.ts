@@ -57,9 +57,9 @@ export const validateDocument = (
     seenItems.add(itemKey);
   }
 
-  if (quoteItemValue.totalPrice === 0) {
+  /*if (quoteItemValue.totalPrice === 0) {
     return "alerts.cannotCreateWithPriceZero";
-  }
+  }*/
 
   return null; // No errors
 };
