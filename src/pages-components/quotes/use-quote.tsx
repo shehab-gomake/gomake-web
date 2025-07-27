@@ -7,7 +7,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ApprovalStatus,
+  ApprovalStatus, INVOICES_EXPORT_TYPES,
   LogActionType,
   QUOTE_STATUSES,
   StatusTitleText,
@@ -458,7 +458,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const isOrdersTracking = pathname === "/ordersTracking";
 
-  const ExportDocumentTableToExcel = async () => {
+  const ExportDocumentTableToExcel = async (exportType?:INVOICES_EXPORT_TYPES) => {
     const sortOrder = currentSortOrder;
     const callBack = (res) => {
       if (res?.success) {
@@ -476,6 +476,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     };
     await ExportDocumentTableToExcelApi(callApi, callBack, {
       documentType: docType,
+      exportType: exportType,
       data: {
         model: {
           pageNumber: page,
