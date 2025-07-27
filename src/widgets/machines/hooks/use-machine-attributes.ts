@@ -1,6 +1,6 @@
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {machineState as STATE} from "@/widgets/machines/state/machine-state";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {machineInputs} from "@/widgets/machines/utils/attributes/machine-inputs/machine-inputs";
 import {getCategoryBasicInputs} from "@/widgets/machines/utils/attributes/basic-inputs";
 import {getCategoryMediaInputs} from "@/widgets/machines/utils/attributes/media-inputs";
@@ -26,10 +26,45 @@ const useMachineAttributes = () => {
     const setMachine = useSetRecoilState(STATE);
     const [errors, setErrors] = useState<Record<string, boolean>>({})
     const printColors = useRecoilValue(printColorsParameterValuesState);
+    const [machineHourCostValue, setMachineHourCostValue] = useState<number>();
+
+    const machineHourCost = () => {
+        if (machineState?.price?.price && machineState.attributes?.dailyProductivityInHours && machineState.attributes?.lifeExpectancyYears && machineState.attributes?.monthlyMaintenanceCost && machineState.attributes?.monthlyCostOfSpace && machineState.attributes?.electricityCostPerWorkingHour) {
+            return machineState?.price?.price /
+                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * 22 * 12) +
+                +machineState.attributes?.monthlyMaintenanceCost / (22 * 8) +
+                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / (22 * 8);
+        }
+        return 0
+    };
+
+    // Track changes to machineHourCost calculation values
+    useEffect(() => {
+        setMachineHourCostValue(Number(machineHourCost()?.toFixed(2)));
+        setMachine({...machineState, price: {...machineState.price, machineHourCost: machineHourCost()?.toFixed(2)}});
+    }, [
+        machineState?.price?.price,
+        machineState?.attributes?.dailyProductivityInHours,
+        machineState?.attributes?.lifeExpectancyYears,
+        machineState?.attributes?.monthlyMaintenanceCost,
+        machineState?.attributes?.monthlyCostOfSpace,
+        machineState?.attributes?.electricityCostPerWorkingHour
+    ]);
+
+    // Track changes to direct machineHourCost value
+    useEffect(() => {
+        if (machineState?.price?.machineHourCost !== undefined) {
+            setMachineHourCostValue(Number(machineState.price.machineHourCost));
+            setMachine({...machineState, price: {...machineState.price, machineHourCost: Number(machineState.price.machineHourCost)}});
+        }
+    }, [machineState?.price?.machineHourCost]);
+
+    
     const changeMachineGeneralAttributes = (key: string, value: any) => {
         if(key === "productionFloorColor"){
             setMachine({...machineState, attributes: {...machineState.attributes, productionFloorColor: value}});
-        }else{
+        }
+        else{
             setErrors({...errors, [key]: false});
             setMachine({...machineState, [key]: value});
         }
@@ -61,7 +96,7 @@ const useMachineAttributes = () => {
         }
     }
 
-    const machineGeneralAttributes = machineInputs(machineState);
+    const machineGeneralAttributes = machineInputs(machineState,machineHourCostValue);
     const machineBasicAttributes = () => !!machineState.category ? getCategoryBasicInputs(machineState.category, machineState) : [];
     const machineMediaAttributes = () => !!machineState.category ? getCategoryMediaInputs(machineState.category, machineState) : [];
     const machineSpeedAttributes = () => getCategorySpeedInputs(machineState.category, machineState);

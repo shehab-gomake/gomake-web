@@ -1,13 +1,5 @@
-const machineHourCost = (machine) => {
-    if (machine?.price?.price && machine.attributes?.dailyProductivityInHours && machine.attributes?.lifeExpectancyYears && machine.attributes?.monthlyMaintenanceCost && machine.attributes?.monthlyCostOfSpace && machine.attributes?.electricityCostPerWorkingHour) {
-        return machine?.price?.price /
-            (+machine.attributes?.dailyProductivityInHours * +machine.attributes?.lifeExpectancyYears * 22 * 12) +
-            +machine.attributes?.monthlyMaintenanceCost / (22 * 8) +
-            +machine.attributes?.electricityCostPerWorkingHour + +machine.attributes?.monthlyCostOfSpace / (22 * 8);
-    }
-    return 0
-};
-const machineInputs = (state: Record<string, any>) => {
+
+const machineInputs = (state: Record<string, any>,machineHourCostValue) => {
     return [
         {
             name: "manufacturer",
@@ -93,11 +85,11 @@ const machineInputs = (state: Record<string, any>) => {
                     type: "number",
                     placeholder: "machineAttributes.machineHourCost",
                     required: true,
-                    parameterKey: "",
+                    parameterKey: "machineHourCost",
                     options: [],
-                    value: machineHourCost(state)?.toFixed(2),
-                    isValid: !!state?.machineHourCost,
-                    readonly: true
+                    value: machineHourCostValue,
+                    // value: machineHourCost(state)?.toFixed(2),
+                    isValid: !!state?.price?.machineHourCost,
                 },
             ]
         }
