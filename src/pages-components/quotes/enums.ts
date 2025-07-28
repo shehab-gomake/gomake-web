@@ -137,3 +137,10 @@ export enum PURCHASE_ORDER_STATUSES {
   Closed,
   ManualClose,
 }
+export enum INVOICES_EXPORT_TYPES {
+  Excel = 0,
+  ExtendedExcel,
+  ExtendedTxt,
+  SummeryExcelWithoutVat,
+  SummeryExcelWithVat,
+}

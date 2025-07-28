@@ -4,6 +4,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useSnackBar } from "./use-snack-bar";
+import { useModal } from "./use-modal";
+import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
+import { useRecoilState } from "recoil";
 
 export enum QR_CODE_LISTENER_FROM {
   PRODUCTION_FLOOR = "productionFloor",
@@ -20,12 +23,20 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-
+  const isOpenDoneModal =useModal()
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
   
-  const handleBoardMissionsBarcodeActionsFunction = async (barcode: string) => {
+  const handleBoardMissionsBarcodeActionsFunction = async (barcode: string,data:any) => {
     barcode = barcode.replace(/½/g, '-');
     const callBack = (res) => {
       if (res?.success) {
+        if(!router.pathname.includes("boardMissionsId")){
+          const url = `/production-floor?boardMissionsId=${data?.boardMissionId}${data?.productType ? `&productType=${data?.productType}` : ""}&step=stations`;
+          router.push(url);
+        }
+        if(res?.data?.isLastStation){
+          isOpenDoneModal.open()
+        }
         alertSuccessUpdate();
       } else {
         alertFaultUpdate();
@@ -39,10 +50,11 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
   const handleBoardMissionsQRCodeAction = async (barcode: string) => {
     barcode = barcode.replace(/½/g, '-');
     const callBack = (res) => {
+      setSelectedMission(res?.data);
       if (res?.success) {
         if (qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR) {
           if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-            handleBoardMissionsBarcodeActionsFunction(barcode);
+            handleBoardMissionsBarcodeActionsFunction(barcode,res?.data);
           }
           else {
             const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
@@ -120,8 +132,11 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
 
 
 
+
+
   return {
     barcode,
+    isOpenDoneModal
   };
 };
 
