@@ -87,9 +87,8 @@ const machineInputs = (state: Record<string, any>,machineHourCostValue) => {
                     required: true,
                     parameterKey: "machineHourCost",
                     options: [],
-                    value: machineHourCostValue,
-                    // value: machineHourCost(state)?.toFixed(2),
-                    isValid: !!state?.price?.machineHourCost,
+                    value: state?.attributes?.machineHourCost,
+                    isValid: true,
                 },
             ]
         }

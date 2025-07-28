@@ -53,16 +53,19 @@ const useMachineAttributes = () => {
 
     // Track changes to direct machineHourCost value
     useEffect(() => {
-        if (machineState?.price?.machineHourCost !== undefined) {
+        if (machineState.attributes?.machineHourCost !== undefined) {
             setMachineHourCostValue(Number(machineState.price.machineHourCost));
-            setMachine({...machineState, price: {...machineState.price, machineHourCost: Number(machineState.price.machineHourCost)}});
+            setMachine({...machineState, price: {...machineState.price, machineHourCost: Number(machineState.attributes.machineHourCost)}});
         }
-    }, [machineState?.price?.machineHourCost]);
+    }, [machineState.attributes?.machineHourCost]);
 
     
     const changeMachineGeneralAttributes = (key: string, value: any) => {
         if(key === "productionFloorColor"){
             setMachine({...machineState, attributes: {...machineState.attributes, productionFloorColor: value}});
+        }
+        else if(key === "price"){
+            setMachine({...machineState, attributes: {...machineState.attributes, machineHourCost: value?.machineHourCost}});
         }
         else{
             setErrors({...errors, [key]: false});
