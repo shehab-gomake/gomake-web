@@ -239,9 +239,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   }
 `;
 
-  const { } = useQrCodeListener({
-    qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS,
-  });
+
+  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS });
   return (
     <>
       <Stack

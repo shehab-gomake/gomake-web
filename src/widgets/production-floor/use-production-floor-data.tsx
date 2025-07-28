@@ -7,6 +7,7 @@ import {
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
   updateProductionFloorNotesApi,
+  ungroupJobsApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -620,7 +621,7 @@ const useProductionFloorData = () => {
       }
     };
     await moveBoardMissionToDoneApi(callApi, callBack, {
-      boardMissionId: selectedMission.id,
+      boardMissionId: selectedMission.id || selectedMission.boardMissionId,
       sendMessage,
       productType: selectedMission.productType ?? "",
       storage: selectedMission.storage ?? "",
@@ -675,6 +676,16 @@ const useProductionFloorData = () => {
     await getBoardMissionPDF(callApi, callBack, {
       boardMissionId: boardMissionId?.id,
     });
+  };
+
+  const onClickUnGroupJob = async (boardMissionId) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getData()
+        alertSuccessUpdate();
+      }
+    };
+    await ungroupJobsApi(callApi, callBack, boardMissionId?.id);
   };
 
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
@@ -797,6 +808,7 @@ const useProductionFloorData = () => {
     setOpenMarkReadyModal,
     onClickMoveBoardMissionToDone,
     onClickPrintJob,
+    onClickUnGroupJob,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,

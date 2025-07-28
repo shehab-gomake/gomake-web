@@ -24,7 +24,7 @@ import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-flo
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { handleBoardMissionsBarcodeActions, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -46,7 +46,8 @@ const ProductionFloorWidget = () => {
     setFilterGroups,
     getStationFilterGroups,
     setSelectedGroupId,
-    getData
+    onClickMoveBoardMissionToDone,
+    onOpenMarkReadyModalForHasJobs,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -179,9 +180,7 @@ const ProductionFloorWidget = () => {
     });
   };
 
-
-
-  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
+  const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
 
 
   return (
@@ -355,6 +354,26 @@ const ProductionFloorWidget = () => {
       />
 
       <QRScannerFab />
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={isOpenDoneModal.isOpen}
+        onClose={() => isOpenDoneModal.close()}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        style={
+          isMobile
+            ? {
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
+            : undefined
+        }
+      />
 
     </Stack>
   );
