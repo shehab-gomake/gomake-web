@@ -266,9 +266,6 @@ const ProductionFloorFilters = ({
   const {
     t,
     dir,
-    search,
-    setSearch,
-    onTagsChange,
     onSelectDeliveryTimeDates,
     onSelectCreateDates,
     createDateFilter,
@@ -293,6 +290,7 @@ const ProductionFloorFilters = ({
     setMissionsList,
     filteredMissionsBySearch,
     isSearchLoading,
+    setIsSearchLoading,
     openModal,
     handleDeleteConfirm,
     handleCancel,
@@ -315,6 +313,12 @@ const ProductionFloorFilters = ({
     setFilters,
     searchInputFilterRef,
     getAllData,
+    debouncedSearchValue,
+    globalSearch,
+    setGlobalSearch,
+    localSearch,
+    setLocalSearch,
+    debouncedSearch
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -416,23 +420,47 @@ const ProductionFloorFilters = ({
   //!there is no productType
   const handleMissionClick = (id, productType) => {
     push(`/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`).then(() => {
-      setSearch("");
+      setGlobalSearch("");
+      setLocalSearch("");
       setMissionsList([]);
     });
   };
-
   const [isListOpen, setIsListOpen] = useState(false);
   const searchInputRef = useRef(null);
-  const handleSearchChange = (value) => {
-    setSearch(value);
-    if (!value) {
+
+  const handleSearchChange = useCallback((value) => {
+    setLocalSearch(value); // Update local state immediately for fast UI
+    if (value) {
+      setIsSearchLoading(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    setGlobalSearch(debouncedSearchValue);
+    setIsSearchLoading(false);
+
+    if (!debouncedSearchValue) {
       setIsListOpen(false);
       setMissionsList([]);
     } else {
       setIsListOpen(true);
       setMissionsList(getMissionsList());
     }
-  };
+  }, [debouncedSearchValue, setGlobalSearch]);
+
+  // React to debounced value changes
+  useEffect(() => {
+    // This runs 500ms after user stops typing
+    setIsSearchLoading(false);
+
+    if (!debouncedSearchValue) {
+      setIsListOpen(false);
+      setMissionsList([]);
+    } else {
+      setIsListOpen(true);
+      setMissionsList(getMissionsList());
+    }
+  }, [debouncedSearchValue]);
 
   const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
   const debouncedPatternSearch = useDebounce(patternSearch, 500);
@@ -481,7 +509,7 @@ const ProductionFloorFilters = ({
             />}
             {view !== EProductionFloorView.DONE_JOBS && <SearchInputComponent
               bgColor={"#F8F8F8"}
-              value={search}
+              value={localSearch} // Use local state for immediate updates
               onChange={handleSearchChange}
               filtersButton={
                 isSearchLoading && (

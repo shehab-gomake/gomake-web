@@ -44,6 +44,7 @@ import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employ
 import { actionsListState, sourceOfActionsListState } from "../state/actions-list";
 import moment from "moment";
 import { Source } from "./select/actions-select/use-actions-list";
+import { useDebounce } from "use-debounce";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -75,7 +76,10 @@ const useProductionFloorFilters = ({
   );
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
-  const [search, setSearch] = useRecoilState(productionFloorTextSearchState);
+  const [globalSearch, setGlobalSearch] = useRecoilState(productionFloorTextSearchState);
+  const [localSearch, setLocalSearch] = useState(globalSearch);
+  const debouncedSearch = useDebounce(localSearch, 500);
+  const debouncedSearchValue = Array.isArray(debouncedSearch) ? debouncedSearch[0] : debouncedSearch;
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
@@ -92,6 +96,7 @@ const useProductionFloorFilters = ({
     filteredMissionsStateBySearch
   );
   const isSearchLoading = useRecoilValue(searchLoadingState);
+  const setIsSearchLoading = useSetRecoilState(searchLoadingState);
 
   const [missionsList, setMissionsList] = useRecoilState(missionsListState);
   const [visibleCards, setVisibleCards] = useState<
@@ -589,8 +594,6 @@ const useProductionFloorFilters = ({
   return {
     t,
     dir,
-    search,
-    setSearch,
     filters,
     filtersState,
     setFilters,
@@ -632,6 +635,7 @@ const useProductionFloorFilters = ({
     setMissionsList,
     filteredMissionsBySearch,
     isSearchLoading,
+    setIsSearchLoading,
     openModal,
     handleDeleteConfirm,
     handleCancel,
@@ -658,6 +662,12 @@ const useProductionFloorFilters = ({
     view,
     getAllData,
     searchInputFilterRef,
+    debouncedSearchValue,
+    globalSearch,
+    setGlobalSearch,
+    localSearch,
+    setLocalSearch,
+    debouncedSearch
   };
 };
 
