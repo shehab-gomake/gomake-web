@@ -43,7 +43,6 @@ const useActionUpdateValues = () => {
     currentProductItemValueDraftId
   );
   const [attributesData, setAttributesData] = useRecoilState<AttributesData>(attributesDataState);
-  console.log("attributesData", attributesData);
   const [openModalMachine, setOpenModalMachine] = useRecoilState(openModalMachineState);
   const [openModalMaterial, setOpenModalMaterial] = useRecoilState(openModalMaterialState);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =

@@ -62,11 +62,9 @@ const usePricingWidget = ({
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  console.log("selectedWorkFlow", selectedWorkFlow);
   const productItemValueByEdit = useRecoilValue<any>(
     productItemValueByEditState
   );
-  console.log("view", view);
   const [pageSize, setPageSize] = useState(10);
   const [heightScrolling, setHeightScrolling] = useState(50);
   const [isChangeView, setIsChangeView] = useState(true);
