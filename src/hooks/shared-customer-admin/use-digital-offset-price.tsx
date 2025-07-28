@@ -99,6 +99,11 @@ import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket
 import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
+export interface SampleTypeOption {
+  value: number;
+  text: string;
+}
+
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
     openQuantityComponentModalState
@@ -2609,10 +2614,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     text: string;
   }
 
-  interface SampleTypeOption {
-    value: number;
-    text: string;
-  }
+
 
   const getGraphicsType = (
     billingMethod?: BillingMethod
