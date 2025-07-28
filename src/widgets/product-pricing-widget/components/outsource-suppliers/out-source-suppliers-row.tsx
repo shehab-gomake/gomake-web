@@ -66,6 +66,7 @@ const OutSourceSuppliersRowComponent = ({
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const { secondColor } = useGomakeTheme();
   const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
+
   const {
     updatePrice,
     updateWorkHours,
@@ -134,14 +135,29 @@ const OutSourceSuppliersRowComponent = ({
   ) => {
     updatePrice(supplierId, price, actionId);
   };
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
+  const {
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    listClient,
+
+  } = useCustomerDropDownList({ clientType: CLIENT_TYPE.SUPPLIER });
 
   const handleSupplierUpdate = (supplierId, actionId) => {
-    debugger;
     const selectedSupp = options.find((x) => x.supplierId == supplierId);
+    setCustomer({
+      id: selectedSupp?.supplierId,
+      name: selectedSupp?.supplierName,
+    });
+    // setSupplier(selectedSupp);
     updateSupplierId(supplierId, actionId);
+    setIsUpdateBusinessName(null);
+
     // setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
     //setSliderCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
-    //setSupplier(selectedSupp);
   };
 
   useEffect(() => {
@@ -180,6 +196,13 @@ const OutSourceSuppliersRowComponent = ({
                     t={t}
                     secondColor={secondColor}
                     systemCurrency={systemCurrency}
+                    setIsUpdateBusinessName={setIsUpdateBusinessName}
+                    isUpdateBusinessName={isUpdateBusinessName}
+                    customer={customer}
+                    setCustomer={setCustomer}
+                    renderOptions={renderOptions}
+                    checkWhatRenderArray={checkWhatRenderArray}
+                    isFetching={isFetching}
                   />
                 );
                 //return OutSourceSupplierRow(action,currentProductItemValue,selectedWorkFlow,options,handleSupplierUpdate,handleDeliveryTimeUpdate,handleCostUpdate,handleProfitUpdate,handleUpdatePrice,onClickRemoveOutSourceAction,t,secondColor,systemCurrency);
@@ -216,28 +239,28 @@ const OutSourceSupplierRow = ({
   t,
   secondColor,
   systemCurrency,
+  setIsUpdateBusinessName,
+  isUpdateBusinessName,
+  customer,
+  setCustomer,
+  renderOptions,
+  checkWhatRenderArray,
+  isFetching,
 }) => {
-  const {
-    customer,
-    setCustomer,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-    listClient,
-  } = useCustomerDropDownList({ clientType: CLIENT_TYPE.SUPPLIER });
   const { classes } = useStyle();
+
   // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
   // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
   const foundSupplier = options.find((x) => x.supplierId == action?.supplierId);
-  if (
-    (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
-    !customer
-  ) {
-    setCustomer({
-      id: foundSupplier?.supplierId,
-      name: foundSupplier?.supplierName,
-    });
-  }
+  // if (
+  //   (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
+  //   !customer
+  // ) {
+  //   setCustomer({
+  //     id: foundSupplier?.supplierId,
+  //     name: foundSupplier?.supplierName,
+  //   });
+  // }
 
   const textAreaOutputs = action?.outputs?.filter(
     (parameter) =>
@@ -252,7 +275,6 @@ const OutSourceSupplierRow = ({
     ...supplier,
   }));
 
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
 
   const onBlurBusinessName = async () => {
     setIsUpdateBusinessName(null);
@@ -298,20 +320,6 @@ const OutSourceSupplierRow = ({
             setIsUpdate={setIsUpdateBusinessName}
             onBlur={onBlurBusinessName}
           />
-          {/*<EditableSelect
-                isEditable={true}
-                label={t("suppliers.supplierName")}
-                value={
-                  foundSupplier?.supplierName
-                      ? foundSupplier?.supplierName
-                      : "Select Supplier"
-                }
-                // onUpdate={handleSupplierUpdate}
-                onUpdate={(v) => {
-                  handleSupplierUpdate(v, action?.id);
-                }}
-                options={options}
-            />*/}
           <Divider orientation={"vertical"} flexItem />
           <EditableValue
             unit={"W.H"}
