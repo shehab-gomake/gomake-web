@@ -387,7 +387,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const filteredReceiptItems = Object.keys(checkedItemsIds)
     .map((key) => {
-      const item = quoteItemValue.receiptItems.find(
+      const item = quoteItemValue?.receiptItems?.find(
         (item) => item.id === checkedItemsIds[key]
       );
       const sumApplied = allocatedSums[key] || 0;
