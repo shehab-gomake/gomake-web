@@ -509,7 +509,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return (
         <>
           <div>{t("boardMissions.done")}</div>
-          <div>{mission?.storage ? ` ${mission.storage}` : ""}</div>
+
+          <div>{mission?.storage === "undefined" ? "" : mission?.storage ? ` ${mission.storage}` :
+            " "}</div>
         </>
       );
     }
