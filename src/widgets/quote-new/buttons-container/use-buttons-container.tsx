@@ -291,7 +291,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId = async (orderId, res, sendMessage, isPrepaymentClient, isStripeCash) => {
 
     const callBack = (result) => {
-      if (result?.success) {
+      if (result?.success && CheckPreferenceValue(EPreferences.ASK_TO_GROUP_SIMILAR_JOBS)) {
         if (result?.data?.item1) {
           setPendingOrderData({
             orderId: orderId,
