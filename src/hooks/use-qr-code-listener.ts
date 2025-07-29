@@ -32,10 +32,6 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
       barcode = barcode.replace(/½/g, '-');
       const callBack = (res) => {
         if (res?.success) {
-          if(!router.pathname.includes("boardMissionsId")){
-            const url = `/production-floor?boardMissionsId=${data?.boardMissionId}${data?.productType ? `&productType=${data?.productType}` : ""}&step=stations`;
-            router.push(url);
-          }
           if(res?.data?.isLastStation){
             isOpenDoneModal.open()
           }
@@ -58,13 +54,16 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
       const callBack = async (res) => {
         setSelectedMission(res?.data);
         if (res?.success) {
-          if (qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR) {
+          if (qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId")) {
             if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
               await handleBoardMissionsBarcodeActionsFunction(barcode,res?.data);
             }
             else {
-              const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-              router.push(url);
+              if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
+              }
+           
             }
           }
           else {
@@ -73,8 +72,10 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
               router.push(url);
             }
             else {
-              const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-              router.push(url);
+              if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
+              }
             }
           }
         }
@@ -102,7 +103,6 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
         return;
       }
       if(isProcessingBarCode){
-        debugger
         return;
       }
       // Clear previous timeout if exists
