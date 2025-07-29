@@ -156,6 +156,7 @@ const useCopyFromOrderModal = ({
   };
 
   const handleSelectAll = (documentItem) => {
+    debugger
     const selectedIds = new Set(selectedItems.map((item) => item.id));
     const sectionItemIds =
       documentItem?.orderItems?.map((item) => item.id) || [];
@@ -174,6 +175,32 @@ const useCopyFromOrderModal = ({
       );
       setSelectedItems([...selectedItems, ...newItems]);
     }
+  };
+  const handleSelectAllDocuments = (filteredDocumentItems) => {
+    if(!filteredDocumentItems || !filteredDocumentItems.length){
+      return;
+    }
+    let newSelectedItems = [];
+    for(let i = 0; i < filteredDocumentItems.length; i++) {
+      let documentItem = filteredDocumentItems[i];
+      const selectedIds = new Set(selectedItems.map((item) => item.id));
+      const sectionItemIds =
+          documentItem?.orderItems?.map((item) => item.id) || [];
+
+      const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
+
+      if (allSelected) {
+        // If all items in the section are selected, remove them
+        newSelectedItems = newSelectedItems.filter((item) => !sectionItemIds.includes(item.id));
+      } else {
+        // If any item is not selected, add only missing items
+        const newItems = documentItem?.orderItems.filter(
+            (item) => !selectedIds.has(item.id)
+        );
+        newSelectedItems = [...newSelectedItems, ...newItems];
+      }
+    }
+    setSelectedItems(newSelectedItems)
   };
 
   const areAllItemsSelected = (documentItemId) => {
@@ -385,12 +412,12 @@ const useCopyFromOrderModal = ({
     showReadyOnly,
     isCopyFromOrder,
     setDocumentItems,
-
     showReadyJobs,
     setShowReadyJobs,
     isLoadingPayments,
     hasFetchedOnce,
     noDocumentData,
+    handleSelectAllDocuments
   };
 };
 

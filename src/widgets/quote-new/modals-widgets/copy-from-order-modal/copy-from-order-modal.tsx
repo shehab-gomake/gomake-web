@@ -3,8 +3,9 @@ import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { useCopyFromOrderModal } from "./use-copy-from-order-modal";
 import { OrderTableWidget } from "./order-table";
 import { useStyle } from "./style";
-import { Skeleton } from "@mui/material";
+import {Checkbox, Skeleton} from "@mui/material";
 import { NoDataComponent } from "../../receipts-table/Payment-methods-details/no-data-component";
+import {CheckboxCheckedIcon, CheckboxIcon} from "@/icons";
 
 const CopyFromOrderModal = ({
   openModal,
@@ -39,6 +40,7 @@ const CopyFromOrderModal = ({
     isLoadingPayments,
     hasFetchedOnce,
     noDocumentData,
+    handleSelectAllDocuments
   } = useCopyFromOrderModal({
     onClose,
     documentType,
@@ -82,45 +84,46 @@ const CopyFromOrderModal = ({
               </div>
             </div>
           ) : documentItems?.length > 0 ? (
-            <div style={classes.filtersContainer}>
-              <div style={classes.searchContainer}>
-                <div style={classes.searchLabelStyle}>
-                  {t("sales.quote.searchBy")}
+              <div style={classes.filtersContainer}>
+                <div style={classes.searchContainer}>
+                  <div style={classes.searchLabelStyle}>
+                    {t("sales.quote.searchBy")}
+                  </div>
+                  <SearchInputComponent onChange={setTerm}/>
                 </div>
-                <SearchInputComponent onChange={setTerm} />
-              </div>
-              <div style={classes.switchContainer}>
-                <SecondSwitch
-                  checked={showReadyOnly}
-                  onChange={(e) => setShowReadyOnly(e.target.checked)}
-                />
-                <span style={classes.switchLabel}>
+                <div style={classes.switchContainer}>
+                  <SecondSwitch
+                      checked={showReadyOnly}
+                      onChange={(e) => setShowReadyOnly(e.target.checked)}
+                  />
+                  <span style={classes.switchLabel}>
                   {t("sales.cart.showReadyItems")}
                 </span>
-              </div>
+                </div>
 
-              <div style={classes.switchContainer}>
-                <SecondSwitch
-                  checked={showReadyJobs}
-                  onChange={(e) => setShowReadyJobs(e.target.checked)}
-                />
-                <span style={classes.switchLabel}>
+                <div style={classes.switchContainer}>
+                  <SecondSwitch
+                      checked={showReadyJobs}
+                      onChange={(e) => setShowReadyJobs(e.target.checked)}
+                  />
+                  <span style={classes.switchLabel}>
                   {t("sales.cart.showReadyJobs")}
                 </span>
+                </div>
+                
               </div>
-            </div>
           ) : null}
         </div>
 
         <div style={classes.bodyContainer}>
           {isLoadingPayments ? (
-            <>
-              <div style={classes.skeletonheaderTable}>
-                <Skeleton variant="text" height={34} width={140} />
-                <Skeleton variant="text" height={34} width={140} />
-              </div>
-              <Skeleton variant="rectangular" height={280} width={"100%"} />
-            </>
+              <>
+                <div style={classes.skeletonheaderTable}>
+                  <Skeleton variant="text" height={34} width={140}/>
+                  <Skeleton variant="text" height={34} width={140}/>
+                </div>
+                <Skeleton variant="rectangular" height={280} width={"100%"}/>
+              </>
           ) : isEmpty ? (
             <NoDataComponent subNoDataText={noDocumentData()} />
           ) : (
@@ -134,6 +137,7 @@ const CopyFromOrderModal = ({
               areAllItemsSelected={areAllItemsSelected}
               selectedItems={selectedItems}
               filterItems={filterItems}
+              handleSelectAllDocuments={handleSelectAllDocuments}
             />
           )}
         </div>
