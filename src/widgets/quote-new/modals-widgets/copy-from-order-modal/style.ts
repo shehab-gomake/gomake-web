@@ -79,6 +79,12 @@ const useStyle = () => {
         justifyContent:"flex-end",
         alignItems:"center",
       },
+      selectAllDocumentsContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent:"flex-start",
+        alignItems:"center",
+      },
       selectAllStyle:{
         ...FONT_FAMILY.Lexend(400,12),
       },
