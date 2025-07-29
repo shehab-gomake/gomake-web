@@ -7,6 +7,7 @@ import { useSnackBar } from "./use-snack-bar";
 import { useModal } from "./use-modal";
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { useRecoilState } from "recoil";
+import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 export enum QR_CODE_LISTENER_FROM {
   PRODUCTION_FLOOR = "productionFloor",
@@ -23,58 +24,71 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-  const isOpenDoneModal =useModal()
+  const isOpenDoneModal = useModal()
   const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
+
+  const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   
-  const handleBoardMissionsBarcodeActionsFunction = async (barcode: string,data:any) => {
-    barcode = barcode.replace(/½/g, '-');
-    const callBack = (res) => {
-      if (res?.success) {
-        if(!router.pathname.includes("boardMissionsId")){
-          const url = `/production-floor?boardMissionsId=${data?.boardMissionId}${data?.productType ? `&productType=${data?.productType}` : ""}&step=stations`;
-          router.push(url);
+  const handleBoardMissionsBarcodeActionsFunction = async (barcode: string, data: any) => {
+    
+    return new Promise(async (resolve, reject) => {
+      barcode = barcode.replace(/½/g, '-');
+      const callBack = (res) => {
+        if (res?.success) {
+          if(res?.data?.isLastStation){
+            isOpenDoneModal.open()
+          }
+          alertSuccessUpdate();
+        } 
+        else {
+          alertFaultUpdate();
         }
-        if(res?.data?.isLastStation){
-          isOpenDoneModal.open()
-        }
-        alertSuccessUpdate();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await handleBoardMissionsBarcodeActions(callApi, callBack, {
-      barcode
-    });
+        resolve(true)
+      };
+      await handleBoardMissionsBarcodeActions(callApi, callBack, {
+        barcode
+      });
+    })
   };
 
   const handleBoardMissionsQRCodeAction = async (barcode: string) => {
-    barcode = barcode.replace(/½/g, '-');
-    const callBack = (res) => {
-      setSelectedMission(res?.data);
-      if (res?.success) {
-        if (qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR) {
-          if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-            handleBoardMissionsBarcodeActionsFunction(barcode,res?.data);
+    return new Promise(async (resolve, reject) => {
+      barcode = barcode.replace(/½/g, '-');
+      const callBack = async (res) => {
+        setSelectedMission(res?.data);
+        if (res?.success) {
+          if (qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId")) {
+            if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
+              if(stations?.length > 0){
+              await handleBoardMissionsBarcodeActionsFunction(barcode, res?.data);
+              }
+            }
+            else {
+              if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
+              }
+           
+            }
           }
           else {
-            const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-            router.push(url);
+            if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
+              const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
+              router.push(url);
+            }
+            else {
+              if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
+              }
+            }
           }
         }
-        else {
-          if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-            const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
-            router.push(url);
-          }
-          else {
-            const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-            router.push(url);
-          }
-        }
-      }
-    };
-    await handleBoardMissionsBarcodeActionsApi(callApi, callBack, {
-      barcode
+        resolve(true);
+      };
+      await handleBoardMissionsBarcodeActionsApi(callApi, callBack, {
+        barcode
+      });
     });
   };
 
@@ -83,8 +97,16 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    let isProcessingBarCode = false;
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      // Check if we're on boardMissionsId route and stations are empty
+      if (router.asPath.includes("boardMissionsId")) {
+        if (!stations || stations.length === 0) {
+          // Don't listen to QR code scanning if no stations
+          return;
+        }
+      }
 
-    const handleKeyDown = (event: KeyboardEvent) => {
       // Skip if user is typing in an input field, textarea, or contenteditable
       const target = event.target as HTMLElement;
       if (target?.tagName === 'INPUT' || 
@@ -93,7 +115,9 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
           target?.isContentEditable) {
         return;
       }
-
+      if(isProcessingBarCode){
+        return;
+      }
       // Clear previous timeout if exists
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
@@ -102,8 +126,12 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
       // Handle Enter key for scan completion
       if (event.key === 'Enter' && scanBuffer.length > 0) {
         setBarcode(scanBuffer);
-        handleBoardMissionsQRCodeAction(scanBuffer);
+        isProcessingBarCode = true;
+        console.log("handleBoardMissionsQRCodeAction start");
+        await handleBoardMissionsQRCodeAction(scanBuffer);
+        console.log("handleBoardMissionsQRCodeAction finished");
         setScanBuffer('');
+        isProcessingBarCode = false;
         return;
       }
 
@@ -128,11 +156,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
         clearTimeout(timeoutIdRef.current);
       }
     };
-  }, [scanBuffer]);
-
-
-
-
+  }, [scanBuffer, stations, router.asPath]); // Added stations and router.asPath to dependencies
 
   return {
     barcode,

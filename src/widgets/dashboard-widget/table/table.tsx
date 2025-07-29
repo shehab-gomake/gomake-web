@@ -393,7 +393,7 @@ const BoardMissionsTable = ({
                               <div style={{ width: "30%", height: "100%" }}>
                                 <div style={classes.tdRows}>
                                   <DateTimeComponent
-                                    dateTime={board.creationDate.toString()}
+                                    dateTime={board.dueDate.toString()}
                                     gap={"20px"}
                                     direction={"column"}
                                   />

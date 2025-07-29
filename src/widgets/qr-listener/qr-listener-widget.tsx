@@ -167,15 +167,15 @@ const QrListenerWidget = ({ listening }: IProps) => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("keypress", listening ? handleKeyPress : () => { });
-    return () => {
-      window.removeEventListener(
-        "keypress",
-        listening ? handleKeyPress : () => { }
-      );
-    };
-  }, [inputBuffer, lastInputTime, listening]);
+  // useEffect(() => {
+  //   window.addEventListener("keypress", listening ? handleKeyPress : () => { });
+  //   return () => {
+  //     window.removeEventListener(
+  //       "keypress",
+  //       listening ? handleKeyPress : () => { }
+  //     );
+  //   };
+  // }, [inputBuffer, lastInputTime, listening]);
 
   const handleBoardMissionsQrCode = async (qrCode: string) => {
     const callBack = (res) => {
