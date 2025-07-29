@@ -101,7 +101,6 @@ const PricingWidget = ({
     getSelectedWorkFlow,
 
   });
-  console.log("compareWorkFlowsData", compareWorkFlowsData)
   const isHasSubWorkFlowsOrProductTypeActions =
     hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
@@ -115,8 +114,6 @@ const PricingWidget = ({
   // Add this function for compare logic
   const handleCompareTab = (section: any) => {
     getCompareWorkFlows(section)
-    // TODO: Implement your compare logic here
-    console.log('Comparing with section:', section);
   };
 
   const [openModalMachine, setOpenModalMachine] = useRecoilState(
@@ -646,7 +643,7 @@ const PricingWidget = ({
         yesBtn={t("modal.confirm")}
         onClickDelete={updateWorkFlowForMaterials}
       />
-       <GoMakeModal
+      <GoMakeModal
         openModal={isOpenCompareModal.isOpen}
         onClose={isOpenCompareModal.close}
         modalTitle={compareWorkFlowsData?.title ? compareWorkFlowsData?.title : t("pricingWidget.dynamicTable.compareModalTitle", {

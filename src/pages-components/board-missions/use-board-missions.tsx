@@ -1,4 +1,5 @@
 import {
+  SampleTypeOption,
   useAgentsList,
   useCustomerDropDownList,
   useGomakeAxios,
@@ -48,6 +49,7 @@ import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-miss
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { JobsTableColumns } from "../quotes/enums/document-table-columns-enum";
+import { exampleTypeState } from "@/store/example-type";
 
 type StatusOption = {
   label: string;
@@ -74,6 +76,7 @@ interface Query {
   fromReadyDate?: string;
   toReadyDate?: string;
   productsIds?: string[];
+  sampleType?: number;
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -101,7 +104,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
-
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
+  const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
   // const [patternSearch, setPatternSearch] = useState<string>("");
   const [patternSearch, setPatternSearch] = useState<any>(null);
 
@@ -357,6 +361,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       delete newQuery.toReadyDate;
     }
 
+    if (sampleType?.value) {
+      newQuery.sampleType = sampleType.value;
+    } else {
+      delete newQuery.sampleType;
+    }
+
     router.replace(
       {
         pathname: router.pathname,
@@ -375,6 +385,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setCustomer(null);
     setStatus(null);
     setOrderStatus(null);
+    setSampleType(null);
     selectedSupplierId(null);
     setProductIds([]);
     setPatternSearch("");
@@ -744,6 +755,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? GetDateFormat(new Date(currentToReadyDate))
         : undefined;
 
+
+    const currentSampleType = router.query.sampleType;
+
     const data = isClear
       ? {
         productsIds: [],
@@ -782,6 +796,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         pageSize: pageSize,
         orderNumber: router?.query?.orderNumber,
         order: sortOrder,
+        exampleType: Number(currentSampleType) || Number(sampleType?.value),
       };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
@@ -846,7 +861,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentPageNumber = router.query.pageNumber;
-
+    const currentSampleType = router.query.sampleType;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
@@ -877,6 +892,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           productsIds: productIds,
           productionStatus: status?.value,
           orderStatus: orderStatus?.value,
+          exampleType: Number(currentSampleType) || Number(sampleType?.value), // Add this line
           pageNumber: currentPageNumber || pageNumber,
           pageSize: pageSize,
           supplierId: supplierId?.value,
@@ -1241,8 +1257,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       finalPatternSearch,
       pageNumber,
       productsIds,
+      sampleType,
     } = router.query;
 
+
+    if (sampleType) {
+      const sampleTypeValue = Array.isArray(sampleType) ? sampleType[0] : sampleType;
+      const selectedSampleType = exampleTypeValues?.find(
+        (option) => option.key === sampleTypeValue
+      );
+      if (selectedSampleType) {
+        setSampleType({
+          value: selectedSampleType.key,
+          text: t(`products.proofTypes.${selectedSampleType.value}`),
+        });
+      }
+    }
     if (productsIds) {
       const productIdsArray = Array.isArray(productsIds)
         ? productsIds
@@ -1388,7 +1418,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const currentFromReadyDate = router.query.fromReadyDate;
     const currentToReadyDate = router.query.toReadyDate;
-
+    const currentSampleType = router.query.sampleType;
     const currentFormattedFromDate =
       typeof currentFromDate === "string"
         ? GetDateFormat(new Date(currentFromDate))
@@ -1418,6 +1448,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       typeof currentToReadyDate === "string"
         ? GetDateFormat(new Date(currentToReadyDate))
         : undefined;
+
 
     const data = {
       clientId: router?.query?.clientId || customer?.id,
@@ -1449,6 +1480,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber: pageNumber || currentPageNumber,
       pageSize: pageSize,
       orderNumber: router?.query?.orderNumber,
+      exampleType: Number(currentSampleType) || Number(sampleType?.value),
     };
 
     await exportJobTableToExcelApi(callApi, callBack, data);
@@ -1609,6 +1641,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     isHeaderSortable,
     isDescOrderBE,
     handleSortBE,
+    exampleTypeValues,
+    sampleType,
+    setSampleType,
   };
 };
 

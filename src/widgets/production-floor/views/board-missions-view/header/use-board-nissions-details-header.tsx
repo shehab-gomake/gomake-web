@@ -108,8 +108,6 @@ const useBoardMissionsDetailsHeader = () => {
               })
             );
           }
-          console.log("newStatusId", newStatusId)
-
           if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample) {
             setOpenSimpleApproveModal(true);
           }

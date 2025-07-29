@@ -56,8 +56,8 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     />,
     order.number,
     DOCUMENT_TYPE[order.documentType],
-    order.totalPaymentBeforeVat,
-    order.totalPayment,
+    order.totalPriceWithoutVat,
+    order.totalPrice,
   ]);
 
   // Handling selection of orders

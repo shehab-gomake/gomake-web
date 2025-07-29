@@ -34,7 +34,7 @@ const AddSupplierModal = () => {
   } = useAddMaterialSupplier();
   const { materialCategories } = useMaterials(false);
   const { t } = useTranslation();
-  const {} = useClientTypesList(true, CLIENT_TYPE_Id.SUPPLIER);
+  const { } = useClientTypesList(true, CLIENT_TYPE_Id.SUPPLIER);
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
       clientType: CLIENT_TYPE.SUPPLIER,
