@@ -502,7 +502,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickSendAndChat = async (managerIds: string[]) => {
     const callBack = (res) => {
       if (res?.success) {
-        push(`/messenger?dialogId=${res.data}`);
+        if(res?.data){
+          push(`/messenger?dialogId=${res.data}`);
+        }else{
+          push(`/quotes`);
+        }
+        
       } else alertFaultSend();
     };
     await sendQuoteApprovalToManagerApi(callApi, callBack, {
