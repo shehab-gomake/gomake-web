@@ -110,6 +110,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     };
     await getBoardMissionPDF(callApi, callBack, {
       boardMissionId: mission?.boardMissionId,
+      productType: mission?.productType ?? "",
     });
   };
 

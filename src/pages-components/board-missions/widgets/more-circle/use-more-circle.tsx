@@ -187,7 +187,7 @@ const useMoreCircle = ({
       condition: true && isSendPaymentToClient,
       name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
-      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId),
+      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId, mission?.productType),
     },
     {
       condition: true && isSendPaymentToClient,

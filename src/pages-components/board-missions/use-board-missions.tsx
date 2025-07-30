@@ -933,7 +933,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onClickWorkMissionPdf = async (
     boardMissionId: string,
-    actionId: string
+    actionId: string,
+    productType: string
   ) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -947,6 +948,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       boardMissionId,
       isPurchaseJobs,
       actionId: actionId,
+      productType: productType ?? "",
     });
   };
 
