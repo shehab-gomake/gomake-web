@@ -77,6 +77,7 @@ import {
   QR_CODE_LISTENER_FROM,
   useQrCodeListener,
 } from "@/hooks/use-qr-code-listener";
+import QrCodeReader from "@/components/qr-code-reader";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -439,7 +440,6 @@ const QuotesListPageWidget = ({
 
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
-  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.QUOTES })
   return (
     <>
       {!isFromHomePage && (
@@ -450,6 +450,7 @@ const QuotesListPageWidget = ({
           spacing={2}
           height="100%"
         >
+          <QrCodeReader qrCodeListenerFrom={QR_CODE_LISTENER_FROM.QUOTES}/>
           <div style={classes.mainContainer}>
             {/* header section */}
             <div style={classes.headerStyle}>

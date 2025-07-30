@@ -106,12 +106,16 @@ const FilesGroupComponent = ({
     });
 
   };
-  const printJobUsingPrintNode = async (jobId: string) => {
+  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+    let data = jobId;
+    if(productType){
+      data = data + "?productType="+productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
 
 
@@ -306,7 +310,7 @@ const FilesGroupComponent = ({
         yesBtn={t("sales.quote.print")}
         openModal={isOpenPrintingModal.isOpen}
         onClose={isOpenPrintingModal.close}
-        onClickDelete={() => { printJobUsingPrintNode(boardMissionId).then() }}
+        onClickDelete={() => { printJobUsingPrintNode(boardMissionId,productType).then() }}
       />
     </Stack>
   );

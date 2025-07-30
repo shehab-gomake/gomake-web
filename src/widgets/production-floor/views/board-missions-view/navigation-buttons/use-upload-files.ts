@@ -34,7 +34,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     setShowFileUploader(true);
 
     const filesGroup = uploadingFiles?.find(
-      (fg) => fg.orderItemId === orderItemId
+      (fg) => fg.orderItemId === orderItemId && fg.productType === productType
     );
     debugger
 console.log("uploadingFiles",filesGroup)
@@ -194,7 +194,7 @@ console.log("uploadingFiles",filesGroup)
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
-    formData.append("productType", productType);
+    formData.append("productType", productType ? productType.toString() : null);
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);

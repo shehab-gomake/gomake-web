@@ -94,7 +94,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
 
   const [barcode, setBarcode] = useState('');
   const [scanBuffer, setScanBuffer] = useState('');
-  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+  //const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     let isProcessingBarCode = false;
@@ -119,9 +119,9 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
         return;
       }
       // Clear previous timeout if exists
-      if (timeoutIdRef.current) {
+      /*if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
-      }
+      }*/
 
       // Handle Enter key for scan completion
       if (event.key === 'Enter' && scanBuffer.length > 0) {
@@ -143,18 +143,18 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
       }
 
       // Set timeout to detect end of scanner input
-      timeoutIdRef.current = setTimeout(() => {
+      /*timeoutIdRef.current = setTimeout(() => {
         setScanBuffer('');
-      }, 100);
+      }, 100);*/
     };
 
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      if (timeoutIdRef.current) {
+      /*if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
-      }
+      }*/
     };
   }, [scanBuffer, stations, router.asPath]); // Added stations and router.asPath to dependencies
 
