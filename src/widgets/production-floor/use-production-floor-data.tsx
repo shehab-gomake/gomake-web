@@ -348,14 +348,6 @@ const useProductionFloorData = () => {
             <MoreMenuWidget
               mission={mission}
               isDoneJobs={true}
-              // onClickDuplicate={onOpenDuplicateModal}
-              // onOpenModal={onOpenModal}
-              // onClickPrintPackagingSlip={onOpenPackagesModal}
-              // onClickMarksAsDone={onOpenMarkReadyModal}
-              // onClickMarksAsDoneForProductType={
-              //   onOpenMarkReadyModalForProductType
-              // }
-              // onClickReturnToProduction={onOpenReturnToProdModal}
               onClickOrderSummeryPdf={onClickOrderSummeryPdf}
               onClickWorkMissionPdf={onClickWorkMissionPdf}
             />,
@@ -370,7 +362,8 @@ const useProductionFloorData = () => {
 
     const onClickWorkMissionPdf = async (
       boardMissionId: string,
-      actionId: string
+      actionId: string,
+      productType: string
     ) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -384,6 +377,7 @@ const useProductionFloorData = () => {
         boardMissionId,
         isPurchaseJobs: false,
         actionId: actionId,
+        productType: productType ?? "",
       });
     };
 
@@ -675,6 +669,7 @@ const useProductionFloorData = () => {
     };
     await getBoardMissionPDF(callApi, callBack, {
       boardMissionId: boardMissionId?.id,
+      productType: boardMissionId?.productType ?? "",
     });
   };
 

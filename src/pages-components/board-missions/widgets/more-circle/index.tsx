@@ -10,7 +10,7 @@ interface IBoardMissionsProps {
   onClickMarksAsDone?: (mission?: any) => void;
   onClickReturnToProduction?: (mission?: any) => void;
   onClickOrderSummeryPdf?: (id: string) => void;
-  onClickWorkMissionPdf?: (id: string, actionId: string) => void;
+  onClickWorkMissionPdf?: (id: string, actionId: string, productType: string) => void;
   onOpenModal?: (mission?: any) => void;
   onClickPrintPackagingSlip?: (mission?: any) => void;
   onClickMarksAsDoneForProductType?: (mission?: any) => void;
