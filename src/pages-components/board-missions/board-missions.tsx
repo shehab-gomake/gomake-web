@@ -49,8 +49,8 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
-import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
-import { exampleTypeState } from "@/store/example-type";
+import QrCodeReader from "@/components/qr-code-reader";
+import {QR_CODE_LISTENER_FROM} from "@/hooks/use-qr-code-listener";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -239,321 +239,319 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     top: 420px !important;
   }
 `;
-
-
-  const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS });
   return (
     <>
       <Stack
-        direction="column"
-        justifyContent="space-between"
-        display="flex"
-        spacing={1}
-        height="100%"
+          direction="column"
+          justifyContent="space-between"
+          display="flex"
+          spacing={1}
+          height="100%"
       >
+        <QrCodeReader qrCodeListenerFrom={QR_CODE_LISTENER_FROM.JOBS}/>
         <div style={classes.mainContainer}>
           <HeaderTitle
-            title={
-              !isPurchaseJobs
-                ? t("boardMissions.title")
-                : t("boardMissions.purchaseJobsTitle")
-            }
-            marginTop={1}
-            marginBottom={1}
+              title={
+                !isPurchaseJobs
+                    ? t("boardMissions.title")
+                    : t("boardMissions.purchaseJobsTitle")
+              }
+              marginTop={1}
+              marginBottom={1}
           />
           <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
           >
             <SearchInputComponent
-              searchInputStyle={{ width: 400 }}
-              filtersButton={
-                <InputAdornment position="start">
-                  <div>
-                    <IconButton onClick={handleClick}>
-                      <TuneIcon />
-                      {Object.keys(router.query).filter(
-                        (key) => key !== "pageNumber"
-                      ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
+                searchInputStyle={{width: 400}}
+                filtersButton={
+                  <InputAdornment position="start">
+                    <div>
+                      <IconButton onClick={handleClick}>
+                        <TuneIcon/>
+                        {Object.keys(router.query).filter(
+                            (key) => key !== "pageNumber"
+                        ).length > 0 && (
+                            <div
+                                style={{position: "absolute", top: -5, right: -1}}
+                            >
+                              <DotIcon/>
+                            </div>
                         )}
-                    </IconButton>
-                    <GoMakeMenu
-                      handleClose={handleClose}
-                      open={open}
-                      anchorEl={anchorEl}
-                    >
-                      <div style={classes.filtersContainer}>
-                        <div style={classes.selectedFilterContainer}>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {isPurchaseJobs
-                                ? t("reports.supplier")
-                                : t("sales.quote.customer")}
-                            </h3>
-                            <ClientAutocomplete
-                              key={customer?.id}
-                              clientType={
-                                isPurchaseJobs
-                                  ? CLIENT_TYPE.SUPPLIER
-                                  : CLIENT_TYPE.CUSTOMER
-                              }
-                              options={renderOptions() ? renderOptions() : []}
-                              onChangeTextField={checkWhatRenderArray}
-                              getOptionLabel={(option: any) => `${option.name}`}
-                              style={classes.textInputStyle}
-                              onChange={handleCustomerChange}
-                              value={customer}
-                              withArrow={true}
-                              loading={isFetching}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("sales.quote.agent")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={agent?.id}
-                              options={agentsCategories}
-                              style={classes.textInputStyle}
-                              getOptionLabel={(option: any) => option.label}
-                              placeholder={t("sales.quote.ChooseAgent")}
-                              onChange={handleAgentChange}
-                              value={agent}
-                              withArrow={true}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.productionStatus")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={status?.value}
-                              options={productionStatuses}
-                              style={classes.textInputStyle}
-                              placeholder={t("boardMissions.productionStatus")}
-                              onChange={handleStatusChange}
-                              value={status}
-                              withArrow={true}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.orderStatus")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={orderStatus?.value}
-                              options={orderStatuses}
-                              style={classes.textInputStyle}
-                              placeholder={t("boardMissions.orderStatus")}
-                              onChange={handleOrderStatusChange}
-                              value={orderStatus}
-                              withArrow={true}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("products.offsetPrice.admin.proof")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={sampleType?.value}
-                              options={
-                                exampleTypeValues?.map((option) => ({
-                                  value: option.key,
-                                  text: t(`products.proofTypes.${option.value}`),
-                                })) || []
-                              }
-                              getOptionLabel={(option: any) => option.text}
-                              placeholder={t("products.offsetPrice.admin.proof")}
-                              style={classes.textInputStyle}
-                              onChange={(e, value) => setSampleType(value)}
-                              value={sampleType}
-                            />
-                          </div>
+                      </IconButton>
+                      <GoMakeMenu
+                          handleClose={handleClose}
+                          open={open}
+                          anchorEl={anchorEl}
+                      >
+                        <div style={classes.filtersContainer}>
+                          <div style={classes.selectedFilterContainer}>
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {isPurchaseJobs
+                                    ? t("reports.supplier")
+                                    : t("sales.quote.customer")}
+                              </h3>
+                              <ClientAutocomplete
+                                  key={customer?.id}
+                                  clientType={
+                                    isPurchaseJobs
+                                        ? CLIENT_TYPE.SUPPLIER
+                                        : CLIENT_TYPE.CUSTOMER
+                                  }
+                                  options={renderOptions() ? renderOptions() : []}
+                                  onChangeTextField={checkWhatRenderArray}
+                                  getOptionLabel={(option: any) => `${option.name}`}
+                                  style={classes.textInputStyle}
+                                  onChange={handleCustomerChange}
+                                  value={customer}
+                                  withArrow={true}
+                                  loading={isFetching}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("sales.quote.agent")}
+                              </h3>
+                              <GoMakeAutoComplate
+                                  key={agent?.id}
+                                  options={agentsCategories}
+                                  style={classes.textInputStyle}
+                                  getOptionLabel={(option: any) => option.label}
+                                  placeholder={t("sales.quote.ChooseAgent")}
+                                  onChange={handleAgentChange}
+                                  value={agent}
+                                  withArrow={true}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.productionStatus")}
+                              </h3>
+                              <GoMakeAutoComplate
+                                  key={status?.value}
+                                  options={productionStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t("boardMissions.productionStatus")}
+                                  onChange={handleStatusChange}
+                                  value={status}
+                                  withArrow={true}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.orderStatus")}
+                              </h3>
+                              <GoMakeAutoComplate
+                                  key={orderStatus?.value}
+                                  options={orderStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t("boardMissions.orderStatus")}
+                                  onChange={handleOrderStatusChange}
+                                  value={orderStatus}
+                                  withArrow={true}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("products.offsetPrice.admin.proof")}
+                              </h3>
+                              <GoMakeAutoComplate
+                                  key={sampleType?.value}
+                                  options={
+                                      exampleTypeValues?.map((option) => ({
+                                        value: option.key,
+                                        text: t(`products.proofTypes.${option.value}`),
+                                      })) || []
+                                  }
+                                  getOptionLabel={(option: any) => option.text}
+                                  placeholder={t("products.offsetPrice.admin.proof")}
+                                  style={classes.textInputStyle}
+                                  onChange={(e, value) => setSampleType(value)}
+                                  value={sampleType}
+                              />
+                            </div>
 
 
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.products")}
-                            </h3>
-                            <GoMakeMultiSelect
-                              onChange={handleMultiSelectChange}
-                              style={classes.textInputForProductsStyle}
-                              options={productsList}
-                              values={productIds}
-                              placeholder={t("boardMissions.selectProducts")}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.dateRange")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectDeliveryTimeDates}
-                              value={
-                                fromDate && toDate ? [fromDate, toDate] : null
-                              }
-                              ranges={predefinedRanges}
-                            />
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.products")}
+                              </h3>
+                              <GoMakeMultiSelect
+                                  onChange={handleMultiSelectChange}
+                                  style={classes.textInputForProductsStyle}
+                                  options={productsList}
+                                  values={productIds}
+                                  placeholder={t("boardMissions.selectProducts")}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <GlobalStyle RTL={RTL}/>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.dateRange")}
+                              </h3>
+                              <DateRangePicker
+                                  onChange={onSelectDeliveryTimeDates}
+                                  value={
+                                    fromDate && toDate ? [fromDate, toDate] : null
+                                  }
+                                  ranges={predefinedRanges}
+                              />
+                            </div>
+
+                            <div style={classes.statusFilterContainer}>
+                              <GlobalStyle RTL={RTL}/>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.dueDate")}
+                              </h3>
+                              <DateRangePicker
+                                  onChange={onSelectDueTimeDates}
+                                  value={
+                                    fromDueDate && toDueDate
+                                        ? [fromDueDate, toDueDate]
+                                        : null
+                                  }
+                                  ranges={predefinedRanges}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <GlobalStyle RTL={RTL}/>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.readyDate")}
+                              </h3>
+                              <DateRangePicker
+                                  onChange={onSelectReadyTimeDates}
+                                  value={
+                                    fromReadyDate && toReadyDate
+                                        ? [fromReadyDate, toReadyDate]
+                                        : null
+                                  }
+                                  ranges={predefinedRanges}
+                              />
+                            </div>
                           </div>
 
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.dueDate")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectDueTimeDates}
-                              value={
-                                fromDueDate && toDueDate
-                                  ? [fromDueDate, toDueDate]
-                                  : null
-                              }
-                              ranges={predefinedRanges}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.readyDate")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectReadyTimeDates}
-                              value={
-                                fromReadyDate && toReadyDate
-                                  ? [fromReadyDate, toReadyDate]
-                                  : null
-                              }
-                              ranges={predefinedRanges}
-                            />
+                          <div style={classes.buttonsFiltersContainer}>
+                            <div style={classes.buttonsFilterContainer}>
+                              <div style={classes.filterLabelStyle}/>
+                              <GomakePrimaryButton
+                                  style={classes.clearBtnStyle}
+                                  onClick={handleClickClear}
+                              >
+                                {t("sales.quote.clear")}
+                              </GomakePrimaryButton>
+                            </div>
+                            <div style={classes.buttonsFilterContainer}>
+                              <div style={classes.filterLabelStyle}/>
+                              <GomakePrimaryButton
+                                  style={classes.searchBtnStyle}
+                                  onClick={handleClickSearch}
+                              >
+                                {t("sales.quote.search")}
+                              </GomakePrimaryButton>
+                            </div>
                           </div>
                         </div>
-
-                        <div style={classes.buttonsFiltersContainer}>
-                          <div style={classes.buttonsFilterContainer}>
-                            <div style={classes.filterLabelStyle} />
-                            <GomakePrimaryButton
-                              style={classes.clearBtnStyle}
-                              onClick={handleClickClear}
-                            >
-                              {t("sales.quote.clear")}
-                            </GomakePrimaryButton>
-                          </div>
-                          <div style={classes.buttonsFilterContainer}>
-                            <div style={classes.filterLabelStyle} />
-                            <GomakePrimaryButton
-                              style={classes.searchBtnStyle}
-                              onClick={handleClickSearch}
-                            >
-                              {t("sales.quote.search")}
-                            </GomakePrimaryButton>
-                          </div>
-                        </div>
-                      </div>
-                    </GoMakeMenu>
-                  </div>
-                </InputAdornment>
-              }
-              onChange={onChangeMissionsSearch}
-              value={patternSearch}
-              inputRef={searchInputRef}
+                      </GoMakeMenu>
+                    </div>
+                  </InputAdornment>
+                }
+                onChange={onChangeMissionsSearch}
+                value={patternSearch}
+                inputRef={searchInputRef}
             />
             {!isPurchaseJobs && (
-              <ExcelMenu onExportTableClick={ExportJobsTableToExcel} documentType={null} />
+                <ExcelMenu onExportTableClick={ExportJobsTableToExcel} documentType={null}/>
             )}
           </div>
           <PrimaryTable
-            stickyFirstCol={false}
-            stickyHeader={true}
-            maxHeight={"calc(100vh - 250px)"}
-            rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
-            headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
-            withSortBE={true}
-            onClickSortBE={handleSortBE}
-            isDescOrderBE={isDescOrderBE}
-            isHeaderSortable={isHeaderSortable}
-            columnWidths={
-              !isPurchaseJobs
-                ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                  ? [
-                    "7%",
-                    "7%",
-                    "6%",
-                    "6%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
-                  ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
-            }
+              stickyFirstCol={false}
+              stickyHeader={true}
+              maxHeight={"calc(100vh - 250px)"}
+              rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
+              headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
+              withSortBE={true}
+              onClickSortBE={handleSortBE}
+              isDescOrderBE={isDescOrderBE}
+              isHeaderSortable={isHeaderSortable}
+              columnWidths={
+                !isPurchaseJobs
+                    ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+                        ? [
+                          "7%",
+                          "7%",
+                          "6%",
+                          "6%",
+                          "7%",
+                          "7%",
+                          "8%",
+                          "7%",
+                          "4%",
+                          "6%",
+                          "12%",
+                          "7%",
+                          "7%",
+                          "13%",
+                          "3%",
+                        ]
+                        : [
+                          "7%",
+                          "7%",
+                          "7%",
+                          "7%",
+                          "7%",
+                          "7%",
+                          "8%",
+                          "7%",
+                          "18%",
+                          "7%",
+                          "15%",
+                          "7%",
+                          "3%",
+                        ]
+                    : [
+                      "7%",
+                      "5%",
+                      "6%",
+                      "7%",
+                      "6%",
+                      "7%",
+                      "11%",
+                      "8%",
+                      "6%",
+                      "8%",
+                      "5%",
+                      "5%",
+                      "7%",
+                      "7%",
+                      "4%",
+                      "2%",
+                    ]
+              }
           />
         </div>
         <GoMakePagination
-          onChangePageNumber={handlePageChange}
-          onChangePageSize={handlePageSizeChange}
-          page={pageNumber}
-          setPage={setPageNumber}
-          pagesCount={pagesCount}
-          pageSize={pageSize}
-          router={router}
-          isFromDocumentsOrJobs={true}
-          initialPageSize={initialPageSize}
+            onChangePageNumber={handlePageChange}
+            onChangePageSize={handlePageSizeChange}
+            page={pageNumber}
+            setPage={setPageNumber}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
+            router={router}
+            isFromDocumentsOrJobs={true}
+            initialPageSize={initialPageSize}
         />
       </Stack>
       <ThreeOptionsModal
-        modalType={ModalType.DUPLICATE}
-        title={t("boardMissions.duplicateModalTitle")}
-        yesBtn={"boardMissions.duplicateModalYes"}
-        noBtn={"boardMissions.duplicateModalNo"}
+          modalType={ModalType.DUPLICATE}
+          title={t("boardMissions.duplicateModalTitle")}
+          yesBtn={"boardMissions.duplicateModalYes"}
+          noBtn={"boardMissions.duplicateModalNo"}
         openModal={openDuplicateModal}
         onClose={onCloseDuplicateModal}
         onClickYes={() =>
