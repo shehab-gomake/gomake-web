@@ -665,6 +665,7 @@ const QuoteNewPageWidget = ({
                     handleChange={handleChangeCreationDate}
                     isEditable={false}
                     inputRef={creationDateRef}
+                    withTime={true}
                   />}
                   <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
                     <ClientBalanceComponent
