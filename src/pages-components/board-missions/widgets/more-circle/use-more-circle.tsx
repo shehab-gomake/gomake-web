@@ -129,12 +129,16 @@ const useMoreCircle = ({
     });
   };
 
-  const printJobUsingPrintNode = async (jobId: string) => {
+  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+    let data = jobId;
+    if(productType){
+      data = data + "?productType="+productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
   const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
@@ -251,7 +255,7 @@ const useMoreCircle = ({
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () => {
-        printJobUsingPrintNode(mission?.id).then();
+        printJobUsingPrintNode(mission?.id,mission?.productType).then();
       },
     },
     !!companyProfile.filesApiAddress && {

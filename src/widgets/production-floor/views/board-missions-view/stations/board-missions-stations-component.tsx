@@ -33,12 +33,16 @@ const BoardMissionsStationsComponent = ({
   );
   const isLoading =
     !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
-  const printJobUsingPrintNode = async (jobId: string) => {
+  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+    let data = jobId;
+    if(productType){
+      data = data + "?productType="+productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
   return (
     <Stack gap={"10px"} maxHeight="100%">
@@ -97,7 +101,7 @@ const BoardMissionsStationsComponent = ({
             }}
             onClickDelete={() => {
               setIsPrintNodeModalOpen(false);
-              printJobUsingPrintNode(router.query.boardMissionsId as string).then();
+              printJobUsingPrintNode(router.query.boardMissionsId as string,boardMissionsDetails.productType).then();
             }}
             // onClickCancel={() => {
             //   setIsPrintNodeModalOpen(false)

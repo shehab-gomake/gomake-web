@@ -211,7 +211,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         !!(
           isPrintHouseUsePrintNode &&
           newOrderId &&
-          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
+          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS) && 
+          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
         printNodeModalShowLog(callApi, () => { }, {
