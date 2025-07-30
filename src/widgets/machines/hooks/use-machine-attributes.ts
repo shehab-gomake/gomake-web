@@ -50,14 +50,14 @@ const useMachineAttributes = () => {
         machineState?.attributes?.monthlyCostOfSpace,
         machineState?.attributes?.electricityCostPerWorkingHour
     ]);
-
     // Track changes to direct machineHourCost value
     useEffect(() => {
+       
         if (machineState.attributes?.machineHourCost !== undefined) {
             setMachineHourCostValue(Number(machineState.price.machineHourCost));
             setMachine({...machineState, price: {...machineState.price, machineHourCost: Number(machineState.attributes.machineHourCost)}});
         }
-    }, [machineState.attributes?.machineHourCost]);
+    }, []);
 
     
     const changeMachineGeneralAttributes = (key: string, value: any) => {
