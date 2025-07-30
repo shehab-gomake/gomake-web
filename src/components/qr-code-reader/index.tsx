@@ -104,7 +104,6 @@ const QrCodeReader = (props:IProps)=>{
                 onError={handleError}
                 onScan={handleScan}
             />
-            <p>{myState}</p>
         </div>
     )
 }
