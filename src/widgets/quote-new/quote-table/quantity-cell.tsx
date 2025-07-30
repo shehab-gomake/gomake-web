@@ -17,6 +17,7 @@ const QuoteQuantityCell = ({
   isUpdateAmount,
   setIsUpdateAmount,
   onBlurAmount,
+  isPrePaymentPage,
   t
 }) => {
   const quantityContent = (
@@ -29,7 +30,7 @@ const QuoteQuantityCell = ({
             value={item?.quantity}
             onBlur={onBlurApproveAmount}
             isUpdate={
-              quoteItems?.isCanUpdateQuantity && isUpdateApproveAmount
+              quoteItems?.isCanUpdateQuantity && isUpdateApproveAmount && !isPrePaymentPage
             }
             setIsUpdate={setIsUpdateApproveAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
@@ -52,7 +53,7 @@ const QuoteQuantityCell = ({
           <InputUpdatedValues
             value={item?.quantity}
             onBlur={onBlurAmount}
-            isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
+            isUpdate={canUpdatePricesBasedOnType && isUpdateAmount && !isPrePaymentPage}
             setIsUpdate={setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
             // Enhanced styling for closed items

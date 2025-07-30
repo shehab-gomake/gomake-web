@@ -289,6 +289,7 @@ const RowMappingWidget = ({
             canUpdate={canUpdate}
             documentType={documentType}
             workName={item?.workName}
+            isPrePaymentPage={isPrePaymentPage}
           />
         </PrimaryTableCell>
       )}
@@ -313,6 +314,7 @@ const RowMappingWidget = ({
           isUpdateAmount={isUpdateAmount}
           setIsUpdateAmount={setIsUpdateAmount}
           onBlurAmount={onBlurAmount}
+          isPrePaymentPage={isPrePaymentPage}
           t={t}
         />
       </PrimaryTableCell>
@@ -331,7 +333,7 @@ const RowMappingWidget = ({
               <InputUpdatedValues
                 value={item.price}
                 onBlur={onBlurPrice}
-                isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
+                isUpdate={canUpdatePricesBasedOnType && isUpdatePrice && !isPrePaymentPage}
                 setIsUpdate={
                   isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
                 }
@@ -359,7 +361,7 @@ const RowMappingWidget = ({
               <InputUpdatedValues
                 value={item.discount ? item.discount : "0"}
                 onBlur={onBlurDiscount}
-                isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
+                isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount && !isPrePaymentPage}
                 setIsUpdate={
                   isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
                 }
@@ -405,7 +407,7 @@ const RowMappingWidget = ({
                   <InputUpdatedValues
                     value={item.finalPrice}
                     onBlur={onBlurFinalPrice}
-                    isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
+                    isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice && !isPrePaymentPage}
                     setIsUpdate={
                       isQuoteConfirmation
                         ? setIsConfirmation

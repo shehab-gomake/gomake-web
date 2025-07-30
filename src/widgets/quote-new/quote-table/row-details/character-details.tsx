@@ -15,6 +15,7 @@ interface CharacterDetailsProps {
   canUpdate?: boolean;
   documentType?: number;
   workName?: string;
+  isPrePaymentPage?: boolean;
 }
 
 const CharacterDetails = ({
@@ -27,6 +28,7 @@ const CharacterDetails = ({
   canUpdate = true,
   documentType,
   workName,
+  isPrePaymentPage
 }: CharacterDetailsProps) => {
   const {
     t,
@@ -54,7 +56,7 @@ const CharacterDetails = ({
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
-  const canEditDetails = canUpdate && !canNotEditWhenShowJobNameOnly;
+  const canEditDetails = canUpdate && !canNotEditWhenShowJobNameOnly && !isPrePaymentPage;
 
   return (
     <>
