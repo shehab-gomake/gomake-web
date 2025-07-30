@@ -36,7 +36,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     const filesGroup = uploadingFiles?.find(
       (fg) => fg.orderItemId === orderItemId
     );
-
+console.log("uploadingFiles",filesGroup)
     if (filesGroup) {
       setUploadingFiles(
         uploadingFiles.map((fg) =>
@@ -111,7 +111,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
         file?.name,
         fileType, 
         productType,
-        hotFolderName
+        hotFolderName,
+        filesGroup
       );
 
       if (!response || !response.success) {
@@ -187,7 +188,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     fileName,
     fileType,
     productType,
-    hotFolderName
+    hotFolderName,
+    filesGroup
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
@@ -223,7 +225,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       );
 
       const data = await response.json();
-      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)){
+      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && filesGroup?.filesInfo?.length < 1){
         isOpenPrintingModal?.open();
       }
       return data;

@@ -204,9 +204,15 @@ const FilesGroupComponent = ({
               </Stack>
             )}
             <Stack>
-              {graphicsFiles.map((file) => (
-                <FileComponent {...file} />
-              ))}
+              <div style={{
+                maxHeight: '200px',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+              }}>
+                {graphicsFiles.map((file) => (
+                  <FileComponent {...file} />
+                ))}
+              </div>
             </Stack>
           </Stack>
         </Stack>
@@ -270,10 +276,16 @@ const FilesGroupComponent = ({
                 </span>
               </Stack>
             )}
-            <Stack>
-              {printingFiles.map((file) => (
-                <FileComponent {...file} />
-              ))}
+            <Stack >
+              <div style={{
+                maxHeight: '200px',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+              }}>
+                {printingFiles.map((file) => (
+                  <FileComponent {...file} />
+                ))}
+              </div>
             </Stack>
           </Stack>
         </Stack>
