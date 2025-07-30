@@ -105,7 +105,7 @@ const useCompanyProfile = () => {
       fileBase64: file,
       printHouseLogoType: 2,
     });
-
+    window.location.reload();
     return res.success;
   };
 
