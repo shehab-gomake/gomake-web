@@ -647,7 +647,10 @@ const handleBoardMissionsBarcodeActions: ICallAndSetData = async (
     EHttpMethod.PUT,
     HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS,
     callBack,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 
@@ -873,7 +876,10 @@ const handleBoardMissionsBarcodeActionsApi: ICallAndSetData = async (
     EHttpMethod.GET,
     HANDLE_BOARD_MISSIONS_BARCODE_ACTIONS_URL,
     callBack,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 
