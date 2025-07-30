@@ -155,8 +155,13 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-            }&step=stations`}
+          href={
+            mission?.groupedInJobId !== null ?
+              `/production-floor?boardMissionsId=${mission?.groupedInJobId}${mission?.productType ? `&productType=${mission?.productType}` : ""
+              }&step=stations`
+              :
+              `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+              }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>

@@ -99,6 +99,11 @@ import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket
 import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
+export interface SampleTypeOption {
+  value: number;
+  text: string;
+}
+
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
     openQuantityComponentModalState
@@ -297,7 +302,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
   };
   useEffect(() => {
-    if (calculationResult && widgetType != EWidgetProductType.EDIT) {
+    if (calculationResult && (widgetType != EWidgetProductType.EDIT || widgetType != EWidgetProductType.DUPLICATE)) {
       setCalculationResult(calculationResult);
     }
   }, [calculationResult]);
@@ -444,7 +449,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setJobActions(result?.productItemValue.actions);
       setCalculationResult(result);
       if (
-        widgetType === EWidgetProductType.EDIT &&
+        (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) &&
         (isActionEmployeeUpdated || isJobNameValue)
       ) {
         setIsChangePriceForEdit(true);
@@ -652,7 +657,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
         if (
-          widgetType === EWidgetProductType.EDIT &&
+          (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) &&
           (isActionEmployeeUpdated || isJobNameValue)
         ) {
           setIsChangePriceForEdit(true);
@@ -1865,7 +1870,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
-        setIsSetTemplete(widgetType === EWidgetProductType.EDIT ? false : true);
+        setIsSetTemplete((widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) ? false : true);
         setTimeout(() => {
           setIsSetTemplete(true);
         }, 500);
@@ -1875,7 +1880,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (
-      widgetType === EWidgetProductType.EDIT &&
+      (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) &&
       !isMigratedFromOldSystem &&
       productTemplate?.productItemValue &&
       productTemplate?.productItemValue?.itemParmetersValues?.length > 0 &&
@@ -2609,10 +2614,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     text: string;
   }
 
-  interface SampleTypeOption {
-    value: number;
-    text: string;
-  }
+
 
   const getGraphicsType = (
     billingMethod?: BillingMethod

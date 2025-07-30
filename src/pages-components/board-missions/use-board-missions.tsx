@@ -1,4 +1,5 @@
 import {
+  SampleTypeOption,
   useAgentsList,
   useCustomerDropDownList,
   useGomakeAxios,
@@ -48,6 +49,7 @@ import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-miss
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { JobsTableColumns } from "../quotes/enums/document-table-columns-enum";
+import { exampleTypeState } from "@/store/example-type";
 
 type StatusOption = {
   label: string;
@@ -74,6 +76,7 @@ interface Query {
   fromReadyDate?: string;
   toReadyDate?: string;
   productsIds?: string[];
+  sampleType?: number;
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -101,7 +104,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
-
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
+  const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
   // const [patternSearch, setPatternSearch] = useState<string>("");
   const [patternSearch, setPatternSearch] = useState<any>(null);
 
@@ -239,9 +243,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.costFromOrderItem"),
+    t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.priceFromOrderItem"),
+    t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -357,6 +361,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       delete newQuery.toReadyDate;
     }
 
+    if (sampleType?.value) {
+      newQuery.sampleType = sampleType.value;
+    } else {
+      delete newQuery.sampleType;
+    }
+
     router.replace(
       {
         pathname: router.pathname,
@@ -375,6 +385,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setCustomer(null);
     setStatus(null);
     setOrderStatus(null);
+    setSampleType(null);
     selectedSupplierId(null);
     setProductIds([]);
     setPatternSearch("");
@@ -498,7 +509,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return (
         <>
           <div>{t("boardMissions.done")}</div>
-          <div>{mission?.storage ? ` ${mission.storage}` : ""}</div>
+
+          <div>{mission?.storage === "undefined" ? "" : mission?.storage ? ` ${mission.storage}` :
+            " "}</div>
         </>
       );
     }
@@ -571,7 +584,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-            mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
           return [
@@ -601,11 +614,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               {mission?.clientName}
             </div>,
             mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName
-                    ? mission?.productTypeName
-                    : mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName
+                ? mission?.productTypeName
+                : mission?.productType
+              }`
               : mission?.number,
             <Stack
               direction="column"
@@ -634,32 +646,32 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.quantity,
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               ? [
-                  isRTL
-                    ? mission?.cost +
-                      " " +
-                      getCurrencyUnitText(mission?.currency)
-                    : getCurrencyUnitText(mission?.currency) +
-                      " " +
-                      mission?.cost,
-                ]
+                isRTL
+                  ? mission?.cost +
+                  " " +
+                  getCurrencyUnitText(mission?.currency)
+                  : getCurrencyUnitText(mission?.currency) +
+                  " " +
+                  mission?.cost,
+              ]
               : []),
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               ? [
-                  [
-                    isRTL
-                      ? mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " ") +
-                        getCurrencyUnitText(mission?.currency)
-                      : getCurrencyUnitText(mission?.currency) +
-                        " " +
-                        mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " "),
-                  ],
-                ]
+                [
+                  isRTL
+                    ? mission?.price +
+                    (itemCalculatedPrice
+                      ? ` (${itemCalculatedPrice})`
+                      : " ") +
+                    getCurrencyUnitText(mission?.currency)
+                    : getCurrencyUnitText(mission?.currency) +
+                    " " +
+                    mission?.price +
+                    (itemCalculatedPrice
+                      ? ` (${itemCalculatedPrice})`
+                      : " "),
+                ],
+              ]
               : []),
             mission?.jobName,
             mission?.numberOfBoardMissions,
@@ -699,8 +711,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -743,45 +755,49 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? GetDateFormat(new Date(currentToReadyDate))
         : undefined;
 
+
+    const currentSampleType = router.query.sampleType;
+
     const data = isClear
       ? {
-          productsIds: [],
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-        }
+        productsIds: [],
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      }
       : {
-          clientId: router?.query?.clientId || customer?.id,
-          agentId: router?.query?.agentId || agent?.id,
-          search:
-            finalPatternSearch !== null &&
+        clientId: router?.query?.clientId || customer?.id,
+        agentId: router?.query?.agentId || agent?.id,
+        search:
+          finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
             finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-          fromDate:
-            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-          fromDueDate:
-            currentFormattedFromDueDate ||
-            (fromDueDate && GetDateFormat(fromDueDate)),
-          toDueDate:
-            currentFormattedToDueDate ||
-            (toDueDate && GetDateFormat(toDueDate)),
+            ? finalPatternSearch
+            : currentFinalPatternSearch,
+        fromDate:
+          currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+        toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+        fromDueDate:
+          currentFormattedFromDueDate ||
+          (fromDueDate && GetDateFormat(fromDueDate)),
+        toDueDate:
+          currentFormattedToDueDate ||
+          (toDueDate && GetDateFormat(toDueDate)),
 
-          fromReadyDate:
-            currentFormattedFromReadyDate ||
-            (fromReadyDate && GetDateFormat(fromReadyDate)),
-          toReadyDate:
-            currentFormattedToReadyDate ||
-            (toReadyDate && GetDateFormat(toReadyDate)),
-          productsIds: currentProductsIds,
-          productionStatus: currentProductionStatus || status?.value,
-          orderStatus: currentOrderStatus || orderStatus?.value,
-          pageNumber: pageNumber || currentPageNumber,
-          pageSize: pageSize,
-          orderNumber: router?.query?.orderNumber,
-          order: sortOrder,
-        };
+        fromReadyDate:
+          currentFormattedFromReadyDate ||
+          (fromReadyDate && GetDateFormat(fromReadyDate)),
+        toReadyDate:
+          currentFormattedToReadyDate ||
+          (toReadyDate && GetDateFormat(toReadyDate)),
+        productsIds: currentProductsIds,
+        productionStatus: currentProductionStatus || status?.value,
+        orderStatus: currentOrderStatus || orderStatus?.value,
+        pageNumber: pageNumber || currentPageNumber,
+        pageSize: pageSize,
+        orderNumber: router?.query?.orderNumber,
+        order: sortOrder,
+        exampleType: Number(currentSampleType) || Number(sampleType?.value),
+      };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
 
@@ -800,11 +816,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           </div>,
           mission?.supplierName,
           mission?.productType
-            ? `${mission?.number} / ${
-                mission?.productTypeName
-                  ? mission?.productTypeName
-                  : mission?.productType
-              }`
+            ? `${mission?.number} / ${mission?.productTypeName
+              ? mission?.productTypeName
+              : mission?.productType
+            }`
             : mission?.number,
           mission?.orderNumber,
           mission?.purchaseOrderNumber,
@@ -820,8 +835,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           mission?.isReady
             ? t("boardMissions.done")
             : mission?.boardMissionStatus && mission?.station
-            ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-            : "",
+              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+              : "",
           <MoreMenuWidget
             mission={mission}
             onClickDuplicate={onOpenDuplicateModal}
@@ -846,42 +861,43 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentPageNumber = router.query.pageNumber;
-
+    const currentSampleType = router.query.sampleType;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
       isClear
         ? {
-            productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-          }
+          productsIds: [],
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+        }
         : {
-            clientId: customer?.id,
-            agentId: agent?.id,
-            search:
-              finalPatternSearch !== null &&
+          clientId: customer?.id,
+          agentId: agent?.id,
+          search:
+            finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+          fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+          toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+          fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+          toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: pageSize,
-            supplierId: supplierId?.value,
-            isPurchaseJobs: true,
-          }
+          productsIds: productIds,
+          productionStatus: status?.value,
+          orderStatus: orderStatus?.value,
+          exampleType: Number(currentSampleType) || Number(sampleType?.value), // Add this line
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: pageSize,
+          supplierId: supplierId?.value,
+          isPurchaseJobs: true,
+        }
     );
   };
 
@@ -889,16 +905,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${
-          missionItem?.clientTypeId
-        }&customerId=${
-          missionItem?.customerID
+        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
+        }&customerId=${missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${
-          missionItem?.orderItemId
-        }&documentType=${
-          DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
+        }&documentType=${DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1245,8 +1257,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       finalPatternSearch,
       pageNumber,
       productsIds,
+      sampleType,
     } = router.query;
 
+
+    if (sampleType) {
+      const sampleTypeValue = Array.isArray(sampleType) ? sampleType[0] : sampleType;
+      const selectedSampleType = exampleTypeValues?.find(
+        (option) => option.key === sampleTypeValue
+      );
+      if (selectedSampleType) {
+        setSampleType({
+          value: selectedSampleType.key,
+          text: t(`products.proofTypes.${selectedSampleType.value}`),
+        });
+      }
+    }
     if (productsIds) {
       const productIdsArray = Array.isArray(productsIds)
         ? productsIds
@@ -1379,8 +1405,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1392,7 +1418,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const currentFromReadyDate = router.query.fromReadyDate;
     const currentToReadyDate = router.query.toReadyDate;
-
+    const currentSampleType = router.query.sampleType;
     const currentFormattedFromDate =
       typeof currentFromDate === "string"
         ? GetDateFormat(new Date(currentFromDate))
@@ -1423,13 +1449,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? GetDateFormat(new Date(currentToReadyDate))
         : undefined;
 
+
     const data = {
       clientId: router?.query?.clientId || customer?.id,
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-        finalPatternSearch !== undefined &&
-        finalPatternSearch !== ""
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -1453,6 +1480,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber: pageNumber || currentPageNumber,
       pageSize: pageSize,
       orderNumber: router?.query?.orderNumber,
+      exampleType: Number(currentSampleType) || Number(sampleType?.value),
     };
 
     await exportJobTableToExcelApi(callApi, callBack, data);
@@ -1613,6 +1641,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     isHeaderSortable,
     isDescOrderBE,
     handleSortBE,
+    exampleTypeValues,
+    sampleType,
+    setSampleType,
   };
 };
 

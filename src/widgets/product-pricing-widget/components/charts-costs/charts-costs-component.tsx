@@ -8,6 +8,7 @@ import {
   LinearScale,
   BarElement
 } from 'chart.js';
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   ArcElement,
@@ -17,35 +18,61 @@ ChartJS.register(
   LinearScale,
   BarElement
 );
+
 const ChartsCostsComponent = ({ selectedWorkFlow }) => {
-  console.log(selectedWorkFlow);
-  const total = selectedWorkFlow.totalLaborCosts + selectedWorkFlow.totalMaterialCosts + selectedWorkFlow.totalOtherCosts;
-  const currency = selectedWorkFlow?.totalCost?.defaultUnit;
+  const { t } = useTranslation();
+
+  // Get values with null/undefined safety
+  const laborCosts = selectedWorkFlow?.totalLaborCosts || 0;
+  const materialCosts = selectedWorkFlow?.totalMaterialCosts || 0;
+  const otherCosts = selectedWorkFlow?.totalOtherCosts || 0;
+
+  // Check if all values are 0 or null
+  const hasNoData = laborCosts === 0 && materialCosts === 0 && otherCosts === 0;
+
+  // If all data is 0 or null, don't render the chart
+  if (hasNoData) {
+    return null;
+  }
+
+  const total = laborCosts + materialCosts + otherCosts;
+  const currency = selectedWorkFlow?.totalCost?.defaultUnit || '';
+
+  // Build datasets array conditionally
+  const datasets = [];
+
+  if (laborCosts > 0) {
+    datasets.push({
+      label: `${t("pricingWidget.labor")} (${currency})`,
+      data: [laborCosts],
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      stack: 'Stack 0',
+    });
+  }
+
+  if (materialCosts > 0) {
+    datasets.push({
+      label: `${t("pricingWidget.material")} (${currency})`,
+      data: [materialCosts],
+      backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      stack: 'Stack 0',
+    });
+  }
+
+  if (otherCosts > 0) {
+    datasets.push({
+      label: `${t("pricingWidget.technical")} (${currency})`,
+      data: [otherCosts],
+      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      stack: 'Stack 0',
+    });
+  }
 
   return (
     <Bar
       data={{
         labels: [''],
-        datasets: [
-          {
-            label: `Labor (${currency})`,
-            data: [selectedWorkFlow.totalLaborCosts],
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            stack: 'Stack 0',
-          },
-          {
-            label: `Material (${currency})`,
-            data: [selectedWorkFlow.totalMaterialCosts],
-            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-            stack: 'Stack 0',
-          },
-          {
-            label: `Technical (${currency})`,
-            data: [selectedWorkFlow.totalOtherCosts],
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            stack: 'Stack 0',
-          }
-        ]
+        datasets: datasets
       }}
       options={{
         indexAxis: 'y',
@@ -61,7 +88,6 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
               font: {
                 size: 11,
               }
-
             }
           },
           tooltip: { enabled: true },
@@ -92,4 +118,5 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
     />
   );
 };
+
 export { ChartsCostsComponent };
