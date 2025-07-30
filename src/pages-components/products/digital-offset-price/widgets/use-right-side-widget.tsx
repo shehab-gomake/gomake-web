@@ -65,7 +65,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [
     sliderCurrentProductItemValueTotalPrice, setSliderCurrentProductItemValueTotalPrice] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
-  console.log("sliderCurrentProductItemValueTotalPrice", { sliderCurrentProductItemValueTotalPrice, localStateValue })
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
