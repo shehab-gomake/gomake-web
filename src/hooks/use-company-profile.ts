@@ -18,6 +18,7 @@ import { useState } from "react";
 import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
 import { useModal } from "./use-modal";
 import { connectToStripeApi } from "@/services/api-service/print-houses/connect-to-stripe-api";
+import router from "next/router";
 
 const countryList = require("country-list");
 const allCountries = countryList.getNames();
@@ -59,6 +60,7 @@ const useCompanyProfile = () => {
   };
 
   const updateProfileChanges = async () => {
+    const tab = router?.query?.tab;
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
@@ -66,7 +68,7 @@ const useCompanyProfile = () => {
         alertFaultUpdate();
       }
     };
-    await updateCompanyProfile(callApi, callBack, { ...profile });
+    await updateCompanyProfile(callApi, callBack, { ...profile,selectedTab: tab });
   };
   const profileChange = (newProfile: ICompanyProfile) => {
     setProfile(newProfile);

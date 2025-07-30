@@ -60,6 +60,7 @@ import {
   jobActionsState,
   jobDetailsState,
   lastProductItemValuePriceState,
+  localStateValueState,
   outsourceSuppliersState,
   productUrgentWorkState,
   selectedWorkFlowState,
@@ -345,6 +346,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
+
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
@@ -414,6 +417,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
       setCurrentCalculatedTotalPrice(null);
       setCalculationExceptionsLogs(null);
       setCalculationExceptionsLogs(null);
@@ -600,6 +604,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
       setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
@@ -2461,6 +2466,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
       setCurrentCalculatedTotalPrice(null);
       setLastProductItemValueTotalPrice(null);
       setUrgentOrder(null);
@@ -6154,6 +6160,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
       setCurrentCalculatedTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
@@ -6511,9 +6518,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productId: router?.query?.productId,
           supplierId: "",
           customerID: router?.query?.customerId,
-          // unitPrice:
-          //   +currentProductItemValueTotalPrice / +quantity?.values[0],
-          // finalPrice: +currentProductItemValueTotalPrice,
           unitPrice:
             +sliderCurrentProductItemValueTotalPrice /
             (quantity &&

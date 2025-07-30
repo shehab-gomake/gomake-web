@@ -16,6 +16,7 @@ import {
   currentCalculatedTotalPriceState,
   currentProductItemValuePriceState,
   lastProductItemValuePriceState,
+  localStateValueState,
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
   workFlowsState,
@@ -62,9 +63,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
   const [
-    sliderCurrentProductItemValueTotalPrice,
-    setSliderCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+    sliderCurrentProductItemValueTotalPrice, setSliderCurrentProductItemValueTotalPrice] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -267,6 +267,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       : newValue;
 
     setSliderCurrentProductItemValueTotalPrice(adjustedValue);
+    setLocalStateValue(adjustedValue);
   };
 
   useEffect(() => {
@@ -401,6 +402,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     router,
     clientTypesCategories,
     isRTL,
+    localStateValue,
+    setLocalStateValue,
     setSliderCurrentProductItemValueTotalPrice,
     setClientTypeDefaultValue,
     handleProductChange,
