@@ -36,11 +36,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     const filesGroup = uploadingFiles?.find(
       (fg) => fg.orderItemId === orderItemId
     );
+    debugger
 console.log("uploadingFiles",filesGroup)
     if (filesGroup) {
       setUploadingFiles(
         uploadingFiles.map((fg) =>
-          fg.orderItemId === orderItemId
+          fg.orderItemId === orderItemId && fg.productType === productType
             ? {
                 ...filesGroup,
                 filesInfo: [
@@ -118,7 +119,7 @@ console.log("uploadingFiles",filesGroup)
       if (!response || !response.success) {
         setUploadingFiles(
           uploadingFiles.map((fg) =>
-            fg.orderItemId === orderItemId
+            fg.orderItemId === orderItemId && fg.productType === productType
               ? {
                   ...filesGroup,
                   filesInfo: [
@@ -151,7 +152,7 @@ console.log("uploadingFiles",filesGroup)
       if (currentChunk === totalChunks) {
         setUploadingFiles(
           uploadingFiles.map((fg) =>
-            fg.orderItemId === orderItemId
+            fg.orderItemId === orderItemId && fg.productType === productType
               ? {
                   ...filesGroup,
                   filesInfo: [
