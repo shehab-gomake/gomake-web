@@ -82,6 +82,7 @@ const useCompanyProfile = () => {
           logo: res.data?.url,
         });
         setChangeProfileImage(false);
+        window.location.reload();
       }
     };
     const res = await updateCompanyLogo(callApi, callBack, {
@@ -105,7 +106,7 @@ const useCompanyProfile = () => {
       fileBase64: file,
       printHouseLogoType: 2,
     });
-    window.location.reload();
+    
     return res.success;
   };
 

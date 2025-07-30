@@ -189,6 +189,7 @@ const TableRowComponent = ({
     updateBoardMissionsOrder,
     t,
     onClickPrintJob,
+    onClickUnGroupJob,
     updateNotes,
   } = useProductionFloorData();
 
@@ -579,6 +580,7 @@ const TableRowComponent = ({
                 onClickDone={onClickDone}
                 onClickPrintJob={onClickPrintJob}
                 onClickPrintDTicket={onClickPrintDTicket}
+                onClickUnGroupJob={onClickUnGroupJob}
               />
             </SecondaryTableCell>
           );

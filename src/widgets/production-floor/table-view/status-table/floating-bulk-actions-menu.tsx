@@ -14,7 +14,8 @@ import {
   Update as UpdateIcon,
   ArrowForward as ArrowForwardIcon,
   CheckCircle as CheckCircleIcon,
-  ExpandMore as ExpandMoreIcon
+  ExpandMore as ExpandMoreIcon,
+  GroupWork as GroupWorkIcon
 } from '@mui/icons-material';
 
 const FloatingBulkActionsMenu = ({
@@ -22,12 +23,14 @@ const FloatingBulkActionsMenu = ({
   onUpdateStatus,
   onMoveToNextStation,
   onMoveToDone,
+  onGroupJobs,
   onClearSelection,
   statusOptions = [],
   t = (key) => key
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
+  const canGroupJobs = selectedJobs.length >= 2;
 
   useEffect(() => {
     setIsVisible(selectedJobs.length > 0);
@@ -50,7 +53,17 @@ const FloatingBulkActionsMenu = ({
     setIsVisible(false);
   };
 
+  const handleGroupJobs = () => {
+    if (selectedJobs.length >= 2) {
+      onGroupJobs(selectedJobs);
+      setIsVisible(false);
+    }
+  };
+
   if (!isVisible) return null;
+
+
+
 
   return (
     <Fade in={isVisible}>
@@ -181,6 +194,40 @@ const FloatingBulkActionsMenu = ({
             <CheckCircleIcon sx={{ fontSize: 20, color: '#6b7280', mb: 0.5 }} />
             <Typography variant="caption" sx={{ fontSize: '11px', color: '#6b7280' }}>
               {t('bulkActions.moveToDone') || 'Move to Done'}
+            </Typography>
+          </Box>
+
+          {/* Group Jobs */}
+          <Box
+            onClick={handleGroupJobs}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              p: 1.5,
+              borderRadius: 1,
+              cursor: canGroupJobs ? 'pointer' : 'not-allowed',
+              transition: 'all 0.2s',
+              minWidth: 64,
+              opacity: canGroupJobs ? 1 : 0.5,
+              '&:hover': {
+                backgroundColor: canGroupJobs ? '#f5f5f5' : 'transparent',
+              },
+            }}
+          >
+            <GroupWorkIcon sx={{
+              fontSize: 20,
+              color: canGroupJobs ? '#6b7280' : '#d1d5db',
+              mb: 0.5
+            }} />
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: '11px',
+                color: canGroupJobs ? '#6b7280' : '#d1d5db'
+              }}
+            >
+              {t('bulkActions.groupJobs') || 'Group Jobs'}
             </Typography>
           </Box>
 

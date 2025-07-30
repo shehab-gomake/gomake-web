@@ -112,7 +112,7 @@ const addBoardMissionsToFileUploaderApi: ICallAndSetData = async (
 const printJobUsingPrintNodeApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: string
+  data: string,
 ) => {
   return await getSetApiData(
     callApi,

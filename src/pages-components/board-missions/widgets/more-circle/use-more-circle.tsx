@@ -129,12 +129,16 @@ const useMoreCircle = ({
     });
   };
 
-  const printJobUsingPrintNode = async (jobId: string) => {
+  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+    let data = jobId;
+    if(productType){
+      data = data + "?productType="+productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
   const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
@@ -155,8 +159,13 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-            }&step=stations`}
+          href={
+            mission?.groupedInJobId !== null ?
+              `/production-floor?boardMissionsId=${mission?.groupedInJobId}${mission?.productType ? `&productType=${mission?.productType}` : ""
+              }&step=stations`
+              :
+              `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+              }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -182,7 +191,7 @@ const useMoreCircle = ({
       condition: true && isSendPaymentToClient,
       name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
-      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId),
+      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId, mission?.productType),
     },
     {
       condition: true && isSendPaymentToClient,
@@ -246,7 +255,7 @@ const useMoreCircle = ({
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () => {
-        printJobUsingPrintNode(mission?.id).then();
+        printJobUsingPrintNode(mission?.id,mission?.productType).then();
       },
     },
     !!companyProfile.filesApiAddress && {

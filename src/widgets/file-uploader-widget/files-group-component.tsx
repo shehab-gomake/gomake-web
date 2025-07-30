@@ -106,12 +106,16 @@ const FilesGroupComponent = ({
     });
 
   };
-  const printJobUsingPrintNode = async (jobId: string) => {
+  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
-    await printJobUsingPrintNodeApi(callApi, callBack, jobId);
+    let data = jobId;
+    if(productType){
+      data = data + "?productType="+productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
 
 
@@ -204,9 +208,15 @@ const FilesGroupComponent = ({
               </Stack>
             )}
             <Stack>
-              {graphicsFiles.map((file) => (
-                <FileComponent {...file} />
-              ))}
+              <div style={{
+                maxHeight: '200px',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+              }}>
+                {graphicsFiles.map((file) => (
+                  <FileComponent {...file} />
+                ))}
+              </div>
             </Stack>
           </Stack>
         </Stack>
@@ -270,10 +280,16 @@ const FilesGroupComponent = ({
                 </span>
               </Stack>
             )}
-            <Stack>
-              {printingFiles.map((file) => (
-                <FileComponent {...file} />
-              ))}
+            <Stack >
+              <div style={{
+                maxHeight: '200px',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+              }}>
+                {printingFiles.map((file) => (
+                  <FileComponent {...file} />
+                ))}
+              </div>
             </Stack>
           </Stack>
         </Stack>
@@ -294,7 +310,7 @@ const FilesGroupComponent = ({
         yesBtn={t("sales.quote.print")}
         openModal={isOpenPrintingModal.isOpen}
         onClose={isOpenPrintingModal.close}
-        onClickDelete={() => { printJobUsingPrintNode(boardMissionId).then() }}
+        onClickDelete={() => { printJobUsingPrintNode(boardMissionId,productType).then() }}
       />
     </Stack>
   );

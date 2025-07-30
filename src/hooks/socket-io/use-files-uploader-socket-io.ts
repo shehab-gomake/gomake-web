@@ -21,6 +21,14 @@ const useFilesUploaderSocketIO = () => {
   useEffect(()=>{
     const socket = io(config.api_server);
     socket.on("UpdateFileUploader", (newData) => {
+      if(newData && newData.length > 0){
+        for(let i = 0;i<newData.length;i++){
+          if(newData[i].productType){
+            newData[i].productType = newData[i].productType.replaceAll('\\','');
+            newData[i].productType = newData[i].productType.replaceAll('"','');
+          }
+        }
+      }
       setFiles(newData);
       setData(newData);
       setShowFileUploader(newData?.length > 0);

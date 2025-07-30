@@ -39,7 +39,7 @@ import {
   getInitialOrderFoldersData,
   printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
-import { useGomakeAxios } from "@/hooks";
+import { SampleTypeOption, useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
@@ -49,11 +49,8 @@ import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
-import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {
-  QR_CODE_LISTENER_FROM,
-  useQrCodeListener,
-} from "@/hooks/use-qr-code-listener";
+import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
+import { exampleTypeState } from "@/store/example-type";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -158,6 +155,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isHeaderSortable,
     isDescOrderBE,
     handleSortBE,
+    exampleTypeValues,
+    sampleType,
+    setSampleType,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -170,6 +170,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+
+
 
   useEffect(() => {
     if (router.isReady && companyProfile.filesApiAddress && newOrderId) {
@@ -209,7 +211,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         !!(
           isPrintHouseUsePrintNode &&
           newOrderId &&
-          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
+          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS) && 
+          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
         printNodeModalShowLog(callApi, () => { }, {
@@ -236,6 +239,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     top: 420px !important;
   }
 `;
+
 
   const { } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.JOBS });
   return (
@@ -355,6 +359,27 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               withArrow={true}
                             />
                           </div>
+                          <div style={classes.statusFilterContainer}>
+                            <h3 style={classes.filterLabelStyle}>
+                              {t("products.offsetPrice.admin.proof")}
+                            </h3>
+                            <GoMakeAutoComplate
+                              key={sampleType?.value}
+                              options={
+                                exampleTypeValues?.map((option) => ({
+                                  value: option.key,
+                                  text: t(`products.proofTypes.${option.value}`),
+                                })) || []
+                              }
+                              getOptionLabel={(option: any) => option.text}
+                              placeholder={t("products.offsetPrice.admin.proof")}
+                              style={classes.textInputStyle}
+                              onChange={(e, value) => setSampleType(value)}
+                              value={sampleType}
+                            />
+                          </div>
+
+
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("boardMissions.products")}

@@ -58,7 +58,7 @@ const QuoteConfirmationPageWidget = ({
   };
 
   useEffect(() => {
-    if(router.isReady == false){
+    if (router.isReady == false) {
       return;
     }
     const handlePrePaymentPage = async () => {
@@ -71,7 +71,7 @@ const QuoteConfirmationPageWidget = ({
             updateTempUserTokenStorage(userToken);
             await getDebtsPaymentById();
           }
-        } catch (error) {}
+        } catch (error) { }
       } else if (isPrePaymentPage) {
         removeTempUserTokenStorage();
         try {

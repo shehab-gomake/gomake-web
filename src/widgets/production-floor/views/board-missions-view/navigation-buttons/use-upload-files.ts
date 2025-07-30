@@ -34,13 +34,14 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     setShowFileUploader(true);
 
     const filesGroup = uploadingFiles?.find(
-      (fg) => fg.orderItemId === orderItemId
+      (fg) => fg.orderItemId === orderItemId && fg.productType === productType
     );
-
+    debugger
+console.log("uploadingFiles",filesGroup)
     if (filesGroup) {
       setUploadingFiles(
         uploadingFiles.map((fg) =>
-          fg.orderItemId === orderItemId
+          fg.orderItemId === orderItemId && fg.productType === productType
             ? {
                 ...filesGroup,
                 filesInfo: [
@@ -111,13 +112,14 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
         file?.name,
         fileType, 
         productType,
-        hotFolderName
+        hotFolderName,
+        filesGroup
       );
 
       if (!response || !response.success) {
         setUploadingFiles(
           uploadingFiles.map((fg) =>
-            fg.orderItemId === orderItemId
+            fg.orderItemId === orderItemId && fg.productType === productType
               ? {
                   ...filesGroup,
                   filesInfo: [
@@ -150,7 +152,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       if (currentChunk === totalChunks) {
         setUploadingFiles(
           uploadingFiles.map((fg) =>
-            fg.orderItemId === orderItemId
+            fg.orderItemId === orderItemId && fg.productType === productType
               ? {
                   ...filesGroup,
                   filesInfo: [
@@ -187,11 +189,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     fileName,
     fileType,
     productType,
-    hotFolderName
+    hotFolderName,
+    filesGroup
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
-    formData.append("productType", productType);
+    formData.append("productType", productType ? productType.toString() : null);
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
@@ -223,7 +226,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       );
 
       const data = await response.json();
-      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)){
+      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && filesGroup?.filesInfo?.length < 1){
         isOpenPrintingModal?.open();
       }
       return data;

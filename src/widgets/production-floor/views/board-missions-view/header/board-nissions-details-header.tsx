@@ -61,7 +61,6 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-
   const fieldMappings = useMemo(
     () => [
       {
@@ -70,6 +69,15 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
         value: DateHourFormatterShort(
           convertUtcToLocalIsoString(
             boardMissionsDetails.createdDate?.toString()
+          )
+        ),
+      },
+      {
+        condition: boardMissionsDetails?.estimatedProductionDate !== null,
+        label: t("sales.quote.estimatedProductionDate"),
+        value: DateHourFormatterShort(
+          convertUtcToLocalIsoString(
+            boardMissionsDetails?.estimatedProductionDate?.toString()
           )
         ),
       },

@@ -7,6 +7,7 @@ import {
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
   updateProductionFloorNotesApi,
+  ungroupJobsApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -347,14 +348,6 @@ const useProductionFloorData = () => {
             <MoreMenuWidget
               mission={mission}
               isDoneJobs={true}
-              // onClickDuplicate={onOpenDuplicateModal}
-              // onOpenModal={onOpenModal}
-              // onClickPrintPackagingSlip={onOpenPackagesModal}
-              // onClickMarksAsDone={onOpenMarkReadyModal}
-              // onClickMarksAsDoneForProductType={
-              //   onOpenMarkReadyModalForProductType
-              // }
-              // onClickReturnToProduction={onOpenReturnToProdModal}
               onClickOrderSummeryPdf={onClickOrderSummeryPdf}
               onClickWorkMissionPdf={onClickWorkMissionPdf}
             />,
@@ -369,7 +362,8 @@ const useProductionFloorData = () => {
 
     const onClickWorkMissionPdf = async (
       boardMissionId: string,
-      actionId: string
+      actionId: string,
+      productType: string
     ) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -383,6 +377,7 @@ const useProductionFloorData = () => {
         boardMissionId,
         isPurchaseJobs: false,
         actionId: actionId,
+        productType: productType ?? "",
       });
     };
 
@@ -674,7 +669,18 @@ const useProductionFloorData = () => {
     };
     await getBoardMissionPDF(callApi, callBack, {
       boardMissionId: boardMissionId?.id,
+      productType: boardMissionId?.productType ?? "",
     });
+  };
+
+  const onClickUnGroupJob = async (boardMissionId) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getData()
+        alertSuccessUpdate();
+      }
+    };
+    await ungroupJobsApi(callApi, callBack, boardMissionId?.id);
   };
 
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
@@ -797,6 +803,7 @@ const useProductionFloorData = () => {
     setOpenMarkReadyModal,
     onClickMoveBoardMissionToDone,
     onClickPrintJob,
+    onClickUnGroupJob,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
