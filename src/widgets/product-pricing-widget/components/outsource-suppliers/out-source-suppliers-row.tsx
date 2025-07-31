@@ -249,18 +249,18 @@ const OutSourceSupplierRow = ({
 }) => {
   const { classes } = useStyle();
 
-  // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-  // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
   const foundSupplier = options.find((x) => x.supplierId == action?.supplierId);
-  // if (
-  //   (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
-  //   !customer
-  // ) {
-  //   setCustomer({
-  //     id: foundSupplier?.supplierId,
-  //     name: foundSupplier?.supplierName,
-  //   });
-  // }
+  useEffect(() => {
+    if (
+      (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
+      !customer
+    ) {
+      setCustomer({
+        id: foundSupplier?.supplierId,
+        name: foundSupplier?.supplierName,
+      });
+    }
+  }, []);
 
   const textAreaOutputs = action?.outputs?.filter(
     (parameter) =>
