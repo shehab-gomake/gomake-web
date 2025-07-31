@@ -63,6 +63,7 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { FONT_FAMILY } from "@/utils/font-family";
 import { formatSecondsToHHMMSS } from "@/utils/helpers";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -107,6 +108,7 @@ const BoardMissionsStationActionItem = ({
   storage,
 }: IProps) => {
   const isMobile = useIsMobile();
+  const { primaryColor, grayColor } = useGomakeTheme();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -508,15 +510,20 @@ const BoardMissionsStationActionItem = ({
                         </Button>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             "&:hover": {
-                              backgroundColor: "#8283be",
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
                             },
                           }}
                           onClick={onClickOpenDoneModal}
@@ -928,15 +935,20 @@ const BoardMissionsStationActionItem = ({
                         </Button>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             "&:hover": {
-                              backgroundColor: "#8283be",
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
                             },
                           }}
                           onClick={onClickOpenDoneModal}
