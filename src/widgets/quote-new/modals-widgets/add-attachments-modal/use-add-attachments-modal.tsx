@@ -9,7 +9,7 @@ import { WastebasketNew } from "@/icons/wastebasket-new";
 import { IconButton } from "@mui/material";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import { loadingWithShadowState } from "@/store/loading-with-shadow";
-import { getUserToken } from "@/services/storage-data";
+import {getTempUserToken, getUserToken} from "@/services/storage-data";
 import axios from "axios";
 
 
@@ -197,13 +197,17 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                 )}`;
 
                 try {
+                    let userToken = getUserToken();
+                    if(!userToken){
+                        userToken = getTempUserToken();
+                    }
                     const response = await axios.post(`${quoteConfirm?.filesApiAddress}/api/Files/UploadBase64`, {
                         quoteItemId: quoteConfirm?.id,
                         fileName: file.name,
                         base64Content: base64Content
                     }, {
                         headers: {
-                            authorization: "Bearer " + getUserToken(),
+                            authorization: "Bearer " + userToken,
                         },
                     });
 
