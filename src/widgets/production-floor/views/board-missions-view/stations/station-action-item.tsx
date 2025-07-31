@@ -104,7 +104,7 @@ const BoardMissionsStationActionItem = ({
   productType,
   realProductionTime,
   isSubAction = false,
-  storage
+  storage,
 }: IProps) => {
   const isMobile = useIsMobile();
 
@@ -172,7 +172,10 @@ const BoardMissionsStationActionItem = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  const onClickBackToProcess = async (boardMissionsActionId: string, productType: string) => {
+  const onClickBackToProcess = async (
+    boardMissionsActionId: string,
+    productType: string
+  ) => {
     setLoading(true);
     const callBack = (res) => {
       setLoading(false);
@@ -326,7 +329,7 @@ const BoardMissionsStationActionItem = ({
     };
     await getBoardMissionActionMaterialsApi(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: productType
+      productType: productType,
     });
   };
 
@@ -480,9 +483,12 @@ const BoardMissionsStationActionItem = ({
                           variant={"contained"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId, productType).then();
+                            onClickBackToProcess(
+                              boardMissionActionId,
+                              productType
+                            ).then();
                           }}
-                          style={{
+                          sx={{
                             padding: "5px 8px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
                             backgroundColor: "#FFF",
@@ -490,6 +496,12 @@ const BoardMissionsStationActionItem = ({
                             borderRadius: "8px",
                             textTransform: "capitalize",
                             border: "1px solid #475467",
+                            "&:hover": {
+                              backgroundColor: "#FFF",
+                              boxShadow:
+                                "0 0 12px 3px rgba(130, 131, 190, 0.45)",
+                              border: "none",
+                            },
                           }}
                         >
                           {t("boardMissions.completed")}
@@ -503,6 +515,9 @@ const BoardMissionsStationActionItem = ({
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            "&:hover": {
+                              backgroundColor: "#8283be",
+                            },
                           }}
                           onClick={onClickOpenDoneModal}
                         >
@@ -867,11 +882,11 @@ const BoardMissionsStationActionItem = ({
                       )}
                     </>
                   )}
-                  {
-                    storage && (
-                      <span style={classes.sectionTitle}>{t("boardMissions.storage")}: {storage}</span>
-                    )
-                  }
+                  {storage && (
+                    <span style={classes.sectionTitle}>
+                      {t("boardMissions.storage")}: {storage}
+                    </span>
+                  )}
                 </Stack>
                 {/* Completed and Check */}
                 <PermissionCheck
@@ -888,9 +903,12 @@ const BoardMissionsStationActionItem = ({
                           variant={"outlined"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId, productType).then();
+                            onClickBackToProcess(
+                              boardMissionActionId,
+                              productType
+                            ).then();
                           }}
-                          style={{
+                          sx={{
                             padding: "5px 8px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
                             backgroundColor: "#FFF",
@@ -898,6 +916,12 @@ const BoardMissionsStationActionItem = ({
                             borderRadius: "8px",
                             textTransform: "capitalize",
                             border: "1px solid #475467",
+                            "&:hover": {
+                              backgroundColor: "#FFF",
+                              boxShadow:
+                                "0 0 12px 3px rgba(130, 131, 190, 0.45)",
+                              border: "none",
+                            },
                           }}
                         >
                           {t("boardMissions.completed")}
@@ -911,6 +935,9 @@ const BoardMissionsStationActionItem = ({
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            "&:hover": {
+                              backgroundColor: "#8283be",
+                            },
                           }}
                           onClick={onClickOpenDoneModal}
                         >
