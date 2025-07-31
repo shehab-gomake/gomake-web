@@ -1124,12 +1124,12 @@ const ActionContainerComponent = ({
                   {!isFromSetting && (
                     <Divider orientation={"vertical"} flexItem />
                   )}
-                  <div onClick={(e) => e.stopPropagation()}>
+                  {!isFromSetting && <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect
                       value={source}
                       onChange={handleSourceChange}
                     />
-                  </div>
+                  </div>}
                 </Stack>
                 <div
                   style={{
