@@ -63,6 +63,7 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { FONT_FAMILY } from "@/utils/font-family";
 import { formatSecondsToHHMMSS } from "@/utils/helpers";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -107,6 +108,7 @@ const BoardMissionsStationActionItem = ({
   storage,
 }: IProps) => {
   const isMobile = useIsMobile();
+  const { primaryColor, grayColor } = useGomakeTheme();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -403,6 +405,8 @@ const BoardMissionsStationActionItem = ({
   //   setIsOpen(!!selected);
   // }, [selected]);
 
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <>
       {isHaveSubACtions ? (
@@ -479,8 +483,8 @@ const BoardMissionsStationActionItem = ({
                       {loading ? (
                         <CircularProgress size={isMobile ? 20 : 30} />
                       ) : isDone ? (
-                        <Button
-                          variant={"contained"}
+                        <PrimaryButton
+                          variant="contained"
                           onClick={(e) => {
                             e.stopPropagation();
                             onClickBackToProcess(
@@ -488,35 +492,43 @@ const BoardMissionsStationActionItem = ({
                               productType
                             ).then();
                           }}
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
                           sx={{
-                            padding: "5px 8px",
+                            padding: "5px 12px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
-                            backgroundColor: "#FFF",
-                            color: "#475467",
                             borderRadius: "8px",
                             textTransform: "capitalize",
-                            border: "1px solid #475467",
+                            transition: "all 0.2s ease-in-out",
+                            minWidth: "100px",
                             "&:hover": {
-                              backgroundColor: "#FFF",
-                              boxShadow:
-                                "0 0 12px 3px rgba(130, 131, 190, 0.45)",
-                              border: "none",
+                              backgroundColor: "#f9fafb",
+                              color: grayColor(300),
+                              border: `1px solid ${grayColor(300)}`,
+                              boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             },
                           }}
                         >
-                          {t("boardMissions.completed")}
-                        </Button>
+                          {isHovered
+                            ? t("boardMissions.reopen")
+                            : t("boardMissions.completed")}
+                        </PrimaryButton>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             "&:hover": {
-                              backgroundColor: "#8283be",
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
                             },
                           }}
                           onClick={onClickOpenDoneModal}
@@ -899,8 +911,8 @@ const BoardMissionsStationActionItem = ({
                       {loading ? (
                         <CircularProgress size={isMobile ? 20 : 30} />
                       ) : isDone ? (
-                        <Button
-                          variant={"outlined"}
+                        <PrimaryButton
+                          variant="contained"
                           onClick={(e) => {
                             e.stopPropagation();
                             onClickBackToProcess(
@@ -908,35 +920,43 @@ const BoardMissionsStationActionItem = ({
                               productType
                             ).then();
                           }}
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
                           sx={{
-                            padding: "5px 8px",
+                            padding: "5px 12px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
-                            backgroundColor: "#FFF",
-                            color: "#475467",
                             borderRadius: "8px",
                             textTransform: "capitalize",
-                            border: "1px solid #475467",
+                            transition: "all 0.2s ease-in-out",
                             "&:hover": {
-                              backgroundColor: "#FFF",
-                              boxShadow:
-                                "0 0 12px 3px rgba(130, 131, 190, 0.45)",
-                              border: "none",
+                              backgroundColor: "#f9fafb",
+                              color: grayColor(300),
+                              border: `1px solid ${grayColor(300)}`,
+                              boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             },
+                            minWidth: "100px",
                           }}
                         >
-                          {t("boardMissions.completed")}
-                        </Button>
+                          {isHovered
+                            ? t("boardMissions.reopen")
+                            : t("boardMissions.completed")}
+                        </PrimaryButton>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
                             "&:hover": {
-                              backgroundColor: "#8283be",
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
                             },
                           }}
                           onClick={onClickOpenDoneModal}
