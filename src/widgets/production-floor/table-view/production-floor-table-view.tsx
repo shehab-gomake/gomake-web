@@ -40,7 +40,7 @@ import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-moda
 import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { Permissions } from "@/components/CheckPermission/enum";
+
 import { useUserPermission } from "@/hooks/use-permission";
 
 // Performance optimization constants
@@ -49,7 +49,7 @@ const BATCH_SIZE = 50; // Process items in batches
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
-  const { CheckPermission } = useUserPermission();
+  
 
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
@@ -234,63 +234,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const { callApi } = useGomakeAxios();
 
   const visibleColumns = useVisibleOrderedColumns();
-  const setColumnVisibility = useSetRecoilState(columnVisibilityState);
-  const setColumnOrder = useSetRecoilState(columnOrderState);
+
 
   const [columnsReady, setColumnsReady] = useState(false);
 
-  // Optimized column settings loading
-  useEffect(() => {
-    const loadColumnSettings = async () => {
-      // Add timeout to prevent infinite loading
-      const timeoutId = setTimeout(() => {
-        console.warn("⚠️ Column settings loading timeout - using defaults");
-        setColumnsReady(true);
-      }, 10000); // 10 seconds timeout
-
-      try {
-        const res = await getProductionFloorTableSettingsApi(callApi, () => {});
-        const saved: ColumnSetting[] = res?.data;
-
-        const filteredKeys = allColumnKeys.filter(
-          (key) =>
-            key !== "checkbox" ||
-            CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
-        );
-
-        if (saved && saved.length > 0) {
-          const { order, visibility } = parseSavedColumnSettings(
-            saved,
-            filteredKeys
-          );
-          setColumnOrder(order);
-          setColumnVisibility(visibility);
-        } else {
-          setColumnOrder(filteredKeys);
-          setColumnVisibility(
-            Object.fromEntries(filteredKeys.map((key) => [key, true]))
-          );
-        }
-      } catch (e) {
-        console.error("Failed to load column settings", e);
-        // Use default settings on error
-        const filteredKeys = allColumnKeys.filter(
-          (key) =>
-            key !== "checkbox" ||
-            CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
-        );
-        setColumnOrder(filteredKeys);
-        setColumnVisibility(
-          Object.fromEntries(filteredKeys.map((key) => [key, true]))
-        );
-      } finally {
-        clearTimeout(timeoutId);
-        setColumnsReady(true);
-      }
-    };
-
-    loadColumnSettings();
-  }, [callApi, CheckPermission, setColumnOrder, setColumnVisibility]);
+  
 
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -473,7 +421,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     }
 
     // Show loading skeleton while column settings are loading
-    if (!columnsReady) {
+    /*if (!columnsReady) {
       return (
         <Stack gap={"10px"}>
           {Array.from({ length: 5 }).map((_, index) => (
@@ -481,7 +429,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           ))}
         </Stack>
       );
-    }
+    }*/
 
     return (
       <>

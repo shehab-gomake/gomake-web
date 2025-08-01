@@ -13,7 +13,11 @@ import { productionFloorFiltersState } from "@/widgets/production-floor/state/pr
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-
+import { allColumnKeys, columnOrderState, ColumnSetting, columnVisibilityState, parseSavedColumnSettings } from "../../state/production-floor-coulmns-table-settings";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 const ProductionFloorBoardMissionsViews = ({
   connectionId,
 }: {
@@ -25,9 +29,11 @@ const ProductionFloorBoardMissionsViews = ({
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
-
+  const { callApi } = useGomakeAxios();
+  const [columnVisibility,setColumnVisibility] = useRecoilState(columnVisibilityState);
+  const [columnOrder,setColumnOrder] = useRecoilState(columnOrderState);
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
-
+  const { CheckPermission } = useUserPermission();
   // Use refs to prevent infinite loops
   const hasInitializedRef = useRef(false);
   const lastConnectionIdRef = useRef<string | null>(null);
@@ -39,10 +45,48 @@ const ProductionFloorBoardMissionsViews = ({
 
   useEffect(() => {
     if (shouldFetchData && !hasInitializedRef.current) {
-      hasInitializedRef.current = true;
-      lastConnectionIdRef.current = connectionId;
-      setLoading(true);
-      getData(connectionId)
+      const loadColumnSettings = async () => {
+        try {
+          const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+          const saved: ColumnSetting[] = res?.data;
+    
+          const filteredKeys = allColumnKeys.filter(
+            (key) =>
+              key !== "checkbox" ||
+              CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+          );
+    
+          if (saved && saved.length > 0) {
+            const { order, visibility } = parseSavedColumnSettings(
+              saved,
+              filteredKeys
+            );
+            setColumnOrder(order);
+            setColumnVisibility(visibility);
+          } else {
+            setColumnOrder(filteredKeys);
+            setColumnVisibility(
+              Object.fromEntries(filteredKeys.map((key) => [key, true]))
+            );
+          }
+
+        } catch (e) {
+          console.error("Failed to load column settings", e);
+          // Use default settings on error
+          const filteredKeys = allColumnKeys.filter(
+            (key) =>
+              key !== "checkbox" ||
+              CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+          );
+          setColumnOrder(filteredKeys);
+          setColumnVisibility(
+            Object.fromEntries(filteredKeys.map((key) => [key, true]))
+          );
+        }
+        hasInitializedRef.current = true;
+        lastConnectionIdRef.current = connectionId;
+        setLoading(true);
+        getData(connectionId)
         .then(() => {
           setLoading(false);
         })
@@ -50,11 +94,14 @@ const ProductionFloorBoardMissionsViews = ({
           console.error("Error fetching production floor data:", error);
           setLoading(false);
         });
+      };
+    
+      loadColumnSettings();
     }
   }, [shouldFetchData, connectionId]);
 
   // Handle connection ID changes
-  useEffect(() => {
+  /*useEffect(() => {
     if (connectionId && lastConnectionIdRef.current !== connectionId) {
       lastConnectionIdRef.current = connectionId;
       setLoading(true);
@@ -67,7 +114,7 @@ const ProductionFloorBoardMissionsViews = ({
           setLoading(false);
         });
     }
-  }, [connectionId]);
+  }, [connectionId]);*/
 
   useEffect(() => {
     if (!!isSocketUpdateJobsTable) {
