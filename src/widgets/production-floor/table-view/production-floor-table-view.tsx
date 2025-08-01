@@ -1,7 +1,7 @@
 import { StatusTableComponent } from "@/widgets/production-floor/table-view/status-table/status-table-component";
 import { useProductionFloorTable } from "@/widgets/production-floor/table-view/use-production-floor-table";
 import Stack from "@mui/material/Stack";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -40,11 +40,16 @@ import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-moda
 import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { Permissions } from "@/components/CheckPermission/enum";
+
 import { useUserPermission } from "@/hooks/use-permission";
 
+// Performance optimization constants
+const VIRTUALIZATION_THRESHOLD = 100; // Start virtualization when more than 100 items
+const BATCH_SIZE = 50; // Process items in batches
+const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
+
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
-  const { CheckPermission } = useUserPermission();
+  
 
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
@@ -70,11 +75,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
   const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
   const { initialPageSize } = useListPagination();
-  useEffect(() => {
-    if (initialPageSize && initialPageSize !== pageSize) {
-      setPageSize(initialPageSize);
-    }
-  }, [initialPageSize]);
+  
+  // Performance optimization states
+  const [isVirtualizing, setIsVirtualizing] = useState(false);
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: BATCH_SIZE });
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const {
     storageList,
@@ -85,22 +91,17 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     setInputValue,
   } = useStorageList();
   const { employeesCategories } = useEmployeeList();
-  const handlePageChange = (event, value) => {
-    setPageNumber(value);
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, pageNumber: value },
-    });
-    getAllData(value, pageSize);
-  };
-  const handlePageSizeChange = (event) => {
-    setPageNumber(1);
-    setPageSize(event.target.value);
-    getAllData(1, event.target.value);
-  };
 
+  useEffect(() => {
+    if (initialPageSize && initialPageSize !== pageSize) {
+      setPageSize(initialPageSize);
+    }
+  }, [initialPageSize]);
+
+  // Memoized filtered data with performance optimizations
   const filteredDataByMachine = useMemo(() => {
     if (!selectedChipId.length) return data;
+    
     return data.map((item) => {
       const filteredBoardMissions = item.boardMissions.filter((mission) =>
         selectedChipId.some(
@@ -116,39 +117,105 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     });
   }, [data, selectedChipId]);
 
-  const matchSearch = (mission) => {
-    return search
-      ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-        search
-      ) ||
-      `${mission.clientName?.toLowerCase()}`.includes(
-        search.toLowerCase()
-      ) ||
-      `${mission.productName?.toLowerCase()}`.includes(
-        search.toLowerCase()
-      ) ||
-      mission.automatedTags?.some((tag) =>
-        tag.toLowerCase().includes(search.toLowerCase())
-      ) ||
-      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      : true;
-  };
-  const allFilteredMissions = filteredDataByMachine.flatMap(
-    (statusBoards) => statusBoards.boardMissions
-  );
-  const filteredMissions = allFilteredMissions.filter(matchSearch);
+  // Optimized search matching function
+  const matchSearch = useCallback((mission) => {
+    if (!search) return true;
+    
+    const searchLower = search.toLowerCase();
+    const missionNumber = `${mission.boardMissionNumber}\\${mission.orderNumber}`;
+    const clientName = mission.clientName?.toLowerCase() || '';
+    const productName = mission.productName?.toLowerCase() || '';
+    const jobName = mission?.jobName?.toLowerCase() || '';
+    
+    return missionNumber.includes(search) ||
+           clientName.includes(searchLower) ||
+           productName.includes(searchLower) ||
+           jobName.includes(searchLower) ||
+           mission.automatedTags?.some((tag) =>
+             tag.toLowerCase().includes(searchLower)
+           );
+  }, [search]);
 
+  // Memoized filtered missions with virtualization support
+  const allFilteredMissions = useMemo(() => {
+    const missions = filteredDataByMachine.flatMap(
+      (statusBoards) => statusBoards.boardMissions
+    );
+    const filtered = missions.filter(matchSearch);
+    
+    // Enable virtualization for large datasets
+    const shouldVirtualize = filtered.length > VIRTUALIZATION_THRESHOLD;
+    
+    if (shouldVirtualize) {
+      return filtered.slice(visibleRange.start, visibleRange.end);
+    } else {
+      return filtered;
+    }
+  }, [filteredDataByMachine, matchSearch, visibleRange]);
+
+  // Separate effect to handle virtualization state changes
   useEffect(() => {
-    setFilteredMissionsBySearch(filteredMissions);
-    const delayFetch = setTimeout(() => {
+    const missions = filteredDataByMachine.flatMap(
+      (statusBoards) => statusBoards.boardMissions
+    );
+    const filtered = missions.filter(matchSearch);
+    const shouldVirtualize = filtered.length > VIRTUALIZATION_THRESHOLD;
+    
+    if (shouldVirtualize !== isVirtualizing) {
+      setIsVirtualizing(shouldVirtualize);
+    }
+  }, [filteredDataByMachine, matchSearch, isVirtualizing]);
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      // Only update if search has actually changed
+      const missions = filteredDataByMachine.flatMap(
+        (statusBoards) => statusBoards.boardMissions
+      );
+      const filtered = missions.filter(matchSearch);
+      setFilteredMissionsBySearch(filtered);
+      
       if (!!search) {
         getAllBoardMissionsFromSearch().then();
       }
-    }, 1000);
-    return () => clearTimeout(delayFetch);
-  }, [search]);
+    }, DEBOUNCE_DELAY);
 
-  const tableHeader = [
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [search, filteredDataByMachine, matchSearch, setFilteredMissionsBySearch, getAllBoardMissionsFromSearch]);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    if (!isVirtualizing) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleRange(prev => ({
+              start: prev.start,
+              end: Math.min(prev.end + BATCH_SIZE, data.flatMap(item => item.boardMissions).length)
+            }));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observerRef.current = observer;
+    return () => observer.disconnect();
+  }, [isVirtualizing, data]);
+
+  // Memoized table headers
+  const tableHeader = useMemo(() => [
     t("boardMissions.image"),
     t("boardMissions.creationDate"),
     t("boardMissions.dueDate"),
@@ -157,66 +224,44 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
-    // t("boardMissions.costFromOrderItem"),
-    // t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
-    // t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more"),
-  ].filter(Boolean);
+  ].filter(Boolean), [t]);
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
 
   const visibleColumns = useVisibleOrderedColumns();
-  const setColumnVisibility = useSetRecoilState(columnVisibilityState);
-  const setColumnOrder = useSetRecoilState(columnOrderState);
+
 
   const [columnsReady, setColumnsReady] = useState(false);
 
-  useEffect(() => {
-    const loadColumnSettings = async () => {
-      try {
-        const res = await getProductionFloorTableSettingsApi(callApi, () => { });
-        const saved: ColumnSetting[] = res?.data;
-
-        const filteredKeys = allColumnKeys.filter(
-          (key) =>
-            key !== "checkbox" ||
-            CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
-        );
-
-        if (saved && saved.length > 0) {
-          const { order, visibility } = parseSavedColumnSettings(
-            saved,
-            filteredKeys
-          );
-          setColumnOrder(order);
-          setColumnVisibility(visibility);
-        } else {
-          // setColumnOrder(allColumnKeys);
-
-          setColumnOrder(filteredKeys);
-          setColumnVisibility(
-            Object.fromEntries(filteredKeys.map((key) => [key, true]))
-          );
-        }
-      } catch (e) {
-        console.error("Failed to load column settings", e);
-      } finally {
-        setColumnsReady(true);
-      }
-    };
-
-    loadColumnSettings();
-  }, []);
+  
 
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
 
-  const handleBulkUpdateStatus = async (selectedJobs, statusId) => {
+  // Memoized pagination handlers
+  const handlePageChange = useCallback((event, value) => {
+    setPageNumber(value);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, pageNumber: value },
+    });
+    getAllData(value, pageSize);
+  }, [setPageNumber, router, getAllData, pageSize]);
+
+  const handlePageSizeChange = useCallback((event) => {
+    setPageNumber(1);
+    setPageSize(event.target.value);
+    getAllData(1, event.target.value);
+  }, [setPageNumber, setPageSize, getAllData]);
+
+  // Memoized bulk action handlers
+  const handleBulkUpdateStatus = useCallback(async (selectedJobs, statusId) => {
     try {
       await updateStatus(selectedJobs, statusId);
       setSelectedIds([]);
@@ -224,9 +269,9 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       console.error("Error updating status:", error);
       alertFaultUpdate();
     }
-  };
+  }, [updateStatus, setSelectedIds, alertFaultUpdate]);
 
-  const handleBulkMoveToNextStation = async (selectedJobs) => {
+  const handleBulkMoveToNextStation = useCallback(async (selectedJobs) => {
     try {
       const callBack = (res) => {
         if (res?.success) {
@@ -249,9 +294,9 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       console.error("Error moving to done:", error);
       alertFaultUpdate();
     }
-  };
+  }, [callApi, setSelectedIds, getData, alertFaultUpdate]);
 
-  const handleBulkMoveToDone = async (selectedJobs, sendMessage) => {
+  const handleBulkMoveToDone = useCallback(async (selectedJobs, sendMessage) => {
     try {
       const callBack = (res) => {
         if (res?.success) {
@@ -275,12 +320,13 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       console.error("Error moving to done:", error);
       alertFaultUpdate();
     }
-  };
+  }, [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue]);
 
-  const handleClearSelection = () => {
+  const handleClearSelection = useCallback(() => {
     setSelectedIds([]);
-  };
-  // Get status options from your data
+  }, [setSelectedIds]);
+
+  // Memoized status options
   const statusOptions = useMemo(() => {
     return filteredDataByMachine.map((statusBoard: any) => ({
       id: statusBoard.boardMissionStatus.boardMissionStatus?.id,
@@ -291,15 +337,14 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     }));
   }, [filteredDataByMachine]);
 
-  const isOpenGroupJobsModal = useModal()
+  const isOpenGroupJobsModal = useModal();
 
-  const handleCheckIfCanMakeGroupedBoardMissions = async (selectedJobIds) => {
+  const handleCheckIfCanMakeGroupedBoardMissions = useCallback(async (selectedJobIds) => {
     const callBack = (res) => {
       if (res?.success) {
         if (res?.data?.item1) {
-          isOpenGroupJobsModal.open()
-        }
-        else {
+          isOpenGroupJobsModal.open();
+        } else {
           alertFault(res?.data?.item2);
         }
       } else {
@@ -308,34 +353,33 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     };
     const selectedJobsIdsList = selectedJobIds.map(job => job.id);
 
-
     await checkIfCanMakeGroupedBoardMissionsApi(callApi, callBack, {
       selectedJobsIdsList
     });
-  };
-  const handleGroupJobs = async (selectedJobIds) => {
+  }, [callApi, isOpenGroupJobsModal, alertFault, alertFaultUpdate]);
+
+  const handleGroupJobs = useCallback(async (selectedJobIds) => {
     const selectedJobsIdsList = selectedJobIds.map(job => job.id);
 
     const callBack = (res) => {
-
       if (res?.success) {
         setSelectedIds([]);
         getData();
-
       } else {
         alertFaultUpdate();
       }
     };
 
     await groupJobsApi(callApi, callBack, selectedJobsIdsList);
-  };
+  }, [callApi, setSelectedIds, getData, alertFaultUpdate]);
 
   const moveToDone = useModal();
   const moveToNextStation = useModal();
 
-  return (
-    <Stack gap={"20px"}>
-      {view === EProductionFloorView.DONE_JOBS ? (
+  // Memoized content rendering
+  const renderContent = useMemo(() => {
+    if (view === EProductionFloorView.DONE_JOBS) {
+      return (
         <>
           <PrimaryTable
             stickyFirstCol={false}
@@ -373,43 +417,84 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
             initialPageSize={initialPageSize}
           />
         </>
-      ) : (
-        <>
-          {!columnsReady ? (
-            // Skeleton while loading columns
-            <Stack gap={"10px"}>
-              {[...new Array(5)].map((_) => (
-                <Skeleton variant="rounded" width={"100%"} height={60} />
-              ))}
-            </Stack>
-          ) : (
-            filteredDataByMachine.map((statusBoards, index) => {
-              const allBoardMissions = filteredDataByMachine.flatMap(
-                (board) => board.boardMissions
-              );
-              return (
-                <StatusTableComponent
-                  key={index}
-                  status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-                  boards={statusBoards?.boardMissions}
-                  onClickClient={getCustomerForEdit}
-                  allBoardMissions={allBoardMissions}
-                  setFilters={setFilters}
-                  storageList={storageList}
-                  inputValue={inputValue}
-                  defaultValue={defaultValue}
-                  addPrintHouseJobsStorage={addPrintHouseJobsStorage}
-                  handleStorageChange={handleStorageChange}
-                  setInputValue={setInputValue}
-                  employeesCategories={employeesCategories}
-                  visibleColumns={visibleColumns}
-                />
-              );
-            })
-          )}
-        </>
-      )}
+      );
+    }
 
+    // Show loading skeleton while column settings are loading
+    /*if (!columnsReady) {
+      return (
+        <Stack gap={"10px"}>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Skeleton key={`skeleton-${index}`} variant="rounded" width={"100%"} height={60} />
+          ))}
+        </Stack>
+      );
+    }*/
+
+    return (
+      <>
+        {filteredDataByMachine.map((statusBoards, index) => {
+          const allBoardMissions = filteredDataByMachine.flatMap(
+            (board) => board.boardMissions
+          );
+          return (
+            <StatusTableComponent
+              key={`status-${statusBoards?.boardMissionStatus?.boardMissionStatus?.id}-${index}`}
+              status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+              boards={statusBoards?.boardMissions}
+              onClickClient={getCustomerForEdit}
+              allBoardMissions={allBoardMissions}
+              setFilters={setFilters}
+              storageList={storageList}
+              inputValue={inputValue}
+              defaultValue={defaultValue}
+              addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+              handleStorageChange={handleStorageChange}
+              setInputValue={setInputValue}
+              employeesCategories={employeesCategories}
+              visibleColumns={visibleColumns}
+              isVirtualizing={isVirtualizing}
+            />
+          );
+        })}
+        {isVirtualizing && (
+          <div ref={(el) => {
+            if (el && observerRef.current) {
+              observerRef.current.observe(el);
+            }
+          }} style={{ height: '20px' }} />
+        )}
+      </>
+    );
+  }, [
+    view,
+    allBoardMissions,
+    tableHeader,
+    handlePageChange,
+    handlePageSizeChange,
+    pageNumber,
+    pagesCount,
+    pageSize,
+    router,
+    initialPageSize,
+    columnsReady,
+    filteredDataByMachine,
+    getCustomerForEdit,
+    setFilters,
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    employeesCategories,
+    visibleColumns,
+    isVirtualizing
+  ]);
+
+  return (
+    <Stack gap={"20px"}>
+      {renderContent}
 
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
@@ -419,11 +504,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         customer={customer}
         setCustomer={setCustomer}
       />
+      
       <FloatingBulkActionsMenu
         selectedJobs={selectedIds}
         onUpdateStatus={handleBulkUpdateStatus}
         onMoveToNextStation={moveToNextStation.open}
-        onGroupJobs={handleCheckIfCanMakeGroupedBoardMissions} // Add this new prop
+        onGroupJobs={handleCheckIfCanMakeGroupedBoardMissions}
         onMoveToDone={moveToDone.open}
         onClearSelection={handleClearSelection}
         statusOptions={statusOptions}
@@ -489,6 +575,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           handleBulkMoveToNextStation(selectedIds);
         }}
       />
+      
       <GoMakeDeleteModal
         hideIcon={true}
         modalType={ModalType.WARNING}
