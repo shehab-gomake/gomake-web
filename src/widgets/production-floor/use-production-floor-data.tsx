@@ -24,7 +24,7 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useTranslation } from "react-i18next";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { IFilterGroupsList } from "./interfaces/borad-missions-filter-groups";
 import {
@@ -87,15 +87,16 @@ const useProductionFloorData = () => {
     selectedGroupIdState
   );
   const view = useRecoilValue(productionFloorViewState);
-  const getData = async (connectionId?: string) => {
+  
+  // Flag to prevent multiple calls to getStationFilterGroups
+  const [isLoadingFilterGroups, setIsLoadingFilterGroups] = useState(false);
+  const getData = useCallback(async (connectionId?: string) => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
-      getDataByGroups(connectionId, filtersState).then();
-      return;
+      return await getDataByGroups(connectionId, filtersState);
     }
 
     if (view === EProductionFloorView.DONE_JOBS) {
-      getAllBoardMissions();
-      return;
+      return await getAllBoardMissions();
     }
 
     const callBack = (res) => {
@@ -119,8 +120,10 @@ const useProductionFloorData = () => {
             checked: agentIdsFromServer.includes(agent.id),
           }))
         );
+        
+        // Only call getStationFilterGroups once per successful data fetch
+        getStationFilterGroups();
       }
-      getStationFilterGroups();
     };
     if (abortController) {
       abortController.abort();
@@ -136,9 +139,9 @@ const useProductionFloorData = () => {
       false,
       newRequestAbortController
     );
-  };
+  }, [view, filtersState, abortController, callApi, setData, setFilters, setStationOrdering, setSelectedGroupId, setTags, setUserGroups, setPath, setAgents]);
 
-  const getDataByGroups = async (
+  const getDataByGroups = useCallback(async (
     connectionId?: string,
     currentFilters?: IProductionFloorFilter,
     clearData?: boolean,
@@ -194,7 +197,7 @@ const useProductionFloorData = () => {
       false,
       newRequestAbortController
     );
-  };
+  }, [callApi, setData, setFilters, setAgents, setJobsStatuses, setSelectedGroupId, setTags, setUserGroups, setPath]);
 
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
@@ -262,7 +265,7 @@ const useProductionFloorData = () => {
     return "";
   };
 
-  const getAllBoardMissions = async (
+  const getAllBoardMissions = useCallback(async (
     pageNumberInput?: number,
     pageSizeInput?: number,
     patternSearchInput?: string
@@ -411,15 +414,15 @@ const useProductionFloorData = () => {
           patternSearchInput : "",
     };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
-  };
+  }, [callApi, setAllBoardMissions, setPagesCount, pageNumber, pageSize, patternSearch, router, t, CheckPermission]);
 
-  const getAllData = async (
+  const getAllData = useCallback(async (
     pageNumber: number,
     pageSize: number,
     patternSearchInput?: string
   ) => {
     return await getAllBoardMissions(pageNumber, pageSize, patternSearchInput);
-  };
+  }, [getAllBoardMissions]);
 
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -698,8 +701,22 @@ const useProductionFloorData = () => {
 
   const [filterGroups, setFilterGroups] =
     useRecoilState<IFilterGroupsList[]>(filterGroupsState);
-  const getStationFilterGroups = async () => {
+  const getStationFilterGroups = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isLoadingFilterGroups) {
+      return;
+    }
+    
+    setIsLoadingFilterGroups(true);
+    
+    // Add timeout to prevent hanging
+    const timeoutId = setTimeout(() => {
+      console.warn("⚠️ Filter groups loading timeout");
+      setIsLoadingFilterGroups(false);
+    }, 10000); // 10 seconds timeout
+    
     const callBack = (res) => {
+      clearTimeout(timeoutId);
       if (res.success) {
         const filterGroupsList: IFilterGroupsList[] = res?.data?.map(
           (group) => ({
@@ -729,9 +746,10 @@ const useProductionFloorData = () => {
 
         setFilterGroups([allGroupViewFilter, ...filterGroupsList]);
       }
+      setIsLoadingFilterGroups(false);
     };
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
-  };
+  }, [isLoadingFilterGroups, callApi, setFilterGroups, t]);
 
   const handleOpenQRScanner = () => {
     push(`/qr-scanner`);

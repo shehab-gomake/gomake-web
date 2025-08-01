@@ -22,7 +22,7 @@ import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
@@ -47,6 +47,11 @@ import {
   getCustomWidth,
 } from "../../state/production-floor-coulmns-table-settings";
 
+// Performance optimization constants
+const VIRTUALIZATION_THRESHOLD = 50; // Start virtualization when more than 50 items per status
+const VIRTUAL_BATCH_SIZE = 20; // Number of items to render at once
+const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
+
 interface IProps {
   status: IProductionStatus;
   boards: IBoardMissions[];
@@ -62,6 +67,7 @@ interface IProps {
   setInputValue?: any;
   employeesCategories?: any;
   visibleColumns: string[];
+  isVirtualizing?: boolean;
 }
 
 const StatusTableComponent = ({
@@ -79,6 +85,7 @@ const StatusTableComponent = ({
   setInputValue,
   employeesCategories,
   visibleColumns,
+  isVirtualizing = false,
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
@@ -92,21 +99,29 @@ const StatusTableComponent = ({
     direction: CurrentStationOrderingEnum;
   }>({ key: "", direction: CurrentStationOrderingEnum.NONE });
 
-  const reSortingCurrentStation = async (
+  // Performance optimization states
+  const [virtualStart, setVirtualStart] = useState(0);
+  const [virtualEnd, setVirtualEnd] = useState(VIRTUAL_BATCH_SIZE);
+  const [isVirtualizingLocal, setIsVirtualizingLocal] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const reSortingCurrentStation = useCallback(async (
     direction: CurrentStationOrderingEnum
   ) => {
     await setFilters({
       ...filtersState,
       currentStationOrdering: direction,
     });
-  };
-  const hasUrgentOrApproval = allBoardMissions?.some(
+  }, [setFilters, filtersState]);
+
+  const hasUrgentOrApproval = useMemo(() => allBoardMissions?.some(
     (board) =>
       board.isUrgentWork ||
       board.showGraphicsApprovalAlert === 1 ||
       board.showGraphicsApprovalAlert === 0 ||
       board.showGraphicsApprovalAlert === 2
-  );
+  ), [allBoardMissions]);
 
   const {
     t,
@@ -163,14 +178,7 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
-          } /* else if (status.key === "Stuck") {
-            handleOpenStuckModal(
-              status.id,
-              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
-              item.board.id,
-              item.board.productType
-            );
-          }*/ else {
+          } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               status.id
@@ -192,30 +200,91 @@ const StatusTableComponent = ({
     [status, boards]
   );
 
-
+  // Optimized board filtering with memoization
   const getBoards = useCallback(() => {
-    return !!search
-      ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
-      : boards;
+    if (!search) return boards;
+    
+    const searchLower = search.toLowerCase();
+    return boards?.filter(
+      (board) => {
+        const missionNumber = `${board?.boardMissionNumber}\\${board?.orderNumber}`;
+        const clientName = board?.clientName?.toLowerCase() || '';
+        const productName = board?.productName?.toLowerCase() || '';
+        const jobName = board?.jobName?.toLowerCase() || '';
+        
+        return missionNumber.includes(search) ||
+               clientName.includes(searchLower) ||
+               productName.includes(searchLower) ||
+               jobName.includes(searchLower) ||
+               board?.automatedTags?.some((tag) =>
+                 `${tag.toLowerCase()}`.includes(searchLower)
+               );
+      }
+    );
   }, [boards, search]);
+
+  // Memoized filtered boards with virtualization
+  const filteredBoards = useMemo(() => {
+    const boards = getBoards();
+    const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
+    
+    // Enable local virtualization for large datasets
+    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
+    
+    if (shouldVirtualize) {
+      return sortedBoards.slice(virtualStart, virtualEnd);
+    } else {
+      return sortedBoards;
+    }
+  }, [getBoards, virtualStart, virtualEnd]);
+
+  // Separate effect to handle virtualization state changes
+  useEffect(() => {
+    const boards = getBoards();
+    const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
+    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
+    
+    if (shouldVirtualize !== isVirtualizingLocal) {
+      setIsVirtualizingLocal(shouldVirtualize);
+    }
+  }, [getBoards, isVirtualizingLocal]);
+
+  // Intersection Observer for infinite scrolling within status
+  useEffect(() => {
+    if (!isVirtualizingLocal || !isOpen) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVirtualEnd(prev => {
+              // Use the current boards length without calling getBoards() again
+              const currentBoards = boards?.length || 0;
+              return Math.min(prev + VIRTUAL_BATCH_SIZE, currentBoards);
+            });
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observerRef.current = observer;
+    return () => observer.disconnect();
+  }, [isVirtualizingLocal, isOpen, boards?.length]);
+
+  // Reset virtualization when status is toggled
+  useEffect(() => {
+    if (isOpen) {
+      setVirtualStart(0);
+      setVirtualEnd(VIRTUAL_BATCH_SIZE);
+    }
+  }, [isOpen]);
 
   const columnOrder = useRecoilValue(columnOrderState);
   const columnVisibility = useRecoilValue(columnVisibilityState);
+
+  // Memoized table headers
+  const memoizedTableHeaders = useMemo(() => tableHeaders(status.id), [tableHeaders, status.id]);
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -258,7 +327,7 @@ const StatusTableComponent = ({
               <Table stickyHeader={false}>
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
-                    {tableHeaders(status.id)?.map((header, index) => {
+                    {memoizedTableHeaders?.map((header, index) => {
                       const key = columnOrder.filter(
                         (k) => columnVisibility[k]
                       )[index];
@@ -272,7 +341,6 @@ const StatusTableComponent = ({
                             minWidth: width,
                             maxWidth: width,
                             width,
-                            // Spread the mobile styles conditionally
                             ...(isMobileScreen && {
                               position: index <= 1 ? "sticky" : "relative",
                               [RTL ? "right" : "left"]:
@@ -323,14 +391,14 @@ const StatusTableComponent = ({
                                   setCurrentStationOrdering(
                                     currentStationOrdering ===
                                       CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
+                                        ? CurrentStationOrderingEnum.ASC
+                                        : CurrentStationOrderingEnum.NONE
                                   );
                                   reSortingCurrentStation(
                                     currentStationOrdering ===
                                       CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
+                                        ? CurrentStationOrderingEnum.ASC
+                                        : CurrentStationOrderingEnum.NONE
                                   );
                                 }}
                               >
@@ -344,33 +412,39 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {(() => {
-                    return [...getBoards()]
-                      ?.sort((a, b) => a.priority - b.priority)
-                      ?.map((boardMission, index) => (
-                        <TableRowComponent
-                          key={"status" + status.id + boardMission.id + index}
-                          boardMission={boardMission}
-                          status={status}
-                          onClickDone={tryMoveBoardMissionsToDone}
-                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                          index={index}
-                          onClickClient={onClickClient}
-                          isMobileScreen={isMobileScreen}
-                          isRTL={RTL}
-                          isUrgentWork={hasUrgentOrApproval}
-                          onUpdateJobDueDate={updateJobDueDate}
-                          employeesCategories={employeesCategories}
-                          visibleColumns={visibleColumns}
-                        />
-                      ));
-                  })()}
+                  {filteredBoards.map((boardMission, index) => (
+                    <TableRowComponent
+                      key={`status-${status.id}-${boardMission.id}-${index}`}
+                      boardMission={boardMission}
+                      status={status}
+                      onClickDone={tryMoveBoardMissionsToDone}
+                      onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                      index={index}
+                      onClickClient={onClickClient}
+                      isMobileScreen={isMobileScreen}
+                      isRTL={RTL}
+                      isUrgentWork={hasUrgentOrApproval}
+                      onUpdateJobDueDate={updateJobDueDate}
+                      employeesCategories={employeesCategories}
+                      visibleColumns={visibleColumns}
+                    />
+                  ))}
+                  {isVirtualizingLocal && (
+                    <tr ref={(el) => {
+                      if (el && observerRef.current) {
+                        observerRef.current.observe(el);
+                      }
+                    }}>
+                      <td colSpan={memoizedTableHeaders?.length || 1} style={{ height: '20px' }} />
+                    </tr>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           </Paper>
         </Collapse>
       )}
+      
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -421,12 +495,14 @@ const StatusTableComponent = ({
           />
         </div>
       </ThreeOptionsModal>
+      
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
         onClose={onClosePrintDeliverTicketModal}
         boardMissionId={selectedMission?.id}
         quantity={selectedMission?.quantity}
       />
+      
       <GoMakeDeleteModal
         title={t("sales.quote.simpleApproveMail")}
         yesBtn={t("modal.yes")}
@@ -487,6 +563,7 @@ const StatusTableComponent = ({
           />
         </div>
       </GoMakeDeleteModal>
+      
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}
@@ -504,4 +581,5 @@ const StatusTableComponent = ({
     </Stack>
   );
 };
+
 export { StatusTableComponent };
