@@ -41,6 +41,7 @@ import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 import { ColumnSettingsMenu } from "../components/column-settings-menu";
+import { LoadMorePagination } from "../components/load-more-pagination";
 import {
   columnOrderState,
   columnVisibilityState,
@@ -48,7 +49,7 @@ import {
 } from "../../state/production-floor-coulmns-table-settings";
 
 // Performance optimization constants
-const VIRTUALIZATION_THRESHOLD = 50; // Start virtualization when more than 50 items per status
+const VIRTUALIZATION_THRESHOLD = 20; // Start virtualization when more than 50 items per status
 const VIRTUAL_BATCH_SIZE = 20; // Number of items to render at once
 const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
 
@@ -105,6 +106,7 @@ const StatusTableComponent = ({
   const [isVirtualizingLocal, setIsVirtualizingLocal] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const reSortingCurrentStation = useCallback(async (
     direction: CurrentStationOrderingEnum
@@ -229,7 +231,7 @@ const StatusTableComponent = ({
     const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
     
     // Enable local virtualization for large datasets
-    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
+    const shouldVirtualize = false;//sortedBoards.length > VIRTUALIZATION_THRESHOLD;
     
     if (shouldVirtualize) {
       return sortedBoards.slice(virtualStart, virtualEnd);
@@ -323,7 +325,7 @@ const StatusTableComponent = ({
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper>
-            <TableContainer>
+            <TableContainer ref={tableContainerRef}>
               <Table stickyHeader={false}>
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
@@ -412,31 +414,52 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredBoards.map((boardMission, index) => (
-                    <TableRowComponent
-                      key={`status-${status.id}-${boardMission.id}-${index}`}
-                      boardMission={boardMission}
-                      status={status}
-                      onClickDone={tryMoveBoardMissionsToDone}
-                      onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                      index={index}
-                      onClickClient={onClickClient}
-                      isMobileScreen={isMobileScreen}
-                      isRTL={RTL}
-                      isUrgentWork={hasUrgentOrApproval}
-                      onUpdateJobDueDate={updateJobDueDate}
-                      employeesCategories={employeesCategories}
-                      visibleColumns={visibleColumns}
-                    />
-                  ))}
-                  {isVirtualizingLocal && (
-                    <tr ref={(el) => {
-                      if (el && observerRef.current) {
-                        observerRef.current.observe(el);
-                      }
-                    }}>
-                      <td colSpan={memoizedTableHeaders?.length || 1} style={{ height: '20px' }} />
-                    </tr>
+                  {filteredBoards.length > 50 ? (
+                    <LoadMorePagination
+                      items={filteredBoards}
+                      itemsPerPage={50}
+                      tableRef={tableContainerRef}
+                    >
+                      {(currentItems) => (
+                        <>
+                          {currentItems.map((boardMission, index) => (
+                            <TableRowComponent
+                              key={`status-${status.id}-${boardMission.id}-${index}`}
+                              boardMission={boardMission}
+                              status={status}
+                              onClickDone={tryMoveBoardMissionsToDone}
+                              onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                              index={index}
+                              onClickClient={onClickClient}
+                              isMobileScreen={isMobileScreen}
+                              isRTL={RTL}
+                              isUrgentWork={hasUrgentOrApproval}
+                              onUpdateJobDueDate={updateJobDueDate}
+                              employeesCategories={employeesCategories}
+                              visibleColumns={visibleColumns}
+                            />
+                          ))}
+                        </>
+                      )}
+                    </LoadMorePagination>
+                  ) : (
+                    filteredBoards.map((boardMission, index) => (
+                      <TableRowComponent
+                        key={`status-${status.id}-${boardMission.id}-${index}`}
+                        boardMission={boardMission}
+                        status={status}
+                        onClickDone={tryMoveBoardMissionsToDone}
+                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                        index={index}
+                        onClickClient={onClickClient}
+                        isMobileScreen={isMobileScreen}
+                        isRTL={RTL}
+                        isUrgentWork={hasUrgentOrApproval}
+                        onUpdateJobDueDate={updateJobDueDate}
+                        employeesCategories={employeesCategories}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))
                   )}
                 </TableBody>
               </Table>

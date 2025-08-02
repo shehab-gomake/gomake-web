@@ -93,6 +93,11 @@
     "purchaseInvoices": "الفواتير",
     "supplierPayments": "الدفعات"
   },
+  "pagination": {
+    "showing": "عرض {{showing}}",
+    "loadMore": "تحميل المزيد ({{count}} عنصر)",
+    "showFirst": "عرض أول {{count}}"
+  },
   "properties": {
     "parameter": "المعلمة",
     "unit": "وحدة",

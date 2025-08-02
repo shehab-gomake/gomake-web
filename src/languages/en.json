@@ -95,6 +95,11 @@
     "supplierPayments": "payments",
     "translations": "Translations"
   },
+  "pagination": {
+    "showing": "Showing {{showing}}",
+    "loadMore": "Load More ({{count}} items)",
+    "showFirst": "Show First {{count}}"
+  },
   "properties": {
     "parameter": "Parameter",
     "unit":"Unit",
