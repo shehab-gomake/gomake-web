@@ -1650,6 +1650,7 @@
       "waitForPrintHouseConfirm": "מחכה לאישור הדפסה",
       "chooseStatus": "בחר מעמד",
       "chooseCustomer": "בחר לקוח",
+      "maxItemsReached": "הגעת למספר המרבי של פריטים (100) ליצירת מסמך חדש"
       "ChooseAgent": "בחר סוכן",
       "loggers": "משובים",
       "pdf": "PDF",
