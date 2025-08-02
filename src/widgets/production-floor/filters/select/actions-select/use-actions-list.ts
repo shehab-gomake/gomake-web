@@ -153,10 +153,10 @@ const useActionsList = ({
         stationId === station.actionId
           ? {
               ...station,
-              checked: !checked,
+              checked: !station.checked,
               machines: station.machines?.map((machine) => ({
                 ...machine,
-                checked: !checked,
+                checked: !station.checked,
               })),
             }
           : station
@@ -174,16 +174,34 @@ const useActionsList = ({
   const getActions = async () => {
     const callBack = (res) => {
       if (res.success) {
+        debugger;
         setActions(res?.data);
-        setDashboardMachines(
-          res?.data.flatMap((station) =>
-            station.machines.map((machine) => ({
-              id: machine.machineId,
-              name: machine.machineName,
-              checked: true,
-            }))
-          )
+        const dashboardMachinesData = res?.data.flatMap((station) =>
+          station.machines.map((machine) => ({
+            id: machine.machineId,
+            name: machine.machineName + " (" + station.actionName + ")",
+            checked: true,
+          }))
         );
+        setDashboardMachines(dashboardMachinesData);
+        
+        // Initialize actionsList for dashboard source
+        if (source === Source.DASHBOARD) {
+          setActionsList(
+            res?.data.map((action) => {
+              return {
+                ...action,
+                label: action.actionName,
+                checked: true, // All stations should be checked by default for dashboard
+                machines: action?.machines?.map((machine) => ({
+                  ...machine,
+                  label: machine.machineName,
+                  checked: true, // All machines should be checked by default for dashboard
+                })),
+              };
+            })
+          );
+        }
       }
     };
     await getPrintHouseActions(callApi, callBack, source === Source.USERS);
@@ -208,11 +226,11 @@ const useActionsList = ({
       }));
   }, [actionsList]);
 
-  // useEffect(() => {
-  //   if (source !== Source.DASHBOARD) {
-  //     getActions().then();
-  //   }
-  // }, [source]);
+  useEffect(() => {
+    if (source === Source.DASHBOARD) {
+      getActions().then();
+    }
+  }, [source]);
 
   const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
   const onClickOpenDepartmentModal = () => {

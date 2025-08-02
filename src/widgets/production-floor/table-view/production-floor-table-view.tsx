@@ -44,8 +44,7 @@ import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { useUserPermission } from "@/hooks/use-permission";
 
 // Performance optimization constants
-const VIRTUALIZATION_THRESHOLD = 100; // Start virtualization when more than 100 items
-const BATCH_SIZE = 50; // Process items in batches
+const ITEMS_PER_PAGE = 50; // Show 50 items per page
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
@@ -75,12 +74,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
   const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
   const { initialPageSize } = useListPagination();
-  
-  // Performance optimization states
-  const [isVirtualizing, setIsVirtualizing] = useState(false);
-  const [visibleRange, setVisibleRange] = useState({ start: 0, end: BATCH_SIZE });
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const {
     storageList,
@@ -136,43 +129,17 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
            );
   }, [search]);
 
-  // Memoized filtered missions with virtualization support
+  // Memoized filtered missions
   const allFilteredMissions = useMemo(() => {
     const missions = filteredDataByMachine.flatMap(
       (statusBoards) => statusBoards.boardMissions
     );
-    const filtered = missions.filter(matchSearch);
-    
-    // Enable virtualization for large datasets
-    const shouldVirtualize = filtered.length > VIRTUALIZATION_THRESHOLD;
-    
-    if (shouldVirtualize) {
-      return filtered.slice(visibleRange.start, visibleRange.end);
-    } else {
-      return filtered;
-    }
-  }, [filteredDataByMachine, matchSearch, visibleRange]);
-
-  // Separate effect to handle virtualization state changes
-  useEffect(() => {
-    const missions = filteredDataByMachine.flatMap(
-      (statusBoards) => statusBoards.boardMissions
-    );
-    const filtered = missions.filter(matchSearch);
-    const shouldVirtualize = filtered.length > VIRTUALIZATION_THRESHOLD;
-    
-    if (shouldVirtualize !== isVirtualizing) {
-      setIsVirtualizing(shouldVirtualize);
-    }
-  }, [filteredDataByMachine, matchSearch, isVirtualizing]);
+    return missions.filter(matchSearch);
+  }, [filteredDataByMachine, matchSearch]);
 
   // Debounced search effect
   useEffect(() => {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-
-    searchTimeoutRef.current = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       // Only update if search has actually changed
       const missions = filteredDataByMachine.flatMap(
         (statusBoards) => statusBoards.boardMissions
@@ -185,34 +152,8 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       }
     }, DEBOUNCE_DELAY);
 
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
+    return () => clearTimeout(timeoutId);
   }, [search, filteredDataByMachine, matchSearch, setFilteredMissionsBySearch, getAllBoardMissionsFromSearch]);
-
-  // Intersection Observer for infinite scrolling
-  useEffect(() => {
-    if (!isVirtualizing) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleRange(prev => ({
-              start: prev.start,
-              end: Math.min(prev.end + BATCH_SIZE, data.flatMap(item => item.boardMissions).length)
-            }));
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current = observer;
-    return () => observer.disconnect();
-  }, [isVirtualizing, data]);
 
   // Memoized table headers
   const tableHeader = useMemo(() => [
@@ -431,66 +372,58 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       );
     }*/
 
-    return (
-      <>
-        {filteredDataByMachine.map((statusBoards, index) => {
-          const allBoardMissions = filteredDataByMachine.flatMap(
-            (board) => board.boardMissions
-          );
           return (
-            <StatusTableComponent
-              key={`status-${statusBoards?.boardMissionStatus?.boardMissionStatus?.id}-${index}`}
-              status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-              boards={statusBoards?.boardMissions}
-              onClickClient={getCustomerForEdit}
-              allBoardMissions={allBoardMissions}
-              setFilters={setFilters}
-              storageList={storageList}
-              inputValue={inputValue}
-              defaultValue={defaultValue}
-              addPrintHouseJobsStorage={addPrintHouseJobsStorage}
-              handleStorageChange={handleStorageChange}
-              setInputValue={setInputValue}
-              employeesCategories={employeesCategories}
-              visibleColumns={visibleColumns}
-              isVirtualizing={isVirtualizing}
-            />
-          );
-        })}
-        {isVirtualizing && (
-          <div ref={(el) => {
-            if (el && observerRef.current) {
-              observerRef.current.observe(el);
-            }
-          }} style={{ height: '20px' }} />
-        )}
-      </>
-    );
-  }, [
-    view,
-    allBoardMissions,
-    tableHeader,
-    handlePageChange,
-    handlePageSizeChange,
-    pageNumber,
-    pagesCount,
-    pageSize,
-    router,
-    initialPageSize,
-    columnsReady,
-    filteredDataByMachine,
-    getCustomerForEdit,
-    setFilters,
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue,
-    employeesCategories,
-    visibleColumns,
-    isVirtualizing
-  ]);
+        <>
+          {filteredDataByMachine.map((statusBoards, index) => {
+            const allBoardMissions = filteredDataByMachine.flatMap(
+              (board) => board.boardMissions
+            );
+            return (
+              <StatusTableComponent
+                key={`status-${statusBoards?.boardMissionStatus?.boardMissionStatus?.id}-${index}`}
+                status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+                boards={statusBoards?.boardMissions}
+                onClickClient={getCustomerForEdit}
+                allBoardMissions={allBoardMissions}
+                setFilters={setFilters}
+                storageList={storageList}
+                inputValue={inputValue}
+                defaultValue={defaultValue}
+                addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+                handleStorageChange={handleStorageChange}
+                setInputValue={setInputValue}
+                employeesCategories={employeesCategories}
+                visibleColumns={visibleColumns}
+                isVirtualizing={false}
+              />
+            );
+          })}
+        </>
+      );
+      }, [
+      view,
+      allBoardMissions,
+      tableHeader,
+      handlePageChange,
+      handlePageSizeChange,
+      pageNumber,
+      pagesCount,
+      pageSize,
+      router,
+      initialPageSize,
+      columnsReady,
+      filteredDataByMachine,
+      getCustomerForEdit,
+      setFilters,
+      storageList,
+      inputValue,
+      defaultValue,
+      addPrintHouseJobsStorage,
+      handleStorageChange,
+      setInputValue,
+      employeesCategories,
+      visibleColumns
+    ]);
 
   return (
     <Stack gap={"20px"}>

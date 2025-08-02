@@ -13,17 +13,24 @@ import {boardMissionsStationsState} from "@/widgets/production-floor/views/board
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {useModal} from "@/hooks/use-modal";
+import { useTranslation } from 'react-i18next';
+import { GoMakeAlertModal } from "../modal/alert-modal";
+
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
     onIsLastStationDetect?:()=>void;
 }
 const QrCodeReader = (props:IProps)=>{
+    const { t } = useTranslation();
     const { alertSuccessUpdate, alertFault } = useSnackBar();
     const { callApi } = useGomakeAxios();
     const router = useRouter();
     const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
     const [myState,setMyState] = useState("helll");
+    const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+    const [deliveryQRData, setDeliveryQRData] = useState<any>(null);
+
     const handleBoardMissionsBarcodeActionsFunction = async (barcode: string, data: any) => {
 
         return new Promise(async (resolve, reject) => {
@@ -39,7 +46,7 @@ const QrCodeReader = (props:IProps)=>{
                     alertSuccessUpdate();
                 }
                 else {
-                    alertFault("Dected qr code in not valid")
+                    alertFault(t("productionFloor.qrReadError"))
                 }
                 resolve(true)
             };
@@ -47,6 +54,18 @@ const QrCodeReader = (props:IProps)=>{
                 barcode
             });
         })
+    };
+
+    const handleDeliveryQRCode = (qrData: any) => {
+        if (deliveryQRData && deliveryQRData.orderId === qrData.orderId) {
+            // User has already seen the warning for this QR code, proceed to order page
+            const url = `/orders?orderId=${qrData?.orderId}&clientId=${qrData?.clientId}&orderNumber=${qrData?.orderNumber}&isComeFromQR=true`;
+            router.push(url);
+        } else {
+            // First time scanning this delivery QR code, show warning
+            setDeliveryQRData(qrData);
+            setIsDeliveryModalOpen(true);
+        }
     };
 
     const handleBoardMissionsQRCodeAction = async (barcode: string) => {
@@ -63,8 +82,7 @@ const QrCodeReader = (props:IProps)=>{
                         }
                         else {
                             if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
-                                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-                                router.push(url);
+                                handleDeliveryQRCode(res?.data);
                             }
 
                         }
@@ -76,13 +94,18 @@ const QrCodeReader = (props:IProps)=>{
                         }
                         else {
                             if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
-                                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-                                router.push(url);
+                                if(props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR){
+                                    handleDeliveryQRCode(res?.data);
+                                }else{
+                                    const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                                    router.push(url);
+                                }
+                            
                             }
                         }
                     }
                 }else{
-                    alertFault("Dected qr code in not valid")
+                    alertFault(t("productionFloor.qrReadError"))
                 }
                 resolve(true);
             };
@@ -98,11 +121,29 @@ const QrCodeReader = (props:IProps)=>{
     const handleError = (err)=>{
         console.error(err)
     }
+
+    const handleModalConfirm = () => {
+        setIsDeliveryModalOpen(false);
+        if (deliveryQRData) {
+            const url = `/orders?orderId=${deliveryQRData?.orderId}&clientId=${deliveryQRData?.clientId}&orderNumber=${deliveryQRData?.orderNumber}&isComeFromQR=true`;
+            router.push(url);
+        }
+    };
+
     return (
         <div>
             <BarcodeReader
                 onError={handleError}
                 onScan={handleScan}
+            />
+            <GoMakeAlertModal
+                openModal={isDeliveryModalOpen}
+                onClose={() => setIsDeliveryModalOpen(false)}
+                title={t("delivery")}
+                subTitle={t("productionFloor.deliveryQrCodeError")}
+                onClickConfirm={handleModalConfirm}
+                yesBtn="modal.ok"
+                withCancelBtn={true}
             />
         </div>
     )
