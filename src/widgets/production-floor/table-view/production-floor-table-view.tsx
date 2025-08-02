@@ -42,6 +42,7 @@ import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 import { useUserPermission } from "@/hooks/use-permission";
+import {useSearch} from "rsuite/cjs/internals/Picker";
 
 // Performance optimization constants
 const ITEMS_PER_PAGE = 50; // Show 50 items per page
@@ -63,7 +64,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     setCustomer,
   } = useProductionFloorTable();
   const { t } = useTranslation();
-
+  const [lastSearch,setLastSearch] = useState("");
   const { setFilters, view, getAllData } = useProductionFloorFilters({
     connectionId: connectionId,
     isFetching: false,
@@ -129,27 +130,25 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
            );
   }, [search]);
 
-  // Memoized filtered missions
-  const allFilteredMissions = useMemo(() => {
-    const missions = filteredDataByMachine.flatMap(
-      (statusBoards) => statusBoards.boardMissions
-    );
-    return missions.filter(matchSearch);
-  }, [filteredDataByMachine, matchSearch]);
-
+  
   // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      // Only update if search has actually changed
-      const missions = filteredDataByMachine.flatMap(
-        (statusBoards) => statusBoards.boardMissions
-      );
-      const filtered = missions.filter(matchSearch);
-      setFilteredMissionsBySearch(filtered);
-      
-      if (!!search) {
-        getAllBoardMissionsFromSearch().then();
+      setLastSearch(search);
+      if(search != lastSearch){
+        // Only update if search has actually changed
+        const missions = filteredDataByMachine.flatMap(
+            (statusBoards) => statusBoards.boardMissions
+        );
+        const filtered = missions.filter(matchSearch);
+        setFilteredMissionsBySearch(filtered);
+
+        if (!!search) {
+          getAllBoardMissionsFromSearch().then();
+        }
+        setLastSearch(search);
       }
+      
     }, DEBOUNCE_DELAY);
 
     return () => clearTimeout(timeoutId);
