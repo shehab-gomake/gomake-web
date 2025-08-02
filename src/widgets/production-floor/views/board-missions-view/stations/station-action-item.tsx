@@ -63,6 +63,7 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { FONT_FAMILY } from "@/utils/font-family";
 import { formatSecondsToHHMMSS } from "@/utils/helpers";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -104,9 +105,10 @@ const BoardMissionsStationActionItem = ({
   productType,
   realProductionTime,
   isSubAction = false,
-  storage
+  storage,
 }: IProps) => {
   const isMobile = useIsMobile();
+  const { primaryColor, grayColor } = useGomakeTheme();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -172,7 +174,10 @@ const BoardMissionsStationActionItem = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  const onClickBackToProcess = async (boardMissionsActionId: string, productType: string) => {
+  const onClickBackToProcess = async (
+    boardMissionsActionId: string,
+    productType: string
+  ) => {
     setLoading(true);
     const callBack = (res) => {
       setLoading(false);
@@ -326,7 +331,7 @@ const BoardMissionsStationActionItem = ({
     };
     await getBoardMissionActionMaterialsApi(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: productType
+      productType: productType,
     });
   };
 
@@ -399,6 +404,8 @@ const BoardMissionsStationActionItem = ({
   // useEffect(() => {
   //   setIsOpen(!!selected);
   // }, [selected]);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <>
@@ -476,33 +483,53 @@ const BoardMissionsStationActionItem = ({
                       {loading ? (
                         <CircularProgress size={isMobile ? 20 : 30} />
                       ) : isDone ? (
-                        <Button
-                          variant={"contained"}
+                        <PrimaryButton
+                          variant="contained"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId, productType).then();
+                            onClickBackToProcess(
+                              boardMissionActionId,
+                              productType
+                            ).then();
                           }}
-                          style={{
-                            padding: "5px 8px",
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
+                          sx={{
+                            padding: "5px 12px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
-                            backgroundColor: "#FFF",
-                            color: "#475467",
                             borderRadius: "8px",
                             textTransform: "capitalize",
-                            border: "1px solid #475467",
+                            transition: "all 0.2s ease-in-out",
+                            minWidth: "100px",
+                            "&:hover": {
+                              backgroundColor: "#f9fafb",
+                              color: grayColor(300),
+                              border: `1px solid ${grayColor(300)}`,
+                              boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
+                            },
                           }}
                         >
-                          {t("boardMissions.completed")}
-                        </Button>
+                          {isHovered
+                            ? t("boardMissions.reopen")
+                            : t("boardMissions.completed")}
+                        </PrimaryButton>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
+                            "&:hover": {
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
+                            },
                           }}
                           onClick={onClickOpenDoneModal}
                         >
@@ -867,11 +894,11 @@ const BoardMissionsStationActionItem = ({
                       )}
                     </>
                   )}
-                  {
-                    storage && (
-                      <span style={classes.sectionTitle}>{t("boardMissions.storage")}: {storage}</span>
-                    )
-                  }
+                  {storage && (
+                    <span style={classes.sectionTitle}>
+                      {t("boardMissions.storage")}: {storage}
+                    </span>
+                  )}
                 </Stack>
                 {/* Completed and Check */}
                 <PermissionCheck
@@ -884,33 +911,53 @@ const BoardMissionsStationActionItem = ({
                       {loading ? (
                         <CircularProgress size={isMobile ? 20 : 30} />
                       ) : isDone ? (
-                        <Button
-                          variant={"outlined"}
+                        <PrimaryButton
+                          variant="contained"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId, productType).then();
+                            onClickBackToProcess(
+                              boardMissionActionId,
+                              productType
+                            ).then();
                           }}
-                          style={{
-                            padding: "5px 8px",
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
+                          sx={{
+                            padding: "5px 12px",
                             ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
-                            backgroundColor: "#FFF",
-                            color: "#475467",
                             borderRadius: "8px",
                             textTransform: "capitalize",
-                            border: "1px solid #475467",
+                            transition: "all 0.2s ease-in-out",
+                            "&:hover": {
+                              backgroundColor: "#f9fafb",
+                              color: grayColor(300),
+                              border: `1px solid ${grayColor(300)}`,
+                              boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
+                            },
+                            minWidth: "100px",
                           }}
                         >
-                          {t("boardMissions.completed")}
-                        </Button>
+                          {isHovered
+                            ? t("boardMissions.reopen")
+                            : t("boardMissions.completed")}
+                        </PrimaryButton>
                       ) : (
                         <PrimaryButton
-                          variant={"contained"}
+                          variant={"outlined"}
                           sx={{
                             height: isMobile ? "25px" : "30px",
                             width: isMobile ? "25px" : "30px",
                             minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
+                            color: grayColor(300),
+                            border: `1px solid ${grayColor(300)}`,
+                            boxShadow: `0 0 0 0.25px ${grayColor(300)}`,
+                            "&:hover": {
+                              backgroundColor: primaryColor(500),
+                              color: "#fff",
+                              border: "none",
+                            },
                           }}
                           onClick={onClickOpenDoneModal}
                         >
