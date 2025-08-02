@@ -5,7 +5,7 @@ import { IBoardMissions } from "@/widgets/dashboard-widget/interfaces";
 import { IMachine } from "@/shared/interfaces";
 import { StatusView } from "@/components/status-view";
 import ElectricBoltSharpIcon from "@mui/icons-material/ElectricBoltSharp";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { EStatus } from "@/shared";
 import { useRecoilValue } from "recoil";
 import { boardsMissionsStatusFilterState } from "@/store/boards-missions-status-filter";
@@ -23,6 +23,10 @@ import { MachineTimeProgressComponent } from "@/widgets/dashboard-widget/table/m
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import DownloadIcon from "@mui/icons-material/Download";
+import CircularProgress from "@mui/material/CircularProgress";
+import Tooltip from "@mui/material/Tooltip";
+import { FixedSizeList as List } from 'react-window';
+
 export const exportExcel = (rows, filename) => {
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
@@ -43,8 +47,9 @@ const BoardMissionsTable = ({
   const { classes } = useStyle(direction);
   const [orderByMachine, setOrderByMachine] = useState<string>("");
   const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
-  const [isOrderByCreationDate, SetIsOrderByCreationDate] =
-    useState<boolean>(false);
+  const [isOrderByDueDate, setIsOrderByDueDate] = useState<boolean>(false);
+  const [dueDateSortDirection, setDueDateSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [isSorting, setIsSorting] = useState<boolean>(false);
   const { replace } = useRouter();
   const {
     scrollRef,
@@ -116,57 +121,92 @@ const BoardMissionsTable = ({
 
     return data;
   };
-  const boards = useCallback(() => {
-    let boards = getFilteredBoardMissions(selectedStatusFilter); //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
+  // Memoize filtered data to avoid recalculation
+  const filteredBoards = useMemo(() => {
+    return getFilteredBoardMissions(selectedStatusFilter);
+  }, [boardsMissions, selectedStatusFilter]);
+
+  // Optimized sorting function with memoized date parsing
+  const sortBoards = useCallback((boardsToSort: IBoardMissions[]) => {
     if (orderByMachine) {
-      boards = boards
+      return boardsToSort
         .sort((board1: IBoardMissions, board2: IBoardMissions) => {
-          return board2.dueDate > board1.dueDate
-            ? -1
-            : board2.dueDate < board1.dueDate
-            ? 1
-            : 0;
+          // First sort by due date (earliest first)
+          const dueDate1 = new Date(board1.dueDate);
+          const dueDate2 = new Date(board2.dueDate);
+          if (dueDate1 < dueDate2) return -1;
+          if (dueDate1 > dueDate2) return 1;
+          return 0;
         })
         .sort((board1: IBoardMissions, board2: IBoardMissions) => {
+          // Then sort by machine status
           return hasMachine(board1) - hasMachine(board2);
         });
-      return boards;
     }
-    if (isOrderByCreationDate) {
-      boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
-        return board2.dueDate < board1.dueDate
-          ? -1
-          : board2.dueDate > board1.dueDate
-          ? 1
-          : 0;
-      });
-      return boards;
+    
+    if (isOrderByDueDate) {
+      // Pre-parse dates for better performance
+      const boardsWithParsedDates = boardsToSort.map(board => ({
+        ...board,
+        parsedDueDate: new Date(board.dueDate)
+      }));
+      
+      return boardsWithParsedDates
+        .sort((board1, board2) => {
+          const dueDate1 = board1.parsedDueDate;
+          const dueDate2 = board2.parsedDueDate;
+          if (dueDate1 < dueDate2) return dueDateSortDirection === 'asc' ? -1 : 1;
+          if (dueDate1 > dueDate2) return dueDateSortDirection === 'asc' ? 1 : -1;
+          return 0;
+        })
+        .map(({ parsedDueDate, ...board }) => board); // Remove parsed date before returning
     }
-    return boards;
-  }, [
-    orderByMachine,
-    boardsMissions,
-    selectedStatusFilter,
-    isOrderByCreationDate,
-  ]);
-  const sortByCreationDate = () => {
-    SetIsOrderByCreationDate(!isOrderByCreationDate);
-    setOrderByMachine("");
+    
+    return boardsToSort;
+  }, [orderByMachine, isOrderByDueDate, dueDateSortDirection]);
+
+  const boards = useMemo(() => {
+    if (isSorting) {
+      return filteredBoards; // Return unsorted data while sorting
+    }
+    return sortBoards(filteredBoards);
+  }, [filteredBoards, sortBoards, isSorting]);
+  const sortByDueDate = () => {
+    // Prevent multiple rapid clicks
+    if (isSorting) return;
+    
+    setIsSorting(true);
+    
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+      if (!isOrderByDueDate) {
+        setIsOrderByDueDate(true);
+        setDueDateSortDirection('asc');
+      } else {
+        setDueDateSortDirection(dueDateSortDirection === 'asc' ? 'desc' : 'asc');
+      }
+      setOrderByMachine("");
+      
+      // Small delay to show loading state
+      setTimeout(() => {
+        setIsSorting(false);
+      }, 100);
+    });
   };
 
   const handleMachineClicked = (machineId: string) => {
     setOrderByMachine(machineId === orderByMachine ? "" : machineId);
-    SetIsOrderByCreationDate(false);
+    setIsOrderByDueDate(false);
   };
 
   const exportToExcel = () => {
-    const rows = boards().flatMap((board, index) => {
+    const rows = boards.flatMap((board, index) => {
       if (board?.splittedBoards?.length > 0) {
         return board.splittedBoards.map((splitBoard, k) => ({
           "#": k === 0 ? index + 1 : "",
           Client: board.clientName,
           Task: board.code,
-          "Due Date": board.creationDate.toString(),
+          "Due Date": board.dueDate.toString(),
           Product: board.productName,
           Status: statusName(splitBoard.status) || "",
           ...Object.fromEntries(
@@ -181,7 +221,7 @@ const BoardMissionsTable = ({
         "#": index + 1,
         Client: board.clientName,
         Task: board.code,
-        "Due Date": board.creationDate.toString(),
+        "Due Date": board.dueDate.toString(),
         Product: board.productName,
         Status: statusName(board.status) || "",
         ...Object.fromEntries(
@@ -201,8 +241,8 @@ const BoardMissionsTable = ({
     return () => {
       window.removeEventListener("resize", checkScrollPosition);
     };
-  }, [boards(), usedMachines]);
-  return boards().length > 0 ? (
+  }, [boards, usedMachines]);
+  return boards.length > 0 ? (
     <>
       <Stack
         direction={"row"}
@@ -240,6 +280,24 @@ const BoardMissionsTable = ({
         style={classes.tableWrapper}
         className={"show-scrollbar"}
       >
+        {isSorting && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 10,
+            }}
+          >
+            <CircularProgress size={40} />
+          </div>
+        )}
         <table id={"dashboard-table"} style={classes.table}>
           <thead>
             <tr>
@@ -253,19 +311,28 @@ const BoardMissionsTable = ({
                   <div style={{ width: "25%" }}>
                     {t("dashboard-widget.task")}
                   </div>
-                  <div
-                    style={
-                      isOrderByCreationDate
-                        ? {
-                            ...classes.selectedMachine,
-                            width: "30%",
-                          }
-                        : { width: "30%" }
-                    }
-                    onClick={() => sortByCreationDate()}
-                  >
-                    {t("dashboard-widget.dueDate")}
-                  </div>
+                  <Tooltip title={t("dashboard-widget.clickToSort") || "Click to sort by due date"}>
+                    <div
+                      style={{
+                        width: "30%",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        ...(isOrderByDueDate ? classes.selectedMachine : {}),
+                        ...(isSorting ? { opacity: 0.7 } : {}),
+                      }}
+                      onClick={() => sortByDueDate()}
+                    >
+                      {t("dashboard-widget.dueDate")}
+                      {isOrderByDueDate && (
+                        <span style={{ fontSize: '12px' }}>
+                          {dueDateSortDirection === 'asc' ? '↑' : '↓'}
+                        </span>
+                      )}
+                      {isSorting && <CircularProgress size={12} />}
+                    </div>
+                  </Tooltip>
                   <div style={{ width: "20%" }}>
                     {t("dashboard-widget.product")}
                   </div>
@@ -307,7 +374,7 @@ const BoardMissionsTable = ({
                   >
                     <Stack gap={"8x"} minWidth={"fit-content"}>
                       <Stack justifyContent={"center"} height={"48px"}>
-                        {machine?.progress?.name}
+                        {machine?.name}
                       </Stack>
                       <Divider flexItem orientation={"horizontal"} />
                       <Stack
@@ -348,8 +415,8 @@ const BoardMissionsTable = ({
             </tr>
           </thead>
           <tbody>
-            {boards() &&
-              boards().map((board: IBoardMissions, index: number) => {
+            {boards &&
+              boards.map((board: IBoardMissions, index: number) => {
                 return board?.splittedBoards?.length > 0 ? (
                   board.splittedBoards.map((splitBoard, k) => {
                     return (
@@ -502,15 +569,15 @@ const BoardMissionsTable = ({
                             </div>
                           </div>
                         </div>
-                        <div style={{ width: "30%" }}>
-                          <div style={classes.tdRows}>
-                            <DateTimeComponent
-                              dateTime={board.creationDate.toString()}
-                              gap={"20px"}
-                              direction={"column"}
-                            />
-                          </div>
-                        </div>
+                                                                                    <div style={{ width: "30%" }}>
+                                <div style={classes.tdRows}>
+                                  <DateTimeComponent
+                                    dateTime={board.dueDate.toString()}
+                                    gap={"20px"}
+                                    direction={"column"}
+                                  />
+                                </div>
+                              </div>
                         <div style={{ width: "20%", height: "100%" }}>
                           <div style={classes.tdRows}>
                             <span>

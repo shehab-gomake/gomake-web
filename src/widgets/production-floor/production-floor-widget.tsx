@@ -194,10 +194,7 @@ const ProductionFloorWidget = () => {
       maxHeight={"100%"}
       overflow={"hidden"}
     >
-      <QrCodeReader 
-          qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
-          onIsLastStationDetect={()=>isOpenDoneModal.open()}
-      />
+      
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
@@ -381,7 +378,10 @@ const ProductionFloorWidget = () => {
             : undefined
         }
       />
-
+      <QrCodeReader 
+          qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
+          onIsLastStationDetect={()=>isOpenDoneModal.open()}
+      />
     </Stack>
   );
 };

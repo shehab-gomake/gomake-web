@@ -2222,5 +2222,15 @@
     "changeLang": "Sprache ändern",
     "changeAnyway": "Trotzdem ändern",
     "changeLangSubTitle": "Sie haben möglicherweise Änderungen am Editor-Inhalt vorgenommen. Falls ja, werden diese Änderungen verworfen, wenn Sie fortfahren und die Sprache ändern"
+  },
+  "QRCodes": {
+    "QRCodes": "QR-Codes",
+    "PDFproductionQrCodes": "PDF-Produktion - QR-Codes",
+    "DisplayQRcodesinaworkorderdocument": "QR-Codes in einem Arbeitsauftragsdokument anzeigen",
+    "Showpaymentdate": "Zahlungsdatum anzeigen",
+    "DisplayaninitialQRCode": "Einen initialen QR-Code für die gesamte Bestellung innerhalb der Produktions-PDF anzeigen",
+    "displayall": "Alle Typen mit gleichen Mengen in der PDF der PACA anzeigen",
+    "ShowStarted": "Gestartete und beendete QRs in der Produktions-PDF anzeigen",
+    "deliveryWarning": "Dieser QR-Code wird für die Lieferung verwendet. Um den Job abzuschließen, müssen Sie den Fertigstellungs-QR-Code scannen, nicht den Lieferungs-QR-Code."
   }
 }
