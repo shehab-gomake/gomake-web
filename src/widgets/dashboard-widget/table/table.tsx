@@ -16,8 +16,11 @@ import { Divider, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { DateTimeComponent } from "@/components/date-time/date-time-component";
 import { useTableScroll } from "@/widgets/dashboard-widget/table/use-table-scroll";
+import { useVirtualScroll } from "@/widgets/dashboard-widget/table/use-virtual-scroll";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { ShutterIcon } from "@/components/icons/shutter-icon";
 import { MachineTimeProgressComponent } from "@/widgets/dashboard-widget/table/machine-time-progress-component";
 import * as XLSX from "xlsx";
@@ -25,7 +28,6 @@ import { saveAs } from "file-saver";
 import DownloadIcon from "@mui/icons-material/Download";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tooltip from "@mui/material/Tooltip";
-import { FixedSizeList as List } from 'react-window';
 
 export const exportExcel = (rows, filename) => {
   const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -58,6 +60,11 @@ const BoardMissionsTable = ({
     scroll,
     checkScrollPosition,
   } = useTableScroll();
+
+  // Virtual scrolling configuration
+  const ROW_HEIGHT = 80; // Approximate height of each row
+  const CONTAINER_HEIGHT = 600; // Fixed container height for virtual scrolling
+
   const boardLink = (boardMissions: IBoardMissions) => {
     replace(
       `/production-floor/?boardMissionsId=${
@@ -67,6 +74,7 @@ const BoardMissionsTable = ({
       }`
     ).then();
   };
+
   const hasMachine = (board: IBoardMissions) => {
     switch (board.machinesStatuses[orderByMachine]) {
       case EStatus.IN_PROCESS:
@@ -83,6 +91,7 @@ const BoardMissionsTable = ({
         return 5;
     }
   };
+
   const statusName = (status) => {
     switch (status) {
       case EStatus.IN_PROCESS:
@@ -97,6 +106,7 @@ const BoardMissionsTable = ({
         return "Done";
     }
   };
+
   const getFilteredBoardMissions = (selectedStatusFilter: EStatus | null) => {
     var data = [...boardsMissions];
     if (selectedStatusFilter) {
@@ -118,9 +128,9 @@ const BoardMissionsTable = ({
             (board.splittedBoards && board.splittedBoards.length > 0)
       );
     }
-
     return data;
   };
+
   // Memoize filtered data to avoid recalculation
   const filteredBoards = useMemo(() => {
     return getFilteredBoardMissions(selectedStatusFilter);
@@ -171,6 +181,24 @@ const BoardMissionsTable = ({
     }
     return sortBoards(filteredBoards);
   }, [filteredBoards, sortBoards, isSorting]);
+
+  const {
+    containerRef: virtualScrollRef,
+    totalHeight,
+    visibleData,
+    offsetY,
+    startIndex,
+    endIndex,
+    handleScroll,
+    scrollToIndex,
+    scrollLeft
+  } = useVirtualScroll({
+    data: boards,
+    itemHeight: ROW_HEIGHT,
+    containerHeight: CONTAINER_HEIGHT,
+    overscan: 10, // Render 10 extra rows above and below for smooth scrolling
+  });
+
   const sortByDueDate = () => {
     // Prevent multiple rapid clicks
     if (isSorting) return;
@@ -235,6 +263,7 @@ const BoardMissionsTable = ({
 
     exportExcel(rows, "BoardMissions.xlsx");
   };
+
   useEffect(() => {
     checkScrollPosition();
     window.addEventListener("resize", checkScrollPosition);
@@ -242,6 +271,14 @@ const BoardMissionsTable = ({
       window.removeEventListener("resize", checkScrollPosition);
     };
   }, [boards, usedMachines]);
+
+  // Initialize virtual scrolling container
+  useEffect(() => {
+    if (virtualScrollRef.current) {
+      virtualScrollRef.current.scrollTop = 0;
+    }
+  }, [boards.length]); // Re-initialize when data changes
+
   return boards.length > 0 ? (
     <>
       <Stack
@@ -254,32 +291,46 @@ const BoardMissionsTable = ({
           <DownloadIcon />
         </IconButton>
       </Stack>
-      <div style={{ position: "relative", width: "100%", right: 10 }}>
-        {canScrollRight && (
+     
+        <div style={{marginTop:10,marginBottom:10,width:"100%",display:"flex",justifyContent:"flex-end",gap:10}}>
           <IconButton
-            onClick={() => scroll(direction === "ltr" ? "right" : "left")}
-            style={{
-              position: "absolute",
-              ...adaptLeft(direction, 0),
-              top: 32,
-              zIndex: 1,
-              backgroundColor: "#FFF",
-            }}
+          style={{
+            backgroundColor: "#FFF",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            width: 40,
+            height: 40,
+          }}
+          onClick={() => scrollLeft(direction === "ltr" ? "left" : "right")}
           >
-            {direction === "ltr" ? (
-              <ChevronRightIcon />
-            ) : (
-              <KeyboardArrowLeftIcon />
-            )}
+          {direction === "ltr" ? (
+            <KeyboardArrowLeftIcon />
+          ) : (
+            <ChevronRightIcon />
+          )}
           </IconButton>
-        )}
-      </div>
+          <IconButton
+          style={{
+
+          backgroundColor: "#FFF",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          width: 40,
+          height: 40,
+          }}
+          onClick={() => scrollLeft(direction === "ltr" ? "right" : "left")}
+          >
+          {direction === "ltr" ? (
+          <KeyboardArrowRightIcon />
+          ) : (
+          <ChevronLeftIcon />
+          )}
+          </IconButton>
+        </div>
       <div
-        ref={scrollRef}
-        onScroll={checkScrollPosition}
+        
         style={classes.tableWrapper}
         className={"show-scrollbar"}
       >
+        
         {isSorting && (
           <div
             style={{
@@ -298,20 +349,49 @@ const BoardMissionsTable = ({
             <CircularProgress size={40} />
           </div>
         )}
-        <table id={"dashboard-table"} style={classes.table}>
-          <thead>
-            <tr>
-              <th style={{ ...classes.tableHead, ...classes.firstColHead }}>
-                <div style={classes.firstColHeadContent}>
-                  <div style={{ width: "5%" }}>#</div>
-                  <div style={{ width: "5%" }}></div>
-                  <div style={{ width: "35%" }}>
-                    {t("dashboard-widget.client")}
-                  </div>
-                  <div style={{ width: "25%" }}>
-                    {t("dashboard-widget.task")}
-                  </div>
-                  <Tooltip title={t("dashboard-widget.clickToSort") || "Click to sort by due date"}>
+       
+        {/* Single table with sticky header and virtual scrolling body */}
+        <div  style={{ position: "relative" }}>
+          
+          <div
+            ref={scrollRef}
+            onScroll={checkScrollPosition}
+            style={{
+              height: CONTAINER_HEIGHT,
+              overflow: "auto",
+              position: "relative",
+              //overflowX: "auto",
+              overflowY: "auto",
+            }}
+          >
+            <div
+              ref={virtualScrollRef}
+              onScroll={handleScroll}
+              style={{
+                height: CONTAINER_HEIGHT,
+                overflow: "auto",
+                position: "relative",
+              }}
+              onLoad={() => {
+                // Ensure the container is properly initialized
+                if (virtualScrollRef.current) {
+                  virtualScrollRef.current.scrollTop = 0;
+                }
+              }}
+            >
+          <table id={"dashboard-table"} style={{ ...classes.table, width: "max-content", minWidth: "100%", tableLayout: "fixed" }}>
+            <thead style={{ position: "sticky", top: 0, zIndex: 10, backgroundColor: "#fff" }}>
+              <tr>
+                <th style={{ ...classes.tableHead, ...classes.firstColHead, width: "300px" }}>
+                  <div style={classes.firstColHeadContent}>
+                    <div style={{ width: "5%" }}>#</div>
+                    <div style={{ width: "5%" }}></div>
+                    <div style={{ width: "35%" }}>
+                      {t("dashboard-widget.client")}
+                    </div>
+                    <div style={{ width: "38%" }}>
+                      {t("dashboard-widget.task")}
+                    </div>
                     <div
                       style={{
                         width: "30%",
@@ -331,96 +411,89 @@ const BoardMissionsTable = ({
                         </span>
                       )}
                       {isSorting && <CircularProgress size={12} />}
+                      </div>
+                    <div style={{ width: "20%" }}>
+                      {t("dashboard-widget.product")}
                     </div>
-                  </Tooltip>
-                  <div style={{ width: "20%" }}>
-                    {t("dashboard-widget.product")}
+                    <div style={{ width: "35%" }}>
+                      {t("dashboard-widget.status")}
+                    </div>
+                  
                   </div>
-                  <div style={{ width: "35%" }}>
-                    {t("dashboard-widget.status")}
-                  </div>
-                  {canScrollLeft && (
-                    <IconButton
+                </th>
+               
+                {usedMachines.map((machine: IMachine) => {
+                  return (
+                    <th
+                      key={machine?.id}
                       style={{
-                        position: "absolute",
-                        ...adaptLeft(direction, -20),
-                        top: -13,
-                        zIndex: 1,
-                        backgroundColor: "#FFF",
+                        ...(orderByMachine === machine?.id
+                          ? { ...classes.tableHead, ...classes.selectedMachine }
+                          : classes.tableHead),
+                        width: "120px"
                       }}
-                      onClick={() =>
-                        scroll(direction === "ltr" ? "left" : "right")
-                      }
+                      onClick={() => handleMachineClicked(machine?.id)}
                     >
-                      {direction === "ltr" ? (
-                        <KeyboardArrowLeftIcon />
-                      ) : (
-                        <ChevronRightIcon />
-                      )}
-                    </IconButton>
-                  )}
-                </div>
-              </th>
-              {usedMachines.map((machine: IMachine) => {
-                return (
-                  <th
-                    key={machine?.id}
-                    style={
-                      orderByMachine === machine?.id
-                        ? { ...classes.tableHead, ...classes.selectedMachine }
-                        : classes.tableHead
-                    }
-                    onClick={() => handleMachineClicked(machine?.id)}
-                  >
-                    <Stack gap={"8x"} minWidth={"fit-content"}>
-                      <Stack justifyContent={"center"} height={"48px"}>
-                        {machine?.name}
-                      </Stack>
-                      <Divider flexItem orientation={"horizontal"} />
-                      <Stack
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        direction={"row"}
-                        gap={"4px"}
-                        height={"48px"}
-                      >
-                        <Stack
-                          style={{
-                            padding: "3px 6px",
-                            borderRadius: "2px",
-                            backgroundColor: "rgba(255, 255, 255, 0.2)",
-                            height: "fit-content",
-                          }}
-                        >
-                          <ShutterIcon color={"#FFF"} />
+                      <Stack gap={"8x"} minWidth={"fit-content"}>
+                        <Stack justifyContent={"center"} height={"48px"}>
+                          {machine?.name}
                         </Stack>
-                        <Stack gap={"2px"} alignItems={"start"}>
-                          <MachineTimeProgressComponent
-                            done={machine.progress?.doneTime}
-                            total={machine.progress?.totalTime}
-                          />
-                          <Stack>
-                            <span>
-                              ( {machine?.progress?.doneJobsCount}/
-                              {machine?.progress?.totalJobsCount}
-                              {t("measurementUnits.shortJobs")}){" "}
-                            </span>
+                        <Divider flexItem orientation={"horizontal"} />
+                        <Stack
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                          direction={"row"}
+                          gap={"4px"}
+                          height={"48px"}
+                        >
+                          <Stack
+                            style={{
+                              padding: "3px 6px",
+                              borderRadius: "2px",
+                              backgroundColor: "rgba(255, 255, 255, 0.2)",
+                              height: "fit-content",
+                            }}
+                          >
+                            <ShutterIcon color={"#FFF"} />
+                          </Stack>
+                          <Stack gap={"2px"} alignItems={"start"}>
+                            <MachineTimeProgressComponent
+                              done={machine.progress?.doneTime}
+                              total={machine.progress?.totalTime}
+                            />
+                            <Stack>
+                              <span>
+                                ( {machine?.progress?.doneJobsCount}/
+                                {machine?.progress?.totalJobsCount}
+                                {t("measurementUnits.shortJobs")}){" "}
+                              </span>
+                            </Stack>
                           </Stack>
                         </Stack>
                       </Stack>
-                    </Stack>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {boards &&
-              boards.map((board: IBoardMissions, index: number) => {
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Virtual scrolling spacer */}
+              <tr style={{ height: offsetY }}>
+                <td colSpan={usedMachines.length + 1} style={{ padding: 0, border: 0 }}></td>
+              </tr>
+              
+              {visibleData && visibleData.length > 0 ? visibleData.map((board: IBoardMissions, virtualIndex: number) => {
+                const actualIndex = startIndex + virtualIndex;
                 return board?.splittedBoards?.length > 0 ? (
                   board.splittedBoards.map((splitBoard, k) => {
                     return (
-                      <tr style={board.isLate ? classes.lateMission : {}}>
+                      <tr 
+                        key={`${actualIndex}-${k}`}
+                        style={{ 
+                          ...(board.isLate ? classes.lateMission : {}),
+                          height: ROW_HEIGHT,
+                        }}
+                      >
                         {k === 0 && (
                           <td
                             rowSpan={board.splittedBoards.length}
@@ -431,10 +504,11 @@ const BoardMissionsTable = ({
                               backgroundColor: board.isLate
                                 ? classes.lateMission.backgroundColor
                                 : "#FFFFFF",
+                              width: "300px"
                             }}
                           >
                             <div style={classes.firstColCellSplitBoards}>
-                              <div style={{ width: "5%" }}>{index + 1}</div>
+                              <div style={{ width: "5%" }}>{actualIndex + 1}</div>
                               <div style={{ width: "5%" }}>
                                 {board.isUrgent ? (
                                   <ElectricBoltSharpIcon color={"error"} />
@@ -480,6 +554,7 @@ const BoardMissionsTable = ({
                                 {board.splittedBoards.map(
                                   (sBoard, cellNumber) => (
                                     <div
+                                      key={cellNumber}
                                       style={
                                         cellNumber + 1 ===
                                         board.splittedBoards.length
@@ -508,14 +583,15 @@ const BoardMissionsTable = ({
                           return (
                             <td
                               key={machine?.id + i}
-                              style={
-                                k + 1 === board.splittedBoards.length
+                              style={{
+                                ...(k + 1 === board.splittedBoards.length
                                   ? classes.tableCell
                                   : {
                                       ...classes.tableCell,
                                       borderBottom: 0,
-                                    }
-                              }
+                                    }),
+                                width: "120px"
+                              }}
                             >
                               <StatusView
                                 style={{ margin: "auto" }}
@@ -531,8 +607,11 @@ const BoardMissionsTable = ({
                   })
                 ) : (
                   <tr
-                    key={index}
-                    style={board.isLate ? classes.lateMission : {}}
+                    key={actualIndex}
+                    style={{ 
+                      ...(board.isLate ? classes.lateMission : {}),
+                      height: ROW_HEIGHT,
+                    }}
                   >
                     <td
                       style={{
@@ -542,10 +621,11 @@ const BoardMissionsTable = ({
                         backgroundColor: board.isLate
                           ? classes.lateMission.backgroundColor
                           : "#FFFFFF",
+                        width: "300px"
                       }}
                     >
                       <div style={classes.firstColCell}>
-                        <div style={{ width: "5%" }}>{index + 1}</div>
+                        <div style={{ width: "5%" }}>{actualIndex + 1}</div>
                         <div style={{ width: "5%" }}>
                           {board.isUrgent ? (
                             <ElectricBoltSharpIcon color={"error"} />
@@ -569,15 +649,15 @@ const BoardMissionsTable = ({
                             </div>
                           </div>
                         </div>
-                                                                                    <div style={{ width: "30%" }}>
-                                <div style={classes.tdRows}>
-                                  <DateTimeComponent
-                                    dateTime={board.dueDate.toString()}
-                                    gap={"20px"}
-                                    direction={"column"}
-                                  />
-                                </div>
-                              </div>
+                        <div style={{ width: "30%" }}>
+                          <div style={classes.tdRows}>
+                            <DateTimeComponent
+                              dateTime={board.dueDate.toString()}
+                              gap={"20px"}
+                              direction={"column"}
+                            />
+                          </div>
+                        </div>
                         <div style={{ width: "20%", height: "100%" }}>
                           <div style={classes.tdRows}>
                             <span>
@@ -599,7 +679,7 @@ const BoardMissionsTable = ({
                     </td>
                     {usedMachines.map((machine: IMachine, i: number) => {
                       return (
-                        <td key={machine?.id + i} style={classes.tableCell}>
+                        <td key={machine?.id + i} style={{ ...classes.tableCell, width: "120px" }}>
                           <StatusView
                             style={{ margin: "auto" }}
                             status={board.machinesStatuses[machine?.id]}
@@ -609,9 +689,17 @@ const BoardMissionsTable = ({
                     })}
                   </tr>
                 );
-              })}
-          </tbody>
-        </table>
+              }) : null}
+              
+              {/* Virtual scrolling spacer */}
+              <tr style={{ height: totalHeight - offsetY - (visibleData ? visibleData.length * ROW_HEIGHT : 0) }}>
+                <td colSpan={usedMachines.length + 1} style={{ padding: 0, border: 0 }}></td>
+              </tr>
+            </tbody>
+          </table>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   ) : (
