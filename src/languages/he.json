@@ -1650,6 +1650,7 @@
       "waitForPrintHouseConfirm": "מחכה לאישור הדפסה",
       "chooseStatus": "בחר מעמד",
       "chooseCustomer": "בחר לקוח",
+      "maxItemsReached": "הגעת למספר המרבי של פריטים (100) ליצירת מסמך חדש"
       "ChooseAgent": "בחר סוכן",
       "loggers": "משובים",
       "pdf": "PDF",
@@ -2214,7 +2215,8 @@
       "Showpaymentdate": "הצג את תאריך התשלום",
       "DisplayaninitialQRCode": "הצג קוד QR ראשוני עבור כל ההזמנה בתוך PD הייצורF",
       "displayall": "להציג את כל הסוגים בכמויות שוות ב-PDF של PACA",
-      "ShowStarted": "הצג QRs התחילו והסתיימו ב-PDF להפקה"
+      "ShowStarted": "הצג QRs התחילו והסתיימו ב-PDF להפקה",
+      "deliveryWarning": "קוד QR זה משמש למשלוח. כדי להשלים את העבודה, עליך לסרוק את קוד ה-QR לסיום ולא את קוד ה-QR למשלוח."
     },
     "IframeDocument": {
       "Document": "מסמך"

@@ -173,7 +173,21 @@ const useCopyFromOrderModal = ({
       const newItems = documentItem?.orderItems.filter(
         (item) => !selectedIds.has(item.id)
       );
-      setSelectedItems([...selectedItems, ...newItems]);
+      
+      // Check if adding these items would exceed 100 items
+      const currentCount = selectedItems.length;
+      const newItemsCount = newItems.length;
+      
+      if (currentCount + newItemsCount > 100) {
+        // Only add items up to the 100 limit
+        const itemsToAdd = newItems.slice(0, 100 - currentCount);
+        setSelectedItems([...selectedItems, ...itemsToAdd]);
+        
+        // Show alert that only first 100 items were selected
+        alertWarning("sales.quote.maxItemsReached");
+      } else {
+        setSelectedItems([...selectedItems, ...newItems]);
+      }
     }
   };
   const handleSelectAllDocuments = (filteredDocumentItems) => {
@@ -181,6 +195,9 @@ const useCopyFromOrderModal = ({
       return;
     }
     let newSelectedItems = [];
+    let totalItemsToAdd = 0;
+    let hasReachedLimit = false;
+    
     for(let i = 0; i < filteredDocumentItems.length; i++) {
       let documentItem = filteredDocumentItems[i];
       const selectedIds = new Set(selectedItems.map((item) => item.id));
@@ -197,10 +214,33 @@ const useCopyFromOrderModal = ({
         const newItems = documentItem?.orderItems.filter(
             (item) => !selectedIds.has(item.id)
         );
-        newSelectedItems = [...newSelectedItems, ...newItems];
+        
+        // Check if adding these items would exceed 100 items
+        const currentTotal = selectedItems.length + newSelectedItems.length;
+        const remainingSlots = 100 - currentTotal;
+        
+        if (remainingSlots <= 0) {
+          hasReachedLimit = true;
+          break;
+        }
+        
+        if (newItems.length > remainingSlots) {
+          // Only add items up to the 100 limit
+          const itemsToAdd = newItems.slice(0, remainingSlots);
+          newSelectedItems = [...newSelectedItems, ...itemsToAdd];
+          hasReachedLimit = true;
+        } else {
+          newSelectedItems = [...newSelectedItems, ...newItems];
+        }
       }
     }
-    setSelectedItems(newSelectedItems)
+    
+    setSelectedItems([...selectedItems, ...newSelectedItems]);
+    
+    // Show alert if we reached the limit
+    if (hasReachedLimit) {
+      alertWarning("sales.quote.maxItemsReached");
+    }
   };
 
   const areAllItemsSelected = (documentItemId) => {
@@ -217,7 +257,7 @@ const useCopyFromOrderModal = ({
     );
   };
 
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertWarning } = useSnackBar();
   const [isLoadingPayments, setIsLoadingPayments] = useState<boolean>(false);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 

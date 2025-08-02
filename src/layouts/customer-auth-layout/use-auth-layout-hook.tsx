@@ -141,6 +141,12 @@ const useAuthLayoutHook = (
             path: "/dashboard",
             Permission: Permissions.SHOW_SALES_DASHBOARD,
           },
+          {
+            key: "productionDashboard",
+            title: "tabs.productionDashboard",
+            path: "/production-dashboard",
+            Permission: Permissions.SHOW_SALES_DASHBOARD,
+          },
         ],
         icon: () => {
           return <SalesIcon />;

@@ -128,6 +128,7 @@ const useQuoteNew = ({
     alertFault,
     alertSuccessSend,
     alertFaultSend,
+    alertWarning,
   } = useSnackBar();
   const systemVAT = useRecoilValue<number>(systemVATState);
   const AddCustomerModal = useModal();
@@ -1972,6 +1973,15 @@ const useQuoteNew = ({
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
   const handleSaveBtnClickForDocument = async () => {
+    // Check if we're creating a new document and if the document already has more than 100 items
+    const isNewCreation = router?.query?.isNewCreation === "true";
+    const currentItemCount = quoteItemValue?.documentItems?.length || 0;
+    
+    if (isNewCreation && currentItemCount > 100) {
+      alertWarning("sales.quote.maxItemsReached");
+      return;
+    }
+    
     // const validationError = validateDocument(quoteItemValue);
     // if (validationError) {
     //   alertFault(validationError);
@@ -2401,7 +2411,9 @@ const useQuoteNew = ({
         alertSuccessUpdate();
         getQuote();
       } else {
-        alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+        alertFault(`
+          ${t("sales.quote.errorUpdateBudget")}
+        `);
         if (quoteItemValue?.budgetId) {
           const budget = allClientActiveBudgets.find(
             (budget) => budget.id === quoteItemValue.budgetId
