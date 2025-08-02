@@ -1655,6 +1655,7 @@
       "waitForPrintHouseConfirm": "في انتظار تأكيد دار الطباعة",
       "chooseStatus": "اختر الحالة",
       "chooseCustomer": "اختر العميل",
+      "maxItemsReached": "تم الوصول إلى الحد الأقصى لعدد العناصر (100) لإنشاء وثيقة جديدة"
       "ChooseAgent": "اختر وكيلاً",
       "loggers": "سجلات",
       "pdf": "PDF",

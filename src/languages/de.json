@@ -1625,6 +1625,7 @@
       "chooseCustomer": "Kunde auswählen",
       "ChooseAgent": "Agent auswählen",
       "loggers": "Protokolle",
+      "maxItemsReached": "Maximale Anzahl von Artikeln (100) für die Erstellung neuer Dokumente erreicht"
       "pdf": "PDF",
       "edit": "Bearbeiten",
       "quoteList": "Angebotsliste",

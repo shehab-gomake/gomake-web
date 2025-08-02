@@ -1712,6 +1712,7 @@
       "chooseCustomer": "Select a customer",
       "ChooseAgent": "Choose an agent",
       "loggers": "Loggers",
+      "maxItemsReached": "Maximum number of items (100) reached for new document creation"
       "pdf": "PDF",
       "edit": "Edit",
       "quoteList": "Quote List",
