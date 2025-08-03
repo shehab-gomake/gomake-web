@@ -26,7 +26,7 @@ const AddNewParameterModal = ({
   getProductById
 }: AddNewParameterModalProps) => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const parameterTypeOptions = [
@@ -44,7 +44,12 @@ const AddNewParameterModal = ({
         onClose()
       }
       else {
-        alertFaultAdded()
+        if (res?.errors?.ErrorMessage) {
+          alertFault(res?.errors?.ErrorMessage)
+        }
+        else {
+          alertFaultAdded()
+        }
       }
     }
     await addParameterToProductApi(callApi, callBack, {
