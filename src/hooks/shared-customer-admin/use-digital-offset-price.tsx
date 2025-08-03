@@ -347,7 +347,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
-  console.log("sliderCurrentProductItemValueTotalPrice", { sliderCurrentProductItemValueTotalPrice, localStateValue })
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
