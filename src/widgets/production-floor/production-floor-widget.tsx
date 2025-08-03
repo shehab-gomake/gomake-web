@@ -33,7 +33,8 @@ import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
 import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useModal} from "@/hooks/use-modal";
+import { useModal } from "@/hooks/use-modal";
+import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -50,6 +51,9 @@ const ProductionFloorWidget = () => {
     setSelectedGroupId,
     onClickMoveBoardMissionToDone,
     onOpenMarkReadyModalForHasJobs,
+    openPackagesModal,
+    onClosePrintDeliverTicketModal,
+    selectedMission
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -184,7 +188,7 @@ const ProductionFloorWidget = () => {
 
   //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
   const isOpenDoneModal = useModal()
-  
+
 
   return (
     <Stack
@@ -194,7 +198,7 @@ const ProductionFloorWidget = () => {
       maxHeight={"100%"}
       overflow={"hidden"}
     >
-      
+
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
@@ -378,10 +382,18 @@ const ProductionFloorWidget = () => {
             : undefined
         }
       />
-      <QrCodeReader 
-          qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
-          onIsLastStationDetect={()=>isOpenDoneModal.open()}
+      <PrintPackingSlipModalWidget
+        openModal={openPackagesModal}
+        onClose={onClosePrintDeliverTicketModal}
+        boardMissionId={selectedMission?.id || selectedMission?.boardMissionId}
+        quantity={selectedMission?.quantity}
       />
+      <QrCodeReader
+        qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
+        onIsLastStationDetect={() => isOpenDoneModal.open()}
+      />
+
+
     </Stack>
   );
 };
