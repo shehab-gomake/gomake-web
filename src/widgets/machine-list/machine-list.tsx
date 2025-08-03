@@ -17,7 +17,6 @@ const MachineList = ({}: IMachineList) => {
     );
   };
 
-  //!here
   useEffect(() => {
     getMachinesList();
   }, []);
