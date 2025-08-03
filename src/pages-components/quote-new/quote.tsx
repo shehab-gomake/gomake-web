@@ -348,10 +348,10 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSocketIo({ getQuote });
+    const {} = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSocketIo({ getQuote });
+    const {} = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -410,7 +410,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -471,8 +471,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -542,7 +542,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                          quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -555,7 +555,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                  isReceipt ? "status" : "documentStatus"
+                                    isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -608,13 +608,12 @@ const QuoteNewPageWidget = ({
                       </div>
                     </div>
                   )}
-
                   <DateField
                     label={t("sales.quote.creationDate")}
                     date={creationDate}
                     handleChange={handleChangeCreationDate}
                     isEditable={
-                      (isInvoice || isPurchaseInvoice) &&
+                      (isInvoice || isPurchaseInvoice || isDeliveryNote) &&
                       quoteItemValue?.isEditable
                     }
                     inputRef={creationDateRef}
@@ -656,17 +655,21 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                    // preventOpenCondition={!quoteState.client}
+                      // preventOpenCondition={!quoteState.client}
                     />
                   )}
-                  {(documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote) && quoteItemValue?.estimatedProductionDate && <DateField
-                    label={t("sales.quote.estimatedProductionDate")}
-                    date={quoteItemValue?.estimatedProductionDate}
-                    handleChange={handleChangeCreationDate}
-                    isEditable={false}
-                    inputRef={creationDateRef}
-                    withTime={true}
-                  />}
+                  {(documentType === DOCUMENT_TYPE.order ||
+                    documentType === DOCUMENT_TYPE.quote) &&
+                    quoteItemValue?.estimatedProductionDate && (
+                      <DateField
+                        label={t("sales.quote.estimatedProductionDate")}
+                        date={quoteItemValue?.estimatedProductionDate}
+                        handleChange={handleChangeCreationDate}
+                        isEditable={false}
+                        inputRef={creationDateRef}
+                        withTime={true}
+                      />
+                    )}
                   <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
                     <ClientBalanceComponent
                       clientBalance={quoteState.clientBalance}
@@ -1075,18 +1078,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1155,11 +1158,11 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseRelatedDocumentsModal}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
         openModal={openReferenceModal}
         onClose={onClickCloseReferenceModal}
-        hideIcon={true}
         title={t("sales.quote.titleReferenceModal")}
-        yesBtn={t("sales.quote.yesBtn")}
+        yesBtn={t("sales.documentDeliveries.continue")}
         onClickDelete={() => onChangeDatesToCreationDate()}
       />
       <InvoiceCreationModal
