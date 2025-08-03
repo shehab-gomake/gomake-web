@@ -87,7 +87,7 @@ const useProductionFloorData = () => {
     selectedGroupIdState
   );
   const view = useRecoilValue(productionFloorViewState);
-  
+
   // Flag to prevent multiple calls to getStationFilterGroups
   const [isLoadingFilterGroups, setIsLoadingFilterGroups] = useState(false);
   const getData = useCallback(async (connectionId?: string) => {
@@ -120,7 +120,7 @@ const useProductionFloorData = () => {
             checked: agentIdsFromServer.includes(agent.id),
           }))
         );
-        
+
         // Only call getStationFilterGroups once per successful data fetch
         getStationFilterGroups();
       }
@@ -694,7 +694,7 @@ const useProductionFloorData = () => {
   };
 
   const onClosePrintDeliverTicketModal = () => {
-    handleRemoveBoardMission(selectedMission.id);
+    handleRemoveBoardMission(selectedMission.id || selectedMission.boardMissionId);
     setSelectedMission(null);
     setOpenPackagesModal(false);
   };
@@ -706,15 +706,15 @@ const useProductionFloorData = () => {
     if (isLoadingFilterGroups) {
       return;
     }
-    
+
     setIsLoadingFilterGroups(true);
-    
+
     // Add timeout to prevent hanging
     const timeoutId = setTimeout(() => {
       console.warn("⚠️ Filter groups loading timeout");
       setIsLoadingFilterGroups(false);
     }, 10000); // 10 seconds timeout
-    
+
     const callBack = (res) => {
       clearTimeout(timeoutId);
       if (res.success) {
