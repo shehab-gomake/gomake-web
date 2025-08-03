@@ -3203,7 +3203,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
     else if (
-      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+      parameter?.parameterType === EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES
     ) {
       Comp = (
         <AdvertisingProductNameParameterWidget

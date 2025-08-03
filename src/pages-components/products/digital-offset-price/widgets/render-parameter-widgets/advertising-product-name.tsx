@@ -24,7 +24,6 @@ const AdvertisingProductNameParameterWidget = ({
   getAllMaterial,
   newDieCutSelect,
 }: any) => {
-
   const {
     defaultObject,
     openModal,
@@ -103,7 +102,6 @@ const AdvertisingProductNameParameterWidget = ({
     return MyOptions;
   }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
 
-  console.log("getOptions", getOptions())
 
   const [selectedValue, setSelectedValue] = useState(
     index !== -1
@@ -216,19 +214,31 @@ const AdvertisingProductNameParameterWidget = ({
             // Regular rendering for other items
             return (
               <li {...props}>
-                {(image || categoryImage) ? (
+                {
+                  parameter?.code === "Rolldirection" &&
                   <img
-                    src={parameter?.code === "DiecutType" ? categoryImage : image}
+                    src={option?.imageUrl}
                     alt={option.updateName}
-                    style={{ width: '40px', height: '40px', margin: '10px', objectFit: 'contain' }}
+                    style={{ width: '40px', height: '40px', margin: '10px', objectFit: "cover" }}
                   />
-                ) : (
-                  <div style={{ margin: 10 }}>
-                    <AdvertisingIcon width="40" height="40" />
-                  </div>
-                )}
+                }
+                {
+                  parameter?.code != "Rolldirection" && <>
+                    {(image || categoryImage) ? (
+                      <img
+                        src={parameter?.code === "DiecutType" ? categoryImage : image}
+                        alt={option.updateName}
+                        style={{ width: '40px', height: '40px', margin: '10px', objectFit: 'contain' }}
+                      />
+                    ) : (
+                      <div style={{ margin: 10 }}>
+                        <AdvertisingIcon width="40" height="40" />
+                      </div>
+                    )}
+                  </>
+                }
                 {option.updateName}
-                {parameter.code != "DiecutType" && parameter.code != "DieCutter" && <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>}
+                {parameter.code != "DiecutType" && parameter.code != "DieCutter" && parameter.code != "Rolldirection" && <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>}
               </li>
             );
           }}
