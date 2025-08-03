@@ -1136,11 +1136,13 @@ const useAddProduct = ({ classes }) => {
           }}
         />
       );
-    } else if (
+    }
+    else if (
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
       EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+
     ) {
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find(
@@ -1293,7 +1295,132 @@ const useAddProduct = ({ classes }) => {
           />
         );
       }
-    } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
+    }
+
+    else if (parameter?.parameterType === EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES) {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            gap: "8px",
+          }}
+        >
+          <GoMakeAutoComplate
+            options={parameter?.valuesConfigs}
+            disabled={parameter?.isHidden}
+            placeholder={parameter.name}
+            style={classes.dropDownListStyle}
+            getOptionLabel={(option: any) => option.updateName}
+            defaultValue={defaultObject}
+            onChange={(e: any, value: any) => {
+              updatedProductParameterValuesConfigsDefault(
+                sectionId,
+                subSectionId,
+                parameter,
+                value
+              );
+            }}
+            renderOption={(props: any, option: any) => {
+              return (
+                <div style={classes.optionsContainer}>
+                  <div
+                    {...props}
+                    style={{ width: "100%", alignSelf: "center", marginTop: 5 }}
+                  >
+                    {option?.imageUrl && <img
+                      src={option?.imageUrl}
+                      alt={option.updateName}
+                      style={{ width: '40px', height: '40px', margin: '10px', objectFit: "cover" }}
+                    />}
+                    {option.updateName}
+                  </div>
+                  <div>
+                    {option.isHidden ? (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setIsMaterialParameter(false);
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          if (!doNotAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(
+                              false,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              selectedUpdateType
+                            );
+                          }
+                        }}
+                      >
+                        <HiddenIcon />
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setIsMaterialParameter(false);
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          if (!doNotAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(
+                              false,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              selectedUpdateType
+                            );
+                          }
+                        }}
+                      >
+                        <NotHiddenIcon />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            }}
+          />
+          {parameter?.setSettingIcon && (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                onOpeneMultiParameterModal(
+                  parameter,
+                  subSection,
+                  section,
+                  subSectionParameters
+                );
+              }}
+            >
+              <SettingsIcon
+                stroke={"rgba(237, 2, 140, 1)"}
+                width={24}
+                height={24}
+              />
+            </div>
+          )}
+        </div>
+      )
+    }
+    else if (parameter?.parameterType === EParameterTypes.BUTTON) {
       return (
         <ButtonParameterWidget
           classes={classes}
