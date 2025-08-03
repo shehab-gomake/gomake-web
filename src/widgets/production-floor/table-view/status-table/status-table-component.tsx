@@ -8,6 +8,7 @@ import {
   TableBody,
   TableContainer,
   TableHead,
+  Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
@@ -47,11 +48,12 @@ import {
   columnVisibilityState,
   getCustomWidth,
 } from "../../state/production-floor-coulmns-table-settings";
+import React from "react";
 
-// Performance optimization constants
-const VIRTUALIZATION_THRESHOLD = 20; // Start virtualization when more than 50 items per status
-const VIRTUAL_BATCH_SIZE = 20; // Number of items to render at once
-const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
+  // Performance optimization constants
+  const VIRTUALIZATION_THRESHOLD = 15; // Start virtualization when more than 30 items per status
+  const VIRTUAL_BATCH_SIZE = 15; // Number of items to render at once
+  const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
 
 interface IProps {
   status: IProductionStatus;
@@ -104,6 +106,9 @@ const StatusTableComponent = ({
   const [virtualStart, setVirtualStart] = useState(0);
   const [virtualEnd, setVirtualEnd] = useState(VIRTUAL_BATCH_SIZE);
   const [isVirtualizingLocal, setIsVirtualizingLocal] = useState(false);
+  const [showAllRows, setShowAllRows] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
   const observerRef = useRef<IntersectionObserver | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -231,14 +236,17 @@ const StatusTableComponent = ({
     const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
     
     // Enable local virtualization for large datasets
-    const shouldVirtualize = false;//sortedBoards.length > VIRTUALIZATION_THRESHOLD;
+    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
     
     if (shouldVirtualize) {
       return sortedBoards.slice(virtualStart, virtualEnd);
     } else {
-      return sortedBoards;
+      // Pagination logic
+      const startIndex = 0;
+      const endIndex = showAllRows ? sortedBoards.length : Math.min(currentPage * itemsPerPage, sortedBoards.length);
+      return sortedBoards.slice(startIndex, endIndex);
     }
-  }, [getBoards, virtualStart, virtualEnd]);
+  }, [getBoards, virtualStart, virtualEnd, showAllRows, currentPage]);
 
   // Separate effect to handle virtualization state changes
   useEffect(() => {
@@ -287,6 +295,12 @@ const StatusTableComponent = ({
 
   // Memoized table headers
   const memoizedTableHeaders = useMemo(() => tableHeaders(status.id), [tableHeaders, status.id]);
+
+  // Memoized row component to prevent unnecessary re-renders
+  const MemoizedTableRowComponent = useMemo(() => React.memo(TableRowComponent), []);
+
+  // Loading state for large datasets
+  const [isLoadingRows, setIsLoadingRows] = useState(false);
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -414,16 +428,16 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredBoards.length > 50 ? (
+                  {filteredBoards.length > 30 ? (
                     <LoadMorePagination
                       items={filteredBoards}
-                      itemsPerPage={50}
+                      itemsPerPage={15}
                       tableRef={tableContainerRef}
                     >
                       {(currentItems) => (
                         <>
                           {currentItems.map((boardMission, index) => (
-                            <TableRowComponent
+                            <MemoizedTableRowComponent
                               key={`status-${status.id}-${boardMission.id}-${index}`}
                               boardMission={boardMission}
                               status={status}
@@ -443,23 +457,72 @@ const StatusTableComponent = ({
                       )}
                     </LoadMorePagination>
                   ) : (
-                    filteredBoards.map((boardMission, index) => (
-                      <TableRowComponent
-                        key={`status-${status.id}-${boardMission.id}-${index}`}
-                        boardMission={boardMission}
-                        status={status}
-                        onClickDone={tryMoveBoardMissionsToDone}
-                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                        index={index}
-                        onClickClient={onClickClient}
-                        isMobileScreen={isMobileScreen}
-                        isRTL={RTL}
-                        isUrgentWork={hasUrgentOrApproval}
-                        onUpdateJobDueDate={updateJobDueDate}
-                        employeesCategories={employeesCategories}
-                        visibleColumns={visibleColumns}
-                      />
-                    ))
+                    <>
+                      {filteredBoards.map((boardMission, index) => (
+                        <MemoizedTableRowComponent
+                          key={`status-${status.id}-${boardMission.id}-${index}`}
+                          boardMission={boardMission}
+                          status={status}
+                          onClickDone={tryMoveBoardMissionsToDone}
+                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                          index={index}
+                          onClickClient={onClickClient}
+                          isMobileScreen={isMobileScreen}
+                          isRTL={RTL}
+                          isUrgentWork={hasUrgentOrApproval}
+                          onUpdateJobDueDate={updateJobDueDate}
+                          employeesCategories={employeesCategories}
+                          visibleColumns={visibleColumns}
+                        />
+                      ))}
+                      {!showAllRows && getBoards().length > currentPage * itemsPerPage && (
+                        <tr>
+                          <td colSpan={100} style={{ textAlign: 'center', padding: '20px' }}>
+                            <Typography variant="body2" color="text.secondary">
+                              {t('pagination.showing', { showing: `${currentPage * itemsPerPage} of ${getBoards().length}` })}
+                            </Typography>
+                                                          <Stack direction="row" gap={1} sx={{ mt: 1 }}>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  onClick={() => {
+                                    setCurrentPage(prev => prev + 1);
+                                    // Scroll to top
+                                    setTimeout(() => {
+                                      if (tableContainerRef?.current) {
+                                        tableContainerRef.current.scrollIntoView({ 
+                                          behavior: 'smooth', 
+                                          block: 'start' 
+                                        });
+                                      }
+                                    }, 100);
+                                  }}
+                                >
+                                  {t('pagination.loadMore', { count: Math.min(itemsPerPage, getBoards().length - (currentPage * itemsPerPage)) })}
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  size="small"
+                                  onClick={() => {
+                                    setShowAllRows(true);
+                                    // Scroll to top
+                                    setTimeout(() => {
+                                      if (tableContainerRef?.current) {
+                                        tableContainerRef.current.scrollIntoView({ 
+                                          behavior: 'smooth', 
+                                          block: 'start' 
+                                        });
+                                      }
+                                    }, 100);
+                                  }}
+                                >
+                                  Show All ({getBoards().length - (currentPage * itemsPerPage)} more)
+                                </Button>
+                              </Stack>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   )}
                 </TableBody>
               </Table>
