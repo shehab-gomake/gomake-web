@@ -348,7 +348,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
-
+  console.log("sliderCurrentProductItemValueTotalPrice", { sliderCurrentProductItemValueTotalPrice, localStateValue })
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
@@ -6528,7 +6528,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               quantity?.values[0]
               ? +quantity?.values[0]
               : 1),
-          finalPrice: +sliderCurrentProductItemValueTotalPrice,
+          finalPrice: (widgetType == EWidgetProductType.EDIT ||
+            widgetType == EWidgetProductType.DUPLICATE) && localStateValue && localStateValue != null ?
+            +localStateValue :
+            +sliderCurrentProductItemValueTotalPrice,
           amount:
             quantity &&
               quantity.values &&
