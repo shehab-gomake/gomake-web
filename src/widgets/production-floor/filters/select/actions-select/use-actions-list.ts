@@ -57,6 +57,9 @@ const useActionsList = ({
   const [dashboardMachines, setDashboardMachines] =
     useRecoilState(machinesListState);
   const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
+  const [checkedMachinesOrder, setCheckedMachinesOrder] = useState<string[]>(
+    []
+  );
   const actionsListRef = useRef<IActionMachines[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -139,6 +142,21 @@ const useActionsList = ({
       )
     );
 
+    // Track the order of checked machines
+    setCheckedMachinesOrder((prevOrder) => {
+      const isCurrentlyChecked = actionsList
+        ?.find((station) => station.actionId === stationId)
+        ?.machines?.find((machine) => machine.machineId === machineId)?.checked;
+
+      if (isCurrentlyChecked) {
+        // Machine is being unchecked, remove from order
+        return prevOrder.filter((id) => id !== machineId);
+      } else {
+        // Machine is being checked, add to the end of order
+        return [...prevOrder.filter((id) => id !== machineId), machineId];
+      }
+    });
+
     // Restore scroll position after state update
     requestAnimationFrame(() => {
       if (scrollRef.current) {
@@ -162,6 +180,29 @@ const useActionsList = ({
           : station
       );
 
+      // Track the order of checked machines for station selection
+      setCheckedMachinesOrder((prevOrder) => {
+        const station = updatedActionsList?.find(
+          (s) => s.actionId === stationId
+        );
+        const isCurrentlyChecked = station?.checked;
+
+        if (isCurrentlyChecked) {
+          // Station is being unchecked, remove all its machines from order
+          const stationMachineIds =
+            station?.machines?.map((m) => m.machineId) || [];
+          return prevOrder.filter((id) => !stationMachineIds.includes(id));
+        } else {
+          // Station is being checked, add all its machines to the end of order
+          const stationMachineIds =
+            station?.machines?.map((m) => m.machineId) || [];
+          const existingOrder = prevOrder.filter(
+            (id) => !stationMachineIds.includes(id)
+          );
+          return [...existingOrder, ...stationMachineIds];
+        }
+      });
+
       actionsListRef.current = updatedActionsList || [];
       return updatedActionsList;
     });
@@ -184,23 +225,29 @@ const useActionsList = ({
           }))
         );
         setDashboardMachines(dashboardMachinesData);
-        
+
         // Initialize actionsList for dashboard source
         if (source === Source.DASHBOARD) {
-          setActionsList(
-            res?.data.map((action) => {
-              return {
-                ...action,
-                label: action.actionName,
-                checked: true, // All stations should be checked by default for dashboard
-                machines: action?.machines?.map((machine) => ({
-                  ...machine,
-                  label: machine.machineName,
-                  checked: true, // All machines should be checked by default for dashboard
-                })),
-              };
-            })
+          const initialActionsList = res?.data.map((action) => {
+            return {
+              ...action,
+              label: action.actionName,
+              checked: true, // All stations should be checked by default for dashboard
+              machines: action?.machines?.map((machine) => ({
+                ...machine,
+                label: machine.machineName,
+                checked: true, // All machines should be checked by default for dashboard
+              })),
+            };
+          });
+
+          setActionsList(initialActionsList);
+
+          // Initialize the checked machines order with all machines in their original order
+          const allMachineIds = res?.data.flatMap((station) =>
+            station.machines.map((machine) => machine.machineId)
           );
+          setCheckedMachinesOrder(allMachineIds);
         }
       }
     };
@@ -257,10 +304,13 @@ const useActionsList = ({
             inProcessCount: group?.inProcessCount,
           })
         );
-        setFilterGroups([{
-          id:"all",
-          name:t("productionFloor.allFilterGroupsViewName")
-        }, ...filterGroupsList]);
+        setFilterGroups([
+          {
+            id: "all",
+            name: t("productionFloor.allFilterGroupsViewName"),
+          },
+          ...filterGroupsList,
+        ]);
       }
     };
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
@@ -348,6 +398,7 @@ const useActionsList = ({
     onSelectMachine,
     onSelectStation,
     actionsMachinesIds,
+    checkedMachinesOrder,
     setAnchorEl,
     filter,
     setFilter,
