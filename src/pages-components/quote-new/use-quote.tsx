@@ -347,6 +347,7 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
+  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] = useState(false);
   const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
   const onClickOpenDeleteDeliveryModal = () => {
     setOpenDeleteDeliveryModal(true);
@@ -361,7 +362,12 @@ const useQuoteNew = ({
   const onCloseAddAttachmentsModal = () => {
     setOpenAddAttachmentsModal(false);
   };
-
+  const onOpenAddAttachmentsPurchaseModal = () => {
+    setOpenAddAttachmentsPurchaseModal(true);
+  };
+  const onCloseAddAttachmentsPurchaseModal = () => {
+    setOpenAddAttachmentsPurchaseModal(false);
+  };
   const onOpenDeliveryModal = () => {
     setOpenAddDeliveryModal(true);
   };
@@ -2761,12 +2767,14 @@ const useQuoteNew = ({
     receiptSendModal,
     renderCreateNewButton,
     isNewCreation,
-
     primaryColor,
     moveToReadyOption,
     setMoveToReadyOption,
     handleRadioChange,
     reCalculateItem,
+    openAddAttachmentsPurchaseModal,
+    onOpenAddAttachmentsPurchaseModal,
+    onCloseAddAttachmentsPurchaseModal,
   };
 };
 
