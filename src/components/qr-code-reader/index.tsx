@@ -91,27 +91,21 @@ const QrCodeReader = (props:IProps)=>{
                         }
                         else {
                             if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
-                                handleDeliveryQRCode(res?.data);
+                                setSelectedJobQuantity(res?.data?.quantity);
+                                setOpenMoveToReadyModal(true)
                             }
 
                         }
                     }
                     else {
                         if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-                            //const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
-                            //router.push(url);
-                            setSelectedJobQuantity(res?.data?.quantity);
-                            setOpenMoveToReadyModal(true)
+                            const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
+                            router.push(url);
                         }
                         else {
                             if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
-                                if(props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR){
-                                    handleDeliveryQRCode(res?.data);
-                                }else{
-                                    const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
-                                    router.push(url);
-                                }
-                            
+                                setSelectedJobQuantity(res?.data?.quantity);
+                                setOpenMoveToReadyModal(true)
                             }
                         }
                     }
