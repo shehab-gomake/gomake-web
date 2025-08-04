@@ -51,7 +51,10 @@ import {
   openOrderModalState,
   shouldReopenOrderModalState,
 } from "@/store/order-modal-states";
-import { checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi, getGroupJobsUsingOrderIdApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi,
+  getGroupJobsUsingOrderIdApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -119,7 +122,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
+    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
   };
 
   const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
@@ -257,7 +260,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   } | null>(null);
   const [pendingOrderData, setPendingOrderData] = useState(null);
 
-  const sendBodyCommingFromOrder = (res, sendMessage, isStripeCash, isPrepaymentClient) => {
+  const sendBodyCommingFromOrder = (
+    res,
+    sendMessage,
+    isPrepaymentClient,
+    isStripeCash
+  ) => {
     if (quoteItemValue?.isUsedStripe) {
       if (!sendMessage) {
         navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
@@ -285,51 +293,77 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         navigate(`/jobs?orderNumber=${res?.data?.number}`);
       }
     }
-  }
+  };
 
-
-  const handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId = async (orderId, res, sendMessage, isPrepaymentClient, isStripeCash) => {
-
+  const handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId = async (
+    orderId,
+    res,
+    sendMessage,
+    isPrepaymentClient,
+    isStripeCash
+  ) => {
     const callBack = (result) => {
-      if (result?.success && CheckPreferenceValue(EPreferences.ASK_TO_GROUP_SIMILAR_JOBS)) {
+      if (
+        result?.success &&
+        CheckPreferenceValue(EPreferences.ASK_TO_GROUP_SIMILAR_JOBS)
+      ) {
         if (result?.data?.item1) {
           setPendingOrderData({
             orderId: orderId,
             res: res,
             sendMessage: sendMessage,
             isPrepaymentClient: isPrepaymentClient,
-            isStripeCash: isStripeCash
-          })
-          isOpenGroupJobsModal.open()
-        }
-        else {
+            isStripeCash: isStripeCash,
+          });
+          isOpenGroupJobsModal.open();
+        } else {
           alertFault(result?.data?.item2);
-          sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
-
+          sendBodyCommingFromOrder(
+            res,
+            sendMessage,
+            isPrepaymentClient,
+            isStripeCash
+          );
         }
       } else {
-        sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
+        sendBodyCommingFromOrder(
+          res,
+          sendMessage,
+          isPrepaymentClient,
+          isStripeCash
+        );
       }
     };
 
-    await checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi(callApi, callBack, orderId);
+    await checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi(
+      callApi,
+      callBack,
+      orderId
+    );
   };
 
   const handleGetGroupJobsUsingOrderId = async (pendingOrderData) => {
     const callBack = (result) => {
       if (result?.success) {
-        isOpenGroupJobsModal.close()
-        sendBodyCommingFromOrder(pendingOrderData?.res, pendingOrderData?.sendMessage, pendingOrderData?.isPrepaymentClient, pendingOrderData?.isStripeCash);
-
+        isOpenGroupJobsModal.close();
+        sendBodyCommingFromOrder(
+          pendingOrderData?.res,
+          pendingOrderData?.sendMessage,
+          pendingOrderData?.isPrepaymentClient,
+          pendingOrderData?.isStripeCash
+        );
       } else {
-        isOpenGroupJobsModal.close()
-        setPendingOrderData(null)
+        isOpenGroupJobsModal.close();
+        setPendingOrderData(null);
         alertFaultUpdate();
-
       }
     };
 
-    await getGroupJobsUsingOrderIdApi(callApi, callBack, pendingOrderData?.orderId);
+    await getGroupJobsUsingOrderIdApi(
+      callApi,
+      callBack,
+      pendingOrderData?.orderId
+    );
   };
   const isOpenGroupJobsModal = useModal();
 
@@ -343,10 +377,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
-        handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId(res?.data?.orderID, res, sendMessage, isPrepaymentClient, isStripeCash);
-
-
-
+        handleCheckIfCanMakeGroupedBoardMissionsUsingOrderId(
+          res?.data?.orderID,
+          res,
+          sendMessage,
+          isPrepaymentClient,
+          isStripeCash
+        );
       } else {
         alertFaultUpdate();
       }
@@ -556,12 +593,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickSendAndChat = async (managerIds: string[]) => {
     const callBack = (res) => {
       if (res?.success) {
-        if(res?.data){
+        if (res?.data) {
           push(`/messenger?dialogId=${res.data}`);
-        }else{
+        } else {
           push(`/quotes`);
         }
-        
       } else alertFaultSend();
     };
     await sendQuoteApprovalToManagerApi(callApi, callBack, {
@@ -599,10 +635,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         isOrder
           ? navigate("/orders")
           : isDeliveryNote
-            ? navigate("/deliveryNotes")
-            : isInvoice
-              ? navigate("/invoices")
-              : navigate("/purchaseOrders");
+          ? navigate("/deliveryNotes")
+          : isInvoice
+          ? navigate("/invoices")
+          : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }
@@ -792,7 +828,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     filteredReceiptItems,
     finalTotalPayment,
     handleOpenReceiptSummary,
-    sendBodyCommingFromOrder
+    sendBodyCommingFromOrder,
   };
 };
 
