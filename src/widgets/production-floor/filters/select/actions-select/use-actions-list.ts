@@ -66,6 +66,7 @@ const useActionsList = ({
   const handleClick = () => {
     setOpen(!open);
   };
+
   useEffect(() => {
     setSourceOfActionsList(source);
   }, [source]);
@@ -250,7 +251,10 @@ const useActionsList = ({
         }
       }
     };
-    await getPrintHouseActions(callApi, callBack, source === Source.USERS);
+    await getPrintHouseActions(callApi, callBack, {
+      isFromEmployeeForm: source === Source.USERS,
+      isFromDashboard: true,
+    });
   };
 
   const actionsMachinesIds: IStation[] = useMemo(() => {

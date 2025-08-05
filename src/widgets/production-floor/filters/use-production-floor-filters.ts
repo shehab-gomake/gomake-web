@@ -41,7 +41,10 @@ import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
-import { actionsListState, sourceOfActionsListState } from "../state/actions-list";
+import {
+  actionsListState,
+  sourceOfActionsListState,
+} from "../state/actions-list";
 import moment from "moment";
 import { Source } from "./select/actions-select/use-actions-list";
 import { useDebounce } from "use-debounce";
@@ -76,15 +79,23 @@ const useProductionFloorFilters = ({
   );
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
-  const [globalSearch, setGlobalSearch] = useRecoilState(productionFloorTextSearchState);
+  const [globalSearch, setGlobalSearch] = useRecoilState(
+    productionFloorTextSearchState
+  );
   const [localSearch, setLocalSearch] = useState(globalSearch);
   const debouncedSearch = useDebounce(localSearch, 500);
-  const debouncedSearchValue = Array.isArray(debouncedSearch) ? debouncedSearch[0] : debouncedSearch;
+  const debouncedSearchValue = Array.isArray(debouncedSearch)
+    ? debouncedSearch[0]
+    : debouncedSearch;
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
-  const { getDataByGroups, getAllBoardMissions,getAllData ,searchInputFilterRef} = useProductionFloorData();
-
+  const {
+    getDataByGroups,
+    getAllBoardMissions,
+    getAllData,
+    searchInputFilterRef,
+  } = useProductionFloorData();
 
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
@@ -583,8 +594,12 @@ const useProductionFloorFilters = ({
         setActions(res?.data);
       }
     };
-    await getPrintHouseActions(callApi, callBack, sourceOfActionsList === Source.USERS);
+    await getPrintHouseActions(callApi, callBack, {
+      isFromEmployeeForm: sourceOfActionsList === Source.USERS,
+      isFromDashboard: false,
+    });
   };
+
   useEffect(() => {
     if (isFetching) {
       getActions();
@@ -667,7 +682,7 @@ const useProductionFloorFilters = ({
     setGlobalSearch,
     localSearch,
     setLocalSearch,
-    debouncedSearch
+    debouncedSearch,
   };
 };
 
