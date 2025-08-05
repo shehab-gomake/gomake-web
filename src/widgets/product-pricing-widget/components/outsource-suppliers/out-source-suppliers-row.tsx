@@ -18,7 +18,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import {
-  calculationResultState,
   currentProductItemValuePriceState,
   sliderCurrentProductItemValuePriceState,
 } from "../../state";
@@ -83,7 +82,6 @@ const OutSourceSuppliersRowComponent = ({
     sliderCurrentProductItemValuePriceState
   );
 
-  const calculationResult = useRecoilValue(calculationResultState);
   useEffect(() => {
     if (options?.length > 0) {
       const isEditOrDuplicate =
@@ -135,29 +133,9 @@ const OutSourceSuppliersRowComponent = ({
   ) => {
     updatePrice(supplierId, price, actionId);
   };
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
-  const {
-    customer,
-    setCustomer,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-    listClient,
-
-  } = useCustomerDropDownList({ clientType: CLIENT_TYPE.SUPPLIER });
 
   const handleSupplierUpdate = (supplierId, actionId) => {
-    const selectedSupp = options.find((x) => x.supplierId == supplierId);
-    setCustomer({
-      id: selectedSupp?.supplierId,
-      name: selectedSupp?.supplierName,
-    });
-    // setSupplier(selectedSupp);
     updateSupplierId(supplierId, actionId);
-    setIsUpdateBusinessName(null);
-
-    // setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
-    //setSliderCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
   };
 
   useEffect(() => {
@@ -183,6 +161,7 @@ const OutSourceSuppliersRowComponent = ({
               selectedWorkFlow?.actions?.map((action, index) => {
                 return (
                   <OutSourceSupplierRow
+                    key={action?.id}
                     action={action}
                     currentProductItemValue={currentProductItemValue}
                     selectedWorkFlow={selectedWorkFlow}
@@ -196,16 +175,8 @@ const OutSourceSuppliersRowComponent = ({
                     t={t}
                     secondColor={secondColor}
                     systemCurrency={systemCurrency}
-                    setIsUpdateBusinessName={setIsUpdateBusinessName}
-                    isUpdateBusinessName={isUpdateBusinessName}
-                    customer={customer}
-                    setCustomer={setCustomer}
-                    renderOptions={renderOptions}
-                    checkWhatRenderArray={checkWhatRenderArray}
-                    isFetching={isFetching}
                   />
                 );
-                //return OutSourceSupplierRow(action,currentProductItemValue,selectedWorkFlow,options,handleSupplierUpdate,handleDeliveryTimeUpdate,handleCostUpdate,handleProfitUpdate,handleUpdatePrice,onClickRemoveOutSourceAction,t,secondColor,systemCurrency);
               })}
           </Stack>
         </Fade>
@@ -239,28 +210,29 @@ const OutSourceSupplierRow = ({
   t,
   secondColor,
   systemCurrency,
-  setIsUpdateBusinessName,
-  isUpdateBusinessName,
-  customer,
-  setCustomer,
-  renderOptions,
-  checkWhatRenderArray,
-  isFetching,
 }) => {
   const { classes } = useStyle();
 
   // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
   // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
   const foundSupplier = options.find((x) => x.supplierId == action?.supplierId);
-  // if (
-  //   (foundSupplier && customer && customer.id != foundSupplier.supplierId) ||
-  //   !customer
-  // ) {
-  //   setCustomer({
-  //     id: foundSupplier?.supplierId,
-  //     name: foundSupplier?.supplierName,
-  //   });
-  // }
+  const [customer, setCustomer] = useState<any>(null);
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
+
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+  } = useCustomerDropDownList({ clientType: CLIENT_TYPE.SUPPLIER });
+
+  useEffect(() => {
+    if (foundSupplier) {
+      setCustomer({
+        id: foundSupplier?.supplierId,
+        name: foundSupplier?.supplierName,
+      });
+    }
+  }, [foundSupplier]);
 
   const textAreaOutputs = action?.outputs?.filter(
     (parameter) =>
@@ -277,6 +249,18 @@ const OutSourceSupplierRow = ({
 
 
   const onBlurBusinessName = async () => {
+    setIsUpdateBusinessName(null);
+  };
+
+  const handleLocalSupplierUpdate = (supplierId, actionId) => {
+    const selectedSupp = options.find((x) => x.supplierId == supplierId);
+    if (selectedSupp) {
+      setCustomer({
+        id: selectedSupp?.supplierId,
+        name: selectedSupp?.supplierName,
+      });
+    }
+    handleSupplierUpdate(supplierId, actionId);
     setIsUpdateBusinessName(null);
   };
 
@@ -315,7 +299,7 @@ const OutSourceSupplierRow = ({
             onChangeTextField={checkWhatRenderArray}
             value={customer?.name ?? t("sales.quote.chooseSupplier")}
             loading={isFetching}
-            onChange={(e, v) => handleSupplierUpdate(v?.id, action?.id)}
+            onChange={(e, v) => handleLocalSupplierUpdate(v?.id, action?.id)}
             isUpdate={isUpdateBusinessName}
             setIsUpdate={setIsUpdateBusinessName}
             onBlur={onBlurBusinessName}
