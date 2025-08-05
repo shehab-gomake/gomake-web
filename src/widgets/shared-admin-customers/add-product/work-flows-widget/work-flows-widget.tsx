@@ -12,7 +12,6 @@ import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/i
 import { useModal } from "@/hooks/use-modal";
 
 const WorkFlowsWidget = ({ productState, getProductById }: any) => {
-  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {

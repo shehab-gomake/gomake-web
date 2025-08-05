@@ -17,7 +17,6 @@ const useDocumentsTableSocketIo = (documentType: DOCUMENT_TYPE) => {
     });
 
     return () => {
-      console.log("Closing socket connection...");
       socket.disconnect();
     };
   }, [documentType]);

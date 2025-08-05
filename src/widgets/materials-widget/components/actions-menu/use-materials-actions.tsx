@@ -111,7 +111,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);
-  console.log("materialCategoryData", { materialCategoryData, selectedMaterialIdForUpdate, selectedMaterialsIds });
 
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {

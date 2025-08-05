@@ -103,7 +103,6 @@ const AdvertisingProductNameParameterWidget = ({
     return MyOptions;
   }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
 
-  console.log("getOptions", getOptions())
 
   const [selectedValue, setSelectedValue] = useState(
     index !== -1

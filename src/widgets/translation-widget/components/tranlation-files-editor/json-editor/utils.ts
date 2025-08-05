@@ -33,7 +33,6 @@ export const downloadJsonFile = async (jsonString: string) => {
             window.document.body.removeChild(link);
         } catch (err) {
             // eslint-disable-next-line no-console
-            console.log("Error: fail to download a file.");
         }
     }
 };
