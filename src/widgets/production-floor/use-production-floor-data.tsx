@@ -501,7 +501,7 @@ const useProductionFloorData = () => {
           id: string;
           productType: string;
           priority: number;
-        }[] = res?.data;
+        }[] = Array.isArray(res?.data) ? res?.data : [];
         alertSuccessUpdate();
         setData(
           data.map((s) =>

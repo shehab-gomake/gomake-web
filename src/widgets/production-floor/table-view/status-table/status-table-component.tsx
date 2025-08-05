@@ -428,9 +428,9 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredBoards.length > 30 ? (
+                  {getBoards().length > 15 ? (
                     <LoadMorePagination
-                      items={filteredBoards}
+                      items={[...getBoards()].sort((a, b) => a.priority - b.priority)}
                       itemsPerPage={15}
                       tableRef={tableContainerRef}
                     >
