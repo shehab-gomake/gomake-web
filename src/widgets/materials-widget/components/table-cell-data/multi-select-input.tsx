@@ -90,7 +90,7 @@ const MultiSelectInput = ({
         disableClearable={true}
         placeholder={placeHolder}
         options={reorderedOptions}
-        onChange={() => { }}
+        onChange={() => console.log("Not Work")}
         renderOption={(props: any, option: any) => {
           return (
             <Stack style={classes.multiSelectOption}>
