@@ -23,7 +23,6 @@ const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
-  
 
 const UPDATE_BOARD_MISSION_STUCK_REASON_URL =
   "/v1/erp-service/board-missions/update-board-mission-stuck-reason";
@@ -67,9 +66,11 @@ const ADD_BOARD_MISSIONS_COMMENT_URL =
 const MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/move-board-mission-to-done";
 
-  const MOVE_BOARD_MISSION_LIST_TO_DONE_URL = "/v1/jobs-service/board-missions/move-board-mission-list-to-done" 
+const MOVE_BOARD_MISSION_LIST_TO_DONE_URL =
+  "/v1/jobs-service/board-missions/move-board-mission-list-to-done";
 
-  const UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL = "/v1/jobs-service/board-missions/update-board-mission-list-current-station"
+const UPDATE_BOARD_MISSION_LIST_CURRENT_STATION_URL =
+  "/v1/jobs-service/board-missions/update-board-mission-list-current-station";
 
 const BACK_TO_PROCESS_URL = "/v1/erp-service/board-missions/back-to-process";
 const SAVE_UPLOADED_FILE_URL =
@@ -111,12 +112,14 @@ const DELETE_JOB_FILE_UR =
 const UPDATE_PRODUCTION_FLOOR_NOTE_URL =
   "/v1/erp-service/board-missions/update-production-floor-note";
 
-  const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL = "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions";
-  const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL = "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions-using-order-id";
-  const GROUP_JOBS_URL = "/v1/jobs-service/board-missions/group-jobs";
-  const GROUP_JOBS_USING_ORDER_ID_URL = "/v1/jobs-service/board-missions/group-jobs-using-order-id";
-  const UNGROUP_JOBS_URL = "/v1/jobs-service/board-missions/ungroup-jobs";
-
+const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL =
+  "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions";
+const CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL =
+  "/v1/jobs-service/board-missions/check-if-can-make-grouped-board-missions-using-order-id";
+const GROUP_JOBS_URL = "/v1/jobs-service/board-missions/group-jobs";
+const GROUP_JOBS_USING_ORDER_ID_URL =
+  "/v1/jobs-service/board-missions/group-jobs-using-order-id";
+const UNGROUP_JOBS_URL = "/v1/jobs-service/board-missions/ungroup-jobs";
 
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
@@ -312,13 +315,24 @@ const deleteBoardMissionsGroup: ICallAndSetData = async (
 const getPrintHouseActions: ICallAndSetData = async (
   callApi,
   callBack,
-  data
+  data: { isFromEmployeeForm: boolean; isFromDashboard?: boolean },
+  lock = false,
+  abortController
 ) => {
+  const params = new URLSearchParams();
+  params.append("isFromEmployeeForm", data.isFromEmployeeForm.toString());
+  if (data.isFromDashboard) {
+    params.append("isFromDashboard", "true");
+  }
+
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_PRINT_HOUSE_ACTIONS_MACHINES_URL + "?isFromEmployeeForm=" + data,
-    callBack
+    GET_PRINT_HOUSE_ACTIONS_MACHINES_URL + "?" + params.toString(),
+    callBack,
+    {},
+    lock,
+    abortController
   );
 };
 
@@ -527,7 +541,7 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (
   );
 };
 
-const moveBoardMissionListToDoneApi: ICallAndSetData = async (  
+const moveBoardMissionListToDoneApi: ICallAndSetData = async (
   callApi,
   setState,
   data
@@ -889,39 +903,32 @@ const checkIfCanMakeGroupedBoardMissionsApi: ICallAndSetData = async (
   data
 ) => {
   return await getSetApiData(
-    callApi, 
-    EHttpMethod.POST, 
-    CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL, 
-    callBack, 
+    callApi,
+    EHttpMethod.POST,
+    CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_URL,
+    callBack,
     data
   );
 };
 
 // 2. Check If Can Make Grouped Board Missions Using Order Id
-const checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  orderId
-) => {
-  return await getSetApiData(
-    callApi, 
-    EHttpMethod.GET, 
-    `${CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL}/${orderId}`, 
-    callBack
-  );
-};
+const checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi: ICallAndSetData =
+  async (callApi, callBack, orderId) => {
+    return await getSetApiData(
+      callApi,
+      EHttpMethod.GET,
+      `${CHECK_IF_CAN_MAKE_GROUPED_BOARD_MISSIONS_USING_ORDER_ID_URL}/${orderId}`,
+      callBack
+    );
+  };
 
 // 3. Group Jobs
-const groupJobsApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  data
-) => {
+const groupJobsApi: ICallAndSetData = async (callApi, callBack, data) => {
   return await getSetApiData(
-    callApi, 
-    EHttpMethod.POST, 
-    GROUP_JOBS_URL, 
-    callBack, 
+    callApi,
+    EHttpMethod.POST,
+    GROUP_JOBS_URL,
+    callBack,
     data
   );
 };
@@ -933,23 +940,19 @@ const getGroupJobsUsingOrderIdApi: ICallAndSetData = async (
   orderId
 ) => {
   return await getSetApiData(
-    callApi, 
-    EHttpMethod.GET, 
-    `${GROUP_JOBS_USING_ORDER_ID_URL}/${orderId}`, 
+    callApi,
+    EHttpMethod.GET,
+    `${GROUP_JOBS_USING_ORDER_ID_URL}/${orderId}`,
     callBack
   );
 };
 
 // 5. Ungroup Jobs
-const ungroupJobsApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  groupId
-) => {
+const ungroupJobsApi: ICallAndSetData = async (callApi, callBack, groupId) => {
   return await getSetApiData(
-    callApi, 
-    EHttpMethod.DELETE, 
-    `${UNGROUP_JOBS_URL}/${groupId}`, 
+    callApi,
+    EHttpMethod.DELETE,
+    `${UNGROUP_JOBS_URL}/${groupId}`,
     callBack
   );
 };
@@ -1010,5 +1013,5 @@ export {
   checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi,
   groupJobsApi,
   getGroupJobsUsingOrderIdApi,
-  ungroupJobsApi
+  ungroupJobsApi,
 };
