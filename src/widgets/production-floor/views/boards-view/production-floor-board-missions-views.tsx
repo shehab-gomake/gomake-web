@@ -24,14 +24,16 @@ const ProductionFloorBoardMissionsViews = ({
   connectionId: string;
 }) => {
   const [view] = useRecoilState(productionFloorViewState);
-  const { getData, updateStatus } = useProductionFloorData();
+  const { getData, updateStatus, getAllBoardMissions, getStationFilterGroups } = useProductionFloorData();
+
+
   const [loading, setLoading] = useState<boolean>(false);
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const [columnVisibility,setColumnVisibility] = useRecoilState(columnVisibilityState);
-  const [columnOrder,setColumnOrder] = useRecoilState(columnOrderState);
+  const [columnVisibility, setColumnVisibility] = useRecoilState(columnVisibilityState);
+  const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
   const { CheckPermission } = useUserPermission();
   // Use refs to prevent infinite loops
@@ -44,18 +46,27 @@ const ProductionFloorBoardMissionsViews = ({
   }, [connectionId, isSocketUpdateJobsTable]);
 
   useEffect(() => {
+    if (view === EProductionFloorView.DONE_JOBS) {
+      getAllBoardMissions()
+    }
+    else if (view === EProductionFloorView.TABLE) {
+      getData()
+    }
+  }, [view])
+
+  useEffect(() => {
     if (shouldFetchData && !hasInitializedRef.current) {
       const loadColumnSettings = async () => {
         try {
-          const res = await getProductionFloorTableSettingsApi(callApi, () => {});
+          const res = await getProductionFloorTableSettingsApi(callApi, () => { });
           const saved: ColumnSetting[] = res?.data;
-    
+
           const filteredKeys = allColumnKeys.filter(
             (key) =>
               key !== "checkbox" ||
               CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
           );
-    
+
           if (saved && saved.length > 0) {
             const { order, visibility } = parseSavedColumnSettings(
               saved,
@@ -87,15 +98,15 @@ const ProductionFloorBoardMissionsViews = ({
         lastConnectionIdRef.current = connectionId;
         setLoading(true);
         getData(connectionId)
-        .then(() => {
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching production floor data:", error);
-          setLoading(false);
-        });
+          .then(() => {
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching production floor data:", error);
+            setLoading(false);
+          });
       };
-    
+
       loadColumnSettings();
     }
   }, [shouldFetchData, connectionId]);
@@ -135,11 +146,11 @@ const ProductionFloorBoardMissionsViews = ({
   const renderLoadingSkeleton = useCallback(() => (
     <Stack gap={"10px"}>
       {Array.from({ length: 5 }).map((_, index) => (
-        <Skeleton 
+        <Skeleton
           key={`skeleton-${index}`}
-          variant="rounded" 
-          width={"100%"} 
-          height={60} 
+          variant="rounded"
+          width={"100%"}
+          height={60}
         />
       ))}
     </Stack>
@@ -160,13 +171,13 @@ const ProductionFloorBoardMissionsViews = ({
     }
 
     if (view === EProductionFloorView.TABLE ||
-        view === EProductionFloorView.FILTER_GROUPS ||
-        view === EProductionFloorView.DONE_JOBS) {
+      view === EProductionFloorView.FILTER_GROUPS ||
+      view === EProductionFloorView.DONE_JOBS) {
       return (
-        <ProductionFloorTableView 
-          connectionId={connectionId} 
-          updateStatus={updateStatus} 
-          getData={getData} 
+        <ProductionFloorTableView
+          connectionId={connectionId}
+          updateStatus={updateStatus}
+          getData={getData}
         />
       );
     }

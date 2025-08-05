@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { EditIcon } from "@/icons";
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { getAllBudgetsForClientApi, getAllDocumentsByBudgetApi, getAllDocumentsByBudgetIdApi } from "@/services/api-service/generic-doc/documents-api";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import {
+  getAllBudgetsForClientApi,
+  getAllDocumentsByBudgetApi,
+  getAllDocumentsByBudgetIdApi,
+} from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getBudgetStatusText, getPaymentStatusText } from "./helpers-budget";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -35,7 +39,7 @@ const useBudgetTab = (state) => {
     alertSuccessAdded,
     alertFaultAdded,
     alertSuccessDelete,
-    alertFaultDelete
+    alertFaultDelete,
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const [budgets, setBudgets] = useState([]);
@@ -50,7 +54,6 @@ const useBudgetTab = (state) => {
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [newBudget, setNewBudget] = useState<Budget | null>(null);
   const path = `/invoice?isNewCreation=true&budgetId=${newBudget?.id}`;
-
 
   const [openCreateInvoiceModal, setOpenCreateInvoiceModal] =
     useState<boolean>(false);
@@ -72,9 +75,9 @@ const useBudgetTab = (state) => {
   };
 
   const handleViewOrders = (budget) => {
-    setSelectedBudget(budget)
-    getAllDocumentsByBudgetId(budget)
-    setAllDocumentsByBudgetId([])
+    setSelectedBudget(budget);
+    getAllDocumentsByBudgetId(budget);
+    setAllDocumentsByBudgetId([]);
     setIsOrdersModalOpen(true);
   };
 
@@ -94,7 +97,6 @@ const useBudgetTab = (state) => {
     });
   };
 
-
   const getAllDocumentsByBudget = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -113,12 +115,11 @@ const useBudgetTab = (state) => {
     const callBack = (res) => {
       if (res?.success) {
         setAllDocumentsByBudgetId(res.data);
-        setIsLoadingDocuments(true)
+        setIsLoadingDocuments(true);
         alertSuccessGetData();
       } else {
         alertFaultGetData();
-        setIsLoadingDocuments(true)
-
+        setIsLoadingDocuments(true);
       }
     };
     await getAllDocumentsByBudgetIdApi(callApi, callBack, {
@@ -126,16 +127,15 @@ const useBudgetTab = (state) => {
     });
   };
 
-
   useEffect(() => {
-    getAllBudgetsForClient()
-  }, [])
+    getAllBudgetsForClient();
+  }, []);
 
   useEffect(() => {
     if (isOrdersModalOpen) {
-      getAllDocumentsByBudget()
+      getAllDocumentsByBudget();
     }
-  }, [isOrdersModalOpen])
+  }, [isOrdersModalOpen]);
   const tableHeaders = [
     t("customers.modal.budgetName"),
     t("customers.modal.vatIncluded"),
@@ -145,86 +145,115 @@ const useBudgetTab = (state) => {
     t("customers.modal.period"),
     t("customers.modal.paymentStatus"),
     t("customers.modal.status"),
-    t("customers.modal.more")
+    t("customers.modal.more"),
   ];
 
-  const addBudget = useCallback(async (budget) => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/budgets/create-new-budget`,
-      {
-        clientId: state?.id,
-        clientName: state?.name,
-        ...budget,
+  const addBudget = useCallback(
+    async (budget) => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/budgets/create-new-budget`,
+        {
+          clientId: state?.id,
+          clientName: state?.name,
+          ...budget,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        getAllBudgetsForClient();
+        setNewBudget(res?.data?.data?.data);
+
+        if (!res?.data?.data?.data?.invoiceNumber) {
+          onOpenCreateInvoiceModal();
+        }
+      } else {
+        alertFaultAdded();
       }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      getAllBudgetsForClient();
-      setNewBudget(res?.data?.data?.data)
+    },
+    [state]
+  );
 
-      if (!res?.data?.data?.data?.invoiceNumber) {
-        onOpenCreateInvoiceModal();
+  const editBudget = useCallback(
+    async (updatedBudget) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/budgets/update-budget`,
+        {
+          ...updatedBudget,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllBudgetsForClient();
+      } else {
+        alertFaultUpdate();
       }
-    } else {
-      alertFaultAdded();
-    }
-  }, [state]);
+    },
+    [state]
+  );
 
-  const editBudget = useCallback(async (updatedBudget) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/budgets/update-budget`,
-      {
-        ...updatedBudget,
+  const mapData = (handleEditBudget, handleViewOrders) =>
+    budgets.map((row) => [
+      row.name,
+      row.isAmountWithVat ? (
+        <div style={{ color: "#40CC4E" }}>{t("modal.yes")}</div>
+      ) : (
+        <div style={{ color: "#D92C2C" }}>{t("modal.no")}</div>
+      ),
+      row.amount,
+      row.balance,
+      row.invoiceNumber,
+      row.fromDate && row.toDate
+        ? `${row.fromDate.split("T")[0]} / ${row.toDate.split("T")[0]}`
+        : "",
+      getPaymentStatusText(row.paymentStatus),
+      getBudgetStatusText(row.status),
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        <div
+          onClick={() => handleEditBudget(row)}
+          style={{ cursor: "pointer" }}
+        >
+          <EditIcon />
+        </div>
+        <div
+          onClick={() => handleViewOrders(row)}
+          style={{ cursor: "pointer" }}
+        >
+          <AccountTreeIcon />
+        </div>
+      </div>,
+    ]);
+
+  const updateDocumentBudget = useCallback(
+    async (budget) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/budgets/update-document-budget`,
+        {
+          documentType: budget?.documentType,
+          documentId: budget?.documentId,
+          budgetId: null,
+        }
+      );
+      if (res?.success) {
+        getAllDocumentsByBudgetId(selectedBudget);
+        getAllBudgetsForClient();
+        alertSuccessDelete();
+      } else {
+        alertFaultDelete();
       }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      getAllBudgetsForClient();
-    } else {
-      alertFaultUpdate();
-    }
-  }, [state]);
-
-  const mapData = (handleEditBudget, handleViewOrders) => budgets.map((row) => [
-    row.name,
-    row.isAmountWithVat ? (
-      <div style={{ color: "#40CC4E" }}>{t("modal.yes")}</div>
-    ) : (
-      <div style={{ color: "#D92C2C" }}>{t("modal.no")}</div>
-    ),
-    row.amount,
-    row.balance,
-    row.invoiceNumber,
-    row.fromDate && row.toDate ? `${row.fromDate.split("T")[0]} / ${row.toDate.split("T")[0]}` : "",
-    getPaymentStatusText(row.paymentStatus),
-    getBudgetStatusText(row.status),
-    <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }}>
-      <div onClick={() => handleEditBudget(row)} style={{ cursor: "pointer" }}><EditIcon /></div>
-      <div onClick={() => handleViewOrders(row)} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
-    </div>
-  ]);
-
-
-  const updateDocumentBudget = useCallback(async (budget) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/budgets/update-document-budget`,
-      {
-        documentType: budget?.documentType,
-        documentId: budget?.documentId,
-        budgetId: null
-      }
-    );
-    if (res?.success) {
-
-      getAllDocumentsByBudgetId(selectedBudget)
-      alertSuccessDelete();
-    } else {
-      alertFaultDelete();
-    }
-  }, [selectedBudget]);
+    },
+    [selectedBudget]
+  );
 
   return {
     mapData,
@@ -250,7 +279,8 @@ const useBudgetTab = (state) => {
     isDataLoaded,
     isLoadingDocuments,
     onCloseCreateInvoiceModal,
-    navigate
+    navigate,
+    getAllBudgetsForClient,
   };
 };
 

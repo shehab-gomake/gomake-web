@@ -17,7 +17,6 @@ const useDeliveriesSocketIo = () => {
     });
 
     return () => {
-      console.log("Closing socket connection...");
       socket.disconnect();
     };
   }, [printHouse?.id]);

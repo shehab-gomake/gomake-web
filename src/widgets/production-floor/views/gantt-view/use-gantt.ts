@@ -59,7 +59,6 @@ const useGantt = () => {
       .utc() // Convert to UTC
       .toISOString();
 
-    console.log({ startDate: startOfMonth, endDate: endOfMonth }); // Debugging payload
 
     const callBack = (res) => {
       if (res.success) {

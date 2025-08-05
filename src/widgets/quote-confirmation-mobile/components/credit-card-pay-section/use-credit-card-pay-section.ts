@@ -67,7 +67,6 @@ const useCreditCardPaySection = ({
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(
     initialPaymentDetails
   );
-  console.log("paymentDetailsState", paymentDetailsState)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
 
   const transactionTypes = [

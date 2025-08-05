@@ -79,7 +79,6 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       }));
 
       const callBack = (res) => {
-        console.log("res", res);
         if (res.success) {
           const path = isAdmin ? "/materials-admin" : "/materials";
           push(path + `/${materialType}?materialCategory=${newCategory}`);

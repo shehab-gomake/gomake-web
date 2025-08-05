@@ -99,6 +99,7 @@ import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
 import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useModal } from "../use-modal";
 
 export interface SampleTypeOption {
   value: number;
@@ -347,7 +348,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
-
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
   useEffect(() => {
@@ -3203,7 +3203,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
     else if (
-      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+      parameter?.parameterType === EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES
     ) {
       Comp = (
         <AdvertisingProductNameParameterWidget
@@ -6526,7 +6527,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               quantity?.values[0]
               ? +quantity?.values[0]
               : 1),
-          finalPrice: +sliderCurrentProductItemValueTotalPrice,
+          finalPrice: (widgetType == EWidgetProductType.EDIT ||
+            widgetType == EWidgetProductType.DUPLICATE) && localStateValue && localStateValue != null ?
+            +localStateValue :
+            +sliderCurrentProductItemValueTotalPrice,
           amount:
             quantity &&
               quantity.values &&
@@ -6550,9 +6554,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoadingWithLockScreen(false);
       // You can combine all error messages into a single string if needed
       setErrorMsg(workflowValidation.errors.join(", "));
+      isOpenErrorsModal.open()
     }
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
+
+  const isOpenErrorsModal = useModal()
+
 
   const navigateForRouter = () => {
     if (!productItemValueDraftId) {
@@ -6560,6 +6568,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       createDefaultWorkFlowApi();
     } else {
       const workflowValidation = validateWorkflows(workFlows[0]);
+      console.log("workflowValidation", workflowValidation)
 
       if (workflowValidation.isValid) {
         // If workflows are valid, proceed to validate parameters
@@ -6580,8 +6589,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setErrorMsg(t("products.offsetPrice.admin.errorReq"));
         }
       } else {
-        // If workflows are not valid, set error message
-        // You can combine all error messages into a single string if needed
+        isOpenErrorsModal.open()
         setErrorMsg(workflowValidation.errors.join(", "));
       }
     }
@@ -7038,6 +7046,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentSignalRConnectionId,
     deliveryDate,
     SelectWorkFlowById,
+    isOpenErrorsModal,
   };
 };
 
