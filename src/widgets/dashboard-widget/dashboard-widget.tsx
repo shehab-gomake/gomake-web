@@ -48,25 +48,36 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     setStatistics,
     isLoading,
   } = useBoardMissions();
-  const actions = (action: DashboardActions, dateRange: IDateRange) => {
-    switch (action) {
-      case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
-        getLateTodayBoardsMissions().then();
-        break;
-      case DashboardActions.LATE_BOARDS_MISSIONS:
-        getLateBoardsMissions().then();
-        break;
-      case DashboardActions.ALL_BOARDS_MISSIONS:
-        getAllBoardsMissions().then();
-        break;
-      default:
-        getBoardsMissionsByDateRange(dateRange).then();
-    }
-  };
+  const actions = useCallback(
+    (action: DashboardActions, dateRange: IDateRange) => {
+      switch (action) {
+        case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
+          getLateTodayBoardsMissions().then();
+          break;
+        case DashboardActions.LATE_BOARDS_MISSIONS:
+          getLateBoardsMissions().then();
+          break;
+        case DashboardActions.ALL_BOARDS_MISSIONS:
+          getAllBoardsMissions().then();
+          break;
+        default:
+          getBoardsMissionsByDateRange(dateRange).then();
+      }
+    },
+    [
+      getLateTodayBoardsMissions,
+      getLateBoardsMissions,
+      getAllBoardsMissions,
+      getBoardsMissionsByDateRange,
+    ]
+  );
 
   useEffect(() => {
-    setBoardsMissions([]);
-    setStatistics(null);
+    // Only clear data if we're changing filters, not on initial load
+    if (boardsMissions.length > 0 || statistics) {
+      setBoardsMissions([]);
+      setStatistics(null);
+    }
     actions(action, dates);
   }, [action, dates, selectedAgents]);
 
