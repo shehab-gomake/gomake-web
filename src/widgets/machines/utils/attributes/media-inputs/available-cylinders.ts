@@ -1,7 +1,6 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const availableCylinders = (state: Record<string, any>) => {
-    console.log("state",state)
     return [
         {
             name: 'machineAttributes.availableCylinders',

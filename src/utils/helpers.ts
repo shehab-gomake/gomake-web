@@ -350,7 +350,6 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
         return value;
     }
   } catch (e) {
-    console.log(e);
     return value;
   }
 };
@@ -463,3 +462,12 @@ export const renderExceptionMessage = (
   }
   return "";
 };
+
+// Utility functions for rounding and formatting numbers to 2 decimal places.
+// Commonly used in receipts, summaries, and any monetary value display.
+
+export const round2 = (n: number | string | undefined | null): number =>
+  Math.round((Number(n ?? 0) + Number.EPSILON) * 100) / 100;
+
+export const fmt2 = (n: number | string | undefined | null): string =>
+  round2(n).toFixed(2);

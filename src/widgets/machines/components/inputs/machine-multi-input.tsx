@@ -1,12 +1,12 @@
-import {IMachineMultiInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import {useEffect, useState} from "react";
-import {useStyle} from "@/widgets/machines/components/inputs/style";
-import {useTranslation} from "react-i18next";
-import {FormInput} from "@/components/form-inputs/form-input";
+import { IMachineMultiInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
+import { useEffect, useState } from "react";
+import { useStyle } from "@/widgets/machines/components/inputs/style";
+import { useTranslation } from "react-i18next";
+import { FormInput } from "@/components/form-inputs/form-input";
 
-const MachineMultiInput = ({parameterKey, inputs, name, updateState, value, disabled}: IMachineMultiInput) => {
-    const {classes} = useStyle();
-    const {t} = useTranslation();
+const MachineMultiInput = ({ parameterKey, inputs, name, updateState, value, disabled }: IMachineMultiInput) => {
+    const { classes } = useStyle();
+    const { t } = useTranslation();
     const [state, setState] = useState<Record<string, any>>();
     const onchange = (key: string, value: any) => {
         setState({
@@ -18,26 +18,24 @@ const MachineMultiInput = ({parameterKey, inputs, name, updateState, value, disa
         if (value) {
             setState(value);
         }
-        console.log(value)
     }, [value])
 
     useEffect(() => {
         if (state) {
             updateState(parameterKey, state);
         }
-        console.log(state)
     }, [state])
 
     return (
-       !disabled && <div style={classes.multiInputContainer}>
+        !disabled && <div style={classes.multiInputContainer}>
             <h3 style={classes.multiInputLabel}>{t(name)}</h3>
             <div style={classes.inputsRow}>
                 {
-                    inputs.map(input => <FormInput input={input} changeState={onchange} error={false}/>)
+                    inputs.map(input => <FormInput input={input} changeState={onchange} error={false} />)
                 }
             </div>
         </div>
     );
 }
 
-export {MachineMultiInput};
+export { MachineMultiInput };

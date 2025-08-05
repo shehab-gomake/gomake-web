@@ -25,7 +25,6 @@ const useStorageList = () => {
   useEffect(() => {
     if(!storageList){
       setStorageList([])
-      console.log("{getAllPrintHouseJobsStorage,}",storageList)
       getAllPrintHouseJobsStorage()
     }
   }, [storageList])

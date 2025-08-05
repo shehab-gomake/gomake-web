@@ -28,6 +28,7 @@ import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-repo
 import { ClientBalance } from "./components/client-balance/client-balance";
 import { ClientTypeModal } from "../client-types/components/add-edit-client-type-modal";
 import { PlusIcon } from "@/icons";
+import { FixedSizeList as List } from "react-window";
 
 interface IProps {
   customerAction: CUSTOMER_ACTIONS;
@@ -199,6 +200,27 @@ const CustomerCardWidget = ({
     </div>
   );
 
+  // Row renderer for react-window virtualized contact list
+  const ContactRow = ({ index, style }) => {
+    const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
+    const contact = filteredContacts[index];
+
+    if (!contact) return null;
+
+    return (
+      <div style={style}>
+        <ContactForm
+          key={contact.index}
+          contact={contact}
+          onDelete={deleteContactForm}
+          setContact={(updatedContactData) =>
+            updateContact(contact.index, updatedContactData)
+          }
+        />
+      </div>
+    );
+  };
+
   const renderTableSearch = (
     <>
       {isFromHomePage && showTable && (
@@ -240,20 +262,41 @@ const CustomerCardWidget = ({
       component: (
         <Stack direction={"column"} gap={"15px"}>
           {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
-          <Stack direction={"column"}>
-            {contacts
-              ?.filter((contact) => !contact.isMainContact)
-              ?.map((x) => (
-                <ContactForm
-                  key={x.index}
-                  contact={x}
-                  onDelete={deleteContactForm}
-                  setContact={(updatedContactData) =>
-                    updateContact(x.index, updatedContactData)
-                  }
-                />
-              ))}
-          </Stack>
+          <div style={{ height: "400px", width: "100%" }}>
+            {(() => {
+              const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
+
+              // If there are only a few contacts, render them normally to avoid unnecessary virtualization
+              if (filteredContacts.length <= 3) {
+                return (
+                  <Stack direction={"column"}>
+                    {filteredContacts.map((x) => (
+                      <ContactForm
+                        key={x.index}
+                        contact={x}
+                        onDelete={deleteContactForm}
+                        setContact={(updatedContactData) =>
+                          updateContact(x.index, updatedContactData)
+                        }
+                      />
+                    ))}
+                  </Stack>
+                );
+              }
+
+              // Use virtualized list for large number of contacts
+              return (
+                <List
+                  height={400}
+                  width="100%"
+                  itemCount={filteredContacts.length}
+                  itemSize={280} // Estimated height per contact form (can be adjusted)
+                >
+                  {ContactRow}
+                </List>
+              );
+            })()}
+          </div>
         </Stack>
       ),
     },

@@ -34,6 +34,8 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { ErrorsModalWidget } from "./errors-modal-widget";
+import { Padding } from "@mui/icons-material";
 
 const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const { clasess } = useStyle({ isMobileScreen });
@@ -110,7 +112,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     setShowCalculationInCompletedModal,
     currentSignalRConnectionId,
     deliveryDate,
-    SelectWorkFlowById
+    SelectWorkFlowById,
+    isOpenErrorsModal,
+
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -683,6 +687,22 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         onClose={() => setShowCalculationInCompletedModal(false)}
         onClickDelete={() => addItemForQuotes()}
       />
+      <GoMakeModal
+        modalTitle={" "}
+        withClose={true}
+        openModal={isOpenErrorsModal.isOpen}
+        onClose={() => isOpenErrorsModal.close()}
+        insideStyle={{
+          width: "fit-content",
+          height: "fit-content",
+        }}
+      >
+        <ErrorsModalWidget
+          errors={errorMsg}
+          onClose={() => isOpenErrorsModal.close()}
+          clasess={clasess} // Pass your classes if needed
+        />
+      </GoMakeModal>
     </div>
   );
 };

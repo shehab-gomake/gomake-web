@@ -38,6 +38,10 @@ const useAdjustmentsModal = ({
   const [inputErrors, setInputErrors] = useState([]);
   const hasInputErrors = () => inputErrors.some((error) => error);
 
+  const isApproximatelyZero = (value: number, epsilon = 0.0001) => {
+    return Math.abs(value) < epsilon;
+  };
+
   const onClickOpenDeleteModal = () => {
     if (hasInputErrors()) {
       alertFault("reports.inputErrorAlert");
@@ -201,9 +205,11 @@ const useAdjustmentsModal = ({
       return;
     }
 
-    if (selectedItems.length > 0 && calculateTotalPrice() === 0) {
+    const total = calculateTotalPrice();
+
+    if (selectedItems.length > 0 && isApproximatelyZero(total)) {
       internalReconciliationApi();
-    } else if (selectedItems.length > 0 && calculateTotalPrice() !== 0) {
+    } else if (selectedItems.length > 0 && !isApproximatelyZero(total)) {
       alertFault("reports.matchTotalZeroErrorMsg");
     } else {
       alertFault("reports.matchErrorMsg");

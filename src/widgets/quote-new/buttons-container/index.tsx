@@ -17,7 +17,7 @@ import { PaymentBtn } from "./payment/payment-button";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { CreditCardIcon } from "@/icons/credit-card-icon";
 import { CloseBtnMenu } from "./close-btn-menu";
 import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
@@ -31,6 +31,8 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { ReceiptSummaryContent } from "../receipt-summary-content/receipt-summary-content";
+import { AttachIcon } from "@/components/icons/attach-icon";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -50,6 +52,7 @@ const ButtonsContainer = ({
   handleSendUsingWhatsAppWeb,
   onClickConfirmCreateDocument,
   onClickOpenAddAttachmentsModal,
+  onClickOpenAddAttachmentsPurchaseModal,
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
   handleSaveDraftBtnClick,
@@ -156,6 +159,12 @@ const ButtonsContainer = ({
       quoteItemValue.isSendMails ||
       quoteItemValue.isSendSMS) &&
     !quoteItemValue?.isNeedApproval;
+
+  const hasFilesInEachDocument = useMemo(() => {
+    return quoteItemValue?.documentItems?.some(item =>
+      item.files && Array.isArray(item.files) && item.files.length > 0
+    ) || false;
+  }, [quoteItemValue?.documentItems]);
 
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
@@ -294,7 +303,7 @@ const ButtonsContainer = ({
               )
             }
             style={classes.btnContainer}
-            onClick={onClickOpenAddAttachmentsModal}
+            onClick={onClickOpenAddAttachmentsPurchaseModal}
           >
             {quoteItemValue?.attachments?.length > 0
               ? t("sales.quote.editAttachments")
@@ -403,6 +412,7 @@ const ButtonsContainer = ({
             {t("sales.cart.saveDraft")}
           </GomakePrimaryButton>
         )}
+
         {isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -445,6 +455,16 @@ const ButtonsContainer = ({
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
         )}
+        {isQuote && !isNewCreation && hasFilesInEachDocument && <SecondaryButton
+          variant="outlined"
+          startIcon={<AttachIcon />}
+          style={classes.btnStyle}
+          onClick={() => {
+            onClickOpenAddAttachmentsModal()
+          }}
+        >
+          {t("sales.quote.attachFiles")}
+        </SecondaryButton>}
         {isQuote && quoteItemValue?.isManager && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -490,6 +510,7 @@ const ButtonsContainer = ({
             </GomakePrimaryButton>
           </>
         )}
+
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
