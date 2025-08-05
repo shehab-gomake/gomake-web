@@ -18,6 +18,7 @@ import { Skeleton } from "@mui/material";
 import { DashboardDates } from "@/widgets/dashboard-widget/dates";
 import Stack from "@mui/material/Stack";
 import { useDashboardSocketIo } from "@/hooks/socket-io/use-dashboard-socket-io";
+import { useTranslation } from "react-i18next";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
   const {
@@ -32,7 +33,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
   const { dates, action } = useGomakeDateRange();
   const selectedAgents = useRecoilValue(selectedAgentsState);
   const {} = useDashboardSocketIo(() => actions(action, dates));
-
+  const { t } = useTranslation();
   const {
     getBoardsMissionsByDateRange,
     statistics,
@@ -45,26 +46,38 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     dashboardColumns,
     setBoardsMissions,
     setStatistics,
+    isLoading,
   } = useBoardMissions();
-  const actions = (action: DashboardActions, dateRange: IDateRange) => {
-    switch (action) {
-      case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
-        getLateTodayBoardsMissions().then();
-        break;
-      case DashboardActions.LATE_BOARDS_MISSIONS:
-        getLateBoardsMissions().then();
-        break;
-      case DashboardActions.ALL_BOARDS_MISSIONS:
-        getAllBoardsMissions().then();
-        break;
-      default:
-        getBoardsMissionsByDateRange(dateRange).then();
-    }
-  };
+  const actions = useCallback(
+    (action: DashboardActions, dateRange: IDateRange) => {
+      switch (action) {
+        case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
+          getLateTodayBoardsMissions().then();
+          break;
+        case DashboardActions.LATE_BOARDS_MISSIONS:
+          getLateBoardsMissions().then();
+          break;
+        case DashboardActions.ALL_BOARDS_MISSIONS:
+          getAllBoardsMissions().then();
+          break;
+        default:
+          getBoardsMissionsByDateRange(dateRange).then();
+      }
+    },
+    [
+      getLateTodayBoardsMissions,
+      getLateBoardsMissions,
+      getAllBoardsMissions,
+      getBoardsMissionsByDateRange,
+    ]
+  );
 
   useEffect(() => {
-    setBoardsMissions([]);
-    setStatistics(null);
+    // Only clear data if we're changing filters, not on initial load
+    if (boardsMissions.length > 0 || statistics) {
+      setBoardsMissions([]);
+      setStatistics(null);
+    }
     actions(action, dates);
   }, [action, dates, selectedAgents]);
 
@@ -169,13 +182,31 @@ const DashboardWidget = ({}: IDashboardWidget) => {
               />
             )}
           </div>
-        ) : (
+        ) : isLoading ? (
           <Skeleton
             variant="rectangular"
             width={"100%"}
             height={400}
             style={{ borderRadius: 16 }}
           />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: 400,
+              borderRadius: 16,
+              backgroundColor: "#f5f5f5",
+              color: "#666",
+              fontSize: "16px",
+              fontWeight: "500",
+            }}
+          >
+            {tasksFilter
+              ? t("dashboard.noDataSearch")
+              : t("dashboard.noDataAvailable")}
+          </div>
         )}
       </Stack>
     </div>

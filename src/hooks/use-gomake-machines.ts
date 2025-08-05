@@ -16,7 +16,6 @@ const useGomakeMachines = () => {
   const getMachinesList = async () => {
     const callBack = (res) => {
       if (res.success) {
-        debugger;
         const machinesList: IMachine[] = res.data.map((m) => ({
           ...m,
           name: m.model,
