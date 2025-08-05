@@ -215,7 +215,6 @@ const useActionsList = ({
   const getActions = async () => {
     const callBack = (res) => {
       if (res.success) {
-        debugger;
         setActions(res?.data);
         const dashboardMachinesData = res?.data.flatMap((station) =>
           station.machines.map((machine) => ({
