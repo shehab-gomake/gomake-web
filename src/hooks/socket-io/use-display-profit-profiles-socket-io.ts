@@ -48,7 +48,6 @@ const useDisplayProfitProfilesSocketIo = ({setProducts}) => {
         });
 
         return () => {
-            console.log("Closing socket connection...");
             socket.disconnect();
         };
     }, []);

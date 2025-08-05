@@ -14,7 +14,6 @@ class ActionProvider {
         return  new Promise((resolve, reject) => {
             const socket = io(config.api_server);
             socket.on('chatbot-socket-io', (newData:any) => {
-                console.log("newData", newData)
                 let message = newData.message;
                 let calculationUrl = newData.calculationUrl;
                 const greetingMessage = createCustomMessage(message, 'bot', {loading: false});

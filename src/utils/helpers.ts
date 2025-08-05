@@ -350,7 +350,6 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
         return value;
     }
   } catch (e) {
-    console.log(e);
     return value;
   }
 };

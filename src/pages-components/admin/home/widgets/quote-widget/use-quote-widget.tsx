@@ -200,7 +200,6 @@ const useQuoteWidget = () => {
 
   const [allStuckJobs, setAllStuckJobs] = useState(0);
   const user = useRecoilValue<any>(userState);
-  console.log("user", user?.isAgent);
   useEffect(() => {
     if (permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS)) {
       getAllStuckJobs();

@@ -51,7 +51,6 @@ const useGomakeAxios = () => {
           }
         }, 500);
       }
-      console.log(url)
       if (result.status === HttpErrorCodes.UNAUTHORIZED && isLoggedIn ) {
         setIsLoggedIn(false);
         showLoginModal(true);

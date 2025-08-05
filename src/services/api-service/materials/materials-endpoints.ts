@@ -414,7 +414,6 @@ const uploadQuoteItemFileApi: ICallAndSetData = async (
   callBack,
   data
 ) => {
-  console.log("data", data)
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,

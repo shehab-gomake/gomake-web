@@ -127,9 +127,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
       if (event.key === 'Enter' && scanBuffer.length > 0) {
         setBarcode(scanBuffer);
         isProcessingBarCode = true;
-        console.log("handleBoardMissionsQRCodeAction start");
         await handleBoardMissionsQRCodeAction(scanBuffer);
-        console.log("handleBoardMissionsQRCodeAction finished");
         setScanBuffer('');
         isProcessingBarCode = false;
         return;
