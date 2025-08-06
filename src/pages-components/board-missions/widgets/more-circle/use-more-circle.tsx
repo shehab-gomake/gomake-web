@@ -23,10 +23,13 @@ import {
 } from "@/store/file-uploader-state";
 import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 import { printHouseProfile } from "@/store/print-house-profile";
-import { EditIcon } from "@/icons";
+import { EditIcon, TickMoveIcon } from "@/icons";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { moveBoardMissionStatusToWaitingApi, tryMoveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  moveBoardMissionStatusToWaitingApi,
+  tryMoveBoardMissionToDoneApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useMoreCircle = ({
   mission,
@@ -41,7 +44,7 @@ const useMoreCircle = ({
   onClickMarksAsDoneForProductType,
   isDoneJobs,
   handleClickBackToProcess,
-  onOpenMarkReadyModalForHasJobs
+  onOpenMarkReadyModalForHasJobs,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -111,13 +114,13 @@ const useMoreCircle = ({
       if (res.success) {
         if (boardMission.productType) {
           // moveBoardMissionToDone(boardMission);
-          onClickMarksAsDoneForProductType(mission)
+          onClickMarksAsDoneForProductType(mission);
         } else {
           if (res.data) {
             // onClickMarksAsDone(mission)
             onOpenMarkReadyModalForHasJobs(boardMission);
           } else {
-            onClickMarksAsDone(mission)
+            onClickMarksAsDone(mission);
             // onOpenMarkReadyModal(boardMission.id);
           }
         }
@@ -129,13 +132,16 @@ const useMoreCircle = ({
     });
   };
 
-  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string
+  ) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
     let data = jobId;
-    if(productType){
+    if (productType) {
       //data = data + "?productType="+productType;
     }
     await printJobUsingPrintNodeApi(callApi, callBack, data);
@@ -160,12 +166,18 @@ const useMoreCircle = ({
         <a
           style={classes.menuTitleStyle}
           href={
-            mission?.groupedInJobId !== null ?
-              `/production-floor?boardMissionsId=${mission?.groupedInJobId}${mission?.productType ? `&productType=${mission?.productType}` : ""
-              }&step=stations`
-              :
-              `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-              }&step=stations`}
+            mission?.groupedInJobId !== null
+              ? `/production-floor?boardMissionsId=${mission?.groupedInJobId}${
+                  mission?.productType
+                    ? `&productType=${mission?.productType}`
+                    : ""
+                }&step=stations`
+              : `/production-floor?boardMissionsId=${mission?.id}${
+                  mission?.productType
+                    ? `&productType=${mission?.productType}`
+                    : ""
+                }&step=stations`
+          }
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -173,7 +185,8 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
           }&step=stations`
         ),
     },
@@ -188,10 +201,24 @@ const useMoreCircle = ({
       onclick: () => navigate(handleClickEdit(mission)),
     },
     {
+      condition: true,
+      onclick: () =>
+        navigate(
+          `/purchaseOrders?finalPatternSearch=${mission?.orderNumber}&pageNumber=1`
+        ),
+      icon: <TickMoveIcon />,
+      name: t("sales.quote.purchaseOrders"),
+    },
+    {
       condition: true && isSendPaymentToClient,
       name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
-      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId, mission?.productType),
+      onclick: () =>
+        onClickWorkMissionPdf(
+          mission?.id,
+          mission?.actionId,
+          mission?.productType
+        ),
     },
     {
       condition: true && isSendPaymentToClient,
@@ -210,7 +237,8 @@ const useMoreCircle = ({
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
-        mission?.status !== BoardMissionStatusForFilter.DONE && !mission?.isReady
+        mission?.status !== BoardMissionStatusForFilter.DONE &&
+        !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
@@ -244,7 +272,8 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
@@ -255,7 +284,7 @@ const useMoreCircle = ({
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () => {
-        printJobUsingPrintNode(mission?.id,mission?.productType).then();
+        printJobUsingPrintNode(mission?.id, mission?.productType).then();
       },
     },
     !!companyProfile.filesApiAddress && {
