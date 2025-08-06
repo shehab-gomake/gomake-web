@@ -42,7 +42,7 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
 import { Stack } from "@mui/material";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
@@ -50,6 +50,10 @@ import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { JobsTableColumns } from "../quotes/enums/document-table-columns-enum";
 import { exampleTypeState } from "@/store/example-type";
+import {
+  columnOrderStateFamily,
+  columnVisibilityStateFamily,
+} from "./states/board-missions-columns-settings-state";
 
 type StatusOption = {
   label: string;
@@ -252,6 +256,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more"),
   ].filter(Boolean); // This filters out falsy values
+
   const tableHeaderForPurchaseJobs = [
     t("boardMissions.creationDate"),
     t("boardMissions.dueDate"),
@@ -377,7 +382,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     );
     handleClose();
     setPageNumber(1);
-    //getAllData(isPurchaseJobs, false); // moved to useEffect below
   };
 
   const handleClickClear = () => {
@@ -412,7 +416,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       { shallow: true }
     );
     handleClose();
-    //getAllData(isPurchaseJobs, true); // moved to useEffect below
   };
 
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
@@ -583,130 +586,136 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const getAllBoardMissions = async (isClear: boolean = false, order?: any) => {
     const sortOrder = order || currentSortOrder;
+
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
+
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
             mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
-          return [
-            <a
-              href={mission?.boardMissionImage}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={mission?.boardMissionImage}
-                alt=""
-                style={{
-                  width: "45px",
-                  height: "45px",
-                  objectFit: "contain",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              />
-            </a>,
-            formatISODateTime(mission?.createdDate),
-            formatISODateTime(mission?.dueDate),
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => onClickOpenCustomerModal(mission?.customerID)}
-            >
-              {mission?.clientName}
-            </div>,
-            mission?.productType
+
+          const row: Record<string, React.ReactNode> = {
+            image: (
+              <a
+                href={mission?.boardMissionImage}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={mission?.boardMissionImage}
+                  alt=""
+                  style={{
+                    width: "45px",
+                    height: "45px",
+                    objectFit: "contain",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                />
+              </a>
+            ),
+            creationDate: formatISODateTime(mission?.createdDate),
+            dueDate: formatISODateTime(mission?.dueDate),
+            clientName: (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+              >
+                {mission?.clientName}
+              </div>
+            ),
+            missionNumber: mission?.productType
               ? `${mission?.number} / ${
-                  mission?.productTypeName
-                    ? mission?.productTypeName
-                    : mission?.productType
+                  mission?.productTypeName ?? mission?.productType
                 }`
               : mission?.number,
-            <Stack
-              direction="column"
-              spacing={0.5}
-              width="100%"
-              sx={{ textAlign: "center" }}
-            >
-              {mission?.quoteNumber && (
+            relatedDocuments: (
+              <Stack
+                direction="column"
+                spacing={0.5}
+                width="100%"
+                sx={{ textAlign: "center" }}
+              >
+                {mission?.quoteNumber && (
+                  <a
+                    href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
+                    style={classes.tableAtagStyle}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {mission?.quoteNumber}
+                  </a>
+                )}
                 <a
-                  href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
+                  href={`/orders?finalPatternSearch=${mission?.orderNumber}`}
                   style={classes.tableAtagStyle}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {mission?.quoteNumber}
+                  {mission?.orderNumber}
                 </a>
-              )}
+              </Stack>
+            ),
+            purchaseNumber: (
               <a
-                // href={`/order?Id=${mission?.orderID}`}
-                href={`/orders?finalPatternSearch=${mission?.orderNumber}`}
+                href={`/purchaseOrders?finalPatternSearch=${mission?.purchaseNumber}`}
                 style={classes.tableAtagStyle}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {mission?.orderNumber}
+                {mission?.purchaseNumber}
               </a>
-            </Stack>,
-            mission?.outSourceType === null
-              ? `${t("boardMissions." + EWorkSource[0])}`
-              : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
-            mission?.quantity,
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-              ? [
-                  isRTL
-                    ? mission?.cost +
-                      " " +
-                      getCurrencyUnitText(mission?.currency)
-                    : getCurrencyUnitText(mission?.currency) +
-                      " " +
-                      mission?.cost,
-                ]
-              : []),
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-              ? [
-                  [
-                    isRTL
-                      ? mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " ") +
-                        getCurrencyUnitText(mission?.currency)
-                      : getCurrencyUnitText(mission?.currency) +
-                        " " +
-                        mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " "),
-                  ],
-                ]
-              : []),
-            mission?.jobName,
-            mission?.numberOfBoardMissions,
-            mission?.productName,
-            <div style={{ whiteSpace: "break-spaces" }}>
-              {getJobStatus(mission)}
-            </div>,
-            <MoreMenuWidget
-              mission={mission}
-              onClickDuplicate={onOpenDuplicateModal}
-              onOpenModal={onOpenModal}
-              onClickPrintPackagingSlip={onOpenPackagesModal}
-              onClickMarksAsDone={onOpenMarkReadyModal}
-              handleClickBackToProcess={handleClickBackToProcess}
-              onClickMarksAsDoneForProductType={
-                onOpenMarkReadyModalForProductType
-              }
-              onClickReturnToProduction={onOpenReturnToProdModal}
-              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-              onClickWorkMissionPdf={onClickWorkMissionPdf}
-              onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
-            />,
-          ];
+            ),
+            outSourceType: t(
+              "boardMissions." + EWorkSource[mission?.outSourceType ?? 0]
+            ),
+            quantity: mission?.quantity,
+            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && {
+              costFromOrderItem: isRTL
+                ? `${mission?.cost} ${getCurrencyUnitText(mission?.currency)}`
+                : `${getCurrencyUnitText(mission?.currency)} ${mission?.cost}`,
+              priceFromOrderItem: isRTL
+                ? `${mission?.price}${
+                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                  } ${getCurrencyUnitText(mission?.currency)}`
+                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${
+                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                  }`,
+            }),
+            jobName: mission?.jobName,
+            numberOfBoardMissionsInOrder: mission?.numberOfBoardMissions,
+            productName: mission?.productName,
+            currentBoardMissionStatus: (
+              <div style={{ whiteSpace: "break-spaces" }}>
+                {getJobStatus(mission)}
+              </div>
+            ),
+            more: (
+              <MoreMenuWidget
+                mission={mission}
+                onClickDuplicate={onOpenDuplicateModal}
+                onOpenModal={onOpenModal}
+                onClickPrintPackagingSlip={onOpenPackagesModal}
+                onClickMarksAsDone={onOpenMarkReadyModal}
+                handleClickBackToProcess={handleClickBackToProcess}
+                onClickMarksAsDoneForProductType={
+                  onOpenMarkReadyModalForProductType
+                }
+                onClickReturnToProduction={onOpenReturnToProdModal}
+                onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+                onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+              />
+            ),
+          };
+
+          return row;
         });
+
         setAllBoardMissions(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / pageSize));
       } else {
@@ -815,61 +824,76 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
-        const mapData = _data.data?.map((mission: any) => [
-          formatISODateTime(mission?.createdDate),
-          formatISODateTime(mission?.dueDate),
-          <div
-            style={{ cursor: "pointer" }}
-            onClick={() => onClickOpenCustomerModal(mission?.customerID)}
-          >
-            {mission?.clientName}
-          </div>,
-          mission?.supplierName,
-          mission?.productType
-            ? `${mission?.number} / ${
-                mission?.productTypeName
-                  ? mission?.productTypeName
-                  : mission?.productType
-              }`
-            : mission?.number,
-          mission?.orderNumber,
-          mission?.purchaseOrderNumber,
-          mission?.outSourceType === null
-            ? EWorkSource[0]
-            : EWorkSource[mission?.outSourceType],
-          mission?.quantity,
-          mission?.cost,
-          mission?.price,
-          mission?.jobName,
-          mission?.numberOfBoardMissions,
-          mission?.productName,
-          mission?.isReady
-            ? t("boardMissions.done")
-            : mission?.boardMissionStatus && mission?.station
-            ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-            : "",
-          <MoreMenuWidget
-            mission={mission}
-            onClickDuplicate={onOpenDuplicateModal}
-            onOpenModal={onOpenModal}
-            onClickPrintPackagingSlip={onOpenPackagesModal}
-            onClickMarksAsDone={onOpenMarkReadyModal}
-            handleClickBackToProcess={handleClickBackToProcess}
-            onClickMarksAsDoneForProductType={
-              onOpenMarkReadyModalForProductType
-            }
-            onClickReturnToProduction={onOpenReturnToProdModal}
-            onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-            onClickWorkMissionPdf={onClickWorkMissionPdf}
-            onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
-          />,
-        ]);
+        const mapData = _data.data?.map((mission: any) => {
+          const row: Record<string, React.ReactNode> = {
+            creationDate: formatISODateTime(mission?.createdDate),
+            dueDate: formatISODateTime(mission?.dueDate),
+            clientName: (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+              >
+                {mission?.clientName}
+              </div>
+            ),
+            supplierName: mission?.supplierName,
+            missionNumber: mission?.productType
+              ? `${mission?.number} / ${
+                  mission?.productTypeName ?? mission?.productType
+                }`
+              : mission?.number,
+            orderNumber: mission?.orderNumber,
+            purchaseOrderNumber: mission?.purchaseOrderNumber,
+            outSourceType:
+              mission?.outSourceType === null
+                ? t("boardMissions." + EWorkSource[0])
+                : t("boardMissions." + EWorkSource[mission?.outSourceType]),
+            quantity: mission?.quantity,
+            outSourceCost: isRTL
+              ? `${mission?.cost} ${getCurrencyUnitText(mission?.currency)}`
+              : `${getCurrencyUnitText(mission?.currency)} ${mission?.cost}`,
+            priceFromOrderItem: isRTL
+              ? `${mission?.price} ${getCurrencyUnitText(mission?.currency)}`
+              : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}`,
+            jobName: mission?.jobName,
+            numberOfBoardMissionsInOrder: mission?.numberOfBoardMissions,
+            productName: mission?.productName,
+            currentBoardMissionStatus: mission?.isReady
+              ? t("boardMissions.done")
+              : mission?.boardMissionStatus && mission?.station
+              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+              : "",
+            more: (
+              <MoreMenuWidget
+                mission={mission}
+                onClickDuplicate={onOpenDuplicateModal}
+                onOpenModal={onOpenModal}
+                onClickPrintPackagingSlip={onOpenPackagesModal}
+                onClickMarksAsDone={onOpenMarkReadyModal}
+                handleClickBackToProcess={handleClickBackToProcess}
+                onClickMarksAsDoneForProductType={
+                  onOpenMarkReadyModalForProductType
+                }
+                onClickReturnToProduction={onOpenReturnToProdModal}
+                onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+                onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+              />
+            ),
+          };
+
+          return row;
+        });
         setAllPurchaseJobs(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / pageSize));
       } else {
         alertFaultGetData();
       }
     };
+
+    if (!router.isReady) {
+      return;
+    }
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentPageNumber = router.query.pageNumber;
     const currentSampleType = router.query.sampleType;
@@ -1519,24 +1543,36 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     await moveBoardMissionStatusToWaitingApi(callApi, callBack, params);
   };
 
-  const [currentSortOrder, setCurrentSortOrder] = useState<any>(null);
-  const isHeaderSortable = (docType: string, header: string) => {
-    if (isPurchaseJobs) return false;
+  /*  //////////////////////////////////////////////////////////////////////////////////////////////////// */
 
-    return columnMappings.hasOwnProperty(header);
-  };
   const [isDescOrderBE, setIsDescOrderBE] = useState(false);
+  const [currentSortOrder, setCurrentSortOrder] = useState<any>(null);
 
-  const columnMappings = {
-    [t("boardMissions.creationDate")]: JobsTableColumns.CreationDate,
-    [t("boardMissions.dueDate")]: JobsTableColumns.DueDate,
+  const columnMappings: Record<string, Record<string, number>> = {
+    boardMissions: {
+      creationDate: JobsTableColumns.CreationDate,
+      dueDate: JobsTableColumns.DueDate,
+    },
+    purchaseJobs: {
+      creationDate: JobsTableColumns.CreationDate,
+      dueDate: JobsTableColumns.DueDate,
+    },
+    default: {
+      creationDate: 0,
+      dueDate: 1,
+    },
+  };
+
+  const isHeaderSortable = (docType: string, header: string): boolean => {
+    const mapping = columnMappings[tableKey] || columnMappings.default;
+    return mapping.hasOwnProperty(header);
   };
 
   const handleSortBE = (key: string) => {
-    debugger;
     const direction = isDescOrderBE ? "desc" : "asc";
 
-    const columnIndex = columnMappings?.[key];
+    const columnIndex =
+      columnMappings[tableKey]?.[key] ?? columnMappings.default[key];
 
     if (columnIndex !== undefined) {
       const sortOrder = [
@@ -1546,16 +1582,30 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         },
       ];
 
-      // Save the sort order to state
       setCurrentSortOrder(sortOrder);
 
-      getAllData(isPurchaseJobs, false, sortOrder);
-
+      getAllData(isPurchaseJobs, false, sortOrder); // Ensure this calls getAllBoardMissions or getAllPurchaseJobs
       setIsDescOrderBE(!isDescOrderBE);
     } else {
       console.error("Invalid key for sorting:", key);
     }
   };
+
+  const tableKey = isPurchaseJobs ? "purchaseJobs" : "boardMissions";
+
+  const [columnOrder] = useRecoilState(columnOrderStateFamily(tableKey));
+  const [columnVisibility] = useRecoilState(
+    columnVisibilityStateFamily(tableKey)
+  );
+
+  const setColumnVisibility = useSetRecoilState(
+    columnVisibilityStateFamily(tableKey)
+  );
+  const setColumnOrder = useSetRecoilState(columnOrderStateFamily(tableKey));
+
+  const [columnsReady, setColumnsReady] = useState(false);
+
+  const visibleHeaders = columnOrder.filter((key) => columnVisibility[key]);
 
   return {
     tableHeader,
@@ -1661,6 +1711,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     exampleTypeValues,
     sampleType,
     setSampleType,
+    columnsReady,
+    setColumnsReady,
+    setColumnOrder,
+    visibleHeaders,
+    setColumnVisibility,
+    tableKey,
   };
 };
 

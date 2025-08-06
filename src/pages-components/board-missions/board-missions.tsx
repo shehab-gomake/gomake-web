@@ -12,7 +12,7 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { Stack } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
@@ -37,6 +37,7 @@ import { createGlobalStyle } from "styled-components";
 import {
   addOrderBoardMissionsToFileUploaderApi,
   getInitialOrderFoldersData,
+  getJobsTableSettingsApi,
   printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { SampleTypeOption, useGomakeAxios } from "@/hooks";
@@ -51,6 +52,14 @@ import { getUserToken } from "@/services/storage-data";
 import { predefinedRanges } from "@/utils/dateRanges";
 import QrCodeReader from "@/components/qr-code-reader";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
+import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
+import {
+  getJobsCustomWidth,
+  jobsColumnKeys,
+  parseSavedColumnSettings,
+} from "./states/board-missions-columns-settings-state";
+import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
+import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -158,6 +167,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     exampleTypeValues,
     sampleType,
     setSampleType,
+    columnsReady,
+    setColumnsReady,
+    setColumnOrder,
+    visibleHeaders,
+    setColumnVisibility,
+    tableKey,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -170,8 +185,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
-
-
 
   useEffect(() => {
     if (router.isReady && companyProfile.filesApiAddress && newOrderId) {
@@ -198,7 +211,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -215,7 +228,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -239,6 +252,45 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     top: 420px !important;
   }
 `;
+
+  useEffect(() => {
+    const loadDocumentColumnSettings = async () => {
+      try {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+          isPurchaseJobs,
+        });
+        const saved: ColumnSetting[] = res?.data;
+        const allColumnKeys = jobsColumnKeys[tableKey];
+
+        const filteredKeys = allColumnKeys.filter(
+          (key) =>
+            (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+        );
+
+        if (saved && saved.length > 0) {
+          const { order, visibility } = parseSavedColumnSettings(
+            saved,
+            filteredKeys
+          );
+          setColumnOrder(order);
+          setColumnVisibility(visibility);
+        } else {
+          setColumnOrder(filteredKeys);
+          setColumnVisibility(
+            Object.fromEntries(filteredKeys.map((key) => [key, true]))
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load document column settings", error);
+      } finally {
+        setColumnsReady(true);
+      }
+    };
+
+    loadDocumentColumnSettings();
+  }, [isPurchaseJobs, tableKey]);
+
   return (
     <>
       <Stack
@@ -277,12 +329,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (key) => key !== "pageNumber"
                       ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                        <div
+                          style={{ position: "absolute", top: -5, right: -1 }}
+                        >
+                          <DotIcon />
+                        </div>
+                      )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -366,17 +418,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               options={
                                 exampleTypeValues?.map((option) => ({
                                   value: option.key,
-                                  text: t(`products.proofTypes.${option.value}`),
+                                  text: t(
+                                    `products.proofTypes.${option.value}`
+                                  ),
                                 })) || []
                               }
                               getOptionLabel={(option: any) => option.text}
-                              placeholder={t("products.offsetPrice.admin.proof")}
+                              placeholder={t(
+                                "products.offsetPrice.admin.proof"
+                              )}
                               style={classes.textInputStyle}
                               onChange={(e, value) => setSampleType(value)}
                               value={sampleType}
                             />
                           </div>
-
 
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
@@ -465,75 +520,51 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               value={patternSearch}
               inputRef={searchInputRef}
             />
-            {!isPurchaseJobs && (
-              <ExcelMenu onExportTableClick={ExportJobsTableToExcel} documentType={null} />
-            )}
+
+            <Stack direction={"row"} gap={1}>
+              {columnsReady && (
+                <BoardMissionsColumnSettingsMenu
+                  tableKey={tableKey}
+                  isPurchaseJobs={isPurchaseJobs}
+                />
+              )}
+              {!isPurchaseJobs && (
+                <ExcelMenu
+                  onExportTableClick={ExportJobsTableToExcel}
+                  documentType={null}
+                />
+              )}
+            </Stack>
           </div>
-          <PrimaryTable
-            stickyFirstCol={false}
-            stickyHeader={true}
-            maxHeight={"calc(100vh - 250px)"}
-            rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
-            headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
-            withSortBE={true}
-            onClickSortBE={handleSortBE}
-            isDescOrderBE={isDescOrderBE}
-            isHeaderSortable={isHeaderSortable}
-            columnWidths={
-              !isPurchaseJobs
-                ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                  ? [
-                    "7%",
-                    "7%",
-                    "6%",
-                    "6%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
-                  ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
-            }
-          />
+          {/* jobs table */}
+          <>
+            {columnsReady ? (
+              <DocumentPrimaryTable
+                stickyFirstCol={false}
+                stickyHeader={true}
+                maxHeight={"calc(100vh - 250px)"}
+                rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
+                headers={visibleHeaders}
+                withSortBE={true}
+                onClickSortBE={handleSortBE}
+                isDescOrderBE={isDescOrderBE}
+                isHeaderSortable={isHeaderSortable}
+                columnWidths={visibleHeaders.map((key) =>
+                  getJobsCustomWidth(tableKey, key)
+                )}
+              />
+            ) : (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+                width="100%"
+              >
+                <CircularProgress />
+              </Box>
+            )}
+          </>
         </div>
         <GoMakePagination
           onChangePageNumber={handlePageChange}
@@ -588,12 +619,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -634,12 +665,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -698,7 +729,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -760,12 +791,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
