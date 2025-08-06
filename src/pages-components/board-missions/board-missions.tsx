@@ -263,17 +263,23 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         const saved: ColumnSetting[] = res?.data;
         const allColumnKeys = jobsColumnKeys[tableKey];
 
+        const filteredKeys = allColumnKeys.filter(
+          (key) =>
+            (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+        );
+
         if (saved && saved.length > 0) {
           const { order, visibility } = parseSavedColumnSettings(
             saved,
-            allColumnKeys
+            filteredKeys
           );
           setColumnOrder(order);
           setColumnVisibility(visibility);
         } else {
-          setColumnOrder(allColumnKeys);
+          setColumnOrder(filteredKeys);
           setColumnVisibility(
-            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+            Object.fromEntries(filteredKeys.map((key) => [key, true]))
           );
         }
       } catch (error) {

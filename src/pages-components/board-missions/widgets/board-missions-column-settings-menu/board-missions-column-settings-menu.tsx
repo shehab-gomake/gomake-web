@@ -25,6 +25,8 @@ import {
 } from "../../states/board-missions-columns-settings-state";
 import { useStyle } from "./style";
 import { saveJobsTableSettingsApi } from "@/services/api-service/board-missions/board-missions-table";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface DragItem {
   id: string;
@@ -36,6 +38,15 @@ export const BoardMissionsColumnSettingsMenu = ({
   tableKey,
   isPurchaseJobs,
 }) => {
+  const { CheckPermission } = useUserPermission();
+  const allColumnKeys = jobsColumnKeys[tableKey];
+
+  const filteredKeys = allColumnKeys.filter(
+    (key) =>
+      (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
+      CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+  );
+
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -49,7 +60,7 @@ export const BoardMissionsColumnSettingsMenu = ({
     columnOrderStateFamily(tableKey)
   );
 
-  const allKeys = jobsColumnKeys[tableKey];
+  // const filteredKeys = jobsColumnKeys[tableKey];
 
   const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
     ...columnVisibility,
@@ -80,7 +91,7 @@ export const BoardMissionsColumnSettingsMenu = ({
 
   const handleSave = async () => {
     const updatedVisibility = Object.fromEntries(
-      allKeys.map((key) => [key, !!tempColumnVisibility[key]])
+      filteredKeys.map((key) => [key, !!tempColumnVisibility[key]])
     );
 
     const updatedColumns = tempColumnOrder.map((key) => ({
@@ -109,17 +120,17 @@ export const BoardMissionsColumnSettingsMenu = ({
   };
 
   const handleHideAll = () => {
-    const hidden = Object.fromEntries(allKeys.map((key) => [key, false]));
+    const hidden = Object.fromEntries(filteredKeys.map((key) => [key, false]));
     setTempColumnVisibility(hidden);
   };
 
   const handleShowAll = () => {
-    const shown = Object.fromEntries(allKeys.map((key) => [key, true]));
+    const shown = Object.fromEntries(filteredKeys.map((key) => [key, true]));
     setTempColumnVisibility(shown);
   };
 
   const handleResetOrder = () => {
-    setTempColumnOrder([...allKeys]);
+    setTempColumnOrder([...filteredKeys]);
   };
 
   useEffect(() => {

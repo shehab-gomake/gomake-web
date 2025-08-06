@@ -99,7 +99,6 @@ export const parseSavedColumnSettings = (
   return { visibility, order };
 };
 
-// Visibility state per document table
 export const columnVisibilityStateFamily = atomFamily<
   Record<string, boolean>,
   string
@@ -109,7 +108,6 @@ export const columnVisibilityStateFamily = atomFamily<
     Object.fromEntries(jobsColumnKeys[tableKey].map((key) => [key, true])),
 });
 
-// Order state per document table
 export const columnOrderStateFamily = atomFamily<string[], string>({
   key: "jobsColumnOrderStateFamily",
   default: (tableKey) => jobsColumnKeys[tableKey],
