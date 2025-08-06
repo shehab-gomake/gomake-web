@@ -10,6 +10,7 @@ export const jobsColumnKeys: Record<string, string[]> = {
     "clientName",
     "missionNumber",
     "relatedDocuments",
+    "purchaseNumber",
     "outSourceType",
     "quantity",
     "costFromOrderItem",
@@ -48,6 +49,7 @@ export const jobsColumnWidthsMap: Record<string, Record<string, string>> = {
     clientName: "6%", // 4
     missionNumber: "7%", // 5
     relatedDocuments: "7%", // 6
+    purchaseNumber: "7%", // 6
     outSourceType: "8%", // 7
     quantity: "7%", // 8
     costFromOrderItem: "4%", // 9 (conditional)
