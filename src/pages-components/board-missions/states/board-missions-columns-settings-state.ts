@@ -1,7 +1,6 @@
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import { atomFamily } from "recoil";
 
-//!here 2 new
 export const jobsColumnKeys: Record<string, string[]> = {
   boardMissions: [
     "image",
@@ -114,5 +113,3 @@ export const columnOrderStateFamily = atomFamily<string[], string>({
   key: "jobsColumnOrderStateFamily",
   default: (tableKey) => jobsColumnKeys[tableKey],
 });
-
-//!here 2 new

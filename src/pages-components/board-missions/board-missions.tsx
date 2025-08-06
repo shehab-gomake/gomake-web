@@ -253,7 +253,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   }
 `;
 
-  //!here 5 new
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
@@ -560,6 +559,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 justifyContent="center"
                 alignItems="center"
                 height="100%"
+                width="100%"
               >
                 <CircularProgress />
               </Box>

@@ -33,7 +33,6 @@ interface DragItem {
   index: number;
 }
 
-//!here 3 new
 export const BoardMissionsColumnSettingsMenu = ({
   tableKey,
   isPurchaseJobs,
@@ -59,8 +58,6 @@ export const BoardMissionsColumnSettingsMenu = ({
   const [columnOrder, setColumnOrder] = useRecoilState(
     columnOrderStateFamily(tableKey)
   );
-
-  // const filteredKeys = jobsColumnKeys[tableKey];
 
   const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
     ...columnVisibility,
