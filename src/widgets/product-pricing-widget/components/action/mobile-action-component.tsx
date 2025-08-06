@@ -674,7 +674,7 @@ const MobileActionContainerComponent = ({
                               placeholder={t(
                                 "materials.sheetPaper.chooseMaterial"
                               )}
-                              value={materials[0]?.materialCategories[0]?.name}
+                              value={materials[0]?.materialCategories?.[0]?.name}
                             />
                             <IconButton
                               onClick={(e) => {

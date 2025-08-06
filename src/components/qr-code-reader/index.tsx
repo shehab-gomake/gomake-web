@@ -1,39 +1,39 @@
 
 import BarcodeReader from 'react-barcode-reader'
-import {useState} from "react";
+import { useState } from "react";
 import {
     handleBoardMissionsBarcodeActions,
     handleBoardMissionsBarcodeActionsApi, moveBoardMissionToDoneApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {ModalType, QrCodeAction} from "@/enums";
-import {QR_CODE_LISTENER_FROM} from "@/hooks/use-qr-code-listener";
-import {useRecoilState} from "recoil";
-import {selectedMissionsState} from "@/widgets/production-floor/state/boards";
-import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useRouter} from "next/router";
-import {useModal} from "@/hooks/use-modal";
+import { ModalType, QrCodeAction } from "@/enums";
+import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
+import { useRecoilState } from "recoil";
+import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
+import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useRouter } from "next/router";
+import { useModal } from "@/hooks/use-modal";
 import { useTranslation } from 'react-i18next';
 import { GoMakeAlertModal } from "../modal/alert-modal";
-import {ThreeOptionsModal} from "@/components";
+import { ThreeOptionsModal } from "@/components";
 import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
-import {useIsMobile} from "@/hooks/use-responsive";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
-    onIsLastStationDetect?:()=>void;
+    onIsLastStationDetect?: () => void;
 }
-const QrCodeReader = (props:IProps)=>{
+const QrCodeReader = (props: IProps) => {
     const { t } = useTranslation();
-    const { alertSuccessUpdate, alertFault,alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFault, alertFaultUpdate } = useSnackBar();
     const { callApi } = useGomakeAxios();
     const router = useRouter();
     const isMobile = useIsMobile();
     const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
-    const [myState,setMyState] = useState("helll");
+    const [myState, setMyState] = useState("helll");
     const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
     const [deliveryQRData, setDeliveryQRData] = useState<any>(null);
     const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
@@ -46,9 +46,9 @@ const QrCodeReader = (props:IProps)=>{
             barcode = barcode.replace(/½/g, '-');
             const callBack = (res) => {
                 if (res?.success) {
-                    if(res?.data?.isLastStation){
+                    if (res?.data?.isLastStation) {
                         //isOpenDoneModal.open()
-                        if(props?.onIsLastStationDetect){
+                        if (props?.onIsLastStationDetect) {
                             props.onIsLastStationDetect();
                         }
                     }
@@ -85,12 +85,12 @@ const QrCodeReader = (props:IProps)=>{
                 if (res?.success) {
                     if (props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId")) {
                         if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
-                            if(stations?.length > 0){
+                            if (stations?.length > 0) {
                                 await handleBoardMissionsBarcodeActionsFunction(barcode, res?.data);
                             }
                         }
                         else {
-                            if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                            if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
                                 setSelectedJobQuantity(res?.data?.quantity);
                                 setOpenMoveToReadyModal(true)
                             }
@@ -103,13 +103,13 @@ const QrCodeReader = (props:IProps)=>{
                             router.push(url);
                         }
                         else {
-                            if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                            if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
                                 setSelectedJobQuantity(res?.data?.quantity);
                                 setOpenMoveToReadyModal(true)
                             }
                         }
                     }
-                }else{
+                } else {
                     alertFault(t("productionFloor.qrReadError"))
                 }
                 resolve(true);
@@ -119,11 +119,10 @@ const QrCodeReader = (props:IProps)=>{
             });
         });
     };
-    const handleScan = async (data)=>{
-        console.log("handleScan", data);
+    const handleScan = async (data) => {
         await handleBoardMissionsQRCodeAction(data);
     }
-    const handleError = (err)=>{
+    const handleError = (err) => {
         console.error(err)
     }
 
@@ -195,7 +194,7 @@ const QrCodeReader = (props:IProps)=>{
             />
             <PrintPackingSlipModalWidget
                 openModal={openPackagesModal}
-                onClose={()=>setOpenPackagesModal(false)}
+                onClose={() => setOpenPackagesModal(false)}
                 boardMissionId={selectedMission?.id || selectedMission?.boardMissionId}
                 quantity={selectedJobQuantity}
             />

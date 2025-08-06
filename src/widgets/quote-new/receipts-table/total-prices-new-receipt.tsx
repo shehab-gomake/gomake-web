@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useStyle } from "./style";
+import { fmt2 } from "@/utils/helpers";
 
 const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
   const headerHeight = "44px";
@@ -8,6 +9,7 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
   const { t } = useTranslation();
   const dir = t("direction");
   const { getCurrencyUnitText, quoteItemValue } = useQuoteGetData();
+  const currency = getCurrencyUnitText(quoteItemValue?.currency);
 
   return (
     <div style={classes.priceFooterContainer}>
@@ -29,7 +31,7 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
             borderBottom: "1px solid #EAECF0",
           }}
         >
-          {sum + " " + getCurrencyUnitText(quoteItemValue?.currency)}
+          {fmt2(sum) + " " + currency}
         </div>
       </div>
       {taxDeduction !== 0 && (
@@ -51,7 +53,7 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
               borderBottom: "1px solid #EAECF0",
             }}
           >
-            {taxDeduction + " " + getCurrencyUnitText(quoteItemValue?.currency)}
+            {taxDeduction + " " + currency}
           </div>
         </div>
       )}
@@ -74,10 +76,7 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
               borderBottom: "1px solid #EAECF0",
             }}
           >
-            {sum -
-              totalPayment +
-              " " +
-              getCurrencyUnitText(quoteItemValue?.currency)}
+            {fmt2(Number(sum) - Number(totalPayment)) + " " + currency}
           </div>
         </div>
       )}
@@ -100,9 +99,9 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
               borderBottom: "1px solid #EAECF0",
             }}
           >
-            {Math.abs(sum - totalPayment) +
+            {fmt2(Math.abs(Number(sum) - Number(totalPayment))) +
               " " +
-              getCurrencyUnitText(quoteItemValue?.currency)}
+              currency}
           </div>
         </div>
       )}
@@ -125,11 +124,7 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
             paddingLeft: 36,
           }}
         >
-          <div>
-            {Number(totalPayment) +
-              " " +
-              getCurrencyUnitText(quoteItemValue?.currency)}
-          </div>
+          {fmt2(totalPayment) + " " + currency}
         </div>
       </div>
     </div>

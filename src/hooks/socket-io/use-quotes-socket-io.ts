@@ -14,7 +14,6 @@ const useQuotesSocketIo = ({getQuote}) => {
         });
 
         return () => {
-            console.log("Closing socket connection...");
             socket.disconnect();
         };
     }, []);

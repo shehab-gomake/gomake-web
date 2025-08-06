@@ -239,7 +239,6 @@ const useWorkFlows = ({ getProductById, sourceTypeFromProduct }: any) => {
   }, []);
 
   useEffect(() => {
-    console.log("sourceTypeFromProduct", sourceTypeFromProduct);
     if (sourceTypeFromProduct === EWorkSource.OUT) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW);
     } else {

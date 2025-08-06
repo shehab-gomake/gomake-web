@@ -66,6 +66,7 @@ const useActionsList = ({
   const handleClick = () => {
     setOpen(!open);
   };
+
   useEffect(() => {
     setSourceOfActionsList(source);
   }, [source]);
@@ -215,7 +216,6 @@ const useActionsList = ({
   const getActions = async () => {
     const callBack = (res) => {
       if (res.success) {
-        debugger;
         setActions(res?.data);
         const dashboardMachinesData = res?.data.flatMap((station) =>
           station.machines.map((machine) => ({
@@ -251,7 +251,10 @@ const useActionsList = ({
         }
       }
     };
-    await getPrintHouseActions(callApi, callBack, source === Source.USERS);
+    await getPrintHouseActions(callApi, callBack, {
+      isFromEmployeeForm: source === Source.USERS,
+      isFromDashboard: true,
+    });
   };
 
   const actionsMachinesIds: IStation[] = useMemo(() => {

@@ -66,7 +66,7 @@ const useProfitsGetData = () => {
   }, []);
 
   const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState , {cardType : CLIENT_TYPE_Id.CUSTOMER});
+    await getAndSetClientTypes(callApi, setClientTypesState, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   }, []);
 
   const getActionProfits = async (withUpdateAction = true) => {
@@ -76,8 +76,7 @@ const useProfitsGetData = () => {
       withUpdateAction
         ? setActionExceptionProfitRows
         : (data) => {
-            console.log(data);
-          },
+        },
       setActionProfitRowsNew,
       machincesStateValue,
       productsStateValue,
@@ -98,7 +97,7 @@ const useProfitsGetData = () => {
       // setActionProfitRowsNew("");
       let data = await getAndSetActionExceptionProfitRowByActionExceptionId(
         callApi,
-        () => {},
+        () => { },
         {
           ActionExceptionId: actionExceptionProfitIdValue,
         }

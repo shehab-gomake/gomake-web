@@ -93,6 +93,35 @@ html * {
   background: #333;
 }
 
+/* Dashboard table scrollbar styles */
+.dashboard-table-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dashboard-table-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dashboard-table-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.dashboard-table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.dashboard-table-scrollbar::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
+
+/* Hide scrollbar buttons/arrows */
+.dashboard-table-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
 .MuiSlider-rail {
   height: 7px !important;
 }
@@ -325,10 +354,10 @@ input::placeholder {
 }
 
 .MuiTooltip-tooltip {
-  background: #0C111D !important;
+  background: #0c111d !important;
   color: #fff !important;
-  font-size: 15px ;
-  font-weight: 500 ;
+  font-size: 15px;
+  font-weight: 500;
   max-width: 200px !important;
 }
 

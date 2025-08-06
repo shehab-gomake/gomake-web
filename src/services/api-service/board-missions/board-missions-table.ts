@@ -24,9 +24,17 @@ const ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
   "/v1/erp-service/board-missions/add-order-to-file-uploader";
 const EXPORT_JOBS_TABLE_TO_EXCEL_URL =
   "/v1/job-service/board-missions-tables/export-job-table-to-excel";
-const PRINT_NODE_PRINTING_MODAL_LOG = "/v1/job-service/board-missions-tables/print-node-modal-log"
-const PRINT_NODE_PRINTING_CANCEL_LOG = "/v1/job-service/board-missions-tables/print-node-cancel-log"
-const GET_INITIAL_ORDER_FOLDERS_DATA = "/v1/job-service/board-missions-tables/get-initial-order-folders-data";
+const PRINT_NODE_PRINTING_MODAL_LOG =
+  "/v1/job-service/board-missions-tables/print-node-modal-log";
+const PRINT_NODE_PRINTING_CANCEL_LOG =
+  "/v1/job-service/board-missions-tables/print-node-cancel-log";
+const GET_INITIAL_ORDER_FOLDERS_DATA =
+  "/v1/job-service/board-missions-tables/get-initial-order-folders-data";
+const SAVE_JOBS_TABLE_SETTINGS_URL =
+  "/v1/job-service/production-floor-table-settings/save-jobs-table-settings";
+const GET_JOBS_TABLE_SETTINGS_URL =
+  "/v1/job-service/production-floor-table-settings/get-jobs-table-settings";
+
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -112,7 +120,7 @@ const addBoardMissionsToFileUploaderApi: ICallAndSetData = async (
 const printJobUsingPrintNodeApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: string,
+  data: string
 ) => {
   return await getSetApiData(
     callApi,
@@ -176,44 +184,73 @@ const exportJobTableToExcelApi: ICallAndSetData = async (
   );
 };
 const printNodeModalShowLog: ICallAndSetData = async (
-    callApi,
-    setState,
-    data
+  callApi,
+  setState,
+  data
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      PRINT_NODE_PRINTING_MODAL_LOG,
-      setState,
-      data
+    callApi,
+    EHttpMethod.POST,
+    PRINT_NODE_PRINTING_MODAL_LOG,
+    setState,
+    data
   );
 };
 const printNodeModalCancelLog: ICallAndSetData = async (
-    callApi,
-    setState,
-    data
+  callApi,
+  setState,
+  data
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      PRINT_NODE_PRINTING_CANCEL_LOG,
-      setState,
-      data
+    callApi,
+    EHttpMethod.POST,
+    PRINT_NODE_PRINTING_CANCEL_LOG,
+    setState,
+    data
   );
 };
 const getInitialOrderFoldersData: ICallAndSetData = async (
-    callApi,
-    setState,
-    data
+  callApi,
+  setState,
+  data
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      GET_INITIAL_ORDER_FOLDERS_DATA,
-      setState,
-      data
+    callApi,
+    EHttpMethod.POST,
+    GET_INITIAL_ORDER_FOLDERS_DATA,
+    setState,
+    data
   );
 };
+
+const saveJobsTableSettingsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SAVE_JOBS_TABLE_SETTINGS_URL,
+    setState,
+    data
+  );
+};
+
+const getJobsTableSettingsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_JOBS_TABLE_SETTINGS_URL,
+    setState,
+    data
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -228,5 +265,7 @@ export {
   exportJobTableToExcelApi,
   printNodeModalShowLog,
   printNodeModalCancelLog,
-  getInitialOrderFoldersData
+  getInitialOrderFoldersData,
+  saveJobsTableSettingsApi,
+  getJobsTableSettingsApi,
 };

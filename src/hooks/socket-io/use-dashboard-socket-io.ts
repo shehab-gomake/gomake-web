@@ -13,7 +13,6 @@ const useDashboardSocketIo = (onUpdate: ()=>void) => {
         });
 
         return () => {
-            console.log("Closing socket connection...");
             socket.disconnect();
         };
     }, []);

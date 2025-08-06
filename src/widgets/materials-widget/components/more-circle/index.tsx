@@ -25,7 +25,6 @@ const MaterialMenuWidget = ({
   onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   toggleIsActive
 }) => {
-  console.log("dataRow", dataRow)
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
     onChangeRowCheckBox,

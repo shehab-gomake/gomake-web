@@ -37,7 +37,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       (fg) => fg.orderItemId === orderItemId && fg.productType === productType
     );
     debugger
-console.log("uploadingFiles",filesGroup)
     if (filesGroup) {
       setUploadingFiles(
         uploadingFiles.map((fg) =>

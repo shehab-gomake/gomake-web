@@ -213,8 +213,6 @@ const OutSourceSupplierRow = ({
 }) => {
   const { classes } = useStyle();
 
-  // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-  // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
   const foundSupplier = options.find((x) => x.supplierId == action?.supplierId);
   const [customer, setCustomer] = useState<any>(null);
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);

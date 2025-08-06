@@ -335,8 +335,14 @@ const BoardMissionsDetailsHeader = () => {
                     width: isMobile ? 60 : 80,
                     height: isMobile ? 60 : 80,
                     borderRadius: "8px",
+                    cursor: "pointer",
                   }}
                   variant={"square"}
+                  onClick={() => {
+                    if (boardMissionsDetails?.boardMissionImage) {
+                      window.open(boardMissionsDetails.boardMissionImage, '_blank');
+                    }
+                  }}
                 >
                   <TocIcon
                     style={{

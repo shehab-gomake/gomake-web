@@ -14,7 +14,10 @@ const usePrintHouseActionsList = () => {
         setActions(res?.data);
       }
     };
-    await getPrintHouseActions(callApi, callBack, true);
+    await getPrintHouseActions(callApi, callBack, {
+      isFromEmployeeForm: true,
+      isFromDashboard: false,
+    });
   };
 
   useEffect(() => {

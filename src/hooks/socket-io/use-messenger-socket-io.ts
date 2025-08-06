@@ -27,7 +27,6 @@ const useMessengerSocketIo = () => {
             setNotifications(prev => [...prev, newNotification]);
         });
         return () => {
-            console.log("Closing socket connection...");
             socket.disconnect();
         };
     }, []);

@@ -23,7 +23,7 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue, } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState, } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
@@ -240,10 +240,8 @@ const ActionContainerComponent = ({
   productType,
   actionIndex,
   categoryId,
-  isCalculated,
   actionException,
   materials,
-  employeeId,
   employeeName,
   isNeedEmployee,
   isNeedMachine,
@@ -262,7 +260,6 @@ const ActionContainerComponent = ({
   relatedActions,
   showSaveChangesButton,
   customer,
-  setCustomer,
   renderOptions,
   checkWhatRenderArray,
   isFetching,
@@ -289,13 +286,7 @@ const ActionContainerComponent = ({
     handleClick,
     handleClose,
     updateActionData,
-    openModalMachine,
-    openModalMaterial,
-    onClickCloseModalMachine,
-    onClickCloseModalMaterial,
     setAttributesData,
-    updateWorkFlowForMachine,
-    updateWorkFlowForMaterials,
     updateWorkFlowForEmployees,
     onClickGetEmployeeForAction,
     onClickGetMachineForAction,
@@ -332,9 +323,7 @@ const ActionContainerComponent = ({
   };
 
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
-  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
-    isActionEmployeeUpdatedState
-  );
+  const setIsActionEmployeeUpdated = useSetRecoilState(isActionEmployeeUpdatedState);
 
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
@@ -345,8 +334,6 @@ const ActionContainerComponent = ({
 
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
-  const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0;
   const direction = t("direction");
   const inputsParameters = outputs?.filter(
     (parameter) =>
@@ -443,6 +430,7 @@ const ActionContainerComponent = ({
     }
     if (isFromSetting) {
       updateProductAction({ actionId, value: newCost, fieldName: "totalcost" });
+
     } else {
       updateActionData(id, +newCost, "totalCost", productType).then();
     }
@@ -459,7 +447,12 @@ const ActionContainerComponent = ({
     if (price === totalPrice?.values[0]?.toString()) {
       return; // Exit early if values match
     }
-    updateActionData(id, +price, "totalPrice", productType).then();
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "totalPrice" });
+    } else {
+      updateActionData(id, +price, "totalPrice", productType).then();
+    }
+
   };
 
   const handleSourceChange = (source: EWorkSource) => {
@@ -878,7 +871,7 @@ const ActionContainerComponent = ({
                               placeholder={t(
                                 "materials.sheetPaper.chooseMaterial"
                               )}
-                              value={materials[0]?.materialCategories[0]?.name}
+                              value={materials[0]?.materialCategories?.[0]?.name}
                             />
                             <IconButton
                               onClick={(e) => {
@@ -1006,39 +999,43 @@ const ActionContainerComponent = ({
                         source={source}
                         name={t("machineAttributes.cost")}
                       />
-                      <Divider
-                        orientation={"vertical"}
-                        style={{ height: "50%", margin: "auto 0" }}
-                        flexItem
-                      />
+
                       {!isFromSetting && (
-                        <Stack
-                          direction={"row"}
-                          gap={"3px"}
-                          alignItems={"center"}
-                        >
-                          <EditableKeyValueViewComponent
-                            onUpdate={handleProfitUpdate}
-                            {...profit}
-                            values={profitValue}
-                            source={source}
-                            name={t(
-                              "products.profits.pricingListWidget.profit"
-                            )}
+                        <>
+                          <Divider
+                            orientation={"vertical"}
+                            style={{ height: "50%", margin: "auto 0" }}
+                            flexItem
                           />
-                          <span>
-                            {`(${source === EWorkSource.OUT
-                              ? formatValueWithUnit(
-                                calculateOutSourceProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              : formatValueWithUnit(
-                                calculateProfitInMoney(),
-                                totalPrice?.defaultUnit
-                              )
-                              })`}
-                          </span>
-                        </Stack>
+                          <Stack
+                            direction={"row"}
+                            gap={"3px"}
+                            alignItems={"center"}
+                          >
+                            <EditableKeyValueViewComponent
+                              onUpdate={handleProfitUpdate}
+                              {...profit}
+                              values={profitValue}
+                              source={source}
+                              name={t(
+                                "products.profits.pricingListWidget.profit"
+                              )}
+                            />
+                            <span>
+                              {`(${source === EWorkSource.OUT
+                                ? formatValueWithUnit(
+                                  calculateOutSourceProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )
+                                : formatValueWithUnit(
+                                  calculateProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )
+                                })`}
+                            </span>
+                          </Stack>
+                        </>
+
                       )}
                       {!isFromSetting && source !== EWorkSource.OUT && (
                         <Divider
@@ -1127,12 +1124,12 @@ const ActionContainerComponent = ({
                   {!isFromSetting && (
                     <Divider orientation={"vertical"} flexItem />
                   )}
-                  <div onClick={(e) => e.stopPropagation()}>
+                  {!isFromSetting && <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect
                       value={source}
                       onChange={handleSourceChange}
                     />
-                  </div>
+                  </div>}
                 </Stack>
                 <div
                   style={{
