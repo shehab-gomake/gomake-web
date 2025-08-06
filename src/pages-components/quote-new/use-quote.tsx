@@ -27,6 +27,7 @@ import {
   cancelDocumentApi,
   changeDocumentClientApi,
   createDocumentApi,
+  createNewDocumentApi,
   deleteDeliveryItemApi,
   deleteDocumentAddressApi,
   deleteDocumentContactApi,
@@ -49,6 +50,7 @@ import {
   updateAgentApi,
   updateDiscountTypeApi,
   updateDocuementItemSelectApi,
+  updateDocumentApi,
   updateDocumentContactApi,
   updateDocumentCurrencyApi,
   updateDocumentPreferenceApi,
@@ -347,7 +349,8 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
-  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] = useState(false);
+  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] =
+    useState(false);
   const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
   const onClickOpenDeleteDeliveryModal = () => {
     setOpenDeleteDeliveryModal(true);
@@ -2473,6 +2476,56 @@ const useQuoteNew = ({
     });
   };
 
+  const [selectedQuote, setSelectedQuote] = useState<any>();
+  const [openChangeStatusModal, setOpenChangeStatusModal] = useState(false);
+
+  const onClickOpenChangeStatusModal = (quote: any) => {
+    setSelectedQuote(quote);
+    setOpenChangeStatusModal(true);
+  };
+
+  const onClickCloseChangeStatusModal = () => {
+    setOpenChangeStatusModal(false);
+    setSelectedQuote(null);
+  };
+
+  const updateQuoteStatus = async (quote?) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quote?.id ?? selectedQuote?.id,
+      },
+    });
+  };
+
+  const onclickCreateNew = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        } else {
+          onClickOpenChangeStatusModal({ id: documentId });
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await createNewDocumentApi(callApi, callBack, { documentType: 0 });
+  };
+
   const renderCreateNewButton = () => (
     <Button
       sx={{
@@ -2484,11 +2537,13 @@ const useQuoteNew = ({
         },
       }}
       onClick={() =>
-        navigate(
-          isOutgoingPayments
-            ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-            : `/${documentPath}?isNewCreation=true`
-        )
+        isOrder
+          ? onclickCreateNew()
+          : navigate(
+              isOutgoingPayments
+                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+                : `/${documentPath}?isNewCreation=true`
+            )
       }
       startIcon={<PlusIcon />}
     >
@@ -2775,6 +2830,9 @@ const useQuoteNew = ({
     openAddAttachmentsPurchaseModal,
     onOpenAddAttachmentsPurchaseModal,
     onCloseAddAttachmentsPurchaseModal,
+    openChangeStatusModal,
+    onClickCloseChangeStatusModal,
+    updateQuoteStatus,
   };
 };
 
