@@ -346,16 +346,19 @@ const QuoteNewPageWidget = ({
     primaryColor,
     moveToReadyOption,
     handleRadioChange,
+    openChangeStatusModal,
+    onClickCloseChangeStatusModal,
+    updateQuoteStatus,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSocketIo({ getQuote });
+    const {} = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSocketIo({ getQuote });
+    const {} = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -414,7 +417,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -475,8 +478,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -546,7 +549,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                          quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -559,7 +562,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                  isReceipt ? "status" : "documentStatus"
+                                    isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -570,7 +573,7 @@ const QuoteNewPageWidget = ({
                         )}
                       </>
                     )}
-                    {isReceipt && !isNewCreation && renderCreateNewButton()}
+                    {!isQuote && !isNewCreation && renderCreateNewButton()}
                     {isShowSettingIcon && (
                       <IconButton
                         style={{ marginRight: 4 }}
@@ -659,7 +662,7 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                    // preventOpenCondition={!quoteState.client}
+                      // preventOpenCondition={!quoteState.client}
                     />
                   )}
                   {(documentType === DOCUMENT_TYPE.order ||
@@ -857,7 +860,9 @@ const QuoteNewPageWidget = ({
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
                 onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
-                onClickOpenAddAttachmentsPurchaseModal={onOpenAddAttachmentsPurchaseModal}
+                onClickOpenAddAttachmentsPurchaseModal={
+                  onOpenAddAttachmentsPurchaseModal
+                }
                 onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
                 AddCustomerModal={AddCustomerModal}
                 handleSaveDraftBtnClick={handleSaveDraftBtnClick}
@@ -1083,18 +1088,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1273,6 +1278,15 @@ const QuoteNewPageWidget = ({
         }}
         subTitle={t("alerts.thisPurchaseNumberIsExist")}
         yesBtn={t("alerts.UpdateAnyway")}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openChangeStatusModal}
+        onClose={onClickCloseChangeStatusModal}
+        onClickDelete={() => updateQuoteStatus()}
       />
     </>
   );
