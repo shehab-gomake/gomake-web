@@ -6,6 +6,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { useRecoilValue } from "recoil";
 import { totalAllocatedDocumentsState } from "../../states";
+import { fmt2, round2 } from "@/utils/helpers";
 
 const FooterSection = ({ onCloseModal }: any) => {
   const { classes } = useStyle();
@@ -34,6 +35,8 @@ const FooterSection = ({ onCloseModal }: any) => {
   const totalAllocatedDocuments = useRecoilValue<number>(
     totalAllocatedDocumentsState
   );
+
+  const diff = round2(totalAllocatedDocuments - totalPayment);
 
   const handleClickCancelTransactionModal = () => {
     if (!validateRequiredAccountCodes()) return;
@@ -109,10 +112,11 @@ const FooterSection = ({ onCloseModal }: any) => {
               readOnly
               id={"totalFromDocuments"}
               style={classes.inputStyle}
-              value={totalAllocatedDocuments}
+              value={fmt2(totalAllocatedDocuments)}
             />
           </Stack>
-          {totalAllocatedDocuments - totalPayment > 0 && totalPayment !== 0 && (
+
+          {diff > 0 && totalPayment !== 0 && (
             <Stack
               style={{
                 ...classes.rowStyle,
@@ -120,10 +124,7 @@ const FooterSection = ({ onCloseModal }: any) => {
               }}
             >
               <span style={classes.textStyle}>{t("payment.balance")}</span>
-              <input
-                style={classes.inputStyle}
-                value={totalAllocatedDocuments - totalPayment}
-              />
+              <input style={classes.inputStyle} value={fmt2(diff)} />
             </Stack>
           )}
           <Stack
@@ -135,7 +136,8 @@ const FooterSection = ({ onCloseModal }: any) => {
             <span style={classes.textStyle}>{t("payment.totalPayment")}</span>
             <input style={classes.inputStyle} value={totalPayment} />
           </Stack>
-          {totalAllocatedDocuments - totalPayment < 0 && (
+
+          {diff < 0 && (
             <Stack
               style={{
                 ...classes.rowStyle,
@@ -146,8 +148,9 @@ const FooterSection = ({ onCloseModal }: any) => {
                 {t("payment.excessPayment")}
               </span>
               <input
+                readOnly
                 style={classes.inputStyle}
-                value={Math.abs(totalAllocatedDocuments - totalPayment)}
+                value={fmt2(Math.abs(diff))}
               />
             </Stack>
           )}

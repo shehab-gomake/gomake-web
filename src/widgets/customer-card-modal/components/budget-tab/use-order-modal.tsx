@@ -7,12 +7,19 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
-
-const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocumentBudget, selectedBudget }) => {
+const useOrderModal = ({
+  allDocuments,
+  onClose,
+  allDocumentsByBudget,
+  updateDocumentBudget,
+  selectedBudget,
+  getAllBudgetsForClient,
+}) => {
   // State to manage switching between modals
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFault, alertWarning } =
+    useSnackBar();
   const [isClientOrdersModalOpen, setIsClientOrdersModalOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState([]);
   // Table headers for the current budget's orders
@@ -21,7 +28,7 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     t("documentingDesign.documnetCreation.docmentType"),
     t("home.headers.totalPriceWithoutVat"),
     t("reports.totalPrice"),
-    t("properties.more")
+    t("properties.more"),
   ];
 
   // Table headers for client's orders selection modal
@@ -30,42 +37,56 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     t("home.headers.documentNumber"),
     t("documentingDesign.documnetCreation.docmentType"),
     t("home.headers.totalPriceWithoutVat"),
-    t("reports.totalPrice")
+    t("reports.totalPrice"),
   ];
 
   const handleDeleteOrder = (document) => {
-    updateDocumentBudget(document)
-  }
+    updateDocumentBudget(document);
+  };
 
   // Mapping orders for the current budget modal
-  const mapOrdersData = () => allDocuments?.map(document => [
-    document.documentNumber,
-    DOCUMENT_TYPE[document.documentType],
-    document.totalPaymentBeforeVat,
-    document.totalPayment,
-    <div onClick={() => handleDeleteOrder(document)} style={{ cursor: "pointer" }}><DeleteIcon /></div>
-  ]);
+  const mapOrdersData = () =>
+    allDocuments?.map((document) => [
+      document.documentNumber,
+      DOCUMENT_TYPE[document.documentType],
+      document.totalPaymentBeforeVat,
+      document.totalPayment,
+      <div
+        onClick={() => handleDeleteOrder(document)}
+        style={{ cursor: "pointer" }}
+      >
+        <DeleteIcon />
+      </div>,
+    ]);
 
   // Mapping client's orders data for selection
-  const mapClientOrdersData = () => allDocumentsByBudget.map(order => [
-    <Checkbox
-      checked={selectedOrders.some(selected => selected.documentId === order.id)}
-      onChange={(e) => handleSelectOrder(e, order)}
-      icon={<CheckboxIcon />}
-      checkedIcon={<CheckboxCheckedIcon />}
-    />,
-    order.number,
-    DOCUMENT_TYPE[order.documentType],
-    order.totalPriceWithoutVat,
-    order.totalPrice,
-  ]);
+  const mapClientOrdersData = () =>
+    allDocumentsByBudget.map((order) => [
+      <Checkbox
+        checked={selectedOrders.some(
+          (selected) => selected.documentId === order.id
+        )}
+        onChange={(e) => handleSelectOrder(e, order)}
+        icon={<CheckboxIcon />}
+        checkedIcon={<CheckboxCheckedIcon />}
+      />,
+      order.number,
+      DOCUMENT_TYPE[order.documentType],
+      order.totalPriceWithoutVat,
+      order.totalPrice,
+    ]);
 
   // Handling selection of orders
   const handleSelectOrder = (e, order) => {
     if (e.target.checked) {
-      setSelectedOrders([...selectedOrders, { documentId: order?.id, documentType: order?.documentType }]);
+      setSelectedOrders([
+        ...selectedOrders,
+        { documentId: order?.id, documentType: order?.documentType },
+      ]);
     } else {
-      setSelectedOrders(selectedOrders.filter(selected => selected.documentId !== order.id));
+      setSelectedOrders(
+        selectedOrders.filter((selected) => selected.documentId !== order.id)
+      );
     }
   };
 
@@ -86,22 +107,26 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
       `/v1/erp-service/budgets/update-documents-budget`,
       {
         budgetId: selectedBudget?.id,
-        documents: selectedOrders
+        documents: selectedOrders,
       }
     );
     if (res?.success) {
       alertSuccessUpdate();
+      getAllBudgetsForClient();
       onClose();
     } else {
-      if (res?.errors?.statusCode === 107) {
-        alertFault(t(`documentingDesign.${res?.errors?.message}`));
-      }
-      else {
+      const errorCode = res?.errors?.statusCode;
+      const errorMessage = res?.errors?.message;
+
+      if (errorCode === 107) {
+        alertFault(t(`documentingDesign.${errorMessage}`));
+      } else if (errorCode === 113) {
+        alertWarning("customers.modal.budgetNotActive");
+      } else if (errorCode === 114) {
+        alertWarning("customers.modal.budgetPeriodExpired");
+      } else {
         alertFaultUpdate();
-
-
       }
-
     }
   }, [selectedBudget, selectedOrders]);
 
@@ -113,7 +138,7 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     updateDocumentsBudget,
     isClientOrdersModalOpen,
     ordersTableHeaders,
-    clientOrdersTableHeaders
+    clientOrdersTableHeaders,
   };
 };
 

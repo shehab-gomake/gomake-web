@@ -1,12 +1,12 @@
-import React, {useEffect} from 'react';
-import {Stack, IconButton} from '@mui/material';
-import {AddCircleOutlineRounded} from '@mui/icons-material';
-import {SelectMachines} from "@/widgets/employees-working-hours-widgets/modals/components/select-machines";
-import {IStartEndTime, IWorkingHoursMachine} from "@/widgets/employees-working-hours-widgets/interface";
-import {useTranslation} from "react-i18next";
+import React, { useEffect } from 'react';
+import { Stack, IconButton } from '@mui/material';
+import { AddCircleOutlineRounded } from '@mui/icons-material';
+import { SelectMachines } from "@/widgets/employees-working-hours-widgets/modals/components/select-machines";
+import { IStartEndTime, IWorkingHoursMachine } from "@/widgets/employees-working-hours-widgets/interface";
+import { useTranslation } from "react-i18next";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import {TimeTextField} from "@/widgets/employees-working-hours-widgets/modals/components/time-text-field";
-import {FONT_FAMILY} from "@/utils/font-family";
+import { TimeTextField } from "@/widgets/employees-working-hours-widgets/modals/components/time-text-field";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface TimeRangeManagerProps {
     groupIndex: number;
@@ -22,31 +22,27 @@ interface TimeRangeManagerProps {
 }
 
 const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
-                                                               groupIndex,
-                                                               onTimeChange,
-                                                               onMachinesChange,
-                                                               onAddTimeRange,
-                                                               onRemoveTimeRange,
-                                                               machines,
-                                                               timeIndex,
-                                                               time,
-                                                               showMachines = true,
-                                                               canAddTimeRange = true
-                                                           }) => {
-    const {t} = useTranslation();
+    groupIndex,
+    onTimeChange,
+    onMachinesChange,
+    onAddTimeRange,
+    onRemoveTimeRange,
+    machines,
+    timeIndex,
+    time,
+    showMachines = true,
+    canAddTimeRange = true
+}) => {
+    const { t } = useTranslation();
     const convertDateToTimeString = (date) => {
-       if (date === null) {
-           return null;
-       }
+        if (date === null) {
+            return null;
+        }
         const tDate = new Date(date);
         const hours = tDate.getHours().toString().padStart(2, '0'); // Get hours and pad to 2 digits
         const minutes = tDate.getMinutes().toString().padStart(2, '0'); // Get minutes and pad to 2 digits
         return `${hours}:${minutes}`;
     };
-
-    useEffect(() => {
-        console.log(machines)
-    }, [machines])
 
     return (
         <Stack gap="20px" key={timeIndex}>
@@ -55,7 +51,7 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                     type="time"
                     variant="outlined"
                     fullWidth
-                    sx={{background: 'white'}}
+                    sx={{ background: 'white' }}
                     value={convertDateToTimeString(time.startTime)}
                     onChange={(e) =>
                         onTimeChange(groupIndex, timeIndex, 'startTime', e.target.value)
@@ -66,7 +62,7 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                     type="time"
                     variant="outlined"
                     fullWidth
-                    sx={{background: 'white'}}
+                    sx={{ background: 'white' }}
                     value={convertDateToTimeString(time.endTime)}
                     onChange={(e) =>
                         onTimeChange(groupIndex, timeIndex, 'endTime', e.target.value)
@@ -76,17 +72,17 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                     canAddTimeRange && <>
                         {timeIndex === 0 ? (
                             <IconButton
-                                sx={{fontSize: 14}}
+                                sx={{ fontSize: 14 }}
                                 onClick={() => onAddTimeRange(groupIndex)}
                             >
-                                <AddCircleOutlineRounded/>
+                                <AddCircleOutlineRounded />
                             </IconButton>
                         ) : (
                             <IconButton
 
                                 onClick={() => onRemoveTimeRange(groupIndex, timeIndex)}
                             >
-                                <DeleteOutlinedIcon style={{color: 'D92D20'}}/>
+                                <DeleteOutlinedIcon style={{ color: 'D92D20' }} />
                             </IconButton>
                         )}
                     </>
@@ -109,4 +105,4 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
     );
 };
 
-export {TimeRangeManager};
+export { TimeRangeManager };

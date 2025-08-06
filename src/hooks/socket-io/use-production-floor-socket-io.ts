@@ -37,7 +37,6 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
     });
 
     return () => {
-      console.log("Closing socket connection...");
       socket.disconnect();
     };
   }, [view]);

@@ -46,7 +46,6 @@ export const useSimpleApproveModal = (updateStatus:any) => {
   const sendJobExampleConfirmationToClient = async (boardMissionId: string) => {
     const callBack = (res) => {
       if (res.success) {
-        console.log("res", res)
       }
     };
     await sendJobExampleConfirmationToClientApi(callApi, callBack, {

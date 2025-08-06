@@ -13,7 +13,6 @@ const useOrdersSocketIo = ({getQuote}) => {
         });
 
         return () => {
-            console.log("Closing socket connection...");
             socket.disconnect();
         };
     }, []);

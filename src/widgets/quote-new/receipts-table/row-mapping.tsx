@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { ERPDocumentsTypesEnum } from "@/enums";
+import { fmt2 } from "@/utils/helpers";
 
 const RowMappingWidget = ({
   item,
@@ -132,7 +133,8 @@ const RowMappingWidget = ({
             ...classes.cellContainerStyle,
           }}
         >
-          {item?.sumApplied}
+          {/* {item?.sumApplied} */}
+          {fmt2(item?.sumApplied)}
         </PrimaryTableCell>
       ) : (
         <PrimaryTableCell
@@ -140,7 +142,6 @@ const RowMappingWidget = ({
             alignItems: "center",
             display: "flex",
             flexDirection: "row",
-            // justifyContent: "center",
             ...classes.cellContainerStyle,
             padding: "0px 50px",
             gap: "3px",
@@ -148,15 +149,14 @@ const RowMappingWidget = ({
         >
           <input
             key={`allocates-${index}`}
-            value={allocatedSum || 0}
+            value={fmt2(allocatedSum)}
             onChange={handleAllocatedSumChange}
             style={{ width: "80px", textAlign: "center" }}
             type="number"
             min={Math.min(0, item?.sumApplied)}
             max={item?.sumApplied > 0 ? item?.sumApplied : 0}
-            // step="0.01"
           />
-          / {item?.sumApplied}
+          / {fmt2(item?.sumApplied)}
         </PrimaryTableCell>
       )}
     </TableRow>

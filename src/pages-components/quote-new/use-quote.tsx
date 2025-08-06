@@ -347,6 +347,7 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
+  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] = useState(false);
   const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
   const onClickOpenDeleteDeliveryModal = () => {
     setOpenDeleteDeliveryModal(true);
@@ -361,7 +362,12 @@ const useQuoteNew = ({
   const onCloseAddAttachmentsModal = () => {
     setOpenAddAttachmentsModal(false);
   };
-
+  const onOpenAddAttachmentsPurchaseModal = () => {
+    setOpenAddAttachmentsPurchaseModal(true);
+  };
+  const onCloseAddAttachmentsPurchaseModal = () => {
+    setOpenAddAttachmentsPurchaseModal(false);
+  };
   const onOpenDeliveryModal = () => {
     setOpenAddDeliveryModal(true);
   };
@@ -423,11 +429,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
@@ -446,8 +452,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-        ? "10%"
-        : null, // Details column (optional)
+      ? "10%"
+      : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -1207,7 +1213,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-                (isPrintHouseMaterialItem || selectedFirstMaterial)
+              (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1450,7 +1456,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1836,7 +1842,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -1897,6 +1903,12 @@ const useQuoteNew = ({
   };
 
   const handleSaveDraftBtnClick = async () => {
+    const currentItemsCount = quoteItemValue?.documentItems?.length || 0;
+    if (currentItemsCount > 100) {
+      alertWarning("sales.quote.maxItemsReached");
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         const path = isInvoice ? `/invoices` : `/purchaseInvoices`;
@@ -1976,12 +1988,12 @@ const useQuoteNew = ({
     // Check if we're creating a new document and if the document already has more than 100 items
     const isNewCreation = router?.query?.isNewCreation === "true";
     const currentItemCount = quoteItemValue?.documentItems?.length || 0;
-    
+
     if (isNewCreation && currentItemCount > 100) {
       alertWarning("sales.quote.maxItemsReached");
       return;
     }
-    
+
     // const validationError = validateDocument(quoteItemValue);
     // if (validationError) {
     //   alertFault(validationError);
@@ -2755,12 +2767,14 @@ const useQuoteNew = ({
     receiptSendModal,
     renderCreateNewButton,
     isNewCreation,
-
     primaryColor,
     moveToReadyOption,
     setMoveToReadyOption,
     handleRadioChange,
     reCalculateItem,
+    openAddAttachmentsPurchaseModal,
+    onOpenAddAttachmentsPurchaseModal,
+    onCloseAddAttachmentsPurchaseModal,
   };
 };
 
