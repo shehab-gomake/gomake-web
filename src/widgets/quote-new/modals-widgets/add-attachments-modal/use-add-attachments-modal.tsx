@@ -32,22 +32,12 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
     }
-
-
-
-
-
-
-
     const uploadQuoteItemFileForDocument = async (data: any) => {
         const callBack = (res) => {
-            console.log("res", res)
             if (res?.success) {
-                console.log("res1", res)
                 getQuote();
             }
             else {
-                console.log("res2", res)
                 // alertFault(res?.message)
             }
         }
@@ -61,12 +51,10 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
 
     const removeQuoteItemFile = async (data: any) => {
         const callBack = (res) => {
-            console.log("res", res)
             if (res?.success) {
                 alertSuccessDelete()
             }
             else {
-                console.log("res2", res)
                 alertFaultDelete()
             }
         }
@@ -149,7 +137,6 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
                         }
                     });
                 } catch (error) {
-                    console.log("Upload failed:", error);
                 }
             };
             reader.readAsArrayBuffer(file);

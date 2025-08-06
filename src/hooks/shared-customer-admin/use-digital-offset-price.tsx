@@ -6568,8 +6568,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       createDefaultWorkFlowApi();
     } else {
       const workflowValidation = validateWorkflows(workFlows[0]);
-      console.log("workflowValidation", workflowValidation)
-
       if (workflowValidation.isValid) {
         // If workflows are valid, proceed to validate parameters
         let checkParameter = validateParameters(subProducts);

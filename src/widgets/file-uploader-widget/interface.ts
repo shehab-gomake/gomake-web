@@ -15,6 +15,7 @@ export interface IUploadingFile {
   fileName: string;
   fileStatus: EUploadingFileStatus;
   fileType?: FileTypeENUM;
+  uploadId?:any;
 }
 
 export enum EUploadingFileStatus {
