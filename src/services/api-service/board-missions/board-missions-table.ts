@@ -31,9 +31,9 @@ const PRINT_NODE_PRINTING_CANCEL_LOG =
 const GET_INITIAL_ORDER_FOLDERS_DATA =
   "/v1/job-service/board-missions-tables/get-initial-order-folders-data";
 const SAVE_JOBS_TABLE_SETTINGS_URL =
-  "/v1/job-service/board-missions-table-settings/save-jobs-table-settings";
+  "/v1/job-service/production-floor-table-settings/save-jobs-table-settings";
 const GET_JOBS_TABLE_SETTINGS_URL =
-  "/v1/job-service/board-missions-table-settings/get-jobs-table-settings";
+  "/v1/job-service/production-floor-table-settings/get-jobs-table-settings";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
