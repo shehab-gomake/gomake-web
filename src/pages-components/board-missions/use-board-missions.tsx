@@ -660,16 +660,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 </a>
               </Stack>
             ),
-            purchaseNumber: (
-              <a
-                href={`/purchaseOrders?finalPatternSearch=${mission?.purchaseNumber}`}
-                style={classes.tableAtagStyle}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {mission?.purchaseNumber}
-              </a>
-            ),
+            purchaseNumber: mission?.purchaseNumber,
             outSourceType: t(
               "boardMissions." + EWorkSource[mission?.outSourceType ?? 0]
             ),
