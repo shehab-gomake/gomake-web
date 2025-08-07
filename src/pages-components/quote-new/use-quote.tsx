@@ -347,7 +347,8 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
-  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] = useState(false);
+  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] =
+    useState(false);
   const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
   const onClickOpenDeleteDeliveryModal = () => {
     setOpenDeleteDeliveryModal(true);
@@ -2192,8 +2193,19 @@ const useQuoteNew = ({
   }, [quoteItemValue, quoteConfirm, isQuote, isQuoteConfirmation]);
 
   useEffect(() => {
-    if (isQuote) {
+    if (!isQuote) return;
+
+    const isDeliveryDateRequired = CheckPreferenceValue(
+      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+    );
+
+    if (!isDeliveryDateRequired) {
       getQuoteDeliveryDate();
+    } else {
+      setQuoteItemValue((prev) => ({
+        ...prev,
+        dueDate: null,
+      }));
     }
   }, [isQuote]);
 
@@ -2775,6 +2787,7 @@ const useQuoteNew = ({
     openAddAttachmentsPurchaseModal,
     onOpenAddAttachmentsPurchaseModal,
     onCloseAddAttachmentsPurchaseModal,
+    CheckPreferenceValue,
   };
 };
 
