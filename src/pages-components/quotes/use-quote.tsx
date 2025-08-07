@@ -108,6 +108,7 @@ import {
   OrdersTableColumns,
   QuotesTableColumns,
 } from "./enums/document-table-columns-enum";
+import { Typography } from "@mui/material";
 
 type PaymentTypeOption = {
   label: string;
@@ -563,7 +564,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       <div
         style={{ maxHeight: showAll ? "none" : "100px", overflow: "hidden" }}
       >
-        {visibleItems.map((item, index) => (
+        {visibleItems?.map((item, index) => (
           <a
             key={index}
             href={`${renderURLDocumentType(
@@ -586,18 +587,81 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           </a>
         ))}
         {documents.length > MAX_VISIBLE && (
-          <span
+          <Typography
             onClick={() => setShowAll(!showAll)}
-            style={{
+            sx={{
               cursor: "pointer",
               color: "#000",
               textDecoration: "underline",
               display: "inline-block",
               marginTop: "5px",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              "&:hover": {
+                color: "#717273",
+              },
             }}
           >
             {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
-          </span>
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  const WorksNameCell = ({ worksNames }: { worksNames: any }) => {
+    const { t } = useTranslation();
+    const [showAll, setShowAll] = useState(false);
+    const MAX_VISIBLE = 3;
+
+    // Parse worksNames if it's a string, otherwise ensure it's an array
+    const safeWorksNames = (() => {
+      if (typeof worksNames === "string") {
+        // Split by comma and trim whitespace
+        return worksNames
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
+      } else if (Array.isArray(worksNames)) {
+        return worksNames;
+      } else {
+        return [];
+      }
+    })();
+
+    const visibleItems = showAll
+      ? safeWorksNames
+      : safeWorksNames.slice(0, MAX_VISIBLE);
+
+    const displayText = visibleItems.join(", ");
+
+    return (
+      <div
+        style={{
+          maxHeight: showAll ? "none" : "60px",
+          overflow: "hidden",
+          lineHeight: "1.4",
+        }}
+      >
+        <span>{displayText}</span>
+        {safeWorksNames.length > MAX_VISIBLE && (
+          <Typography
+            onClick={() => setShowAll(!showAll)}
+            sx={{
+              cursor: "pointer",
+              color: "#000",
+              textDecoration: "underline",
+              display: "inline-block",
+              [isRTL ? "mr" : "ml"]: 1,
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              "&:hover": {
+                color: "#717273",
+              },
+            }}
+          >
+            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
         )}
       </div>
     );
@@ -631,7 +695,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               agent: quote?.agentName,
               number: quote?.number,
               purchaseNumber: quote?.purchaseNumber,
-              worksName: quote?.worksNames,
+              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
               discount: quote?.discount,
               totalPriceWithoutVat: isRTL
                 ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -727,7 +791,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ...baseRow,
                 agent: quote?.agentName,
                 number: quote?.number,
-                worksName: quote?.worksNames,
+                worksName: (
+                  <WorksNameCell worksNames={quote?.worksNames || []} />
+                ),
               };
             }
 
@@ -1088,7 +1154,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             agent: quote?.agentName,
             number: quote?.number,
             purchaseNumber: quote?.purchaseNumber,
-            worksName: quote?.worksNames,
+            worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
             discount: quote?.discount,
             totalPriceWithoutVat: isRTL
               ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -1182,7 +1248,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ...baseRow,
               agent: quote?.agentName,
               number: quote?.number,
-              worksName: quote?.worksNames,
+              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
             };
           }
 
