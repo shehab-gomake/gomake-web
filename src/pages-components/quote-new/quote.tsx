@@ -877,6 +877,7 @@ const QuoteNewPageWidget = ({
                     ? CLIENT_TYPE.SUPPLIER
                     : CLIENT_TYPE.CUSTOMER
                 }
+                deliveryDate={selectDate}
               />
             </div>
           )}

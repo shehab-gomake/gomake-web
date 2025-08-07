@@ -60,6 +60,7 @@ const ButtonsContainer = ({
   receiptSendModal,
   openReceiptModal,
   clientType,
+  deliveryDate,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -201,6 +202,10 @@ const ButtonsContainer = ({
     EPreferences.DELIVERY_DATE_REQUIRED_IN_DOC
   );
 
+  const isNeedDeliveryDateInQuote = CheckPreferenceValue(
+    EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+  );
+
   const checkIsAgentRequired = CheckPreferenceValue(
     EPreferences.AGENT_REQUIRED_IN_DOC
   );
@@ -211,6 +216,8 @@ const ButtonsContainer = ({
   const handleOrderNowClick = () => {
     if (checkIsAgentRequired && isAgentEmpty) {
       alertFault("sales.cart.agentIsRequired");
+    } else if (isQuote && isNeedDeliveryDateInQuote && !deliveryDate) {
+      alertFault("sales.cart.deliveryDateIsRequired");
     } else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
       alertFault("sales.cart.deliveryDateIsRequired");
     } else {

@@ -138,16 +138,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       alertFault("home.admin.pleaseSelectClient");
       return;
     }
-    // Check if delivery date is required and selected
-
-    const test = quoteItemValue?.dueDate;
-    if (
-      CheckPreferenceValue(EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE) &&
-      !quoteItemValue?.dueDate
-    ) {
-      alertFault("home.admin.pleaseSelectDeliveryDate");
-      return;
-    }
 
     const isAddressRequired = CheckPreferenceValue(
       EPreferences.ADDRESSES_REQUIRED_FOR_ORDER
