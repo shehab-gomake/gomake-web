@@ -603,6 +603,43 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     );
   };
 
+  const WorksNameCell = ({ worksNames }: { worksNames: any[] }) => {
+    const { t } = useTranslation();
+    const [showAll, setShowAll] = useState(false);
+    const MAX_VISIBLE = 2;
+
+    const visibleItems = showAll
+      ? worksNames
+      : worksNames.slice(0, MAX_VISIBLE);
+
+    return (
+      <div
+        style={{ maxHeight: showAll ? "none" : "100px", overflow: "hidden" }}
+      >
+        {visibleItems.map((workName, index) => (
+          <div key={index} style={{ marginBottom: "2px" }}>
+            {workName}
+            <br />
+          </div>
+        ))}
+        {worksNames.length > MAX_VISIBLE && (
+          <span
+            onClick={() => setShowAll(!showAll)}
+            style={{
+              cursor: "pointer",
+              color: "#000",
+              textDecoration: "underline",
+              display: "inline-block",
+              marginTop: "5px",
+            }}
+          >
+            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   const getAllQuotes = useCallback(
     async (order?: any) => {
       const sortOrder = order || currentSortOrder;
@@ -631,7 +668,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               agent: quote?.agentName,
               number: quote?.number,
               purchaseNumber: quote?.purchaseNumber,
-              worksName: quote?.worksNames,
+              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
               discount: quote?.discount,
               totalPriceWithoutVat: isRTL
                 ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -727,7 +764,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ...baseRow,
                 agent: quote?.agentName,
                 number: quote?.number,
-                worksName: quote?.worksNames,
+                worksName: (
+                  <WorksNameCell worksNames={quote?.worksNames || []} />
+                ),
               };
             }
 
@@ -1088,7 +1127,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             agent: quote?.agentName,
             number: quote?.number,
             purchaseNumber: quote?.purchaseNumber,
-            worksName: quote?.worksNames,
+            worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
             discount: quote?.discount,
             totalPriceWithoutVat: isRTL
               ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -1182,7 +1221,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ...baseRow,
               agent: quote?.agentName,
               number: quote?.number,
-              worksName: quote?.worksNames,
+              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
             };
           }
 
