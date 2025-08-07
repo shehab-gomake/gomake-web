@@ -591,10 +591,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClick={() => setShowAll(!showAll)}
             sx={{
               cursor: "pointer",
-              color: "#2e3092",
+              color: "#000",
               textDecoration: "underline",
               display: "inline-block",
-              ml: 1,
+              marginTop: "5px",
               fontWeight: 500,
               fontSize: "0.9rem",
               "&:hover": {
@@ -612,7 +612,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const WorksNameCell = ({ worksNames }: { worksNames: any }) => {
     const { t } = useTranslation();
     const [showAll, setShowAll] = useState(false);
-    const MAX_VISIBLE = 15;
+    const MAX_VISIBLE = 3;
 
     // Parse worksNames if it's a string, otherwise ensure it's an array
     const safeWorksNames = (() => {
@@ -649,10 +649,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClick={() => setShowAll(!showAll)}
             sx={{
               cursor: "pointer",
-              color: "#2e3092",
+              color: "#000",
               textDecoration: "underline",
               display: "inline-block",
-              ml: 1,
+              [isRTL ? "mr" : "ml"]: 1,
               fontWeight: 500,
               fontSize: "0.9rem",
               "&:hover": {
