@@ -41,7 +41,6 @@ import { productionFloorFiltersState } from "../../state/production-floor-filter
 import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
-import { ColumnSettingsMenu } from "../components/column-settings-menu";
 import { LoadMorePagination } from "../components/load-more-pagination";
 import {
   columnOrderState,
@@ -50,10 +49,10 @@ import {
 } from "../../state/production-floor-coulmns-table-settings";
 import React from "react";
 
-  // Performance optimization constants
-  const VIRTUALIZATION_THRESHOLD = 15; // Start virtualization when more than 30 items per status
-  const VIRTUAL_BATCH_SIZE = 15; // Number of items to render at once
-  const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
+// Performance optimization constants
+const VIRTUALIZATION_THRESHOLD = 15; // Start virtualization when more than 30 items per status
+const VIRTUAL_BATCH_SIZE = 15; // Number of items to render at once
+const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
 
 interface IProps {
   status: IProductionStatus;
@@ -113,22 +112,27 @@ const StatusTableComponent = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
-  const reSortingCurrentStation = useCallback(async (
-    direction: CurrentStationOrderingEnum
-  ) => {
-    await setFilters({
-      ...filtersState,
-      currentStationOrdering: direction,
-    });
-  }, [setFilters, filtersState]);
+  const reSortingCurrentStation = useCallback(
+    async (direction: CurrentStationOrderingEnum) => {
+      await setFilters({
+        ...filtersState,
+        currentStationOrdering: direction,
+      });
+    },
+    [setFilters, filtersState]
+  );
 
-  const hasUrgentOrApproval = useMemo(() => allBoardMissions?.some(
-    (board) =>
-      board.isUrgentWork ||
-      board.showGraphicsApprovalAlert === 1 ||
-      board.showGraphicsApprovalAlert === 0 ||
-      board.showGraphicsApprovalAlert === 2
-  ), [allBoardMissions]);
+  const hasUrgentOrApproval = useMemo(
+    () =>
+      allBoardMissions?.some(
+        (board) =>
+          board.isUrgentWork ||
+          board.showGraphicsApprovalAlert === 1 ||
+          board.showGraphicsApprovalAlert === 0 ||
+          board.showGraphicsApprovalAlert === 2
+      ),
+    [allBoardMissions]
+  );
 
   const {
     t,
@@ -210,40 +214,42 @@ const StatusTableComponent = ({
   // Optimized board filtering with memoization
   const getBoards = useCallback(() => {
     if (!search) return boards;
-    
+
     const searchLower = search.toLowerCase();
-    return boards?.filter(
-      (board) => {
-        const missionNumber = `${board?.boardMissionNumber}\\${board?.orderNumber}`;
-        const clientName = board?.clientName?.toLowerCase() || '';
-        const productName = board?.productName?.toLowerCase() || '';
-        const jobName = board?.jobName?.toLowerCase() || '';
-        
-        return missionNumber.includes(search) ||
-               clientName.includes(searchLower) ||
-               productName.includes(searchLower) ||
-               jobName.includes(searchLower) ||
-               board?.automatedTags?.some((tag) =>
-                 `${tag.toLowerCase()}`.includes(searchLower)
-               );
-      }
-    );
+    return boards?.filter((board) => {
+      const missionNumber = `${board?.boardMissionNumber}\\${board?.orderNumber}`;
+      const clientName = board?.clientName?.toLowerCase() || "";
+      const productName = board?.productName?.toLowerCase() || "";
+      const jobName = board?.jobName?.toLowerCase() || "";
+
+      return (
+        missionNumber.includes(search) ||
+        clientName.includes(searchLower) ||
+        productName.includes(searchLower) ||
+        jobName.includes(searchLower) ||
+        board?.automatedTags?.some((tag) =>
+          `${tag.toLowerCase()}`.includes(searchLower)
+        )
+      );
+    });
   }, [boards, search]);
 
   // Memoized filtered boards with virtualization
   const filteredBoards = useMemo(() => {
     const boards = getBoards();
     const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
-    
+
     // Enable local virtualization for large datasets
     const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
-    
+
     if (shouldVirtualize) {
       return sortedBoards.slice(virtualStart, virtualEnd);
     } else {
       // Pagination logic
       const startIndex = 0;
-      const endIndex = showAllRows ? sortedBoards.length : Math.min(currentPage * itemsPerPage, sortedBoards.length);
+      const endIndex = showAllRows
+        ? sortedBoards.length
+        : Math.min(currentPage * itemsPerPage, sortedBoards.length);
       return sortedBoards.slice(startIndex, endIndex);
     }
   }, [getBoards, virtualStart, virtualEnd, showAllRows, currentPage]);
@@ -253,7 +259,7 @@ const StatusTableComponent = ({
     const boards = getBoards();
     const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
     const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
-    
+
     if (shouldVirtualize !== isVirtualizingLocal) {
       setIsVirtualizingLocal(shouldVirtualize);
     }
@@ -267,7 +273,7 @@ const StatusTableComponent = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVirtualEnd(prev => {
+            setVirtualEnd((prev) => {
               // Use the current boards length without calling getBoards() again
               const currentBoards = boards?.length || 0;
               return Math.min(prev + VIRTUAL_BATCH_SIZE, currentBoards);
@@ -294,10 +300,16 @@ const StatusTableComponent = ({
   const columnVisibility = useRecoilValue(columnVisibilityState);
 
   // Memoized table headers
-  const memoizedTableHeaders = useMemo(() => tableHeaders(status.id), [tableHeaders, status.id]);
+  const memoizedTableHeaders = useMemo(
+    () => tableHeaders(status.id),
+    [tableHeaders, status.id]
+  );
 
   // Memoized row component to prevent unnecessary re-renders
-  const MemoizedTableRowComponent = useMemo(() => React.memo(TableRowComponent), []);
+  const MemoizedTableRowComponent = useMemo(
+    () => React.memo(TableRowComponent),
+    []
+  );
 
   // Loading state for large datasets
   const [isLoadingRows, setIsLoadingRows] = useState(false);
@@ -328,12 +340,12 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${!status.isGroup
-            ? t("productionStatuses." + status.name)
-            : status.name
-            } (${getBoards().length})`}
+          {`${
+            !status.isGroup
+              ? t("productionStatuses." + status.name)
+              : status.name
+          } (${getBoards().length})`}
         </Button>
-        {status.index === 1 && <ColumnSettingsMenu />}
       </Stack>
 
       {getBoards().length > 0 && (
@@ -372,12 +384,12 @@ const StatusTableComponent = ({
                               ? currentStationOrdering ===
                                 CurrentStationOrderingEnum.NONE
                                 ? {
-                                  "& .sort-icon": { opacity: 0 },
-                                  "&:hover .sort-icon": { opacity: 1 },
-                                }
+                                    "& .sort-icon": { opacity: 0 },
+                                    "&:hover .sort-icon": { opacity: 1 },
+                                  }
                                 : {
-                                  "& .sort-icon": { opacity: 1 },
-                                }
+                                    "& .sort-icon": { opacity: 1 },
+                                  }
                               : undefined
                           }
                         >
@@ -400,21 +412,21 @@ const StatusTableComponent = ({
                                     key: t("productionFloor.currentStation"),
                                     direction:
                                       currentStationOrdering ===
-                                        CurrentStationOrderingEnum.NONE
+                                      CurrentStationOrderingEnum.NONE
                                         ? CurrentStationOrderingEnum.ASC
                                         : CurrentStationOrderingEnum.NONE,
                                   });
                                   setCurrentStationOrdering(
                                     currentStationOrdering ===
                                       CurrentStationOrderingEnum.NONE
-                                        ? CurrentStationOrderingEnum.ASC
-                                        : CurrentStationOrderingEnum.NONE
+                                      ? CurrentStationOrderingEnum.ASC
+                                      : CurrentStationOrderingEnum.NONE
                                   );
                                   reSortingCurrentStation(
                                     currentStationOrdering ===
                                       CurrentStationOrderingEnum.NONE
-                                        ? CurrentStationOrderingEnum.ASC
-                                        : CurrentStationOrderingEnum.NONE
+                                      ? CurrentStationOrderingEnum.ASC
+                                      : CurrentStationOrderingEnum.NONE
                                   );
                                 }}
                               >
@@ -430,7 +442,9 @@ const StatusTableComponent = ({
                 <TableBody>
                   {getBoards().length > 15 ? (
                     <LoadMorePagination
-                      items={[...getBoards()].sort((a, b) => a.priority - b.priority)}
+                      items={[...getBoards()].sort(
+                        (a, b) => a.priority - b.priority
+                      )}
                       itemsPerPage={15}
                       tableRef={tableContainerRef}
                     >
@@ -442,7 +456,9 @@ const StatusTableComponent = ({
                               boardMission={boardMission}
                               status={status}
                               onClickDone={tryMoveBoardMissionsToDone}
-                              onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                              onClickPrintDTicket={
+                                onOpenPrintDeliverTicketModal
+                              }
                               index={index}
                               onClickClient={onClickClient}
                               isMobileScreen={isMobileScreen}
@@ -475,30 +491,49 @@ const StatusTableComponent = ({
                           visibleColumns={visibleColumns}
                         />
                       ))}
-                      {!showAllRows && getBoards().length > currentPage * itemsPerPage && (
-                        <tr>
-                          <td colSpan={100} style={{ textAlign: 'center', padding: '20px' }}>
-                            <Typography variant="body2" color="text.secondary">
-                              {t('pagination.showing', { showing: `${currentPage * itemsPerPage} of ${getBoards().length}` })}
-                            </Typography>
-                                                          <Stack direction="row" gap={1} sx={{ mt: 1 }}>
+                      {!showAllRows &&
+                        getBoards().length > currentPage * itemsPerPage && (
+                          <tr>
+                            <td
+                              colSpan={100}
+                              style={{ textAlign: "center", padding: "20px" }}
+                            >
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {t("pagination.showing", {
+                                  showing: `${currentPage * itemsPerPage} of ${
+                                    getBoards().length
+                                  }`,
+                                })}
+                              </Typography>
+                              <Stack direction="row" gap={1} sx={{ mt: 1 }}>
                                 <Button
                                   variant="contained"
                                   size="small"
                                   onClick={() => {
-                                    setCurrentPage(prev => prev + 1);
+                                    setCurrentPage((prev) => prev + 1);
                                     // Scroll to top
                                     setTimeout(() => {
                                       if (tableContainerRef?.current) {
-                                        tableContainerRef.current.scrollIntoView({ 
-                                          behavior: 'smooth', 
-                                          block: 'start' 
-                                        });
+                                        tableContainerRef.current.scrollIntoView(
+                                          {
+                                            behavior: "smooth",
+                                            block: "start",
+                                          }
+                                        );
                                       }
                                     }, 100);
                                   }}
                                 >
-                                  {t('pagination.loadMore', { count: Math.min(itemsPerPage, getBoards().length - (currentPage * itemsPerPage)) })}
+                                  {t("pagination.loadMore", {
+                                    count: Math.min(
+                                      itemsPerPage,
+                                      getBoards().length -
+                                        currentPage * itemsPerPage
+                                    ),
+                                  })}
                                 </Button>
                                 <Button
                                   variant="outlined"
@@ -508,20 +543,25 @@ const StatusTableComponent = ({
                                     // Scroll to top
                                     setTimeout(() => {
                                       if (tableContainerRef?.current) {
-                                        tableContainerRef.current.scrollIntoView({ 
-                                          behavior: 'smooth', 
-                                          block: 'start' 
-                                        });
+                                        tableContainerRef.current.scrollIntoView(
+                                          {
+                                            behavior: "smooth",
+                                            block: "start",
+                                          }
+                                        );
                                       }
                                     }, 100);
                                   }}
                                 >
-                                  Show All ({getBoards().length - (currentPage * itemsPerPage)} more)
+                                  Show All (
+                                  {getBoards().length -
+                                    currentPage * itemsPerPage}{" "}
+                                  more)
                                 </Button>
                               </Stack>
-                          </td>
-                        </tr>
-                      )}
+                            </td>
+                          </tr>
+                        )}
                     </>
                   )}
                 </TableBody>
@@ -530,7 +570,7 @@ const StatusTableComponent = ({
           </Paper>
         </Collapse>
       )}
-      
+
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -550,12 +590,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -581,14 +621,14 @@ const StatusTableComponent = ({
           />
         </div>
       </ThreeOptionsModal>
-      
+
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
         onClose={onClosePrintDeliverTicketModal}
         boardMissionId={selectedMission?.id}
         quantity={selectedMission?.quantity}
       />
-      
+
       <GoMakeDeleteModal
         title={t("sales.quote.simpleApproveMail")}
         yesBtn={t("modal.yes")}
@@ -618,12 +658,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -649,7 +689,7 @@ const StatusTableComponent = ({
           />
         </div>
       </GoMakeDeleteModal>
-      
+
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}
