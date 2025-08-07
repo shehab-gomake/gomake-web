@@ -69,7 +69,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
           if (typeof param.value === "object") {
             result.push({
               name: param.name,
-              value: param.value.id, // Extract the ID
+              value: param?.value?.id, // Extract the ID
             });
           }
           if (param.length && param.width) {
