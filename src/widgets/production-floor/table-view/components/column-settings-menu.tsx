@@ -34,7 +34,8 @@ interface DragItem {
   index: number;
 }
 
-export const ColumnSettingsMenu = () => {
+// New component that can be used as a menu without its own trigger
+export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   const { CheckPermission } = useUserPermission();
   const filteredKeys = allColumnKeys.filter(
     (key) =>
@@ -43,8 +44,6 @@ export const ColumnSettingsMenu = () => {
   );
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
 
   const [columnVisibility, setColumnVisibility] = useRecoilState(
     columnVisibilityState
@@ -66,9 +65,6 @@ export const ColumnSettingsMenu = () => {
       [key]: !prev[key],
     }));
   };
-
-  const handleOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => setAnchorEl(null);
 
   const moveItem = useCallback((dragIndex: number, hoverIndex: number) => {
     const updated = [...draggingOrderRef.current];
@@ -100,13 +96,13 @@ export const ColumnSettingsMenu = () => {
     } catch (error) {
       console.error("Failed to save column settings", error);
     }
-    handleClose();
+    onClose();
   };
 
   const handleCancel = () => {
     setTempColumnVisibility({ ...columnVisibility });
     setTempColumnOrder([...columnOrder]);
-    handleClose();
+    onClose();
   };
 
   const handleHideAll = () => {
@@ -130,75 +126,64 @@ export const ColumnSettingsMenu = () => {
   }, [open, columnOrder]);
 
   return (
-    <>
-      <Tooltip title={t("general.columnVisibility")}>
-        <IconButton onClick={handleOpen}>
-          <ViewColumnIcon />
-        </IconButton>
-      </Tooltip>
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={() => {
+        handleCancel();
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" px={1} py={1}>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleHideAll}
+        >
+          {t("productionFloor.hideAll")}
+        </PrimaryButton>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleResetOrder}
+        >
+          {t("productionFloor.resetOrder")}
+        </PrimaryButton>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleShowAll}
+        >
+          {t("productionFloor.showAll")}
+        </PrimaryButton>
+      </Stack>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => {
-          handleCancel();
-        }}
-      >
-        <Stack direction="row" justifyContent="space-between" px={1} py={1}>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleHideAll}
-          >
-            {t("productionFloor.hideAll")}
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleResetOrder}
-          >
-            {t("productionFloor.resetOrder")}
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleShowAll}
-          >
-            {t("productionFloor.showAll")}
-          </PrimaryButton>
-        </Stack>
-
-        <DndProvider backend={HTML5Backend}>
-          {tempColumnOrder?.map((key, index) => (
-            <DraggableMenuItem
-              key={key}
-              id={key}
-              index={index}
-              label={getLabel(t, key)}
-              checked={tempColumnVisibility[key]}
-              onToggle={() => handleToggleColumn(key)}
-              moveItem={moveItem}
-            />
-          ))}
-        </DndProvider>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
-          <PrimaryButton
-            style={{ width: "fit-content" }}
-            onClick={handleCancel}
-          >
-            {t("modal.cancel")}
-          </PrimaryButton>
-          <PrimaryButton
-            style={{ width: "fit-content" }}
-            variant={"contained"}
-            onClick={handleSave}
-          >
-            {t("sales.quote.save")}
-          </PrimaryButton>
-        </Stack>
-      </Menu>
-    </>
+      <DndProvider backend={HTML5Backend}>
+        {tempColumnOrder?.map((key, index) => (
+          <DraggableMenuItem
+            key={key}
+            id={key}
+            index={index}
+            label={getLabel(t, key)}
+            checked={tempColumnVisibility[key]}
+            onToggle={() => handleToggleColumn(key)}
+            moveItem={moveItem}
+          />
+        ))}
+      </DndProvider>
+      <Divider />
+      <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
+        <PrimaryButton style={{ width: "fit-content" }} onClick={handleCancel}>
+          {t("modal.cancel")}
+        </PrimaryButton>
+        <PrimaryButton
+          style={{ width: "fit-content" }}
+          variant={"contained"}
+          onClick={handleSave}
+        >
+          {t("sales.quote.save")}
+        </PrimaryButton>
+      </Stack>
+    </Menu>
   );
 };
 
