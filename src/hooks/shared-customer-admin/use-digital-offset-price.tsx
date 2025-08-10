@@ -4641,13 +4641,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      // if (
-      //   findIndex !== -1 &&
-      //   data?.values === null &&
-      //   data?.valueIds === null
-      // ) {
-      //   temp.splice(findIndex, 1);
-      // }
       var valueConfig = subSectionParameter?.valuesConfigs?.find(
         (x) => x.id === data.valueIds
       );
@@ -4720,6 +4713,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ...temp[findIndex],
           values: [data.values],
           valueIds: [data.valueIds],
+          actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
         };
 
         if (valuesArray.length > 0 && valuesArray[0] !== "false") {
@@ -4727,6 +4721,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             ...temp[findIndex],
             values: valuesArray,
             valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
+            actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
           };
           addRelatedParametersWithDefaultValues(
             parameterId,
@@ -4756,7 +4751,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ParameterType: ParameterType,
           isQuantityParameter: subSectionParameter?.isQuantityParameter,
           parameterName: parameterName,
-          actionId: actionId,
+          actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? actionId : null : actionId,
           values: [data.values],
           valueIds: [data.valueIds],
           actionIndex,
