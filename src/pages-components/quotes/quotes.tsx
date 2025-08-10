@@ -428,7 +428,7 @@ const QuotesListPageWidget = ({
         } else {
           setColumnOrder(allColumnKeys);
           setColumnVisibility(
-            Object.fromEntries(allColumnKeys.map((key) => [key, true]))
+            Object.fromEntries(allColumnKeys.map((key) => [key, false])) // Default to false (unchecked)
           );
         }
       } catch (error) {
@@ -450,7 +450,7 @@ const QuotesListPageWidget = ({
           spacing={2}
           height="100%"
         >
-          <QrCodeReader qrCodeListenerFrom={QR_CODE_LISTENER_FROM.QUOTES}/>
+          <QrCodeReader qrCodeListenerFrom={QR_CODE_LISTENER_FROM.QUOTES} />
           <div style={classes.mainContainer}>
             {/* header section */}
             <div style={classes.headerStyle}>
