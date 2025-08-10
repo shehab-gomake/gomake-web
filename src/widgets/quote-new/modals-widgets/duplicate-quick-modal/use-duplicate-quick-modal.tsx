@@ -69,7 +69,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
           if (typeof param.value === "object") {
             result.push({
               name: param.name,
-              value: param.value.id, // Extract the ID
+              value: param?.value?.id, // Extract the ID
             });
           }
           if (param.length && param.width) {
@@ -110,10 +110,12 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
       return;
     }
     const items = transformedGroupList.map(group => ({
-      parameters: group.parameters.map(param => ({
-        parameterId: param?.name.value, // Example ID, replace with actual logic if needed
-        value: param.value
-      }))
+      parameters: group.parameters
+        .filter(param => param.value !== null && param.value !== undefined && param.value !== "")
+        .map(param => ({
+          parameterId: param?.name.value, // Example ID, replace with actual logic if needed
+          value: param.value
+        }))
     }));
     const callBack = (res) => {
       if (res?.success) {
