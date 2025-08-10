@@ -500,7 +500,6 @@ const useQuoteNew = ({
         setSelectDate(res?.data ?? null);
       }
     };
-
     await getDocumentDeliveryDateApi(callApi, callBack);
   };
 
@@ -2199,15 +2198,10 @@ const useQuoteNew = ({
       EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
     );
 
-    if (!isDeliveryDateRequired) {
+    if (!isDeliveryDateRequired || quoteItemValue?.dueDateUpdatedByUser) {
       getQuoteDeliveryDate();
-    } else {
-      setQuoteItemValue((prev) => ({
-        ...prev,
-        dueDate: null,
-      }));
     }
-  }, [isQuote]);
+  }, [isQuote, quoteItemValue?.dueDateUpdatedByUser]);
 
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
