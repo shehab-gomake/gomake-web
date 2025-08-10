@@ -628,9 +628,10 @@ const QuoteNewPageWidget = ({
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                     (isQuote &&
                     !selectDate &&
-                    !CheckPreferenceValue(
+                    (!CheckPreferenceValue(
                       EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-                    ) ? (
+                    ) ||
+                      quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
