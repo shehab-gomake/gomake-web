@@ -111,8 +111,8 @@ const DateField: React.FC<IDateFieldProps> = ({
             marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
             marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
             "& .MuiInputAdornment-root": {
-              marginLeft: isRTL ? "0px" : withTime ? "-5px" : "-30px",
-              marginRight: isRTL ? (withTime ? "-5px" : "-30px") : "0px",
+              marginLeft: isRTL ? "0px" : withTime ? "-10px" : "-30px",
+              marginRight: isRTL ? (withTime ? "-10px" : "-30px") : "0px",
             },
           }}
         />
