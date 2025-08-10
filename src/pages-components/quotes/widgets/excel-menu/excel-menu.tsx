@@ -79,7 +79,7 @@ const ExcelMenu = ({
           </div>
         </MenuItem>
           {
-              documentType == DOCUMENT_TYPE.invoice && <MenuItem
+              ( documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund ) && <MenuItem
                   onClick={() => {
                       handleMenuClose();
                       onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedExcel);
@@ -91,7 +91,7 @@ const ExcelMenu = ({
               </MenuItem>
           }
           {
-              documentType == DOCUMENT_TYPE.invoice && <MenuItem
+              ( documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund ) && <MenuItem
                   onClick={() => {
                       handleMenuClose();
                       onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedTxt);
@@ -103,7 +103,7 @@ const ExcelMenu = ({
               </MenuItem>
           }
           {
-              documentType == DOCUMENT_TYPE.invoice && <MenuItem
+              ( documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund ) && <MenuItem
                   onClick={() => {
                       handleMenuClose();
                       onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithVat);
@@ -115,7 +115,7 @@ const ExcelMenu = ({
               </MenuItem>
           }
           {
-              documentType == DOCUMENT_TYPE.invoice && <MenuItem
+              ( documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund ) && <MenuItem
                   onClick={() => {
                       handleMenuClose();
                       onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat);
