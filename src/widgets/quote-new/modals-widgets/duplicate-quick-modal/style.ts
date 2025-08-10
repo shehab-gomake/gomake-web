@@ -19,7 +19,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         width: "100%",
         gap: 24,
-        marginTop: 24,
         overflowY: "auto" as "auto",
         maxHeight: "400px",
         padding: 5
