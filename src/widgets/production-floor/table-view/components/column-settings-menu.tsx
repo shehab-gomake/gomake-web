@@ -206,17 +206,19 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
       </Stack>
 
       <DndProvider backend={HTML5Backend}>
-        {tempColumnOrder?.map((key, index) => (
-          <DraggableMenuItem
-            key={key}
-            id={key}
-            index={index}
-            label={getLabel(t, key)}
-            checked={tempColumnVisibility[key]}
-            onToggle={() => handleToggleColumn(key)}
-            moveItem={moveItem}
-          />
-        ))}
+        {tempColumnOrder
+          ?.filter((key) => filteredKeys.includes(key))
+          ?.map((key, index) => (
+            <DraggableMenuItem
+              key={key}
+              id={key}
+              index={index}
+              label={getLabel(t, key)}
+              checked={tempColumnVisibility[key]}
+              onToggle={() => handleToggleColumn(key)}
+              moveItem={moveItem}
+            />
+          ))}
       </DndProvider>
       <Divider />
       <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
@@ -318,7 +320,6 @@ const DraggableMenuItem = React.memo(
   }
 );
 
-//!here
 const getLabel = (t, key: string): string => {
   const map = {
     checkbox: t("productionFloor.checkBox"),

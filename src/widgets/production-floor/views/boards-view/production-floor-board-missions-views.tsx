@@ -84,7 +84,7 @@ const ProductionFloorBoardMissionsViews = ({
             // Parse saved settings and preserve existing column states
             const { order, visibility } = parseSavedColumnSettings(
               saved,
-              allColumnKeys
+              filteredKeys
             );
 
             // Filter the results based on permissions
