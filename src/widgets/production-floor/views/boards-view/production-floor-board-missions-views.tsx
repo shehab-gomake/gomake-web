@@ -100,7 +100,7 @@ const ProductionFloorBoardMissionsViews = ({
           } else {
             setColumnOrder(filteredKeys);
             setColumnVisibility(
-              Object.fromEntries(filteredKeys.map((key) => [key, false])) // Default to false (unchecked)
+              Object.fromEntries(filteredKeys.map((key) => [key, true]))
             );
           }
         } catch (e) {
