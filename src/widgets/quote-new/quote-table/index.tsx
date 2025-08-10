@@ -15,17 +15,14 @@ import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { NotCalculatingIcon } from "@/icons";
 import {
   ECalculationStatus,
-  ShowDocumentDetailsEnum,
   ShowPricesEnum,
 } from "@/enums";
 import { CalculatingIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { DebtRowMappingWidget } from "./debt-row-mapping";
-import { EPreferences } from "@/enums/prefernces";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -63,13 +60,6 @@ const QuoteForPriceTable = ({
       },
     };
   });
-
-  const isDeliveryNote =
-    documentType === DOCUMENT_TYPE.deliveryNote ||
-    documentType === DOCUMENT_TYPE.deliveryNoteRefund;
-  const isInvoice =
-    documentType === DOCUMENT_TYPE.invoice ||
-    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   const [visibleChilds, setVisibleChilds] = useState<{
     [key: number]: boolean;

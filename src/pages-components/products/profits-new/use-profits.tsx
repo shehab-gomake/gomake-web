@@ -160,7 +160,7 @@ const useNewProfits = () => {
   ]);
   const getAllActionProfitRowsByActionId = useCallback(
     async (additionId?: any) => {
-      setIsLoading(true);
+      // setIsLoading(true);
       if (actionProfitByActionId?.id) {
         const requestBody: any = {
           actionIdOrProductId: router.query.actionId
@@ -238,7 +238,7 @@ const useNewProfits = () => {
 
   const getCalculateCaseProfits = useCallback(
     async (additionId?: any) => {
-      setIsLoading(true);
+      // setIsLoading(true);
       const requestBody: any = {
         actionId: router.query.actionId,
         signalRConnectionId: router.query.signalRConnectionId,

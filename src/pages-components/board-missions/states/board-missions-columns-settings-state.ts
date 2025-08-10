@@ -86,6 +86,10 @@ export const getJobsCustomWidth = (
   return jobsColumnWidthsMap[tableKey]?.[columnKey] ?? "auto";
 };
 
+/**
+ * Parse saved column settings and handle new columns that weren't previously saved
+ * New columns are positioned according to jobsColumnKeys order and default to visible: false (unchecked)
+ */
 export const parseSavedColumnSettings = (
   settings: ColumnSetting[],
   allKeys: string[]
@@ -93,10 +97,13 @@ export const parseSavedColumnSettings = (
   const visibility = Object.fromEntries(
     allKeys.map((key) => {
       const found = settings.find((s) => s.key === key);
-      return [key, found?.visible ?? true];
+      return [key, found?.visible ?? false]; // New columns (not in saved settings) default to false (unchecked)
     })
   );
-  const order = settings.map((s) => s.key);
+
+  // Simply use the jobsColumnKeys order as defined
+  const order = [...allKeys];
+
   return { visibility, order };
 };
 
@@ -106,7 +113,7 @@ export const columnVisibilityStateFamily = atomFamily<
 >({
   key: "jobsColumnVisibilityStateFamily",
   default: (tableKey) =>
-    Object.fromEntries(jobsColumnKeys[tableKey].map((key) => [key, true])),
+    Object.fromEntries(jobsColumnKeys[tableKey].map((key) => [key, false])), // Default to false (unchecked)
 });
 
 export const columnOrderStateFamily = atomFamily<string[], string>({

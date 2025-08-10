@@ -13,6 +13,7 @@ import { useState } from "react";
 import { CharacterDetails } from "../quote-table/row-details/character-details";
 import { ECalculationStatus } from "@/enums";
 import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const RowMappingChildWidget = ({
   item,
@@ -76,7 +77,7 @@ const RowMappingChildWidget = ({
       documentType,
       DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
     );
-
+  const isOrder = documentType === DOCUMENT_TYPE.order;
   return (
     <TableRow
       key={item.id}
@@ -123,14 +124,14 @@ const RowMappingChildWidget = ({
                 }}
               />
 
-              <Checkbox
+              {!isOrder ? <Checkbox
                 icon={<CheckboxIcon />}
                 checkedIcon={<CheckboxCheckedIcon />}
                 checked={isSelected}
                 onChange={(e) =>
                   handleChangeSelectedItem(e.target.checked, item?.id)
                 }
-              />
+              /> : <div style={{ width: "32px", height: "32px" }} />}
               {index}
             </div>
           </>
