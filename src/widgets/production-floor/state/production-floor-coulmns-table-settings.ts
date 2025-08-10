@@ -47,17 +47,18 @@ export interface ColumnSetting {
 
 export const parseSavedColumnSettings = (
   settings: ColumnSetting[],
-  availableKeys: string[]
+  allKeys: string[]
 ): { visibility: Record<string, boolean>; order: string[] } => {
   const visibility = Object.fromEntries(
-    availableKeys.map((key) => {
+    allKeys.map((key) => {
       const found = settings.find((s) => s.key === key);
-      return [key, found?.visible ?? true];
+      return [key, found?.visible ?? false]; // New columns (not in saved settings) default to false (unchecked)
     })
   );
-  const order = settings
-    .map((s) => s.key)
-    .filter((key) => availableKeys.includes(key));
+
+  // Simply use the allColumnKeys order as defined
+  const order = [...allKeys];
+
   return { visibility, order };
 };
 

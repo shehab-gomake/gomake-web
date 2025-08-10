@@ -13,7 +13,13 @@ import { productionFloorFiltersState } from "@/widgets/production-floor/state/pr
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-import { allColumnKeys, columnOrderState, ColumnSetting, columnVisibilityState, parseSavedColumnSettings } from "../../state/production-floor-coulmns-table-settings";
+import {
+  allColumnKeys,
+  columnOrderState,
+  ColumnSetting,
+  columnVisibilityState,
+  parseSavedColumnSettings,
+} from "../../state/production-floor-coulmns-table-settings";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
@@ -24,17 +30,20 @@ const ProductionFloorBoardMissionsViews = ({
   connectionId: string;
 }) => {
   const [view] = useRecoilState(productionFloorViewState);
-  const { getData, updateStatus, getAllBoardMissions, getStationFilterGroups } = useProductionFloorData();
-
+  const { getData, updateStatus, getAllBoardMissions, getStationFilterGroups } =
+    useProductionFloorData();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const [columnVisibility, setColumnVisibility] = useRecoilState(columnVisibilityState);
+  const [columnVisibility, setColumnVisibility] = useRecoilState(
+    columnVisibilityState
+  );
   const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
-  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } = useJobsTableSocketIo();
+  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
+    useJobsTableSocketIo();
   const { CheckPermission } = useUserPermission();
   // Use refs to prevent infinite loops
   const hasInitializedRef = useRef(false);
@@ -47,51 +56,66 @@ const ProductionFloorBoardMissionsViews = ({
 
   useEffect(() => {
     if (view === EProductionFloorView.DONE_JOBS) {
-      getAllBoardMissions()
+      getAllBoardMissions();
+    } else if (view === EProductionFloorView.TABLE) {
+      getData();
     }
-    else if (view === EProductionFloorView.TABLE) {
-      getData()
-    }
-  }, [view])
+  }, [view]);
 
   useEffect(() => {
     if (shouldFetchData && !hasInitializedRef.current) {
       const loadColumnSettings = async () => {
         try {
-          const res = await getProductionFloorTableSettingsApi(callApi, () => { });
+          const res = await getProductionFloorTableSettingsApi(
+            callApi,
+            () => {}
+          );
           const saved: ColumnSetting[] = res?.data;
 
           const filteredKeys = allColumnKeys.filter(
             (key) =>
               key !== "checkbox" ||
-              CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+              CheckPermission(
+                Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+              )
           );
 
           if (saved && saved.length > 0) {
+            // Parse saved settings and preserve existing column states
             const { order, visibility } = parseSavedColumnSettings(
               saved,
-              filteredKeys
+              allColumnKeys
             );
-            setColumnOrder(order);
-            setColumnVisibility(visibility);
+
+            // Filter the results based on permissions
+            const filteredVisibility = Object.fromEntries(
+              filteredKeys.map((key) => [key, visibility[key] ?? false])
+            );
+            const filteredOrder = order.filter((key) =>
+              filteredKeys.includes(key)
+            );
+
+            setColumnOrder(filteredOrder);
+            setColumnVisibility(filteredVisibility);
           } else {
             setColumnOrder(filteredKeys);
             setColumnVisibility(
-              Object.fromEntries(filteredKeys.map((key) => [key, true]))
+              Object.fromEntries(filteredKeys.map((key) => [key, false])) // Default to false (unchecked)
             );
           }
-
         } catch (e) {
           console.error("Failed to load column settings", e);
           // Use default settings on error
           const filteredKeys = allColumnKeys.filter(
             (key) =>
               key !== "checkbox" ||
-              CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR)
+              CheckPermission(
+                Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+              )
           );
           setColumnOrder(filteredKeys);
           setColumnVisibility(
-            Object.fromEntries(filteredKeys.map((key) => [key, true]))
+            Object.fromEntries(filteredKeys.map((key) => [key, false])) // Default to false (unchecked)
           );
         }
         hasInitializedRef.current = true;
@@ -143,18 +167,21 @@ const ProductionFloorBoardMissionsViews = ({
   }, [connectionId, isSocketUpdateJobsTable, setIsSocketUpdateJobsTable]);
 
   // Render loading skeleton with optimized structure
-  const renderLoadingSkeleton = useCallback(() => (
-    <Stack gap={"10px"}>
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Skeleton
-          key={`skeleton-${index}`}
-          variant="rounded"
-          width={"100%"}
-          height={60}
-        />
-      ))}
-    </Stack>
-  ), []);
+  const renderLoadingSkeleton = useCallback(
+    () => (
+      <Stack gap={"10px"}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Skeleton
+            key={`skeleton-${index}`}
+            variant="rounded"
+            width={"100%"}
+            height={60}
+          />
+        ))}
+      </Stack>
+    ),
+    []
+  );
 
   // Memoized content to prevent unnecessary re-renders
   const renderContent = useMemo(() => {
@@ -162,7 +189,10 @@ const ProductionFloorBoardMissionsViews = ({
       return renderLoadingSkeleton();
     }
 
-    if (filter?.stations?.length === 0 && view !== EProductionFloorView.DONE_JOBS) {
+    if (
+      filter?.stations?.length === 0 &&
+      view !== EProductionFloorView.DONE_JOBS
+    ) {
       return (
         <span style={classes.noStationSelected}>
           {t("productionFloor.noStationsSelected")}
@@ -170,9 +200,11 @@ const ProductionFloorBoardMissionsViews = ({
       );
     }
 
-    if (view === EProductionFloorView.TABLE ||
+    if (
+      view === EProductionFloorView.TABLE ||
       view === EProductionFloorView.FILTER_GROUPS ||
-      view === EProductionFloorView.DONE_JOBS) {
+      view === EProductionFloorView.DONE_JOBS
+    ) {
       return (
         <ProductionFloorTableView
           connectionId={connectionId}
@@ -187,7 +219,16 @@ const ProductionFloorBoardMissionsViews = ({
     }
 
     return <div />;
-  }, [loading, filter?.stations?.length, view, connectionId, updateStatus, renderLoadingSkeleton, classes.noStationSelected, t]);
+  }, [
+    loading,
+    filter?.stations?.length,
+    view,
+    connectionId,
+    updateStatus,
+    renderLoadingSkeleton,
+    classes.noStationSelected,
+    t,
+  ]);
 
   return <>{renderContent}</>;
 };

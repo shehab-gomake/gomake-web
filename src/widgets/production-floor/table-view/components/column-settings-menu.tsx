@@ -50,12 +50,27 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   );
   const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
 
-  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
-    ...columnVisibility,
-  }));
-  const [tempColumnOrder, setTempColumnOrder] = useState(() => [
-    ...columnOrder,
-  ]);
+  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => {
+    // Always start with all keys from allColumnKeys, defaulting new ones to false (unchecked)
+    // This ensures new columns are detected immediately on first opening
+    const completeVisibility = Object.fromEntries(
+      allColumnKeys.map((key) => [
+        key,
+        columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+      ])
+    );
+    return completeVisibility;
+  });
+  const [tempColumnOrder, setTempColumnOrder] = useState(() => {
+    // Ensure all keys from allColumnKeys are included in order
+    const completeOrder = [...columnOrder];
+    allColumnKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key); // Add new columns at the end
+      }
+    });
+    return completeOrder;
+  });
 
   const draggingOrderRef = useRef([...columnOrder]);
 
@@ -100,8 +115,23 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   };
 
   const handleCancel = () => {
-    setTempColumnVisibility({ ...columnVisibility });
-    setTempColumnOrder([...columnOrder]);
+    // Reset to current state, ensuring all keys are included
+    const completeVisibility = Object.fromEntries(
+      allColumnKeys.map((key) => [
+        key,
+        columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+      ])
+    );
+
+    const completeOrder = [...columnOrder];
+    allColumnKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key);
+      }
+    });
+
+    setTempColumnVisibility(completeVisibility);
+    setTempColumnOrder(completeOrder);
     onClose();
   };
 
@@ -116,14 +146,32 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   };
 
   const handleResetOrder = () => {
-    setTempColumnOrder([...filteredKeys]);
+    setTempColumnOrder([...allColumnKeys]);
   };
 
   useEffect(() => {
     if (open) {
       draggingOrderRef.current = [...columnOrder];
+
+      // Always sync with current state when modal opens
+      const completeVisibility = Object.fromEntries(
+        allColumnKeys.map((key) => [
+          key,
+          columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+        ])
+      );
+
+      const completeOrder = [...columnOrder];
+      allColumnKeys.forEach((key) => {
+        if (!completeOrder.includes(key)) {
+          completeOrder.push(key);
+        }
+      });
+
+      setTempColumnVisibility(completeVisibility);
+      setTempColumnOrder(completeOrder);
     }
-  }, [open, columnOrder]);
+  }, [open, columnOrder, columnVisibility, allColumnKeys]);
 
   return (
     <Menu
