@@ -62,16 +62,7 @@ const FixedDocumentType = () => {
           <KeyboardArrowDownIcon />
         </ListItemButton>
       </List>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => setAnchorEl(null)}
-        PaperProps={{
-          sx: {
-            width: anchorEl?.offsetWidth,
-          },
-        }}
-      >
+      <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
         {options.map((option) => (
           <MenuItem
             key={option.value}
