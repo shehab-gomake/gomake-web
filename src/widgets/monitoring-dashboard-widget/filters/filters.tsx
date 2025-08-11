@@ -4,6 +4,7 @@ import { useSalesDashboardFilters } from "./use-filters";
 import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop-down";
 import { SingleSelectSearchDropdown } from "./components/single-customer-select-dropdown";
 import { FixedDataType } from "./components/fixed-data-type-component";
+import { FixedDocumentType } from "./components/fixed-document-type-component";
 
 const DashboardFilters = () => {
   const { classes } = useStyle();
@@ -35,6 +36,7 @@ const DashboardFilters = () => {
     <div style={classes.datesContainer}>
       <GoMakeDatepicker />
       <FixedDataType />
+      <FixedDocumentType />
       <SingleSelectSearchDropdown />
       <MultiSelectDropdown
         items={clientTypesCategories}

@@ -21,6 +21,7 @@ import { selectedJobTypesIdsState } from "./filters/states/selected-job-types-id
 import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
+import { selectedDocumentTypeState } from "./filters/states/selected-document-type";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -109,6 +110,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
+      }),
       ...extraCostData,
     };
 
@@ -146,6 +150,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
 
@@ -187,6 +194,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
     const callBack = (res) => {
@@ -240,6 +250,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
 
@@ -295,6 +308,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
+      }),
     };
 
     const callBack = (res) => {
@@ -349,6 +365,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
+      }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -390,6 +409,7 @@ const useMonitoringDashboard = () => {
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
   const selectedClient = useRecoilValue(selectedDashClientState);
   const selectedDataType = useRecoilValue(selectedDataTypeState);
+  const selectedDocumentType = useRecoilValue(selectedDocumentTypeState);
 
   const filters = useMemo(
     () => ({
@@ -402,6 +422,7 @@ const useMonitoringDashboard = () => {
       selectedJobTypesIds,
       selectedClient,
       selectedDataType,
+      selectedDocumentType,
     }),
     [
       dates?.startDate,
@@ -413,6 +434,7 @@ const useMonitoringDashboard = () => {
       selectedJobTypesIds,
       selectedClient,
       selectedDataType,
+      selectedDocumentType,
     ]
   );
 
@@ -445,6 +467,7 @@ const useMonitoringDashboard = () => {
     selectedProductTypesIds,
     selectedClientTypesIds,
     selectedJobTypesIds,
+    selectedDocumentType,
     filters,
     currUnit,
     selectedClient,
