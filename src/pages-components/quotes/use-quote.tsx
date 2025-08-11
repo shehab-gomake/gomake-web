@@ -835,6 +835,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
               return {
                 ...baseRow,
+                deliveryDate: formatISODateTime(quote?.dueDate),
                 orderNumber: quote?.number,
                 quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
                   <span key={index}>
@@ -1282,6 +1283,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
             return {
               ...baseRow,
+              deliveryDate: formatISODateTime(quote?.dueDate),
               orderNumber: quote?.number,
               quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
                 <span key={index}>
