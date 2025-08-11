@@ -95,9 +95,9 @@ const useSalesDashboardFilters = () => {
   };
 
   const jobTypesCategories = [
-    { id: "internal", label: "Internal" },
-    { id: "partial-out-source", label: "Partial Out Source" },
-    { id: "out-source", label: "Out Source" },
+    { id: "internal", label: t("dashboard.internal") },
+    { id: "partial-out-source", label: t("dashboard.partialOutSource") },
+    { id: "out-source", label: t("dashboard.outSource") },
   ];
 
   const toggleJobType = (id: string) => {
