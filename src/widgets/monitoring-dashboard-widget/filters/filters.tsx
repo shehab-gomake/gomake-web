@@ -25,6 +25,10 @@ const DashboardFilters = () => {
     toggleClientType,
     selectedClientTypesIds,
     clientTypesCategories,
+    toggleAllJobTypes,
+    toggleJobType,
+    selectedJobTypesIds,
+    jobTypesCategories,
   } = useSalesDashboardFilters();
 
   return (
@@ -38,6 +42,13 @@ const DashboardFilters = () => {
         onToggle={toggleClientType}
         onToggleAll={toggleAllClientTypes}
         buttonLabel={t("customers.modal.clientType")}
+      />
+      <MultiSelectDropdown
+        items={jobTypesCategories}
+        selectedIds={selectedJobTypesIds}
+        onToggle={toggleJobType}
+        onToggleAll={toggleAllJobTypes}
+        buttonLabel={t("dashboard.jobType")}
       />
       <MultiSelectDropdown
         items={agentsCategories}

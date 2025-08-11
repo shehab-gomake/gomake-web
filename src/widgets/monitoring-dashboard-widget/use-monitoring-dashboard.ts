@@ -17,6 +17,7 @@ import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
 import { selectedProductsIdsState } from "./filters/states/selected-product-id";
 import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
 import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
+import { selectedJobTypesIdsState } from "./filters/states/selected-job-types-ids";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
@@ -98,6 +99,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
+      }),
 
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -133,6 +137,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -172,6 +179,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
@@ -193,10 +203,8 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
-          row?.totalCalculatedPrice
-            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
-                2
-              )}%`
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
@@ -224,6 +232,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
@@ -246,10 +257,8 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
-          row?.totalCalculatedPrice
-            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
-                2
-              )}%`
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
@@ -277,6 +286,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
@@ -299,10 +311,8 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
-          row?.totalCalculatedPrice
-            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
-                2
-              )}%`
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
@@ -329,6 +339,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedJobTypesIds?.length && {
+        jobTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -371,6 +384,7 @@ const useMonitoringDashboard = () => {
 
   const { dates } = useRecoilValue(dashboardDateState);
   const selectedClientTypesIds = useRecoilValue(selectedClientTypesIdsState);
+  const selectedJobTypesIds = useRecoilValue(selectedJobTypesIdsState);
   const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
   const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
@@ -385,6 +399,7 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedJobTypesIds,
       selectedClient,
       selectedDataType,
     }),
@@ -395,6 +410,7 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedJobTypesIds,
       selectedClient,
       selectedDataType,
     ]
@@ -428,6 +444,7 @@ const useMonitoringDashboard = () => {
     selectedProductsIds,
     selectedProductTypesIds,
     selectedClientTypesIds,
+    selectedJobTypesIds,
     filters,
     currUnit,
     selectedClient,
