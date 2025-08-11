@@ -8,6 +8,8 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
 import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { exportDashboardToExcel } from "./utils/export-to-excel";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -53,6 +55,21 @@ const MonitoringDashboardWidget = () => {
 
     fetchAllData();
   }, [filters]);
+
+  const handleExportToExcel = () => {
+    const exportData = {
+      agentsData: agentsRow || [],
+      productsData: productsRow || [],
+      clientsData: clientsRow || [],
+      agentHeaders: agentTableHeaders || [],
+      productHeaders: productTableHeaders || [],
+      clientHeaders: clientTableHeaders || [],
+      statistics,
+      salesItems: salesItems || [],
+    };
+
+    exportDashboardToExcel(exportData, "monitoring-dashboard");
+  };
 
   const renderTableSection = (
     title: string,
@@ -108,7 +125,32 @@ const MonitoringDashboardWidget = () => {
   return (
     <div style={classes.container}>
       <div style={classes.subContainer}>
-        <DashboardFilters />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 2,
+          }}
+        >
+          <DashboardFilters />
+          <Button
+            variant="contained"
+            startIcon={<FileDownloadIcon />}
+            onClick={handleExportToExcel}
+            sx={{
+              backgroundColor: "#1976d2",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#1565c0",
+              },
+              minWidth: "180px",
+              height: "40px",
+            }}
+          >
+            {t("dashboard.exportToExcel")}
+          </Button>
+        </Box>
       </div>
       {statistics ? (
         <Cards data={statistics} currUnit={currUnit} />
