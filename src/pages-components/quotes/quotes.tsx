@@ -428,7 +428,7 @@ const QuotesListPageWidget = ({
         } else {
           setColumnOrder(allColumnKeys);
           setColumnVisibility(
-            Object.fromEntries(allColumnKeys.map((key) => [key, false])) // Default to false (unchecked)
+            Object.fromEntries(allColumnKeys.map((key) => [key, true])) // Default to true (checked) when API returns empty
           );
         }
       } catch (error) {
