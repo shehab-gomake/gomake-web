@@ -22,6 +22,7 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
 import { selectedDocumentTypeState } from "./filters/states/selected-document-type";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -40,6 +41,7 @@ const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { getCurrencyUnitText } = useQuoteGetData();
+  const { primaryColor } = useGomakeTheme();
   const [statistics, setStatistics] = useState();
   const [salesItems, setSalesItems] = useState<
     {
@@ -472,13 +474,13 @@ const useMonitoringDashboard = () => {
     currUnit,
     selectedClient,
     selectedDataType,
-
     visibleAgentRows,
     setVisibleAgentRows,
     visibleProductRows,
     setVisibleProductRows,
     visibleClientRows,
     setVisibleClientRows,
+    primaryColor,
   };
 };
 

@@ -10,6 +10,8 @@ import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-ch
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { exportDashboardToExcel } from "./utils/export-to-excel";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -39,6 +41,7 @@ const MonitoringDashboardWidget = () => {
     setVisibleProductRows,
     visibleClientRows,
     setVisibleClientRows,
+    primaryColor,
   } = useMonitoringDashboard();
 
   useEffect(() => {
@@ -122,6 +125,14 @@ const MonitoringDashboardWidget = () => {
     );
   };
 
+  const menuActions = [
+    {
+      name: t("dashboard.exportToExcel"),
+      onclick: handleExportToExcel,
+      icon: <FileDownloadOutlinedIcon style={{ color: primaryColor(300) }} />,
+    },
+  ];
+
   return (
     <div style={classes.container}>
       <div style={classes.subContainer}>
@@ -129,27 +140,17 @@ const MonitoringDashboardWidget = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 2,
+            alignItems: "baseline",
           }}
         >
           <DashboardFilters />
-          <Button
-            variant="contained"
-            startIcon={<FileDownloadIcon />}
-            onClick={handleExportToExcel}
-            sx={{
-              backgroundColor: "#1976d2",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#1565c0",
-              },
-              minWidth: "180px",
-              height: "40px",
-            }}
-          >
-            {t("dashboard.exportToExcel")}
-          </Button>
+          <ReportActionsMenu
+            actions={menuActions.map((action) => ({
+              name: action.name,
+              icon: action.icon,
+              onClick: action.onclick,
+            }))}
+          />
         </Box>
       </div>
       {statistics ? (
