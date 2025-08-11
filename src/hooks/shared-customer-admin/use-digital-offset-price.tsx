@@ -100,6 +100,7 @@ import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket
 import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useModal } from "../use-modal";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 export interface SampleTypeOption {
   value: number;
@@ -1175,6 +1176,100 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
 
+  const validateMaterialExists = (parameter, allMaterials, subSection) => {
+    if (!parameter.valueIds || parameter.valueIds.length === 0) {
+      return false;
+    }
+
+    // Get the material path from the parameter
+    const materialPath = parameter.materialPath;
+    if (!materialPath || materialPath.length === 0) return true; // If no material path, we can't validate
+
+    const selectedValueId = parameter.valueIds[0];
+
+    // For single level material path
+    if (materialPath.length === 1) {
+      const material = allMaterials?.find(item =>
+        compareStrings(item.pathName, materialPath[0])
+      );
+
+      if (!material || !material.data) {
+        return false;
+      }
+
+      // Check if the value exists in the material data
+      return material.data.some(item =>
+        item.valueId === selectedValueId ||
+        compareStrings(item.valueId, selectedValueId)
+      );
+    }
+
+    // For multi-level material path (like sheets -> weights -> colors)
+    if (materialPath.length > 1) {
+      let materialData = allMaterials?.find(item =>
+        compareStrings(item.pathName, materialPath[0])
+      )?.data;
+
+      if (!materialData) return false;
+
+      // Navigate through the material path hierarchy
+      let searchPath = "";
+      for (let i = 0; i < materialPath.length - 1; i++) {
+        searchPath += materialPath[i];
+
+        // Find the previous parameter in the hierarchy
+        const prevParameter = subSection.parameters.find(p =>
+          p.materialPath &&
+          p.materialPath.join("") === searchPath &&
+          p.actionIndex === parameter.actionIndex
+        );
+
+        if (prevParameter && prevParameter.valuesConfigs) {
+          // Get the selected value from the previous parameter
+          let value = prevParameter.valuesConfigs.find(x => x.isDefault);
+
+          if (!value && prevParameter.valuesConfigs.length === 1 && prevParameter.isRequired) {
+            value = prevParameter.valuesConfigs[0];
+          }
+
+          // If we need to check the actual selected value from subProducts
+          const subProductParam = parameter.subProductParameters?.find(
+            p => p.parameterId === prevParameter.id
+          );
+
+          if (subProductParam && subProductParam.valueIds?.length > 0) {
+            const selectedId = subProductParam.valueIds[0];
+            materialData = materialData?.find(x =>
+              x.valueId === selectedId || compareStrings(x.valueId, selectedId)
+            )?.data;
+          } else if (value && value.valueIds?.length > 0) {
+            materialData = materialData?.find(x =>
+              x.valueId === value.valueIds[0] || compareStrings(x.valueId, value.valueIds[0])
+            )?.data;
+          } else if (value) {
+            materialData = materialData?.find(x =>
+              x.valueId === value.id || compareStrings(x.valueId, value.id)
+            )?.data;
+          } else {
+            materialData = null;
+          }
+        }
+      }
+
+      // Check if the selected value exists in the final material data
+      if (!materialData) return false;
+
+      return materialData.some(item =>
+        item.valueId === selectedValueId ||
+        compareStrings(item.valueId, selectedValueId)
+      );
+    }
+
+    return true;
+  };
+
+  const [removedMaterialParameters, setRemovedMaterialParameters] = useState({});
+
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -1840,6 +1935,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         });
+        const removedParams = {};
+
         const filteredSubProductsArray = subProductsArray.map((subProduct) => {
           const hasDieCutOrKissCut = subProduct.parameters.some(
             (parameter) =>
@@ -1849,8 +1946,61 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           return {
             ...subProduct,
-            parameters: subProduct.parameters.filter(parameter => parameter.values && parameter.values.length > 0
-              && parameter.values[0] !== null && parameter.values[0] !== undefined && parameter.values[0] !== "")
+            parameters: subProduct.parameters
+              .filter(parameter => {
+                // Special validation for SELECT_MATERIALS in EDIT/DUPLICATE mode
+                if (parameter.parameterType === EParameterTypes.SELECT_MATERIALS &&
+                  (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE)) {
+
+                  // Find the corresponding section and subsection for this parameter
+                  const section = sectionData.find(s => s.id === parameter.sectionId);
+                  const subSection = section?.subSections.find(ss => ss.id === parameter.subSectionId);
+
+                  if (subSection) {
+                    // Get the parameter definition from the template
+                    const templateParameter = subSection.parameters.find(p =>
+                      p.id === parameter.parameterId &&
+                      p.actionIndex === parameter.actionIndex
+                    );
+
+                    if (templateParameter && templateParameter.materialPath) {
+                      // Create a temporary object for validation instead of modifying the original
+                      const parameterForValidation = {
+                        ...parameter,
+                        materialPath: templateParameter.materialPath,
+                        subProductParameters: subProduct.parameters
+                      };
+
+                      // Validate if the material value still exists
+                      const isValid = validateMaterialExists(parameterForValidation, allMaterials, subSection);
+
+                      if (!isValid) {
+                        // Save the removed parameter info
+                        const paramKey = `${parameter.parameterId}_${parameter.sectionId}_${parameter.subSectionId}_${parameter.actionIndex || 0}`;
+                        removedParams[paramKey] = {
+                          parameterId: parameter.parameterId,
+                          parameterName: parameter.parameterName,
+                          parameterCode: parameter.parameterCode,
+                          values: parameter.values,
+                          valueIds: parameter.valueIds,
+                          sectionId: parameter.sectionId,
+                          subSectionId: parameter.subSectionId,
+                          actionIndex: parameter.actionIndex,
+                        };
+
+                        return false; // Remove this parameter
+                      }
+                    }
+                  }
+                }
+
+                // Existing filter conditions
+                return parameter.values &&
+                  parameter.values.length > 0 &&
+                  parameter.values[0] !== null &&
+                  parameter.values[0] !== undefined &&
+                  parameter.values[0] !== "";
+              })
               .map((parameter) => {
                 if (
                   hasDieCutOrKissCut &&
@@ -1872,6 +2022,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }),
           };
         });
+        if (Object.keys(removedParams).length > 0) {
+          setRemovedMaterialParameters(prev => ({
+            ...prev,
+            ...removedParams
+          }));
+        }
         setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
@@ -3182,24 +3338,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
     ) {
+      const paramKey = `${parameter.id}_${section.id}_${subSection.id}_${parameter.actionIndex || 0}`;
+      const removedParam = removedMaterialParameters[paramKey];
       Comp = (
-        <DropDownListParameterWidget
-          parameter={parameter}
-          clasess={clasess}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          selectedValueConfig={selectedValueConfig}
-          inModal={inModal}
-          setSelectedValueConfig={setSelectedValueConfig}
-          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
-          subSectionParameters={subSectionParameters}
-          list={list}
-          setDeviceCategory={setDeviceCategory}
-          setDeviceSize={setDeviceSize}
-        />
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <DropDownListParameterWidget
+            parameter={parameter}
+            clasess={clasess}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            selectedValueConfig={selectedValueConfig}
+            inModal={inModal}
+            setSelectedValueConfig={setSelectedValueConfig}
+            onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+            subSectionParameters={subSectionParameters}
+            list={list}
+            setDeviceCategory={setDeviceCategory}
+            setDeviceSize={setDeviceSize}
+          />
+          {
+            removedParam && <div style={{ ...FONT_FAMILY.Lexend(500, 12) }}>
+              {t("products.offsetPrice.admin.removedData")} {removedParam?.values[0]}
+            </div>
+          }
+        </div>
       );
     }
     else if (
@@ -4641,13 +4806,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      // if (
-      //   findIndex !== -1 &&
-      //   data?.values === null &&
-      //   data?.valueIds === null
-      // ) {
-      //   temp.splice(findIndex, 1);
-      // }
+
       var valueConfig = subSectionParameter?.valuesConfigs?.find(
         (x) => x.id === data.valueIds
       );
@@ -4720,6 +4879,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ...temp[findIndex],
           values: [data.values],
           valueIds: [data.valueIds],
+          actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
         };
 
         if (valuesArray.length > 0 && valuesArray[0] !== "false") {
@@ -4727,6 +4887,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             ...temp[findIndex],
             values: valuesArray,
             valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
+            actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
           };
           addRelatedParametersWithDefaultValues(
             parameterId,
@@ -4756,7 +4917,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           ParameterType: ParameterType,
           isQuantityParameter: subSectionParameter?.isQuantityParameter,
           parameterName: parameterName,
-          actionId: actionId,
+          actionId: valueConfig && ParameterType !== EParameterTypes.SELECT_MATERIALS ? valueConfig?.activateAction ? actionId : null : actionId,
           values: [data.values],
           valueIds: [data.valueIds],
           actionIndex,
@@ -5681,6 +5842,107 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       }
+      if (data?.values !== null && data?.valueIds !== null &&
+        (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE)) {
+
+        // Remove the current parameter from removedMaterialParameters
+        const paramKey = `${parameterId}_${sectionId}_${subSectionId}_${actionIndex || 0}`;
+
+        if (removedMaterialParameters[paramKey]) {
+          setRemovedMaterialParameters(prev => {
+            const newState = { ...prev };
+            delete newState[paramKey];
+            return newState;
+          });
+        }
+
+        // Check and remove related parameters
+        if (subSectionParameter?.relatedParameters && subSectionParameter.relatedParameters.length > 0) {
+          const relatedParamKeysToRemove = [];
+
+          subSectionParameter.relatedParameters.forEach((relatedParam) => {
+            // Check if this related parameter exists in the updated temp array
+            const relatedParamExists = temp.find(
+              (param) =>
+                param.parameterId === relatedParam.parameterId &&
+                param.sectionId === sectionId &&
+                param.subSectionId === subSectionId &&
+                param.actionIndex === (relatedParam.actionIndex !== undefined ? relatedParam.actionIndex : actionIndex)
+            );
+
+            // If the related parameter exists and has values, remove it from removedMaterialParameters
+            if (relatedParamExists && relatedParamExists.values && relatedParamExists.values.length > 0) {
+              const relatedParamKey = `${relatedParam.parameterId}_${sectionId}_${subSectionId}_${relatedParam.actionIndex || actionIndex || 0}`;
+
+              if (removedMaterialParameters[relatedParamKey]) {
+                relatedParamKeysToRemove.push(relatedParamKey);
+              }
+            }
+          });
+
+          // Remove all related parameters from removedMaterialParameters
+          if (relatedParamKeysToRemove.length > 0) {
+            setRemovedMaterialParameters(prev => {
+              const newState = { ...prev };
+              relatedParamKeysToRemove.forEach(key => {
+                delete newState[key];
+              });
+              return newState;
+            });
+          }
+        }
+
+        // Also check for material path related parameters (if it's a SELECT_MATERIALS type)
+        if (subSectionParameter?.parameterType === EParameterTypes.SELECT_MATERIALS &&
+          subSectionParameter?.materialPath &&
+          subSectionParameter.materialPath.length > 0) {
+
+          const materialPath = subSectionParameter.materialPath[subSectionParameter.materialPath.length - 1];
+          const section = productTemplateCopy.sections.find(s => s.id === sectionId);
+          const subSection = section?.subSections.find(ss => ss.id === subSectionId);
+
+          if (subSection) {
+            const materialRelatedParameters = subSection.parameters.filter(
+              (x) =>
+                x.id !== subSectionParameter.id &&
+                x.actionIndex === actionIndex &&
+                x.materialPath?.find((y) => compareStrings(y, materialPath))
+            );
+
+            const materialRelatedKeysToRemove = [];
+
+            materialRelatedParameters.forEach((materialParam) => {
+              // Check if this material-related parameter exists in temp
+              const materialParamExists = temp.find(
+                (param) =>
+                  param.parameterId === materialParam.id &&
+                  param.sectionId === sectionId &&
+                  param.subSectionId === subSectionId &&
+                  param.actionIndex === materialParam.actionIndex
+              );
+
+              if (materialParamExists && materialParamExists.values && materialParamExists.values.length > 0) {
+                const materialParamKey = `${materialParam.id}_${sectionId}_${subSectionId}_${materialParam.actionIndex || 0}`;
+
+                if (removedMaterialParameters[materialParamKey]) {
+                  materialRelatedKeysToRemove.push(materialParamKey);
+                }
+              }
+            });
+
+            // Remove material-related parameters from removedMaterialParameters
+            if (materialRelatedKeysToRemove.length > 0) {
+              setRemovedMaterialParameters(prev => {
+                const newState = { ...prev };
+                materialRelatedKeysToRemove.forEach(key => {
+                  delete newState[key];
+                });
+                return newState;
+              });
+            }
+          }
+        }
+      }
 
       let temp2 = [...subProducts];
       const index2 = temp2.findIndex((item) => item.type === subSectionType);
@@ -6568,8 +6830,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       createDefaultWorkFlowApi();
     } else {
       const workflowValidation = validateWorkflows(workFlows[0]);
-      console.log("workflowValidation", workflowValidation)
-
       if (workflowValidation.isValid) {
         // If workflows are valid, proceed to validate parameters
         let checkParameter = validateParameters(subProducts);

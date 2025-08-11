@@ -73,6 +73,7 @@ export const documentColumnKeys: Record<string, string[]> = {
     "supplierName",
     "client",
     "itemsNumber",
+    "totalPriceWithoutVat",
     "totalPrice",
     "notes",
     "status",
@@ -85,6 +86,7 @@ export const documentColumnKeys: Record<string, string[]> = {
     "purchaseOrderNumber",
     "supplierName",
     "itemsNumber",
+    "totalPriceWithoutVat",
     "totalPrice",
     "notes",
     "status",
@@ -185,7 +187,8 @@ export const documentColumnWidthsMap: Record<string, Record<string, string>> = {
     orderNumber: "8%",
     supplierName: "8%",
     client: "10%",
-    itemsNumber: "23%",
+    itemsNumber: "13%",
+    totalPriceWithoutVat: "10%",
     totalPrice: "10%",
     notes: "10%",
     status: "10%",
@@ -198,6 +201,7 @@ export const documentColumnWidthsMap: Record<string, Record<string, string>> = {
     purchaseOrderNumber: "13%",
     supplierName: "10%",
     itemsNumber: "10%",
+    totalPriceWithoutVat: "10%",
     totalPrice: "10%",
     notes: "10%",
     status: "10%",
@@ -236,6 +240,10 @@ export const getDocumentCustomWidth = (
   return documentColumnWidthsMap[tableKey]?.[columnKey] ?? "auto";
 };
 
+/**
+ * Parse saved column settings and handle new columns that weren't previously saved
+ * New columns are positioned according to documentColumnKeys order and default to visible: false (unchecked)
+ */
 export const parseSavedColumnSettings = (
   settings: ColumnSetting[],
   allKeys: string[]
@@ -243,10 +251,13 @@ export const parseSavedColumnSettings = (
   const visibility = Object.fromEntries(
     allKeys.map((key) => {
       const found = settings.find((s) => s.key === key);
-      return [key, found?.visible ?? true];
+      return [key, found?.visible ?? false]; // New columns (not in saved settings) default to false (unchecked)
     })
   );
-  const order = settings.map((s) => s.key);
+
+  // Simply use the documentColumnKeys order as defined
+  const order = [...allKeys];
+
   return { visibility, order };
 };
 
@@ -257,7 +268,7 @@ export const columnVisibilityStateFamily = atomFamily<
 >({
   key: "documentColumnVisibilityStateFamily",
   default: (tableKey) =>
-    Object.fromEntries(documentColumnKeys[tableKey].map((key) => [key, true])),
+    Object.fromEntries(documentColumnKeys[tableKey].map((key) => [key, false])), // Default to false (unchecked)
 });
 
 // Order state per document table

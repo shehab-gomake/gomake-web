@@ -17,7 +17,7 @@ import {
   ParametersMapping,
   TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CheckIcon from "@mui/icons-material/Check";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/stations/style";
@@ -31,7 +31,6 @@ import {
   boardMissionsUpdateActionMachine,
   cancelBoardMissionsActionDone,
   getBoardMissionActionMaterialsApi,
-  toggleBoardMissionsActionTimer,
   updateBoardMissionsActionDoneWithMaterialsApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -40,7 +39,6 @@ import Button from "@mui/material/Button";
 import { GomakeTextInput } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -48,6 +46,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import {
   boardMissionsStationsState,
   isOrderCompletedState,
+  isPackagingModalOpenState,
   isPrintNodeModalOpenState,
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -136,7 +135,8 @@ const BoardMissionsStationActionItem = ({
   }, [supplierId, suppliers, suppliersState]);
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   const setIsPrintNodeModalOpen = useSetRecoilState(isPrintNodeModalOpenState);
-  const [openPackagingModal, setOpenPackagingModal] = useState<boolean>(false);
+  const [openPackagingModal, setOpenPackagingModal] = useRecoilState(isPackagingModalOpenState);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -400,12 +400,12 @@ const BoardMissionsStationActionItem = ({
     });
   };
 
-  // if isSubAction make problem delete it and use the useEffect
-  // useEffect(() => {
-  //   setIsOpen(!!selected);
-  // }, [selected]);
-
   const [isHovered, setIsHovered] = useState(false);
+
+  // Modify the modal close handler
+  const handleClosePackagingModal = () => {
+    setOpenPackagingModal(false);
+  };
 
   return (
     <>
@@ -1036,9 +1036,7 @@ const BoardMissionsStationActionItem = ({
         boardMissionId={boardMissions.boardMissionId}
         quantity={boardMissions.quantity}
         openModal={openPackagingModal}
-        onClose={() => {
-          setOpenPackagingModal(false);
-        }}
+        onClose={handleClosePackagingModal}
       />
     </>
   );

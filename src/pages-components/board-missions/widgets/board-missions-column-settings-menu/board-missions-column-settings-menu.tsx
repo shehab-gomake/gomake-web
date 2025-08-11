@@ -59,12 +59,27 @@ export const BoardMissionsColumnSettingsMenu = ({
     columnOrderStateFamily(tableKey)
   );
 
-  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
-    ...columnVisibility,
-  }));
-  const [tempColumnOrder, setTempColumnOrder] = useState(() => [
-    ...columnOrder,
-  ]);
+  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => {
+    // Ensure all keys from filteredKeys are included in visibility, defaulting new ones to false (unchecked)
+    // This handles the case where new columns are added to jobsColumnKeys
+    const completeVisibility = { ...columnVisibility };
+    filteredKeys.forEach((key) => {
+      if (!(key in completeVisibility)) {
+        completeVisibility[key] = false; // New columns are unchecked by default
+      }
+    });
+    return completeVisibility;
+  });
+  const [tempColumnOrder, setTempColumnOrder] = useState(() => {
+    // Ensure all keys from filteredKeys are included in order
+    const completeOrder = [...columnOrder];
+    filteredKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key); // Add new columns at the end
+      }
+    });
+    return completeOrder;
+  });
 
   const draggingOrderRef = useRef([...columnOrder]);
 
@@ -111,8 +126,23 @@ export const BoardMissionsColumnSettingsMenu = ({
   };
 
   const handleCancel = () => {
-    setTempColumnVisibility({ ...columnVisibility });
-    setTempColumnOrder([...columnOrder]);
+    // Reset to current state, ensuring all keys are included
+    const completeVisibility = { ...columnVisibility };
+    filteredKeys.forEach((key) => {
+      if (!(key in completeVisibility)) {
+        completeVisibility[key] = false;
+      }
+    });
+
+    const completeOrder = [...columnOrder];
+    filteredKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key);
+      }
+    });
+
+    setTempColumnVisibility(completeVisibility);
+    setTempColumnOrder(completeOrder);
     handleClose();
   };
 
@@ -133,8 +163,29 @@ export const BoardMissionsColumnSettingsMenu = ({
   useEffect(() => {
     if (open) {
       draggingOrderRef.current = [...columnOrder];
+
+      // Check for new columns and add them to temp state
+      const newKeys = filteredKeys.filter(
+        (key) => !(key in tempColumnVisibility)
+      );
+      if (newKeys.length > 0) {
+        setTempColumnVisibility((prev) => {
+          const updated = { ...prev };
+          newKeys.forEach((key) => {
+            updated[key] = false; // New columns are unchecked by default
+          });
+          return updated;
+        });
+      }
+
+      const missingKeys = filteredKeys.filter(
+        (key) => !tempColumnOrder.includes(key)
+      );
+      if (missingKeys.length > 0) {
+        setTempColumnOrder((prev) => [...prev, ...missingKeys]);
+      }
     }
-  }, [open, columnOrder]);
+  }, [open, columnOrder, filteredKeys, tempColumnVisibility, tempColumnOrder]);
 
   return (
     <>

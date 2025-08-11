@@ -78,7 +78,7 @@ const useStatusTable = () => {
         ),
       }),
       job_order: `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
-      deliveryDate: t("sales.quote.deliveryDate"),
+      deliveryDate: t("sales.quote.deliveryDate"), //!here after
       customer: t("productionFloor.customer"),
       agent: t("productionFloor.agent"),
       productName: t("sales.quote.productName"),

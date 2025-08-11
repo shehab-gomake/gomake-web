@@ -73,6 +73,12 @@ export const isPrintNodeModalOpenState = atom({
   default: false,
 });
 
+export const isPackagingModalOpenState = atom({
+  key: "isPackagingModalOpenState",
+  default: false,
+});
+
+
 
 
 

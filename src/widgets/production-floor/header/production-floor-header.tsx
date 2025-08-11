@@ -2,6 +2,7 @@ import { Breadcrumbs, ButtonGroup, Link, Stack, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import { useProductionFloorHeader } from "@/widgets/production-floor/header/use-production-floor-header";
 import { EProductionFloorView } from "@/widgets/production-floor/state/production-floor-view";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -21,6 +22,8 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { DoneJobsIcon } from "./components/icons/done-jobs";
+import { ColumnSettingsMenuContent } from "@/widgets/production-floor/table-view/components/column-settings-menu";
+import { useState } from "react";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -43,22 +46,34 @@ const ProductionFloorHeader = ({
   const { CheckPermission } = useUserPermission();
   const isMobileScreen = useIsMobile();
 
+  // State for column settings menu
+  const [columnSettingsAnchorEl, setColumnSettingsAnchorEl] = useState(null);
+  const columnSettingsOpen = Boolean(columnSettingsAnchorEl);
+
+  const handleColumnSettingsOpen = (event) => {
+    setColumnSettingsAnchorEl(event.currentTarget);
+  };
+
+  const handleColumnSettingsClose = () => {
+    setColumnSettingsAnchorEl(null);
+  };
+
   const _renderTitleComponent = () => {
     switch (view) {
       case EProductionFloorView.TABLE:
-        return t("productionFloor.productionFloorTable")
+        return t("productionFloor.productionFloorTable");
       case EProductionFloorView.KANBAN:
-        return t("productionFloor.productionFloorKanban")
+        return t("productionFloor.productionFloorKanban");
       case EProductionFloorView.DASHBOARD:
-        return t("productionFloor.dashboard")
+        return t("productionFloor.dashboard");
       case EProductionFloorView.GANTT:
-        return t("productionFloor.timeline")
+        return t("productionFloor.timeline");
       case EProductionFloorView.DONE_JOBS:
-        return t("productionFloor.archive")
+        return t("productionFloor.archive");
       default:
-        return t("tabs.productFloor")
+        return t("tabs.productFloor");
     }
-  }
+  };
 
   return (
     <Stack
@@ -125,20 +140,40 @@ const ProductionFloorHeader = ({
       </Stack>
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {view !== EProductionFloorView.DASHBOARD && (
-          <ActionsListComponent
-            filterGroups={filterGroups}
-            setFilterGroups={setFilterGroups}
-            source={Source.PRODUCTION_FLOOR}
-            onClickApply={onStationsChange}
-            buttonElement={
-              <PrimaryButton
-                style={{ minWidth: "40px", height: "40px", padding: 0 }}
-                variant={"outlined"}
-              >
-                <SettingsIcon />
-              </PrimaryButton>
-            }
-          />
+          <>
+            <ActionsListComponent
+              filterGroups={filterGroups}
+              setFilterGroups={setFilterGroups}
+              source={Source.PRODUCTION_FLOOR}
+              onClickApply={onStationsChange}
+              buttonElement={
+                <PrimaryButton
+                  style={{ minWidth: "40px", height: "40px", padding: 0 }}
+                  variant={"outlined"}
+                >
+                  <SettingsIcon />
+                </PrimaryButton>
+              }
+            />
+            {view === EProductionFloorView.TABLE && (
+              <Tooltip title={t("general.columnVisibility")}>
+                <PrimaryButton
+                  style={{ minWidth: "40px", height: "40px", padding: 0 }}
+                  variant={"outlined"}
+                  onClick={handleColumnSettingsOpen}
+                >
+                  <ViewColumnIcon />
+                </PrimaryButton>
+              </Tooltip>
+            )}
+            {view === EProductionFloorView.TABLE && (
+              <ColumnSettingsMenuContent
+                anchorEl={columnSettingsAnchorEl}
+                open={columnSettingsOpen}
+                onClose={handleColumnSettingsClose}
+              />
+            )}
+          </>
         )}
         <SelectGroup />
         <ButtonGroup dir={"ltr"}>
@@ -146,11 +181,12 @@ const ProductionFloorHeader = ({
             <PrimaryButton
               style={{ width: "40px", height: "40px", padding: 0 }}
               variant={
-                view === EProductionFloorView.DONE_JOBS ? "contained" : "outlined"
+                view === EProductionFloorView.DONE_JOBS
+                  ? "contained"
+                  : "outlined"
               }
               onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
             >
-
               <DoneJobsIcon />
             </PrimaryButton>
           </Tooltip>
@@ -167,14 +203,15 @@ const ProductionFloorHeader = ({
                 <HourglassEmptyRoundedIcon />
               </PrimaryButton>
             </Tooltip>
-
           )}
 
           <Tooltip title={t("productionFloor.dashboard")}>
             <PrimaryButton
               style={{ width: "40px", height: "40px", padding: 0 }}
               variant={
-                view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
+                view === EProductionFloorView.DASHBOARD
+                  ? "contained"
+                  : "outlined"
               }
               onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
             >

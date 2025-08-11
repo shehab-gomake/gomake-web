@@ -12,57 +12,66 @@ import {
 } from "@/widgets/file-uploader-widget/interface";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
-import { useState } from "react";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
-const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean,productType?:string,isOpenPrintingModal?:any) => {
+const useUploadFiles = (
+  orderItemId, 
+  filesPath, 
+  graphicsFilePath,
+  isComplexProduct?: boolean,
+  productType?: string,
+  isOpenPrintingModal?: any
+) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
-  const [fileId, setFileId] = useState<string>("");
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const { callApi } = useGomakeAxios();
 
   const handleFileUpload = async (file, fileType) => {
-    const finalPath =
-      fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
+    const finalPath = fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
     setShowFileUploader(true);
 
-    const filesGroup = uploadingFiles?.find(
+    // Generate a unique identifier for this file upload
+    const uploadId = `${orderItemId}_${file.name}_${Date.now()}`;
+
+    // Update files state to show uploading status
+    const currentFilesGroup = uploadingFiles?.find(
       (fg) => fg.orderItemId === orderItemId && fg.productType === productType
     );
-    debugger
-    if (filesGroup) {
-      setUploadingFiles(
-        uploadingFiles.map((fg) =>
+
+    if (currentFilesGroup) {
+      setUploadingFiles(prev =>
+        prev.map((fg) =>
           fg.orderItemId === orderItemId && fg.productType === productType
             ? {
-                ...filesGroup,
+                ...fg,
                 filesInfo: [
                   {
                     fileName: file?.name,
                     fileStatus: EUploadingFileStatus.UPLOADING,
                     fileType,
+                    uploadId, // Add uploadId to track this specific upload
                   },
-                  ...filesGroup.filesInfo,
+                  ...fg.filesInfo,
                 ],
               }
             : fg
         )
       );
     } else {
-      setUploadingFiles([
+      setUploadingFiles(prev => [
         {
           orderItemId,
           boardMissionId: boardMissions.boardMissionId,
           filePath: filesPath,
           graphicsFilePath: graphicsFilePath,
-          productType:productType,
+          productType: productType,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
           hotFolderName: file?.hotFolderName,
           filesInfo: [
@@ -70,10 +79,11 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
               fileName: file?.name,
               fileStatus: EUploadingFileStatus.UPLOADING,
               fileType,
+              uploadId, // Add uploadId to track this specific upload
             },
           ],
         },
-        ...uploadingFiles,
+        ...prev,
       ]);
     }
 
@@ -88,51 +98,53 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       fileType,
     });
 
-    // Get the initial fileId from the response
-    const initialFileId = initialStatusResponse?.data?.data?.data;
-    if (initialFileId) {
-      setFileId(initialFileId);
-    }
+    // Get the fileId specific to this upload
+    const fileId = initialStatusResponse?.data?.data?.data;
 
-    // File upload logic remains unchanged
+    // File upload logic
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     let currentChunk = 0;
+    
     while (currentChunk < totalChunks) {
       const start = currentChunk * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
-      const hotFolderName = uploadingFiles?.find(
-        (fg) => fg.orderItemId === orderItemId
-      )?.hotFolderName;
+      
+      // Get the latest state for hotFolderName
+      const latestFilesGroup = uploadingFiles?.find(
+        (fg) => fg.orderItemId === orderItemId && fg.productType === productType
+      );
+      const hotFolderName = latestFilesGroup?.hotFolderName;
+
       let response = await uploadChunk(
         chunk,
         currentChunk,
         totalChunks,
         file?.name,
-        fileType, 
+        fileType,
         productType,
         hotFolderName,
-        filesGroup
+        fileId, // Pass the specific fileId for this upload
+        uploadId // Pass uploadId to identify this specific upload
       );
 
       if (!response || !response.success) {
-        setUploadingFiles(
-          uploadingFiles.map((fg) =>
+        // Update error status for this specific file
+        setUploadingFiles(prev =>
+          prev.map((fg) =>
             fg.orderItemId === orderItemId && fg.productType === productType
               ? {
-                  ...filesGroup,
-                  filesInfo: [
-                    {
-                      fileName: file?.name,
-                      fileStatus: EUploadingFileStatus.ERROR,
-                      fileType,
-                    },
-                    ...filesGroup.filesInfo,
-                  ],
+                  ...fg,
+                  filesInfo: fg.filesInfo.map(fileInfo =>
+                    fileInfo.uploadId === uploadId
+                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.ERROR }
+                      : fileInfo
+                  ),
                 }
               : fg
           )
         );
+        
         await setOrderItemFileStatus({
           orderItemId,
           filename: file?.name,
@@ -142,30 +154,30 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.ERROR,
           fileType,
-          fileId: initialFileId
+          fileId: fileId
         });
         return;
       }
 
       currentChunk++;
+      
       if (currentChunk === totalChunks) {
-        setUploadingFiles(
-          uploadingFiles.map((fg) =>
+        // Update success status for this specific file
+        setUploadingFiles(prev =>
+          prev.map((fg) =>
             fg.orderItemId === orderItemId && fg.productType === productType
               ? {
-                  ...filesGroup,
-                  filesInfo: [
-                    {
-                      fileName: file?.name,
-                      fileStatus: EUploadingFileStatus.Uploaded,
-                      fileType,
-                    },
-                    ...filesGroup.filesInfo,
-                  ],
+                  ...fg,
+                  filesInfo: fg.filesInfo.map(fileInfo =>
+                    fileInfo.uploadId === uploadId
+                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded }
+                      : fileInfo
+                  ),
                 }
               : fg
           )
         );
+        
         await setOrderItemFileStatus({
           orderItemId,
           filename: file?.name,
@@ -175,8 +187,19 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.Uploaded,
           fileType,
-          fileId: initialFileId
+          fileId: fileId
         });
+        
+        // Check if we should open printing modal
+        const finalFilesGroup = uploadingFiles?.find(
+          (fg) => fg.orderItemId === orderItemId && fg.productType === productType
+        );
+        
+        if (response?.success && 
+            CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && 
+            (!finalFilesGroup || finalFilesGroup.filesInfo.length <= 1)) {
+          isOpenPrintingModal?.open();
+        }
       }
     }
   };
@@ -189,7 +212,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     fileType,
     productType,
     hotFolderName,
-    filesGroup
+    fileId, // Now passed as parameter
+    uploadId // For tracking
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
@@ -197,15 +221,15 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
-    formData.append("hotFolderName", hotFolderName);
+    formData.append("hotFolderName", hotFolderName || "");
     formData.append(
       "takeScreenShot",
       chunkIndex + 1 === totalChunks ? "true" : "false"
     );
-    formData.append("currentPacket", chunkIndex + 1);
-    formData.append("totalPackets", totalChunks);
+    formData.append("currentPacket", (chunkIndex + 1).toString());
+    formData.append("totalPackets", totalChunks.toString());
     formData.append("signalRConnectId", connectionId);
-    formData.append("fileId", fileId);
+    formData.append("fileId", fileId || "");
 
     formData.append(
       "path",
@@ -225,9 +249,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       );
 
       const data = await response.json();
-      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && filesGroup?.filesInfo?.length < 1){
-        isOpenPrintingModal?.open();
-      }
       return data;
     } catch (error) {
       console.error("Error uploading chunk:", error);
@@ -250,6 +271,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     );
     return res;
   };
+
   return {
     handleFileUpload,
   };
