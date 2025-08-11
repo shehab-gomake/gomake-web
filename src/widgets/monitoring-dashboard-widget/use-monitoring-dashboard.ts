@@ -193,6 +193,11 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCalculatedPrice
+            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
+                2
+              )}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -241,6 +246,11 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCalculatedPrice
+            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
+                2
+              )}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -289,6 +299,11 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCalculatedPrice
+            ? `${((row?.totalProfit / row.totalCalculatedPrice) * 100).toFixed(
+                2
+              )}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -344,6 +359,7 @@ const useMonitoringDashboard = () => {
     t("dashboard.cost"),
     t("dashboard.profit"),
     t("dashboard.avgProfit"),
+    t("dashboard.profitMargin"),
     t("dashboard.avgPerOrder"),
     t("dashboard.os"),
     t("dashboard.successRate"),
