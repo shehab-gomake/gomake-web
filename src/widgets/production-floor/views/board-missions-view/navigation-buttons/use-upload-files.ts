@@ -149,9 +149,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
 
       currentChunk++;
       if (currentChunk === totalChunks) {
-        if(CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && filesGroup?.filesInfo?.length < 1){
-          isOpenPrintingModal?.open();
-        }
         setUploadingFiles(
           uploadingFiles.map((fg) =>
             fg.orderItemId === orderItemId && fg.productType === productType
@@ -228,7 +225,9 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
       );
 
       const data = await response.json();
-      
+      if(data?.success && CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && filesGroup?.filesInfo?.length < 1){
+        isOpenPrintingModal?.open();
+      }
       return data;
     } catch (error) {
       console.error("Error uploading chunk:", error);
