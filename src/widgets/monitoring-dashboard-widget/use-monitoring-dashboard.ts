@@ -100,7 +100,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
 
       ...(filters.selectedClient?.id && {
@@ -139,7 +139,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -180,7 +180,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -233,7 +233,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -287,7 +287,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
@@ -341,7 +341,7 @@ const useMonitoringDashboard = () => {
         clentTypes: filters.selectedClientTypesIds,
       }),
       ...(filters.selectedJobTypesIds?.length && {
-        jobTypes: filters.selectedJobTypesIds,
+        sourceTypes: filters.selectedJobTypesIds,
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],

@@ -1,8 +1,18 @@
 import { atom } from "recoil";
 
-const selectedJobTypesIdsState = atom({
+export enum SourceTypeEnum {
+  Internally,
+  Fully,
+  partially,
+}
+
+const selectedJobTypesIdsState = atom<number[]>({
   key: "selectedJobTypesIdsState",
-  default: ["internal", "partial-out-source", "out-source"],
+  default: [
+    SourceTypeEnum.Internally,
+    SourceTypeEnum.partially,
+    SourceTypeEnum.Fully,
+  ],
 });
 
 export { selectedJobTypesIdsState };

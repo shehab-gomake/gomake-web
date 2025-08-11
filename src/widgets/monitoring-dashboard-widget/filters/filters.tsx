@@ -48,7 +48,7 @@ const DashboardFilters = () => {
         selectedIds={selectedJobTypesIds}
         onToggle={toggleJobType}
         onToggleAll={toggleAllJobTypes}
-        buttonLabel={t("dashboard.jobType")}
+        buttonLabel={t("dashboard.sourceTypes")}
       />
       <MultiSelectDropdown
         items={agentsCategories}

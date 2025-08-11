@@ -8,7 +8,10 @@ import { selectedProductsIdsState } from "./states/selected-product-id";
 import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-down-list";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { selectedClientTypesIdsState } from "./states/selected-client-types-ids";
-import { selectedJobTypesIdsState } from "./states/selected-job-types-ids";
+import {
+  selectedJobTypesIdsState,
+  SourceTypeEnum,
+} from "./states/selected-job-types-ids";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
@@ -95,12 +98,12 @@ const useSalesDashboardFilters = () => {
   };
 
   const jobTypesCategories = [
-    { id: "internal", label: t("dashboard.internal") },
-    { id: "partial-out-source", label: t("dashboard.partialOutSource") },
-    { id: "out-source", label: t("dashboard.outSource") },
+    { id: SourceTypeEnum.Internally, label: t("dashboard.internal") },
+    { id: SourceTypeEnum.partially, label: t("dashboard.partialOutSource") },
+    { id: SourceTypeEnum.Fully, label: t("dashboard.outSource") },
   ];
 
-  const toggleJobType = (id: string) => {
+  const toggleJobType = (id: number) => {
     setSelectedJobTypesIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
