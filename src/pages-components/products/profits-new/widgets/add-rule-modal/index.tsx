@@ -809,6 +809,7 @@ const AddRuleModal = ({
                         rules[index]?.statement2?.type === 5 ||
                         rules[index]?.statement2?.type === 4 ||
                         rules[index]?.statement2?.type === 10 ||
+                        rules[index]?.statement2?.type === 13 ||
                         rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>

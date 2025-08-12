@@ -200,7 +200,7 @@ const BoardMissionsTable = ({
     scrollToIndex,
     scrollLeft,
   } = useVirtualScroll({
-    data: boards,
+    data: [...boards],
     itemHeight: ROW_HEIGHT,
     containerHeight: CONTAINER_HEIGHT,
     overscan: 10, // Render 10 extra rows above and below for smooth scrolling

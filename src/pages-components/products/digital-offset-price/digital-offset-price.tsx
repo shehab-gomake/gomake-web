@@ -591,7 +591,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={isLoadingPrice}
+                    disabled={isLoadingPrice || widgetType === EWidgetProductType.CALCULATION_ERROR}
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>

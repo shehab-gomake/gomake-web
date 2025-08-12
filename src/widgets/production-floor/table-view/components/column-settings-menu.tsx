@@ -34,7 +34,8 @@ interface DragItem {
   index: number;
 }
 
-export const ColumnSettingsMenu = () => {
+// New component that can be used as a menu without its own trigger
+export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   const { CheckPermission } = useUserPermission();
   const filteredKeys = allColumnKeys.filter(
     (key) =>
@@ -43,20 +44,33 @@ export const ColumnSettingsMenu = () => {
   );
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
 
   const [columnVisibility, setColumnVisibility] = useRecoilState(
     columnVisibilityState
   );
   const [columnOrder, setColumnOrder] = useRecoilState(columnOrderState);
 
-  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => ({
-    ...columnVisibility,
-  }));
-  const [tempColumnOrder, setTempColumnOrder] = useState(() => [
-    ...columnOrder,
-  ]);
+  const [tempColumnVisibility, setTempColumnVisibility] = useState(() => {
+    // Always start with all keys from allColumnKeys, defaulting new ones to false (unchecked)
+    // This ensures new columns are detected immediately on first opening
+    const completeVisibility = Object.fromEntries(
+      allColumnKeys.map((key) => [
+        key,
+        columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+      ])
+    );
+    return completeVisibility;
+  });
+  const [tempColumnOrder, setTempColumnOrder] = useState(() => {
+    // Ensure all keys from allColumnKeys are included in order
+    const completeOrder = [...columnOrder];
+    allColumnKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key); // Add new columns at the end
+      }
+    });
+    return completeOrder;
+  });
 
   const draggingOrderRef = useRef([...columnOrder]);
 
@@ -66,9 +80,6 @@ export const ColumnSettingsMenu = () => {
       [key]: !prev[key],
     }));
   };
-
-  const handleOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => setAnchorEl(null);
 
   const moveItem = useCallback((dragIndex: number, hoverIndex: number) => {
     const updated = [...draggingOrderRef.current];
@@ -100,13 +111,28 @@ export const ColumnSettingsMenu = () => {
     } catch (error) {
       console.error("Failed to save column settings", error);
     }
-    handleClose();
+    onClose();
   };
 
   const handleCancel = () => {
-    setTempColumnVisibility({ ...columnVisibility });
-    setTempColumnOrder([...columnOrder]);
-    handleClose();
+    // Reset to current state, ensuring all keys are included
+    const completeVisibility = Object.fromEntries(
+      allColumnKeys.map((key) => [
+        key,
+        columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+      ])
+    );
+
+    const completeOrder = [...columnOrder];
+    allColumnKeys.forEach((key) => {
+      if (!completeOrder.includes(key)) {
+        completeOrder.push(key);
+      }
+    });
+
+    setTempColumnVisibility(completeVisibility);
+    setTempColumnOrder(completeOrder);
+    onClose();
   };
 
   const handleHideAll = () => {
@@ -120,56 +146,69 @@ export const ColumnSettingsMenu = () => {
   };
 
   const handleResetOrder = () => {
-    setTempColumnOrder([...filteredKeys]);
+    setTempColumnOrder([...allColumnKeys]);
   };
 
   useEffect(() => {
     if (open) {
       draggingOrderRef.current = [...columnOrder];
+
+      // Always sync with current state when modal opens
+      const completeVisibility = Object.fromEntries(
+        allColumnKeys.map((key) => [
+          key,
+          columnVisibility[key] ?? false, // Use saved value if exists, otherwise false (unchecked)
+        ])
+      );
+
+      const completeOrder = [...columnOrder];
+      allColumnKeys.forEach((key) => {
+        if (!completeOrder.includes(key)) {
+          completeOrder.push(key);
+        }
+      });
+
+      setTempColumnVisibility(completeVisibility);
+      setTempColumnOrder(completeOrder);
     }
-  }, [open, columnOrder]);
+  }, [open, columnOrder, columnVisibility, allColumnKeys]);
 
   return (
-    <>
-      <Tooltip title={t("general.columnVisibility")}>
-        <IconButton onClick={handleOpen}>
-          <ViewColumnIcon />
-        </IconButton>
-      </Tooltip>
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={() => {
+        handleCancel();
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" px={1} py={1}>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleHideAll}
+        >
+          {t("productionFloor.hideAll")}
+        </PrimaryButton>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleResetOrder}
+        >
+          {t("productionFloor.resetOrder")}
+        </PrimaryButton>
+        <PrimaryButton
+          variant="text"
+          style={{ fontSize: 12, padding: "4px 8px" }}
+          onClick={handleShowAll}
+        >
+          {t("productionFloor.showAll")}
+        </PrimaryButton>
+      </Stack>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => {
-          handleCancel();
-        }}
-      >
-        <Stack direction="row" justifyContent="space-between" px={1} py={1}>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleHideAll}
-          >
-            {t("productionFloor.hideAll")}
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleResetOrder}
-          >
-            {t("productionFloor.resetOrder")}
-          </PrimaryButton>
-          <PrimaryButton
-            variant="text"
-            style={{ fontSize: 12, padding: "4px 8px" }}
-            onClick={handleShowAll}
-          >
-            {t("productionFloor.showAll")}
-          </PrimaryButton>
-        </Stack>
-
-        <DndProvider backend={HTML5Backend}>
-          {tempColumnOrder?.map((key, index) => (
+      <DndProvider backend={HTML5Backend}>
+        {tempColumnOrder
+          ?.filter((key) => filteredKeys.includes(key))
+          ?.map((key, index) => (
             <DraggableMenuItem
               key={key}
               id={key}
@@ -180,25 +219,21 @@ export const ColumnSettingsMenu = () => {
               moveItem={moveItem}
             />
           ))}
-        </DndProvider>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
-          <PrimaryButton
-            style={{ width: "fit-content" }}
-            onClick={handleCancel}
-          >
-            {t("modal.cancel")}
-          </PrimaryButton>
-          <PrimaryButton
-            style={{ width: "fit-content" }}
-            variant={"contained"}
-            onClick={handleSave}
-          >
-            {t("sales.quote.save")}
-          </PrimaryButton>
-        </Stack>
-      </Menu>
-    </>
+      </DndProvider>
+      <Divider />
+      <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
+        <PrimaryButton style={{ width: "fit-content" }} onClick={handleCancel}>
+          {t("modal.cancel")}
+        </PrimaryButton>
+        <PrimaryButton
+          style={{ width: "fit-content" }}
+          variant={"contained"}
+          onClick={handleSave}
+        >
+          {t("sales.quote.save")}
+        </PrimaryButton>
+      </Stack>
+    </Menu>
   );
 };
 
