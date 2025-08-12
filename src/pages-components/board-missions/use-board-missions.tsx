@@ -421,6 +421,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     setPageNumber(1);
 
+    setHasFetchedQuery(null); // ✅ force next fetch on empty query
+
     const query = {};
     router.replace(
       {
@@ -444,9 +446,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setHasFetchedQuery(null);
     } else if (hasFetchedQuery !== serializedQuery) {
       getAllData(isPurchaseJobs, false);
-      setHasFetchedQuery(serializedQuery); // Mark this query as fetched
+      setHasFetchedQuery(serializedQuery);
     }
-  }, [pageSize, router]);
+  }, [pageSize, router.query]);
 
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
@@ -820,7 +822,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         productsIds: currentProductsIds,
         productionStatus: currentProductionStatus || status?.value,
         orderStatus: currentOrderStatus || orderStatus?.value,
-        pageNumber: pageNumber || currentPageNumber,
+            pageNumber: currentPageNumber || pageNumber,
         pageSize: pageSize,
         orderNumber: router?.query?.orderNumber,
         order: sortOrder,
@@ -1289,9 +1291,33 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     await printNodeModalCancelLog(callApi, callBack, { orderId: orderId });
   };
+
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
   useEffect(() => {
+    const q = router.query;
+    const hasQuery = Object.keys(q || {}).length > 0;
+
+    if (!hasQuery) {
+      // clear all URL-derived filters/state so the inputs look empty
+      setCustomer(null);
+      setAgent(null);
+      setStatus(null);
+      setOrderStatus(null);
+      setSampleType(null);
+      setProductIds([]);
+      setFromDate(undefined);
+      setToDate(undefined);
+      setFromDueDate(undefined);
+      setToDueDate(undefined);
+      setFromReadyDate(undefined);
+      setToReadyDate(undefined);
+      setPatternSearch("");
+      setFinalPatternSearch("");
+      setPageNumber(1);
+      return; // nothing else to hydrate
+    }
+
     const {
       clientId,
       clientName,
@@ -1308,8 +1334,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber,
       productsIds,
       sampleType,
-      proofTypes,
-    } = router.query;
+        proofTypes,
+    } = q;
+    
 
     if (proofTypes) {
       const proofTypesArray = Array.isArray(proofTypes)
@@ -1397,7 +1424,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setFinalPatternSearch(finalPatternSearch);
       }
     }
-  }, [router, agentsCategories]);
+  }, [router.query, agentsCategories]);
 
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
