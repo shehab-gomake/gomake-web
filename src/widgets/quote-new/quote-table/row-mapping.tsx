@@ -107,6 +107,7 @@ const RowMappingWidget = ({
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isQuote = documentType === DOCUMENT_TYPE.quote;
+  const isOrder = documentType === DOCUMENT_TYPE.order;
   const isDeliveryNote =
     documentType === DOCUMENT_TYPE.deliveryNote ||
     documentType === DOCUMENT_TYPE.deliveryNoteRefund;
@@ -164,7 +165,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-        ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
+        ) : (isQuote || isOrder) && !isPrePaymentPage && !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
             {item?.childsDocumentItems?.length > 0 && (
               <IconButton onClick={() => setIsShowChilds((prev) => !prev)}>
@@ -175,6 +176,7 @@ const RowMappingWidget = ({
               <div style={{ width: "32px", height: "32px" }} />
             )}
             {
+              !isOrder &&
               <Checkbox
                 icon={<CheckboxIcon />}
                 checkedIcon={
