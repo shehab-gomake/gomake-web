@@ -525,6 +525,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const getJobStatus = (mission) => {
+    console.log("mission", mission);
     if (mission?.isReady) {
       return (
         <>
@@ -551,7 +552,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       const empName =
         mission.station.machineName && mission.station.machineId
           ? mission.station.machineName
-          : mission.station.employeeName;
+          : mission.station?.supplierId
+            ? mission.station.supplierName
+            : mission.station.employeeName;
       if (empName)
         return `${t(
           "productionStatuses." + mission.boardMissionStatus.name
@@ -822,7 +825,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         productsIds: currentProductsIds,
         productionStatus: currentProductionStatus || status?.value,
         orderStatus: currentOrderStatus || orderStatus?.value,
-            pageNumber: currentPageNumber || pageNumber,
+        pageNumber: currentPageNumber || pageNumber,
         pageSize: pageSize,
         orderNumber: router?.query?.orderNumber,
         order: sortOrder,
@@ -1493,13 +1496,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       : router.query.productsIds
         ? [router.query.productsIds]
         : productIds;
-
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
         ? [router.query.proofTypes]
         : proofTypes;
-
+    
     const currentOrderStatus = router.query.orderStatus;
 
     const currentFromDate = router.query.fromDate;
