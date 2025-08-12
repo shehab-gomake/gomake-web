@@ -1,6 +1,6 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice } from "@/hooks";
+import { useDigitalOffsetPrice, useSnackBar } from "@/hooks";
 import {
   GoMakeDeleteModal,
   GoMakeModal,
@@ -35,7 +35,6 @@ import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
-import { Padding } from "@mui/icons-material";
 
 const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const { clasess } = useStyle({ isMobileScreen });
@@ -60,7 +59,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     duplicateParameters,
     setProductTemplate,
     multiParameterModal,
-    calculationServerErrorState,
     settingParameters,
     setSettingParameters,
     priceRecovery,
@@ -97,7 +95,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     getSelectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
-    canCalculation,
     calculationProduct,
     subProducts,
     isOpenCreateDefaultWorkFlow,
@@ -114,9 +111,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
-
+    isButtonDisabledState,
   } = useDigitalOffsetPrice({ clasess, widgetType });
-
+  const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
   const visibleSections = productTemplate?.sections?.filter(
@@ -284,6 +281,8 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const func = () => {
     getSelectedWorkFlow(currentSignalRConnectionId).then();
   };
+
+
   return (
     <div>
       {productTemplate?.sections?.length > 0 ? (
@@ -568,6 +567,13 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={() => {
+
+                      if (isButtonDisabledState) {
+                        alertFault("alerts.outOfAllowed");
+                        return;
+                      }
+
+
                       if (
                         DOCUMENT_TYPE.order ===
                         Number(router.query.documentType) &&
@@ -591,7 +597,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={isLoadingPrice}
+                    disabled={isLoadingPrice || widgetType === EWidgetProductType.CALCULATION_ERROR}
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>

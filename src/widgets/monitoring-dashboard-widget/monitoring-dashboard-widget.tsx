@@ -8,6 +8,10 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
 import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { exportDashboardToExcel } from "./utils/export-to-excel";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -37,6 +41,7 @@ const MonitoringDashboardWidget = () => {
     setVisibleProductRows,
     visibleClientRows,
     setVisibleClientRows,
+    primaryColor,
   } = useMonitoringDashboard();
 
   useEffect(() => {
@@ -53,6 +58,21 @@ const MonitoringDashboardWidget = () => {
 
     fetchAllData();
   }, [filters]);
+
+  const handleExportToExcel = () => {
+    const exportData = {
+      agentsData: agentsRow || [],
+      productsData: productsRow || [],
+      clientsData: clientsRow || [],
+      agentHeaders: agentTableHeaders || [],
+      productHeaders: productTableHeaders || [],
+      clientHeaders: clientTableHeaders || [],
+      statistics,
+      salesItems: salesItems || [],
+    };
+
+    exportDashboardToExcel(exportData, "monitoring-dashboard");
+  };
 
   const renderTableSection = (
     title: string,
@@ -105,10 +125,33 @@ const MonitoringDashboardWidget = () => {
     );
   };
 
+  const menuActions = [
+    {
+      name: t("dashboard.exportToExcel"),
+      onclick: handleExportToExcel,
+      icon: <FileDownloadOutlinedIcon style={{ color: primaryColor(300) }} />,
+    },
+  ];
+
   return (
     <div style={classes.container}>
       <div style={classes.subContainer}>
-        <DashboardFilters />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+          }}
+        >
+          <DashboardFilters />
+          <ReportActionsMenu
+            actions={menuActions.map((action) => ({
+              name: action.name,
+              icon: action.icon,
+              onClick: action.onclick,
+            }))}
+          />
+        </Box>
       </div>
       {statistics ? (
         <Cards data={statistics} currUnit={currUnit} />

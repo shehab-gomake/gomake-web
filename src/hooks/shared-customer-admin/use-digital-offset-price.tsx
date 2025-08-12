@@ -72,6 +72,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,
   getProductByItemIdApi,
+  getProductCalculationExceptionByIdApi,
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import {
@@ -101,6 +102,7 @@ import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useModal } from "../use-modal";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 
 export interface SampleTypeOption {
   value: number;
@@ -128,6 +130,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [workTypes, setWorkTypes] = useState<any>([]);
   const [missionsListForEdit, setMissionsListForEdit] = useState<any>([]);
   const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
+  const [productItemCalculationException, setProductItemCalculationException] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] =
     useState([]);
@@ -151,6 +154,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
   );
+
+
+
 
   useEffect(() => {
     setIgnoreCalculatedWorkflows(
@@ -351,6 +357,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
+
+  const [isButtonDisabledState, setIsButtonDisabledState] = useState(false);
+  const priceChangePercents = useRecoilValue(priceChangePercentsState);
+
+  const priceToUse = currentCalculatedTotalPrice;
+  const minDiscount =
+    priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;
+  const maxIncrease =
+    Number(priceToUse) +
+    (Number(priceToUse) * Number(priceChangePercents?.maxPercent || 0)) / 100;
   useEffect(() => {
     if (widgetType == EWidgetProductType.CREATE) {
       let copy = lodashClonedeep(subProducts);
@@ -474,7 +490,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId ?? productItemCalculationException
       }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
       }`;
     if (documentItemId) {
@@ -2695,6 +2711,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         getAllMaterial().then((materials) => {
           getProductQuoteItemById(materials, router?.query?.productId);
         });
+      } else if (widgetType === EWidgetProductType.CALCULATION_ERROR) {
+        getAllMaterial().then((materials) => {
+          getProductCalculationExceptionById(materials, router?.query?.productItemCalculationExceptionId as string);
+        });
+
+
       } else {
         getAllMaterial().then((materials) => {
           getProductById(materials);
@@ -6264,6 +6286,62 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  const getProductCalculationExceptionById = async (materials, productItemCalculationExceptionId: string) => {
+    const callBack = (res) => {
+      console.log("res", res);
+      const updatedTemplate = updateIsHidden(res, subProducts);
+      setDefaultProductTemplate(updatedTemplate);
+      initQuoteItemProduct(updatedTemplate, materials);
+      setdocumentItemByEdit(res?.docmentItem);
+      setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+      setProductItemValueByEdit(res?.productItemValue);
+      setValuesState(res?.productItemValue?.workTypes);
+      setWorkTypes(res?.productItemValue?.workTypes);
+      setMissionsListForEdit(res?.missions);
+      setCalculatedPriceProductItemValue(res?.calculatedPrice);
+      setProductItemCalculationException(res?.data?.id);
+      const itemParameters =
+        res?.data?.productItemValue?.itemParmetersValues || [];
+      if (itemParameters && itemParameters?.length > 0) {
+        const allEmpty = itemParameters.every(
+          (item) => !item.subProductType || item.subProductType === ""
+        );
+
+        if (allEmpty) {
+          setSubProductsCopy([
+            {
+              parameters: itemParameters,
+              type: null,
+            },
+          ]);
+        } else {
+          // Group by subProductType
+          const groupedByType = itemParameters.reduce((acc, item) => {
+            const type = item.subProductType || "";
+            if (!acc[type]) {
+              acc[type] = [];
+            }
+            acc[type].push(item);
+            return acc;
+          }, {});
+
+          // Convert to array format
+          const formattedGroups = Object.entries(groupedByType).map(
+            ([type, parameters]) => ({
+              type: type || null,
+              parameters,
+            })
+          );
+
+          setSubProductsCopy(formattedGroups);
+        }
+      }
+    };
+    await getProductCalculationExceptionByIdApi(callApi, callBack, {
+      productItemCalculationExceptionId,
+    });
+  };
+
   const initQuoteItemProduct = (quoteItemProduct, materials) => {
     if (
       quoteItemProduct &&
@@ -6825,6 +6903,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
   const navigateForRouter = () => {
+    if (isButtonDisabledState) {
+      alertFault("alerts.outOfAllowed");
+      return;
+    }
     if (!productItemValueDraftId) {
       onClickOpenCreateDefaultWorkFlow();
       createDefaultWorkFlowApi();
@@ -7225,6 +7307,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       .join(",\n"); // Joins with newline characters
   };
 
+  const isButtonDisabled = (localStateValue, priceChangePercents, maxIncrease, minDiscount) => {
+    // If the value is 0 or less, don't disable
+    if (localStateValue <= 0) {
+      return false;
+    }
+
+    const inputValue = Number(localStateValue);
+
+    // Check if both max and min limits exist
+    if (!maxIncrease || !minDiscount) {
+      return false;
+    }
+
+    // If both percentages are null, don't disable
+    if (priceChangePercents?.minPercent === null && priceChangePercents?.maxPercent === null) {
+      return false;
+    }
+
+    // If both percentages exist and value is out of range, disable the button
+    if (
+      priceChangePercents?.minPercent !== null &&
+      priceChangePercents?.maxPercent !== null &&
+      (inputValue < minDiscount || inputValue > maxIncrease)
+    ) {
+      return true; // Disable button - value is out of range
+    }
+
+    // Otherwise, don't disable
+    return false;
+  };
+
+  useEffect(() => {
+    setIsButtonDisabledState(isButtonDisabled(localStateValue, priceChangePercents, maxIncrease, minDiscount));
+  }, [localStateValue, priceChangePercents, maxIncrease, minDiscount]);
+
   return {
     t,
     router,
@@ -7297,6 +7414,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onClickCloseCreateDefaultWorkFlow,
     addItemForQuotes,
     sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
     setCanCalculation,
@@ -7307,6 +7425,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
+    isButtonDisabledState
   };
 };
 

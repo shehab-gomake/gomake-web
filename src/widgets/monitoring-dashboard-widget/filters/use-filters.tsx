@@ -8,6 +8,10 @@ import { selectedProductsIdsState } from "./states/selected-product-id";
 import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-down-list";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { selectedClientTypesIdsState } from "./states/selected-client-types-ids";
+import {
+  selectedJobTypesIdsState,
+  SourceTypeEnum,
+} from "./states/selected-job-types-ids";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
@@ -35,6 +39,10 @@ const useSalesDashboardFilters = () => {
 
   const [selectedClientTypesIds, setSelectedClientTypesIds] = useRecoilState(
     selectedClientTypesIdsState
+  );
+
+  const [selectedJobTypesIds, setSelectedJobTypesIds] = useRecoilState(
+    selectedJobTypesIdsState
   );
 
   const toggleAgent = (id: string) => {
@@ -89,6 +97,26 @@ const useSalesDashboardFilters = () => {
     setSelectedClientTypesIds(isAllSelected ? [] : allIds);
   };
 
+  const jobTypesCategories = [
+    { id: SourceTypeEnum.Internally, label: t("dashboard.internal") },
+    { id: SourceTypeEnum.partially, label: t("dashboard.partialOutSource") },
+    { id: SourceTypeEnum.Fully, label: t("dashboard.outSource") },
+  ];
+
+  const toggleJobType = (id: number) => {
+    setSelectedJobTypesIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllJobTypes = () => {
+    const allIds = jobTypesCategories.map((a) => a.id);
+    const isAllSelected = allIds.every((id) =>
+      selectedJobTypesIds.includes(id)
+    );
+    setSelectedJobTypesIds(isAllSelected ? [] : allIds);
+  };
+
   return {
     t,
     agentsCategories,
@@ -108,6 +136,10 @@ const useSalesDashboardFilters = () => {
     toggleClientType,
     selectedClientTypesIds,
     clientTypesCategories,
+    toggleAllJobTypes,
+    toggleJobType,
+    selectedJobTypesIds,
+    jobTypesCategories,
   };
 };
 

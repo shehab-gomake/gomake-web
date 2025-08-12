@@ -60,6 +60,7 @@ const ButtonsContainer = ({
   receiptSendModal,
   openReceiptModal,
   clientType,
+  deliveryDate,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -161,9 +162,12 @@ const ButtonsContainer = ({
     !quoteItemValue?.isNeedApproval;
 
   const hasFilesInEachDocument = useMemo(() => {
-    return quoteItemValue?.documentItems?.some(item =>
-      item.files && Array.isArray(item.files) && item.files.length > 0
-    ) || false;
+    return (
+      quoteItemValue?.documentItems?.some(
+        (item) =>
+          item.files && Array.isArray(item.files) && item.files.length > 0
+      ) || false
+    );
   }, [quoteItemValue?.documentItems]);
 
   const handleCopyFromDocumentClick = (documentNumber) => {
@@ -198,6 +202,10 @@ const ButtonsContainer = ({
     EPreferences.DELIVERY_DATE_REQUIRED_IN_DOC
   );
 
+  const isNeedDeliveryDateInQuote = CheckPreferenceValue(
+    EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+  );
+
   const checkIsAgentRequired = CheckPreferenceValue(
     EPreferences.AGENT_REQUIRED_IN_DOC
   );
@@ -207,7 +215,9 @@ const ButtonsContainer = ({
 
   const handleOrderNowClick = () => {
     if (checkIsAgentRequired && isAgentEmpty) {
-      alertFault(t("sales.cart.agentIsRequired"));
+      alertFault("sales.cart.agentIsRequired");
+    } else if (isQuote && isNeedDeliveryDateInQuote && !deliveryDate) {
+      alertFault("sales.cart.deliveryDateIsRequired");
     } else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
       alertFault("sales.cart.deliveryDateIsRequired");
     } else {
@@ -381,14 +391,14 @@ const ButtonsContainer = ({
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
           (isPurchaseOrder &&
             quoteItemValue?.documentStatus !==
-            PURCHASE_ORDER_STATUSES.Canceled)) && (
-            <GomakePrimaryButton
-              style={classes.btnSecondContainer}
-              onClick={handleCancelBtnClick}
-            >
-              {t("materials.buttons.cancel")}
-            </GomakePrimaryButton>
-          )}
+              PURCHASE_ORDER_STATUSES.Canceled)) && (
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleCancelBtnClick}
+          >
+            {t("materials.buttons.cancel")}
+          </GomakePrimaryButton>
+        )}
         {isReceipt &&
           !!canCancelReceipt &&
           !isNewCreation &&
@@ -455,16 +465,18 @@ const ButtonsContainer = ({
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
         )}
-        {isQuote && !isNewCreation && hasFilesInEachDocument && <SecondaryButton
-          variant="outlined"
-          startIcon={<AttachIcon />}
-          style={classes.btnStyle}
-          onClick={() => {
-            onClickOpenAddAttachmentsModal()
-          }}
-        >
-          {t("sales.quote.attachFiles")}
-        </SecondaryButton>}
+        {isQuote && !isNewCreation && hasFilesInEachDocument && (
+          <SecondaryButton
+            variant="outlined"
+            startIcon={<AttachIcon />}
+            style={classes.btnStyle}
+            onClick={() => {
+              onClickOpenAddAttachmentsModal();
+            }}
+          >
+            {t("sales.quote.attachFiles")}
+          </SecondaryButton>
+        )}
         {isQuote && quoteItemValue?.isManager && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -502,10 +514,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -641,7 +654,7 @@ const ButtonsContainer = ({
           cancelBtn={t("sales.modals.proceedWithoutPayment")}
           openModal={CheckoutModalOpen.isOpen}
           withClose={false}
-          onClose={() => { }}
+          onClose={() => {}}
           onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
           onClickCancel={() => {
             if (checkoutModalData) {
@@ -666,9 +679,13 @@ const ButtonsContainer = ({
           cancelBtn={t("modal.no")}
           openModal={isOpenGroupJobsModal.isOpen}
           onClose={() => {
-            sendBodyCommingFromOrder(pendingOrderData?.res, pendingOrderData?.sendMessage, pendingOrderData?.isPrepaymentClient, pendingOrderData?.isStripeCash);
-            isOpenGroupJobsModal.close()
-
+            sendBodyCommingFromOrder(
+              pendingOrderData?.res,
+              pendingOrderData?.sendMessage,
+              pendingOrderData?.isPrepaymentClient,
+              pendingOrderData?.isStripeCash
+            );
+            isOpenGroupJobsModal.close();
           }}
           onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
         />

@@ -129,9 +129,10 @@ const BusinessNewWidget = ({
   const openBillingModal = () => {
     if (!values.client) {
       alertFault(
-        `home.admin.${clientType === CLIENT_TYPE.CUSTOMER
-          ? "pleaseSelectClient"
-          : "pleaseSelectSupplier"
+        `home.admin.${
+          clientType === CLIENT_TYPE.CUSTOMER
+            ? "pleaseSelectClient"
+            : "pleaseSelectSupplier"
         }`
       );
       return;
@@ -143,9 +144,10 @@ const BusinessNewWidget = ({
   const openDeliveryModal = () => {
     if (!values.client) {
       alertFault(
-        `home.admin.${clientType === CLIENT_TYPE.CUSTOMER
-          ? "pleaseSelectClient"
-          : "pleaseSelectSupplier"
+        `home.admin.${
+          clientType === CLIENT_TYPE.CUSTOMER
+            ? "pleaseSelectClient"
+            : "pleaseSelectSupplier"
         }`
       );
       return;
@@ -154,7 +156,16 @@ const BusinessNewWidget = ({
     setOpenModal(true);
   };
 
-  const [immediateSelectedCustomer, setImmediateSelectedCustomer] = useState(null);
+  const [immediateSelectedCustomer, setImmediateSelectedCustomer] =
+    useState(null);
+
+  // Reset immediateSelectedCustomer when quote state changes (new document created)
+  useEffect(() => {
+    // If there's no client in the quote state, reset the immediate selection
+    if (!quoteStateValue?.client?.name) {
+      setImmediateSelectedCustomer(null);
+    }
+  }, [quoteStateValue?.client?.name]);
 
   // 2. Update the onChange handler to set the immediate value
   const handleCustomerChange = (e, value) => {
@@ -320,12 +331,12 @@ const BusinessNewWidget = ({
                 ? purchaseNumber
                 : documentType === DOCUMENT_TYPE.purchaseInvoice ||
                   documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? t("sales.cart.noInvoiceNumber")
-                  : t("sales.quote.noPurchaseNumber")
+                ? t("sales.cart.noInvoiceNumber")
+                : t("sales.quote.noPurchaseNumber")
             }
             label={
               documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+              documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
                 ? t("sales.quote.invoiceNumber")
                 : t("sales.quote.purchaseNumber")
             }
@@ -377,34 +388,41 @@ const BusinessNewWidget = ({
               value={
                 values?.documentDeliveryAddresses?.length > 0
                   ? (() => {
-                    const addressParts = [
-                      values?.documentDeliveryAddresses[0]?.city &&
-                      `${t("customers.modal.city")}: ${values?.documentDeliveryAddresses[0]?.city
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.street &&
-                      `${t("customers.modal.street")}: ${values?.documentDeliveryAddresses[0]?.street
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.entry &&
-                      `${t("customers.modal.entrance")}: ${values?.documentDeliveryAddresses[0]?.entry
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.apartment &&
-                      `${t("customers.modal.apartment")}: ${values?.documentDeliveryAddresses[0]?.apartment
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.floor &&
-                      `${t("customers.modal.floor")}: ${values?.documentDeliveryAddresses[0]?.floor
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.zipCode &&
-                      `${t("customers.modal.zipCode")}: ${values?.documentDeliveryAddresses[0]?.zipCode
-                      }`,
-                      values?.documentDeliveryAddresses[0]?.postbox &&
-                      `${t("customers.modal.po")}: ${values?.documentDeliveryAddresses[0]?.postbox
-                      }`,
-                    ].filter(Boolean);
+                      const addressParts = [
+                        values?.documentDeliveryAddresses[0]?.city &&
+                          `${t("customers.modal.city")}: ${
+                            values?.documentDeliveryAddresses[0]?.city
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.street &&
+                          `${t("customers.modal.street")}: ${
+                            values?.documentDeliveryAddresses[0]?.street
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.entry &&
+                          `${t("customers.modal.entrance")}: ${
+                            values?.documentDeliveryAddresses[0]?.entry
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.apartment &&
+                          `${t("customers.modal.apartment")}: ${
+                            values?.documentDeliveryAddresses[0]?.apartment
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.floor &&
+                          `${t("customers.modal.floor")}: ${
+                            values?.documentDeliveryAddresses[0]?.floor
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.zipCode &&
+                          `${t("customers.modal.zipCode")}: ${
+                            values?.documentDeliveryAddresses[0]?.zipCode
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.postbox &&
+                          `${t("customers.modal.po")}: ${
+                            values?.documentDeliveryAddresses[0]?.postbox
+                          }`,
+                      ].filter(Boolean);
 
-                    return addressParts.length > 0
-                      ? addressParts.join(" | ")
-                      : t("sales.cart.noAddressFound");
-                  })()
+                      return addressParts.length > 0
+                        ? addressParts.join(" | ")
+                        : t("sales.cart.noAddressFound");
+                    })()
                   : t("sales.cart.noAddressFound")
               }
               label={t("sales.cart.deliveryAddress")}
@@ -418,31 +436,31 @@ const BusinessNewWidget = ({
           )}
           {values?.documentDeliveryAddresses?.length > 0
             ? !isQuoteConfirmation &&
-            canEditDocument && (
-              <div style={classes.addNewAddressStyle}>
-                <MinusIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() =>
-                    onClickDeleteAddress(values?.documentDeliveryAddresses[0])
-                  }
-                >
-                  {t("sales.cart.removerDeliveryAddress")}
+              canEditDocument && (
+                <div style={classes.addNewAddressStyle}>
+                  <MinusIcon />
+                  <div
+                    style={classes.addNewAddressTextStyle}
+                    onClick={() =>
+                      onClickDeleteAddress(values?.documentDeliveryAddresses[0])
+                    }
+                  >
+                    {t("sales.cart.removerDeliveryAddress")}
+                  </div>
                 </div>
-              </div>
-            )
+              )
             : !isQuoteConfirmation &&
-            canEditAddress && (
-              <div style={classes.addNewAddressStyle}>
-                <PlusNewIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={openDeliveryModal}
-                >
-                  {t("sales.cart.addDeliveryAddress")}
+              canEditAddress && (
+                <div style={classes.addNewAddressStyle}>
+                  <PlusNewIcon />
+                  <div
+                    style={classes.addNewAddressTextStyle}
+                    onClick={openDeliveryModal}
+                  >
+                    {t("sales.cart.addDeliveryAddress")}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
         </div>
         {/* Billing Address Input */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -451,34 +469,41 @@ const BusinessNewWidget = ({
               value={
                 values?.documentBillingAddresses?.length > 0
                   ? (() => {
-                    const addressParts = [
-                      values?.documentBillingAddresses[0]?.city &&
-                      `${t("customers.modal.city")}: ${values?.documentBillingAddresses[0]?.city
-                      }`,
-                      values?.documentBillingAddresses[0]?.street &&
-                      `${t("customers.modal.street")}: ${values?.documentBillingAddresses[0]?.street
-                      }`,
-                      values?.documentBillingAddresses[0]?.entry &&
-                      `${t("customers.modal.entrance")}: ${values?.documentBillingAddresses[0]?.entry
-                      }`,
-                      values?.documentBillingAddresses[0]?.apartment &&
-                      `${t("customers.modal.apartment")}: ${values?.documentBillingAddresses[0]?.apartment
-                      }`,
-                      values?.documentBillingAddresses[0]?.floor &&
-                      `${t("customers.modal.floor")}: ${values?.documentBillingAddresses[0]?.floor
-                      }`,
-                      values?.documentBillingAddresses[0]?.zipCode &&
-                      `${t("customers.modal.zipCode")}: ${values?.documentBillingAddresses[0]?.zipCode
-                      }`,
-                      values?.documentBillingAddresses[0]?.postbox &&
-                      `${t("customers.modal.po")}: ${values?.documentBillingAddresses[0]?.postbox
-                      }`,
-                    ].filter(Boolean);
+                      const addressParts = [
+                        values?.documentBillingAddresses[0]?.city &&
+                          `${t("customers.modal.city")}: ${
+                            values?.documentBillingAddresses[0]?.city
+                          }`,
+                        values?.documentBillingAddresses[0]?.street &&
+                          `${t("customers.modal.street")}: ${
+                            values?.documentBillingAddresses[0]?.street
+                          }`,
+                        values?.documentBillingAddresses[0]?.entry &&
+                          `${t("customers.modal.entrance")}: ${
+                            values?.documentBillingAddresses[0]?.entry
+                          }`,
+                        values?.documentBillingAddresses[0]?.apartment &&
+                          `${t("customers.modal.apartment")}: ${
+                            values?.documentBillingAddresses[0]?.apartment
+                          }`,
+                        values?.documentBillingAddresses[0]?.floor &&
+                          `${t("customers.modal.floor")}: ${
+                            values?.documentBillingAddresses[0]?.floor
+                          }`,
+                        values?.documentBillingAddresses[0]?.zipCode &&
+                          `${t("customers.modal.zipCode")}: ${
+                            values?.documentBillingAddresses[0]?.zipCode
+                          }`,
+                        values?.documentBillingAddresses[0]?.postbox &&
+                          `${t("customers.modal.po")}: ${
+                            values?.documentBillingAddresses[0]?.postbox
+                          }`,
+                      ].filter(Boolean);
 
-                    return addressParts.length > 0
-                      ? addressParts.join(" | ")
-                      : t("sales.cart.noAddressFound");
-                  })()
+                      return addressParts.length > 0
+                        ? addressParts.join(" | ")
+                        : t("sales.cart.noAddressFound");
+                    })()
                   : t("sales.cart.noAddressFound")
               }
               label={t("sales.cart.billingAddress")}
@@ -492,31 +517,31 @@ const BusinessNewWidget = ({
           )}
           {values?.documentBillingAddresses?.length > 0
             ? !isQuoteConfirmation &&
-            canEditDocument && (
-              <div style={classes.addNewAddressStyle}>
-                <MinusIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() =>
-                    onClickDeleteAddress(values?.documentBillingAddresses[0])
-                  }
-                >
-                  {t("sales.cart.removeBillingAddress")}
+              canEditDocument && (
+                <div style={classes.addNewAddressStyle}>
+                  <MinusIcon />
+                  <div
+                    style={classes.addNewAddressTextStyle}
+                    onClick={() =>
+                      onClickDeleteAddress(values?.documentBillingAddresses[0])
+                    }
+                  >
+                    {t("sales.cart.removeBillingAddress")}
+                  </div>
                 </div>
-              </div>
-            )
+              )
             : !isQuoteConfirmation &&
-            canEditAddress && (
-              <div style={classes.addNewAddressStyle}>
-                <PlusNewIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={openBillingModal}
-                >
-                  {t("sales.cart.addBillingAddress")}
+              canEditAddress && (
+                <div style={classes.addNewAddressStyle}>
+                  <PlusNewIcon />
+                  <div
+                    style={classes.addNewAddressTextStyle}
+                    onClick={openBillingModal}
+                  >
+                    {t("sales.cart.addBillingAddress")}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
         </div>
       </div>
       {!isQuoteConfirmation && (
@@ -562,13 +587,15 @@ const BusinessNewWidget = ({
         openModal={openChangeClientModal}
         onClose={onClickCloseChangeClientModal}
         title={t(
-          `products.profits.${isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
+          `products.profits.${
+            isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
           }`
         )}
         subTitle={t(
-          `products.profits.${isPurchaseDocument
-            ? "subTitleChangeSupplier"
-            : "subTitleChangeClient"
+          `products.profits.${
+            isPurchaseDocument
+              ? "subTitleChangeSupplier"
+              : "subTitleChangeClient"
           }`
         )}
         yesBtn={t("sales.quote.yesBtn")}
@@ -577,7 +604,8 @@ const BusinessNewWidget = ({
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t(
-          `products.profits.${isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
+          `products.profits.${
+            isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
           }`
         )}
         subTitle={t(`sales.cart.subTitleChangeClientFromInvoice`)}
@@ -596,8 +624,9 @@ const BusinessNewWidget = ({
             ClientChangeSource.SAVE_AND_START_NEW_DOC
           )
         }
-        yesBtn={`sales.cart.${isPurchaseDocument ? "saveAndChangeSupplier" : "saveAndChangeClients"
-          }`}
+        yesBtn={`sales.cart.${
+          isPurchaseDocument ? "saveAndChangeSupplier" : "saveAndChangeClients"
+        }`}
         noBtn={"sales.cart.startNewInvoice"}
       />
     </>

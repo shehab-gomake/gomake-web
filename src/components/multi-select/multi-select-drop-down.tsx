@@ -15,15 +15,15 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { PrimaryCheckbox } from "../check-box/primary-check-box";
 
-interface Item {
-  id: string;
+interface Item<T = string | number> {
+  id: T;
   label: string;
 }
 
-interface MultiSelectDropdownProps {
-  items: Item[];
-  selectedIds: string[];
-  onToggle: (id: string) => void;
+interface MultiSelectDropdownProps<T = string | number> {
+  items: Item<T>[];
+  selectedIds: T[];
+  onToggle: (id: T) => void;
   onToggleAll: () => void;
   buttonLabel: string;
   placeholder?: string;
@@ -64,14 +64,14 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
+export const MultiSelectDropdown = <T extends string | number>({
   items,
   selectedIds,
   onToggle,
   onToggleAll,
   buttonLabel,
   placeholder = "Search",
-}) => {
+}: MultiSelectDropdownProps<T>) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

@@ -81,6 +81,7 @@ interface Query {
   toReadyDate?: string;
   productsIds?: string[];
   sampleType?: number;
+  proofTypes?: string[];
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -110,6 +111,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [productsList, setProductsList] = useState([]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
+  // Add state for multiple proof types (similar to productIds)
+  const [proofTypes, setProofTypes] = useState([]);
+
+  // Handler for proof types multi-select change
+  const handleProofTypesChange = (selectedValues) => {
+    setProofTypes(selectedValues);
+  };
   // const [patternSearch, setPatternSearch] = useState<string>("");
   const [patternSearch, setPatternSearch] = useState<any>(null);
 
@@ -300,6 +308,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       delete newQuery.productsIds;
     }
 
+    if (proofTypes.length > 0) {
+      newQuery.proofTypes = proofTypes;
+    } else {
+      delete newQuery.proofTypes;
+    }
+
     if (customer?.id) {
       newQuery.clientId = customer.id;
     } else {
@@ -390,6 +404,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setStatus(null);
     setOrderStatus(null);
     setSampleType(null);
+    setProofTypes([]);
     selectedSupplierId(null);
     setProductIds([]);
     setPatternSearch("");
@@ -405,6 +420,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setCurrentSortOrder(null);
 
     setPageNumber(1);
+
+    setHasFetchedQuery(null); // ✅ force next fetch on empty query
 
     const query = {};
     router.replace(
@@ -429,9 +446,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setHasFetchedQuery(null);
     } else if (hasFetchedQuery !== serializedQuery) {
       getAllData(isPurchaseJobs, false);
-      setHasFetchedQuery(serializedQuery); // Mark this query as fetched
+      setHasFetchedQuery(serializedQuery);
     }
-  }, [pageSize, router]);
+  }, [pageSize, router.query]);
 
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
@@ -725,6 +742,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? [router.query.productsIds]
         : productIds;
 
+    const currentProofTypes = Array.isArray(router.query.proofTypes)
+      ? router.query.proofTypes
+      : router.query.proofTypes
+        ? [router.query.proofTypes]
+        : proofTypes;
+
     const currentOrderStatus = router.query.orderStatus;
 
     const currentFromDate = router.query.fromDate;
@@ -802,11 +825,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         productsIds: currentProductsIds,
         productionStatus: currentProductionStatus || status?.value,
         orderStatus: currentOrderStatus || orderStatus?.value,
-        pageNumber: pageNumber || currentPageNumber,
+        pageNumber: currentPageNumber || pageNumber,
         pageSize: pageSize,
         orderNumber: router?.query?.orderNumber,
         order: sortOrder,
-        exampleType: Number(currentSampleType) || Number(sampleType?.value),
+        exampleTypes: currentProofTypes,
       };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
@@ -887,6 +910,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentPageNumber = router.query.pageNumber;
     const currentSampleType = router.query.sampleType;
+    const currentProofTypes = Array.isArray(router.query.proofTypes)
+      ? router.query.proofTypes
+      : router.query.proofTypes
+        ? [router.query.proofTypes]
+        : proofTypes;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
@@ -917,7 +945,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           productsIds: productIds,
           productionStatus: status?.value,
           orderStatus: orderStatus?.value,
-          exampleType: Number(currentSampleType) || Number(sampleType?.value), // Add this line
+          exampleTypes: currentProofTypes,
           pageNumber: currentPageNumber || pageNumber,
           pageSize: pageSize,
           supplierId: supplierId?.value,
@@ -1266,9 +1294,33 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     await printNodeModalCancelLog(callApi, callBack, { orderId: orderId });
   };
+
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
   useEffect(() => {
+    const q = router.query;
+    const hasQuery = Object.keys(q || {}).length > 0;
+
+    if (!hasQuery) {
+      // clear all URL-derived filters/state so the inputs look empty
+      setCustomer(null);
+      setAgent(null);
+      setStatus(null);
+      setOrderStatus(null);
+      setSampleType(null);
+      setProductIds([]);
+      setFromDate(undefined);
+      setToDate(undefined);
+      setFromDueDate(undefined);
+      setToDueDate(undefined);
+      setFromReadyDate(undefined);
+      setToReadyDate(undefined);
+      setPatternSearch("");
+      setFinalPatternSearch("");
+      setPageNumber(1);
+      return; // nothing else to hydrate
+    }
+
     const {
       clientId,
       clientName,
@@ -1285,9 +1337,18 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber,
       productsIds,
       sampleType,
-    } = router.query;
+      proofTypes,
+    } = q;
+
+    if (proofTypes) {
+      const proofTypesArray = Array.isArray(proofTypes)
+        ? proofTypes
+        : [proofTypes];
+      setProofTypes(proofTypesArray);
+    }
 
     if (sampleType) {
+
       const sampleTypeValue = Array.isArray(sampleType)
         ? sampleType[0]
         : sampleType;
@@ -1365,7 +1426,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setFinalPatternSearch(finalPatternSearch);
       }
     }
-  }, [router, agentsCategories]);
+  }, [router.query, agentsCategories]);
 
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
@@ -1435,7 +1496,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       : router.query.productsIds
         ? [router.query.productsIds]
         : productIds;
-
+    const currentProofTypes = Array.isArray(router.query.proofTypes)
+      ? router.query.proofTypes
+      : router.query.proofTypes
+        ? [router.query.proofTypes]
+        : proofTypes;
+    
     const currentOrderStatus = router.query.orderStatus;
 
     const currentFromDate = router.query.fromDate;
@@ -1507,7 +1573,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber: pageNumber || currentPageNumber,
       pageSize: pageSize,
       orderNumber: router?.query?.orderNumber,
-      exampleType: Number(currentSampleType) || Number(sampleType?.value),
+      exampleTypes: currentProofTypes,
     };
 
     await exportJobTableToExcelApi(callApi, callBack, data);
@@ -1697,6 +1763,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     exampleTypeValues,
     sampleType,
     setSampleType,
+    proofTypes,
+    handleProofTypesChange,
     columnsReady,
     setColumnsReady,
     setColumnOrder,
