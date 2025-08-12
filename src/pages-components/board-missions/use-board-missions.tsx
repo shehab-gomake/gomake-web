@@ -162,10 +162,20 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const { agent, setAgent, agentsCategories, handleAgentChange } =
     useAgentsList();
+
   const router = useRouter();
+
   const handlePageSizeChange = (event) => {
-    setPageNumber(1);
-    setPageSize(event.target.value);
+    const size = Number(event.target.value);
+
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, pageNumber: "1", pageSize: String(size) },
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const onSelectDeliveryTimeDates = (value) => {
@@ -375,11 +385,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     router.replace(
       {
         pathname: router.pathname,
-        query: { ...newQuery },
+        query: { ...newQuery, pageNumber: 1, pageSize: String(pageSize) },
       },
       undefined,
       { shallow: true }
     );
+
     handleClose();
     setPageNumber(1);
   };
@@ -408,32 +419,40 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     setHasFetchedQuery(null); // ✅ force next fetch on empty query
 
-    const query = {};
-    router.replace(
-      {
-        pathname: router.pathname,
-        query: query,
-      },
-      undefined,
-      { shallow: true }
-    );
+    const query = {
+      pageNumber: "1",
+      pageSize: String(router.query.pageSize ?? pageSize),
+    };
+    router.replace({ pathname: router.pathname, query }, undefined, {
+      shallow: true,
+    });
+
     handleClose();
   };
 
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
 
+  // track whether we've already fetched for the exact combo of (query + pageSize)
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
-    const serializedQuery = JSON.stringify(router.query);
+
+    const effectivePageSize = router.query.pageSize
+      ? Number(router.query.pageSize)
+      : pageSize;
+
+    const signature = JSON.stringify({
+      q: router.query,
+      pageSize: effectivePageSize,
+    });
 
     if (isNotFilteredData) {
       getAllData(isPurchaseJobs, true);
       setHasFetchedQuery(null);
-    } else if (hasFetchedQuery !== serializedQuery) {
+    } else if (hasFetchedQuery !== signature) {
       getAllData(isPurchaseJobs, false);
-      setHasFetchedQuery(serializedQuery);
+      setHasFetchedQuery(signature);
     }
-  }, [pageSize, router.query]);
+  }, [router.query, pageSize, isPurchaseJobs]); // include isPurchaseJobs just in case
 
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
@@ -710,7 +729,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         });
 
         setAllBoardMissions(mapData);
-        setPagesCount(Math.ceil(_data?.totalItems / pageSize));
+        setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
         alertFaultGetData();
       }
@@ -719,7 +738,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return;
     }
     const currentFinalPatternSearch = router.query.finalPatternSearch;
-    const currentPageNumber = router.query.pageNumber;
     const currentProductionStatus = router.query.productionStatus;
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
@@ -770,11 +788,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const currentSampleType = router.query.sampleType;
 
+    const currentPageNumber = router.query.pageNumber ?? 1;
+    const currentPageSize = router.query.pageSize
+      ? Number(router.query.pageSize)
+      : pageSize;
+
     const data = isClear
       ? {
           productsIds: [],
-          pageNumber: pageNumber,
-          pageSize: pageSize,
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
         }
       : {
           clientId: router?.query?.clientId || customer?.id,
@@ -805,7 +828,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           productionStatus: currentProductionStatus || status?.value,
           orderStatus: currentOrderStatus || orderStatus?.value,
           pageNumber: currentPageNumber || pageNumber,
-          pageSize: pageSize,
+          pageSize: currentPageSize,
           orderNumber: router?.query?.orderNumber,
           order: sortOrder,
           exampleType: Number(currentSampleType) || Number(sampleType?.value),
@@ -878,7 +901,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           return row;
         });
         setAllPurchaseJobs(mapData);
-        setPagesCount(Math.ceil(_data?.totalItems / pageSize));
+        setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
         alertFaultGetData();
       }
@@ -888,16 +911,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return;
     }
     const currentFinalPatternSearch = router.query.finalPatternSearch;
-    const currentPageNumber = router.query.pageNumber;
     const currentSampleType = router.query.sampleType;
+
+    const currentPageNumber = router.query.pageNumber ?? 1;
+
+    const currentPageSize = router.query.pageSize
+      ? Number(router.query.pageSize)
+      : pageSize;
+
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
       isClear
         ? {
             productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
+            pageNumber: currentPageNumber || pageNumber,
+            pageSize: currentPageSize,
           }
         : {
             clientId: customer?.id,
@@ -922,7 +951,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             orderStatus: orderStatus?.value,
             exampleType: Number(currentSampleType) || Number(sampleType?.value), // Add this line
             pageNumber: currentPageNumber || pageNumber,
-            pageSize: pageSize,
+            pageSize: currentPageSize,
             supplierId: supplierId?.value,
             isPurchaseJobs: true,
           }
@@ -1297,6 +1326,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setPatternSearch("");
       setFinalPatternSearch("");
       setPageNumber(1);
+
       return; // nothing else to hydrate
     }
 
@@ -1316,6 +1346,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageNumber,
       productsIds,
       sampleType,
+      pageSize: qPageSize, // <-- add this
     } = q;
 
     if (sampleType) {
@@ -1364,6 +1395,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (pageNumber) {
       setPageNumber(Number(pageNumber));
     }
+
+    if (qPageSize) setPageSize(Number(qPageSize)); // <-- hydrate from URL
 
     if (orderStatus) {
       const orderStatusToSet = orderStatuses.find(
@@ -1459,7 +1492,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
 
     const currentFinalPatternSearch = router.query.finalPatternSearch;
-    const currentPageNumber = router.query.pageNumber;
     const currentProductionStatus = router.query.productionStatus;
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
@@ -1508,6 +1540,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? GetDateFormat(new Date(currentToReadyDate))
         : undefined;
 
+    const currentPageNumber = router.query.pageNumber ?? 1;
+    const currentPageSize = router.query.pageSize
+      ? Number(router.query.pageSize)
+      : pageSize;
+
     const data = {
       clientId: router?.query?.clientId || customer?.id,
       agentId: router?.query?.agentId || agent?.id,
@@ -1535,8 +1572,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       productsIds: currentProductsIds,
       productionStatus: currentProductionStatus || status?.value,
       orderStatus: currentOrderStatus || orderStatus?.value,
-      pageNumber: pageNumber || currentPageNumber,
-      pageSize: pageSize,
+      pageNumber: currentPageNumber || pageNumber,
+      pageSize: currentPageSize,
       orderNumber: router?.query?.orderNumber,
       exampleType: Number(currentSampleType) || Number(sampleType?.value),
     };
