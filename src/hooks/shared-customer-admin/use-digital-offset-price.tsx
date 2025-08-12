@@ -72,6 +72,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,
   getProductByItemIdApi,
+  getProductCalculationExceptionByIdApi,
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import {
@@ -129,6 +130,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [workTypes, setWorkTypes] = useState<any>([]);
   const [missionsListForEdit, setMissionsListForEdit] = useState<any>([]);
   const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
+  const [productItemCalculationException, setProductItemCalculationException] = useState<any>([]);
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] =
     useState([]);
@@ -488,7 +490,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${router?.query?.productId ?? productItemCalculationException
       }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
       }`;
     if (documentItemId) {
@@ -2709,6 +2711,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         getAllMaterial().then((materials) => {
           getProductQuoteItemById(materials, router?.query?.productId);
         });
+      } else if (widgetType === EWidgetProductType.CALCULATION_ERROR) {
+        getAllMaterial().then((materials) => {
+          getProductCalculationExceptionById(materials, router?.query?.productItemCalculationExceptionId as string);
+        });
+
+
       } else {
         getAllMaterial().then((materials) => {
           getProductById(materials);
@@ -6276,6 +6284,62 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productId: productId,
       });
     }
+  };
+
+  const getProductCalculationExceptionById = async (materials, productItemCalculationExceptionId: string) => {
+    const callBack = (res) => {
+      console.log("res", res);
+      const updatedTemplate = updateIsHidden(res, subProducts);
+      setDefaultProductTemplate(updatedTemplate);
+      initQuoteItemProduct(updatedTemplate, materials);
+      setdocumentItemByEdit(res?.docmentItem);
+      setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+      setProductItemValueByEdit(res?.productItemValue);
+      setValuesState(res?.productItemValue?.workTypes);
+      setWorkTypes(res?.productItemValue?.workTypes);
+      setMissionsListForEdit(res?.missions);
+      setCalculatedPriceProductItemValue(res?.calculatedPrice);
+      setProductItemCalculationException(res?.data?.id);
+      const itemParameters =
+        res?.data?.productItemValue?.itemParmetersValues || [];
+      if (itemParameters && itemParameters?.length > 0) {
+        const allEmpty = itemParameters.every(
+          (item) => !item.subProductType || item.subProductType === ""
+        );
+
+        if (allEmpty) {
+          setSubProductsCopy([
+            {
+              parameters: itemParameters,
+              type: null,
+            },
+          ]);
+        } else {
+          // Group by subProductType
+          const groupedByType = itemParameters.reduce((acc, item) => {
+            const type = item.subProductType || "";
+            if (!acc[type]) {
+              acc[type] = [];
+            }
+            acc[type].push(item);
+            return acc;
+          }, {});
+
+          // Convert to array format
+          const formattedGroups = Object.entries(groupedByType).map(
+            ([type, parameters]) => ({
+              type: type || null,
+              parameters,
+            })
+          );
+
+          setSubProductsCopy(formattedGroups);
+        }
+      }
+    };
+    await getProductCalculationExceptionByIdApi(callApi, callBack, {
+      productItemCalculationExceptionId,
+    });
   };
 
   const initQuoteItemProduct = (quoteItemProduct, materials) => {
