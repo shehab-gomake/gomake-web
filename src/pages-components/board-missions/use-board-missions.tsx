@@ -419,6 +419,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedSupplierId(null);
     setProductIds([]);
     setPatternSearch("");
+    setFinalPatternSearch("");
     setFromDate(null);
     setFromDueDate(null);
     setFromReadyDate(null);
