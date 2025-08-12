@@ -1121,10 +1121,10 @@ const ActionContainerComponent = ({
                     valueColor={secondColor(500)}
                     name={t("sales.quote.price")}
                   />
-                  {!isFromSetting && (
+                  {source !== EWorkSource.OUT && (
                     <Divider orientation={"vertical"} flexItem />
                   )}
-                  {!isFromSetting && <div onClick={(e) => e.stopPropagation()}>
+                  {source !== EWorkSource.OUT && <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect
                       value={source}
                       onChange={handleSourceChange}
