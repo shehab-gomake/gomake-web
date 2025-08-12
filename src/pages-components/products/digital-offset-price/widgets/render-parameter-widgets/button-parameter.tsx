@@ -377,6 +377,7 @@ const ButtonParameterWidget = ({
     if (!isCreate) {
       const materialPath = parameter?.materialPath?.[0];
       const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
+
       if (!materialDataPath) return;
 
       // Create a new list containing just the data arrays from all objects
@@ -390,7 +391,15 @@ const ButtonParameterWidget = ({
       const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
       const transformedShape: any = transformSelectedShape(selectedMaterial);
-      setSelectedShape(selectedShapeIdWhenEdit ?? transformedShape);
+      if (transformedShape) {
+        setSelectedShape(transformedShape);
+      }
+      else if (selectedShapeIdWhenEdit) {
+        setSelectedShape(selectedShapeIdWhenEdit);
+      }
+      else {
+        setSelectedShape(null);
+      }
     }
 
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
