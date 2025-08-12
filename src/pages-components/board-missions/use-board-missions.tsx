@@ -1351,6 +1351,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setToReadyDate(undefined);
       setPatternSearch("");
       setFinalPatternSearch("");
+      setProofTypes([]);
+      selectedSupplierId(null);
+      setResetDatePicker(true);
+      setResetDueDatePicker(true);
+      setResetReadyDatePicker(true);
+      setCurrentSortOrder(null);
       setPageNumber(1);
 
       return; // nothing else to hydrate
