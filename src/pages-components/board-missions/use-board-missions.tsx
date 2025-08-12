@@ -804,7 +804,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           productsIds: currentProductsIds,
           productionStatus: currentProductionStatus || status?.value,
           orderStatus: currentOrderStatus || orderStatus?.value,
-          pageNumber: pageNumber || currentPageNumber,
+          pageNumber: currentPageNumber || pageNumber,
           pageSize: pageSize,
           orderNumber: router?.query?.orderNumber,
           order: sortOrder,
