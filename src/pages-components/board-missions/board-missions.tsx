@@ -167,6 +167,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     exampleTypeValues,
     sampleType,
     setSampleType,
+    proofTypes,
+    handleProofTypesChange,
     columnsReady,
     setColumnsReady,
     setColumnOrder,
@@ -174,6 +176,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setColumnVisibility,
     tableKey,
   } = useBoardMissions({ isPurchaseJobs });
+
+
 
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -211,7 +215,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => {};
+        const callBack = (res) => { };
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -228,7 +232,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => {}, {
+        printNodeModalShowLog(callApi, () => { }, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -256,7 +260,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+        const res = await getJobsTableSettingsApi(callApi, () => { }, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -329,12 +333,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (key) => key !== "pageNumber"
                       ).length > 0 && (
-                        <div
-                          style={{ position: "absolute", top: -5, right: -1 }}
-                        >
-                          <DotIcon />
-                        </div>
-                      )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -409,7 +413,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               withArrow={true}
                             />
                           </div>
-                          <div style={classes.statusFilterContainer}>
+                          {/* <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("products.offsetPrice.admin.proof")}
                             </h3>
@@ -430,6 +434,23 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               style={classes.textInputStyle}
                               onChange={(e, value) => setSampleType(value)}
                               value={sampleType}
+                            />
+                          </div> */}
+                          <div style={classes.statusFilterContainer}>
+                            <h3 style={classes.filterLabelStyle}>
+                              {t("products.offsetPrice.admin.proof")}
+                            </h3>
+                            <GoMakeMultiSelect
+                              onChange={handleProofTypesChange}
+                              style={classes.textInputForProductsStyle}
+                              options={
+                                exampleTypeValues?.map((option) => ({
+                                  label: t(`products.proofTypes.${option.value}`),
+                                  value: option.key,
+                                })) || []
+                              }
+                              values={proofTypes}
+                              placeholder={t("products.offsetPrice.admin.proof")}
                             />
                           </div>
 
@@ -619,12 +640,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -665,12 +686,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -729,7 +750,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {}}
+        onClose={() => { }}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -791,12 +812,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
