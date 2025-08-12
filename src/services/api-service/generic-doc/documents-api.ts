@@ -73,6 +73,8 @@ const UPDATE_DUE_DATE_URL = "/v1/erp-service/documents/update-due-date";
 const UPDATE_AGENT_URL = "/v1/erp-service/documents/update-agent";
 const GET_PRODUCT_ITEM_BY_ID_URL =
   "/v1/erp-service/documents/get-product-document-item-by-id";
+const GET_PRODUCT_CALCULATION_EXCEPTION_BY_ID_URL =
+  "/v1/erp-service/productItemValueDrafts/get-product-calculation-exception-by-id";
 const UPDATE_DOCUMENT_CURRENCY_URL =
   "/v1/erp-service/documents/update-document-currency";
 const UPDATE_DOCUMENT_VAT_STATUS_URL =
@@ -669,6 +671,20 @@ const getProductByItemIdApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.GET,
     GET_PRODUCT_ITEM_BY_ID_URL,
+    setState,
+    data
+  );
+};
+
+const getProductCalculationExceptionByIdApi: ICallAndSetData = async (  
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_PRODUCT_CALCULATION_EXCEPTION_BY_ID_URL,
     setState,
     data
   );
@@ -1369,6 +1385,7 @@ export {
   updateDueDateApi,
   updateAgentApi,
   getProductByItemIdApi,
+  getProductCalculationExceptionByIdApi,
   updateDocumentCurrencyApi,
   updateDocumentVatStatusApi,
   updateExchangeRateApi,
