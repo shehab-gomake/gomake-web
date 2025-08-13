@@ -160,7 +160,7 @@ const ButtonParameterWidget = ({
             });
           });
         }
-        else if (parameter.code == "DieKissCut") {
+        if (parameter.code == "DieKissCut") {
           const dieCutSizesParametersArray = [
             { parameterCode: "Width", value: "" },
             { parameterCode: "Height", value: "" },
@@ -181,31 +181,25 @@ const ButtonParameterWidget = ({
             });
           });
         }
-        else if (parameter.code == "DieStamp") {
-          const dieStampSizesParametersArray = [
-            { parameterCode: "EnhancementLength", value: "" },
-            { parameterCode: "EnhancementWidth", value: "" },
-          ];
-          dieStampSizesParametersArray.forEach((dieStampSizesParameter) => {
-            subProductsCopy = subProductsCopy.map((subProduct) => {
-              console.log("subProduct", { subProduct, subSection })
-              console.log("isSelectedShapisSelectedShapee", isSelectedShape)
-              if (subProduct.type === subSection.type) {
-                const updatedParameters = subProduct.parameters.filter(
-                  (param) =>
-                    !(
-                      param.parameterCode === dieStampSizesParameter.parameterCode &&
-                      param.actionIndex === isSelectedShape.actionIndex
-                    )
-                );
 
-                return { ...subProduct, parameters: updatedParameters };
-              }
+        // Add the code to remove parameters with parameterCode "Width" or "Height"
+        subProductsCopy = subProductsCopy.map((subProduct) => {
+          if (subProduct.type === subSection.type) {
+            const updatedParameters = subProduct.parameters.filter(
+              (param) =>
+                !(
+                  param.parameterCode === "Width" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "Height" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementLength" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
+                )
+            );
+            return { ...subProduct, parameters: updatedParameters };
+          }
+          return subProduct;
+        });
 
-              return subProduct;
-            });
-          });
-        }
+
         let sizeParameter = subSection.parameters.find(
           (param) => param.code === "size"
         );
@@ -278,10 +272,6 @@ const ButtonParameterWidget = ({
             return subProduct;
           });
         }
-
-
-        // Add the code to remove parameters with parameterCode "Width" or "Height"
-
         setProducts(subProductsCopy);
         setSelectedShape(null);
         setIsSelectedShape(null);
@@ -290,7 +280,6 @@ const ButtonParameterWidget = ({
 
   };
   function transformSelectedShape(firstShape) {
-    if (!firstShape) return;
     let rowData = {};
 
     firstShape?.additionalAttribute?.forEach(attribute => {
@@ -367,17 +356,15 @@ const ButtonParameterWidget = ({
       const selectedShape = materialData?.data?.find((data) => {
         return data?.id === isSelectedShape?.valueIds[0];
       });
-      if (selectedShape) {
-        setSelectedShape(selectedShape);
-      }
+      setSelectedShape(selectedShape);
     }
 
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
     if (!isCreate) {
+      // if (materialData?.length > 0 || !isSelectedShape) return;
       const materialPath = parameter?.materialPath?.[0];
       const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-
       if (!materialDataPath) return;
 
       // Create a new list containing just the data arrays from all objects
@@ -388,23 +375,17 @@ const ButtonParameterWidget = ({
         return acc;
       }, []);
       const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds?.[0]);
+      // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
       const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
       const transformedShape: any = transformSelectedShape(selectedMaterial);
-      if (transformedShape) {
-        setSelectedShape(transformedShape);
-      }
-      else if (selectedShapeIdWhenEdit) {
-        setSelectedShape(selectedShapeIdWhenEdit);
-      }
-      else {
-        setSelectedShape(null);
-      }
+      if (!transformedShape) return;
+      setSelectedShape(selectedShapeIdWhenEdit ?? transformedShape);
     }
 
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
-  const [selectedConfigValues, setSelectedConfigValues] = useState<any>({});
+
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
@@ -446,10 +427,14 @@ const ButtonParameterWidget = ({
       let configData = selectedShape;
 
       if (!selectedShape && isSelectedShape) {
-        const selectedValues = isSelectedShape.values;
-        const selectedValueIds = isSelectedShape.valueIds;
+        debugger
+        const selectedValues = isSelectedShape.values; // ["A4 - two Cases"]
+        const selectedValueIds = isSelectedShape.valueIds; // ["06a1cd24-e47d-4234-b5b2-70dbb6bfaacb"]
 
-        const selectedConfig = isSelectedShape?.valuesConfigs?.find(config => {
+        // Since "A4 - two Cases" doesn't match any config name exactly,
+        // you might need to find the config differently
+        // Option 1: Use the first available config as fallback
+        const selectedConfig = isSelectedShape.valuesConfigs.find(config => {
           const nameAttribute = config.additionalAttribute?.find(attr => attr.valueId === "name");
           return nameAttribute && selectedValues.includes(nameAttribute.value);
         })
@@ -458,25 +443,17 @@ const ButtonParameterWidget = ({
           configData = selectedConfig;
           const nameAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "name");
           const imageAttr = selectedConfig.additionalAttribute.find(attr => attr.valueId === "image");
-          setSelectedConfigValues({
-            image: imageAttr?.value,
-            name: nameAttr?.value,
-            values: selectedValues,
-            valueIds: selectedValueIds
-          })
         }
       }
 
       // Simplified image and name extraction
       const image = configData?.rowData?.image?.value ||
         configData?.additionalAttribute?.find(attr => attr.valueId === "image")?.value ||
-        isSelectedShape?.valuesConfigs?.[0]?.additionalAttribute?.find(attr => attr.valueId === "image")?.value ||
-        selectedConfigValues?.image
+        isSelectedShape?.valuesConfigs?.[0]?.additionalAttribute?.find(attr => attr.valueId === "image")?.value;
 
       const name = configData?.rowData?.name?.value ||
         configData?.additionalAttribute?.find(attr => attr.valueId === "name")?.value ||
-        isSelectedShape?.values?.[0] ||
-        selectedConfigValues?.name
+        isSelectedShape?.values?.[0];
 
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
