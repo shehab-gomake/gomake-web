@@ -60,7 +60,88 @@ const useMessageLogs = () => {
     t("mailingSettings.toEmail"),
     t("mailingSettings.templateType"),
     t("mailingSettings.messageBody"),
+    t("mailingSettings.attachment"),
   ];
+
+  const renderAttachmentLink = (mailLog: any) => {
+    // Check if attachments exist
+    if (mailLog.attachments && mailLog.attachments.length > 0) {
+      // If multiple attachments, create multiple links
+      if (mailLog.attachments.length > 1) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {mailLog.attachments.map((attachment: any, index: number) => (
+              <a
+                key={index}
+                href={attachment.url || attachment.path || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: '#1976d2',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+                onClick={(e) => {
+                  // If no valid URL, prevent default action
+                  if (!attachment.url && !attachment.path) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                {attachment.name || attachment.fileName || `Attachment ${index + 1}`}
+              </a>
+            ))}
+          </div>
+        );
+      } else {
+        // Single attachment
+        const attachment = mailLog.attachments[0];
+        return (
+          <a
+            href={attachment.url || attachment.path || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#1976d2',
+              textDecoration: 'none',
+              fontSize: '14px',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+            onClick={(e) => {
+              if (!attachment.url && !attachment.path) {
+                e.preventDefault();
+              }
+            }}
+          >
+            {attachment.name || attachment.fileName || 'View Attachment'}
+          </a>
+        );
+      }
+    } else if (mailLog.attachmentUrl || mailLog.attachmentPath) {
+      // Fallback for single attachment URL/path field
+      return (
+        <a
+          href={mailLog.attachmentUrl || mailLog.attachmentPath}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: '#1976d2',
+            textDecoration: 'none',
+            fontSize: '14px',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+        >
+          View Attachment
+        </a>
+      );
+    }
+    // No attachments
+    return '-';
+  };
   const getAllMailLogs = async ({ pageNumber = 1, pageSizeInitial = 10, patternSearch = "", employeeId, clientId, templateType }
     : { pageNumber?: number, pageSizeInitial?: number, patternSearch?: string, employeeId?: string, clientId?: string, templateType?: number }) => {
     const callBackFunction = (res) => {
@@ -86,6 +167,8 @@ const useMessageLogs = () => {
     mailLog.toEmails?.join(", ") || "",
     templateTypeOptions.find((type) => type.value === mailLog.templateType)?.label || mailLog.templateType,
     mailLog.message,
+    renderAttachmentLink(mailLog),
+
   ]);
 
 
