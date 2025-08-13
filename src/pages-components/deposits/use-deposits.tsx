@@ -181,12 +181,12 @@ const useDeposits = () => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data;
-        const cashDepositData = [
-          formatISODateTime(data?.depositDate),
-          data?.receiptNumber,
-          data?.depositor,
-          data?.cashAmount,
-        ];
+        const cashDepositData = data?.cashToDeposit?.map((deposit: any) => [
+          formatISODateTime(deposit?.depositDate),
+          deposit?.receiptsNumber,
+          deposit?.depositor,
+          deposit?.cashAmount,
+        ]);
         const creditDepositData = data?.creditCards?.map((deposit: any) => [
           deposit?.payDate,
           deposit?.voucherNumber,
