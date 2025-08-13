@@ -1,17 +1,10 @@
-import {
-  ENotificationType,
-  ISystemNotification,
-} from "@/store/system-notifications";
+import { ENotificationType, ISystemNotification } from "@/store/system-notifications";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const NotificationMessageComponent = ({
-  message,
-  type,
-  documentId,
-}: ISystemNotification) => {
+const NotificationMessageComponent = ({ message, type, documentId }: ISystemNotification) => {
   const { primaryColor } = useGomakeTheme();
   const style = {
     color: primaryColor(900),
@@ -44,20 +37,26 @@ const NotificationMessageComponent = ({
       })}
     </Link>
   ) : type === ENotificationType.BOARD_MISSIONS_APPROVED_STATUS ? (
-    <Link
-      style={style}
-      href={`/production-floor?boardMissionsId=${documentId}&step=stations`}
-    >
+    <Link style={style} href={`/production-floor?boardMissionsId=${documentId}&step=stations`}>
       {t("notifications.approvedBoardMissionsMessage", {
         number: message,
       })}
     </Link>
   ) : type === ENotificationType.BOARD_MISSIONS_REJECTED_STATUS ? (
-    <Link
-      style={style}
-      href={`/production-floor?boardMissionsId=${documentId}&step=stations`}
-    >
+    <Link style={style} href={`/production-floor?boardMissionsId=${documentId}&step=stations`}>
       {t("notifications.rejectedBoardMissionsMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.INVOICE_PAYMENT_REQUEST_PAID_BY_CLIENT ? (
+    <Link style={style} href={`/invoice?id=${documentId}`}>
+      {t("notifications.paymentRequestForInvoiceSuccess", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.ORDER_PAYMENT_REQUEST_PAID_BY_CLIENT ? (
+    <Link style={style} href={`/order?id=${documentId}`}>
+      {t("notifications.paymentRequestForOrderSuccess", {
         number: message,
       })}
     </Link>
