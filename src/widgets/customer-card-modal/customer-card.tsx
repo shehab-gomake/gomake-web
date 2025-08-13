@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
@@ -140,6 +140,7 @@ const CustomerCardWidget = ({
     openModal
   });
   const [inputValue, setInputValue] = useState("");
+  const dir: "rtl" | "ltr" = t("direction");
 
   useEffect(() => {
     if (newGroupId) {
@@ -290,7 +291,8 @@ const CustomerCardWidget = ({
                   height={400}
                   width="100%"
                   itemCount={filteredContacts.length}
-                  itemSize={280} // Estimated height per contact form (can be adjusted)
+                  itemSize={280}
+                  direction={dir}
                 >
                   {ContactRow}
                 </List>
