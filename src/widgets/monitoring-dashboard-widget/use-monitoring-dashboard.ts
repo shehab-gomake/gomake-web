@@ -17,9 +17,12 @@ import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
 import { selectedProductsIdsState } from "./filters/states/selected-product-id";
 import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
 import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
+import { selectedJobTypesIdsState } from "./filters/states/selected-job-types-ids";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
+import { selectedDocumentTypeState } from "./filters/states/selected-document-type";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -38,6 +41,7 @@ const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { getCurrencyUnitText } = useQuoteGetData();
+  const { primaryColor } = useGomakeTheme();
   const [statistics, setStatistics] = useState();
   const [salesItems, setSalesItems] = useState<
     {
@@ -98,12 +102,18 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
 
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
       ...extraCostData,
     };
@@ -134,11 +144,17 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
 
@@ -172,11 +188,17 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
     const callBack = (res) => {
@@ -193,6 +215,9 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -219,11 +244,17 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
 
@@ -241,6 +272,9 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -267,11 +301,17 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
 
@@ -289,6 +329,9 @@ const useMonitoringDashboard = () => {
           row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
           row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
           row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.finalPrice
+            ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
+            : "0%",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -315,11 +358,17 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
       }),
     };
     const callBack = (res) => {
@@ -344,6 +393,7 @@ const useMonitoringDashboard = () => {
     t("dashboard.cost"),
     t("dashboard.profit"),
     t("dashboard.avgProfit"),
+    t("dashboard.profitMargin"),
     t("dashboard.avgPerOrder"),
     t("dashboard.os"),
     t("dashboard.successRate"),
@@ -355,11 +405,13 @@ const useMonitoringDashboard = () => {
 
   const { dates } = useRecoilValue(dashboardDateState);
   const selectedClientTypesIds = useRecoilValue(selectedClientTypesIdsState);
+  const selectedJobTypesIds = useRecoilValue(selectedJobTypesIdsState);
   const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
   const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
   const selectedClient = useRecoilValue(selectedDashClientState);
   const selectedDataType = useRecoilValue(selectedDataTypeState);
+  const selectedDocumentType = useRecoilValue(selectedDocumentTypeState);
 
   const filters = useMemo(
     () => ({
@@ -369,8 +421,10 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedJobTypesIds,
       selectedClient,
       selectedDataType,
+      selectedDocumentType,
     }),
     [
       dates?.startDate,
@@ -379,8 +433,10 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedJobTypesIds,
       selectedClient,
       selectedDataType,
+      selectedDocumentType,
     ]
   );
 
@@ -412,17 +468,19 @@ const useMonitoringDashboard = () => {
     selectedProductsIds,
     selectedProductTypesIds,
     selectedClientTypesIds,
+    selectedJobTypesIds,
+    selectedDocumentType,
     filters,
     currUnit,
     selectedClient,
     selectedDataType,
-
     visibleAgentRows,
     setVisibleAgentRows,
     visibleProductRows,
     setVisibleProductRows,
     visibleClientRows,
     setVisibleClientRows,
+    primaryColor,
   };
 };
 
