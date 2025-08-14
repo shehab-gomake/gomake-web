@@ -13,6 +13,7 @@ import { WhatsNewModal } from "./whats-new-modal";
 import { useModal } from "@/hooks/use-modal";
 import { lastVersionState } from "@/store/last-version-state";
 import { updateUserVersionApi } from "@/services/api-service/gomake-versioning/gomake-versioning-endpoint";
+import { generateCustomerLoginLinkApi } from "@/services/api-service/support/support-endpoints";
 
 const SystemHelp = () => {
   const { t } = useTranslation();
@@ -52,11 +53,23 @@ const SystemHelp = () => {
     whatsNewModal.open();
   };
 
+  const handleGoSupportClick = async () => {
+    await generateCustomerLoginLinkApi(callApi, (res) => {
+      if (res?.success && res?.data?.url) {
+        window.open(res.data.url, "_blank");
+      }
+    });
+  };
+
   const helpMenuList = [
     {
       name: t("header.customerSupport"),
       onclick: () =>
         navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
+    },
+    {
+      name: t("header.goSupport"),
+      onclick: handleGoSupportClick,
     },
     {
       name: t("header.guideAndTutorial"),
@@ -102,7 +115,7 @@ const SystemHelp = () => {
                 style={classes.menuItem}
               >
                 <div style={classes.logoutContainer}>{item?.name}</div>
-                {index === 2 && (
+                {index === 3 && (
                   <Badge
                     invisible={!version?.isShowWhatsNewBadge}
                     badgeContent={
