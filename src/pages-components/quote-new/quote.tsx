@@ -70,6 +70,7 @@ import { SettingMenuIcon } from "@/icons/setting-menu ";
 import { useQuotesSocketIo } from "@/hooks/socket-io/use-quotes-socket-io";
 import { useOrdersSocketIo } from "@/hooks/socket-io/use-orders-socket-io";
 import { AddAttachmentsPurchaseModal } from "@/widgets/quote-new/modals-widgets/add-attachments-purchase-modal/add-attachments-purchase-modal";
+import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -349,6 +350,7 @@ const QuoteNewPageWidget = ({
     openChangeStatusModal,
     onClickCloseChangeStatusModal,
     updateQuoteStatus,
+    CheckPreferenceValue
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -627,7 +629,12 @@ const QuoteNewPageWidget = ({
                   />
 
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                    (isQuote && !selectDate ? (
+                    (isQuote &&
+                    !selectDate &&
+                    (!CheckPreferenceValue(
+                      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+                    ) ||
+                      quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
@@ -874,6 +881,7 @@ const QuoteNewPageWidget = ({
                     ? CLIENT_TYPE.SUPPLIER
                     : CLIENT_TYPE.CUSTOMER
                 }
+                deliveryDate={selectDate}
               />
             </div>
           )}
