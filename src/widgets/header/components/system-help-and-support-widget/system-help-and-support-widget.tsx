@@ -24,9 +24,7 @@ const SystemHelp = () => {
   const { callApi } = useGomakeAxios();
 
   const currentPath = useRecoilValue(currentPathState);
-  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
-    null
-  );
+  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(null);
   const openSupport = Boolean(anchorSupportEl);
 
   const handleClickSupport = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,8 +53,8 @@ const SystemHelp = () => {
 
   const handleGoSupportClick = async () => {
     await generateCustomerLoginLinkApi(callApi, (res) => {
-      if (res?.success && res?.data?.url) {
-        window.open(res.data.url, "_blank");
+      if (res?.success && res?.data) {
+        window.open(res.data, "_blank");
       }
     });
   };
@@ -64,8 +62,7 @@ const SystemHelp = () => {
   const helpMenuList = [
     {
       name: t("header.customerSupport"),
-      onclick: () =>
-        navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
+      onclick: () => navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
     },
     {
       name: t("header.goSupport"),
@@ -84,12 +81,7 @@ const SystemHelp = () => {
   ];
 
   return (
-    <Badge
-      color="error"
-      overlap="circular"
-      variant="dot"
-      invisible={!version?.isShowWhatsNewBadge}
-    >
+    <Badge color="error" overlap="circular" variant="dot" invisible={!version?.isShowWhatsNewBadge}>
       <CustomTooltip title={t("header.help")} arrow>
         <IconButton
           style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
@@ -109,26 +101,18 @@ const SystemHelp = () => {
         {helpMenuList?.map((item, index) => {
           return (
             <>
-              <MenuItem
-                key={index}
-                onClick={item?.onclick}
-                style={classes.menuItem}
-              >
+              <MenuItem key={index} onClick={item?.onclick} style={classes.menuItem}>
                 <div style={classes.logoutContainer}>{item?.name}</div>
                 {index === 3 && (
                   <Badge
                     invisible={!version?.isShowWhatsNewBadge}
                     badgeContent={
-                      version?.whatsNewBadgeCount > 1
-                        ? `${version.whatsNewBadgeCount}+`
-                        : version?.whatsNewBadgeCount
+                      version?.whatsNewBadgeCount > 1 ? `${version.whatsNewBadgeCount}+` : version?.whatsNewBadgeCount
                     }
                     color="error"
                     sx={{
                       "& .MuiBadge-badge": {
-                        ...(t("direction") === "rtl"
-                          ? { right: -10 }
-                          : { right: 10 }),
+                        ...(t("direction") === "rtl" ? { right: -10 } : { right: 10 }),
                         ...FONT_FAMILY.Lexend(400, 13),
                         height: "18px",
                         minWidth: "18px",
@@ -139,18 +123,12 @@ const SystemHelp = () => {
                   />
                 )}
               </MenuItem>
-              {index != helpMenuList?.length - 1 ? (
-                <div style={classes.lineContainer} />
-              ) : null}
+              {index != helpMenuList?.length - 1 ? <div style={classes.lineContainer} /> : null}
             </>
           );
         })}
       </GoMakeMenu>
-      <WhatsNewModal
-        open={whatsNewModal.isOpen}
-        onClose={whatsNewModal.close}
-        version={version}
-      />
+      <WhatsNewModal open={whatsNewModal.isOpen} onClose={whatsNewModal.close} version={version} />
     </Badge>
   );
 };
