@@ -4,12 +4,14 @@ import { ReChooseIcon } from "@/icons";
 import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { checkIfDieCutOrDieKissCutExists, findParameterByCode } from "@/utils/helpers";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
+import { findDefaultOption, getParameterByParameterCode } from "@/utils/constants";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -45,6 +47,83 @@ const ButtonParameterWidget = ({
   const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
 
   const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
+
+
+  const widthParameter = getParameterByParameterCode(
+    subProducts,
+    "Width"
+  );
+  const heightParameter = getParameterByParameterCode(
+    subProducts,
+    "Height"
+  );
+  const finalUnitWidthParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitWidth",
+
+  );
+  const finalUnitLengthParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitLength"
+  );
+  const finalUnitHeightParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitHeight"
+  );
+
+  const shapeParameter = getParameterByParameterCode(subProducts, isSelectedShape?.parameterCode === "DieStamp" ? "Enhancementtype" : "Shape")
+  const dieStampParameterForSettings = findParameterByCode(template, isSelectedShape?.parameterCode === "DieStamp" ? "Enhancementtype" : "Shape")
+  const [shapeCodeDefualt, setShapeCodeDefualt] = useState<any>({})
+  useEffect(() => {
+    if (isParameterSettings) {
+      const shapeParameterForSettings = findParameterByCode(template, "Shape")
+      if (shapeParameterForSettings) {
+        const defultShape = findDefaultOption(shapeParameterForSettings)
+        if (defultShape) {
+          setShapeCodeDefualt(defultShape)
+        }
+
+      }
+
+    }
+  }, [isParameterSettings, template])
+
+  const getProductQuoteItemById = useCallback(async () => {
+    const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
+    let shapeCode = "";
+    if (shapeId) {
+      if (shapeParameter?.valuesConfigs && shapeParameter?.valuesConfigs?.length > 0) {
+        const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
+        shapeCode = value?.code;
+      }
+      else {
+        const value = dieStampParameterForSettings?.valuesConfigs.find(x => x.id === shapeId)
+        shapeCode = value?.code;
+      }
+    }
+
+    const reqObj = {
+      key: isSelectedShape?.parameterCode,
+      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
+      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
+      shape: isParameterSettings ? shapeCodeDefualt?.code : shapeCode || "",
+      ...(router.query.customerId !== "00000000-0000-0000-0000-000000000000" && { clientId: router.query.customerId }),
+      finalWidth: finalUnitWidthParameter && finalUnitWidthParameter.values && finalUnitWidthParameter.values.length > 0 && finalUnitWidthParameter.values[0] ? finalUnitWidthParameter.values[0] : 0,
+      finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
+      finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
+    }
+    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
+    if (res?.data?.length > 0) {
+    }
+
+  }, [widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter, isSelectedShape]);
+
+  useEffect(() => {
+    if (isSelectedShape) {
+      getProductQuoteItemById()
+    }
+  }, [isSelectedShape?.parameterCode])
+
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
       const updatedValuesConfigs = isDiesParameter.valuesConfigs.map((config: any) => ({
@@ -143,6 +222,11 @@ const ButtonParameterWidget = ({
             { parameterCode: "DieUnitWidth", value: "" },
             { parameterCode: "DieUnitLength", value: "" },
             { parameterCode: "DieUnitHeight", value: "" },
+            { parameterCode: "dieUnitLength", value: "" },
+            { parameterCode: "dieUnitWidth", value: "" },
+            { parameterCode: "finalUnitWidth", value: "" },
+            { parameterCode: "finalUnitLength", value: "" },
+            { parameterCode: "finalUnitHeight", value: "" },
           ];
           dieCutSizesParametersArray.forEach((dieCutSizesParameter) => {
             subProductsCopy = subProductsCopy.map((subProduct) => {
@@ -182,23 +266,27 @@ const ButtonParameterWidget = ({
           });
         }
 
-        // Add the code to remove parameters with parameterCode "Width" or "Height"
-        subProductsCopy = subProductsCopy.map((subProduct) => {
-          if (subProduct.type === subSection.type) {
-            const updatedParameters = subProduct.parameters.filter(
-              (param) =>
-                !(
-                  param.parameterCode === "Width" && param.actionIndex === isSelectedShape.actionIndex ||
-                  param.parameterCode === "Height" && param.actionIndex === isSelectedShape.actionIndex ||
-                  param.parameterCode === "EnhancementLength" && param.actionIndex === isSelectedShape.actionIndex ||
-                  param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
-                )
-            );
-            return { ...subProduct, parameters: updatedParameters };
-          }
-          return subProduct;
-        });
-
+        if (parameter.code == "DieStamp") {
+          const dieCutSizesParametersArray = [
+            { parameterCode: "EnhancementWidth", value: "" },
+            { parameterCode: "EnhancementLength", value: "" },
+          ];
+          dieCutSizesParametersArray.forEach((dieCutSizesParameter) => {
+            subProductsCopy = subProductsCopy.map((subProduct) => {
+              if (subProduct.type === subSection.type) {
+                const updatedParameters = subProduct.parameters.filter(
+                  (param) =>
+                    !(
+                      param.parameterCode === dieCutSizesParameter.parameterCode &&
+                      param.actionIndex === isSelectedShape.actionIndex
+                    )
+                );
+                return { ...subProduct, parameters: updatedParameters };
+              }
+              return subProduct;
+            });
+          });
+        }
 
         let sizeParameter = subSection.parameters.find(
           (param) => param.code === "size"
@@ -280,6 +368,7 @@ const ButtonParameterWidget = ({
 
   };
   function transformSelectedShape(firstShape) {
+    if (!firstShape) return;
     let rowData = {};
 
     firstShape?.additionalAttribute?.forEach(attribute => {
@@ -427,14 +516,10 @@ const ButtonParameterWidget = ({
       let configData = selectedShape;
 
       if (!selectedShape && isSelectedShape) {
-        debugger
-        const selectedValues = isSelectedShape.values; // ["A4 - two Cases"]
-        const selectedValueIds = isSelectedShape.valueIds; // ["06a1cd24-e47d-4234-b5b2-70dbb6bfaacb"]
+        const selectedValues = isSelectedShape.values;
+        const selectedValueIds = isSelectedShape.valueIds;
 
-        // Since "A4 - two Cases" doesn't match any config name exactly,
-        // you might need to find the config differently
-        // Option 1: Use the first available config as fallback
-        const selectedConfig = isSelectedShape.valuesConfigs.find(config => {
+        const selectedConfig = isSelectedShape?.valuesConfigs?.find(config => {
           const nameAttribute = config.additionalAttribute?.find(attr => attr.valueId === "name");
           return nameAttribute && selectedValues.includes(nameAttribute.value);
         })
