@@ -835,6 +835,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
               return {
                 ...baseRow,
+                deliveryDate: formatISODateTime(quote?.dueDate),
                 orderNumber: quote?.number,
                 quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
                   <span key={index}>
@@ -1282,6 +1283,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
             return {
               ...baseRow,
+              deliveryDate: formatISODateTime(quote?.dueDate),
               orderNumber: quote?.number,
               quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
                 <span key={index}>
@@ -1523,6 +1525,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFinalPatternSearch("");
     setPatternSearch("");
     setCurrentSortOrder(null);
+
+    setHasFetchedQuery(null);
+
     const query = {};
     router.push({
       pathname: router.pathname,
@@ -1533,8 +1538,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
-
-    // Serialize the current query for comparison
     const serializedQuery = JSON.stringify(router.query);
 
     if (!isFromHomePage) {
@@ -2914,6 +2917,33 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   /*   Most Important   */
   useEffect(() => {
+    const q = router.query;
+    const hasQuery = Object.keys(q || {}).length > 0;
+    if (!hasQuery) {
+      // clear all URL-derived filters/state so the inputs look empty
+      setAgentId(null);
+      setCustomerId(null);
+      setStatusId(null);
+      setApprovalStatusId(null);
+      setAccountingStatus(null);
+      setPaymentType(null);
+      setDeliveryStatus(null);
+      setProductionStatus(null);
+      setFromDate(null);
+      setToDate(null);
+      setResetDatePicker(true);
+      setIsCanceledState(false);
+      setIsPausedOrders(false);
+      setPage(1);
+      setMinPrice("");
+      setMaxPrice("");
+      setProductIds([]);
+      setFinalPatternSearch("");
+      setPatternSearch("");
+      setCurrentSortOrder(null);
+      return; // nothing else to hydrate
+    }
+
     const {
       customerId,
       customerName,
@@ -2933,7 +2963,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isPaused,
       productsIds,
       paymentType,
-    } = router.query;
+    } = q;
 
     if (productsIds) {
       const productIdsArray = Array.isArray(productsIds)
@@ -3062,7 +3092,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         Array.isArray(isPaused) ? isPaused[0] === "true" : isPaused === "true"
       );
     }
-  }, [router, agentsCategories]);
+  }, [router.query, agentsCategories]);
 
   const closeAsInvoice = useRecoilValue(closeAsInvoiceState);
 

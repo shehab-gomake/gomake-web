@@ -8,7 +8,7 @@ const SET_BOARD_MISSION_FILTER_URL =
 const GET_ALL_PURCHASE_JOBS_URL =
   "/v1/erp-service/board-missions-tables/get-all-purchase-jobs";
 const GET_ORDER_SUMMERY_PDF_URL =
-  "/v1/erp-service/board-missions-tables/get-order-summery-pdf";
+  "/v1/erp-service/orders/get-order-summery-pdf";
 const GET_WORK_MISSION_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-work-mission-pdf";
 const GET_DELIVERY_TICKER_PDF_URL =

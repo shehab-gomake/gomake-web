@@ -1,11 +1,8 @@
 import { useTranslation } from "react-i18next";
-
 import { Checkbox, Divider } from "@mui/material";
-
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { CartWithoutBgIcon, CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
-
 import { useDuplicateQuickModal } from "./use-duplicate-quick-modal";
 import { DuplicateModalIcon } from "./icons/duplicate-icon";
 import { DeleteModalIcon } from "./icons/delete-icon";
@@ -41,6 +38,7 @@ const DuplicateQuickModal = ({
     lastGroupRef,
     areAllParametersUsed
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
+
   useEffect(() => {
     if (quoteItem?.productID && openModal) {
       getProductSizes()
@@ -83,13 +81,193 @@ const DuplicateQuickModal = ({
     ]
 
     if (openModal && quoteItem) {
-
       setGroups([{
         id: 1,
         parameters: isAddQuantity ? initialParametersForAddQuantity : initialParameters
       }])
     }
   }, [quoteItem, openModal, isAddQuantity])
+
+  // Render Advanced Duplicate view - all parameters in one row
+  const renderAdvancedDuplicateView = () => {
+    return groups.map((group, groupIndex) => (
+      <div key={group.id} style={{ width: "100%" }}
+        ref={groupIndex === groups.length - 1 ? lastGroupRef : null}>
+        {/* <div style={clasess.groupContainer}>
+          <div>
+            <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
+          </div>
+        </div> */}
+
+        {/* Single row for all parameters */}
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "16px",
+          alignItems: "flex-end",
+          marginTop: "16px",
+          marginBottom: "16px"
+        }}>
+          {/* Job Name Input */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "8px" }}>{t("boardMissions.jobName")}</div>
+            <GomakeTextInput
+              style={{ width: "100%" }}
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={group.parameters[0]?.value || ""}
+              onChange={(e) => handleTextInputChange(groupIndex, 0, e.target.value)}
+            />
+          </div>
+
+          {/* Quantity Input */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "8px" }}>{t("boardMissions.quantity")}</div>
+            <GomakeTextInput
+              style={{ width: "100%" }}
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={group.parameters[1]?.value || ""}
+              onChange={(e) => handleTextInputChange(groupIndex, 1, e.target.value)}
+              type="number"
+            />
+          </div>
+
+          {/* Size Selector */}
+          {productSizes?.length > 0 && (
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: "8px" }}>{t("machineAttributes.size")}</div>
+              <GoMakeAutoComplate
+                options={productSizes}
+                onChange={(e, value) => {
+                  if (value) {
+                    handleTextInputChange(groupIndex, 2, value.width, "width");
+                    handleTextInputChange(groupIndex, 2, value, "value");
+                    handleTextInputChange(groupIndex, 2, value.length, "length");
+                  }
+                }}
+                value={group.parameters[2]?.value}
+                getOptionLabel={(option) => option?.name}
+                style={{ width: "100%" }}
+                placeholder={t("products.profits.exceptions.selectParameter")}
+                withArrow={true}
+              />
+            </div>
+          )}
+
+          {/* Width Input */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "8px" }}>{t("machineAttributes.width")}</div>
+            <GomakeTextInput
+              style={{ width: "100%" }}
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={group.parameters[2]?.width || ""}
+              onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "width")}
+              disabled={group.parameters[2]?.width && group.parameters[2]?.value && group.parameters[2]?.value?.width !== null}
+            />
+          </div>
+
+          {/* Length Input */}
+          <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "8px" }}>{t("machineAttributes.length")}</div>
+            <GomakeTextInput
+              style={{ width: "100%" }}
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={group.parameters[2]?.length || ""}
+              onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "length")}
+              disabled={group.parameters[2]?.length && group.parameters[2]?.value && group.parameters[2]?.value?.length !== null}
+            />
+          </div>
+        </div>
+
+        {group.id !== groups.length && <Divider style={{ marginTop: 24 }} />}
+
+        <div style={clasess.groupActions}>
+          <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
+            <DuplicateModalIcon />
+          </div>
+          {groups.length > 1 && (
+            <div onClick={() => deleteGroup(groupIndex)} style={clasess.groupAction}>
+              <DeleteModalIcon />
+            </div>
+          )}
+        </div>
+      </div>
+    ));
+  };
+
+  // Original render for Add Quantity mode - keep as is
+  const renderAddQuantityView = () => {
+    return groups.map((group, groupIndex) => (
+      <div key={group.id} style={{ width: "100%" }}
+        ref={groupIndex === groups.length - 1 ? lastGroupRef : null}>
+        <div style={clasess.groupContainer}>
+          <div>
+            <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
+          </div>
+        </div>
+
+        {group.parameters.map((param, index) => (
+          <div key={index} style={clasess.groupParameter}>
+            <div style={clasess.groupParameterDropdown}>
+              <div>{t("products.parameters.admin.parameter")}</div>
+              <GoMakeAutoComplate
+                key={param?.name}
+                options={[
+                  { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
+                  { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
+                  { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
+                ].filter(option =>
+                  !group.parameters.some((p, i) =>
+                    i !== index && p.name?.value === option.value
+                  )
+                )}
+                onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
+                value={param?.name}
+                style={clasess.groupParameterInput}
+                placeholder={t("products.profits.exceptions.selectParameter")}
+                withArrow={true}
+                disabled={isAddQuantity}
+              />
+            </div>
+            <div style={clasess.groupParameterDropdown2}>
+              <div>{t("documentingSettings.value")}</div>
+              <GomakeTextInput
+                style={clasess.groupParameterInput2}
+                placeholder={t("products.profits.exceptions.enterValue")}
+                value={param?.value}
+                onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value)}
+                type={param?.name?.value === "4991945c-5e07-4773-8f11-2e3483b70b53" ? "number" : "text"}
+              />
+            </div>
+            <div style={clasess.groupParameterAddContainer}>
+              {!isAddQuantity && !areAllParametersUsed(groupIndex) && (
+                <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
+                  <AddModalIcon />
+                </div>
+              )}
+              {group.parameters.length > 1 && (
+                <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
+                  <DeleteModalIcon width="40" height="40" />
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {group.id !== groups.length && <Divider style={{ marginTop: 24 }} />}
+
+        <div style={clasess.groupActions}>
+          <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
+            <DuplicateModalIcon />
+          </div>
+          {groups.length > 1 && (
+            <div onClick={() => deleteGroup(groupIndex)} style={clasess.groupAction}>
+              <DeleteModalIcon />
+            </div>
+          )}
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <>
@@ -103,120 +281,8 @@ const DuplicateQuickModal = ({
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer} className={'show-scrollbar'}>
-          {groups.map((group, groupIndex) => (
-            <div key={group.id} style={{ width: "100%" }}
-              ref={groupIndex === groups.length - 1 ? lastGroupRef : null}>
-              <div style={clasess.groupContainer}>
-                <div>
-                  <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
-                </div>
+          {isAddQuantity ? renderAddQuantityView() : renderAdvancedDuplicateView()}
 
-              </div>
-              {group.parameters.map((param, index) => (
-                <div key={index} style={clasess.groupParameter}>
-                  <div style={clasess.groupParameterDropdown}>
-                    <div>{t("products.parameters.admin.parameter")}</div>
-                    <GoMakeAutoComplate
-                      key={param?.name}
-                      options={[
-                        { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
-                        { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
-                        { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
-                      ].filter(option =>
-                        // Filter out options that are already selected in other parameters of the same group
-                        !group.parameters.some((p, i) =>
-                          i !== index && p.name?.value === option.value
-                        )
-                      )}
-                      onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
-                      value={param?.name}
-                      style={clasess.groupParameterInput}
-                      placeholder={t("products.profits.exceptions.selectParameter")}
-                      withArrow={true}
-                      disabled={isAddQuantity} // Add disabled prop
-
-                    />
-                  </div>
-                  <div style={clasess.groupParameterDropdown2}>
-                    {
-                      param?.name?.value === "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" ?
-                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10, width: "100%" }}>
-                          {productSizes?.length > 0 && <div style={{ width: "100%" }}>
-                            <div>{t("documentingSettings.value")}</div>
-                            <GoMakeAutoComplate
-                              options={productSizes}
-                              onChange={(e, value) => {
-                                if (value) {
-                                  handleTextInputChange(groupIndex, index, value.width, "width");
-                                  handleTextInputChange(groupIndex, index, value, "value");
-                                  handleTextInputChange(groupIndex, index, value.length, "length");
-                                }
-                              }}
-                              value={param?.value}
-                              getOptionLabel={(option) => option?.name}
-                              style={clasess.groupParameterInput2}
-                              placeholder={t("products.profits.exceptions.selectParameter")}
-                              withArrow={true}
-                            />
-                          </div>}
-                          <div style={{ width: "100%" }}>
-                            <div>{t("machineAttributes.width")}</div>
-                            <GomakeTextInput
-                              style={clasess.groupParameterInput2}
-                              placeholder={t("products.profits.exceptions.enterValue")}
-                              value={param?.width ? param?.width : ""}
-                              onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "width")}
-                              disabled={param?.width && param?.value && param?.value?.width !== null ? true : false}
-                            />
-                          </div>
-                          <div style={{ width: "100%" }}>
-                            <div>{t("machineAttributes.length")}</div>
-                            <GomakeTextInput
-                              style={clasess.groupParameterInput2}
-                              placeholder={t("products.profits.exceptions.enterValue")}
-                              value={param?.length ? param?.length : ""}
-                              onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "length")}
-                              disabled={param?.length && param?.value && param?.value?.length !== null ? true : false}
-                            />
-                          </div>
-                        </div> :
-                        <>
-                          <div>{t("documentingSettings.value")}</div>
-                          <GomakeTextInput
-                            style={clasess.groupParameterInput2}
-                            placeholder={t("products.profits.exceptions.enterValue")}
-                            value={param?.value}
-                            onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value)}
-                            type={param?.name?.value === "4991945c-5e07-4773-8f11-2e3483b70b53" ? "number" : "text"}
-                          />
-                        </>
-                    }
-                  </div>
-                  <div style={clasess.groupParameterAddContainer}>
-                    {!isAddQuantity && !areAllParametersUsed(groupIndex) && <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
-                      <AddModalIcon />
-                    </div>}
-                    {group.parameters.length > 1 && (
-                      <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
-                        <DeleteModalIcon width="40" height="40" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {group.id !== groups.length && <Divider style={{ marginTop: 24, }} />}
-              <div style={clasess.groupActions}>
-                <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
-                  <DuplicateModalIcon />
-                </div>
-                {groups.length > 1 && (
-                  <div onClick={() => deleteGroup(groupIndex)} style={clasess.groupAction}>
-                    <DeleteModalIcon />
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
           <div style={clasess.checkboxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -226,8 +292,8 @@ const DuplicateQuickModal = ({
             />
             <div style={clasess.checkboxLabel}>{t("products.addProduct.admin.createSameJobNumber")}</div>
           </div>
-
         </div>
+
         <div style={clasess.buttonContainer} onClick={() => {
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
           onClose()
@@ -238,12 +304,13 @@ const DuplicateQuickModal = ({
           <GomakePrimaryButton style={clasess.addButton} onClick={onClickQuickDuplicate}>
             <div style={clasess.addButtonContainer}>
               <CartWithoutBgIcon />
-              <div style={clasess.addButtonText}>  {t("products.offsetPrice.admin.addOrderBtn")}</div>
+              <div style={clasess.addButtonText}>{t("products.offsetPrice.admin.addOrderBtn")}</div>
             </div>
           </GomakePrimaryButton>
         </div>
-      </GoMakeModal >
+      </GoMakeModal>
     </>
   );
 };
+
 export { DuplicateQuickModal };

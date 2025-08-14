@@ -347,7 +347,10 @@ const QuoteNewPageWidget = ({
     primaryColor,
     moveToReadyOption,
     handleRadioChange,
-    CheckPreferenceValue,
+    openChangeStatusModal,
+    onClickCloseChangeStatusModal,
+    updateQuoteStatus,
+    CheckPreferenceValue
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -572,7 +575,7 @@ const QuoteNewPageWidget = ({
                         )}
                       </>
                     )}
-                    {isReceipt && !isNewCreation && renderCreateNewButton()}
+                    {!isQuote && !isNewCreation && renderCreateNewButton()}
                     {isShowSettingIcon && (
                       <IconButton
                         style={{ marginRight: 4 }}
@@ -1283,6 +1286,15 @@ const QuoteNewPageWidget = ({
         }}
         subTitle={t("alerts.thisPurchaseNumberIsExist")}
         yesBtn={t("alerts.UpdateAnyway")}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openChangeStatusModal}
+        onClose={onClickCloseChangeStatusModal}
+        onClickDelete={() => updateQuoteStatus()}
       />
     </>
   );
