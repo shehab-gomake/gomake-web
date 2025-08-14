@@ -4909,7 +4909,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             ...temp[findIndex],
             values: valuesArray,
             valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
-            actionId: valueConfig && ParameterType !== (ParameterType !== EParameterTypes.SELECT_MATERIALS && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME) ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
+            actionId: valueConfig && (ParameterType !== EParameterTypes.SELECT_MATERIALS && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME) ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
           };
           addRelatedParametersWithDefaultValues(
             parameterId,
