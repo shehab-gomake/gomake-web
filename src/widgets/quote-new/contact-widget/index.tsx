@@ -67,13 +67,12 @@ const ContactNewWidget = ({
   const [documentContacts, setDocumentContacts] = useState(items);
   useEffect(() => {
     setDocumentContacts(items);
-  }, [items]);
 
-  useEffect(() => {
-    if (documentContacts?.length === 0) {
+    if (quoteItemValue && items && items?.length === 0) {
       setIsDisplayWidget(true)
     }
-  }, [documentContacts])
+
+  }, [items]);
 
   const updateDocumentContactsReorder = async (list) => {
     if (router.query.isNewCreation) {
