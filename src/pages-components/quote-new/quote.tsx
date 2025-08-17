@@ -350,7 +350,7 @@ const QuoteNewPageWidget = ({
     openChangeStatusModal,
     onClickCloseChangeStatusModal,
     updateQuoteStatus,
-    CheckPreferenceValue
+    CheckPreferenceValue,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,

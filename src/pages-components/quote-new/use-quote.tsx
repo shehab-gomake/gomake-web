@@ -2838,7 +2838,7 @@ const useQuoteNew = ({
     openChangeStatusModal,
     onClickCloseChangeStatusModal,
     updateQuoteStatus,
-    CheckPreferenceValue
+    CheckPreferenceValue,
   };
 };
 
