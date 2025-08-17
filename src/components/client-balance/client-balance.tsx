@@ -50,28 +50,42 @@ const ClientBalanceComponent = ({
     }
   }, [clientBalance, clientId]);
 
+  // Determine if balance is negative
+  const isNegative = balance < 0;
+
   return (
     <>
       <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
         {balance !== undefined && (
           <Stack direction="row" alignItems="center" gap={"2px"}>
-            <span style={{ width: "70px", color: "#252675" }}>
+            <span style={{
+              width: "70px",
+              color: isNegative ? "#4B5563" : "#252675"
+            }}>
               {t("home.clientBalance")}
             </span>
             <Button
-              startIcon={<WalletIcon stroke="#252675" />}
+              startIcon={
+                <WalletIcon
+                  stroke={isNegative ? "#FFFFFF" : "#252675"}
+                />
+              }
               sx={{
                 border: "none",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 padding: "4px 12px",
-                backgroundColor: "#CBCBE4",
-                color: "#252675 !important",
+                backgroundColor: isNegative ? "#FF4444" : "#CBCBE4",
+                color: isNegative ? "#FFFFFF !important" : "#252675 !important",
                 borderRadius: 16,
                 ...FONT_FAMILY.Inter(500, 14),
                 "& .MuiButton-startIcon": {
                   ...(direction === "rtl" && { margin: "0px 2px 0px 5px" }),
+                },
+                "&:hover": {
+                  backgroundColor: isNegative ? "#B91C1C" : "#A7F3D0",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
                 },
               }}
               onClick={() => getCustomerForEdit(clientId)}
