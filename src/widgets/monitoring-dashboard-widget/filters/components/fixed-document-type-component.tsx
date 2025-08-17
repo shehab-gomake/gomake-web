@@ -22,17 +22,6 @@ const FixedDocumentType = () => {
     ["sales.quote.order", DocumentTypeEnums.Order],
     ["sales.quote.deliveryNote", DocumentTypeEnums.DeliveryNote],
     ["sales.quote.invoice", DocumentTypeEnums.Invoice],
-    ["sales.quote.receipt", DocumentTypeEnums.Receipt],
-    ["sales.quote.deliveryNoteRefund", DocumentTypeEnums.DeliveryNoteRefund],
-    ["sales.quote.invoiceRefund", DocumentTypeEnums.InvoiceRefund],
-    ["sales.quote.generalLedgerReport", DocumentTypeEnums.GeneralLedgerReport],
-    ["sales.quote.purchaseOrder", DocumentTypeEnums.PurchaseOrder],
-    ["sales.quote.purchaseInvoice", DocumentTypeEnums.PurchaseInvoice],
-    [
-      "sales.quote.purchaseInvoiceRefund",
-      DocumentTypeEnums.PurchaseInvoiceRefund,
-    ],
-    ["sales.quote.boardMission", DocumentTypeEnums.BoardMission],
   ];
 
   const DOCUMENT_OPTIONS = documentConfig.map(([label, value]) => ({
