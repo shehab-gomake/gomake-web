@@ -65,7 +65,19 @@ const useMachineAttributes = () => {
             setMachine({...machineState, attributes: {...machineState.attributes, productionFloorColor: value}});
         }
         else if(key === "price"){
-            setMachine({...machineState, attributes: {...machineState.attributes, machineHourCost: value?.machineHourCost}});
+          
+            setMachine({
+                ...machineState, 
+                price: {
+                    ...machineState.price,
+                    price: value?.price !== undefined ? value.price : machineState.price?.price,
+                    currency: value?.currency !== undefined ? value.currency : machineState.price?.currency,
+                }
+            });
+            if(value?.machineHourCost !== undefined && machineState.attributes?.machineHourCost !== value?.machineHourCost){
+                setMachine({...machineState, attributes: {...machineState.attributes, machineHourCost: value?.machineHourCost}});
+            }
+
         }
         else{
             setErrors({...errors, [key]: false});

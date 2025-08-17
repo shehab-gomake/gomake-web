@@ -502,7 +502,6 @@ const useQuoteNew = ({
         setSelectDate(res?.data ?? null);
       }
     };
-
     await getDocumentDeliveryDateApi(callApi, callBack);
   };
 
@@ -2195,10 +2194,16 @@ const useQuoteNew = ({
   }, [quoteItemValue, quoteConfirm, isQuote, isQuoteConfirmation]);
 
   useEffect(() => {
-    if (isQuote) {
+    if (!isQuote) return;
+
+    const isDeliveryDateRequired = CheckPreferenceValue(
+      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+    );
+
+    if (!isDeliveryDateRequired || quoteItemValue?.dueDateUpdatedByUser) {
       getQuoteDeliveryDate();
     }
-  }, [isQuote]);
+  }, [isQuote, quoteItemValue?.dueDateUpdatedByUser]);
 
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
@@ -2833,6 +2838,7 @@ const useQuoteNew = ({
     openChangeStatusModal,
     onClickCloseChangeStatusModal,
     updateQuoteStatus,
+    CheckPreferenceValue,
   };
 };
 

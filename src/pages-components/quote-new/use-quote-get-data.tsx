@@ -204,7 +204,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           }
         };
         await getReceiptByIdApi(callApi, callBack, {
-          receiptId: router?.query?.Id,
+          receiptId: router?.query?.Id || router?.query?.id,
         });
       } else {
         const newRequestAbortController = new AbortController();
@@ -273,7 +273,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           callBack,
           {
             documentType: docType,
-            Id: router?.query?.Id,
+            Id: router?.query?.Id || router?.query?.id,
           },
           false,
           newRequestAbortController

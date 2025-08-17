@@ -102,6 +102,7 @@ import { selectWorkflowByIdApi } from "@/services/api-service/generic-doc/quote-
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useModal } from "../use-modal";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 
 export interface SampleTypeOption {
   value: number;
@@ -153,6 +154,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
   );
+
+
+
 
   useEffect(() => {
     setIgnoreCalculatedWorkflows(
@@ -353,6 +357,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
   const [currentCalculatedTotalPrice, setCurrentCalculatedTotalPrice] =
     useRecoilState<number>(currentCalculatedTotalPriceState);
+
+  const [isButtonDisabledState, setIsButtonDisabledState] = useState(false);
+  const priceChangePercents = useRecoilValue(priceChangePercentsState);
+
+  const priceToUse = currentCalculatedTotalPrice;
+  const minDiscount =
+    priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;
+  const maxIncrease =
+    Number(priceToUse) +
+    (Number(priceToUse) * Number(priceChangePercents?.maxPercent || 0)) / 100;
   useEffect(() => {
     if (widgetType == EWidgetProductType.CREATE) {
       let copy = lodashClonedeep(subProducts);
@@ -6889,6 +6903,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
   const navigateForRouter = () => {
+    if (isButtonDisabledState) {
+      alertFault("alerts.outOfAllowed");
+      return;
+    }
     if (!productItemValueDraftId) {
       onClickOpenCreateDefaultWorkFlow();
       createDefaultWorkFlowApi();
@@ -7289,6 +7307,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       .join(",\n"); // Joins with newline characters
   };
 
+  const isButtonDisabled = (localStateValue, priceChangePercents, maxIncrease, minDiscount) => {
+    // If the value is 0 or less, don't disable
+    if (localStateValue <= 0) {
+      return false;
+    }
+
+    const inputValue = Number(localStateValue);
+
+    // Check if both max and min limits exist
+    if (!maxIncrease || !minDiscount) {
+      return false;
+    }
+
+    // If both percentages are null, don't disable
+    if (priceChangePercents?.minPercent === null && priceChangePercents?.maxPercent === null) {
+      return false;
+    }
+
+    // If both percentages exist and value is out of range, disable the button
+    if (
+      priceChangePercents?.minPercent !== null &&
+      priceChangePercents?.maxPercent !== null &&
+      (inputValue < minDiscount || inputValue > maxIncrease)
+    ) {
+      return true; // Disable button - value is out of range
+    }
+
+    // Otherwise, don't disable
+    return false;
+  };
+
+  useEffect(() => {
+    setIsButtonDisabledState(isButtonDisabled(localStateValue, priceChangePercents, maxIncrease, minDiscount));
+  }, [localStateValue, priceChangePercents, maxIncrease, minDiscount]);
+
   return {
     t,
     router,
@@ -7361,6 +7414,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onClickCloseCreateDefaultWorkFlow,
     addItemForQuotes,
     sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
     setCanCalculation,
@@ -7371,6 +7425,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
+    isButtonDisabledState
   };
 };
 

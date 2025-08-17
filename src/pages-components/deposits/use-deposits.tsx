@@ -2,11 +2,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import {
-  cancelDepositApi,
-  getAllDepositsApi,
-  showDepositApi,
-} from "@/services/api-service/generic-doc/deposits-api";
+import { cancelDepositApi, getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import {
@@ -27,14 +23,11 @@ const useDeposits = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } =
-    useSnackBar();
+  const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } = useSnackBar();
   const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [page, setPage] = useRecoilState<number>(depositsPageState);
   const resetPage = useResetRecoilState(depositsPageState);
-  const [pagesCount, setPagesCount] = useRecoilState<number>(
-    depositsPageCountState
-  );
+  const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(depositsPageSizeState);
   const { initialPageSize } = useListPagination();
 
@@ -49,16 +42,13 @@ const useDeposits = () => {
   const [toDate, setToDate] = useRecoilState<Date>(depositsToDateState);
   const [allDeposits, setAllDeposits] = useRecoilState<any>(allDepositsState);
   const setDeposit = useSetRecoilState<any>(depositState);
-  const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(
-    depositPaymentTypeSate
-  );
+  const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [depositLogTitle, setDepositLogTitle] = useState<string>();
   const [employeeId, setEmployeeId] = useState<any>();
-  const [resetLogsDatePicker, setResetLogsDatePicker] =
-    useState<boolean>(false);
+  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
   const [fromLogsDate, setFromLogsDate] = useState<Date>(new Date());
   const [toLogsDate, setToLogsDate] = useState<Date>(new Date());
   const debounce = useDebounce(patternSearch, 500);
@@ -94,11 +84,7 @@ const useDeposits = () => {
     { label: t("payment.creditCard"), value: PAYMENT_TYPE.CreditCard },
   ];
 
-  const logsTableHeaders = [
-    t("sales.quote.actionDate"),
-    t("sales.quote.employeeName"),
-    t("sales.quote.actionDescription"),
-  ];
+  const logsTableHeaders = [t("sales.quote.actionDate"), t("sales.quote.employeeName"), t("sales.quote.actionDescription")];
 
   const getDepositTypeText = (typeNum: number) => {
     switch (typeNum) {
@@ -121,9 +107,7 @@ const useDeposits = () => {
   };
 
   const onClickDocumentLogs = async (deposit: any) => {
-    setDepositLogTitle(
-      `${t("deposits.LogsForDepositNumber")} - ${deposit?.number}`
-    );
+    setDepositLogTitle(`${t("deposits.LogsForDepositNumber")} - ${deposit?.number}`);
     setOpenLogsModal(true);
   };
 
@@ -181,12 +165,12 @@ const useDeposits = () => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data;
-        const cashDepositData = [
-          formatISODateTime(data?.depositDate),
-          data?.receiptNumber,
-          data?.depositor,
-          data?.cashAmount,
-        ];
+        const cashDepositData = data?.cashToDeposit?.map((deposit: any) => [
+          formatISODateTime(deposit?.depositDate),
+          deposit?.receiptsNumber,
+          deposit?.customer,
+          deposit?.cashAmount,
+        ]);
         const creditDepositData = data?.creditCards?.map((deposit: any) => [
           deposit?.payDate,
           deposit?.voucherNumber,

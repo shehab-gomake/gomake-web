@@ -122,7 +122,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
   };
 
   const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
@@ -317,7 +317,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           });
           isOpenGroupJobsModal.open();
         } else {
-          alertFault(result?.data?.item2);
           sendBodyCommingFromOrder(
             res,
             sendMessage,
@@ -635,10 +634,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         isOrder
           ? navigate("/orders")
           : isDeliveryNote
-          ? navigate("/deliveryNotes")
-          : isInvoice
-          ? navigate("/invoices")
-          : navigate("/purchaseOrders");
+            ? navigate("/deliveryNotes")
+            : isInvoice
+              ? navigate("/invoices")
+              : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }

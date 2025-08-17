@@ -60,6 +60,7 @@ const ButtonsContainer = ({
   receiptSendModal,
   openReceiptModal,
   clientType,
+  deliveryDate,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -161,9 +162,12 @@ const ButtonsContainer = ({
     !quoteItemValue?.isNeedApproval;
 
   const hasFilesInEachDocument = useMemo(() => {
-    return quoteItemValue?.documentItems?.some(item =>
-      item.files && Array.isArray(item.files) && item.files.length > 0
-    ) || false;
+    return (
+      quoteItemValue?.documentItems?.some(
+        (item) =>
+          item.files && Array.isArray(item.files) && item.files.length > 0
+      ) || false
+    );
   }, [quoteItemValue?.documentItems]);
 
   const handleCopyFromDocumentClick = (documentNumber) => {
@@ -198,6 +202,10 @@ const ButtonsContainer = ({
     EPreferences.DELIVERY_DATE_REQUIRED_IN_DOC
   );
 
+  const isNeedDeliveryDateInQuote = CheckPreferenceValue(
+    EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+  );
+
   const checkIsAgentRequired = CheckPreferenceValue(
     EPreferences.AGENT_REQUIRED_IN_DOC
   );
@@ -207,7 +215,9 @@ const ButtonsContainer = ({
 
   const handleOrderNowClick = () => {
     if (checkIsAgentRequired && isAgentEmpty) {
-      alertFault(t("sales.cart.agentIsRequired"));
+      alertFault("sales.cart.agentIsRequired");
+    } else if (isQuote && isNeedDeliveryDateInQuote && !deliveryDate) {
+      alertFault("sales.cart.deliveryDateIsRequired");
     } else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
       alertFault("sales.cart.deliveryDateIsRequired");
     } else {
@@ -455,16 +465,18 @@ const ButtonsContainer = ({
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
         )}
-        {isQuote && !isNewCreation && hasFilesInEachDocument && <SecondaryButton
-          variant="outlined"
-          startIcon={<AttachIcon />}
-          style={classes.btnStyle}
-          onClick={() => {
-            onClickOpenAddAttachmentsModal()
-          }}
-        >
-          {t("sales.quote.attachFiles")}
-        </SecondaryButton>}
+        {isQuote && !isNewCreation && hasFilesInEachDocument && (
+          <SecondaryButton
+            variant="outlined"
+            startIcon={<AttachIcon />}
+            style={classes.btnStyle}
+            onClick={() => {
+              onClickOpenAddAttachmentsModal();
+            }}
+          >
+            {t("sales.quote.attachFiles")}
+          </SecondaryButton>
+        )}
         {isQuote && quoteItemValue?.isManager && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -660,17 +672,23 @@ const ButtonsContainer = ({
         <GoMakeDeleteModal
           modalType={ModalType.WARNING}
           style={{ width: "fit-content" }}
-          title={t("sales.modals.groupJobsModalTitle")}
           subTitle={t("sales.modals.groupJobsModalSubTitle")}
+          title={t("sales.modals.groupJobsModalTitle")}
           yesBtn={t("sales.quote.yesBtn")}
           cancelBtn={t("modal.no")}
           openModal={isOpenGroupJobsModal.isOpen}
-          onClose={() => {
-            sendBodyCommingFromOrder(pendingOrderData?.res, pendingOrderData?.sendMessage, pendingOrderData?.isPrepaymentClient, pendingOrderData?.isStripeCash);
-            isOpenGroupJobsModal.close()
-
-          }}
+          onClose={() => { }}
+          withClose={false}
           onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
+          onClickCancel={() => {
+            sendBodyCommingFromOrder(
+              pendingOrderData?.res,
+              pendingOrderData?.sendMessage,
+              pendingOrderData?.isPrepaymentClient,
+              pendingOrderData?.isStripeCash
+            );
+            isOpenGroupJobsModal.close();
+          }}
         />
         <GoMakeDeleteModal
           insideStyle={{ width: "100%" }}
