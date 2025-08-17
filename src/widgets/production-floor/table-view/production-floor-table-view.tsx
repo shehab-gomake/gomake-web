@@ -42,14 +42,14 @@ import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 import { useUserPermission } from "@/hooks/use-permission";
-import {useSearch} from "rsuite/cjs/internals/Picker";
+import { useSearch } from "rsuite/cjs/internals/Picker";
 
 // Performance optimization constants
 const ITEMS_PER_PAGE = 50; // Show 50 items per page
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
-  
+
 
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
@@ -64,7 +64,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     setCustomer,
   } = useProductionFloorTable();
   const { t } = useTranslation();
-  const [lastSearch,setLastSearch] = useState("");
+  const [lastSearch, setLastSearch] = useState("");
   const { setFilters, view, getAllData } = useProductionFloorFilters({
     connectionId: connectionId,
     isFetching: false,
@@ -95,7 +95,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   // Memoized filtered data with performance optimizations
   const filteredDataByMachine = useMemo(() => {
     if (!selectedChipId.length) return data;
-    
+
     return data.map((item) => {
       const filteredBoardMissions = item.boardMissions.filter((mission) =>
         selectedChipId.some(
@@ -114,31 +114,31 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   // Optimized search matching function
   const matchSearch = useCallback((mission) => {
     if (!search) return true;
-    
+
     const searchLower = search.toLowerCase();
     const missionNumber = `${mission.boardMissionNumber}\\${mission.orderNumber}`;
     const clientName = mission.clientName?.toLowerCase() || '';
     const productName = mission.productName?.toLowerCase() || '';
     const jobName = mission?.jobName?.toLowerCase() || '';
-    
+
     return missionNumber.includes(search) ||
-           clientName.includes(searchLower) ||
-           productName.includes(searchLower) ||
-           jobName.includes(searchLower) ||
-           mission.automatedTags?.some((tag) =>
-             tag.toLowerCase().includes(searchLower)
-           );
+      clientName.includes(searchLower) ||
+      productName.includes(searchLower) ||
+      jobName.includes(searchLower) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(searchLower)
+      );
   }, [search]);
 
-  
+
   // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setLastSearch(search);
-      if(search != lastSearch){
+      if (search != lastSearch) {
         // Only update if search has actually changed
         const missions = filteredDataByMachine.flatMap(
-            (statusBoards) => statusBoards.boardMissions
+          (statusBoards) => statusBoards.boardMissions
         );
         const filtered = missions.filter(matchSearch);
         setFilteredMissionsBySearch(filtered);
@@ -148,7 +148,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         }
         setLastSearch(search);
       }
-      
+
     }, DEBOUNCE_DELAY);
 
     return () => clearTimeout(timeoutId);
@@ -178,7 +178,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
 
   const [columnsReady, setColumnsReady] = useState(false);
 
-  
+
 
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -371,58 +371,58 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       );
     }*/
 
+    return (
+      <>
+        {filteredDataByMachine.map((statusBoards, index) => {
+          const allBoardMissions = filteredDataByMachine.flatMap(
+            (board) => board.boardMissions
+          );
           return (
-        <>
-          {filteredDataByMachine.map((statusBoards, index) => {
-            const allBoardMissions = filteredDataByMachine.flatMap(
-              (board) => board.boardMissions
-            );
-            return (
-              <StatusTableComponent
-                key={`status-${statusBoards?.boardMissionStatus?.boardMissionStatus?.id}-${index}`}
-                status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-                boards={statusBoards?.boardMissions}
-                onClickClient={getCustomerForEdit}
-                allBoardMissions={allBoardMissions}
-                setFilters={setFilters}
-                storageList={storageList}
-                inputValue={inputValue}
-                defaultValue={defaultValue}
-                addPrintHouseJobsStorage={addPrintHouseJobsStorage}
-                handleStorageChange={handleStorageChange}
-                setInputValue={setInputValue}
-                employeesCategories={employeesCategories}
-                visibleColumns={visibleColumns}
-                isVirtualizing={false}
-              />
-            );
-          })}
-        </>
-      );
-      }, [
-      view,
-      allBoardMissions,
-      tableHeader,
-      handlePageChange,
-      handlePageSizeChange,
-      pageNumber,
-      pagesCount,
-      pageSize,
-      router,
-      initialPageSize,
-      columnsReady,
-      filteredDataByMachine,
-      getCustomerForEdit,
-      setFilters,
-      storageList,
-      inputValue,
-      defaultValue,
-      addPrintHouseJobsStorage,
-      handleStorageChange,
-      setInputValue,
-      employeesCategories,
-      visibleColumns
-    ]);
+            <StatusTableComponent
+              key={`status-${statusBoards?.boardMissionStatus?.boardMissionStatus?.id}-${index}`}
+              status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+              boards={statusBoards?.boardMissions}
+              onClickClient={getCustomerForEdit}
+              allBoardMissions={allBoardMissions}
+              setFilters={setFilters}
+              storageList={storageList}
+              inputValue={inputValue}
+              defaultValue={defaultValue}
+              addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+              handleStorageChange={handleStorageChange}
+              setInputValue={setInputValue}
+              employeesCategories={employeesCategories}
+              visibleColumns={visibleColumns}
+              isVirtualizing={false}
+            />
+          );
+        })}
+      </>
+    );
+  }, [
+    view,
+    allBoardMissions,
+    tableHeader,
+    handlePageChange,
+    handlePageSizeChange,
+    pageNumber,
+    pagesCount,
+    pageSize,
+    router,
+    initialPageSize,
+    columnsReady,
+    filteredDataByMachine,
+    getCustomerForEdit,
+    setFilters,
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    employeesCategories,
+    visibleColumns
+  ]);
 
   return (
     <Stack gap={"20px"}>
@@ -436,7 +436,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         customer={customer}
         setCustomer={setCustomer}
       />
-      
+
       <FloatingBulkActionsMenu
         selectedJobs={selectedIds}
         onUpdateStatus={handleBulkUpdateStatus}
@@ -507,7 +507,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           handleBulkMoveToNextStation(selectedIds);
         }}
       />
-      
+
       <GoMakeDeleteModal
         hideIcon={true}
         modalType={ModalType.WARNING}
