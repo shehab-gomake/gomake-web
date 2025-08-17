@@ -317,9 +317,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           });
           isOpenGroupJobsModal.open();
         } else {
-          if (result?.data?.item2 && result?.data?.item2 != "") {
-            alertFault(result?.data?.item2);
-          }
           sendBodyCommingFromOrder(
             res,
             sendMessage,
