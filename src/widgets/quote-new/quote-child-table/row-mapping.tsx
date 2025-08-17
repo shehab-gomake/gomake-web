@@ -11,7 +11,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { CharacterDetails } from "../quote-table/row-details/character-details";
-import { ECalculationStatus } from "@/enums";
+import { ECalculationStatus, ShowDocumentDetailsEnum } from "@/enums";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
@@ -35,6 +35,7 @@ const RowMappingChildWidget = ({
   _renderIconcalculationStatus,
   updateItemStatus,
 }: any) => {
+  console.log("quoteItems", quoteItems)
   const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -168,7 +169,7 @@ const RowMappingChildWidget = ({
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        {quoteItems?.isShowDetails && (
+        {quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails && (
           <PrimaryTableCell
             style={{
               width: columnWidths[3],
