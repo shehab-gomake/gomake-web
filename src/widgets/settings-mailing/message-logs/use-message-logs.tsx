@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useDebounce } from "@/utils/use-debounce";
 import { SMSTemplatesEnum } from "../messageTemplates/enums/enum";
 import { getAllEmployeesApi } from "@/services/api-service/users/users-api";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const useMessageLogs = () => {
   const { t } = useTranslation();
@@ -60,7 +61,32 @@ const useMessageLogs = () => {
     t("mailingSettings.toEmail"),
     t("mailingSettings.templateType"),
     t("mailingSettings.messageBody"),
+    t("mailingSettings.attachment"),
   ];
+
+  const renderAttachmentLink = (mailLog: any) => {
+    // Check if attachmentUrl exists
+    if (mailLog.attachmentUrl) {
+      return (
+        <a
+          href={mailLog.attachmentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: '#1976d2',
+            textDecoration: 'none',
+            fontSize: '18px',
+            cursor: 'pointer',
+          }}
+          title="Download file"
+        >
+          <FileDownloadIcon />
+        </a>
+      );
+    }
+    // No attachment
+    return '-';
+  };
   const getAllMailLogs = async ({ pageNumber = 1, pageSizeInitial = 10, patternSearch = "", employeeId, clientId, templateType }
     : { pageNumber?: number, pageSizeInitial?: number, patternSearch?: string, employeeId?: string, clientId?: string, templateType?: number }) => {
     const callBackFunction = (res) => {
@@ -86,6 +112,8 @@ const useMessageLogs = () => {
     mailLog.toEmails?.join(", ") || "",
     templateTypeOptions.find((type) => type.value === mailLog.templateType)?.label || mailLog.templateType,
     mailLog.message,
+    renderAttachmentLink(mailLog),
+
   ]);
 
 

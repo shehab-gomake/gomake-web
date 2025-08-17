@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+// Complete file - ready to copy and replace your existing CustomerCardWidget
+// This version uses simple scroll for small lists (no virtualization issues!)
+// For large lists (100+), uncomment the react-virtuoso section
+
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
@@ -28,7 +32,9 @@ import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-repo
 import { ClientBalance } from "./components/client-balance/client-balance";
 import { ClientTypeModal } from "../client-types/components/add-edit-client-type-modal";
 import { PlusIcon } from "@/icons";
-import { FixedSizeList as List } from "react-window";
+
+// OPTIONAL: Uncomment these imports if you have 100+ contacts and want virtualization
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'; // npm install react-virtuoso
 
 interface IProps {
   customerAction: CUSTOMER_ACTIONS;
@@ -73,6 +79,10 @@ const CustomerCardWidget = ({
   const isSupplier = typeClient === CLIENT_TYPE.SUPPLIER;
   const showUpdateButton = customerAction === CUSTOMER_ACTIONS.Edit;
   const showAddButton = customerAction === CUSTOMER_ACTIONS.Add;
+  const contactListRef = useRef<HTMLDivElement>(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
+
+
   const {
     customerTableHeaders,
     mapCustomerData,
@@ -139,7 +149,9 @@ const CustomerCardWidget = ({
     onChangeSelectBusiness,
     openModal
   });
+
   const [inputValue, setInputValue] = useState("");
+  const dir: "rtl" | "ltr" = t("direction");
 
   useEffect(() => {
     if (newGroupId) {
@@ -191,6 +203,22 @@ const CustomerCardWidget = ({
     );
   };
 
+  const handleAddEmptyContact = useCallback(() => {
+    addEmptyContact();
+
+    // Auto-scroll to the last item after adding
+    setTimeout(() => {
+      const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
+      if (virtuosoRef.current && filteredContacts.length > 0) {
+        virtuosoRef.current.scrollToIndex({
+          index: filteredContacts.length - 1,
+          behavior: 'smooth',
+          align: 'end'
+        });
+      }
+    }, 100);
+  }, [addEmptyContact, contacts]);
+
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
       <AddIcon onClick={onClick} />
@@ -200,26 +228,17 @@ const CustomerCardWidget = ({
     </div>
   );
 
-  // Row renderer for react-window virtualized contact list
-  const ContactRow = ({ index, style }) => {
-    const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
-    const contact = filteredContacts[index];
+  // // Handle adding new contact with auto-scroll to bottom
+  // const handleAddEmptyContact = useCallback(() => {
+  //   addEmptyContact();
 
-    if (!contact) return null;
-
-    return (
-      <div style={style}>
-        <ContactForm
-          key={contact.index}
-          contact={contact}
-          onDelete={deleteContactForm}
-          setContact={(updatedContactData) =>
-            updateContact(contact.index, updatedContactData)
-          }
-        />
-      </div>
-    );
-  };
+  //   // Scroll to bottom after adding new contact
+  //   setTimeout(() => {
+  //     if (contactListRef.current) {
+  //       contactListRef.current.scrollTop = contactListRef.current.scrollHeight;
+  //     }
+  //   }, 100);
+  // }, [addEmptyContact]);
 
   const renderTableSearch = (
     <>
@@ -260,43 +279,49 @@ const CustomerCardWidget = ({
     {
       title: t("customers.modal.contacts"),
       component: (
-        <Stack direction={"column"} gap={"15px"}>
-          {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
-          <div style={{ height: "400px", width: "100%" }}>
-            {(() => {
-              const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
+        <Stack direction={"column"} gap={"15px"} style={{ height: '100%' }}>
+          {renderAddButton(handleAddEmptyContact, "customers.buttons.addContact")}
 
-              // If there are only a few contacts, render them normally to avoid unnecessary virtualization
-              if (filteredContacts.length <= 3) {
-                return (
-                  <Stack direction={"column"}>
-                    {filteredContacts.map((x) => (
-                      <ContactForm
-                        key={x.index}
-                        contact={x}
-                        onDelete={deleteContactForm}
-                        setContact={(updatedContactData) =>
-                          updateContact(x.index, updatedContactData)
-                        }
-                      />
-                    ))}
-                  </Stack>
-                );
-              }
+          {/* OPTIONAL: Virtualized solution for 100+ contacts */}
+          {/* Uncomment this section and comment out the above div if you have many contacts */}
 
-              // Use virtualized list for large number of contacts
-              return (
-                <List
-                  height={400}
-                  width="100%"
-                  itemCount={filteredContacts.length}
-                  itemSize={280} // Estimated height per contact form (can be adjusted)
-                >
-                  {ContactRow}
-                </List>
-              );
-            })()}
-          </div>
+          <Virtuoso
+            ref={virtuosoRef}
+            style={{
+              height: '400px',
+              border: "1px solid #e0e0e0",
+              borderRadius: "4px",
+            }}
+            data={contacts?.filter((contact) => !contact.isMainContact) || []}
+            itemContent={(index, contact) => (
+              <div style={{ padding: '10px' }}>
+                <ContactForm
+                  key={`contact-${contact.index}-${contact.id || index}`}
+                  contact={contact}
+                  onDelete={deleteContactForm}
+                  setContact={(updatedContactData) =>
+                    updateContact(contact.index, updatedContactData)
+                  }
+                />
+              </div>
+            )}
+            // overscan={200}
+            // increaseViewportBy={{ top: 100, bottom: 100 }}
+            // defaultItemHeight={280}
+            // followOutput="smooth"
+            components={{
+              EmptyPlaceholder: () => (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '40px',
+                  color: '#999'
+                }}>
+                  {t("customers.noContactsAdded")}
+                </div>
+              ),
+            }}
+          />
+
         </Stack>
       ),
     },
@@ -305,18 +330,27 @@ const CustomerCardWidget = ({
       component: (
         <Stack direction={"column"} gap={"15px"}>
           {renderAddButton(addEmptyAddress, "customers.buttons.newAddress")}
-          <Stack direction={"column"}>
-            {addresses?.map((x) => (
-              <AddressForm
-                key={`${x.index}-${x.isDefault}`}
-                address={x}
-                onDelete={deleteAddressForm}
-                setAddress={(updatedAddressData) =>
-                  updateAddress(x.index, updatedAddressData)
-                }
-              />
-            ))}
-          </Stack>
+          <div
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              overflowX: "hidden",
+              scrollBehavior: "smooth",
+            }}
+          >
+            <Stack direction={"column"} gap={"15px"}>
+              {addresses?.map((x) => (
+                <AddressForm
+                  key={`address-${x.index}-${x.isDefault}`}
+                  address={x}
+                  onDelete={deleteAddressForm}
+                  setAddress={(updatedAddressData) =>
+                    updateAddress(x.index, updatedAddressData)
+                  }
+                />
+              ))}
+            </Stack>
+          </div>
         </Stack>
       ),
     },
@@ -341,18 +375,27 @@ const CustomerCardWidget = ({
       component: (
         <Stack direction={"column"} gap={"15px"}>
           {renderAddButton(addEmptyClient, "customers.buttons.addUser")}
-          <Stack direction={"column"}>
-            {users?.map((x) => (
-              <UserForm
-                key={x.index}
-                user={x}
-                onDelete={deleteUserForm}
-                setUser={(updatedUserData) =>
-                  updateUser(x.index, updatedUserData)
-                }
-              ></UserForm>
-            ))}
-          </Stack>
+          <div
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              overflowX: "hidden",
+              scrollBehavior: "smooth",
+            }}
+          >
+            <Stack direction={"column"} gap={"15px"}>
+              {users?.map((x) => (
+                <UserForm
+                  key={`user-${x.index}`}
+                  user={x}
+                  onDelete={deleteUserForm}
+                  setUser={(updatedUserData) =>
+                    updateUser(x.index, updatedUserData)
+                  }
+                />
+              ))}
+            </Stack>
+          </div>
         </Stack>
       ),
     },
@@ -397,86 +440,65 @@ const CustomerCardWidget = ({
   }, [openModal]);
 
   return (
-    <GoMakeModal
-      openModal={open}
-      modalTitle={getModalTitle()}
-      onClose={handleClose}
-      insideStyle={classes.insideStyle}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          justifyContent: "flex-end",
-        }}
+    <>
+      {/* Optional: Add custom scrollbar styles */}
+      <style jsx global>{`
+        .contact-list-container::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        .contact-list-container::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+        
+        .contact-list-container::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+        }
+        
+        .contact-list-container::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      `}</style>
+
+      <GoMakeModal
+        openModal={open}
+        modalTitle={getModalTitle()}
+        onClose={handleClose}
+        insideStyle={classes.insideStyle}
       >
-        <div style={classes.mainContainerStyle}>
-          <Stack direction={"row"}>
-            <span style={classes.subTitleStyle}>
-              {isCustomer
-                ? t("customers.modal.customerInfo")
-                : t("suppliers.supplierInfo")}
-            </span>
-          </Stack>
-          <div style={classes.customerInfoStyle}>
-            {customerInputs(typeClient, customer, showUpdateButton).map(
-              (item) => (
-                <div style={{ marginBottom: 10 }}>
-                  <FormInput
-                    key={"customer-input"}
-                    input={item as IInput}
-                    changeState={onChangeInputs}
-                    error={item.required && !item.value}
-                    readonly={!!item.readonly}
-                  />
-                </div>
-              )
-            )}
-            <div style={classes.itemOnFirstContainer}>
-              <div style={classes.labelTitleStyle}>
-                <div style={classes.inputLbl}>
-                  <Stack
-                    direction={"row"}
-                    gap={"7px"}
-                    alignItems={"flex-end"}
-                    padding={"0 5px"}
-                  >
-                    {clientTypeLabel}
-                  </Stack>
-                  <span style={classes.required}>*</span>
-                </div>
-                <IconButton
-                  onClick={onClickOpenClientType}
-                  size="small"
-                  sx={{ padding: "4px" }}
-                >
-                  <PlusIcon />
-                </IconButton>
-              </div>
-              <div style={{ width: "180px" }}>
-                <GoMakeAutoComplate
-                  key={customer?.clientTypeId || "default"}
-                  options={clientTypesCategories}
-                  placeholder={
-                    isCustomer
-                      ? t("customers.modal.clientType")
-                      : t("suppliers.supplierType")
-                  }
-                  style={classes.dropDownListStyle}
-                  getOptionLabel={(option: any) => option.label}
-                  value={clientTypesCategories?.find(
-                    (option: any) => option?.id === customer?.clientTypeId
-                  )}
-                  onChange={(e: any, value: any) =>
-                    onChangeInputs("clientTypeId", value?.id)
-                  }
-                />
-              </div>
-            </div>
-            {CheckPermission(Permissions.SHOW_GROUPS) && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            justifyContent: "flex-end",
+          }}
+        >
+          <div style={classes.mainContainerStyle}>
+            <Stack direction={"row"}>
+              <span style={classes.subTitleStyle}>
+                {isCustomer
+                  ? t("customers.modal.customerInfo")
+                  : t("suppliers.supplierInfo")}
+              </span>
+            </Stack>
+            <div style={classes.customerInfoStyle}>
+              {customerInputs(typeClient, customer, showUpdateButton).map(
+                (item, index) => (
+                  <div key={`customer-input-${index}`} style={{ marginBottom: 10 }}>
+                    <FormInput
+                      input={item as IInput}
+                      changeState={onChangeInputs}
+                      error={item.required && !item.value}
+                      readonly={!!item.readonly}
+                    />
+                  </div>
+                )
+              )}
               <div style={classes.itemOnFirstContainer}>
                 <div style={classes.labelTitleStyle}>
                   <div style={classes.inputLbl}>
@@ -486,120 +508,163 @@ const CustomerCardWidget = ({
                       alignItems={"flex-end"}
                       padding={"0 5px"}
                     >
-                      {t("products.profits.exceptions.groupBy")}
+                      {clientTypeLabel}
                     </Stack>
+                    <span style={classes.required}>*</span>
                   </div>
+                  <IconButton
+                    onClick={onClickOpenClientType}
+                    size="small"
+                    sx={{ padding: "4px" }}
+                  >
+                    <PlusIcon />
+                  </IconButton>
                 </div>
                 <div style={{ width: "180px" }}>
                   <GoMakeAutoComplate
-                    key={customer?.clientGroupId}
-                    options={
-                      clientGroupList.find(
-                        (option: any) => option.groupName === inputValue
-                      ) || inputValue === ""
-                        ? clientGroupList
-                        : [
-                          {
-                            groupName: `Add "${inputValue}" as a new group`,
-                            id: "new",
-                          },
-                          ...clientGroupList,
-                        ]
+                    key={customer?.clientTypeId || "default"}
+                    options={clientTypesCategories}
+                    placeholder={
+                      isCustomer
+                        ? t("customers.modal.clientType")
+                        : t("suppliers.supplierType")
                     }
-                    placeholder={t("products.profits.exceptions.groupBy")}
                     style={classes.dropDownListStyle}
-                    getOptionLabel={(option: any) => option.groupName}
-                    value={clientGroupList?.find(
-                      (option: any) => option?.id === customer?.clientGroupId
+                    getOptionLabel={(option: any) => option.label}
+                    value={clientTypesCategories?.find(
+                      (option: any) => option?.id === customer?.clientTypeId
                     )}
-                    onChange={(e: any, value: any) => {
-                      if (value?.id === "new") {
-                        addGroupName(inputValue);
-                        setInputValue("");
-                      } else {
-                        onChangeInputs("clientGroupId", value?.id);
-                        setInputValue("");
-                      }
-                    }}
-                    onInputChange={(event: any, newInputValue: string) => {
-                      setInputValue(newInputValue);
-                    }}
+                    onChange={(e: any, value: any) =>
+                      onChangeInputs("clientTypeId", value?.id)
+                    }
                   />
                 </div>
               </div>
+              {CheckPermission(Permissions.SHOW_GROUPS) && (
+                <div style={classes.itemOnFirstContainer}>
+                  <div style={classes.labelTitleStyle}>
+                    <div style={classes.inputLbl}>
+                      <Stack
+                        direction={"row"}
+                        gap={"7px"}
+                        alignItems={"flex-end"}
+                        padding={"0 5px"}
+                      >
+                        {t("products.profits.exceptions.groupBy")}
+                      </Stack>
+                    </div>
+                  </div>
+                  <div style={{ width: "180px" }}>
+                    <GoMakeAutoComplate
+                      key={customer?.clientGroupId}
+                      options={
+                        clientGroupList.find(
+                          (option: any) => option.groupName === inputValue
+                        ) || inputValue === ""
+                          ? clientGroupList
+                          : [
+                            {
+                              groupName: `Add "${inputValue}" as a new group`,
+                              id: "new",
+                            },
+                            ...clientGroupList,
+                          ]
+                      }
+                      placeholder={t("products.profits.exceptions.groupBy")}
+                      style={classes.dropDownListStyle}
+                      getOptionLabel={(option: any) => option.groupName}
+                      value={clientGroupList?.find(
+                        (option: any) => option?.id === customer?.clientGroupId
+                      )}
+                      onChange={(e: any, value: any) => {
+                        if (value?.id === "new") {
+                          addGroupName(inputValue);
+                          setInputValue("");
+                        } else {
+                          onChangeInputs("clientGroupId", value?.id);
+                          setInputValue("");
+                        }
+                      }}
+                      onInputChange={(event: any, newInputValue: string) => {
+                        setInputValue(newInputValue);
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* bottom section */}
+          <div style={classes.bottomSectionStyle}>
+            <PrimaryTabsComponent
+              variant="ButtonedTabs"
+              tabs={tabs}
+              withBackGround={true}
+              selectedTabIndex={selectedTabIndex}
+            >
+              <ClientBalance clientId={customer?.id} />
+            </PrimaryTabsComponent>
+          </div>
+          <div style={classes.footerStyle}>
+            {isFromHomePage && !showTable ? (
+              <SecondaryButton
+                variant="contained"
+                style={{ width: "fit-content" }}
+                onClick={handleShowTable}
+              >
+                {t("customers.buttons.search")}
+              </SecondaryButton>
+            ) : (
+              showAddButton && (
+                <SecondaryButton
+                  variant="contained"
+                  style={{ width: "fit-content" }}
+                  onClick={handleAddCustomer}
+                >
+                  {isCustomer
+                    ? t("customers.buttons.addCustomer")
+                    : t("suppliers.buttons.addSupplier")}
+                </SecondaryButton>
+              )
             )}
+            <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
+              {showUpdateButton && (
+                <SecondaryButton
+                  variant="contained"
+                  style={{ width: "fit-content" }}
+                  onClick={handleEditCustomer}
+                >
+                  {t("customers.buttons.updateChanges")}
+                </SecondaryButton>
+              )}
+            </PermissionCheck>
           </div>
         </div>
-
-        {/* bottom section */}
-        <div style={classes.bottomSectionStyle}>
-          <PrimaryTabsComponent
-            variant="ButtonedTabs"
-            tabs={tabs}
-            withBackGround={true}
-            selectedTabIndex={selectedTabIndex}
-          >
-            <ClientBalance clientId={customer?.id} />
-          </PrimaryTabsComponent>
-        </div>
-        <div style={classes.footerStyle}>
-          {isFromHomePage && !showTable ? (
-            <SecondaryButton
-              variant="contained"
-              style={{ width: "fit-content" }}
-              onClick={handleShowTable}
-            >
-              {t("customers.buttons.search")}
-            </SecondaryButton>
-          ) : (
-            showAddButton && (
-              <SecondaryButton
-                variant="contained"
-                style={{ width: "fit-content" }}
-                onClick={handleAddCustomer}
-              >
-                {isCustomer
-                  ? t("customers.buttons.addCustomer")
-                  : t("suppliers.buttons.addSupplier")}
-              </SecondaryButton>
-            )
-          )}
-          <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
-            {showUpdateButton && (
-              <SecondaryButton
-                variant="contained"
-                style={{ width: "fit-content" }}
-                onClick={handleEditCustomer}
-              >
-                {t("customers.buttons.updateChanges")}
-              </SecondaryButton>
-            )}
-          </PermissionCheck>
-        </div>
-      </div>
-      <GoMakeModal
-        insideStyle={classes.secondInsideStyle}
-        headerPadding={20}
-        openModal={resetPassModal}
-        onClose={() => setResetPassModalModal(false)}
-        modalTitle={t("customers.buttons.changePassword")}
-      >
-        <ChangePasswordComponent onChangePassword={onUpdatePass} />
+        <GoMakeModal
+          insideStyle={classes.secondInsideStyle}
+          headerPadding={20}
+          openModal={resetPassModal}
+          onClose={() => setResetPassModalModal(false)}
+          modalTitle={t("customers.buttons.changePassword")}
+        >
+          <ChangePasswordComponent onChangePassword={onUpdatePass} />
+        </GoMakeModal>
+        {isClientType && (
+          <ClientTypeModal
+            openModal={isClientType}
+            onClose={onClickCloseClientType}
+            modalTitle={
+              isCustomer
+                ? t("customers.buttons.addClientType")
+                : t("suppliers.addSupplierType")
+            }
+            cardTypeId={clientTypeId}
+            actionType="add"
+          />
+        )}
       </GoMakeModal>
-      {isClientType && (
-        <ClientTypeModal
-          openModal={isClientType}
-          onClose={onClickCloseClientType}
-          modalTitle={
-            isCustomer
-              ? t("customers.buttons.addClientType")
-              : t("suppliers.addSupplierType")
-          }
-          cardTypeId={clientTypeId}
-          actionType="add"
-        />
-      )}
-    </GoMakeModal>
+    </>
   );
 };
 
