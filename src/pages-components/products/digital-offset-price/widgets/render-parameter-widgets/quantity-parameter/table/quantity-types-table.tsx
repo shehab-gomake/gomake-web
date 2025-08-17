@@ -42,11 +42,11 @@ const Row = memo(({ index, style, data }: RowProps) => {
   );
 
   return (
-    <div key={index} style={{ display: "flex", flexDirection: isRTL ? "row-reverse" : "row", ...style }}>
+    <div key={index} style={{ display: "flex", flexDirection: isRTL ? "row-reverse" : "row", ...style, overflowX: "hidden" }}>
       <TableCell>
         <GomakeTextInput
           onChange={handleNameChange}
-          style={{ height: "40px", width: "160px" }}
+          style={{ height: "40px", width: "145px" }}
           value={value.name}
           direction={dir}
         />
@@ -54,7 +54,7 @@ const Row = memo(({ index, style, data }: RowProps) => {
       <TableCell style={{ textAlign: "center" }}>
         <GomakeTextInput
           onChange={handleQuantityChange}
-          style={{ height: "40px", width: "160px" }}
+          style={{ height: "40px", width: "145px" }}
           value={value.quantity}
           direction={dir}
         />
@@ -74,16 +74,62 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
 
   const _renderBody = () => {
     return (
-      <TableBody>
+      <TableBody className='quantity-table-list'>
         <List
-          height={295} // Ensure this is a number
-          width={390} // Add the width property
+          height={295}
+          width={375}
           itemCount={values.length}
           itemSize={70}
-          itemData={itemData} // Pass data explicitly to avoid unnecessary re-renders
+          itemData={itemData}
         >
           {Row}
         </List>
+
+        {/* Custom scrollbar styles */}
+        <style>{`
+          .quantity-table-list::-webkit-scrollbar {
+            width: 10px !important;
+          }
+          
+          .quantity-table-list::-webkit-scrollbar-track {
+            background: #f1f1f1 !important;
+            border-radius: 10px;
+          }
+          
+          .quantity-table-list::-webkit-scrollbar-thumb {
+            background: #cccdcf !important;
+            border-radius: 10px !important;
+            border: 2px solid #f1f1f1;
+          }
+          
+          .quantity-table-list::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0 !important;
+          }
+          
+          /* For Firefox */
+          .quantity-table-list {
+            scrollbar-width: thin;
+            scrollbar-color: #cccdcf #f1f1f1;
+          }
+          
+          /* Alternative custom-scroller style if you prefer */
+          .quantity-table-list.custom-scroller::-webkit-scrollbar {
+            width: 7px !important;
+          }
+          
+          .quantity-table-list.custom-scroller::-webkit-scrollbar-track {
+            background: #f6f6f6 !important;
+          }
+          
+          .quantity-table-list.custom-scroller::-webkit-scrollbar-thumb {
+            background: #d5d6e9 !important;
+            border-radius: 10px !important;
+          }
+          
+          .quantity-table-list.custom-scroller::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0 !important;
+          }
+        `}</style>
       </TableBody>
     );
   };
@@ -97,28 +143,27 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
               {isRTL ? (
                 <>
                   <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                    {t("quantityTypes.typeName")} {/* Show type name second in RTL */}
+                    {t("quantityTypes.typeName")}
                   </TableCell>
                   <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                    {t("quantityTypes.quantity")} {/* Show quantity first in RTL */}
+                    {t("quantityTypes.quantity")}
                   </TableCell>
-
                 </>
               ) : (
                 <>
                   <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                    {t("quantityTypes.typeName")} {/* Show type name first in LTR */}
+                    {t("quantityTypes.typeName")}
                   </TableCell>
                   <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                    {t("quantityTypes.quantity")} {/* Show quantity second in LTR */}
+                    {t("quantityTypes.quantity")}
                   </TableCell>
-
                 </>
               )}
             </TableRow>
           </TableHead>
         </Table>
       </TableContainer>
+
       {_renderBody()}
     </>
   );
