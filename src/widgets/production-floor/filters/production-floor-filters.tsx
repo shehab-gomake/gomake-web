@@ -482,7 +482,7 @@ const ProductionFloorFilters = ({
 
 
   return (
-    <Stack style={classes.headerFilterContainer}>
+    <Stack style={classes.headerFilterContainer} >
       <ClickAwayListener
         onClickAway={(event) => {
           if (
