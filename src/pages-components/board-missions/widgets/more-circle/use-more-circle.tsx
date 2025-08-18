@@ -167,28 +167,27 @@ const useMoreCircle = ({
           style={classes.menuTitleStyle}
           href={
             mission?.groupedInJobId !== null
-              ? `/production-floor?boardMissionsId=${mission?.groupedInJobId}${
-                  mission?.productType
-                    ? `&productType=${mission?.productType}`
-                    : ""
-                }&step=stations`
-              : `/production-floor?boardMissionsId=${mission?.id}${
-                  mission?.productType
-                    ? `&productType=${mission?.productType}`
-                    : ""
-                }&step=stations`
+              ? `/production-floor?boardMissionsId=${mission?.groupedInJobId}${mission?.productType
+                ? `&productType=${mission?.productType}`
+                : ""
+              }&step=stations`
+              : `/production-floor?boardMissionsId=${mission?.id}${mission?.productType
+                ? `&productType=${mission?.productType}`
+                : ""
+              }&step=stations`
           }
+          target="_blank"
+
         >
           {t("boardMissions.viewTask")}
         </a>
       ),
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () =>
-        navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${
-            mission?.productType ? `&productType=${mission?.productType}` : ""
-          }&step=stations`
-        ),
+      onclick: () => { }
+      // navigate(
+      //   `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+      //   }&step=stations`
+      // ),
     },
     {
       condition: mission?.isEditable && isCanEditJob,
@@ -238,7 +237,7 @@ const useMoreCircle = ({
       icon: <PackageIcon />,
       onclick:
         mission?.status !== BoardMissionStatusForFilter.DONE &&
-        !mission?.isReady
+          !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
@@ -272,8 +271,7 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${
-            mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
