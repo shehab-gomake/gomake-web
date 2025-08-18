@@ -510,11 +510,20 @@ const QuoteNewPageWidget = ({
                             `${option.name} - ${option.amount}`
                           }
                           withArrow={true}
-                          key={selectedBudget?.id}
+                          key={
+                            selectedBudget
+                              ? `budget-${selectedBudget.id}`
+                              : "budget-null"
+                          }
                           value={selectedBudget}
                           onChange={(e, value) => {
                             if (value) {
+                              // Immediately update the UI to show the selected budget
+                              setSelectedBudget(value);
+                              // Then try to update the document budget
                               updateDocumentBudget(value);
+                            } else {
+                              setSelectedBudget(null);
                             }
                           }}
                           renderOption={(props: any, option: any) => (

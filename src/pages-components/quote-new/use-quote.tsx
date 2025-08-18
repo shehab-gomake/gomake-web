@@ -2418,6 +2418,11 @@ const useQuoteNew = ({
 
   const updateDocumentBudget = useCallback(
     async (budget) => {
+      // Store the previous budget state for rollback
+      const previousBudget = quoteItemValue?.budgetId
+        ? allClientActiveBudgets.find((b) => b.id === quoteItemValue.budgetId)
+        : null;
+
       const res = await callApi(
         EHttpMethod.PUT,
         `/v1/erp-service/budgets/update-document-budget`,
@@ -2434,14 +2439,8 @@ const useQuoteNew = ({
         alertFault(`
           ${t("sales.quote.errorUpdateBudget")}
         `);
-        if (quoteItemValue?.budgetId) {
-          const budget = allClientActiveBudgets.find(
-            (budget) => budget.id === quoteItemValue.budgetId
-          );
-          setSelectedBudget(budget);
-        } else {
-          setSelectedBudget(null);
-        }
+        // Rollback to the previous budget state
+        setSelectedBudget(previousBudget);
       }
     },
     [docType, quoteItemValue, allClientActiveBudgets]
