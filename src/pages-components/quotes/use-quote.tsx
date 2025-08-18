@@ -184,7 +184,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isPausedOrders, setIsPausedOrders] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
-  const [allQuotes, setAllQuotes] = useState();
+  const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
@@ -553,24 +553,295 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const SourceDocumentCell = ({ documents }: { documents: any[] }) => {
+  // At the table/page component level (outside getAllQuotes, once per table)
+  const [cellsExpanded, setCellsExpanded] = useState<Record<string, boolean>>(
+    {}
+  );
+  const toggleCellsExpanded = (rowId: string) =>
+    setCellsExpanded((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+
+  // Store original data to re-map when cellsExpanded changes
+  const [originalData, setOriginalData] = useState<any[] | null>(null);
+
+  // Re-map existing data when cellsExpanded changes to update JSX with new state
+  useEffect(() => {
+    if (originalData && originalData.length > 0) {
+      // Re-map the original data with the new cellsExpanded value
+      const remappedQuotes = originalData.map((quote: any) => {
+        const baseRow = {
+          creationDate: formatCustomDateTime(
+            quote?.createdDate || quote?.creationDate
+          ),
+          client: (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                onClickOpenCustomerModal(quote?.clientId || quote?.customerId)
+              }
+            >
+              {quote?.clientName || quote?.customerName}
+            </div>
+          ),
+          agent: quote?.agentName,
+          number: quote?.number,
+          purchaseNumber: (
+            <PurchaseNumberCell
+              key={`purchase-${quote?.id}`}
+              purchaseNumbers={quote?.purchaseNumber}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+              isRTL={isRTL}
+            />
+          ),
+          worksName: (
+            <WorksNameCell
+              key={`works-${quote?.id}`}
+              worksNames={quote?.worksNames || []}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+              isRTL={isRTL}
+            />
+          ),
+          discount: quote?.discount,
+          totalPriceWithoutVat: isRTL
+            ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
+                quote?.currency
+              )}`
+            : `${getCurrencyUnitText(quote?.currency)} ${
+                quote?.totalPriceWithoutVat
+              }`,
+          totalPrice: isRTL
+            ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
+          notes: quote?.notes,
+          status: _renderStatus(docType, quote, t),
+          more: (
+            <MoreMenuWidget
+              quote={quote}
+              documentType={docType}
+              onClickEditQuote={onClickEditQuote}
+              onClickPdf={onClickQuotePdf}
+              onClickDuplicate={onClickDocumentDuplicate}
+              onClickLoggers={onClickDocumentLogs}
+              onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+              onClickOpenChangeProductionStatusModal={
+                onClickOpenChangeProductionStatusModal
+              }
+              onClickSendPayment={onClickSendPayment}
+              onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+              onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+              onClickReopenDocument={onClickOpenReopenDocumentModal}
+              onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+              onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+              onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickMakePayment={onClickMakePayment}
+              onClickPauseOrResume={onClickPauseOrResume}
+              onClickStartProduction={onClickOpenStartProductionModal}
+              onClickCloseAndTrack={onClickOpenTrackModal}
+              onClickOpenMoveOrderToReadyModal={
+                onClickOpenMoveOrderToReadyModal
+              }
+              onOpenPackagesModal={onOpenPackagesModal}
+              onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+              onOpenDuplicateModal={onOpenDuplicateModal}
+              handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+            />
+          ),
+        };
+
+        if (isPurchaseOrder) {
+          return {
+            ...baseRow,
+            purchaseOrderNumber: quote?.number,
+            orderNumber: quote?.orderNumber,
+            supplierName: quote?.supplierName,
+            itemsNumber: quote?.itemsNumber,
+          };
+        }
+
+        if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
+          return {
+            ...baseRow,
+            purchaseInvoiceNumber: quote?.number,
+            invoiceNumber: quote?.invoiceNumber,
+            purchaseOrderNumber: quote?.orderNumbers
+              ? quote?.orderNumbers.join(", ")
+              : "",
+            supplierName: (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
+                {quote?.customerName}
+              </div>
+            ),
+            itemsNumber: quote?.itemsNumber,
+            status:
+              isInvoice && quote?.isDraft ? (
+                <span style={{ color: "#e77676" }}>
+                  {t("sales.quote.draft")}
+                </span>
+              ) : (
+                _renderStatus(docType, quote, t)
+              ),
+          };
+        }
+
+        if (isQuote) {
+          return {
+            ...baseRow,
+            agent: quote?.agentName,
+            number: quote?.number,
+            worksName: (
+              <WorksNameCell
+                key={`works-${quote?.id}`}
+                worksNames={quote?.worksNames || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+          };
+        }
+
+        if (isOrder) {
+          const jobsElement = CheckPermission(
+            Permissions.SHOW_BOARD_MISSIONS
+          ) ? (
+            <a
+              style={{
+                cursor: "pointer",
+                color: "inherit",
+                textDecoration: "unset",
+              }}
+              href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
+            >
+              {quote?.jobs}
+            </a>
+          ) : (
+            quote?.jobs
+          );
+
+          const paymentStatus = `${
+            isRTL
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+          }/${
+            isRTL
+              ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
+          }`;
+
+          return {
+            ...baseRow,
+            deliveryDate: formatISODateTime(quote?.dueDate),
+            orderNumber: quote?.number,
+            quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
+              <span key={index}>
+                {item?.documentNumber}
+                <br />
+              </span>
+            )),
+            purchaseNumber: (
+              <PurchaseNumberCell
+                key={`purchase-${quote?.id}`}
+                purchaseNumbers={quote?.purchaseNumber}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+            productionStatus: quote?.productionStatus
+              ? t("boardMissions.done")
+              : t("boardMissions.inProduction"),
+            jobs: jobsElement,
+            cost: quote?.cost,
+            paymentStatus: isOrdersTracking
+              ? paymentStatus
+              : baseRow.totalPrice,
+            deliveryStatus: (
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+                onClickOpenMoveOrderToReadyModal={
+                  onClickOpenMoveOrderToReadyModal
+                }
+              />
+            ),
+          };
+        }
+
+        return {
+          ...baseRow,
+          sourceDocument: (
+            <SourceDocumentCell
+              key={`source-${quote?.id}`}
+              documents={quote?.sourceDocumentNumber || []}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+            />
+          ),
+          deliveryStatus:
+            isInvoice || isDeliveryNote ? (
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+                onClickOpenMoveOrderToReadyModal={
+                  onClickOpenMoveOrderToReadyModal
+                }
+              />
+            ) : (
+              <div>—</div>
+            ),
+          status:
+            isInvoice && quote?.isDraft ? (
+              <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
+            ) : (
+              _renderStatus(docType, quote, t)
+            ),
+        };
+      });
+
+      setAllQuotes(remappedQuotes as any[]);
+    }
+  }, [cellsExpanded, originalData]);
+
+  const SourceDocumentCell = ({
+    documents,
+    expanded,
+    onToggle,
+  }: {
+    documents: Array<{
+      sourceDocumentType: any;
+      documentId: any;
+      documentNumber: any;
+    }>;
+    expanded: boolean;
+    onToggle: () => void;
+  }) => {
     const { t } = useTranslation();
-    const [showAll, setShowAll] = useState(false);
     const MAX_VISIBLE = 2;
 
-    const visibleItems = showAll ? documents : documents.slice(0, MAX_VISIBLE);
+    const visibleItems = expanded
+      ? documents
+      : documents?.slice(0, MAX_VISIBLE);
 
     return (
       <div
-        style={{ maxHeight: showAll ? "none" : "100px", overflow: "hidden" }}
+        style={{ maxHeight: expanded ? "none" : "100px", overflow: "hidden" }}
       >
         {visibleItems?.map((item, index) => (
           <a
             key={index}
-            href={`${renderURLDocumentType(
+            href={renderURLDocumentType(
               item?.sourceDocumentType,
               item.documentId
-            )}`}
+            )}
             style={{
               cursor: "pointer",
               color: "inherit",
@@ -582,63 +853,64 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 item?.sourceDocumentType
               )
             )}
-            :{item?.documentNumber}
+            : {item?.documentNumber}
             <br />
           </a>
         ))}
-        {documents.length > MAX_VISIBLE && (
+        {documents?.length > MAX_VISIBLE && (
           <Typography
-            onClick={() => setShowAll(!showAll)}
+            onClick={onToggle}
             sx={{
               cursor: "pointer",
               color: "#000",
               textDecoration: "underline",
               display: "inline-block",
-              marginTop: "5px",
+              mt: "5px",
               fontWeight: 500,
               fontSize: "0.9rem",
-              "&:hover": {
-                color: "#717273",
-              },
+              "&:hover": { color: "#717273" },
             }}
           >
-            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
           </Typography>
         )}
       </div>
     );
   };
 
-  const WorksNameCell = ({ worksNames }: { worksNames: any }) => {
+  const WorksNameCell = ({
+    worksNames,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    worksNames: string[] | string | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
     const { t } = useTranslation();
-    const [showAll, setShowAll] = useState(false);
     const MAX_VISIBLE = 3;
 
-    // Parse worksNames if it's a string, otherwise ensure it's an array
     const safeWorksNames = (() => {
       if (typeof worksNames === "string") {
-        // Split by comma and trim whitespace
         return worksNames
           .split(",")
-          .map((item) => item.trim())
-          .filter((item) => item.length > 0);
-      } else if (Array.isArray(worksNames)) {
-        return worksNames;
-      } else {
-        return [];
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
+      return Array.isArray(worksNames) ? worksNames : [];
     })();
 
-    const visibleItems = showAll
+    const visibleItems = expanded
       ? safeWorksNames
       : safeWorksNames.slice(0, MAX_VISIBLE);
-
     const displayText = visibleItems.join(", ");
 
     return (
       <div
         style={{
-          maxHeight: showAll ? "none" : "60px",
+          maxHeight: expanded ? "none" : "60px",
           overflow: "hidden",
           lineHeight: "1.4",
         }}
@@ -646,7 +918,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         <span>{displayText}</span>
         {safeWorksNames.length > MAX_VISIBLE && (
           <Typography
-            onClick={() => setShowAll(!showAll)}
+            onClick={onToggle}
             sx={{
               cursor: "pointer",
               color: "#000",
@@ -655,12 +927,69 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               [isRTL ? "mr" : "ml"]: 1,
               fontWeight: 500,
               fontSize: "0.9rem",
-              "&:hover": {
-                color: "#717273",
-              },
+              "&:hover": { color: "#717273" },
             }}
           >
-            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  const PurchaseNumberCell = ({
+    purchaseNumbers,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    purchaseNumbers: string[] | string | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safePurchaseNumbers = (() => {
+      if (typeof purchaseNumbers === "string") {
+        return purchaseNumbers
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      return Array.isArray(purchaseNumbers) ? purchaseNumbers : [];
+    })();
+
+    const visibleItems = expanded
+      ? safePurchaseNumbers
+      : safePurchaseNumbers.slice(0, MAX_VISIBLE);
+    const displayText = visibleItems.join(", ");
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          overflow: "hidden",
+          lineHeight: "1.4",
+        }}
+      >
+        <span>{displayText}</span>
+        {safePurchaseNumbers.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              cursor: "pointer",
+              color: "#000",
+              textDecoration: "underline",
+              display: "inline-block",
+              [isRTL ? "mr" : "ml"]: 1,
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              "&:hover": { color: "#717273" },
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
           </Typography>
         )}
       </div>
@@ -694,8 +1023,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ),
               agent: quote?.agentName,
               number: quote?.number,
-              purchaseNumber: quote?.purchaseNumber,
-              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+              purchaseNumber: (
+                <PurchaseNumberCell
+                  key={`purchase-${quote?.id}`}
+                  purchaseNumbers={quote?.purchaseNumber}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
+              worksName: (
+                <WorksNameCell
+                  worksNames={quote?.worksNames || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
               discount: quote?.discount,
               totalPriceWithoutVat: isRTL
                 ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -792,7 +1136,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 agent: quote?.agentName,
                 number: quote?.number,
                 worksName: (
-                  <WorksNameCell worksNames={quote?.worksNames || []} />
+                  <WorksNameCell
+                    worksNames={quote?.worksNames || []}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
                 ),
               };
             }
@@ -843,7 +1192,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     <br />
                   </span>
                 )),
-                purchaseNumber: quote?.purchaseNumber,
+                purchaseNumber: (
+                  <PurchaseNumberCell
+                    key={`purchase-${quote?.id}`}
+                    purchaseNumbers={quote?.purchaseNumber}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
                 productionStatus: quote?.productionStatus
                   ? t("boardMissions.done")
                   : t("boardMissions.inProduction"),
@@ -870,6 +1227,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               sourceDocument: (
                 <SourceDocumentCell
                   documents={quote?.sourceDocumentNumber || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
                 />
               ),
               deliveryStatus:
@@ -943,6 +1302,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ),
           }));
 
+          // Store original data for re-mapping when cellsExpanded changes
+          setOriginalData(data);
           setAllQuotes(
             isReceipt || isSupplierPayments ? mapReceiptData : mapData
           );
@@ -1154,8 +1515,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ),
             agent: quote?.agentName,
             number: quote?.number,
-            purchaseNumber: quote?.purchaseNumber,
-            worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+            purchaseNumber: (
+              <PurchaseNumberCell
+                key={`purchase-${quote?.id}`}
+                purchaseNumbers={quote?.purchaseNumber}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+            worksName: (
+              <WorksNameCell
+                worksNames={quote?.worksNames || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
             discount: quote?.discount,
             totalPriceWithoutVat: isRTL
               ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
@@ -1249,7 +1625,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ...baseRow,
               agent: quote?.agentName,
               number: quote?.number,
-              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+              worksName: (
+                <WorksNameCell
+                  worksNames={quote?.worksNames || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
             };
           }
 
@@ -1291,7 +1674,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   <br />
                 </span>
               )),
-              purchaseNumber: quote?.purchaseNumber,
+              purchaseNumber: (
+                <PurchaseNumberCell
+                  key={`purchase-${quote?.id}`}
+                  purchaseNumbers={quote?.purchaseNumber}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
               productionStatus: quote?.productionStatus
                 ? t("boardMissions.done")
                 : t("boardMissions.inProduction"),
@@ -1318,6 +1709,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             sourceDocument: (
               <SourceDocumentCell
                 documents={quote?.sourceDocumentNumber || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
               />
             ),
             deliveryStatus:
@@ -1382,6 +1775,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           ),
         }));
 
+        // Store original data for re-mapping when cellsExpanded changes
+        setOriginalData(data);
         setAllQuotes(
           isReceipt || isSupplierPayments ? mapReceiptData : mapData
         );
