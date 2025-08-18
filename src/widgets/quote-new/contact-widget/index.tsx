@@ -67,11 +67,6 @@ const ContactNewWidget = ({
   const [documentContacts, setDocumentContacts] = useState(items);
   useEffect(() => {
     setDocumentContacts(items);
-
-    if (quoteItemValue && items && items?.length === 0) {
-      setIsDisplayWidget(true)
-    }
-
   }, [items]);
 
   const updateDocumentContactsReorder = async (list) => {
@@ -186,9 +181,10 @@ const ContactNewWidget = ({
               onClick={() => {
                 if (!quoteItemValue.client) {
                   alertFault(
-                    `home.admin.${clientType === CLIENT_TYPE.CUSTOMER
-                      ? "pleaseSelectClient"
-                      : "pleaseSelectSupplier"
+                    `home.admin.${
+                      clientType === CLIENT_TYPE.CUSTOMER
+                        ? "pleaseSelectClient"
+                        : "pleaseSelectSupplier"
                     }`
                   );
                   return;
