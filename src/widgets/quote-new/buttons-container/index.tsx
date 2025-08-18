@@ -209,6 +209,9 @@ const ButtonsContainer = ({
   const checkIsAgentRequired = CheckPreferenceValue(
     EPreferences.AGENT_REQUIRED_IN_DOC
   );
+  const checkIsAgentRequiredInQuote = CheckPreferenceValue(
+    EPreferences.AGENT_REQUIRED_IN_QUOTE
+  );
   const isAgentEmpty =
     !quoteItemValue?.agentId ||
     quoteItemValue?.agentId === "00000000-0000-0000-0000-000000000000";
@@ -220,6 +223,8 @@ const ButtonsContainer = ({
       alertFault("sales.cart.deliveryDateIsRequired");
     } else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
       alertFault("sales.cart.deliveryDateIsRequired");
+    } else if (isQuote && checkIsAgentRequiredInQuote && isAgentEmpty && isQuote) {
+      alertFault("sales.cart.agentIsRequired");
     } else {
       onClickOpenOrderNowModal(false);
     }
