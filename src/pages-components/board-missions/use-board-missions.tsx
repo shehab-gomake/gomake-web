@@ -272,6 +272,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
       t("boardMissions.priceFromOrderItem"),
+    isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -762,6 +763,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${
                     itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
                   }`,
+            }),
+            ...(isPrintHouseUsePrintNode && {
+              isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
             }),
             jobName: mission?.jobName,
             numberOfBoardMissionsInOrder: mission?.numberOfBoardMissions,
