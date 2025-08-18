@@ -7,7 +7,7 @@ import {
   Stack,
   Divider,
 } from "@mui/material";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
@@ -23,6 +23,7 @@ import {
   columnVisibilityStateFamily,
   jobsColumnKeys,
 } from "../../states/board-missions-columns-settings-state";
+import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import { useStyle } from "./style";
 import { saveJobsTableSettingsApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -38,13 +39,16 @@ export const BoardMissionsColumnSettingsMenu = ({
   isPurchaseJobs,
 }) => {
   const { CheckPermission } = useUserPermission();
+  const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   const allColumnKeys = jobsColumnKeys[tableKey];
 
-  const filteredKeys = allColumnKeys.filter(
-    (key) =>
-      (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
-      CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-  );
+  const filteredKeys = allColumnKeys
+    .filter(
+      (key) =>
+        (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
+        CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+    )
+    .filter((key) => key !== "isPrinted" || isPrintHouseUsePrintNode);
 
   const { t } = useTranslation();
   const { classes } = useStyle();

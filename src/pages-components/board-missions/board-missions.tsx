@@ -7,6 +7,7 @@ import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
   GomakePrimaryButton,
+  SecondSwitch,
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -175,9 +176,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     visibleHeaders,
     setColumnVisibility,
     tableKey,
+    setIsPrintedState,
+    isPrintedState,
+    isPrintHouseUsePrintNode,
   } = useBoardMissions({ isPurchaseJobs });
-
-
 
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -185,7 +187,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
   );
-  const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -215,7 +216,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -232,7 +233,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -260,17 +261,19 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => { }, {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
         const allColumnKeys = jobsColumnKeys[tableKey];
 
-        const filteredKeys = allColumnKeys.filter(
-          (key) =>
-            (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
-            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-        );
+        const filteredKeys = allColumnKeys
+          .filter(
+            (key) =>
+              (key !== "costFromOrderItem" && key !== "priceFromOrderItem") ||
+              CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+          )
+          .filter((key) => key !== "isPrinted" || isPrintHouseUsePrintNode);
 
         if (saved && saved.length > 0) {
           const { order, visibility } = parseSavedColumnSettings(
@@ -333,12 +336,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (k) => k !== "pageNumber" && k !== "pageSize"
                       ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                        <div
+                          style={{ position: "absolute", top: -5, right: -1 }}
+                        >
+                          <DotIcon />
+                        </div>
+                      )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -413,6 +416,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               withArrow={true}
                             />
                           </div>
+
                           {/* <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("products.offsetPrice.admin.proof")}
@@ -442,17 +446,40 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             </h3>
                             <GoMakeMultiSelect
                               onChange={handleProofTypesChange}
-                              style={classes.textInputForProductsStyle}
+                              style={{
+                                ...classes.textInputForProductsStyle,
+                                ...(!!isPrintHouseUsePrintNode && {
+                                  width: "100%",
+                                }),
+                              }}
                               options={
                                 exampleTypeValues?.map((option) => ({
-                                  label: t(`products.proofTypes.${option.value}`),
+                                  label: t(
+                                    `products.proofTypes.${option.value}`
+                                  ),
                                   value: option.key,
                                 })) || []
                               }
                               values={proofTypes}
-                              placeholder={t("products.offsetPrice.admin.proof")}
+                              placeholder={t(
+                                "products.offsetPrice.admin.proof"
+                              )}
                             />
                           </div>
+
+                          {!!isPrintHouseUsePrintNode && (
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.isPrinted")}
+                              </h3>
+                              <SecondSwitch
+                                checked={isPrintedState}
+                                onChange={(e) => {
+                                  setIsPrintedState(e.target.checked);
+                                }}
+                              />
+                            </div>
+                          )}
 
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
@@ -640,12 +667,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -686,12 +713,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -750,7 +777,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -812,12 +839,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
