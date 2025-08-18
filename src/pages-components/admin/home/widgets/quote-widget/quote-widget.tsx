@@ -78,6 +78,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
     onCustomerAddFromOption,
   } = useQuoteWidget();
 
+
   useEffect(() => {
     if (userQuote) {
       setQuoteId(userQuote.id);
