@@ -192,7 +192,7 @@ const ProductionFloorWidget = () => {
 
   return (
     <Stack
-      padding={"0 20px"}
+      // padding={"0 20px"}
       gap={"10px"}
       height={"100%"}
       maxHeight={"100%"}
@@ -206,14 +206,16 @@ const ProductionFloorWidget = () => {
       />
 
       {view !== EProductionFloorView.DASHBOARD && (
-        <ProductionFloorFilters
-          getStationFilterGroups={getStationFilterGroups}
-          connectionId={connectionId}
-          isMobile={isMobile}
-          view={view}
-        />
+        <Stack paddingLeft={"20px"} paddingRight={"20px"}>
+          <ProductionFloorFilters
+            getStationFilterGroups={getStationFilterGroups}
+            connectionId={connectionId}
+            isMobile={isMobile}
+            view={view}
+          />
+        </Stack>
       )}
-      <Stack overflow={"auto"} maxHeight={"100%"}>
+      <Stack overflow={"auto"} maxHeight={"100%"} paddingLeft={"20px"} paddingRight={"20px"}>
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
