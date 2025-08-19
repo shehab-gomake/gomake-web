@@ -19,6 +19,7 @@ import { useDisplayProfitProfilesSocketIo } from "@/hooks/socket-io/use-display-
 import { getProfitsChartDataApi } from "@/services/api-service/generic-doc/orders-api";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { getDataForAutoPricingActionsChartApi } from "@/services/api-service/quotes/qoutes-endpoints";
+import { getAllPrintHouseActions } from "@/services/hooks";
 
 interface PricingProfileSetting {
   id: string;
@@ -27,6 +28,12 @@ interface PricingProfileSetting {
   label: string;
   value: string;
 }
+
+type ActionOption = {
+  actionId: string;
+  label: string;
+  value: string;
+};
 
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
@@ -501,7 +508,10 @@ const usePriceProfit = () => {
   const isRTL = dir === "rtl";
   const { productList } = useAllProductsDropDownList();
   const [productId, setProductId] = useState<string | null>(null);
-  const [actionId, setActionId] = useState<string | null>(null);
+
+  const [action, setAction] = useState<ActionOption | null>(null);
+
+  const [actionList, setActionList] = useState<any[]>([]);
 
   const [chartData, setChartData] = useState({
     pointsX: [],
@@ -525,11 +535,18 @@ const usePriceProfit = () => {
     setProductId(value?.value || null);
   };
 
-  //!here new new
+  const getActions = useCallback(async () => {
+    await getAllPrintHouseActions(callApi, setActionList);
+  }, []);
+
+  const onChangeActionId = (_e: any, option: ActionOption | null) => {
+    setAction(option);
+  };
+
   const getDataForAutoPricingActionsChart = async (
     productId?: string,
-    fromData?: string,
-    toData?: string,
+    fromDate?: string,
+    toDate?: string,
     actionId?: string
   ) => {
     const callBack = (res) => {
@@ -539,26 +556,11 @@ const usePriceProfit = () => {
     };
     await getDataForAutoPricingActionsChartApi(callApi, callBack, {
       productId,
-      fromData,
-      toData,
+      fromDate,
+      toDate,
       actionId,
     });
   };
-
-  // Auto call getDataForAutoPricingActionsChart when parameters change
-  useEffect(() => {
-    if (productId || fromDate || toDate || actionId) {
-      const fromDataString = fromDate ? fromDate.toISOString() : undefined;
-      const toDataString = toDate ? toDate.toISOString() : undefined;
-
-      getDataForAutoPricingActionsChart(
-        productId || undefined,
-        fromDataString,
-        toDataString,
-        actionId || undefined
-      );
-    }
-  }, [productId, fromDate, toDate, actionId]);
 
   return {
     open,
@@ -608,22 +610,22 @@ const usePriceProfit = () => {
     openChartModal,
     router,
     t,
-
     isRTL,
     getProfitsChartData,
     chartData,
     productList,
     onChangeProductId,
     productId,
-    actionId,
-    setActionId,
-    getDataForAutoPricingActionsChart,
-
+    actionList,
+    onChangeActionId,
+    action,
     onSelectDeliveryTimeDates,
     fromDate,
     setFromDate,
     toDate,
     setToDate,
+    getDataForAutoPricingActionsChart,
+    getActions,
   };
 };
 

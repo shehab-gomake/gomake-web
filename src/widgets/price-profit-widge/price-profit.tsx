@@ -14,26 +14,44 @@ const PriceProfitWidge = () => {
     openPrint,
     handleOpenPrint,
     onClickPrint,
-    handleOpenChartModal,
     getProfitsChartData,
     chartData,
-    productList,
-    onChangeProductId,
     productId,
-    actionId,
-    setActionId,
+    actionList,
+    onChangeActionId,
+    action,
     onSelectDeliveryTimeDates,
     fromDate,
     setFromDate,
     toDate,
     setToDate,
+    getDataForAutoPricingActionsChart,
+    getActions,
   } = usePriceProfit();
 
+  // useEffect(() => {
+  //   if (productId !== null) {
+  //     getProfitsChartData(productId);
+  //   } else getProfitsChartData();
+  // }, [productId]);
+
   useEffect(() => {
-    if (productId !== null) {
-      getProfitsChartData(productId);
-    } else getProfitsChartData();
-  }, [productId]);
+    if (productId || fromDate || toDate || action) {
+      const fromDataString = fromDate ? fromDate.toISOString() : undefined;
+      const toDataString = toDate ? toDate.toISOString() : undefined;
+
+      getDataForAutoPricingActionsChart(
+        productId || undefined,
+        fromDataString,
+        toDataString,
+        action?.actionId ?? undefined
+      );
+    }
+  }, [productId, fromDate, toDate, action?.actionId]);
+
+  useEffect(() => {
+    getActions();
+  }, []);
 
   return (
     <div style={classes.mainContainer}>
@@ -43,21 +61,17 @@ const PriceProfitWidge = () => {
         openPrint={openPrint}
         handleOpenPrint={handleOpenPrint}
         onClickPrint={onClickPrint}
-        handleOpenChartModal={handleOpenChartModal}
-        //!here new
-        productList={productList}
-        productId={productId}
-        onChangeProductId={onChangeProductId}
-        actionId={actionId}
-        setActionId={setActionId}
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         fromDate={fromDate}
         setFromDate={setFromDate}
         toDate={toDate}
         setToDate={setToDate}
+        actionList={actionList}
+        action={action}
+        onChangeActionId={onChangeActionId}
       />
       <Divider style={classes.divider} />
-      <PriceCurveFit {...chartData} />
+      {/* <PriceCurveFit {...chartData} /> */}
     </div>
   );
 };

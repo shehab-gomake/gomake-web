@@ -24,12 +24,9 @@ const PriceProfitHeaderWidget = ({
   openPrint,
   handleOpenPrint,
   onClickPrint,
-  handleOpenChartModal,
-  productList,
-  productId,
-  onChangeProductId,
-  actionId,
-  setActionId,
+  actionList,
+  onChangeActionId,
+  action,
   onSelectDeliveryTimeDates,
   fromDate,
   setFromDate,
@@ -77,17 +74,19 @@ const PriceProfitHeaderWidget = ({
             ranges={predefinedRanges}
           />
         </div>
+
         <GoMakeAutoComplate
-          options={productList?.map((product) => ({
-            value: product.id,
-            label: product?.name,
+          options={(actionList ?? []).map((a) => ({
+            value: a.id,
+            label: a.name,
+            actionId: a.actionId,
           }))}
-          value={productList?.find((p) => p.id === productId)?.name || null}
-          key={productId}
-          onChange={onChangeProductId}
+          value={action}
+          onChange={onChangeActionId}
+          getOptionLabel={(o) => o.label}
           style={classes.autoCompleteStyle}
-          placeholder={t("priceProfit.selectProduct")}
-          withArrow={true}
+          placeholder={t("products.profits.admin.selectAction")}
+          withArrow
           popupIcon={<ArrowDownNewIcon />}
         />
         <GomakePrimaryButton
