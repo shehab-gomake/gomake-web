@@ -387,6 +387,7 @@ const StatusTableComponent = ({
     setCurrentStationOrdering,
     reSortingCurrentStation,
   ]);
+  console.log("columnVisibility", columnVisibility)
 
   const TABLE_CONFIG = {
     ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
@@ -396,6 +397,9 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
+    if(boardsCount < 10){
+      return `500px`;
+    }
     const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
     const totalHeight = (visibleItems * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
 
@@ -441,13 +445,14 @@ const StatusTableComponent = ({
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper sx={{ overflow: 'auto' }}>
-            <TableVirtuoso
+            {getBoards().length > 10 ? <TableVirtuoso
               key={`virtuoso-${status.id}-${sortedBoards.length}`}
               ref={virtuosoRef}
               style={{ height: calculateConfigurableHeight() }}
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
+            
               fixedHeaderContent={fixedHeaderContent}
               itemContent={(index: number, boardMission: IBoardMissions) => (
                 <TableRowComponent
@@ -466,7 +471,35 @@ const StatusTableComponent = ({
                   cellsOnly
                 />
               )}
-            />
+            /> : <div>
+              <TableContainer >
+                <Table stickyHeader={false}>
+                  <TableHead style={{ backgroundColor: status.backgroundColor }}>
+                    {fixedHeaderContent()}
+                  </TableHead>
+                    <TableBody>
+                        {sortedBoards.map((boardMission, index) => (
+                        <TableRowComponent
+                            key={boardMission.id}
+                            boardMission={boardMission}
+                            status={status}
+                            onClickDone={tryMoveBoardMissionsToDone}
+                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                            index={index}
+                            onClickClient={onClickClient}
+                            isMobileScreen={isMobileScreen}
+                            isRTL={RTL}
+                            isUrgentWork={hasUrgentOrApproval}
+                            onUpdateJobDueDate={updateJobDueDate}
+                            employeesCategories={employeesCategories}
+                            visibleColumns={visibleColumns}
+                        />
+                        ))}
+                    </TableBody>
+                </Table>
+              </TableContainer>
+             
+            </div> }
           </Paper>
         </Collapse>
       )}
