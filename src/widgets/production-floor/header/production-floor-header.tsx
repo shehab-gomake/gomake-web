@@ -80,6 +80,7 @@ const ProductionFloorHeader = ({
       direction={"row"}
       justifyContent={"space-between"}
       alignItems={"center"}
+      padding={"0 20px"}
       style={{
         ...(isMobileScreen && { display: "contents" }),
       }}
