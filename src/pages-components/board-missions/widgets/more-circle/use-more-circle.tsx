@@ -11,10 +11,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { BoardMissionStatusForFilter } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import {
-  addBoardMissionsToFileUploaderApi,
-  printJobUsingPrintNodeApi,
-} from "@/services/api-service/board-missions/board-missions-table";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRecoilState } from "recoil";
 import {
   fileUploaderConnectionIdState,
@@ -45,6 +42,7 @@ const useMoreCircle = ({
   isDoneJobs,
   handleClickBackToProcess,
   onOpenMarkReadyModalForHasJobs,
+  printJobUsingPrintNode
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -132,20 +130,7 @@ const useMoreCircle = ({
     });
   };
 
-  const printJobUsingPrintNode = async (
-    jobId: string,
-    productType?: string
-  ) => {
-    const callBack = (res) => {
-      if (res.success) {
-      }
-    };
-    let data = jobId;
-    if (productType) {
-      //data = data + "?productType="+productType;
-    }
-    await printJobUsingPrintNodeApi(callApi, callBack, data);
-  };
+
   const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
   const isSendPaymentToClient = CheckPermission(
@@ -281,9 +266,7 @@ const useMoreCircle = ({
       condition: true && isSendPaymentToClient,
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
-      onclick: () => {
-        printJobUsingPrintNode(mission?.id, mission?.productType).then();
-      },
+      onclick: () => printJobUsingPrintNode(mission?.id, mission?.productType).then(),
     },
     !!companyProfile.filesApiAddress && {
       condition: true && isSendPaymentToClient,
