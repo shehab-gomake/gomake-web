@@ -35,6 +35,8 @@ import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-li
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { statusesListState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -185,6 +187,22 @@ const ProductionFloorWidget = () => {
       barcode
     });
   };
+
+  const setStatusesList = useSetRecoilState(statusesListState);
+  const getAllBoardMissionStatus = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setStatusesList(res.data)
+      }
+    };
+    await getAllBoardMissionStatusApi(callApi, callBack).then();
+  };
+
+  useEffect(() => {
+    getAllBoardMissionStatus()
+  }, [])
+
+
 
   //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
   const isOpenDoneModal = useModal()

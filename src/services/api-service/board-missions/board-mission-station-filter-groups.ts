@@ -18,6 +18,8 @@ const DUPLICATE_STATION_FILTER_BY_GROUP_ID_URL = "/v1/erp-service/board-mission-
 
 const GET_STATION_FILTER_GROUP_BY_ID_URL = "/v1/erp-service/board-mission-station-filter-groups/get-station-filter-group-by-id"
 const UPDATE_STATION_FILTER_GROUP_URL = "/v1/erp-service/board-mission-station-filter-groups/update-station-filter-group"
+const GET_ALL_BOARD_MISSION_STATUS_URL = "/v1/erp-service/board-missions/statuses/get-all"
+
 const applyStationFilterGroupApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -149,6 +151,18 @@ const updateStationFilterGroupApi: ICallAndSetData = async (
     data
   );
 };
+
+const getAllBoardMissionStatusApi: ICallAndSetData = async (
+  callApi,
+  setState
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_BOARD_MISSION_STATUS_URL,
+    setState
+  );
+};
 export {
   createBoardMissionStationFilterGroupApi,
   getAllBoardMissionStationFilterGroupsApi,
@@ -158,5 +172,6 @@ export {
   getJobsByGroups,
   duplicateStationFilterByGroupIdApi,
   getStationFilterGroupByIdApi,
-  updateStationFilterGroupApi
+  updateStationFilterGroupApi,
+  getAllBoardMissionStatusApi
 };
