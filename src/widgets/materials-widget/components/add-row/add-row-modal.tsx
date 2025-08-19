@@ -39,12 +39,13 @@ const AddRowModal = (props: IAddRowModalProps) => {
   );
   const [, setParameterCategories] = useRecoilState(materialsParametersState);
 
-  const { renderOptions, checkWhatRenderArray, isFetching } =
+  const { renderOptions, checkWhatRenderArray, isFetching, listClient } =
     useCustomerDropDownList({});
 
   useEffect(() => {
-    if (renderOptions()?.length > 0) setClientsCategories(renderOptions());
-  }, []);
+    const options = renderOptions();
+    if (options?.length > 0) setClientsCategories(options);
+  }, [listClient]);
 
   const [openModal, setOpenModal] =
     useRecoilState<boolean>(openAddRowModalState);
