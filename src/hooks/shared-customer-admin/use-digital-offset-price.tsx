@@ -6277,11 +6277,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           alertFaultUpdate();
         }
       };
+      const duplicateType = router?.query?.duplicateType;
       await getProductByItemIdApi(callApi, callBack, {
         documentItemId: router?.query?.documentItemId,
         signalRConnectionId: conn,
         documentType: router?.query?.documentType,
         productId: productId,
+        ignoreActionNotes: (duplicateType === "1" || duplicateType === "2"),
       });
     }
   };
