@@ -5,7 +5,7 @@ import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-wi
 import { useEffect } from "react";
 import PriceCurveFit from "./widgets/chart/price-curve-fit";
 
-const PriceProfitWidge = () => {
+const PriceProfitWidget = () => {
   const { classes } = useStyle();
   const {
     handlePrintClose,
@@ -22,6 +22,9 @@ const PriceProfitWidge = () => {
     toDate,
     setToDate,
     getDataForAutoPricingActionsChart,
+    handleAutoFix,
+    handleRollback,
+    isFixed,
     getActions,
     getProfitsPricingTables,
     profitsPricingTables,
@@ -73,10 +76,13 @@ const PriceProfitWidge = () => {
         profitsPricingTables={profitsPricingTables}
         selectedPricingTable={selectedPricingTable}
         onSelectPricingTable={onSelectPricingTable}
+        handleAutoFix={handleAutoFix}
+        handleRollback={handleRollback}
+        isFixed={isFixed}
       />
       <Divider style={classes.divider} />
       <PriceCurveFit {...chartData} />
     </div>
   );
 };
-export { PriceProfitWidge };
+export { PriceProfitWidget };

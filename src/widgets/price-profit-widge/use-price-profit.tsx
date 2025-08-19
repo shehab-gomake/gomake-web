@@ -21,6 +21,10 @@ import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list"
 import { getDataForAutoPricingActionsChartApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { getAndSetProfitsPricingTables } from "@/pages-components/products/profits-new/services/get-profits-pricing-tables";
+import {
+  profitAutoFixApi,
+  rollbackUpdatedPricingTablesAfterOptimizationApi,
+} from "@/services/api-service/print-houses/profits-auto-calculation";
 
 interface PricingProfileSetting {
   id: string;
@@ -499,6 +503,7 @@ const usePriceProfit = () => {
   const [actionList, setActionList] = useState<any[]>([]);
   const [profitsPricingTables, setProfitsPricingTables] = useState<any[]>([]);
   const [selectedPricingTable, setSelectedPricingTable] = useState<any>(null);
+  const [isFixed, setIsFixed] = useState<boolean>(false);
 
   const [chartData, setChartData] = useState({
     pointsX: [],
@@ -587,6 +592,92 @@ const usePriceProfit = () => {
     });
   };
 
+  const handleAutoFix = async (
+    fromDate?: string,
+    toDate?: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don't want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
+        setIsFixed(true);
+      }
+    };
+    await profitAutoFixApi(callApi, callBack, {
+      fromDate,
+      toDate,
+      actionId,
+      pricingTableId,
+    });
+  };
+
+  const handleRollback = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don't want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
+        setIsFixed(false);
+      }
+    };
+    await rollbackUpdatedPricingTablesAfterOptimizationApi(callApi, callBack);
+  };
+
   return {
     open,
     anchorEl,
@@ -647,6 +738,9 @@ const usePriceProfit = () => {
     toDate,
     setToDate,
     getDataForAutoPricingActionsChart,
+    handleAutoFix,
+    handleRollback,
+    isFixed,
     getActions,
     getProfitsPricingTables,
     profitsPricingTables,

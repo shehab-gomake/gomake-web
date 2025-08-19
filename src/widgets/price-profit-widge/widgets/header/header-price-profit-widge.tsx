@@ -5,7 +5,7 @@ import {
   GoMakeMenu,
   GomakePrimaryButton,
 } from "@/components";
-import { ArrowDownNewIcon, PrintIcon, SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, PrintIcon } from "@/icons";
 import { MenuItem } from "@mui/material";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
@@ -30,6 +30,9 @@ const PriceProfitHeaderWidget = ({
   profitsPricingTables,
   selectedPricingTable,
   onSelectPricingTable,
+  handleAutoFix,
+  handleRollback,
+  isFixed,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -59,12 +62,37 @@ const PriceProfitHeaderWidget = ({
     <div style={classes.mainContainer}>
       <div style={classes.title}>{t("settings.priceProfit")}</div>
       <div style={classes.buttonContainer}>
-        <PrimaryButton variant={"outlined"} sx={classes.fixBtn}>
-          {t("Fix")}
-          {/* !here */}
+        <PrimaryButton
+          variant={"outlined"}
+          sx={classes.fixBtn}
+          onClick={() => {
+            const fromDataString = fromDate
+              ? fromDate.toISOString()
+              : undefined;
+            const toDataString = toDate ? toDate.toISOString() : undefined;
+
+            if (isFixed) {
+              handleRollback(
+                fromDataString,
+                toDataString,
+                action?.actionId ?? undefined,
+                selectedPricingTable?.value ?? undefined
+              );
+            } else {
+              handleAutoFix(
+                fromDataString,
+                toDataString,
+                action?.actionId ?? undefined,
+                selectedPricingTable?.value ?? undefined
+              );
+            }
+          }}
+        >
+          {isFixed ? t("products.profits.rollback") : t("products.profits.fix")}
         </PrimaryButton>
         <div style={classes.statusFilterContainer}>
           {/* <GlobalStyle RTL={RTL} /> */}
+          {/* !here */}
           <DateRangePicker
             ref={pickerRef}
             onChange={onSelectDeliveryTimeDates}

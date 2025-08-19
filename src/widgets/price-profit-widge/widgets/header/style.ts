@@ -111,7 +111,7 @@ const useStyle = () => {
         width: "fit-content",
         height: 40,
         borderRadius: "8px !important",
-        padding: 0,
+        padding: 1,
         border: "1px solid #E0E0E0",
         backgroundColor: "transparent",
         cursor: "pointer",
