@@ -1264,7 +1264,19 @@
     "category": "Kategorie",
     "editMachine": "Maschine bearbeiten",
     "edit": "Bearbeiten",
-    "machines": "Maschinen"
+    "machines": "Maschinen",
+    "noMachinesFound": "Keine Maschinen gefunden",
+    "noSearchResults": "Keine Maschinen gefunden, die Ihrer Suche entsprechen",
+    "tryDifferentSearch": "Versuchen Sie einen anderen Suchbegriff oder überprüfen Sie die Schreibweise",
+    "noMachinesInSystem": "Derzeit sind keine Maschinen im System verfügbar",
+    "machineName": "Maschinenname",
+    "category": "Kategorie",
+    "selectCategoryManually": "Kategorie manuell auswählen",
+    "loadingAdminMachines": "Admin-Maschinen werden geladen...",
+    "loadedAdminMachines": "{{count}} Admin-Maschinen geladen",
+    "noAdminMachinesFound": "Keine Admin-Maschinen gefunden. Überprüfen Sie die Konsole für Details.",
+    "startTypingToSearch": "Beginnen Sie mit der Eingabe, um nach Maschinen zu suchen...",
+    "loadingMachines": "Maschinen werden geladen..."
   },
   "tyingOptions": {
     "cross": "Kreuz",
@@ -1625,7 +1637,7 @@
       "chooseCustomer": "Kunde auswählen",
       "ChooseAgent": "Agent auswählen",
       "loggers": "Protokolle",
-      "maxItemsReached": "Maximale Anzahl von Artikeln (100) für die Erstellung neuer Dokumente erreicht"
+      "maxItemsReached": "Maximale Anzahl von Artikeln (100) für die Erstellung neuer Dokumente erreicht",
       "pdf": "PDF",
       "edit": "Bearbeiten",
       "quoteList": "Angebotsliste",

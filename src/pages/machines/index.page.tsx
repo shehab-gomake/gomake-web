@@ -1,11 +1,11 @@
 import { Permissions } from "@/components/CheckPermission/enum";
 import { CustomerAuthLayout } from "@/layouts";
-import { CategoriesTable } from "@/widgets/machines/components/categories-table/categories-table";
+import { CustomerMachinesGrouped } from "@/widgets/machines/customer/customer-machines-grouped";
 
 export default function CustomerMachinesPage() {
   return (
     <CustomerAuthLayout staticPageTitle={"machines"} permissionEnumValue={Permissions.SHOW_MACHINES} className={`custom-scrollbar`}>
-      <CategoriesTable isAdmin={false} />
+      <CustomerMachinesGrouped />
     </CustomerAuthLayout>
   );
 }
