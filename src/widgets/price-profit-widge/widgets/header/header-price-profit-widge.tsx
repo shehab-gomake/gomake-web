@@ -11,79 +11,85 @@ import { ReStoreIcon } from "../table/icons/restore-icon";
 import { ResetIcon } from "../table/icons/reser-icon";
 import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { ChartIcon } from "@/icons/chart-icon";
+import { DateRangePicker } from "rsuite";
+import { createGlobalStyle } from "styled-components";
+import { useRef } from "react";
+import { predefinedRanges } from "@/utils/dateRanges";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const PriceProfitHeaderWidget = ({
-  handleClose,
-  anchorEl,
-  open,
-  handleOpen,
   handlePrintClose,
   anchorElPrint,
   openPrint,
   handleOpenPrint,
-  pricingProfileSetting,
-  selectedPricingProfileSetting,
-  setSelectedPricingProfileSetting,
-  updateSelectedPrintHousePrices,
   onClickPrint,
-  resetPrintHousePrice,
   handleOpenChartModal,
+  productList,
+  productId,
+  onChangeProductId,
+  actionId,
+  setActionId,
+  onSelectDeliveryTimeDates,
+  fromDate,
+  setFromDate,
+  toDate,
+  setToDate,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const router = useRouter();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
+  const GlobalStyle = createGlobalStyle`
+  .rs-picker-popup-daterange {
+    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
+    top: 320px !important;
+  }
+`;
 
-  useEffect(() => {
-    if (router.query.productId) {
-      const selectedPricingProfileSetting = pricingProfileSetting
-        ?.map((item) => ({
-          ...item,
-          label: item?.productName,
-          value: item?.productId,
-        }))
-        ?.find((item) => item?.productId === router.query.productId);
-      setSelectedPricingProfileSetting(selectedPricingProfileSetting);
+  const pickerRef = useRef(null);
+
+  const handleSelect = (date) => {
+    if (!fromDate) {
+      setFromDate(date);
+    } else if (!toDate) {
+      setToDate(date);
+      onSelectDeliveryTimeDates([fromDate, date]);
+      pickerRef.current.close();
     }
-  }, [router, pricingProfileSetting]);
+  };
 
   return (
     <div style={classes.mainContainer}>
       <div style={classes.title}>{t("settings.priceProfit")}</div>
       <div style={classes.buttonContainer}>
-        <Box onClick={handleOpenChartModal} sx={classes.chartBtn}>
-          <ChartIcon color="#182230" />
-        </Box>
+        <PrimaryButton variant={"outlined"} sx={classes.fixBtn}>
+          {t("Fix")}
+        </PrimaryButton>
+        <div style={classes.statusFilterContainer}>
+          {/* <GlobalStyle RTL={RTL} /> */}
+          <DateRangePicker
+            ref={pickerRef}
+            onChange={onSelectDeliveryTimeDates}
+            onSelect={handleSelect}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+            ranges={predefinedRanges}
+          />
+        </div>
         <GoMakeAutoComplate
-          options={pricingProfileSetting?.map((item) => ({
-            ...item,
-            label: item?.productName,
-            value: item?.productId,
+          options={productList?.map((product) => ({
+            value: product.id,
+            label: product?.name,
           }))}
-          value={selectedPricingProfileSetting}
-          key={selectedPricingProfileSetting?.productId}
-          onChange={(e, value) => {
-            setSelectedPricingProfileSetting(value);
-            if (value?.value) {
-              router.push({
-                pathname: window.location.pathname,
-                query: { ...router.query, productId: value.value },
-              });
-            }
-          }}
+          value={productList?.find((p) => p.id === productId)?.name || null}
+          key={productId}
+          onChange={onChangeProductId}
           style={classes.autoCompleteStyle}
           placeholder={t("priceProfit.selectProduct")}
           withArrow={true}
           popupIcon={<ArrowDownNewIcon />}
         />
-        <GomakePrimaryButton
-          style={classes.settingBtn}
-          leftIcon={<SettingNewIcon color="#182230" />}
-          rightIcon={<ArrowDownNewIcon />}
-          onClick={handleOpen}
-        />
-
         <GomakePrimaryButton
           style={classes.printBtn}
           leftIcon={<PrintIcon />}
@@ -93,35 +99,6 @@ const PriceProfitHeaderWidget = ({
           {t("priceProfit.print")}
         </GomakePrimaryButton>
       </div>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <div style={classes.menuContainer}>
-          <MenuItem onClick={() => updateSelectedPrintHousePrices(false)}>
-            <div style={classes.menuItemReviewContainer}>
-              <ReStoreIcon stroke={"#667085"} />
-              <div style={classes.menuItemReviewText}>
-                {t("priceProfit.restoreOriginalPrices")}
-              </div>
-            </div>
-          </MenuItem>
-          <MenuItem onClick={resetPrintHousePrice}>
-            <div style={classes.menuItemReviewContainer}>
-              <ResetIcon />
-              <div style={classes.menuItemReviewText}>
-                {t("priceProfit.resetOldVersion")}
-              </div>
-            </div>
-          </MenuItem>
-          <MenuItem onClick={() => updateSelectedPrintHousePrices(true)}>
-            <div style={classes.menuItemReviewContainer}>
-              <UpdatedPriceIcon2 />
-              <div style={classes.menuItemReviewText}>
-                {t("priceProfit.updateAllNewPrices")}
-              </div>
-            </div>
-          </MenuItem>
-        </div>
-      </GoMakeMenu>
-
       <GoMakeMenu
         handleClose={handlePrintClose}
         open={openPrint}

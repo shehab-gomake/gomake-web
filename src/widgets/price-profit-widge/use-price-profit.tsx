@@ -15,7 +15,10 @@ import {
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {useDisplayProfitProfilesSocketIo} from "@/hooks/socket-io/use-display-profit-profiles-socket-io";
+import { useDisplayProfitProfilesSocketIo } from "@/hooks/socket-io/use-display-profit-profiles-socket-io";
+import { getProfitsChartDataApi } from "@/services/api-service/generic-doc/orders-api";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { getDataForAutoPricingActionsChartApi } from "@/services/api-service/quotes/qoutes-endpoints";
 
 interface PricingProfileSetting {
   id: string;
@@ -285,8 +288,8 @@ const usePriceProfit = () => {
         defaultValue: value?.valueId
           ? value?.valueId
           : value?.id
-            ? value?.id
-            : value,
+          ? value?.id
+          : value,
       });
     },
     [router]
@@ -434,7 +437,7 @@ const usePriceProfit = () => {
       isSelectedProducts: isSelected,
     });
   };
-  const { } = useDisplayProfitProfilesSocketIo({ setProducts });
+  const {} = useDisplayProfitProfilesSocketIo({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
     const productId = Array.isArray(router.query.productId)
@@ -468,6 +471,94 @@ const usePriceProfit = () => {
       productId,
     });
   };
+
+  // here new
+
+  // Set default date range: 6 months ago until now
+  const getDefaultDateRange = () => {
+    const now = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(now.getMonth() - 6);
+    return { from: sixMonthsAgo, to: now };
+  };
+
+  const defaultDates = getDefaultDateRange();
+  const [fromDate, setFromDate] = useState<Date>(defaultDates.from);
+  const [toDate, setToDate] = useState<Date>(defaultDates.to);
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      // Reset to default dates if cleared
+      const defaultDates = getDefaultDateRange();
+      setFromDate(defaultDates.from);
+      setToDate(defaultDates.to);
+    }
+  };
+
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
+  const { productList } = useAllProductsDropDownList();
+  const [productId, setProductId] = useState<string | null>(null);
+  const [actionId, setActionId] = useState<string | null>(null);
+
+  const [chartData, setChartData] = useState({
+    pointsX: [],
+    pointsY: [],
+    userPrices: [],
+    calculatedPrices: [],
+    userPricesCosts: [],
+    calculatedPricesCosts: [],
+  });
+
+  const getProfitsChartData = async (productId?: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setChartData(res?.data);
+      }
+    };
+    await getProfitsChartDataApi(callApi, callBack, { productId });
+  };
+
+  const onChangeProductId = (_event: any, value: { value: string } | null) => {
+    setProductId(value?.value || null);
+  };
+
+  //!here new new
+  const getDataForAutoPricingActionsChart = async (
+    productId?: string,
+    fromData?: string,
+    toData?: string,
+    actionId?: string
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setChartData(res?.data);
+      }
+    };
+    await getDataForAutoPricingActionsChartApi(callApi, callBack, {
+      productId,
+      fromData,
+      toData,
+      actionId,
+    });
+  };
+
+  // Auto call getDataForAutoPricingActionsChart when parameters change
+  useEffect(() => {
+    if (productId || fromDate || toDate || actionId) {
+      const fromDataString = fromDate ? fromDate.toISOString() : undefined;
+      const toDataString = toDate ? toDate.toISOString() : undefined;
+
+      getDataForAutoPricingActionsChart(
+        productId || undefined,
+        fromDataString,
+        toDataString,
+        actionId || undefined
+      );
+    }
+  }, [productId, fromDate, toDate, actionId]);
 
   return {
     open,
@@ -516,7 +607,23 @@ const usePriceProfit = () => {
     handleOpenChartModal,
     openChartModal,
     router,
-    t
+    t,
+
+    isRTL,
+    getProfitsChartData,
+    chartData,
+    productList,
+    onChangeProductId,
+    productId,
+    actionId,
+    setActionId,
+    getDataForAutoPricingActionsChart,
+
+    onSelectDeliveryTimeDates,
+    fromDate,
+    setFromDate,
+    toDate,
+    setToDate,
   };
 };
 
