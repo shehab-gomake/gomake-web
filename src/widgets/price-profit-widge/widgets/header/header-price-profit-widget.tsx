@@ -28,16 +28,6 @@ const PriceProfitHeaderWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === "rtl";
-  const GlobalStyle = createGlobalStyle`
-  .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
-    top: 320px !important;
-  }
-`;
-
   const pickerRef = useRef(null);
 
   const handleSelect = (date) => {
@@ -83,8 +73,6 @@ const PriceProfitHeaderWidget = ({
           {isFixed ? t("products.profits.rollback") : t("products.profits.fix")}
         </PrimaryButton>
         <div style={classes.statusFilterContainer}>
-          {/* <GlobalStyle RTL={RTL} /> */}
-          {/* !here */}
           <DateRangePicker
             ref={pickerRef}
             onChange={onSelectDeliveryTimeDates}
