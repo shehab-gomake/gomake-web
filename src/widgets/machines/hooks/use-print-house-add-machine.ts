@@ -72,6 +72,11 @@ const usePrintHouseAddMachine = () => {
                 alertSuccessDelete();
                 deleteMachineFromArray(machineState.id);
                 setMachineState({});
+                
+                // Navigate to category page after successful deletion
+                if (machineState?.category) {
+                    push(`/machines/category/${machineState.category}`);
+                }
             } else {
                 alertFaultDelete();
             }

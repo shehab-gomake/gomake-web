@@ -53,29 +53,47 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
 
+    // Reset loading state when modal opens
+    useEffect(() => {
+        if (allAdminMachines.length === 0) {
+            setLoading(false);
+            setHasLoadedAdminMachines(false);
+        }
+    }, []);
+
     // Load admin machines when modal is opened (only once)
     useEffect(() => {
         if (!hasLoadedAdminMachines && allAdminMachines.length === 0) {
             setLoading(true);
             loadAdminMachines().then(() => {
-                // Wait for the admin machines to actually be loaded into the array
-                const checkForMachines = () => {
+                // Use a timeout to wait for the state to update
+                setTimeout(() => {
                     if (allAdminMachines.length > 0) {
                         setHasLoadedAdminMachines(true);
                         setLoading(false);
                     } else {
-                        // Check again in 100ms if machines are not loaded yet
-                        setTimeout(checkForMachines, 100);
+                        // If still no machines after timeout, mark as loaded but show no machines message
+                        setHasLoadedAdminMachines(true);
+                        setLoading(false);
                     }
-                };
-                checkForMachines();
+                }, 500); // Wait 500ms for state to update
             }).catch(() => {
                 setLoading(false);
+                setHasLoadedAdminMachines(true);
             });
         } else if (allAdminMachines.length > 0) {
             setHasLoadedAdminMachines(true);
+            setLoading(false); // Ensure loading is false when machines are already loaded
         }
     }, [loadAdminMachines, hasLoadedAdminMachines, allAdminMachines.length]);
+
+    // Watch for changes in allAdminMachines and update loading state
+    useEffect(() => {
+        if (allAdminMachines.length > 0 && loading) {
+            setLoading(false);
+            setHasLoadedAdminMachines(true);
+        }
+    }, [allAdminMachines.length, loading]);
 
     // Filter machines based on search input
     useEffect(() => {
