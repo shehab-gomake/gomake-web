@@ -50,9 +50,23 @@ const MultiSelectClientsInput = ({
     label: `${client.name} - ${client.code}`,
   }));
 
+  // Helper function to normalize values array to simple IDs
+  const normalizeValues = (vals: any[]): string[] => {
+    return vals
+      .map((item) => {
+        if (typeof item === "object" && item !== null) {
+          return item.ID || item.id;
+        }
+        return item;
+      })
+      .filter((id) => id !== undefined && id !== null);
+  };
+
+  const normalizedValues = normalizeValues(values);
+
   const reorderedOptions = clientsOptions.sort((a, b) => {
-    const isSelectedA = values.includes(a.value);
-    const isSelectedB = values.includes(b.value);
+    const isSelectedA = normalizedValues.includes(a.value);
+    const isSelectedB = normalizedValues.includes(b.value);
 
     if (isSelectedA && !isSelectedB) {
       return -1;
@@ -63,11 +77,10 @@ const MultiSelectClientsInput = ({
     }
   });
 
-  const selectedLabels = values
+  const selectedLabels = normalizedValues
     ?.map(
-      (selected) =>
-        reorderedOptions?.find((opt) => opt?.value === selected.ID)?.label ||
-        selected.Name
+      (selectedId) =>
+        reorderedOptions?.find((opt) => opt?.value === selectedId)?.label
     )
     .filter((label) => label !== null && label !== undefined);
 
@@ -79,26 +92,17 @@ const MultiSelectClientsInput = ({
     if (isHaveMorethanMaterialSuppliers) {
       onClickOpenDeleteTableRowModal();
     } else {
-      onChangeInputs(
-        parameterKey,
-        isChecked
-          ? [...values, option?.value]
-          : values.filter((v) => v !== option?.value)
-      );
+      const updatedValues = isChecked
+        ? [...normalizedValues, option?.value]
+        : normalizedValues.filter((v) => v !== option?.value);
+
+      onChangeInputs(parameterKey, updatedValues);
     }
   };
 
-  const transformValuesArray = (inputArray) => {
-    return inputArray
-      .map((item) =>
-        typeof item === "object" && item !== null ? item.ID : item
-      ) // Extract ID if item is an object
-      .filter((id) => id !== undefined); // Filter out any undefined values
-  };
-
   const onChangeInputs = async (key, value) => {
-    const values = transformValuesArray(value);
-    await updateCellData(id, key, values);
+    // The value is already normalized, so we can pass it directly
+    await updateCellData(id, key, value);
   };
 
   return (
@@ -108,6 +112,7 @@ const MultiSelectClientsInput = ({
         style={{
           ...classes.multiSelectStyle2,
           "& .MuiChip-deleteIcon": { display: "none" },
+          minWidth: 180,
         }}
         onChangeTextField={
           parameterKey === "clients" ? checkWhatRenderArray : undefined
@@ -118,6 +123,8 @@ const MultiSelectClientsInput = ({
         options={reorderedOptions}
         onChange={() => console.log("Not Work")}
         renderOption={(props: any, option: any) => {
+          const isChecked = normalizedValues.includes(option?.value);
+
           return (
             <Stack style={classes.multiSelectOption}>
               <div>
@@ -129,7 +136,7 @@ const MultiSelectClientsInput = ({
                   }}
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
-                  checked={values?.some((item) => item.ID === option?.value)}
+                  checked={isChecked}
                 />
               </div>
               <div>{option.label}</div>
@@ -150,12 +157,11 @@ const MultiSelectClientsInput = ({
         title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={() => {
-          onChangeInputs(
-            parameterKey,
-            selectedChecked
-              ? [...values, selectedOption?.value]
-              : values.filter((v) => v !== selectedOption?.value)
-          );
+          const updatedValues = selectedChecked
+            ? [...normalizedValues, selectedOption?.value]
+            : normalizedValues.filter((v) => v !== selectedOption?.value);
+
+          onChangeInputs(parameterKey, updatedValues);
         }}
       />
     </div>
