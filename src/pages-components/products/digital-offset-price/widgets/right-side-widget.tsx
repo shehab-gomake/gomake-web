@@ -374,6 +374,7 @@ const RightSideWidget = ({
                     setSliderCurrentProductItemValueTotalPrice(
                       Number(newTotalPrice)
                     );
+                    setLocalStateValue(Number(newTotalPrice))
                   }
                 }}
                 style={{
