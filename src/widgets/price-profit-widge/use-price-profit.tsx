@@ -20,6 +20,7 @@ import { getProfitsChartDataApi } from "@/services/api-service/generic-doc/order
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { getDataForAutoPricingActionsChartApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { getAllPrintHouseActions } from "@/services/hooks";
+import { getAndSetProfitsPricingTables } from "@/pages-components/products/profits-new/services/get-profits-pricing-tables";
 
 interface PricingProfileSetting {
   id: string;
@@ -37,7 +38,7 @@ type ActionOption = {
 
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertSuccessUpdate } = useSnackBar();
+  const { alertFaultGetData } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<
     PricingProfileSetting[]
   >([]);
@@ -257,18 +258,6 @@ const usePriceProfit = () => {
     },
     [requestAbortController]
   );
-  useEffect(() => {
-    getAllPricingProfileSettingForDropDownList();
-  }, []);
-
-  useEffect(() => {
-    if (router.query.productId) {
-      const productId = Array.isArray(router.query.productId)
-        ? router.query.productId[0]
-        : router.query.productId;
-      getAllProfitProfileProductByProductId(productId);
-    }
-  }, [router]);
 
   const updateProfitProfileProductParameter = useCallback(
     async (data: any, value: any) => {
@@ -506,12 +495,10 @@ const usePriceProfit = () => {
 
   const dir = t("direction");
   const isRTL = dir === "rtl";
-  const { productList } = useAllProductsDropDownList();
-  const [productId, setProductId] = useState<string | null>(null);
-
   const [action, setAction] = useState<ActionOption | null>(null);
-
   const [actionList, setActionList] = useState<any[]>([]);
+  const [profitsPricingTables, setProfitsPricingTables] = useState<any[]>([]);
+  const [selectedPricingTable, setSelectedPricingTable] = useState<any>(null);
 
   const [chartData, setChartData] = useState({
     pointsX: [],
@@ -531,22 +518,33 @@ const usePriceProfit = () => {
     await getProfitsChartDataApi(callApi, callBack, { productId });
   };
 
-  const onChangeProductId = (_event: any, value: { value: string } | null) => {
-    setProductId(value?.value || null);
-  };
-
   const getActions = useCallback(async () => {
     await getAllPrintHouseActions(callApi, setActionList);
   }, []);
 
   const onChangeActionId = (_e: any, option: ActionOption | null) => {
     setAction(option);
+    setSelectedPricingTable(null);
   };
+
+  const onSelectPricingTable = (_e: any, option: any) => {
+    setSelectedPricingTable(option);
+  };
+
+  const getProfitsPricingTables = useCallback(async () => {
+    if (action?.actionId) {
+      await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
+        actionIdOrProductId: action.actionId,
+        isOutSource: false, //!here You can make this configurable if needed
+      });
+    }
+  }, [action, callApi]);
 
   const getDataForAutoPricingActionsChart = async (
     fromDate?: string,
     toDate?: string,
-    actionId?: string
+    actionId?: string,
+    pricingTableId?: string
   ) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -585,6 +583,7 @@ const usePriceProfit = () => {
       fromDate,
       toDate,
       actionId,
+      pricingTableId,
     });
   };
 
@@ -639,9 +638,6 @@ const usePriceProfit = () => {
     isRTL,
     getProfitsChartData,
     chartData,
-    productList,
-    onChangeProductId,
-    productId,
     actionList,
     onChangeActionId,
     action,
@@ -652,6 +648,10 @@ const usePriceProfit = () => {
     setToDate,
     getDataForAutoPricingActionsChart,
     getActions,
+    getProfitsPricingTables,
+    profitsPricingTables,
+    selectedPricingTable,
+    onSelectPricingTable,
   };
 };
 

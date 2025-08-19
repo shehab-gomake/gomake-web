@@ -23,25 +23,36 @@ const PriceProfitWidge = () => {
     setToDate,
     getDataForAutoPricingActionsChart,
     getActions,
+    getProfitsPricingTables,
+    profitsPricingTables,
+    selectedPricingTable,
+    onSelectPricingTable,
     chartData,
   } = usePriceProfit();
 
   useEffect(() => {
-    if (fromDate || toDate || action) {
+    if (fromDate || toDate || action || selectedPricingTable) {
       const fromDataString = fromDate ? fromDate.toISOString() : undefined;
       const toDataString = toDate ? toDate.toISOString() : undefined;
 
       getDataForAutoPricingActionsChart(
         fromDataString,
         toDataString,
-        action?.actionId ?? undefined
+        action?.actionId ?? undefined,
+        selectedPricingTable?.value ?? undefined
       );
     }
-  }, [fromDate, toDate, action?.actionId]);
+  }, [fromDate, toDate, action?.actionId, selectedPricingTable?.value]);
 
   useEffect(() => {
     getActions();
   }, []);
+
+  useEffect(() => {
+    if (action?.actionId) {
+      getProfitsPricingTables();
+    }
+  }, [action?.actionId, getProfitsPricingTables]);
 
   return (
     <div style={classes.mainContainer}>
@@ -59,6 +70,9 @@ const PriceProfitWidge = () => {
         actionList={actionList}
         action={action}
         onChangeActionId={onChangeActionId}
+        profitsPricingTables={profitsPricingTables}
+        selectedPricingTable={selectedPricingTable}
+        onSelectPricingTable={onSelectPricingTable}
       />
       <Divider style={classes.divider} />
       <PriceCurveFit {...chartData} />

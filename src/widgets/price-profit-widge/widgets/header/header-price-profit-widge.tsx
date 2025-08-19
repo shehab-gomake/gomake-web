@@ -6,12 +6,7 @@ import {
   GomakePrimaryButton,
 } from "@/components";
 import { ArrowDownNewIcon, PrintIcon, SettingNewIcon } from "@/icons";
-import { Box, MenuItem } from "@mui/material";
-import { ReStoreIcon } from "../table/icons/restore-icon";
-import { ResetIcon } from "../table/icons/reser-icon";
-import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
-import { useRouter } from "next/router";
-import { ChartIcon } from "@/icons/chart-icon";
+import { MenuItem } from "@mui/material";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { useRef } from "react";
@@ -32,6 +27,9 @@ const PriceProfitHeaderWidget = ({
   setFromDate,
   toDate,
   setToDate,
+  profitsPricingTables,
+  selectedPricingTable,
+  onSelectPricingTable,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -63,6 +61,7 @@ const PriceProfitHeaderWidget = ({
       <div style={classes.buttonContainer}>
         <PrimaryButton variant={"outlined"} sx={classes.fixBtn}>
           {t("Fix")}
+          {/* !here */}
         </PrimaryButton>
         <div style={classes.statusFilterContainer}>
           {/* <GlobalStyle RTL={RTL} /> */}
@@ -89,6 +88,25 @@ const PriceProfitHeaderWidget = ({
           withArrow
           popupIcon={<ArrowDownNewIcon />}
         />
+        {action?.actionId &&
+          profitsPricingTables &&
+          profitsPricingTables.length > 0 && (
+            <GoMakeAutoComplate
+              options={(profitsPricingTables ?? []).map((table) => ({
+                value: table.id,
+                label: table.name,
+              }))}
+              value={selectedPricingTable}
+              onChange={onSelectPricingTable}
+              getOptionLabel={(o) => o.label}
+              style={classes.autoCompleteStyle}
+              placeholder={t(
+                "products.profits.pricingListWidget.selectPricingTable"
+              )}
+              withArrow
+              popupIcon={<ArrowDownNewIcon />}
+            />
+          )}
         <GomakePrimaryButton
           style={classes.printBtn}
           leftIcon={<PrintIcon />}
