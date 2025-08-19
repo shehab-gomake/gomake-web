@@ -387,9 +387,10 @@ const StatusTableComponent = ({
     setCurrentStationOrdering,
     reSortingCurrentStation,
   ]);
+  console.log("columnVisibility", columnVisibility)
 
   const TABLE_CONFIG = {
-    ITEM_HEIGHT: 85,
+    ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
     HEADER_HEIGHT: 50,
     MAX_VISIBLE_ITEMS: 10
   };
