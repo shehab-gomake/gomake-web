@@ -472,11 +472,22 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               <h3 style={classes.filterLabelStyle}>
                                 {t("boardMissions.isPrinted")}
                               </h3>
-                              <SecondSwitch
-                                checked={isPrintedState}
-                                onChange={(e) => {
-                                  setIsPrintedState(e.target.checked);
-                                }}
+                              <GoMakeAutoComplate
+                                options={[
+                                  { value: true, text: t("modal.yes") },
+                                  { value: false, text: t("modal.no") }
+                                ]}
+                                getOptionLabel={(option: any) => option.text}
+                                placeholder={t("boardMissions.isPrinted")}
+                                style={classes.textInputStyle}
+                                onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
+                                value={
+                                  isPrintedState === null 
+                                    ? null
+                                    : isPrintedState === true
+                                    ? { value: true, text: t("modal.yes") }
+                                    : { value: false, text: t("modal.no") }
+                                }
                               />
                             </div>
                           )}

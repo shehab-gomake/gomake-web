@@ -116,7 +116,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [sampleType, setSampleType] = useState<SampleTypeOption | null>(null);
   // Add state for multiple proof types (similar to productIds)
   const [proofTypes, setProofTypes] = useState([]);
-  const [isPrintedState, setIsPrintedState] = useState(false);
+  const [isPrintedState, setIsPrintedState] = useState<boolean | null>(null);
 
   // Handler for proof types multi-select change
   const handleProofTypesChange = (selectedValues) => {
@@ -401,7 +401,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       delete newQuery.sampleType;
     }
 
-    if (isPrintedState) newQuery.isPrinted = isPrintedState;
+    if (isPrintedState !== null) newQuery.isPrinted = isPrintedState;
     else delete newQuery.isPrinted;
 
     router.replace(
@@ -1413,7 +1413,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setResetDueDatePicker(true);
       setResetReadyDatePicker(true);
       setCurrentSortOrder(null);
-      setIsPrintedState(false);
+      setIsPrintedState(null);
       setPageNumber(1);
 
       return; // nothing else to hydrate
@@ -1505,12 +1505,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       }
     }
 
-    if (isPrinted) {
-      setIsPrintedState(
-        Array.isArray(isPrinted)
-          ? isPrinted[0] === "true"
-          : isPrinted === "true"
-      );
+    if (isPrinted !== undefined) {
+      const printedValue = Array.isArray(isPrinted) ? isPrinted[0] : isPrinted;
+      if (printedValue === "true") {
+        setIsPrintedState(true);
+      } else if (printedValue === "false") {
+        setIsPrintedState(false);
+      } else {
+        setIsPrintedState(null);
+      }
     }
 
     if (fromDate && typeof fromDate === "string")
