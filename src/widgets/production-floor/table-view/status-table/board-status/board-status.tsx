@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Menu } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilValue } from "recoil";
-import { productionFloorStatusesState } from "@/widgets/production-floor/state/boards";
+import { productionFloorStatusesState, statusesListState } from "@/widgets/production-floor/state/boards";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
@@ -41,6 +41,8 @@ const BoardStatusComponent = ({
   );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
   const statuses = useRecoilValue(productionFloorStatusesState);
+  const statusesList = useRecoilValue(statusesListState);
+
   const open = Boolean(anchorEl);
   const [menuWidth, setMenuWidth] = useState<number>(0);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -70,8 +72,8 @@ const BoardStatusComponent = ({
   };
 
   const boardStatus = useCallback(() => {
-    return statuses?.find((status) => status.id === statusId);
-  }, [statuses, statusId]);
+    return isFromMissionView ? statusesList?.find((status) => status.id === statusId) : statuses?.find((status) => status.id === statusId);
+  }, [statuses, statusId, statusesList, isFromMissionView]);
 
   const newBgColor = isFromMissionView
     ? statusColorBg
@@ -144,7 +146,30 @@ const BoardStatusComponent = ({
           },
         }}
       >
-        {statuses?.map((status) => (
+        {isFromMissionView ? statusesList?.map((status) => (
+          <Button
+            sx={{
+              ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
+              width: "100%",
+              textTransform: "capitalize",
+              justifyContent: "center",
+              boxSizing: "border-box",
+              display: "flex",
+              fontSize: GetProductionFontSizeFromPreferences(),
+              backgroundColor: status.backgroundColor,
+              color: status.textColor,
+              borderRadius: 0,
+              "&:hover": {
+                opacity: 0.7,
+                backgroundColor: status.backgroundColor,
+                color: status.textColor,
+              },
+            }}
+            onClick={() => onSelectNewStatus(status.id)}
+          >
+            {t("productionStatuses." + status.name)}
+          </Button>
+        )) : statuses?.map((status) => (
           <Button
             sx={{
               ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),

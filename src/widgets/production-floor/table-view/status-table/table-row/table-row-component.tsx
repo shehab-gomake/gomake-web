@@ -510,6 +510,7 @@ const TableRowComponent = ({
           return (
             <SecondaryTableCell align="center" style={commonStyle}>
               <BoardStatusComponent
+                isFromMissionView={false}
                 statusId={boardMission.statusId}
                 id={boardMission.id}
                 onChange={(id, statusId) => {
