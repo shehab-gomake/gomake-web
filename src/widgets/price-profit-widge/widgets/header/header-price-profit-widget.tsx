@@ -1,24 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import {
-  GoMakeAutoComplate,
-  GoMakeMenu,
-  GomakePrimaryButton,
-} from "@/components";
-import { ArrowDownNewIcon, PrintIcon } from "@/icons";
-import { MenuItem } from "@mui/material";
+import { GoMakeAutoComplate } from "@/components";
+import { ArrowDownNewIcon } from "@/icons";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { useRef } from "react";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { ExcelMenu } from "../excel-menu/excel-menu";
 
 const PriceProfitHeaderWidget = ({
-  handlePrintClose,
-  anchorElPrint,
-  openPrint,
-  handleOpenPrint,
-  onClickPrint,
   actionList,
   onChangeActionId,
   action,
@@ -33,6 +24,7 @@ const PriceProfitHeaderWidget = ({
   handleAutoFix,
   handleRollback,
   isFixed,
+  onClickDownloadExcel,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -101,7 +93,6 @@ const PriceProfitHeaderWidget = ({
             ranges={predefinedRanges}
           />
         </div>
-
         <GoMakeAutoComplate
           options={(actionList ?? []).map((a) => ({
             value: a.id,
@@ -135,33 +126,8 @@ const PriceProfitHeaderWidget = ({
               popupIcon={<ArrowDownNewIcon />}
             />
           )}
-        <GomakePrimaryButton
-          style={classes.printBtn}
-          leftIcon={<PrintIcon />}
-          rightIcon={<ArrowDownNewIcon color="#fff" />}
-          onClick={handleOpenPrint}
-        >
-          {t("priceProfit.print")}
-        </GomakePrimaryButton>
+        <ExcelMenu onClickDownloadExcel={onClickDownloadExcel} />
       </div>
-      <GoMakeMenu
-        handleClose={handlePrintClose}
-        open={openPrint}
-        anchorEl={anchorElPrint}
-      >
-        <div style={classes.menuContainer}>
-          <MenuItem onClick={() => onClickPrint(false)}>
-            <div style={classes.menuItemReviewText}>
-              {t("priceProfit.printAll")}
-            </div>
-          </MenuItem>
-          <MenuItem onClick={() => onClickPrint(true)}>
-            <div style={classes.menuItemReviewText}>
-              {t("priceProfit.onlySelected")}
-            </div>
-          </MenuItem>
-        </div>
-      </GoMakeMenu>
     </div>
   );
 };

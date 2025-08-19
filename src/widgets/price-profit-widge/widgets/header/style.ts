@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const useStyle = () => {
       },
       title: {
         ...FONT_FAMILY.Lexend(500, 22),
-        width: "100%",
+        width: "20%",
       },
       buttonContainer: {
         display: "flex",

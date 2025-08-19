@@ -1,18 +1,13 @@
 import { Divider } from "@mui/material";
 import { useStyle } from "./style";
 import { usePriceProfit } from "./use-price-profit";
-import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widge";
+import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widget";
 import { useEffect } from "react";
 import PriceCurveFit from "./widgets/chart/price-curve-fit";
 
 const PriceProfitWidget = () => {
   const { classes } = useStyle();
   const {
-    handlePrintClose,
-    anchorElPrint,
-    openPrint,
-    handleOpenPrint,
-    onClickPrint,
     actionList,
     onChangeActionId,
     action,
@@ -31,6 +26,7 @@ const PriceProfitWidget = () => {
     selectedPricingTable,
     onSelectPricingTable,
     chartData,
+    onClickDownloadExcel,
   } = usePriceProfit();
 
   useEffect(() => {
@@ -60,11 +56,6 @@ const PriceProfitWidget = () => {
   return (
     <div style={classes.mainContainer}>
       <PriceProfitHeaderWidget
-        handlePrintClose={handlePrintClose}
-        anchorElPrint={anchorElPrint}
-        openPrint={openPrint}
-        handleOpenPrint={handleOpenPrint}
-        onClickPrint={onClickPrint}
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         fromDate={fromDate}
         setFromDate={setFromDate}
@@ -79,6 +70,7 @@ const PriceProfitWidget = () => {
         handleAutoFix={handleAutoFix}
         handleRollback={handleRollback}
         isFixed={isFixed}
+        onClickDownloadExcel={onClickDownloadExcel}
       />
       <Divider style={classes.divider} />
       <PriceCurveFit {...chartData} />

@@ -6,6 +6,8 @@ const ADD_ITEM_TO_QUOTE_URL = "/v1/erp-service/quote/add-item";
 const GET_DATA_FOR_AUTO_PRICING_ACTIONS_CHART_URL =
   "/v1/erp-service/quote/get-data-for-auto-pricing-actions-chart";
 
+const EXPORT_DATA_FOR_PROFITS_BY_ACTION_URL =
+  "/v1/erp-service/quote/export-data-for-profits-by-action";
 const addItemToQuoteApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -30,4 +32,20 @@ const getDataForAutoPricingActionsChartApi: ICallAndSetData = async (
   );
 };
 
-export { addItemToQuoteApi, getDataForAutoPricingActionsChartApi };
+const exportDataForProfitsByActionApi: ICallAndSetData = async (
+  callApi,
+  setState
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    EXPORT_DATA_FOR_PROFITS_BY_ACTION_URL,
+    setState
+  );
+};
+
+export {
+  addItemToQuoteApi,
+  getDataForAutoPricingActionsChartApi,
+  exportDataForProfitsByActionApi,
+};

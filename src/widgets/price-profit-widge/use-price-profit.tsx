@@ -25,6 +25,7 @@ import {
   profitAutoFixApi,
   rollbackUpdatedPricingTablesAfterOptimizationApi,
 } from "@/services/api-service/print-houses/profits-auto-calculation";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 interface PricingProfileSetting {
   id: string;
@@ -582,6 +583,7 @@ const usePriceProfit = () => {
         };
 
         setChartData(next);
+        setIsFixed(false);
       }
     };
     await getDataForAutoPricingActionsChartApi(callApi, callBack, {
@@ -678,6 +680,27 @@ const usePriceProfit = () => {
     await rollbackUpdatedPricingTablesAfterOptimizationApi(callApi, callBack);
   };
 
+  const exportDataForProfitsByAction = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/quote/export-data-for-profits-by-action`,
+      {},
+      true,
+      null,
+      "blob"
+    );
+
+    const downloadLink = document.createElement("a");
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link;
+    downloadLink.download = `DataForProfitsByAction.xlsx`;
+    downloadLink.click();
+  }, []);
+
+  const onClickDownloadExcel = () => {
+    exportDataForProfitsByAction();
+  };
+
   return {
     open,
     anchorEl,
@@ -746,6 +769,7 @@ const usePriceProfit = () => {
     profitsPricingTables,
     selectedPricingTable,
     onSelectPricingTable,
+    onClickDownloadExcel,
   };
 };
 

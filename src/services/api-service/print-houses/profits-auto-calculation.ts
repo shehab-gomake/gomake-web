@@ -13,7 +13,10 @@ const profitAutoFixApi: ICallAndSetData = async (callApi, setState, data) => {
     EHttpMethod.POST,
     PROFIT_AUTO_FIX_URL,
     setState,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 
