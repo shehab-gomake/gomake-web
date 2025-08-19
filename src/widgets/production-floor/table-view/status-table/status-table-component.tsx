@@ -388,6 +388,21 @@ const StatusTableComponent = ({
     reSortingCurrentStation,
   ]);
 
+  const TABLE_CONFIG = {
+    ITEM_HEIGHT: 85,
+    HEADER_HEIGHT: 50,
+    MAX_VISIBLE_ITEMS: 10
+  };
+
+  const calculateConfigurableHeight = () => {
+    const boardsCount = getBoards().length;
+    const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
+    const totalHeight = (visibleItems * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+
+    console.log("totalHeight", { boardsCount, totalHeight, visibleItems })
+
+    return `${totalHeight}px`;
+  };
 
 
   return (
@@ -425,11 +440,11 @@ const StatusTableComponent = ({
 
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
-          <Paper sx={{ maxHeight: '600px', overflow: 'auto' }}>
+          <Paper sx={{ overflow: 'auto' }}>
             <TableVirtuoso
               key={`virtuoso-${status.id}-${sortedBoards.length}`}
               ref={virtuosoRef}
-              style={{ height: getBoards().length > 2 ? 'calc(100vh - 500px)' : 'calc(100vh - 720px)' }}
+              style={{ height: calculateConfigurableHeight() }}
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
