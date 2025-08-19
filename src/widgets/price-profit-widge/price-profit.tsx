@@ -2,9 +2,8 @@ import { Divider } from "@mui/material";
 import { useStyle } from "./style";
 import { usePriceProfit } from "./use-price-profit";
 import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widge";
-import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
 import { useEffect } from "react";
-import PriceCurveFit from "@/pages-components/gussian-chart/components/price-curve-fit";
+import PriceCurveFit from "./widgets/chart/price-curve-fit";
 
 const PriceProfitWidge = () => {
   const { classes } = useStyle();
@@ -14,9 +13,6 @@ const PriceProfitWidge = () => {
     openPrint,
     handleOpenPrint,
     onClickPrint,
-    getProfitsChartData,
-    chartData,
-    productId,
     actionList,
     onChangeActionId,
     action,
@@ -27,27 +23,21 @@ const PriceProfitWidge = () => {
     setToDate,
     getDataForAutoPricingActionsChart,
     getActions,
+    chartData,
   } = usePriceProfit();
 
-  // useEffect(() => {
-  //   if (productId !== null) {
-  //     getProfitsChartData(productId);
-  //   } else getProfitsChartData();
-  // }, [productId]);
-
   useEffect(() => {
-    if (productId || fromDate || toDate || action) {
+    if (fromDate || toDate || action) {
       const fromDataString = fromDate ? fromDate.toISOString() : undefined;
       const toDataString = toDate ? toDate.toISOString() : undefined;
 
       getDataForAutoPricingActionsChart(
-        productId || undefined,
         fromDataString,
         toDataString,
         action?.actionId ?? undefined
       );
     }
-  }, [productId, fromDate, toDate, action?.actionId]);
+  }, [fromDate, toDate, action?.actionId]);
 
   useEffect(() => {
     getActions();
@@ -71,7 +61,7 @@ const PriceProfitWidge = () => {
         onChangeActionId={onChangeActionId}
       />
       <Divider style={classes.divider} />
-      {/* <PriceCurveFit {...chartData} /> */}
+      <PriceCurveFit {...chartData} />
     </div>
   );
 };

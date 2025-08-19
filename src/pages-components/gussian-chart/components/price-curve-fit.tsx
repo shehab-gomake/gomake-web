@@ -94,6 +94,66 @@ const PriceCurveFit = ({
     },
   };
 
+  //   const options: ChartOptions<"scatter"> = {
+  //     responsive: true,
+  //     plugins: {
+  //       annotation: {
+  //         annotations: {
+  //           userPriceDescription: {
+  //             type: "label", // Label annotation type
+  //             xValue: 3500, // X coordinate
+  //             yValue: 4500, // Y coordinate
+  //             backgroundColor: "rgba(255,99,132,0.8)", // Pink background
+  //             content: ["User Price (Pink Line)"], // Text inside rectangle
+  //             font: { size: 14, weight: "bold" },
+  //             padding: 8,
+  //             borderRadius: 5,
+  //             color: "white",
+  //             textAlign: "center",
+  //           } as any,
+  //           calculatePriceDescription: {
+  //             type: "label",
+  //             xValue: 3500,
+  //             yValue: 4200,
+  //             backgroundColor: "rgba(75,192,192,0.8)", // Teal for Calculate Price
+  //             content: ["Calculate Price (Teal Line)"],
+  //             font: { size: 14, weight: "bold" },
+  //             padding: 8,
+  //             borderRadius: 5,
+  //             color: "white",
+  //             textAlign: "center",
+  //           } as any,
+  //         },
+  //       },
+  //     },
+  //     scales: {
+  //       x: {
+  //         title: {
+  //           display: true,
+  //           text: "Cost",
+  //         },
+  //         // min: 0,
+  //         // max: 5000,
+  //         // ticks: {
+  //         //   stepSize: 1000,
+  //         // },
+  //       },
+  //       y: {
+  //         title: {
+  //           display: true,
+  //           text: "Price",
+  //         },
+  //         // min: 0,
+  //         // max: 5000,
+  //         ticks: {
+  //           callback: function (value) {
+  //             return value.toLocaleString();
+  //           },
+  //         },
+  //       },
+  //     },
+  //   };
+
   return <Scatter data={data} options={options} />;
 };
 

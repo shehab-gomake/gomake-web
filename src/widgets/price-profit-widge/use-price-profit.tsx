@@ -544,18 +544,44 @@ const usePriceProfit = () => {
   };
 
   const getDataForAutoPricingActionsChart = async (
-    productId?: string,
     fromDate?: string,
     toDate?: string,
     actionId?: string
   ) => {
     const callBack = (res) => {
       if (res?.success) {
-        setChartData(res?.data);
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don’t want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
       }
     };
     await getDataForAutoPricingActionsChartApi(callApi, callBack, {
-      productId,
       fromDate,
       toDate,
       actionId,
