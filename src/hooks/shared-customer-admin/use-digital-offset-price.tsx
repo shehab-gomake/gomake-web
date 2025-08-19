@@ -1129,7 +1129,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const duplicateParameters = (mySubSection) => {
     let temp = cloneDeep(productTemplate);
     let myId = mySubSection?.id;
+    let myType = mySubSection?.type; // Get the type as well
     let largestIndex = findLargestActionIndex(mySubSection.parameters);
+
     const duplicatedParameters = mySubSection.parameters.map((parameter) => {
       const duplicatedParameter = { ...parameter };
       duplicatedParameter.actionIndex = largestIndex + 1;
@@ -1140,16 +1142,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       return duplicatedParameter;
     });
+
     const uniqueParameters = removeDuplicates(duplicatedParameters);
+
     temp.sections.forEach((section) => {
       section.subSections.forEach((subSection) => {
-        if (subSection.id === myId) {
+        // Check both id AND type
+        if (subSection.id === myId && subSection.type === myType) {
           subSection.parameters = cloneDeep(subSection.parameters).concat(
             uniqueParameters
           );
         }
       });
     });
+
     setProductTemplate(temp);
   };
 
