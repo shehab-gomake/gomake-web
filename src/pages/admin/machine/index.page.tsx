@@ -1,11 +1,11 @@
 import {AdminAuthLayout} from "@/layouts";
-import {CategoriesTable} from "@/widgets/machines/components/categories-table/categories-table";
+import {AdminCategoriesTable} from "@/widgets/machines/admin/admin-categories-table";
 
 export default function CustomerMachinesPage() {
     return (
         <div>
             <AdminAuthLayout>
-                <CategoriesTable isAdmin={true}/>
+                <AdminCategoriesTable/>
             </AdminAuthLayout>
         </div>
     );
