@@ -19,6 +19,8 @@ import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { useGomakeAxios } from "@/hooks";
 import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
+import { selectedMissionsState } from "../production-floor/state/boards";
+import { useRecoilState, } from "recoil";
 
 const FilesGroupComponent = ({
   title,
@@ -47,6 +49,9 @@ const FilesGroupComponent = ({
   const { push, pathname } = useRouter();
   const fileInputRef = useRef<HTMLInputElement & { fileType?: FileTypeENUM }>(null);
   const { t } = useTranslation();
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(
+    selectedMissionsState
+  );
 
   const handleGraphicsDrop = async (event: React.DragEvent) => {
     event.preventDefault();
@@ -171,7 +176,7 @@ const FilesGroupComponent = ({
         alignItems={"center"}
       >
         <h3 style={{ color: primaryColor(400), ...FONT_FAMILY.Inter(700, 14) }}>
-          {title}
+          {title} {selectedMission && selectedMission?.number && `| ${selectedMission?.number}`}
         </h3>
         {pathname !== "/production-floor" && (
           <Stack direction={"row"} alignItems={"center"}>

@@ -30,6 +30,7 @@ import {
   moveBoardMissionStatusToWaitingApi,
   tryMoveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 
 const useMoreCircle = ({
   mission,
@@ -55,6 +56,10 @@ const useMoreCircle = ({
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [companyProfile] = useRecoilState(printHouseProfile);
+
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(
+    selectedMissionsState
+  );
 
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -82,6 +87,7 @@ const useMoreCircle = ({
   };
 
   const addBoardMissionsToFileUploader = async (mission) => {
+    setSelectedMission(mission);
     const callBack = (res) => {
       if (res?.success) {
         setOpenFileUploader(true);
