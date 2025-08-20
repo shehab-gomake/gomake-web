@@ -22,7 +22,7 @@ const useStyle = () => {
       },
       title: {
         ...FONT_FAMILY.Lexend(500, 22),
-        width: "20%",
+        width: "35%",
       },
       buttonContainer: {
         display: "flex",

@@ -42,7 +42,12 @@ const PriceProfitHeaderWidget = ({
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.title}>{t("settings.priceProfit")}</div>
+      <div style={classes.title}>
+        {t("settings.priceProfit")}
+        {action?.label
+          ? ` - ${action.label}`
+          : ` - ${t("priceProfit.allActions")}`}
+      </div>
       <div style={classes.buttonContainer}>
         <PrimaryButton
           variant={"outlined"}
