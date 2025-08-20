@@ -275,7 +275,7 @@ const DocumentsButton = ({ isMobile = false }) => {
         title={t("boardMissions.selectPrintContent")}
         subTitle={
           pendingPrintMission?.productType
-            ? t("boardMissions.selectPrintContentSubtitle", {
+            ? t("boardMissions.askPrintType", {
               productType: pendingPrintMission.productTypeName || pendingPrintMission.productType
             })
             : ""

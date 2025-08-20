@@ -34,6 +34,7 @@ import {
   backToProcessApi,
   moveBoardMissionStatusToWaitingApi,
   moveBoardMissionToDoneApi,
+  tryMoveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -156,6 +157,53 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const [openPrintTypeModal, setOpenPrintTypeModal] = useState(false);
   const [pendingPrintParams, setPendingPrintParams] = useState(null);
+
+  const [openMarkReadyTypeModal, setOpenMarkReadyTypeModal] = useState(false);
+  const [pendingMarkReadyParams, setPendingMarkReadyParams] = useState(null);
+
+  const onCloseMarkReadyTypeModal = () => {
+    setOpenMarkReadyTypeModal(false);
+    setPendingMarkReadyParams(null);
+  };
+
+  const onOpenMarkReadyTypeModal = (mission) => {
+    setPendingMarkReadyParams(mission);
+    setOpenMarkReadyTypeModal(true);
+  };
+
+
+  const handleMarkReadyTypeChoice = async (markAllReady: boolean) => {
+    if (!pendingMarkReadyParams) return;
+    const mission = pendingMarkReadyParams;
+
+    // Close modal first
+    onCloseMarkReadyTypeModal();
+
+    if (markAllReady) {
+      // User wants to mark ALL jobs as ready
+      const callBack = (res) => {
+        console.log("resresresres", res)
+
+        if (res.success) {
+
+          if (res.data) {
+            onOpenMarkReadyModalForHasJobs(mission);
+          } else {
+            onOpenMarkReadyModal(mission);
+          }
+        }
+      };
+
+      // Call API without productType to mark all
+      await tryMoveBoardMissionToDoneApi(callApi, callBack, {
+        boardMissionId: mission.id,
+      });
+    } else {
+      // User wants to mark only specific product type as ready
+      onOpenMarkReadyModalForProductType(mission);
+    }
+  };
+
 
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
@@ -792,6 +840,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
+                onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
               />
             ),
           };
@@ -973,6 +1022,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
+                onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
               />
             ),
           };
@@ -1984,6 +2034,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     handlePrintTypeChoice,
     pendingPrintParams,
     printJobUsingPrintNode,
+    openMarkReadyTypeModal,
+    pendingMarkReadyParams,
+    onCloseMarkReadyTypeModal,
+    onOpenMarkReadyTypeModal,
+    handleMarkReadyTypeChoice,
   };
 };
 

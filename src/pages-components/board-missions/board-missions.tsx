@@ -177,7 +177,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onClosePrintTypeModal,
     handlePrintTypeChoice,
     pendingPrintParams,
-    printJobUsingPrintNode,
+    openMarkReadyTypeModal,
+    onCloseMarkReadyTypeModal,
+    onOpenMarkReadyTypeModal,
+    pendingMarkReadyParams,
+    handleMarkReadyTypeChoice,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -885,6 +889,23 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onClosePrintTypeModal}
         onClickYes={() => handlePrintTypeChoice(true)}
         onClickNo={() => handlePrintTypeChoice(false)}
+      />
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectMarkReadyContent")}
+        subTitle={
+          pendingMarkReadyParams?.productType
+            ? t("boardMissions.askMarkReadyType", {
+              productType: pendingMarkReadyParams.productTypeName || pendingMarkReadyParams.productType
+            })
+            : ""
+        }
+        yesBtn={t("boardMissions.markAllJobsReady")}
+        noBtn={t("boardMissions.markProductTypeOnlyReady")}
+        openModal={openMarkReadyTypeModal}
+        onClose={onCloseMarkReadyTypeModal}
+        onClickYes={() => handleMarkReadyTypeChoice(true)}
+        onClickNo={() => handleMarkReadyTypeChoice(false)}
       />
     </>
   );
