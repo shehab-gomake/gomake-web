@@ -59,6 +59,7 @@ import {
 } from "./states/board-missions-columns-settings-state";
 import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
+import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -420,29 +421,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             />
                           </div>
 
-                          {/* <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("products.offsetPrice.admin.proof")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={sampleType?.value}
-                              options={
-                                exampleTypeValues?.map((option) => ({
-                                  value: option.key,
-                                  text: t(
-                                    `products.proofTypes.${option.value}`
-                                  ),
-                                })) || []
-                              }
-                              getOptionLabel={(option: any) => option.text}
-                              placeholder={t(
-                                "products.offsetPrice.admin.proof"
-                              )}
-                              style={classes.textInputStyle}
-                              onChange={(e, value) => setSampleType(value)}
-                              value={sampleType}
-                            />
-                          </div> */}
+
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("products.offsetPrice.admin.proof")}
@@ -485,17 +464,27 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                 style={classes.textInputStyle}
                                 onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
                                 value={
-                                  isPrintedState === null 
+                                  isPrintedState === null
                                     ? null
                                     : isPrintedState === true
-                                    ? { value: true, text: t("modal.yes") }
-                                    : { value: false, text: t("modal.no") }
+                                      ? { value: true, text: t("modal.yes") }
+                                      : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
                           )}
-
                           <div style={classes.statusFilterContainer}>
+                            <ProductMultiSelect
+                              products={productsList}
+                              selectedProductIds={productIds}
+                              onProductChange={handleMultiSelectChange}
+                              placeholder={t("boardMissions.selectProducts")}
+                              label={t("boardMissions.products")}
+                              labelStyle={classes.filterLabelStyle}
+                              selectStyle={classes.textInputForProductsStyle}
+                            />
+                          </div>
+                          {/* <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("boardMissions.products")}
                             </h3>
@@ -506,7 +495,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               values={productIds}
                               placeholder={t("boardMissions.selectProducts")}
                             />
-                          </div>
+                          </div> */}
                           <div style={classes.statusFilterContainer}>
                             <GlobalStyle RTL={RTL} />
                             <h3 style={classes.filterLabelStyle}>
