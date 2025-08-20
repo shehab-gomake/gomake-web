@@ -438,7 +438,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setResetDueDatePicker(true);
     setResetReadyDatePicker(true);
     setCurrentSortOrder(null);
-    setIsPrintedState(false);
+    setIsPrintedState(null);
     setPageNumber(1);
 
     setHasFetchedQuery(null); // ✅ force next fetch on empty query
