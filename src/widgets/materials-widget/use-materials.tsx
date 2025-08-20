@@ -141,7 +141,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
-  const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
+  const { alertSuccessDelete, alertFaultDelete, alertFault } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
@@ -461,6 +461,14 @@ const useMaterials = (isAdmin: boolean) => {
   }, []);
 
   const uploadExcelFile = async (e) => {
+    if (!materialType || !materialCategory) {
+      alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
+      return;
+    }
+    if (!supplierId) {
+      alertFault("materials.inputs.errorNoSupplierId");
+      return;
+    }
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();

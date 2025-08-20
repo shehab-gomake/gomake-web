@@ -519,6 +519,14 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const uploadExcelFile = async (e) => {
+    if (!materialType || !materialCategory) {
+      alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
+      return;
+    }
+    if (!supplierId) {
+      alertFault("materials.inputs.errorNoSupplierId");
+      return;
+    }
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
