@@ -1107,11 +1107,11 @@ const ActionContainerComponent = ({
                       </>
                     )}
                   </PermissionCheck>
-                  <Divider
+                  {!isFromSetting && <Divider
                     orientation={"vertical"}
                     style={{ height: "50%", margin: "auto 0" }}
                     flexItem
-                  />
+                  />}
 
                   <EditableKeyValueViewComponent
                     onUpdate={handleUpdatePrice}
@@ -1121,15 +1121,17 @@ const ActionContainerComponent = ({
                     valueColor={secondColor(500)}
                     name={t("sales.quote.price")}
                   />
-                  {source !== EWorkSource.OUT && (
+                  {!isFromSetting && (
                     <Divider orientation={"vertical"} flexItem />
                   )}
-                  {source !== EWorkSource.OUT && <div onClick={(e) => e.stopPropagation()}>
-                    <InOutSourceSelect
-                      value={source}
-                      onChange={handleSourceChange}
-                    />
-                  </div>}
+                  {!isFromSetting && (
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <InOutSourceSelect
+                        value={source}
+                        onChange={handleSourceChange}
+                      />
+                    </div>
+                  )}
                 </Stack>
                 <div
                   style={{
