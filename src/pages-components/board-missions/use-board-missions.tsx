@@ -603,7 +603,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const getJobStatus = (mission) => {
-    console.log("mission", mission);
     if (mission?.isReady) {
       return (
         <>
