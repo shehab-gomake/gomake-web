@@ -284,6 +284,9 @@ const QuotesListPageWidget = ({
     moveToReadyOption,
     handleRadioChange,
     primaryColor,
+    currencyFilter,
+    setCurrencyFilter,
+    currencies,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -298,6 +301,8 @@ const QuotesListPageWidget = ({
     onCloseDeleteModal,
     openDeleteModal,
   } = useDeliveryStatusButton();
+
+
 
   //! I think we don't need this
   useEffect(() => {
@@ -412,7 +417,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -475,8 +480,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        ? () => navigate(`/${documentPath}`)
+                        : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -498,12 +503,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -649,7 +654,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -667,6 +672,22 @@ const QuotesListPageWidget = ({
                                   />
                                 </div>
                               )}
+                            <div style={classes.statusFilterContainer}>
+                              <div style={classes.filterLabelStyle}>
+                                {t("sales.quote.currency")}
+                              </div>
+                              <GoMakeAutoComplate
+                                key={currencyFilter?.value}
+                                options={currencies}
+                                style={classes.textInputStyle}
+                                getOptionLabel={(option: any) => option.label}
+                                placeholder={t("sales.quote.chooseCurrency")}
+                                onChange={(e: any, value: any) => {
+                                  setCurrencyFilter(value);
+                                }}
+                                value={currencyFilter}
+                              />
+                            </div>
                             {isOrder && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
@@ -711,7 +732,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{

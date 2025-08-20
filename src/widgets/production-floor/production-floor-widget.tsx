@@ -35,6 +35,8 @@ import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-li
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { statusesListState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -186,13 +188,29 @@ const ProductionFloorWidget = () => {
     });
   };
 
+  const setStatusesList = useSetRecoilState(statusesListState);
+  const getAllBoardMissionStatus = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setStatusesList(res.data)
+      }
+    };
+    await getAllBoardMissionStatusApi(callApi, callBack).then();
+  };
+
+  useEffect(() => {
+    getAllBoardMissionStatus()
+  }, [])
+
+
+
   //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
   const isOpenDoneModal = useModal()
 
 
   return (
     <Stack
-      padding={"0 20px"}
+      // padding={"0 20px"}
       gap={"10px"}
       height={"100%"}
       maxHeight={"100%"}
@@ -206,14 +224,16 @@ const ProductionFloorWidget = () => {
       />
 
       {view !== EProductionFloorView.DASHBOARD && (
-        <ProductionFloorFilters
-          getStationFilterGroups={getStationFilterGroups}
-          connectionId={connectionId}
-          isMobile={isMobile}
-          view={view}
-        />
+        <Stack paddingLeft={"20px"} paddingRight={"20px"}>
+          <ProductionFloorFilters
+            getStationFilterGroups={getStationFilterGroups}
+            connectionId={connectionId}
+            isMobile={isMobile}
+            view={view}
+          />
+        </Stack>
       )}
-      <Stack overflow={"auto"} maxHeight={"100%"}>
+      <Stack overflow={"auto"} maxHeight={"100%"} paddingLeft={"20px"} paddingRight={"20px"}>
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
