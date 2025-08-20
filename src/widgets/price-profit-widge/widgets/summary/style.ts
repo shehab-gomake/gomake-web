@@ -13,7 +13,7 @@ const useStyle = () => {
       },
       cardContent: {
         width: "100%",
-        padding: "20px 30px",
+        padding: "20px 30px 5px 30px",
         "&:last-child": {
           paddingBottom: "20px",
         },

@@ -57,26 +57,32 @@ const PriceProfitWidget = () => {
 
   return (
     <div style={classes.mainContainer}>
-      <PriceProfitHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        fromDate={fromDate}
-        setFromDate={setFromDate}
-        toDate={toDate}
-        setToDate={setToDate}
-        actionList={actionList}
-        action={action}
-        onChangeActionId={onChangeActionId}
-        profitsPricingTables={profitsPricingTables}
-        selectedPricingTable={selectedPricingTable}
-        onSelectPricingTable={onSelectPricingTable}
-        handleAutoFix={handleAutoFix}
-        handleRollback={handleRollback}
-        isFixed={isFixed}
-        onClickDownloadExcel={exportDataForProfitsByAction}
-      />
-      <Divider style={classes.divider} />
-      <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
-      <PriceCurveFit {...chartData} />
+      <div style={classes.headerSection}>
+        <PriceProfitHeaderWidget
+          onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+          fromDate={fromDate}
+          setFromDate={setFromDate}
+          toDate={toDate}
+          setToDate={setToDate}
+          actionList={actionList}
+          action={action}
+          onChangeActionId={onChangeActionId}
+          profitsPricingTables={profitsPricingTables}
+          selectedPricingTable={selectedPricingTable}
+          onSelectPricingTable={onSelectPricingTable}
+          handleAutoFix={handleAutoFix}
+          handleRollback={handleRollback}
+          isFixed={isFixed}
+          onClickDownloadExcel={exportDataForProfitsByAction}
+        />
+        <Divider style={classes.divider} />
+      </div>
+      <div style={classes.contentSection}>
+        <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
+        <div style={classes.chartContainer}>
+          <PriceCurveFit {...chartData} />
+        </div>
+      </div>
     </div>
   );
 };
