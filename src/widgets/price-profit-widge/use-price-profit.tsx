@@ -438,6 +438,7 @@ const usePriceProfit = () => {
       isSelectedProducts: isSelected,
     });
   };
+
   const {} = useDisplayProfitProfilesSocketIo({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
@@ -473,8 +474,6 @@ const usePriceProfit = () => {
     });
   };
 
-  // here new
-
   // Set default date range: 6 months ago until now
   const getDefaultDateRange = () => {
     const now = new Date();
@@ -486,6 +485,7 @@ const usePriceProfit = () => {
   const defaultDates = getDefaultDateRange();
   const [fromDate, setFromDate] = useState<Date>(defaultDates.from);
   const [toDate, setToDate] = useState<Date>(defaultDates.to);
+
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
       setFromDate(value[0]);
@@ -505,7 +505,13 @@ const usePriceProfit = () => {
   const [profitsPricingTables, setProfitsPricingTables] = useState<any[]>([]);
   const [selectedPricingTable, setSelectedPricingTable] = useState<any>(null);
   const [isFixed, setIsFixed] = useState<boolean>(false);
-
+  const [excelReportLink, setExcelReportLink] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<{
+    diffAfterOptimization: number;
+    diffBeforeOptimization: number;
+    overAllImprovement: number;
+    overAllImprovementPercentage: number;
+  } | null>(null);
   const [chartData, setChartData] = useState({
     pointsX: [],
     pointsY: [],
@@ -584,6 +590,8 @@ const usePriceProfit = () => {
 
         setChartData(next);
         setIsFixed(false);
+        setExcelReportLink(null); // Clear the excel report link when getting new data
+        setSummaryData(null); // Clear the summary data when getting new data
       }
     };
     await getDataForAutoPricingActionsChartApi(callApi, callBack, {
@@ -632,6 +640,22 @@ const usePriceProfit = () => {
 
         setChartData(next);
         setIsFixed(true);
+
+        // Store the excelReportLink from the response
+        if (res?.data?.[0]?.excelReportLink) {
+          setExcelReportLink(res.data[0].excelReportLink);
+        }
+
+        // Store the summary data from the response
+        if (res?.data?.[0]) {
+          setSummaryData({
+            diffAfterOptimization: res.data[0].diffAfterOptimization || 0,
+            diffBeforeOptimization: res.data[0].diffBeforeOptimization || 0,
+            overAllImprovement: res.data[0].overAllImprovement || 0,
+            overAllImprovementPercentage:
+              res.data[0].overAllImprovementPercentage || 0,
+          });
+        }
       }
     };
     await profitAutoFixApi(callApi, callBack, {
@@ -675,16 +699,47 @@ const usePriceProfit = () => {
 
         setChartData(next);
         setIsFixed(false);
+        setExcelReportLink(null); // Clear the excel report link when rolling back
+        setSummaryData(null); // Clear the summary data when rolling back
+
+        // Call getDataForAutoPricingActionsChart after successful rollback
+        getDataForAutoPricingActionsChart(
+          fromDate?.toISOString(),
+          toDate?.toISOString(),
+          action?.actionId,
+          selectedPricingTable?.id
+        );
       }
     };
     await rollbackUpdatedPricingTablesAfterOptimizationApi(callApi, callBack);
   };
 
-  const exportDataForProfitsByAction = useCallback(async () => {
+  //!here please try it
+  const exportDataForProfitsByAction = async (
+    fromDate?: string,
+    toDate?: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
+    if (isFixed && excelReportLink) {
+      const a = document.createElement("a");
+      a.href = excelReportLink;
+      a.download = "DataForProfitsByAction_Fixed.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+
     const res = await callApi(
-      EHttpMethod.GET,
+      EHttpMethod.POST,
       `/v1/erp-service/quote/export-data-for-profits-by-action`,
-      {},
+      {
+        fromDate,
+        toDate,
+        actionId,
+        pricingTableId,
+      },
       true,
       null,
       "blob"
@@ -695,10 +750,6 @@ const usePriceProfit = () => {
     downloadLink.href = link;
     downloadLink.download = `DataForProfitsByAction.xlsx`;
     downloadLink.click();
-  }, []);
-
-  const onClickDownloadExcel = () => {
-    exportDataForProfitsByAction();
   };
 
   return {
@@ -764,12 +815,14 @@ const usePriceProfit = () => {
     handleAutoFix,
     handleRollback,
     isFixed,
+    excelReportLink,
+    summaryData,
     getActions,
     getProfitsPricingTables,
     profitsPricingTables,
     selectedPricingTable,
     onSelectPricingTable,
-    onClickDownloadExcel,
+    exportDataForProfitsByAction,
   };
 };
 

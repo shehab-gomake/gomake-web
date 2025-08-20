@@ -2,6 +2,7 @@ import { Divider } from "@mui/material";
 import { useStyle } from "./style";
 import { usePriceProfit } from "./use-price-profit";
 import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widget";
+import { SummaryWidget } from "./widgets/summary/summary-widget";
 import { useEffect } from "react";
 import PriceCurveFit from "./widgets/chart/price-curve-fit";
 
@@ -20,13 +21,14 @@ const PriceProfitWidget = () => {
     handleAutoFix,
     handleRollback,
     isFixed,
+    summaryData,
     getActions,
     getProfitsPricingTables,
     profitsPricingTables,
     selectedPricingTable,
     onSelectPricingTable,
     chartData,
-    onClickDownloadExcel,
+    exportDataForProfitsByAction,
   } = usePriceProfit();
 
   useEffect(() => {
@@ -70,9 +72,10 @@ const PriceProfitWidget = () => {
         handleAutoFix={handleAutoFix}
         handleRollback={handleRollback}
         isFixed={isFixed}
-        onClickDownloadExcel={onClickDownloadExcel}
+        onClickDownloadExcel={exportDataForProfitsByAction}
       />
       <Divider style={classes.divider} />
+      <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
       <PriceCurveFit {...chartData} />
     </div>
   );

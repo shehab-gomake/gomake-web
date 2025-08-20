@@ -46,13 +46,23 @@ const PriceProfitHeaderWidget = ({
       <div style={classes.buttonContainer}>
         <PrimaryButton
           variant={"outlined"}
-          sx={classes.fixBtn}
+          sx={{
+            ...classes.fixBtn,
+            ...(isFixed && {
+              color: "#d32f2f",
+              border: "1px solid #d32f2f",
+              // fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "#ffebee",
+                border: "1px solid #d32f2f",
+              },
+            }),
+          }}
           onClick={() => {
             const fromDataString = fromDate
               ? fromDate.toISOString()
               : undefined;
             const toDataString = toDate ? toDate.toISOString() : undefined;
-
             if (isFixed) {
               handleRollback(
                 fromDataString,
@@ -114,7 +124,21 @@ const PriceProfitHeaderWidget = ({
               popupIcon={<ArrowDownNewIcon />}
             />
           )}
-        <ExcelMenu onClickDownloadExcel={onClickDownloadExcel} />
+        <ExcelMenu
+          onClickDownloadExcel={() => {
+            const fromDataString = fromDate
+              ? fromDate.toISOString()
+              : undefined;
+            const toDataString = toDate ? toDate.toISOString() : undefined;
+
+            onClickDownloadExcel(
+              fromDataString,
+              toDataString,
+              action?.actionId ?? undefined,
+              selectedPricingTable?.value ?? undefined
+            );
+          }}
+        />
       </div>
     </div>
   );

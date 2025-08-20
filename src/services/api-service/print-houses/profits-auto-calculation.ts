@@ -26,7 +26,11 @@ const rollbackUpdatedPricingTablesAfterOptimizationApi: ICallAndSetData =
       callApi,
       EHttpMethod.GET,
       ROLLBACK_UPDATED_PRICING_TABLES_AFTER_OPTIMIZATION_URL,
-      setState
+      setState,
+      {},
+      true,
+      null,
+      true
     );
   };
 

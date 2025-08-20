@@ -119,6 +119,15 @@ const useStyle = () => {
           border: "1px solid #E0E0E0",
           backgroundColor: "#f5f5f5",
         },
+        "&.rollback": {
+          color: "#d32f2f",
+          border: "1px solid #d32f2f",
+          fontWeight: "bold",
+          "&:hover": {
+            backgroundColor: "#ffebee",
+            border: "1px solid #d32f2f",
+          },
+        },
       },
     };
   }, []);
