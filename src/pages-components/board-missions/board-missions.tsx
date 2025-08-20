@@ -901,7 +901,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
-        noBtn={t("boardMissions.markProductTypeOnlyReady")}
+        noBtn={t("boardMissions.markProductTypeOnlyReady", {
+          productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+        })}
         openModal={openMarkReadyTypeModal}
         onClose={onCloseMarkReadyTypeModal}
         onClickYes={() => handleMarkReadyTypeChoice(true)}

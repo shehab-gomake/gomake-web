@@ -182,14 +182,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (markAllReady) {
       // User wants to mark ALL jobs as ready
       const callBack = (res) => {
-        console.log("resresresres", res)
-
         if (res.success) {
 
           if (res.data) {
-            onOpenMarkReadyModalForHasJobs(mission);
+            onOpenMarkReadyModalForHasJobs(mission, markAllReady);
           } else {
-            onOpenMarkReadyModal(mission);
+            onOpenMarkReadyModal(mission, markAllReady);
           }
         }
       };
@@ -1195,6 +1193,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [markAllReady, setMarkAllReady] = useState<boolean>(false);
   const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
     useState<boolean>(false);
 
@@ -1205,10 +1204,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseMarkReadyModal = () => {
     setSelectedMission(null);
     setOpenMarkReadyModal(false);
+    setMarkAllReady(false);
   };
-  const onOpenMarkReadyModal = (mission) => {
+  const onOpenMarkReadyModal = (mission, markAllReady) => {
     setSelectedMission(mission);
     setOpenMarkReadyModal(true);
+    setMarkAllReady(markAllReady);
   };
   const onOpenMarkReadyModalForProductType = (mission) => {
     setSelectedMission(mission);
@@ -1217,20 +1218,24 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseMarkReadyModalForProductType = () => {
     setSelectedMission(null);
     setOpenMarkReadyModalForProductType(false);
+    setMarkAllReady(false);
   };
 
-  const onOpenMarkReadyModalForHasJobs = (mission) => {
+  const onOpenMarkReadyModalForHasJobs = (mission, markAllReady) => {
     setSelectedMission(mission);
     setOpenMarkReadyModalForHasJobs(true);
+    setMarkAllReady(markAllReady);
   };
   const onCloseMarkReadyModalForHasJobs = () => {
     setSelectedMission(null);
     setOpenMarkReadyModalForHasJobs(false);
+    setMarkAllReady(false);
   };
   const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] =
     useState<boolean>(false);
   const onCloseMarkReadyThenPrintModal = () => {
     setOpenMarkReadyThenPrintModal(false);
+    setMarkAllReady(false);
   };
   const onOpenMarkReadyThenPrintModal = () => {
     setOpenMarkReadyThenPrintModal(true);
@@ -1241,6 +1246,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseReturnToProdModal = () => {
     setSelectedMission(null);
     setOpenReturnToProdModalModal(false);
+
   };
   const onOpenReturnToProdModal = (mission) => {
     setSelectedMission(mission);
@@ -1255,6 +1261,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onClosePackagesModal = () => {
     setOpenPackagesModal(false);
+    setMarkAllReady(false);
   };
 
   useEffect(() => {
@@ -1382,6 +1389,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const onCloseModal = () => {
     setOpenModal(false);
+    setMarkAllReady(false);
   };
   const onOpenModal = (mission: any) => {
     setMissionItem(mission);
@@ -1395,6 +1403,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         getAllData(isPurchaseJobs, false);
         if (!selectedMission?.productType) {
           onOpenPackagesModal(selectedMission);
+          setMarkAllReady(false);
+
         }
       } else {
         alertFaultUpdate();
@@ -1406,7 +1416,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
         sendMessage,
-        productType: selectedMission?.productType ?? "",
+        productType: markAllReady ? "" : selectedMission?.productType ?? "",
         storage: selectedMission?.storage ?? "",
       });
     }
