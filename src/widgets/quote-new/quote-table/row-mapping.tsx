@@ -133,7 +133,7 @@ const RowMappingWidget = ({
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
-  const hasChilds = quoteItems?.documentItems.some(
+  const hasChilds = quoteItems?.documentItems?.some(
     (q) =>
       q.childsDocumentItems && Object.keys(q.childsDocumentItems).length > 0
   );
