@@ -57,9 +57,9 @@ const useAddMaterialSupplier = () => {
     };
     if (newSupplier) {
       await addMaterialSupplier(callApi, callBack, {
-        materialTypeKey: materialType.toString(),
-        categoryKey: materialCategory.toString(),
-        supplierId: newSupplier.id,
+        materialTypeKey: materialType?.toString(),
+        categoryKey: materialCategory?.toString(),
+        supplierId: newSupplier?.id,
       });
     }
   };
