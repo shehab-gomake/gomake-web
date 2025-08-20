@@ -464,11 +464,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                 style={classes.textInputStyle}
                                 onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
                                 value={
-                                  isPrintedState === null
+                                  isPrintedState === null 
                                     ? null
                                     : isPrintedState === true
-                                      ? { value: true, text: t("modal.yes") }
-                                      : { value: false, text: t("modal.no") }
+                                    ? { value: true, text: t("modal.yes") }
+                                    : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
