@@ -35,24 +35,18 @@ import { useMediaQuery } from "@mui/material";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-
 import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
-import { LoadMorePagination } from "../components/load-more-pagination";
 import {
   columnOrderState,
   columnVisibilityState,
   getCustomWidth,
 } from "../../state/production-floor-coulmns-table-settings";
 import React from "react";
-
-// Performance optimization constants
-const VIRTUALIZATION_THRESHOLD = 15; // Start virtualization when more than 30 items per status
-const VIRTUAL_BATCH_SIZE = 15; // Number of items to render at once
-const DEBOUNCE_DELAY = 200; // Debounce for search and filter operations
+import { TableVirtuoso } from 'react-virtuoso';
 
 interface IProps {
   status: IProductionStatus;
@@ -101,16 +95,7 @@ const StatusTableComponent = ({
     direction: CurrentStationOrderingEnum;
   }>({ key: "", direction: CurrentStationOrderingEnum.NONE });
 
-  // Performance optimization states
-  const [virtualStart, setVirtualStart] = useState(0);
-  const [virtualEnd, setVirtualEnd] = useState(VIRTUAL_BATCH_SIZE);
-  const [isVirtualizingLocal, setIsVirtualizingLocal] = useState(false);
-  const [showAllRows, setShowAllRows] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const virtuosoRef = useRef<any>(null);
 
   const reSortingCurrentStation = useCallback(
     async (direction: CurrentStationOrderingEnum) => {
@@ -234,67 +219,11 @@ const StatusTableComponent = ({
     });
   }, [boards, search]);
 
-  // Memoized filtered boards with virtualization
-  const filteredBoards = useMemo(() => {
-    const boards = getBoards();
-    const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
-
-    // Enable local virtualization for large datasets
-    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
-
-    if (shouldVirtualize) {
-      return sortedBoards.slice(virtualStart, virtualEnd);
-    } else {
-      // Pagination logic
-      const startIndex = 0;
-      const endIndex = showAllRows
-        ? sortedBoards.length
-        : Math.min(currentPage * itemsPerPage, sortedBoards.length);
-      return sortedBoards.slice(startIndex, endIndex);
-    }
-  }, [getBoards, virtualStart, virtualEnd, showAllRows, currentPage]);
-
-  // Separate effect to handle virtualization state changes
-  useEffect(() => {
-    const boards = getBoards();
-    const sortedBoards = [...boards].sort((a, b) => a.priority - b.priority);
-    const shouldVirtualize = sortedBoards.length > VIRTUALIZATION_THRESHOLD;
-
-    if (shouldVirtualize !== isVirtualizingLocal) {
-      setIsVirtualizingLocal(shouldVirtualize);
-    }
-  }, [getBoards, isVirtualizingLocal]);
-
-  // Intersection Observer for infinite scrolling within status
-  useEffect(() => {
-    if (!isVirtualizingLocal || !isOpen) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVirtualEnd((prev) => {
-              // Use the current boards length without calling getBoards() again
-              const currentBoards = boards?.length || 0;
-              return Math.min(prev + VIRTUAL_BATCH_SIZE, currentBoards);
-            });
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current = observer;
-    return () => observer.disconnect();
-  }, [isVirtualizingLocal, isOpen, boards?.length]);
-
-  // Reset virtualization when status is toggled
-  useEffect(() => {
-    if (isOpen) {
-      setVirtualStart(0);
-      setVirtualEnd(VIRTUAL_BATCH_SIZE);
-    }
-  }, [isOpen]);
+  // Memoized sorted boards
+  const sortedBoards = useMemo(() => {
+    const filteredBoards = getBoards();
+    return [...filteredBoards].sort((a, b) => a.priority - b.priority);
+  }, [getBoards]);
 
   const columnOrder = useRecoilValue(columnOrderState);
   const columnVisibility = useRecoilValue(columnVisibilityState);
@@ -305,14 +234,180 @@ const StatusTableComponent = ({
     [tableHeaders, status.id]
   );
 
-  // Memoized row component to prevent unnecessary re-renders
-  const MemoizedTableRowComponent = useMemo(
-    () => React.memo(TableRowComponent),
-    []
-  );
+  // Create a stable reference for the TableRow renderer
+  const renderTableRow = useCallback((props: any) => {
+    const { item: boardMission, ...restProps } = props;
 
-  // Loading state for large datasets
-  const [isLoadingRows, setIsLoadingRows] = useState(false);
+    // If this is a data row (has item), render TableRowComponent
+    if (boardMission) {
+      return (
+        <TableRowComponent
+          {...restProps}
+          boardMission={boardMission}
+          status={status}
+          onClickDone={tryMoveBoardMissionsToDone}
+          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+          index={sortedBoards.indexOf(boardMission)}
+          onClickClient={onClickClient}
+          isMobileScreen={isMobileScreen}
+          isRTL={RTL}
+          isUrgentWork={hasUrgentOrApproval}
+          onUpdateJobDueDate={updateJobDueDate}
+          employeesCategories={employeesCategories}
+          visibleColumns={visibleColumns}
+        />
+      );
+    }
+
+    // For header rows, use SecondaryTableRow
+    return <SecondaryTableRow {...restProps} />;
+  }, [
+    status,
+    sortedBoards,
+    tryMoveBoardMissionsToDone,
+    onOpenPrintDeliverTicketModal,
+    onClickClient,
+    isMobileScreen,
+    RTL,
+    hasUrgentOrApproval,
+    updateJobDueDate,
+    employeesCategories,
+    visibleColumns,
+  ]);
+
+  // Custom Table components for TableVirtuoso - with minimal dependencies
+  const TableComponents = useMemo(() => ({
+    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+      <TableContainer {...props} ref={ref} sx={{ height: '100%' }} />
+    )),
+    Table: (props: any) => (
+      <Table {...props} stickyHeader sx={{ tableLayout: 'fixed' }} />
+    ),
+    TableHead: TableHead,
+    // IMPORTANT: do not override TableRow here; let Virtuoso manage rows
+    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+      <TableBody {...props} ref={ref} />
+    )),
+  }), []);
+
+
+
+  // Fixed header content function
+  const fixedHeaderContent = useCallback(() => {
+    return (
+      <SecondaryTableRow>
+        {memoizedTableHeaders?.map((header, index) => {
+          const key = columnOrder.filter((k) => columnVisibility[k])[index];
+          const width = getCustomWidth(key);
+
+          return (
+            <SecondaryTableCell
+              style={{
+                backgroundColor: "#F9FAFB",
+                placeItems: "center",
+                minWidth: width,
+                maxWidth: width,
+                width,
+                ...(isMobileScreen && {
+                  position: index <= 1 ? "sticky" : "relative",
+                  [RTL ? "right" : "left"]:
+                    index === 0 ? 0 : index === 1 ? 48 : "auto",
+                  zIndex: index <= 1 ? 2 : 1,
+                  background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
+                }),
+              }}
+              key={"statusTable" + status.id + index}
+              align={"center"}
+              sx={
+                header === t("productionFloor.currentStation")
+                  ? currentStationOrdering === CurrentStationOrderingEnum.NONE
+                    ? {
+                      "& .sort-icon": { opacity: 0 },
+                      "&:hover .sort-icon": { opacity: 1 },
+                    }
+                    : {
+                      "& .sort-icon": { opacity: 1 },
+                    }
+                  : undefined
+              }
+            >
+              <div
+                style={{
+                  width: "max-content",
+                  minWidth: "max-content",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "5px",
+                }}
+              >
+                {header}
+                {header === t("productionFloor.currentStation") && (
+                  <IconButton
+                    className="sort-icon"
+                    onClick={() => {
+                      setSortConfig({
+                        key: t("productionFloor.currentStation"),
+                        direction:
+                          currentStationOrdering === CurrentStationOrderingEnum.NONE
+                            ? CurrentStationOrderingEnum.ASC
+                            : CurrentStationOrderingEnum.NONE,
+                      });
+                      setCurrentStationOrdering(
+                        currentStationOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : CurrentStationOrderingEnum.NONE
+                      );
+                      reSortingCurrentStation(
+                        currentStationOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : CurrentStationOrderingEnum.NONE
+                      );
+                    }}
+                  >
+                    <ArrowUpward sx={{ fontSize: "18px" }} />
+                  </IconButton>
+                )}
+              </div>
+            </SecondaryTableCell>
+          );
+        })}
+      </SecondaryTableRow>
+    );
+  }, [
+    memoizedTableHeaders,
+    columnOrder,
+    columnVisibility,
+    isMobileScreen,
+    RTL,
+    status.id,
+    t,
+    currentStationOrdering,
+    setSortConfig,
+    setCurrentStationOrdering,
+    reSortingCurrentStation,
+  ]);
+  console.log("columnVisibility", columnVisibility)
+
+  const TABLE_CONFIG = {
+    ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
+    HEADER_HEIGHT: 50,
+    MAX_VISIBLE_ITEMS: 10
+  };
+
+  const calculateConfigurableHeight = () => {
+    const boardsCount = getBoards().length;
+    if(boardsCount < 10){
+      return `500px`;
+    }
+    const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
+    const totalHeight = (visibleItems * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+
+    console.log("totalHeight", { boardsCount, totalHeight, visibleItems })
+
+    return `${totalHeight}px`;
+  };
+
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -340,237 +435,76 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${
-            !status.isGroup
-              ? t("productionStatuses." + status.name)
-              : status.name
-          } (${getBoards().length})`}
+          {`${!status.isGroup
+            ? t("productionStatuses." + status.name)
+            : status.name
+            } (${getBoards().length})`}
         </Button>
       </Stack>
 
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
-          <Paper>
-            <TableContainer ref={tableContainerRef}>
-              <Table stickyHeader={false}>
-                <TableHead style={{ backgroundColor: status.backgroundColor }}>
-                  <SecondaryTableRow>
-                    {memoizedTableHeaders?.map((header, index) => {
-                      const key = columnOrder.filter(
-                        (k) => columnVisibility[k]
-                      )[index];
-                      const width = getCustomWidth(key);
-
-                      return (
-                        <SecondaryTableCell
-                          style={{
-                            backgroundColor: "#F9FAFB",
-                            placeItems: "center",
-                            minWidth: width,
-                            maxWidth: width,
-                            width,
-                            ...(isMobileScreen && {
-                              position: index <= 1 ? "sticky" : "relative",
-                              [RTL ? "right" : "left"]:
-                                index === 0 ? 0 : index === 1 ? 48 : "auto",
-                              zIndex: index <= 1 ? 2 : 1,
-                              background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                            }),
-                          }}
-                          key={"statusTable" + status.id + index}
-                          align={"center"}
-                          sx={
-                            header === t("productionFloor.currentStation")
-                              ? currentStationOrdering ===
-                                CurrentStationOrderingEnum.NONE
-                                ? {
-                                    "& .sort-icon": { opacity: 0 },
-                                    "&:hover .sort-icon": { opacity: 1 },
-                                  }
-                                : {
-                                    "& .sort-icon": { opacity: 1 },
-                                  }
-                              : undefined
-                          }
-                        >
-                          <div
-                            style={{
-                              width: "max-content",
-                              minWidth: "max-content",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "5px",
-                            }}
-                          >
-                            {header}
-                            {header === t("productionFloor.currentStation") && (
-                              <IconButton
-                                className="sort-icon"
-                                onClick={() => {
-                                  setSortConfig({
-                                    key: t("productionFloor.currentStation"),
-                                    direction:
-                                      currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                        ? CurrentStationOrderingEnum.ASC
-                                        : CurrentStationOrderingEnum.NONE,
-                                  });
-                                  setCurrentStationOrdering(
-                                    currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
-                                  );
-                                  reSortingCurrentStation(
-                                    currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
-                                      ? CurrentStationOrderingEnum.ASC
-                                      : CurrentStationOrderingEnum.NONE
-                                  );
-                                }}
-                              >
-                                {<ArrowUpward sx={{ fontSize: "18px" }} />}
-                              </IconButton>
-                            )}
-                          </div>
-                        </SecondaryTableCell>
-                      );
-                    })}
-                  </SecondaryTableRow>
-                </TableHead>
-                <TableBody>
-                  {getBoards().length > 15 ? (
-                    <LoadMorePagination
-                      items={[...getBoards()].sort(
-                        (a, b) => a.priority - b.priority
-                      )}
-                      itemsPerPage={15}
-                      tableRef={tableContainerRef}
-                    >
-                      {(currentItems) => (
-                        <>
-                          {currentItems.map((boardMission, index) => (
-                            <MemoizedTableRowComponent
-                              key={`status-${status.id}-${boardMission.id}-${index}`}
-                              boardMission={boardMission}
-                              status={status}
-                              onClickDone={tryMoveBoardMissionsToDone}
-                              onClickPrintDTicket={
-                                onOpenPrintDeliverTicketModal
-                              }
-                              index={index}
-                              onClickClient={onClickClient}
-                              isMobileScreen={isMobileScreen}
-                              isRTL={RTL}
-                              isUrgentWork={hasUrgentOrApproval}
-                              onUpdateJobDueDate={updateJobDueDate}
-                              employeesCategories={employeesCategories}
-                              visibleColumns={visibleColumns}
-                            />
-                          ))}
-                        </>
-                      )}
-                    </LoadMorePagination>
-                  ) : (
-                    <>
-                      {filteredBoards.map((boardMission, index) => (
-                        <MemoizedTableRowComponent
-                          key={`status-${status.id}-${boardMission.id}-${index}`}
-                          boardMission={boardMission}
-                          status={status}
-                          onClickDone={tryMoveBoardMissionsToDone}
-                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                          index={index}
-                          onClickClient={onClickClient}
-                          isMobileScreen={isMobileScreen}
-                          isRTL={RTL}
-                          isUrgentWork={hasUrgentOrApproval}
-                          onUpdateJobDueDate={updateJobDueDate}
-                          employeesCategories={employeesCategories}
-                          visibleColumns={visibleColumns}
+          <Paper sx={{ overflow: 'auto' }}>
+            {getBoards().length > 10 ? <TableVirtuoso
+              key={`virtuoso-${status.id}-${sortedBoards.length}`}
+              ref={virtuosoRef}
+              style={{ height: calculateConfigurableHeight() }}
+              data={sortedBoards}
+              overscan={5}
+              components={TableComponents}
+            
+              fixedHeaderContent={fixedHeaderContent}
+              itemContent={(index: number, boardMission: IBoardMissions) => (
+                <TableRowComponent
+                  boardMission={boardMission}
+                  status={status}
+                  onClickDone={tryMoveBoardMissionsToDone}
+                  onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                  index={index}
+                  onClickClient={onClickClient}
+                  isMobileScreen={isMobileScreen}
+                  isRTL={RTL}
+                  isUrgentWork={hasUrgentOrApproval}
+                  onUpdateJobDueDate={updateJobDueDate}
+                  employeesCategories={employeesCategories}
+                  visibleColumns={visibleColumns}
+                  cellsOnly
+                />
+              )}
+            /> : <div>
+              <TableContainer >
+                <Table stickyHeader={false}>
+                  <TableHead style={{ backgroundColor: status.backgroundColor }}>
+                    {fixedHeaderContent()}
+                  </TableHead>
+                    <TableBody>
+                        {sortedBoards.map((boardMission, index) => (
+                        <TableRowComponent
+                            key={boardMission.id}
+                            boardMission={boardMission}
+                            status={status}
+                            onClickDone={tryMoveBoardMissionsToDone}
+                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                            index={index}
+                            onClickClient={onClickClient}
+                            isMobileScreen={isMobileScreen}
+                            isRTL={RTL}
+                            isUrgentWork={hasUrgentOrApproval}
+                            onUpdateJobDueDate={updateJobDueDate}
+                            employeesCategories={employeesCategories}
+                            visibleColumns={visibleColumns}
                         />
-                      ))}
-                      {!showAllRows &&
-                        getBoards().length > currentPage * itemsPerPage && (
-                          <tr>
-                            <td
-                              colSpan={100}
-                              style={{ textAlign: "center", padding: "20px" }}
-                            >
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {t("pagination.showing", {
-                                  showing: `${currentPage * itemsPerPage} of ${
-                                    getBoards().length
-                                  }`,
-                                })}
-                              </Typography>
-                              <Stack direction="row" gap={1} sx={{ mt: 1 }}>
-                                <Button
-                                  variant="contained"
-                                  size="small"
-                                  onClick={() => {
-                                    setCurrentPage((prev) => prev + 1);
-                                    // Scroll to top
-                                    setTimeout(() => {
-                                      if (tableContainerRef?.current) {
-                                        tableContainerRef.current.scrollIntoView(
-                                          {
-                                            behavior: "smooth",
-                                            block: "start",
-                                          }
-                                        );
-                                      }
-                                    }, 100);
-                                  }}
-                                >
-                                  {t("pagination.loadMore", {
-                                    count: Math.min(
-                                      itemsPerPage,
-                                      getBoards().length -
-                                        currentPage * itemsPerPage
-                                    ),
-                                  })}
-                                </Button>
-                                <Button
-                                  variant="outlined"
-                                  size="small"
-                                  onClick={() => {
-                                    setShowAllRows(true);
-                                    // Scroll to top
-                                    setTimeout(() => {
-                                      if (tableContainerRef?.current) {
-                                        tableContainerRef.current.scrollIntoView(
-                                          {
-                                            behavior: "smooth",
-                                            block: "start",
-                                          }
-                                        );
-                                      }
-                                    }, 100);
-                                  }}
-                                >
-                                  Show All (
-                                  {getBoards().length -
-                                    currentPage * itemsPerPage}{" "}
-                                  more)
-                                </Button>
-                              </Stack>
-                            </td>
-                          </tr>
-                        )}
-                    </>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                        ))}
+                    </TableBody>
+                </Table>
+              </TableContainer>
+             
+            </div> }
           </Paper>
         </Collapse>
       )}
 
+      {/* All modals remain the same */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -590,12 +524,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -658,12 +592,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

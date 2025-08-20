@@ -500,23 +500,16 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   </SecondaryButton>
                 )}
 
-                {[
-                  ...productTemplate?.sections,
-                  ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
-                    ? [PricingTab]
-                    : []),
-                ].length -
-                  1 !==
-                  activeIndex && (
-                    <div data-tour="next-button">
-                      <SecondaryButton
-                        variant="contained"
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </SecondaryButton>
-                    </div>
-                  )}
+                {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])].length - 1 !== activeIndex && (
+                  <div data-tour="next-button">
+                    <SecondaryButton
+                      variant="contained"
+                      onClick={handleNextClick}
+                    >
+                      {t("products.offsetPrice.admin.nextBtn")}
+                    </SecondaryButton>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ width: "68%" }}>
@@ -529,23 +522,16 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                       {t("products.offsetPrice.admin.previousBtn")}
                     </GomakePrimaryButton>
                   )}
-                  {[
-                    ...productTemplate?.sections,
-                    ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
-                      ? [PricingTab]
-                      : []),
-                  ].length -
-                    1 !==
-                    activeIndex && (
-                      <div data-tour="next-button">
-                        <GomakePrimaryButton
-                          style={clasess.nextBtnStyle}
-                          onClick={handleNextClick}
-                        >
-                          {t("products.offsetPrice.admin.nextBtn")}
-                        </GomakePrimaryButton>
-                      </div>
-                    )}
+                  {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])].length - 1 !== activeIndex && (
+                    <div data-tour="next-button">
+                      <GomakePrimaryButton
+                        style={clasess.nextBtnStyle}
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </GomakePrimaryButton>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

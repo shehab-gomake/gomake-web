@@ -14,6 +14,7 @@ export const jobsColumnKeys: Record<string, string[]> = {
     "quantity",
     "costFromOrderItem",
     "priceFromOrderItem",
+    "isPrinted",
     "jobName",
     "numberOfBoardMissionsInOrder",
     "productName",
@@ -53,11 +54,12 @@ export const jobsColumnWidthsMap: Record<string, Record<string, string>> = {
     quantity: "7%", // 8
     costFromOrderItem: "4%", // 9 (conditional)
     priceFromOrderItem: "6%", // 10 (conditional)
-    jobName: "12%", // 11
-    numberOfBoardMissionsInOrder: "7%", // 12
-    productName: "7%", // 13
-    currentBoardMissionStatus: "13%", // 14
-    more: "3%", // 15
+    isPrinted: "5%", // 11 (conditional)
+    jobName: "12%", // 12
+    numberOfBoardMissionsInOrder: "7%", // 13
+    productName: "7%", // 14
+    currentBoardMissionStatus: "13%", // 15
+    more: "3%", // 16
   },
   purchaseJobs: {
     creationDate: "7%", // 1

@@ -27,6 +27,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: isMobileScreen ? "2px" : "20px",
         padding: "12px 0",
+        paddingRight: "6px",
         ...(isMobileScreen && { ...adaptPaddingRight(dir, 5) }),
         ...(isMobileScreen && { rowGap: "10px" }),
       },

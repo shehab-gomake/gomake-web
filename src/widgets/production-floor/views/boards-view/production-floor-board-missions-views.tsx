@@ -68,7 +68,7 @@ const ProductionFloorBoardMissionsViews = ({
         try {
           const res = await getProductionFloorTableSettingsApi(
             callApi,
-            () => {}
+            () => { }
           );
           const saved: ColumnSetting[] = res?.data;
 

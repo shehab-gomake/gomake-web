@@ -59,6 +59,8 @@ interface IProps {
   onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
   employeesCategories?: any;
   visibleColumns: string[];
+  // NEW: when true, render only <TableCell> elements (for TableVirtuoso itemContent)
+  cellsOnly?: boolean;
 }
 
 enum EDropArea {
@@ -80,6 +82,7 @@ const TableRowComponent = ({
   onUpdateJobDueDate,
   employeesCategories,
   visibleColumns,
+  cellsOnly = false,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -267,6 +270,7 @@ const TableRowComponent = ({
                     [isRTL ? "right" : "left"]: 0,
                     zIndex: 11,
                   }),
+                  padding: "0px",
                 }}
               >
                 <Checkbox
@@ -302,6 +306,8 @@ const TableRowComponent = ({
               }}
             >
               <div
+                // Attach drag/drop ref to the primary content when rendering cells only
+                ref={cellsOnly ? (ref as any) : undefined}
                 style={{
                   display: "flex",
                   flexDirection: "row",
@@ -510,6 +516,7 @@ const TableRowComponent = ({
           return (
             <SecondaryTableCell align="center" style={commonStyle}>
               <BoardStatusComponent
+                isFromMissionView={false}
                 statusId={boardMission.statusId}
                 id={boardMission.id}
                 onChange={(id, statusId) => {
@@ -574,7 +581,7 @@ const TableRowComponent = ({
 
         case "more":
           return (
-            <SecondaryTableCell align="center" style={commonStyle}>
+            <SecondaryTableCell align="center" style={{ ...commonStyle, padding: "0px" }}>
               <MoreMenuWidget
                 boardMission={boardMission}
                 onClickDone={onClickDone}
@@ -597,8 +604,15 @@ const TableRowComponent = ({
       isRTL,
       onClickClient,
       onSelectBoardMissions,
+      cellsOnly,
     ]
   );
+
+  if (cellsOnly) {
+    // Attach drag/drop to the ref target inside the job_order cell
+    drag(drop(ref));
+    return <>{visibleColumns.map((key) => renderCell(key))}</>;
+  }
 
   return (
     <>

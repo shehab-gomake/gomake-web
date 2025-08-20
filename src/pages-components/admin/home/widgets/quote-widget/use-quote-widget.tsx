@@ -30,6 +30,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store/permissions";
 import { getAllStuckJobsApi, getAllStuckJobsByAgentIdApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { userState } from "@/store/user";
+import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -200,6 +201,8 @@ const useQuoteWidget = () => {
 
   const [allStuckJobs, setAllStuckJobs] = useState(0);
   const user = useRecoilValue<any>(userState);
+
+  const { } = updateQuoteStatusSocketIo({ setUserQuote, setQuoteId, setQuoteNumber, setQuoteIfExist, setSelectedClient, setSelectedClientType, clientTypesValue, isFromHomePage: true });
   useEffect(() => {
     if (permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS)) {
       getAllStuckJobs();
@@ -520,3 +523,4 @@ const useQuoteWidget = () => {
 };
 
 export { useQuoteWidget };
+

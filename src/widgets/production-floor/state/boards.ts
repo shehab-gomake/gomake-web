@@ -15,6 +15,11 @@ export const jobsStatusesState = atom<IProductionStatus[]>({
   default: [],
 });
 
+export const statusesListState = atom<IProductionStatus[]>({
+  key: "statusesListState",
+  default: [],
+});
+
 export const productionFloorStatusesState = selector({
   key: "productionFloorStatusesState",
   get: ({ get }) => {

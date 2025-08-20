@@ -109,6 +109,8 @@ import {
   QuotesTableColumns,
 } from "./enums/document-table-columns-enum";
 import { Typography } from "@mui/material";
+import { currenciesState } from "@/widgets/materials-widget/state";
+import { getCurrencies } from "@/services/api-service/general/enums";
 
 type PaymentTypeOption = {
   label: string;
@@ -133,6 +135,7 @@ interface Query {
   pageNumber?: number;
   productsIds?: string[];
   paymentType?: string;
+  currency?: string;
 }
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -152,9 +155,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const router = useRouter();
   const documentPath =
     docType === DOCUMENT_TYPE.supplierPayments
-      ? `${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true&isNewCreation=true`
+      ? `${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+      }?isOutgoingPayments=true&isNewCreation=true`
       : DOCUMENT_TYPE[docType];
 
   const searchInputRef = useRef(null);
@@ -184,7 +186,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isPausedOrders, setIsPausedOrders] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
-  const [allQuotes, setAllQuotes] = useState();
+  const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
@@ -207,6 +209,29 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setPageSize(initialPageSize);
     }
   }, [initialPageSize]);
+  const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
+  const [currencyFilter, setCurrencyFilter] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+
+  const getCurrenciesApi = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCurrencies(
+          res.data.map(({ value, text }) => ({ label: text, value }))
+        );
+      }
+    };
+    await getCurrencies(callApi, callBack);
+  };
+
+
+  useEffect(() => {
+    getCurrenciesApi();
+  }, []);
+
+  console.log("currencies", currencies)
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
@@ -553,24 +578,295 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const SourceDocumentCell = ({ documents }: { documents: any[] }) => {
+  // At the table/page component level (outside getAllQuotes, once per table)
+  const [cellsExpanded, setCellsExpanded] = useState<Record<string, boolean>>(
+    {}
+  );
+  const toggleCellsExpanded = (rowId: string) =>
+    setCellsExpanded((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+
+  // Store original data to re-map when cellsExpanded changes
+  const [originalData, setOriginalData] = useState<any[] | null>(null);
+
+  // Re-map existing data when cellsExpanded changes to update JSX with new state
+  useEffect(() => {
+    if (originalData && originalData.length > 0) {
+      // Re-map the original data with the new cellsExpanded value
+      const remappedQuotes = originalData.map((quote: any) => {
+        const baseRow = {
+          creationDate: formatCustomDateTime(
+            quote?.createdDate || quote?.creationDate
+          ),
+          client: (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                onClickOpenCustomerModal(quote?.clientId || quote?.customerId)
+              }
+            >
+              {quote?.clientName || quote?.customerName}
+            </div>
+          ),
+          agent: quote?.agentName,
+          number: quote?.number,
+          purchaseNumber: (
+            <PurchaseNumberCell
+              key={`purchase-${quote?.id}`}
+              purchaseNumbers={quote?.purchaseNumber}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+              isRTL={isRTL}
+            />
+          ),
+          worksName: (
+            <WorksNameCell
+              key={`works-${quote?.id}`}
+              worksNames={quote?.worksNames || []}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+              isRTL={isRTL}
+            />
+          ),
+          discount: quote?.discount,
+          totalPriceWithoutVat: isRTL
+            ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
+                quote?.currency
+              )}`
+            : `${getCurrencyUnitText(quote?.currency)} ${
+                quote?.totalPriceWithoutVat
+              }`,
+          totalPrice: isRTL
+            ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
+          notes: quote?.notes,
+          status: _renderStatus(docType, quote, t),
+          more: (
+            <MoreMenuWidget
+              quote={quote}
+              documentType={docType}
+              onClickEditQuote={onClickEditQuote}
+              onClickPdf={onClickQuotePdf}
+              onClickDuplicate={onClickDocumentDuplicate}
+              onClickLoggers={onClickDocumentLogs}
+              onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+              onClickOpenChangeProductionStatusModal={
+                onClickOpenChangeProductionStatusModal
+              }
+              onClickSendPayment={onClickSendPayment}
+              onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+              onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+              onClickReopenDocument={onClickOpenReopenDocumentModal}
+              onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+              onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+              onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickMakePayment={onClickMakePayment}
+              onClickPauseOrResume={onClickPauseOrResume}
+              onClickStartProduction={onClickOpenStartProductionModal}
+              onClickCloseAndTrack={onClickOpenTrackModal}
+              onClickOpenMoveOrderToReadyModal={
+                onClickOpenMoveOrderToReadyModal
+              }
+              onOpenPackagesModal={onOpenPackagesModal}
+              onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+              onOpenDuplicateModal={onOpenDuplicateModal}
+              handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+            />
+          ),
+        };
+
+        if (isPurchaseOrder) {
+          return {
+            ...baseRow,
+            purchaseOrderNumber: quote?.number,
+            orderNumber: quote?.orderNumber,
+            supplierName: quote?.supplierName,
+            itemsNumber: quote?.itemsNumber,
+          };
+        }
+
+        if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
+          return {
+            ...baseRow,
+            purchaseInvoiceNumber: quote?.number,
+            invoiceNumber: quote?.invoiceNumber,
+            purchaseOrderNumber: quote?.orderNumbers
+              ? quote?.orderNumbers.join(", ")
+              : "",
+            supplierName: (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
+                {quote?.customerName}
+              </div>
+            ),
+            itemsNumber: quote?.itemsNumber,
+            status:
+              isInvoice && quote?.isDraft ? (
+                <span style={{ color: "#e77676" }}>
+                  {t("sales.quote.draft")}
+                </span>
+              ) : (
+                _renderStatus(docType, quote, t)
+              ),
+          };
+        }
+
+        if (isQuote) {
+          return {
+            ...baseRow,
+            agent: quote?.agentName,
+            number: quote?.number,
+            worksName: (
+              <WorksNameCell
+                key={`works-${quote?.id}`}
+                worksNames={quote?.worksNames || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+          };
+        }
+
+        if (isOrder) {
+          const jobsElement = CheckPermission(
+            Permissions.SHOW_BOARD_MISSIONS
+          ) ? (
+            <a
+              style={{
+                cursor: "pointer",
+                color: "inherit",
+                textDecoration: "unset",
+              }}
+              href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
+            >
+              {quote?.jobs}
+            </a>
+          ) : (
+            quote?.jobs
+          );
+
+          const paymentStatus = `${
+            isRTL
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+          }/${
+            isRTL
+              ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
+          }`;
+
+          return {
+            ...baseRow,
+            deliveryDate: formatISODateTime(quote?.dueDate),
+            orderNumber: quote?.number,
+            quoteNumber: quote?.sourceDocumentNumber?.map((item, index) => (
+              <span key={index}>
+                {item?.documentNumber}
+                <br />
+              </span>
+            )),
+            purchaseNumber: (
+              <PurchaseNumberCell
+                key={`purchase-${quote?.id}`}
+                purchaseNumbers={quote?.purchaseNumber}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+            productionStatus: quote?.productionStatus
+              ? t("boardMissions.done")
+              : t("boardMissions.inProduction"),
+            jobs: jobsElement,
+            cost: quote?.cost,
+            paymentStatus: isOrdersTracking
+              ? paymentStatus
+              : baseRow.totalPrice,
+            deliveryStatus: (
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+                onClickOpenMoveOrderToReadyModal={
+                  onClickOpenMoveOrderToReadyModal
+                }
+              />
+            ),
+          };
+        }
+
+        return {
+          ...baseRow,
+          sourceDocument: (
+            <SourceDocumentCell
+              key={`source-${quote?.id}`}
+              documents={quote?.sourceDocumentNumber || []}
+              expanded={cellsExpanded[quote?.id] || false}
+              onToggle={() => toggleCellsExpanded(quote?.id)}
+            />
+          ),
+          deliveryStatus:
+            isInvoice || isDeliveryNote ? (
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+                onClickOpenMoveOrderToReadyModal={
+                  onClickOpenMoveOrderToReadyModal
+                }
+              />
+            ) : (
+              <div>—</div>
+            ),
+          status:
+            isInvoice && quote?.isDraft ? (
+              <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
+            ) : (
+              _renderStatus(docType, quote, t)
+            ),
+        };
+      });
+
+      setAllQuotes(remappedQuotes as any[]);
+    }
+  }, [cellsExpanded, originalData]);
+
+  const SourceDocumentCell = ({
+    documents,
+    expanded,
+    onToggle,
+  }: {
+    documents: Array<{
+      sourceDocumentType: any;
+      documentId: any;
+      documentNumber: any;
+    }>;
+    expanded: boolean;
+    onToggle: () => void;
+  }) => {
     const { t } = useTranslation();
-    const [showAll, setShowAll] = useState(false);
     const MAX_VISIBLE = 2;
 
-    const visibleItems = showAll ? documents : documents.slice(0, MAX_VISIBLE);
+    const visibleItems = expanded
+      ? documents
+      : documents?.slice(0, MAX_VISIBLE);
 
     return (
       <div
-        style={{ maxHeight: showAll ? "none" : "100px", overflow: "hidden" }}
+        style={{ maxHeight: expanded ? "none" : "100px", overflow: "hidden" }}
       >
         {visibleItems?.map((item, index) => (
           <a
             key={index}
-            href={`${renderURLDocumentType(
+            href={renderURLDocumentType(
               item?.sourceDocumentType,
               item.documentId
-            )}`}
+            )}
             style={{
               cursor: "pointer",
               color: "inherit",
@@ -582,63 +878,64 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 item?.sourceDocumentType
               )
             )}
-            :{item?.documentNumber}
+            : {item?.documentNumber}
             <br />
           </a>
         ))}
-        {documents.length > MAX_VISIBLE && (
+        {documents?.length > MAX_VISIBLE && (
           <Typography
-            onClick={() => setShowAll(!showAll)}
+            onClick={onToggle}
             sx={{
               cursor: "pointer",
               color: "#000",
               textDecoration: "underline",
               display: "inline-block",
-              marginTop: "5px",
+              mt: "5px",
               fontWeight: 500,
               fontSize: "0.9rem",
-              "&:hover": {
-                color: "#717273",
-              },
+              "&:hover": { color: "#717273" },
             }}
           >
-            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
           </Typography>
         )}
       </div>
     );
   };
 
-  const WorksNameCell = ({ worksNames }: { worksNames: any }) => {
+  const WorksNameCell = ({
+    worksNames,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    worksNames: string[] | string | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
     const { t } = useTranslation();
-    const [showAll, setShowAll] = useState(false);
     const MAX_VISIBLE = 3;
 
-    // Parse worksNames if it's a string, otherwise ensure it's an array
     const safeWorksNames = (() => {
       if (typeof worksNames === "string") {
-        // Split by comma and trim whitespace
         return worksNames
           .split(",")
-          .map((item) => item.trim())
-          .filter((item) => item.length > 0);
-      } else if (Array.isArray(worksNames)) {
-        return worksNames;
-      } else {
-        return [];
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
+      return Array.isArray(worksNames) ? worksNames : [];
     })();
 
-    const visibleItems = showAll
+    const visibleItems = expanded
       ? safeWorksNames
       : safeWorksNames.slice(0, MAX_VISIBLE);
-
     const displayText = visibleItems.join(", ");
 
     return (
       <div
         style={{
-          maxHeight: showAll ? "none" : "60px",
+          maxHeight: expanded ? "none" : "60px",
           overflow: "hidden",
           lineHeight: "1.4",
         }}
@@ -646,7 +943,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         <span>{displayText}</span>
         {safeWorksNames.length > MAX_VISIBLE && (
           <Typography
-            onClick={() => setShowAll(!showAll)}
+            onClick={onToggle}
             sx={{
               cursor: "pointer",
               color: "#000",
@@ -655,12 +952,69 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               [isRTL ? "mr" : "ml"]: 1,
               fontWeight: 500,
               fontSize: "0.9rem",
-              "&:hover": {
-                color: "#717273",
-              },
+              "&:hover": { color: "#717273" },
             }}
           >
-            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  const PurchaseNumberCell = ({
+    purchaseNumbers,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    purchaseNumbers: string[] | string | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safePurchaseNumbers = (() => {
+      if (typeof purchaseNumbers === "string") {
+        return purchaseNumbers
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      return Array.isArray(purchaseNumbers) ? purchaseNumbers : [];
+    })();
+
+    const visibleItems = expanded
+      ? safePurchaseNumbers
+      : safePurchaseNumbers.slice(0, MAX_VISIBLE);
+    const displayText = visibleItems.join(", ");
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          overflow: "hidden",
+          lineHeight: "1.4",
+        }}
+      >
+        <span>{displayText}</span>
+        {safePurchaseNumbers.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              cursor: "pointer",
+              color: "#000",
+              textDecoration: "underline",
+              display: "inline-block",
+              [isRTL ? "mr" : "ml"]: 1,
+              fontWeight: 500,
+              fontSize: "0.9rem",
+              "&:hover": { color: "#717273" },
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
           </Typography>
         )}
       </div>
@@ -694,22 +1048,35 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ),
               agent: quote?.agentName,
               number: quote?.number,
-              purchaseNumber: quote?.purchaseNumber,
-              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+              purchaseNumber: (
+                <PurchaseNumberCell
+                  key={`purchase-${quote?.id}`}
+                  purchaseNumbers={quote?.purchaseNumber}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
+              worksName: (
+                <WorksNameCell
+                  worksNames={quote?.worksNames || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
               discount: quote?.discount,
               totalPriceWithoutVat: isRTL
                 ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                    quote?.currency
-                  )}`
-                : `${getCurrencyUnitText(quote?.currency)} ${
-                    quote?.totalPriceWithoutVat
-                  }`,
+                  quote?.currency
+                )}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
+                }`,
 
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${
-                    quote?.totalPrice
-                  }`,
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
+                }`,
               notes: quote?.notes,
               status: _renderStatus(docType, quote, t),
               more: (
@@ -792,7 +1159,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 agent: quote?.agentName,
                 number: quote?.number,
                 worksName: (
-                  <WorksNameCell worksNames={quote?.worksNames || []} />
+                  <WorksNameCell
+                    worksNames={quote?.worksNames || []}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
                 ),
               };
             }
@@ -815,23 +1187,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 quote?.jobs
               );
 
-              const paymentStatus = `${
-                isRTL
-                  ? `${quote?.sumApplied} ${getCurrencyUnitText(
-                      quote?.currency
-                    )}`
-                  : `${getCurrencyUnitText(quote?.currency)} ${
-                      quote?.sumApplied
-                    }`
-              }/${
-                isRTL
+              const paymentStatus = `${isRTL
+                ? `${quote?.sumApplied} ${getCurrencyUnitText(
+                  quote?.currency
+                )}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
+                }`
+                }/${isRTL
                   ? `${quote?.totalPrice} ${getCurrencyUnitText(
-                      quote?.currency
-                    )}`
-                  : `${getCurrencyUnitText(quote?.currency)} ${
-                      quote?.totalPrice
-                    }`
-              }`;
+                    quote?.currency
+                  )}`
+                  : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
+                  }`
+                }`;
 
               return {
                 ...baseRow,
@@ -843,7 +1211,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     <br />
                   </span>
                 )),
-                purchaseNumber: quote?.purchaseNumber,
+                purchaseNumber: (
+                  <PurchaseNumberCell
+                    key={`purchase-${quote?.id}`}
+                    purchaseNumbers={quote?.purchaseNumber}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
                 productionStatus: quote?.productionStatus
                   ? t("boardMissions.done")
                   : t("boardMissions.inProduction"),
@@ -870,6 +1246,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               sourceDocument: (
                 <SourceDocumentCell
                   documents={quote?.sourceDocumentNumber || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
                 />
               ),
               deliveryStatus:
@@ -943,6 +1321,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ),
           }));
 
+          // Store original data for re-mapping when cellsExpanded changes
+          setOriginalData(data);
           setAllQuotes(
             isReceipt || isSupplierPayments ? mapReceiptData : mapData
           );
@@ -966,35 +1346,35 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const currentMaxPrice = router.query.maxPrice || maxPrice;
       const currentFromDate = router.query.fromDate
         ? new Date(
-            Array.isArray(router.query.fromDate)
-              ? router.query.fromDate[0]
-              : router.query.fromDate
-          )
+          Array.isArray(router.query.fromDate)
+            ? router.query.fromDate[0]
+            : router.query.fromDate
+        )
         : null;
       const currentToDate = router.query.toDate
         ? new Date(
-            Array.isArray(router.query.toDate)
-              ? router.query.toDate[0]
-              : router.query.toDate
-          )
+          Array.isArray(router.query.toDate)
+            ? router.query.toDate[0]
+            : router.query.toDate
+        )
         : null;
 
       const currentAccountingStatus = router.query.accountingStatus
         ? accountingStatuses.find(
-            (status) => status.value === Number(router.query.accountingStatus)
-          )
+          (status) => status.value === Number(router.query.accountingStatus)
+        )
         : null;
 
       const currentDeliveryStatusStatus = router.query.deliveryStatus
         ? deliveryStatuses.find(
-            (status) => status.value === Number(router.query.deliveryStatus)
-          )
+          (status) => status.value === Number(router.query.deliveryStatus)
+        )
         : null;
 
       const currentProductionStatus = router.query.productionStatus
         ? productionStatuses.find(
-            (status) => status.value === Number(router.query.productionStatus)
-          )
+          (status) => status.value === Number(router.query.productionStatus)
+        )
         : null;
 
       const currentIsCanceled = router.query.isCanceled;
@@ -1003,13 +1383,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const currentProductsIds = Array.isArray(router.query.productsIds)
         ? router.query.productsIds
         : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
+          ? [router.query.productsIds]
+          : productIds;
+
+      const currentCurrency = router.query.currency
+        ? currencies.find(
+          (curr) => curr.value === router.query.currency
+        )
+        : null;
 
       const currentPaymentType = router.query.paymentType
         ? typeOfPayments.find(
-            (type) => type.value === Number(router.query.paymentType)
-          )
+          (type) => type.value === Number(router.query.paymentType)
+        )
         : null;
 
       // keep your API call logic unchanged
@@ -1024,8 +1410,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           paymentType: currentPaymentType?.value ?? paymentType?.value,
           patternSearch:
             finalPatternSearch !== null &&
-            finalPatternSearch !== undefined &&
-            finalPatternSearch !== ""
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
               ? finalPatternSearch
               : currentFinalPatternSearch,
 
@@ -1062,6 +1448,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             statusId:
               quoteStatusId?.value || currentStatusId || statusId?.value,
             approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
+            currency: currentCurrency?.value ?? currencyFilter?.value,
 
             ...(currentMinPrice && currentMinPrice !== ""
               ? { minPrice: currentMinPrice }
@@ -1072,8 +1459,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
             patternSearch:
               finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
+                finalPatternSearch !== undefined &&
+                finalPatternSearch !== ""
                 ? finalPatternSearch
                 : currentFinalPatternSearch,
 
@@ -1096,6 +1483,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             isCanceled: currentIsCanceled || isCanceledState,
             isPaused: currentIsPaused || isPausedOrders,
             isOrderInTracking: isOrdersTracking,
+
           },
         });
       }
@@ -1154,16 +1542,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ),
             agent: quote?.agentName,
             number: quote?.number,
-            purchaseNumber: quote?.purchaseNumber,
-            worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+            purchaseNumber: (
+              <PurchaseNumberCell
+                key={`purchase-${quote?.id}`}
+                purchaseNumbers={quote?.purchaseNumber}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
+            worksName: (
+              <WorksNameCell
+                worksNames={quote?.worksNames || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
+                isRTL={isRTL}
+              />
+            ),
             discount: quote?.discount,
             totalPriceWithoutVat: isRTL
               ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                  quote?.currency
-                )}`
-              : `${getCurrencyUnitText(quote?.currency)} ${
-                  quote?.totalPriceWithoutVat
-                }`,
+                quote?.currency
+              )}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
+              }`,
 
             totalPrice: isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
@@ -1249,7 +1651,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ...baseRow,
               agent: quote?.agentName,
               number: quote?.number,
-              worksName: <WorksNameCell worksNames={quote?.worksNames || []} />,
+              worksName: (
+                <WorksNameCell
+                  worksNames={quote?.worksNames || []}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
             };
           }
 
@@ -1271,15 +1680,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const paymentStatus = `${
-              isRTL
-                ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-            }/${
-              isRTL
+            const paymentStatus = `${isRTL
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+              }/${isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
-            }`;
+              }`;
 
             return {
               ...baseRow,
@@ -1291,7 +1698,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   <br />
                 </span>
               )),
-              purchaseNumber: quote?.purchaseNumber,
+              purchaseNumber: (
+                <PurchaseNumberCell
+                  key={`purchase-${quote?.id}`}
+                  purchaseNumbers={quote?.purchaseNumber}
+                  expanded={cellsExpanded[quote?.id] || false}
+                  onToggle={() => toggleCellsExpanded(quote?.id)}
+                  isRTL={isRTL}
+                />
+              ),
               productionStatus: quote?.productionStatus
                 ? t("boardMissions.done")
                 : t("boardMissions.inProduction"),
@@ -1318,6 +1733,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             sourceDocument: (
               <SourceDocumentCell
                 documents={quote?.sourceDocumentNumber || []}
+                expanded={cellsExpanded[quote?.id] || false}
+                onToggle={() => toggleCellsExpanded(quote?.id)}
               />
             ),
             deliveryStatus:
@@ -1382,6 +1799,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           ),
         }));
 
+        // Store original data for re-mapping when cellsExpanded changes
+        setOriginalData(data);
         setAllQuotes(
           isReceipt || isSupplierPayments ? mapReceiptData : mapData
         );
@@ -1431,6 +1850,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onClickSearchFilter = async () => {
     const query: Query = { ...router.query };
+
+    // Add currency filter
+    if (currencyFilter?.value) query.currency = currencyFilter.value;
+    else delete query.currency;
+
 
     if (productIds.length > 0) {
       query.productsIds = productIds;
@@ -1525,6 +1949,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFinalPatternSearch("");
     setPatternSearch("");
     setCurrentSortOrder(null);
+    setCurrencyFilter(null);
 
     setHasFetchedQuery(null);
 
@@ -1553,19 +1978,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const tableHeaders = isPurchaseOrder
     ? [
-        t("sales.quote.creationDate"),
-        t("sales.quote.purchaseOrderNumber"),
-        t("sales.quote.orderNumber"),
-        t("sales.quote.supplierName"),
-        t("sales.quote.client"),
-        t("sales.quote.itemsNumber"),
-        t("sales.quote.totalPrice"),
-        t("sales.quote.notes"),
-        t("sales.quote.status"),
-        t("sales.quote.more"),
-      ]
+      t("sales.quote.creationDate"),
+      t("sales.quote.purchaseOrderNumber"),
+      t("sales.quote.orderNumber"),
+      t("sales.quote.supplierName"),
+      t("sales.quote.client"),
+      t("sales.quote.itemsNumber"),
+      t("sales.quote.totalPrice"),
+      t("sales.quote.notes"),
+      t("sales.quote.status"),
+      t("sales.quote.more"),
+    ]
     : isPurchaseInvoice || isPurchaseInvoiceRefund
-    ? [
+      ? [
         t("sales.quote.creationDate"),
         t("sales.quote.purchaseInvoiceNumber"),
         t("sales.quote.invoiceNumber"),
@@ -1577,62 +2002,62 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         t("sales.quote.status"),
         t("sales.quote.more"),
       ]
-    : isQuote
-    ? [
-        t("sales.quote.createdDate"),
-        t("sales.quote.client"),
-        t("sales.quote.agent"),
-        t("documentingDesign.TableSetting.number"),
-        t("sales.quote.worksName"),
-        t("sales.quote.totalPrice"),
-        t("sales.quote.notes"),
-        t("sales.quote.status"),
-        t("sales.quote.more"),
-      ]
-    : [
-        t("sales.quote.createdDate"),
-        isSupplierPayments
-          ? t("sales.quote.supplier")
-          : t("sales.quote.client"),
-        t("sales.quote.agent"),
-        (() => {
-          switch (docType) {
-            case DOCUMENT_TYPE.order:
-              return t("sales.quote.orderNumber");
-            default:
-              return t("documentingDesign.TableSetting.number");
-          }
-        })(),
-        isOrder
-          ? t("sales.quote.quoteNumber")
-          : isReceipt || isSupplierPayments
-          ? null
-          : t("sales.quote.sourceDocument"),
+      : isQuote
+        ? [
+          t("sales.quote.createdDate"),
+          t("sales.quote.client"),
+          t("sales.quote.agent"),
+          t("documentingDesign.TableSetting.number"),
+          t("sales.quote.worksName"),
+          t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ]
+        : [
+          t("sales.quote.createdDate"),
+          isSupplierPayments
+            ? t("sales.quote.supplier")
+            : t("sales.quote.client"),
+          t("sales.quote.agent"),
+          (() => {
+            switch (docType) {
+              case DOCUMENT_TYPE.order:
+                return t("sales.quote.orderNumber");
+              default:
+                return t("documentingDesign.TableSetting.number");
+            }
+          })(),
+          isOrder
+            ? t("sales.quote.quoteNumber")
+            : isReceipt || isSupplierPayments
+              ? null
+              : t("sales.quote.sourceDocument"),
 
-        isOrder && t("sales.quote.purchaseNumber"),
-        isOrder && t("sales.quote.productionStatus"),
-        isOrder && t("sales.quote.jobs"),
-        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-            {t("sales.quote.cost")}
-          </PermissionCheck>
-        ),
-        isReceipt || isSupplierPayments
-          ? t("sales.quote.paymentMethod")
-          : t("sales.quote.worksName"),
-        isOrdersTracking
-          ? t("customers.modal.paymentStatus")
-          : t("sales.quote.totalPrice"),
-        t("sales.quote.notes"),
-        (isOrder ||
-          isInvoice ||
-          isInvoiceRefund ||
-          isDeliveryNote ||
-          isDeliveryNoteRefund) &&
+          isOrder && t("sales.quote.purchaseNumber"),
+          isOrder && t("sales.quote.productionStatus"),
+          isOrder && t("sales.quote.jobs"),
+          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+              {t("sales.quote.cost")}
+            </PermissionCheck>
+          ),
+          isReceipt || isSupplierPayments
+            ? t("sales.quote.paymentMethod")
+            : t("sales.quote.worksName"),
+          isOrdersTracking
+            ? t("customers.modal.paymentStatus")
+            : t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          (isOrder ||
+            isInvoice ||
+            isInvoiceRefund ||
+            isDeliveryNote ||
+            isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
-        t("sales.quote.status"),
-        t("sales.quote.more"),
-      ].filter(Boolean);
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -1823,11 +2248,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               : formatCustomDateTime(document?.createdDate),
             isRTL
               ? document?.totalPrice +
-                " " +
-                getCurrencyUnitText(document?.currency)
+              " " +
+              getCurrencyUnitText(document?.currency)
               : getCurrencyUnitText(document?.currency) +
-                " " +
-                document?.totalPrice,
+              " " +
+              document?.totalPrice,
             <div style={{ display: "flex", justifyContent: "center" }}>
               <h2
                 style={
@@ -2007,9 +2432,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[8]:
         return t("logs.CONTACTS_UPDATED");
       case LogActionType[9]:
-        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${
-          values[0]
-        }" ${t("logs.to")} "${values[1]}"`;
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]
+          }" ${t("logs.to")} "${values[1]}"`;
       case LogActionType[10]:
         if (values[0] === null) {
           return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
@@ -2020,21 +2444,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
       case LogActionType[11]:
         if (values[0] === null) {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${
-            values[1]
-          }"`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]
+            }"`;
         } else {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${
-            values[0]
-          } ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]
+            } ${t("logs.to")} ${values[1]}`;
         }
       case LogActionType[12]:
         if (values[0] === null) {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
         } else {
-          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${
-            values[0]
-          }" ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]
+            }" ${t("logs.to")} "${values[1]}"`;
         }
       case LogActionType[13]:
         return `${t("logs.DOCUMENT_DUPLICATED", {
@@ -2150,14 +2571,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentId: documentId,
           data: isClear
             ? {
-                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-                toDate: toLogsDate && GetDateFormat(toLogsDate),
-              }
+              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+              toDate: toLogsDate && GetDateFormat(toLogsDate),
+            }
             : {
-                userId: employeeId?.id,
-                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-                toDate: toLogsDate && GetDateFormat(toLogsDate),
-              },
+              userId: employeeId?.id,
+              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+              toDate: toLogsDate && GetDateFormat(toLogsDate),
+            },
         });
       } catch (error) {
         reject();
@@ -2227,17 +2648,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const accountingStatuses =
     isReceipt || isSupplierPayments
       ? [
-          {
-            label: t("documentStatus.Receipt.Created"),
-            value: ReceiptAccountingStatus.CREATED,
-          },
-          {
-            label: t("documentStatus.Receipt.Canceled"),
-            value: ReceiptAccountingStatus.CANCELED,
-          },
-        ]
+        {
+          label: t("documentStatus.Receipt.Created"),
+          value: ReceiptAccountingStatus.CREATED,
+        },
+        {
+          label: t("documentStatus.Receipt.Canceled"),
+          value: ReceiptAccountingStatus.CANCELED,
+        },
+      ]
       : isInvoice || isPurchaseInvoice
-      ? [
+        ? [
           { label: t("sales.quote.open"), value: AStatus.OPEN },
           {
             label: t("sales.quote.partialClosed"),
@@ -2246,7 +2667,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-      : [
+        : [
           { label: t("sales.quote.open"), value: AStatus.OPEN },
           {
             label: t("sales.quote.partialClosed"),
@@ -2330,6 +2751,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       productList: productIds && productIds,
       fromDate: fromDate,
       toDate: toDate,
+      currency: currencyFilter?.value,
       // paymentType: paymentType?.value && paymentType?.value,
     };
 
@@ -2358,6 +2780,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     fromDate,
     toDate,
     paymentType,
+    currencyFilter,
   ]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
@@ -2487,8 +2910,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const path = isSelectedCLoseAsDeliveryNote
       ? `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
       : isOrder
-      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+        ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+        : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
 
     window.open(path, "_blank");
     setTriggeredFromMoveOrderToReady(false);
@@ -2963,6 +3386,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isPaused,
       productsIds,
       paymentType,
+      currency,
     } = q;
 
     if (productsIds) {
@@ -2970,6 +3394,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ? productsIds
         : [productsIds];
       setProductIds(productIdsArray); // Set the productsIds state if needed
+    }
+
+    if (currency && typeof currency === 'string') {
+      const currencyToSet = currencies.find(
+        (curr) => curr.value === currency
+      );
+      if (currencyToSet) {
+        setCurrencyFilter(currencyToSet);
+      }
     }
 
     if (customerId) {
@@ -3092,7 +3525,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         Array.isArray(isPaused) ? isPaused[0] === "true" : isPaused === "true"
       );
     }
-  }, [router.query, agentsCategories]);
+  }, [router.query, agentsCategories, currencies]);
 
   const closeAsInvoice = useRecoilValue(closeAsInvoiceState);
 
@@ -3581,6 +4014,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMoveToReadyOption,
     handleRadioChange,
     primaryColor,
+    currencyFilter,
+    setCurrencyFilter,
+    currencies,
   };
 };
 
