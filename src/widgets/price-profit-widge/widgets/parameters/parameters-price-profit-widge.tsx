@@ -1,17 +1,23 @@
-
 import { useStyle } from "./style";
 import { ParameterListWidget } from "./parameter-list-widget";
 import { IconButton, Tooltip } from "@mui/material";
 import { ReloadIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 
-const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDropdownMaterialValue, updateTextInputValue, updateProfitProfileProductParameter, reCalculatePrice }: {
-  parameters: any,
-  updateDropdownValue: (value: any, index: number) => void,
-  updateDropdownMaterialValue: (value: any, index: number) => void,
-  updateTextInputValue: (value: string, index: number) => void,
-  updateProfitProfileProductParameter: (data: any, value: any) => void,
-  reCalculatePrice: () => void
+const ParmaetersPriceProfitWidgett = ({
+  parameters,
+  updateDropdownValue,
+  updateDropdownMaterialValue,
+  updateTextInputValue,
+  updateProfitProfileProductParameter,
+  reCalculatePrice,
+}: {
+  parameters: any;
+  updateDropdownValue: (value: any, index: number) => void;
+  updateDropdownMaterialValue: (value: any, index: number) => void;
+  updateTextInputValue: (value: string, index: number) => void;
+  updateProfitProfileProductParameter: (data: any, value: any) => void;
+  reCalculatePrice: () => void;
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -83,13 +89,19 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
       color: "#228B22",
       border: "#98FB98",
       backgroundColor: "#F0FFF0",
-    }
-
-  ]
+    },
+  ];
 
   return (
     <div style={classes.mainContainer}>
-      <div style={dir === "rtl" ? classes.reCalculateContainerRTL : classes.reCalculateContainer} onClick={reCalculatePrice}>
+      <div
+        style={
+          dir === "rtl"
+            ? classes.reCalculateContainerRTL
+            : classes.reCalculateContainer
+        }
+        onClick={reCalculatePrice}
+      >
         {/* <Tooltip title={t("priceProfit.reCalculatePrice")}>
           <IconButton onClick={reCalculatePrice}>
             <ReloadIcon width={18} height={18} />
@@ -97,42 +109,51 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
         </Tooltip> */}
         {t("priceProfit.calculatePrice")}
       </div>
-      {Object.entries(parametersBySection).map(([sectionName, sectionParameters]: [string, any[]]) => (
-        <div key={sectionName} style={classes.sectionContainer}>
-          <div style={classes.sectionName}>{sectionName}</div>
-          <div style={classes.parameterContainer}>
-            {sectionParameters.map((parameter: any, index: number) => {
-              let displayValue = '';
+      {Object.entries(parametersBySection).map(
+        ([sectionName, sectionParameters]: [string, any[]]) => (
+          <div key={sectionName} style={classes.sectionContainer}>
+            <div style={classes.sectionName}>{sectionName}</div>
+            <div style={classes.parameterContainer}>
+              {sectionParameters.map((parameter: any, index: number) => {
+                let displayValue = "";
 
-              if (parameter.parameterType === 1 || parameter.parameterType === 2) {
-                displayValue = parameter.defaultValue;
-              } else if (parameter.parameterType === 0) {
-                const defaultValue = parameter.values.find((value: any) => value.isDefault);
-                displayValue = defaultValue ? defaultValue.name : '';
-              } else if (parameter.parameterType === 5) {
-                displayValue = parameter.defaultValue;
-              }
-              // Use modulo to cycle through colorsMock
-              const colorStyle = colorsMock[index % colorsMock.length];
+                if (
+                  parameter.parameterType === 1 ||
+                  parameter.parameterType === 2
+                ) {
+                  displayValue = parameter.defaultValue;
+                } else if (parameter.parameterType === 0) {
+                  const defaultValue = parameter.values.find(
+                    (value: any) => value.isDefault
+                  );
+                  displayValue = defaultValue ? defaultValue.name : "";
+                } else if (parameter.parameterType === 5) {
+                  displayValue = parameter.defaultValue;
+                }
+                // Use modulo to cycle through colorsMock
+                const colorStyle = colorsMock[index % colorsMock.length];
 
-              return (
-                <ParameterListWidget
-                  key={parameter.parameterId}
-                  parameter={parameter}
-                  index={index}
-                  colorStyle={colorStyle}
-                  displayValue={displayValue}
-                  updateDropdownValue={updateDropdownValue}
-                  updateDropdownMaterialValue={updateDropdownMaterialValue}
-                  updateTextInputValue={updateTextInputValue}
-                  updateProfitProfileProductParameter={updateProfitProfileProductParameter}
-                />
-              );
-            })}
+                return (
+                  <ParameterListWidget
+                    key={parameter.parameterId}
+                    parameter={parameter}
+                    index={index}
+                    colorStyle={colorStyle}
+                    displayValue={displayValue}
+                    updateDropdownValue={updateDropdownValue}
+                    updateDropdownMaterialValue={updateDropdownMaterialValue}
+                    updateTextInputValue={updateTextInputValue}
+                    updateProfitProfileProductParameter={
+                      updateProfitProfileProductParameter
+                    }
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 };
-export { ParmaetersPriceProfitWidget };
+export { ParmaetersPriceProfitWidgett };

@@ -16,7 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { FinancesWidget } from "../finances";
 
 import { BudgetIcon } from "@/icons";
-import { PriceProfitWidge } from "../price-profit-widge";
+import { PriceProfitWidget } from "../price-profit-widge";
 import { PreferencesIcon } from "@/components/icons/preferences-icons";
 import { SettingsPreferencesWidget } from "../settings-preferences/preferences";
 import { SettingsMyProfileWidget } from "../settings-profile-widget/settings-my-profile-widget";
@@ -40,7 +40,7 @@ export const list: IListItem[] = [
     permission: Permissions.SHOW_PROFILE_COMPANY,
   },
   {
-    component: PriceProfitWidge,
+    component: PriceProfitWidget,
     text: "settings.priceProfit",
     value: "8",
     permission: Permissions.SHOW_PRICING_PROFILE,

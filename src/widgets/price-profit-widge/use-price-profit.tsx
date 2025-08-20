@@ -15,7 +15,17 @@ import {
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {useDisplayProfitProfilesSocketIo} from "@/hooks/socket-io/use-display-profit-profiles-socket-io";
+import { useDisplayProfitProfilesSocketIo } from "@/hooks/socket-io/use-display-profit-profiles-socket-io";
+import { getProfitsChartDataApi } from "@/services/api-service/generic-doc/orders-api";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { getDataForAutoPricingActionsChartApi } from "@/services/api-service/quotes/qoutes-endpoints";
+import { getAllPrintHouseActions } from "@/services/hooks";
+import { getAndSetProfitsPricingTables } from "@/pages-components/products/profits-new/services/get-profits-pricing-tables";
+import {
+  profitAutoFixApi,
+  rollbackUpdatedPricingTablesAfterOptimizationApi,
+} from "@/services/api-service/print-houses/profits-auto-calculation";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 interface PricingProfileSetting {
   id: string;
@@ -25,9 +35,15 @@ interface PricingProfileSetting {
   value: string;
 }
 
+type ActionOption = {
+  actionId: string;
+  label: string;
+  value: string;
+};
+
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertSuccessUpdate } = useSnackBar();
+  const { alertFaultGetData } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<
     PricingProfileSetting[]
   >([]);
@@ -247,18 +263,6 @@ const usePriceProfit = () => {
     },
     [requestAbortController]
   );
-  useEffect(() => {
-    getAllPricingProfileSettingForDropDownList();
-  }, []);
-
-  useEffect(() => {
-    if (router.query.productId) {
-      const productId = Array.isArray(router.query.productId)
-        ? router.query.productId[0]
-        : router.query.productId;
-      getAllProfitProfileProductByProductId(productId);
-    }
-  }, [router]);
 
   const updateProfitProfileProductParameter = useCallback(
     async (data: any, value: any) => {
@@ -285,8 +289,8 @@ const usePriceProfit = () => {
         defaultValue: value?.valueId
           ? value?.valueId
           : value?.id
-            ? value?.id
-            : value,
+          ? value?.id
+          : value,
       });
     },
     [router]
@@ -434,7 +438,8 @@ const usePriceProfit = () => {
       isSelectedProducts: isSelected,
     });
   };
-  const { } = useDisplayProfitProfilesSocketIo({ setProducts });
+
+  const {} = useDisplayProfitProfilesSocketIo({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
     const productId = Array.isArray(router.query.productId)
@@ -467,6 +472,284 @@ const usePriceProfit = () => {
     await reCalculatePriceApi(callApi, callBack, {
       productId,
     });
+  };
+
+  // Set default date range: 6 months ago until now
+  const getDefaultDateRange = () => {
+    const now = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(now.getMonth() - 6);
+    return { from: sixMonthsAgo, to: now };
+  };
+
+  const defaultDates = getDefaultDateRange();
+  const [fromDate, setFromDate] = useState<Date>(defaultDates.from);
+  const [toDate, setToDate] = useState<Date>(defaultDates.to);
+
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      // Reset to default dates if cleared
+      const defaultDates = getDefaultDateRange();
+      setFromDate(defaultDates.from);
+      setToDate(defaultDates.to);
+    }
+  };
+
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
+  const [action, setAction] = useState<ActionOption | null>(null);
+  const [actionList, setActionList] = useState<any[]>([]);
+  const [profitsPricingTables, setProfitsPricingTables] = useState<any[]>([]);
+  const [selectedPricingTable, setSelectedPricingTable] = useState<any>(null);
+  const [isFixed, setIsFixed] = useState<boolean>(false);
+  const [excelReportLink, setExcelReportLink] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<{
+    diffAfterOptimization: number;
+    diffBeforeOptimization: number;
+    overAllImprovement: number;
+    overAllImprovementPercentage: number;
+  } | null>(null);
+  const [chartData, setChartData] = useState({
+    pointsX: [],
+    pointsY: [],
+    userPrices: [],
+    calculatedPrices: [],
+    userPricesCosts: [],
+    calculatedPricesCosts: [],
+  });
+
+  const getProfitsChartData = async (productId?: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setChartData(res?.data);
+      }
+    };
+    await getProfitsChartDataApi(callApi, callBack, { productId });
+  };
+
+  const getActions = useCallback(async () => {
+    await getAllPrintHouseActions(callApi, setActionList);
+  }, []);
+
+  const onChangeActionId = (_e: any, option: ActionOption | null) => {
+    setAction(option);
+    setSelectedPricingTable(null);
+  };
+
+  const onSelectPricingTable = (_e: any, option: any) => {
+    setSelectedPricingTable(option);
+  };
+
+  const getProfitsPricingTables = useCallback(async () => {
+    if (action?.actionId) {
+      await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
+        actionIdOrProductId: action.actionId,
+        isOutSource: false, //!here You can make this configurable if needed
+      });
+    }
+  }, [action, callApi]);
+
+  const getDataForAutoPricingActionsChart = async (
+    fromDate?: string,
+    toDate?: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don’t want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
+        setIsFixed(false);
+        setExcelReportLink(null); // Clear the excel report link when getting new data
+        setSummaryData(null); // Clear the summary data when getting new data
+      }
+    };
+    await getDataForAutoPricingActionsChartApi(callApi, callBack, {
+      fromDate,
+      toDate,
+      actionId,
+      pricingTableId,
+    });
+  };
+
+  const handleAutoFix = async (
+    fromDate?: string,
+    toDate?: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don't want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
+        setIsFixed(true);
+
+        // Store the excelReportLink from the response
+        if (res?.data?.[0]?.excelReportLink) {
+          setExcelReportLink(res.data[0].excelReportLink);
+        }
+
+        // Store the summary data from the response
+        if (res?.data?.[0]) {
+          setSummaryData({
+            diffAfterOptimization: res.data[0].diffAfterOptimization || 0,
+            diffBeforeOptimization: res.data[0].diffBeforeOptimization || 0,
+            overAllImprovement: res.data[0].overAllImprovement || 0,
+            overAllImprovementPercentage:
+              res.data[0].overAllImprovementPercentage || 0,
+          });
+        }
+      }
+    };
+    await profitAutoFixApi(callApi, callBack, {
+      fromDate,
+      toDate,
+      actionId,
+      pricingTableId,
+    });
+  };
+
+  const handleRollback = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const rows =
+          res?.data?.[0]?.actionChartData &&
+          Array.isArray(res.data[0].actionChartData)
+            ? res.data[0].actionChartData
+            : [];
+
+        // (optional) sort by cost so lines draw left→right
+        rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
+
+        const next = {
+          calculatedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          calculatedPrices: rows.map((r) => Number(r.calculatedPrice ?? 0)),
+
+          userPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          userPrices: rows.map((r) => Number(r.userInputPrice ?? 0)),
+
+          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+
+          // 4th line example: cost vs cost (diagonal) — remove if you don't want it
+          costLineX: rows.map((r) => Number(r.cost ?? 0)),
+          costLineY: rows.map((r) => Number(r.cost ?? 0)),
+
+          // no regression points yet
+          pointsX: [],
+          pointsY: [],
+        };
+
+        setChartData(next);
+        setIsFixed(false);
+        setExcelReportLink(null); // Clear the excel report link when rolling back
+        setSummaryData(null); // Clear the summary data when rolling back
+
+        // Call getDataForAutoPricingActionsChart after successful rollback
+        getDataForAutoPricingActionsChart(
+          fromDate?.toISOString(),
+          toDate?.toISOString(),
+          action?.actionId,
+          selectedPricingTable?.id
+        );
+      }
+    };
+    await rollbackUpdatedPricingTablesAfterOptimizationApi(callApi, callBack);
+  };
+
+  //!here please try it
+  const exportDataForProfitsByAction = async (
+    fromDate?: string,
+    toDate?: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
+    if (isFixed && excelReportLink) {
+      const a = document.createElement("a");
+      a.href = excelReportLink;
+      a.download = "DataForProfitsByAction_Fixed.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/quote/export-data-for-profits-by-action`,
+      {
+        fromDate,
+        toDate,
+        actionId,
+        pricingTableId,
+      },
+      true,
+      null,
+      "blob"
+    );
+
+    const downloadLink = document.createElement("a");
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link;
+    downloadLink.download = `DataForProfitsByAction.xlsx`;
+    downloadLink.click();
   };
 
   return {
@@ -516,7 +799,30 @@ const usePriceProfit = () => {
     handleOpenChartModal,
     openChartModal,
     router,
-    t
+    t,
+    isRTL,
+    getProfitsChartData,
+    chartData,
+    actionList,
+    onChangeActionId,
+    action,
+    onSelectDeliveryTimeDates,
+    fromDate,
+    setFromDate,
+    toDate,
+    setToDate,
+    getDataForAutoPricingActionsChart,
+    handleAutoFix,
+    handleRollback,
+    isFixed,
+    excelReportLink,
+    summaryData,
+    getActions,
+    getProfitsPricingTables,
+    profitsPricingTables,
+    selectedPricingTable,
+    onSelectPricingTable,
+    exportDataForProfitsByAction,
   };
 };
 
