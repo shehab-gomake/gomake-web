@@ -293,20 +293,21 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
         </Typography>
       </Box>
 
-      {/* Bottom Row: Job Name and Quantity */}
+      {/* Bottom Row: Product Name and Jobs in Order */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
+          marginBottom: "4px",
         }}
       >
-        {/* Job Name */}
+        {/* Product Name - Bold */}
         <Typography
           variant="body2"
           sx={{
-            fontWeight: 500,
-            color: "#6c757d",
+            fontWeight: 700,
+            color: "#495057",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             maxWidth: "60%",
             overflow: "hidden",
@@ -314,13 +315,15 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
             whiteSpace: "nowrap",
           }}
         >
-          {mission.jobName || mission.productName}
+          {mission.productName}
         </Typography>
 
-        {/* Quantity badge */}
-        {mission.quantity && (
+        {/* Jobs in Order badge */}
+        {mission.numberOfJobsInOrder && (
           <Chip
-            label={mission.quantity}
+            label={`${mission.numberOfJobsInOrder} ${t(
+              "boardMissions.numberOfBoardMissionsInOrder"
+            )}`}
             size="small"
             sx={{
               height: "18px",
@@ -333,6 +336,32 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
           />
         )}
       </Box>
+
+      {/* Job Name Row */}
+      {mission.jobName && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 500,
+              color: "#6c757d",
+              fontSize: isMobile ? "0.65rem" : "0.75rem",
+              fontStyle: "italic",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {mission.jobName}
+          </Typography>
+        </Box>
+      )}
 
       {/* Color Picker Popover */}
       <Popover

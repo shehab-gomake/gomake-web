@@ -11,6 +11,7 @@ import {
 } from "../constants/status-columns";
 import { useRecoilValue } from "recoil";
 import { productionFloorStatusesState } from "../../state/boards";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   station: IStation;
@@ -21,6 +22,7 @@ interface IProps {
 const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
   const { updateStatus } = useProductionFloorData();
   const globalStatuses = useRecoilValue(productionFloorStatusesState);
+  const { t } = useTranslation();
 
   // Debug: Log available statuses
   console.log("Available global statuses:", globalStatuses);
@@ -126,6 +128,7 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
         >
           {station.name}
         </Typography>
+        {/* !here translation */}
         <Typography
           variant="caption"
           sx={{
@@ -133,7 +136,8 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
             fontSize: "0.75rem",
           }}
         >
-          Capacity: {station.capacity} | {station.activeJobs} Active
+          {t("boardMissions.capacity")}: {station.capacity} |{" "}
+          {station.activeJobs} {t("boardMissions.active")}
         </Typography>
       </Box>
 
@@ -226,7 +230,7 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
                   fontSize: "0.8rem",
                 }}
               >
-                No tasks
+                {t("boardMissions.noTasks")}
               </Box>
             )}
           </Box>
