@@ -55,6 +55,7 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
           <Typography variant="h6" sx={{ fontSize: "1.1rem", fontWeight: 600 }}>
             {category.icon} {category.name}
           </Typography>
+          {/* !here need translation with prefix boardMissions */}
           <Box
             sx={{
               backgroundColor: "#e3f2fd",

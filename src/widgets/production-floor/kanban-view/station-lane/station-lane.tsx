@@ -24,10 +24,6 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
   const globalStatuses = useRecoilValue(productionFloorStatusesState);
   const { t } = useTranslation();
 
-  // Debug: Log available statuses
-  console.log("Available global statuses:", globalStatuses);
-  console.log("Current missions:", missions);
-
   // Use fixed status columns that match the header
   const statusColumns = STATUS_COLUMNS;
 
@@ -145,6 +141,15 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
       {statusColumns.map((status, index) => {
         const statusMissions = getMissionsForStatus(status.name);
 
+        // Debug: Log the number of missions for this status
+        console.log(`Status ${status.name}: ${statusMissions.length} missions`);
+
+        // Check if any status column has more than 1 mission to determine height
+        const hasMultipleCards = statusColumns.some((col) => {
+          const missions = getMissionsForStatus(col.name);
+          return missions.length > 1;
+        });
+
         // Drop functionality for each status column
         const [{ isOver, canDrop }, drop] = useDrop(
           () => ({
@@ -196,29 +201,40 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               flexDirection: "column",
               gap: "8px",
               overflow: "auto",
-              maxHeight: "120px",
+              maxHeight: hasMultipleCards ? "204px" : "106px", // Dynamic height: 2 cards if any column has multiple, 1 card if all single
+              minHeight: hasMultipleCards ? "204px" : "106px", // Ensure minimum height for consistent layout
               border: isOver && canDrop ? "2px dashed #1976d2" : "none",
               "::-webkit-scrollbar": {
-                width: "4px",
+                width: "8px",
+              },
+              "::-webkit-scrollbar-track": {
+                backgroundColor: "#f5f5f5",
+                borderRadius: "4px",
               },
               "::-webkit-scrollbar-thumb": {
-                backgroundColor: "#CCCDCF",
-                borderRadius: "2px",
+                backgroundColor: "#bdbdbd",
+                borderRadius: "4px",
+                border: "1px solid #f5f5f5",
               },
               "::-webkit-scrollbar-thumb:hover": {
-                backgroundColor: "#888",
+                backgroundColor: "#9e9e9e",
+              },
+              "::-webkit-scrollbar-corner": {
+                backgroundColor: "#f5f5f5",
               },
             }}
           >
             {statusMissions.length > 0 ? (
-              statusMissions.map((mission, missionIndex) => (
-                <JobCard
-                  key={`${mission.id}-${missionIndex}`}
-                  mission={mission}
-                  isMobile={isMobile}
-                  stationId={station.id}
-                />
-              ))
+              <>
+                {statusMissions.map((mission, missionIndex) => (
+                  <JobCard
+                    key={`${mission.id}-${missionIndex}`}
+                    mission={mission}
+                    isMobile={isMobile}
+                    stationId={station.id}
+                  />
+                ))}
+              </>
             ) : (
               <Box
                 sx={{
