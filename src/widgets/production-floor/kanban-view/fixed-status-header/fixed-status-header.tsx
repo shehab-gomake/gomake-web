@@ -1,12 +1,14 @@
 import React from "react";
 import { Stack, Typography, Box } from "@mui/material";
 import { STATUS_COLUMNS } from "../constants/status-columns";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   isMobile?: boolean;
 }
 
 const FixedStatusHeader: React.FC<IProps> = ({ isMobile }) => {
+  const { t } = useTranslation();
   const statusColumns = STATUS_COLUMNS;
 
   return (
@@ -43,7 +45,7 @@ const FixedStatusHeader: React.FC<IProps> = ({ isMobile }) => {
             fontSize: isMobile ? "0.9rem" : "1rem",
           }}
         >
-          Production Stations
+          {t("boardMissions.productionStations")}
         </Typography>
       </Box>
 
@@ -72,7 +74,7 @@ const FixedStatusHeader: React.FC<IProps> = ({ isMobile }) => {
               textAlign: "center",
             }}
           >
-            {status.name}
+            {t(`productionStatuses.${status.name}`)}
           </Typography>
         </Box>
       ))}
