@@ -78,7 +78,6 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
     onCustomerAddFromOption,
   } = useQuoteWidget();
 
-
   useEffect(() => {
     if (userQuote) {
       setQuoteId(userQuote.id);
@@ -150,7 +149,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
             <div data-tour="select-type" style={{ width: "30%" }}>
               <GoMakeAutoComplate
                 options={clientTypesValue}
-                placeholder={t("home.admin.selectType")}
+                placeholder={t("home.admin.selectCostumerType")}
                 style={classes.selectTypeContainer}
                 getOptionLabel={(option: any) =>
                   option?.name ? option.name : ""

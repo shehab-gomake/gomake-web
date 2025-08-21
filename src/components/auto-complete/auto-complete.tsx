@@ -129,6 +129,7 @@ const GoMakeAutoComplate = ({
   onOpen, // Add the `onOpen` prop
   noOptionsText,
   componentsProps,
+  isOptionEqualToValue,
 }: {
   value?: any;
   onChange?: any;
@@ -160,6 +161,7 @@ const GoMakeAutoComplate = ({
   onOpen?: () => void;
   noOptionsText?: string;
   componentsProps?: any;
+  isOptionEqualToValue?: (option: any, value: any) => boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -262,14 +264,15 @@ const GoMakeAutoComplate = ({
       disableClearable={disableClearable}
       placeholder="Enter"
       multiple={multiple}
-      isOptionEqualToValue={(option: any, value: any) =>
-        option?.id === value?.id
-      }
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
       filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
       noOptionsText={noOptionsText}
       componentsProps={componentsProps}
+      isOptionEqualToValue={
+        isOptionEqualToValue ??
+        ((option: any, value: any) => String(option?.id) === String(value?.id))
+      }
     />
   );
 };
