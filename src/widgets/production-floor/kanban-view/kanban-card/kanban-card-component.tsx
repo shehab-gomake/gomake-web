@@ -16,13 +16,14 @@ import { DateFormatter } from "@/utils/date-formatters";
 interface IProp {
   board: IBoardMissions;
   status?: any;
+  stationId?: string;
 }
 
 const ItemTypes = {
   TASK: "task",
 };
 
-const KanbanCardComponent = ({ board }: IProp) => {
+const KanbanCardComponent = ({ board, stationId }: IProp) => {
   const { classes } = useStyle();
   const { CheckPermission } = useUserPermission();
   const colorPickerRef = useRef<HTMLDivElement>(null);
@@ -48,13 +49,13 @@ const KanbanCardComponent = ({ board }: IProp) => {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: ItemTypes.TASK,
-      item: board,
+      item: { ...board, stationId }, // Include stationId in the dragged item
       canDrag: canDrag,
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [canDrag]
+    [canDrag, stationId]
   );
 
   return (
