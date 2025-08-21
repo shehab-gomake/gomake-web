@@ -55,8 +55,8 @@ const FixedStatusHeader: React.FC<IProps> = ({ isMobile }) => {
             flex: 1,
             minWidth: isMobile ? "120px" : "150px",
             backgroundColor: status.bgColor,
-            borderRight:
-              index < statusColumns.length - 1 ? "1px solid #e0e0e0" : "none",
+            borderRight: "1px solid #e0e0e0", // Always show right border
+            borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
             padding: "16px 8px",
             display: "flex",
             alignItems: "center",

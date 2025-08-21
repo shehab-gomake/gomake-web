@@ -169,8 +169,8 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               flex: 1,
               minWidth: isMobile ? "120px" : "150px",
               backgroundColor: isOver && canDrop ? "#f0f8ff" : "white",
-              borderRight:
-                index < statusColumns.length - 1 ? "1px solid #e0e0e0" : "none",
+              borderRight: "1px solid #e0e0e0", // Always show right border
+              borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
               padding: "8px",
               display: "flex",
               flexDirection: "column",

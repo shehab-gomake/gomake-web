@@ -70,90 +70,117 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
       onClick={handleOpenMission}
       sx={{
         backgroundColor: "white",
-        border: "1px solid #e0e0e0",
-        borderRadius: "6px",
-        padding: "8px",
+        border: `2px solid ${mission.productionFloorJobColor || "#e0e0e0"}`,
+        borderRadius: "8px",
+        padding: "12px",
         cursor: isDragging ? "grabbing" : "pointer",
         transition: "all 0.2s ease",
         opacity: isDragging ? 0.5 : 1,
+        minHeight: "90px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
         "&:hover": {
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          transform: isDragging ? "none" : "translateY(-1px)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          transform: isDragging ? "none" : "translateY(-2px)",
         },
       }}
     >
-      {/* Job Code and Priority */}
+      {/* Top Row: Job Code and Priority Dot */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "4px",
+          alignItems: "flex-start",
+          marginBottom: "8px",
         }}
       >
+        {/* Job Code - Bold and prominent */}
         <Typography
-          variant="caption"
+          variant="body2"
           sx={{
-            fontWeight: 600,
-            color: "#1976d2",
-            fontSize: isMobile ? "0.7rem" : "0.75rem",
+            fontWeight: 700,
+            color: mission.productionFloorJobColor || "#1976d2",
+            fontSize: isMobile ? "0.8rem" : "0.9rem",
+            lineHeight: 1.2,
           }}
         >
-          {mission.boardMissionNumber}
+          {mission.boardMissionNumber}/{mission.orderNumber}
         </Typography>
+
+        {/* Priority Dot */}
         <Box
           sx={{
             width: "8px",
             height: "8px",
             borderRadius: "50%",
             backgroundColor: getPriorityColor(mission.priority || 0),
+            marginLeft: "4px",
           }}
         />
       </Box>
 
-      {/* Customer Name */}
-      <Typography
-        variant="caption"
-        sx={{
-          fontWeight: 500,
-          color: "#495057",
-          fontSize: isMobile ? "0.7rem" : "0.75rem",
-          marginBottom: "2px",
-          display: "block",
-        }}
-      >
-        {mission.clientName}
-      </Typography>
-
-      {/* Job Type */}
-      <Typography
-        variant="caption"
-        sx={{
-          color: "#6c757d",
-          fontSize: isMobile ? "0.65rem" : "0.7rem",
-          marginBottom: "4px",
-          display: "block",
-        }}
-      >
-        {mission.productName || mission.jobName}
-      </Typography>
-
-      {/* Due Date */}
+      {/* Middle Row: Customer Name and Due Date */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-end",
+          marginBottom: "6px",
         }}
       >
+        {/* Customer Name */}
         <Typography
-          variant="caption"
+          variant="body2"
           sx={{
+            fontWeight: 500,
+            color: "#495057",
+            fontSize: isMobile ? "0.7rem" : "0.8rem",
+            maxWidth: "60%",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {mission.clientName}
+        </Typography>
+
+        {/* Due Date */}
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
             color: "#6c757d",
-            fontSize: isMobile ? "0.65rem" : "0.7rem",
+            fontSize: isMobile ? "0.7rem" : "0.8rem",
+            textAlign: "right",
           }}
         >
           {mission.dueDate ? formatDate(mission.dueDate) : "No due date"}
+        </Typography>
+      </Box>
+
+      {/* Bottom Row: Job Name and Quantity */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+        }}
+      >
+        {/* Job Name */}
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            color: "#6c757d",
+            fontSize: isMobile ? "0.7rem" : "0.8rem",
+            maxWidth: "60%",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {mission.jobName || mission.productName}
         </Typography>
 
         {/* Quantity badge */}
@@ -162,52 +189,15 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
             label={mission.quantity}
             size="small"
             sx={{
-              height: "16px",
-              fontSize: isMobile ? "0.6rem" : "0.65rem",
-              backgroundColor: "#e3f2fd",
-              color: "#1976d2",
+              height: "18px",
+              fontSize: isMobile ? "0.65rem" : "0.7rem",
+              backgroundColor: mission.productionFloorJobColor || "#e3f2fd",
+              color: "white",
+              fontWeight: 600,
             }}
           />
         )}
       </Box>
-
-      {/* Tags */}
-      {mission.automatedTags && mission.automatedTags.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "2px",
-            marginTop: "4px",
-          }}
-        >
-          {mission.automatedTags.slice(0, 2).map((tag, index) => (
-            <Chip
-              key={index}
-              label={tag}
-              size="small"
-              sx={{
-                height: "14px",
-                fontSize: isMobile ? "0.55rem" : "0.6rem",
-                backgroundColor: "#f5f5f5",
-                color: "#666",
-              }}
-            />
-          ))}
-          {mission.automatedTags.length > 2 && (
-            <Typography
-              variant="caption"
-              sx={{
-                color: "#999",
-                fontSize: isMobile ? "0.55rem" : "0.6rem",
-                alignSelf: "center",
-              }}
-            >
-              +{mission.automatedTags.length - 2}
-            </Typography>
-          )}
-        </Box>
-      )}
     </Box>
   );
 };
