@@ -183,6 +183,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onOpenMarkReadyTypeModal,
     pendingMarkReadyParams,
     handleMarkReadyTypeChoice,
+    isJobsTableLoading,
+    isJobsTableError,
+    isSocketRefreshingJobs,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -464,11 +467,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                 style={classes.textInputStyle}
                                 onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
                                 value={
-                                  isPrintedState === null 
+                                  isPrintedState === null
                                     ? null
                                     : isPrintedState === true
-                                    ? { value: true, text: t("modal.yes") }
-                                    : { value: false, text: t("modal.no") }
+                                      ? { value: true, text: t("modal.yes") }
+                                      : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
@@ -603,6 +606,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 columnWidths={visibleHeaders.map((key) =>
                   getJobsCustomWidth(tableKey, key)
                 )}
+                loading={isJobsTableLoading}
+                error={isJobsTableError}
+                disableSkeleton={isSocketRefreshingJobs}
               />
             ) : (
               <Box

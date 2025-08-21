@@ -72,10 +72,8 @@ import { DocumentPrimaryTable } from "@/components/tables/document-primary-table
 import { getDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { handleBoardMissionsBarcodeActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import {
   QR_CODE_LISTENER_FROM,
-  useQrCodeListener,
 } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 
@@ -287,6 +285,9 @@ const QuotesListPageWidget = ({
     currencyFilter,
     setCurrencyFilter,
     currencies,
+    isDocumentTableLoading,
+    isDocumentTableError,
+    isSocketRefreshingDocuments,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -856,6 +857,9 @@ const QuotesListPageWidget = ({
                   columnWidths={visibleHeaders.map((key) =>
                     getDocumentCustomWidth(tableKey, key)
                   )}
+                  loading={isDocumentTableLoading}
+                  error={isDocumentTableError}
+                  disableSkeleton={isSocketRefreshingDocuments}
                 />
               ) : (
                 <Box
