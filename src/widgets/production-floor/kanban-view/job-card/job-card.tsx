@@ -220,7 +220,7 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
         },
       }}
     >
-      {/* Top Row: Job Code and Priority Dot */}
+      {/* Top Row: Job Code, Job Name, and Priority Dot */}
       <Box
         sx={{
           display: "flex",
@@ -229,18 +229,45 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
           marginBottom: "8px",
         }}
       >
-        {/* Job Code - Bold and prominent */}
-        <Typography
-          variant="body2"
+        {/* Job Code and Job Name */}
+        <Box
           sx={{
-            fontWeight: 700,
-            color: color || mission.productionFloorJobColor || "#1976d2",
-            fontSize: isMobile ? "0.8rem" : "0.9rem",
-            lineHeight: 1.2,
+            display: "flex",
+            flexDirection: "row",
+            gap: "8px",
+            flex: 1,
+            alignItems: "center",
           }}
         >
-          {mission.boardMissionNumber}/{mission.orderNumber}
-        </Typography>
+          {/* Job Code - Bold and prominent */}
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 700,
+              color: color || mission.productionFloorJobColor || "#1976d2",
+              fontSize: isMobile ? "0.8rem" : "0.9rem",
+              lineHeight: 1.2,
+            }}
+          >
+            {mission.boardMissionNumber}/{mission.orderNumber}
+          </Typography>
+
+          {/* Job Name - if exists */}
+          {mission.jobName && (
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 500,
+                color: "#6c757d",
+                fontSize: isMobile ? "0.65rem" : "0.75rem",
+                fontStyle: "italic",
+                lineHeight: 1.2,
+              }}
+            >
+              {mission.jobName}
+            </Typography>
+          )}
+        </Box>
 
         {/* Priority Dot */}
         <Box
@@ -250,6 +277,7 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
             borderRadius: "50%",
             backgroundColor: getPriorityColor(mission.priority || 0),
             marginLeft: "4px",
+            flexShrink: 0,
           }}
         />
       </Box>
@@ -299,7 +327,6 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
-          marginBottom: "4px",
         }}
       >
         {/* Product Name - Bold */}
@@ -336,32 +363,6 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
           />
         )}
       </Box>
-
-      {/* Job Name Row */}
-      {mission.jobName && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 500,
-              color: "#6c757d",
-              fontSize: isMobile ? "0.65rem" : "0.75rem",
-              fontStyle: "italic",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {mission.jobName}
-          </Typography>
-        </Box>
-      )}
 
       {/* Color Picker Popover */}
       <Popover
