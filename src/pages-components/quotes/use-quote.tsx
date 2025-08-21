@@ -593,7 +593,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   // Re-map existing data when cellsExpanded changes to update JSX with new state
   useEffect(() => {
-    if (originalData && originalData.length > 0) {
+    if (originalData && originalData.length > 0 && !isReceipt && !isSupplierPayments) {
       // Re-map the original data with the new cellsExpanded value
       const remappedQuotes = originalData.map((quote: any) => {
         const baseRow = {
@@ -633,11 +633,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           discount: quote?.discount,
           totalPriceWithoutVat: isRTL
             ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                quote?.currency
-              )}`
-            : `${getCurrencyUnitText(quote?.currency)} ${
-                quote?.totalPriceWithoutVat
-              }`,
+              quote?.currency
+            )}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
+            }`,
           totalPrice: isRTL
             ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
             : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
@@ -750,15 +749,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote?.jobs
           );
 
-          const paymentStatus = `${
-            isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-          }/${
-            isRTL
+          const paymentStatus = `${isRTL
+            ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+            }/${isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
-          }`;
+            }`;
 
           return {
             ...baseRow,
