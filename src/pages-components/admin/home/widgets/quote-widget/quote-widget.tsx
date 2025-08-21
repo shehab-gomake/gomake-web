@@ -146,20 +146,23 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
                 onAddCustomer={onCustomerAddFromOption}
               />
             </div>
-            <div data-tour="select-type" style={{ width: "30%" }}>
-              <GoMakeAutoComplate
-                options={clientTypesValue}
-                placeholder={t("home.admin.selectCostumerType")}
-                style={classes.selectTypeContainer}
-                getOptionLabel={(option: any) =>
-                  option?.name ? option.name : ""
-                }
-                onChange={(e: any, value: any) => {
-                  setSelectedClientType(value);
-                }}
-                value={selectedClientType}
-              />
-            </div>
+            {selectedClient?.id && (
+              <div data-tour="select-type" style={{ width: "30%" }}>
+                <GoMakeAutoComplate
+                  key={`client-type-${selectedClientType?.id || "none"}`}
+                  options={clientTypesValue}
+                  placeholder={t("home.admin.selectCostumerType")}
+                  style={classes.selectTypeContainer}
+                  getOptionLabel={(option: any) =>
+                    option?.name ? option.name : ""
+                  }
+                  onChange={(e: any, value: any) => {
+                    setSelectedClientType(value);
+                  }}
+                  value={selectedClientType}
+                />
+              </div>
+            )}
           </div>
           <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
             <button
