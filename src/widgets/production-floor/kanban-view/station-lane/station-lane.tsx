@@ -9,6 +9,8 @@ import {
   STATUS_COLUMNS,
   STATUS_NAME_MAPPING,
 } from "../constants/status-columns";
+import { useRecoilValue } from "recoil";
+import { productionFloorStatusesState } from "../../state/boards";
 
 interface IProps {
   station: IStation;
@@ -18,6 +20,11 @@ interface IProps {
 
 const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
   const { updateStatus } = useProductionFloorData();
+  const globalStatuses = useRecoilValue(productionFloorStatusesState);
+
+  // Debug: Log available statuses
+  console.log("Available global statuses:", globalStatuses);
+  console.log("Current missions:", missions);
 
   // Use fixed status columns that match the header
   const statusColumns = STATUS_COLUMNS;
@@ -26,13 +33,35 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
   const getStatusIdForName = (statusName: string): string | null => {
     const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
 
+    // First try to find in the current missions data
     const statusMission = missions.find((mission) => {
       const missionStatusName =
         mission.boardMissionStatus.boardMissionStatus.name;
       return possibleNames.includes(missionStatusName);
     });
 
-    return statusMission?.boardMissionStatus.boardMissionStatus.id || null;
+    if (statusMission) {
+      return statusMission.boardMissionStatus.boardMissionStatus.id;
+    }
+
+    // If not found in current missions, try to find in global statuses
+    if (globalStatuses && globalStatuses.length > 0) {
+      const globalStatus = globalStatuses.find((status) => {
+        return possibleNames.includes(status.name);
+      });
+
+      if (globalStatus) {
+        return globalStatus.id;
+      }
+    }
+
+    // Fallback to known status IDs
+    const statusIdMapping: Record<string, string> = {
+      "Waiting Approval": "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63", // This is the actual approval status ID
+      Stuck: "56dd1e80-7436-462c-82e9-cf8a90afd614", // This is the actual stuck status ID
+    };
+
+    return statusIdMapping[statusName] || null;
   };
 
   // Helper function to get missions for a specific status
@@ -111,9 +140,17 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               }
               // Get the actual status ID for this status name
               const actualStatusId = getStatusIdForName(status.name);
+              console.log(
+                `Dropping item to status: ${status.name}, statusId: ${actualStatusId}`,
+                item
+              );
               if (actualStatusId) {
                 // Update the mission status
                 updateStatus([item], actualStatusId).then();
+              } else {
+                console.warn(
+                  `No status ID found for status name: ${status.name}`
+                );
               }
             },
             collect: (monitor) => ({
