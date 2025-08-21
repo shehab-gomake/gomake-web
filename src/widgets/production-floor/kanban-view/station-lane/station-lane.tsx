@@ -53,23 +53,24 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
       }
     }
 
-    // Fallback to known status IDs
-    const statusIdMapping: Record<string, string> = {
-      "In Progress": "52e1b026-2028-4dc6-b8fc-0b80ff04db15", // This is the actual "In process" status ID from the data
-      "Waiting Approval": "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63", // This is the actual approval status ID
-      Stuck: "56dd1e80-7436-462c-82e9-cf8a90afd614", // This is the actual stuck status ID
-    };
+    // If not found in current missions or global statuses, try to find in any mission data
+    // This ensures we get the actual boardMissionStatus.id from the API response
+    for (const statusGroup of missions) {
+      const statusGroupName =
+        statusGroup.boardMissionStatus.boardMissionStatus.name;
+      if (possibleNames.includes(statusGroupName)) {
+        return statusGroup.boardMissionStatus.boardMissionStatus.id;
+      }
+    }
 
-    return statusIdMapping[statusName] || null;
+    // If still not found, return null instead of using mock data
+    console.warn(`No status ID found for status name: ${statusName}`);
+    return null;
   };
 
   // Helper function to get missions for a specific status
   const getMissionsForStatus = (statusName: string) => {
     const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
-
-    console.log(`Looking for status: ${statusName}`);
-    console.log(`Possible names:`, possibleNames);
-    console.log(`Available missions in this station:`, missions);
 
     // Find the status group that matches our status name
     const matchingStatusGroup = missions.find((statusGroup) => {
@@ -87,7 +88,6 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
       return matchingStatusGroup.boardMissions || [];
     }
 
-    console.log(`No missions found for status ${statusName}`);
     return [];
   };
 
@@ -124,7 +124,6 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
         >
           {station.name}
         </Typography>
-        {/* !here translation */}
         <Typography
           variant="caption"
           sx={{
@@ -140,9 +139,6 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
       {/* Status Columns */}
       {statusColumns.map((status, index) => {
         const statusMissions = getMissionsForStatus(status.name);
-
-        // Debug: Log the number of missions for this status
-        console.log(`Status ${status.name}: ${statusMissions.length} missions`);
 
         // Check if any status column has more than 1 mission to determine height
         const hasMultipleCards = statusColumns.some((col) => {
@@ -165,10 +161,7 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               }
               // Get the actual status ID for this status name
               const actualStatusId = getStatusIdForName(status.name);
-              console.log(
-                `Dropping item to status: ${status.name}, statusId: ${actualStatusId}`,
-                item
-              );
+
               if (actualStatusId) {
                 // Update the mission status
                 updateStatus([item], actualStatusId).then();
