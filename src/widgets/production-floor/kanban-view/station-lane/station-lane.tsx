@@ -34,10 +34,10 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
     const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
 
     // First try to find in the current missions data
-    const statusMission = missions.find((mission) => {
-      const missionStatusName =
-        mission.boardMissionStatus.boardMissionStatus.name;
-      return possibleNames.includes(missionStatusName);
+    const statusMission = missions.find((statusGroup) => {
+      const statusGroupName =
+        statusGroup.boardMissionStatus.boardMissionStatus.name;
+      return possibleNames.includes(statusGroupName);
     });
 
     if (statusMission) {
@@ -57,6 +57,7 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
 
     // Fallback to known status IDs
     const statusIdMapping: Record<string, string> = {
+      "In Progress": "52e1b026-2028-4dc6-b8fc-0b80ff04db15", // This is the actual "In process" status ID from the data
       "Waiting Approval": "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63", // This is the actual approval status ID
       Stuck: "56dd1e80-7436-462c-82e9-cf8a90afd614", // This is the actual stuck status ID
     };
@@ -68,13 +69,28 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
   const getMissionsForStatus = (statusName: string) => {
     const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
 
-    const statusMission = missions.find((mission) => {
-      const missionStatusName =
-        mission.boardMissionStatus.boardMissionStatus.name;
-      return possibleNames.includes(missionStatusName);
+    console.log(`Looking for status: ${statusName}`);
+    console.log(`Possible names:`, possibleNames);
+    console.log(`Available missions in this station:`, missions);
+
+    // Find the status group that matches our status name
+    const matchingStatusGroup = missions.find((statusGroup) => {
+      const statusGroupName =
+        statusGroup.boardMissionStatus.boardMissionStatus.name;
+      console.log(`Status group: ${statusGroupName}`);
+      return possibleNames.includes(statusGroupName);
     });
 
-    return statusMission?.boardMissions || [];
+    if (matchingStatusGroup) {
+      console.log(
+        `Found ${matchingStatusGroup.boardMissions.length} missions for status ${statusName}:`,
+        matchingStatusGroup.boardMissions
+      );
+      return matchingStatusGroup.boardMissions || [];
+    }
+
+    console.log(`No missions found for status ${statusName}`);
+    return [];
   };
 
   return (

@@ -9,7 +9,13 @@ export const STATUS_COLUMNS = [
 export const STATUS_NAME_MAPPING: Record<string, string[]> = {
   Waiting: ["Waiting", "waiting", "WAITING"],
   Urgent: ["Urgent", "urgent", "URGENT"],
-  "In Progress": ["In Progress", "in progress", "IN_PROGRESS", "InProcess"],
+  "In Progress": [
+    "In Progress",
+    "in progress",
+    "IN_PROGRESS",
+    "InProcess",
+    "In process",
+  ],
   "Waiting Approval": [
     "Waiting Approval",
     "waiting approval",
