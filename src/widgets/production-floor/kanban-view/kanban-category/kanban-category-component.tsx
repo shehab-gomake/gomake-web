@@ -4,6 +4,7 @@ import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/p
 import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import { ICategory, IStation } from "../types/kanban-types";
 import { StationLane } from "../station-lane/station-lane";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   category: ICategory;
@@ -20,6 +21,7 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
   onToggleCollapse,
   isMobile,
 }) => {
+  const { t } = useTranslation();
   const totalStations = category.stations.length;
   const totalActiveJobs = category.stations.reduce(
     (sum, station) => sum + station.activeJobs,
@@ -52,10 +54,19 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
         onClick={onToggleCollapse}
       >
         <Stack direction="row" alignItems="center" spacing={2}>
+          <IconButton
+            size="small"
+            sx={{
+              padding: "4px",
+              marginRight: "8px",
+              color: "#495057",
+            }}
+          >
+            {isCollapsed ? <ExpandMore /> : <ExpandLess />}
+          </IconButton>
           <Typography variant="h6" sx={{ fontSize: "1.1rem", fontWeight: 600 }}>
-            {category.icon} {category.name}
+            {category.name}
           </Typography>
-          {/* !here need translation with prefix boardMissions */}
           <Box
             sx={{
               backgroundColor: "#e3f2fd",
@@ -66,12 +77,12 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
               fontWeight: 500,
             }}
           >
-            {totalStations} stations with {totalActiveJobs} active jobs
+            {t("boardMissions.stationsWithJobs", {
+              stations: totalStations,
+              jobs: totalActiveJobs,
+            })}
           </Box>
         </Stack>
-        <IconButton size="small">
-          {isCollapsed ? <ExpandMore /> : <ExpandLess />}
-        </IconButton>
       </Stack>
 
       {/* Category Content - Station Lanes */}
