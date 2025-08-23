@@ -99,7 +99,7 @@ const useStyle = () => {
       },
       textInputForProductsStyle: {
         width: 350,
-        border: "none",
+        // border: "none",
       },
       clearBtnStyle: {
         height: 40,

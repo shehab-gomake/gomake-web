@@ -80,6 +80,7 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-quill": "^2.0.0",
     "react-responsive": "^10.0.0",
+    "react-select": "^5.10.2",
     "react-signature-canvas": "^1.0.6",
     "react-test-renderer": "^18.2.0",
     "react-virtuoso": "^4.14.0",

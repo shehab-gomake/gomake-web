@@ -1292,7 +1292,19 @@
     "category": "الفئة",
     "editMachine": "تحرير الجهاز",
     "edit": "تحرير",
-    "machines": "ماكينات"
+    "machines": "ماكينات",
+    "noMachinesFound": "لم يتم العثور على آلات",
+    "noSearchResults": "لم يتم العثور على آلات تطابق بحثك",
+    "tryDifferentSearch": "جرب مصطلح بحث مختلف أو تحقق من الإملاء",
+    "noMachinesInSystem": "لا توجد آلات متاحة حاليًا في النظام",
+    "machineName": "اسم الجهاز",
+    "category": "الفئة",
+    "selectCategoryManually": "اختر الفئة يدويًا",
+    "loadingAdminMachines": "جاري تحميل أجهزة الإدارة...",
+    "loadedAdminMachines": "تم تحميل {{count}} جهاز إدارة",
+    "noAdminMachinesFound": "لم يتم العثور على أجهزة إدارة. تحقق من وحدة التحكم للتفاصيل.",
+    "startTypingToSearch": "ابدأ بالكتابة للبحث عن الأجهزة...",
+    "loadingMachines": "جاري تحميل الأجهزة..."
   },
   "tyingOptions": {
     "cross": "عبر",
@@ -1655,7 +1667,7 @@
       "waitForPrintHouseConfirm": "في انتظار تأكيد دار الطباعة",
       "chooseStatus": "اختر الحالة",
       "chooseCustomer": "اختر العميل",
-      "maxItemsReached": "تم الوصول إلى الحد الأقصى لعدد العناصر (100) لإنشاء وثيقة جديدة"
+      "maxItemsReached": "تم الوصول إلى الحد الأقصى لعدد العناصر (100) لإنشاء وثيقة جديدة",
       "ChooseAgent": "اختر وكيلاً",
       "loggers": "سجلات",
       "pdf": "PDF",
