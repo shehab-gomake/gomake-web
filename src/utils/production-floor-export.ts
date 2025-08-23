@@ -32,7 +32,6 @@ export const flattenProductionFloorData = (statusBoards: IStatusesBoardsMissions
         createdDate: mission.boardMissionCreatedDate,
         stationInDate: mission.stationInDate,
         currentStation: mission.currentStation?.actionName || '',
-        currentEmployee: mission.currentStation?.employeeName || '',
         currentMachine: mission.currentStation?.machineName || '',
         agentName: mission.agentName,
         priority: mission.priority,
