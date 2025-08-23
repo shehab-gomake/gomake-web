@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
-import { PrimaryTable } from "@/components/tables/primary-table";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
@@ -25,12 +24,11 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
 import {
   printHouseProfile,
-  printHouseUsePrintNode,
 } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -41,7 +39,7 @@ import {
   getJobsTableSettingsApi,
   printNodeModalShowLog,
 } from "@/services/api-service/board-missions/board-missions-table";
-import { SampleTypeOption, useGomakeAxios } from "@/hooks";
+import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
@@ -61,6 +59,7 @@ import {
 } from "./states/board-missions-columns-settings-state";
 import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
+import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -75,8 +74,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setInputValue,
   } = useStorageList();
   const {
-    tableHeader,
-    tableHeaderForPurchaseJobs,
     renderOptions,
     customer,
     agent,
@@ -166,8 +163,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isDescOrderBE,
     handleSortBE,
     exampleTypeValues,
-    sampleType,
-    setSampleType,
     proofTypes,
     handleProofTypesChange,
     columnsReady,
@@ -179,6 +174,18 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setIsPrintedState,
     isPrintedState,
     isPrintHouseUsePrintNode,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
+    openMarkReadyTypeModal,
+    onCloseMarkReadyTypeModal,
+    onOpenMarkReadyTypeModal,
+    pendingMarkReadyParams,
+    handleMarkReadyTypeChoice,
+    isJobsTableLoading,
+    isJobsTableError,
+    isSocketRefreshingJobs,
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -216,7 +223,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => {};
+        const callBack = (res) => { };
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -233,7 +240,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => {}, {
+        printNodeModalShowLog(callApi, () => { }, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -261,7 +268,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+        const res = await getJobsTableSettingsApi(callApi, () => { }, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -336,12 +343,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (k) => k !== "pageNumber" && k !== "pageSize"
                       ).length > 0 && (
-                        <div
-                          style={{ position: "absolute", top: -5, right: -1 }}
-                        >
-                          <DotIcon />
-                        </div>
-                      )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -417,29 +424,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             />
                           </div>
 
-                          {/* <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("products.offsetPrice.admin.proof")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={sampleType?.value}
-                              options={
-                                exampleTypeValues?.map((option) => ({
-                                  value: option.key,
-                                  text: t(
-                                    `products.proofTypes.${option.value}`
-                                  ),
-                                })) || []
-                              }
-                              getOptionLabel={(option: any) => option.text}
-                              placeholder={t(
-                                "products.offsetPrice.admin.proof"
-                              )}
-                              style={classes.textInputStyle}
-                              onChange={(e, value) => setSampleType(value)}
-                              value={sampleType}
-                            />
-                          </div> */}
+
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("products.offsetPrice.admin.proof")}
@@ -482,17 +467,27 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                 style={classes.textInputStyle}
                                 onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
                                 value={
-                                  isPrintedState === null 
+                                  isPrintedState === null
                                     ? null
                                     : isPrintedState === true
-                                    ? { value: true, text: t("modal.yes") }
-                                    : { value: false, text: t("modal.no") }
+                                      ? { value: true, text: t("modal.yes") }
+                                      : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
                           )}
-
                           <div style={classes.statusFilterContainer}>
+                            <ProductMultiSelect
+                              products={productsList}
+                              selectedProductIds={productIds}
+                              onProductChange={handleMultiSelectChange}
+                              placeholder={t("boardMissions.selectProducts")}
+                              label={t("boardMissions.products")}
+                              labelStyle={classes.filterLabelStyle}
+                              selectStyle={classes.textInputForProductsStyle}
+                            />
+                          </div>
+                          {/* <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("boardMissions.products")}
                             </h3>
@@ -503,7 +498,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               values={productIds}
                               placeholder={t("boardMissions.selectProducts")}
                             />
-                          </div>
+                          </div> */}
                           <div style={classes.statusFilterContainer}>
                             <GlobalStyle RTL={RTL} />
                             <h3 style={classes.filterLabelStyle}>
@@ -611,6 +606,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 columnWidths={visibleHeaders.map((key) =>
                   getJobsCustomWidth(tableKey, key)
                 )}
+                loading={isJobsTableLoading}
+                error={isJobsTableError}
+                disableSkeleton={isSocketRefreshingJobs}
               />
             ) : (
               <Box
@@ -678,12 +676,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -724,12 +722,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -788,7 +786,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {}}
+        onClose={() => { }}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -850,12 +848,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -881,6 +879,42 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           />
         </div>
       </GoMakeDeleteModal>
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectPrintContent")}
+        subTitle={
+          pendingPrintParams?.productType
+            ? t("boardMissions.askPrintType", {
+              productType: pendingPrintParams.productType
+            })
+            : ""
+        }
+        yesBtn={"boardMissions.printAllJobs"}
+        noBtn={"boardMissions.printProductTypeOnly"}
+        openModal={openPrintTypeModal}
+        onClose={onClosePrintTypeModal}
+        onClickYes={() => handlePrintTypeChoice(true)}
+        onClickNo={() => handlePrintTypeChoice(false)}
+      />
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectMarkReadyContent")}
+        subTitle={
+          pendingMarkReadyParams?.productType
+            ? t("boardMissions.askMarkReadyType", {
+              productType: pendingMarkReadyParams.productTypeName || pendingMarkReadyParams.productType
+            })
+            : ""
+        }
+        yesBtn={t("boardMissions.markAllJobsReady")}
+        noBtn={t("boardMissions.markProductTypeOnlyReady", {
+          productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+        })}
+        openModal={openMarkReadyTypeModal}
+        onClose={onCloseMarkReadyTypeModal}
+        onClickYes={() => handleMarkReadyTypeChoice(true)}
+        onClickNo={() => handleMarkReadyTypeChoice(false)}
+      />
     </>
   );
 };

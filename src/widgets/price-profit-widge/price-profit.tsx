@@ -1,144 +1,87 @@
 import { Divider } from "@mui/material";
 import { useStyle } from "./style";
 import { usePriceProfit } from "./use-price-profit";
-import { ParmaetersPriceProfitWidget } from "./widgets/parameters/parameters-price-profit-widge";
-import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widge";
-import { PriceProfitTable } from "./widgets/table/table-price-profit-widge";
-import { GoMakeModal } from "@/components";
-import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
+import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widget";
+import { SummaryWidget } from "./widgets/summary/summary-widget";
+import { useEffect } from "react";
+import PriceCurveFit from "./widgets/chart/price-curve-fit";
 
-const PriceProfitWidge = () => {
+const PriceProfitWidget = () => {
   const { classes } = useStyle();
   const {
-    open,
-    anchorEl,
-    selectedProduct,
-    products,
-    anchorElSetting,
-    openSetting,
-    handleClose,
-    handleOpen,
-    handleOpenSetting,
-    handleCloseSetting,
-    handleCheckboxChange,
-    handleRestoreOriginalPrice,
-    handleUpdateNewPrice,
-    handleReviewCalculation,
-    setSelectedProduct,
-    handlePriceChange,
-    isUpdate,
-    setIsUpdate,
-    onBlurPriceChange,
-    handlePrintClose,
-    anchorElPrint,
-    openPrint,
-    handleOpenPrint,
-    handleHideProduct,
-    updateDropdownValue,
-    updateDropdownMaterialValue,
-    updateTextInputValue,
-    pricingProfileSetting,
-    selectedPricingProfileSetting,
-    setSelectedPricingProfileSetting,
-    updateProfitProfileProductParameter,
-    onBlurQuantityChange,
-    handleQuantity,
-    isUpdateQuantity,
-    setIsUpdateQuantity,
-    updatePrintHousePrice,
-    updateProfitProfileProductHidden,
-    updateProfitProfileProductSelected,
-    updateSelectedPrintHousePrices,
-    onClickPrint,
-    resetPrintHousePrice,
-    reCalculatePrice,
-    handleCloseChartModal,
-    handleOpenChartModal,
-    openChartModal,
-    router,
-    t
+    actionList,
+    onChangeActionId,
+    action,
+    onSelectDeliveryTimeDates,
+    fromDate,
+    setFromDate,
+    toDate,
+    setToDate,
+    getDataForAutoPricingActionsChart,
+    handleAutoFix,
+    handleRollback,
+    isFixed,
+    summaryData,
+    getActions,
+    getProfitsPricingTables,
+    profitsPricingTables,
+    selectedPricingTable,
+    onSelectPricingTable,
+    chartData,
+    exportDataForProfitsByAction,
   } = usePriceProfit();
+
+  useEffect(() => {
+    if (fromDate || toDate || action || selectedPricingTable) {
+      const fromDataString = fromDate ? fromDate.toISOString() : undefined;
+      const toDataString = toDate ? toDate.toISOString() : undefined;
+
+      getDataForAutoPricingActionsChart(
+        fromDataString,
+        toDataString,
+        action?.actionId ?? undefined,
+        selectedPricingTable?.value ?? undefined
+      );
+    }
+  }, [fromDate, toDate, action?.actionId, selectedPricingTable?.value]);
+
+  useEffect(() => {
+    getActions();
+  }, []);
+
+  useEffect(() => {
+    if (action?.actionId) {
+      getProfitsPricingTables();
+    }
+  }, [action?.actionId, getProfitsPricingTables]);
+
   return (
     <div style={classes.mainContainer}>
-      <PriceProfitHeaderWidget
-        handleClose={handleCloseSetting}
-        anchorEl={anchorElSetting}
-        open={openSetting}
-        handleOpen={handleOpenSetting}
-        handlePrintClose={handlePrintClose}
-        anchorElPrint={anchorElPrint}
-        openPrint={openPrint}
-        handleOpenPrint={handleOpenPrint}
-        pricingProfileSetting={pricingProfileSetting}
-        selectedPricingProfileSetting={selectedPricingProfileSetting}
-        setSelectedPricingProfileSetting={setSelectedPricingProfileSetting}
-        updateSelectedPrintHousePrices={updateSelectedPrintHousePrices}
-        onClickPrint={onClickPrint}
-        resetPrintHousePrice={resetPrintHousePrice}
-        handleOpenChartModal={handleOpenChartModal}
-      />
-      <Divider style={classes.divider} />
-      {products && products?.requiredParameters?.length > 0 && (
-        <ParmaetersPriceProfitWidget
-          parameters={products?.requiredParameters}
-          updateDropdownValue={updateDropdownValue}
-          updateDropdownMaterialValue={updateDropdownMaterialValue}
-          updateTextInputValue={updateTextInputValue}
-          updateProfitProfileProductParameter={
-            updateProfitProfileProductParameter
-          }
-          reCalculatePrice={reCalculatePrice}
+      <div style={classes.headerSection}>
+        <PriceProfitHeaderWidget
+          onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+          fromDate={fromDate}
+          setFromDate={setFromDate}
+          toDate={toDate}
+          setToDate={setToDate}
+          actionList={actionList}
+          action={action}
+          onChangeActionId={onChangeActionId}
+          profitsPricingTables={profitsPricingTables}
+          selectedPricingTable={selectedPricingTable}
+          onSelectPricingTable={onSelectPricingTable}
+          handleAutoFix={handleAutoFix}
+          handleRollback={handleRollback}
+          isFixed={isFixed}
+          onClickDownloadExcel={exportDataForProfitsByAction}
         />
-      )}
-      {products &&
-        products?.headers?.length > 0 &&
-        products?.data?.length > 0 && (
-          <PriceProfitTable
-            headers={products?.headers}
-            open={open}
-            anchorEl={anchorEl}
-            handleClose={handleClose}
-            handleOpen={handleOpen}
-            handleCheckboxChange={handleCheckboxChange}
-            handleRestoreOriginalPrice={handleRestoreOriginalPrice}
-            handleUpdateNewPrice={handleUpdateNewPrice}
-            handleReviewCalculation={handleReviewCalculation}
-            selectedProduct={selectedProduct}
-            products={products}
-            setSelectedProduct={setSelectedProduct}
-            handlePriceChange={handlePriceChange}
-            isUpdate={isUpdate}
-            setIsUpdate={setIsUpdate}
-            onBlurPriceChange={onBlurPriceChange}
-            handleHideProduct={handleHideProduct}
-            onBlurQuantityChange={onBlurQuantityChange}
-            handleQuantity={handleQuantity}
-            isUpdateQuantity={isUpdateQuantity}
-            setIsUpdateQuantity={setIsUpdateQuantity}
-            updatePrintHousePrice={updatePrintHousePrice}
-            updateProfitProfileProductHidden={updateProfitProfileProductHidden}
-            updateProfitProfileProductSelected={
-              updateProfitProfileProductSelected
-            }
-          />
-        )}
-      {
-        !router?.query?.productId && (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50%", textAlign: "center", width: "100%" }}>
-            <h3>{t("priceProfit.pleaseSelectProduct")}</h3>
-          </div>
-        )
-      }
-      <GoMakeModal
-        openModal={openChartModal}
-        onClose={handleCloseChartModal}
-        modalTitle={" "}
-        insideStyle={classes.modalStyle}
-        withRoundedCloseIcon={false}
-      >
-        <GaussianChart />
-      </GoMakeModal>
+        <Divider style={classes.divider} />
+      </div>
+      <div style={classes.contentSection}>
+        <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
+        <PriceCurveFit {...chartData} />
+      </div>
     </div>
   );
 };
-export { PriceProfitWidge };
+export { PriceProfitWidget };

@@ -31,6 +31,11 @@ const DocumentsButton = ({ isMobile = false }) => {
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
+
+  // ===== NEW STATE FOR PRINT TYPE SELECTION MODAL =====
+  const [openPrintTypeModal, setOpenPrintTypeModal] = useState<boolean>(false);
+  const [pendingPrintMission, setPendingPrintMission] = useState(null);
+
   const isReady = useRecoilValue(isReadyBoardMissionsState);
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -46,7 +51,7 @@ const DocumentsButton = ({ isMobile = false }) => {
         condition: true,
         name: "boardMissions.pdfWorkMission",
         icon: <PDFIcon />,
-        onclick: () => onClickPrint(boardMissions),
+        onclick: () => handlePrintClick(boardMissions), // CHANGED: Now calls handlePrintClick
       },
       {
         condition: true,
@@ -97,22 +102,59 @@ const DocumentsButton = ({ isMobile = false }) => {
     await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
   };
 
-  const onClickPrint = async (mission) => {
+  // ===== NEW FUNCTION: Handle print click - checks if productType exists =====
+  const handlePrintClick = (mission) => {
+    setOpen(false); // Close the menu
+
+    if (mission?.productType) {
+      // Has productType - show modal to ask user
+      setPendingPrintMission(mission);
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - proceed with full job
+      processPrintRequest(mission, "");
+    }
+  };
+
+  // ===== NEW FUNCTION: Process the actual print request =====
+  const processPrintRequest = async (mission, productType) => {
     setDownloading(true);
-    setOpen(false);
     const callBack = (res) => {
       setDownloading(false);
       if (res?.success) {
         const pdfLink = res.data;
         downloadPdf(pdfLink);
       } else {
+        // Handle error
       }
     };
+
     await getBoardMissionPDF(callApi, callBack, {
       boardMissionId: mission?.boardMissionId,
-      productType: mission?.productType ?? "",
+      productType: productType, // Will be "" for full job or actual productType for specific
     });
   };
+
+  // ===== NEW FUNCTION: Handle user's choice from modal =====
+  const handlePrintTypeChoice = (printAll: boolean) => {
+    if (!pendingPrintMission) return;
+
+    // Close modal
+    setOpenPrintTypeModal(false);
+
+    if (printAll) {
+      // User wants full job - send empty string
+      processPrintRequest(pendingPrintMission, "");
+    } else {
+      // User wants specific product type
+      processPrintRequest(pendingPrintMission, pendingPrintMission.productType);
+    }
+
+    // Clear pending mission
+    setPendingPrintMission(null);
+  };
+
+  // ===== REMOVED OLD onClickPrint function - replaced with handlePrintClick and processPrintRequest =====
 
   const GetPrintingTicketPDF = async (boardMissionId) => {
     setDownloading(true);
@@ -226,6 +268,38 @@ const DocumentsButton = ({ isMobile = false }) => {
           </Paper>
         </ClickOutside>
       )}
+
+      {/* ===== NEW MODAL: Print Type Selection Modal ===== */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectPrintContent")}
+        subTitle={
+          pendingPrintMission?.productType
+            ? t("boardMissions.askPrintType", {
+              productType: pendingPrintMission.productTypeName || pendingPrintMission.productType
+            })
+            : ""
+        }
+        yesBtn={t("boardMissions.printAllJobs")}
+        noBtn={t("boardMissions.printProductTypeOnly")}
+        openModal={openPrintTypeModal}
+        onClose={() => {
+          setOpenPrintTypeModal(false);
+          setPendingPrintMission(null);
+        }}
+        onClickYes={() => handlePrintTypeChoice(true)}
+        onClickNo={() => handlePrintTypeChoice(false)}
+        style={
+          isMobile
+            ? {
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
+            : undefined
+        }
+      />
+
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
         onClose={() => setOpenPackagesModal(false)}

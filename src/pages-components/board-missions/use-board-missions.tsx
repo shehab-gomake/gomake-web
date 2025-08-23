@@ -16,6 +16,7 @@ import {
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
+  printJobUsingPrintNodeApi,
   printNodeModalCancelLog,
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
@@ -33,6 +34,7 @@ import {
   backToProcessApi,
   moveBoardMissionStatusToWaitingApi,
   moveBoardMissionToDoneApi,
+  tryMoveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -152,6 +154,54 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setPageNumber,
     initialPageSize,
   } = useListPagination();
+
+  const [openPrintTypeModal, setOpenPrintTypeModal] = useState(false);
+  const [pendingPrintParams, setPendingPrintParams] = useState(null);
+
+  const [openMarkReadyTypeModal, setOpenMarkReadyTypeModal] = useState(false);
+  const [pendingMarkReadyParams, setPendingMarkReadyParams] = useState(null);
+
+  const onCloseMarkReadyTypeModal = () => {
+    setOpenMarkReadyTypeModal(false);
+    setPendingMarkReadyParams(null);
+  };
+
+  const onOpenMarkReadyTypeModal = (mission) => {
+    setPendingMarkReadyParams(mission);
+    setOpenMarkReadyTypeModal(true);
+  };
+
+
+  const handleMarkReadyTypeChoice = async (markAllReady: boolean) => {
+    if (!pendingMarkReadyParams) return;
+    const mission = pendingMarkReadyParams;
+
+    // Close modal first
+    onCloseMarkReadyTypeModal();
+
+    if (markAllReady) {
+      // User wants to mark ALL jobs as ready
+      const callBack = (res) => {
+        if (res.success) {
+
+          if (res.data) {
+            onOpenMarkReadyModalForHasJobs(mission, markAllReady);
+          } else {
+            onOpenMarkReadyModal(mission, markAllReady);
+          }
+        }
+      };
+
+      // Call API without productType to mark all
+      await tryMoveBoardMissionToDoneApi(callApi, callBack, {
+        boardMissionId: mission.id,
+      });
+    } else {
+      // User wants to mark only specific product type as ready
+      onOpenMarkReadyModalForProductType(mission);
+    }
+  };
+
 
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
@@ -273,9 +323,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.costFromOrderItem"),
+    t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.priceFromOrderItem"),
+    t("boardMissions.priceFromOrderItem"),
     isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
@@ -442,7 +492,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setResetDueDatePicker(true);
     setResetReadyDatePicker(true);
     setCurrentSortOrder(null);
-    setIsPrintedState(false);
+    setIsPrintedState(null);
     setPageNumber(1);
 
     setHasFetchedQuery(null); // ✅ force next fetch on empty query
@@ -487,8 +537,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   useEffect(() => {
     if (isSocketUpdateJobsTable) {
-      getAllData(false, false);
-      setIsSocketUpdateJobsTable(false);
+      (async () => {
+        setIsSocketRefreshingJobs(true);
+        await getAllData(false, false, undefined, true);
+        setIsSocketRefreshingJobs(false);
+        setIsSocketUpdateJobsTable(false);
+      })();
     }
   }, [isSocketUpdateJobsTable]);
 
@@ -503,16 +557,21 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   }, []);
 
   const [missionItem, setMissionItem] = useState<any>();
+  // Loading/Error states for jobs table
+  const [isJobsTableLoading, setIsJobsTableLoading] = useState<boolean>(false);
+  const [isJobsTableError, setIsJobsTableError] = useState<boolean>(false);
+  const [isSocketRefreshingJobs, setIsSocketRefreshingJobs] = useState<boolean>(false);
 
   const getAllData = async (
     isPurchaseJobs: boolean,
     isClear: boolean = false,
-    sortOrder?: any
+    sortOrder?: any,
+    invokedBySocket: boolean = false
   ) => {
     if (isPurchaseJobs) {
-      return await getAllPurchaseJobs(isClear);
+      return await getAllPurchaseJobs(isClear, invokedBySocket);
     } else {
-      return await getAllBoardMissions(isClear, sortOrder);
+      return await getAllBoardMissions(isClear, sortOrder, invokedBySocket);
     }
   };
 
@@ -557,7 +616,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const getJobStatus = (mission) => {
-    console.log("mission", mission);
     if (mission?.isReady) {
       return (
         <>
@@ -567,8 +625,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             {mission?.storage === "undefined"
               ? ""
               : mission?.storage
-              ? ` ${mission.storage}`
-              : " "}
+                ? ` ${mission.storage}`
+                : " "}
           </div>
         </>
       );
@@ -585,8 +643,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         mission.station.machineName && mission.station.machineId
           ? mission.station.machineName
           : mission.station?.supplierId
-          ? mission.station.supplierName
-          : mission.station.employeeName;
+            ? mission.station.supplierName
+            : mission.station.employeeName;
       if (empName)
         return `${t(
           "productionStatuses." + mission.boardMissionStatus.name
@@ -675,8 +733,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   //!here
-  const getAllBoardMissions = async (isClear: boolean = false, order?: any) => {
+  const getAllBoardMissions = async (isClear: boolean = false, order?: any, invokedBySocket: boolean = false) => {
     const sortOrder = order || currentSortOrder;
+    setIsJobsTableError(false);
+    setIsJobsTableLoading(!isSocketRefreshingJobs);
 
     const callBack = (res) => {
       if (res?.success) {
@@ -685,7 +745,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-            mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
 
@@ -720,9 +780,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               </div>
             ),
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName ?? mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
+              }`
               : mission?.number,
             relatedDocuments: (
               <Stack
@@ -761,12 +820,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 ? `${mission?.cost} ${getCurrencyUnitText(mission?.currency)}`
                 : `${getCurrencyUnitText(mission?.currency)} ${mission?.cost}`,
               priceFromOrderItem: isRTL
-                ? `${mission?.price}${
-                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                  } ${getCurrencyUnitText(mission?.currency)}`
-                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${
-                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                  }`,
+                ? `${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                } ${getCurrencyUnitText(mission?.currency)}`
+                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                }`,
             }),
             ...(isPrintHouseUsePrintNode && {
               isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
@@ -794,6 +851,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+                printJobUsingPrintNode={printJobUsingPrintNode}
+                onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
               />
             ),
           };
@@ -804,7 +863,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setAllBoardMissions(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
+        setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
+        setAllBoardMissions([]);
       }
     };
     if (!router.isReady) {
@@ -815,14 +876,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -875,49 +936,52 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const data = isClear
       ? {
-          productsIds: [],
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-        }
+        productsIds: [],
+        pageNumber: currentPageNumber || pageNumber,
+        pageSize: currentPageSize,
+      }
       : {
-          clientId: router?.query?.clientId || customer?.id,
-          agentId: router?.query?.agentId || agent?.id,
-          search:
-            finalPatternSearch !== null &&
+        clientId: router?.query?.clientId || customer?.id,
+        agentId: router?.query?.agentId || agent?.id,
+        search:
+          finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
             finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-          fromDate:
-            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-          fromDueDate:
-            currentFormattedFromDueDate ||
-            (fromDueDate && GetDateFormat(fromDueDate)),
-          toDueDate:
-            currentFormattedToDueDate ||
-            (toDueDate && GetDateFormat(toDueDate)),
+            ? finalPatternSearch
+            : currentFinalPatternSearch,
+        fromDate:
+          currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+        toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+        fromDueDate:
+          currentFormattedFromDueDate ||
+          (fromDueDate && GetDateFormat(fromDueDate)),
+        toDueDate:
+          currentFormattedToDueDate ||
+          (toDueDate && GetDateFormat(toDueDate)),
 
-          fromReadyDate:
-            currentFormattedFromReadyDate ||
-            (fromReadyDate && GetDateFormat(fromReadyDate)),
-          toReadyDate:
-            currentFormattedToReadyDate ||
-            (toReadyDate && GetDateFormat(toReadyDate)),
-          productsIds: currentProductsIds,
-          productionStatus: currentProductionStatus || status?.value,
-          orderStatus: currentOrderStatus || orderStatus?.value,
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-          orderNumber: router?.query?.orderNumber,
-          order: sortOrder,
-          exampleTypes: currentProofTypes,
-          isPrinted: currentIsPrinted || isPrintedState,
-        };
+        fromReadyDate:
+          currentFormattedFromReadyDate ||
+          (fromReadyDate && GetDateFormat(fromReadyDate)),
+        toReadyDate:
+          currentFormattedToReadyDate ||
+          (toReadyDate && GetDateFormat(toReadyDate)),
+        productsIds: currentProductsIds,
+        productionStatus: currentProductionStatus || status?.value,
+        orderStatus: currentOrderStatus || orderStatus?.value,
+        pageNumber: currentPageNumber || pageNumber,
+        pageSize: currentPageSize,
+        orderNumber: router?.query?.orderNumber,
+        order: sortOrder,
+        exampleTypes: currentProofTypes,
+        isPrinted: currentIsPrinted || isPrintedState,
+      };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
+    setIsJobsTableLoading(false);
   };
 
-  const getAllPurchaseJobs = async (isClear: boolean = false) => {
+  const getAllPurchaseJobs = async (isClear: boolean = false, invokedBySocket?: any) => {
+    setIsJobsTableError(false);
+    setIsJobsTableLoading(!isSocketRefreshingJobs);
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
@@ -935,9 +999,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ),
             supplierName: mission?.supplierName,
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName ?? mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
+              }`
               : mission?.number,
             orderNumber: mission?.orderNumber,
             purchaseOrderNumber: mission?.purchaseOrderNumber,
@@ -958,8 +1021,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             currentBoardMissionStatus: mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-              : "",
+                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+                : "",
             more: (
               <MoreMenuWidget
                 mission={mission}
@@ -975,6 +1038,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
+                printJobUsingPrintNode={printJobUsingPrintNode}
+                onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
               />
             ),
           };
@@ -984,7 +1049,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setAllPurchaseJobs(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
+        setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
+        setAllPurchaseJobs([]);
       }
     };
 
@@ -1003,61 +1070,58 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
       isClear
         ? {
-            productsIds: [],
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: currentPageSize,
-          }
+          productsIds: [],
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+        }
         : {
-            clientId: customer?.id,
-            agentId: agent?.id,
-            search:
-              finalPatternSearch !== null &&
+          clientId: customer?.id,
+          agentId: agent?.id,
+          search:
+            finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+          fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+          toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+          fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+          toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            exampleTypes: currentProofTypes,
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: currentPageSize,
-            supplierId: supplierId?.value,
-            isPurchaseJobs: true,
-          }
+          productsIds: productIds,
+          productionStatus: status?.value,
+          orderStatus: orderStatus?.value,
+          exampleTypes: currentProofTypes,
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+          supplierId: supplierId?.value,
+          isPurchaseJobs: true,
+        }
     );
+    setIsJobsTableLoading(false);
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${
-          missionItem?.clientTypeId
-        }&customerId=${
-          missionItem?.customerID
+        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
+        }&customerId=${missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${
-          missionItem?.orderItemId
-        }&documentType=${
-          DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
+        }&documentType=${DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1083,6 +1147,26 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     actionId: string,
     productType: string
   ) => {
+    if (productType) {
+      // Has productType - show modal
+      setPendingPrintParams({
+        type: 'pdf',
+        boardMissionId,
+        actionId,
+        productType
+      });
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - print full job directly
+      await processPdfRequest(boardMissionId, actionId, "");
+    }
+  };
+
+  const processPdfRequest = async (
+    boardMissionId: string,
+    actionId: string,
+    productType: string
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -1091,13 +1175,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         alertFaultGetData();
       }
     };
+
     await getWorkMissionPdfApi(callApi, callBack, {
       boardMissionId,
       isPurchaseJobs,
       actionId: actionId,
-      productType: productType ?? "",
+      productType: productType, // "" for full job, or specific productType
     });
   };
+
 
   const onClickPrintPackagingSlip = async () => {
     if (quantityPerPackage > missionItem?.quantity) {
@@ -1129,6 +1215,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [markAllReady, setMarkAllReady] = useState<boolean>(false);
   const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
     useState<boolean>(false);
 
@@ -1139,10 +1226,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseMarkReadyModal = () => {
     setSelectedMission(null);
     setOpenMarkReadyModal(false);
+    setMarkAllReady(false);
   };
-  const onOpenMarkReadyModal = (mission) => {
+  const onOpenMarkReadyModal = (mission, markAllReady) => {
     setSelectedMission(mission);
     setOpenMarkReadyModal(true);
+    setMarkAllReady(markAllReady);
   };
   const onOpenMarkReadyModalForProductType = (mission) => {
     setSelectedMission(mission);
@@ -1151,20 +1240,24 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseMarkReadyModalForProductType = () => {
     setSelectedMission(null);
     setOpenMarkReadyModalForProductType(false);
+    setMarkAllReady(false);
   };
 
-  const onOpenMarkReadyModalForHasJobs = (mission) => {
+  const onOpenMarkReadyModalForHasJobs = (mission, markAllReady) => {
     setSelectedMission(mission);
     setOpenMarkReadyModalForHasJobs(true);
+    setMarkAllReady(markAllReady);
   };
   const onCloseMarkReadyModalForHasJobs = () => {
     setSelectedMission(null);
     setOpenMarkReadyModalForHasJobs(false);
+    setMarkAllReady(false);
   };
   const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] =
     useState<boolean>(false);
   const onCloseMarkReadyThenPrintModal = () => {
     setOpenMarkReadyThenPrintModal(false);
+    setMarkAllReady(false);
   };
   const onOpenMarkReadyThenPrintModal = () => {
     setOpenMarkReadyThenPrintModal(true);
@@ -1175,6 +1268,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onCloseReturnToProdModal = () => {
     setSelectedMission(null);
     setOpenReturnToProdModalModal(false);
+
   };
   const onOpenReturnToProdModal = (mission) => {
     setSelectedMission(mission);
@@ -1189,6 +1283,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onClosePackagesModal = () => {
     setOpenPackagesModal(false);
+    setMarkAllReady(false);
   };
 
   useEffect(() => {
@@ -1316,6 +1411,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const onCloseModal = () => {
     setOpenModal(false);
+    setMarkAllReady(false);
   };
   const onOpenModal = (mission: any) => {
     setMissionItem(mission);
@@ -1329,6 +1425,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         getAllData(isPurchaseJobs, false);
         if (!selectedMission?.productType) {
           onOpenPackagesModal(selectedMission);
+          setMarkAllReady(false);
+
         }
       } else {
         alertFaultUpdate();
@@ -1340,7 +1438,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
         sendMessage,
-        productType: selectedMission?.productType ?? "",
+        productType: markAllReady ? "" : selectedMission?.productType ?? "",
         storage: selectedMission?.storage ?? "",
       });
     }
@@ -1360,6 +1458,76 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       sendMessage: false,
       productType: selectedMission?.productType ?? "",
     });
+  };
+  const onClosePrintTypeModal = () => {
+    setOpenPrintTypeModal(false);
+    setPendingPrintParams(null);
+  };
+
+  const handlePrintTypeChoice = async (printAll: boolean) => {
+    if (!pendingPrintParams) return;
+
+    const { type, ...params } = pendingPrintParams;
+
+    // Close modal first
+    onClosePrintTypeModal();
+
+    // Handle based on type
+    if (type === 'pdf') {
+      const { boardMissionId, actionId, productType } = params;
+      if (printAll) {
+        // User selected "All Jobs" - send empty productType
+        await processPdfRequest(boardMissionId, actionId, "");
+      } else {
+        // User selected "Product Type Only" - send actual productType
+        await processPdfRequest(boardMissionId, actionId, productType);
+      }
+    } else if (type === 'printNode') {
+      const { jobId, productType } = params;
+      if (printAll) {
+        // User selected "All Jobs" - send empty productType
+        await processPrintNodeRequest(jobId, "");
+      } else {
+        // User selected "Product Type Only" - send actual productType
+        await processPrintNodeRequest(jobId, productType);
+      }
+    }
+  };
+
+  const processPrintNodeRequest = async (
+    jobId: string,
+    productType: string
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // Handle success
+      }
+    };
+
+    let data = jobId;
+    if (productType) {
+      // data = data + "?productType=" + productType;
+    }
+
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
+  };
+
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string
+  ) => {
+    if (productType) {
+      // Has productType - show modal
+      setPendingPrintParams({
+        type: 'printNode',
+        jobId,
+        productType
+      });
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - print full job directly
+      await processPrintNodeRequest(jobId, "");
+    }
   };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -1610,14 +1778,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1670,8 +1838,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-        finalPatternSearch !== undefined &&
-        finalPatternSearch !== ""
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -1896,6 +2064,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setIsPrintedState,
     isPrintedState,
     isPrintHouseUsePrintNode,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
+    printJobUsingPrintNode,
+    openMarkReadyTypeModal,
+    pendingMarkReadyParams,
+    onCloseMarkReadyTypeModal,
+    onOpenMarkReadyTypeModal,
+    handleMarkReadyTypeChoice,
+    isJobsTableLoading,
+    isJobsTableError,
+    isSocketRefreshingJobs,
   };
 };
 

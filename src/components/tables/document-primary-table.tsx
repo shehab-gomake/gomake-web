@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Skeleton,
 } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -33,6 +34,9 @@ interface IDocumentTableProps {
   isHeaderSortable?: any;
   docType?: number;
   dataTour?: string;
+  loading?: boolean;
+  error?: boolean;
+  disableSkeleton?: boolean; // do not show skeleton (e.g., during realtime/socket updates)
 }
 
 const StyledTableCell = styled(TableCell)(() => {
@@ -93,6 +97,9 @@ export const DocumentPrimaryTable = ({
   isHeaderSortable,
   docType,
   dataTour,
+  loading = false,
+  error = false,
+  disableSkeleton = false,
 }: IDocumentTableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -229,7 +236,23 @@ export const DocumentPrimaryTable = ({
                   colSpan={headers.length}
                   style={{ padding: "20px" }}
                 >
-                  {t("skeleton.noData")}
+                  {error ? (
+                    <span>{t("skeleton.errorGettingData")}</span>
+                  ) : loading && !disableSkeleton ? (
+                    <div style={{ width: "100%" }}>
+                      {Array.from({ length: 5 }).map((_, idx) => (
+                        <div key={`sk-${idx}`} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                          {headers.map((_, cIdx) => (
+                            <div key={`sk-${idx}-${cIdx}`} style={{ flex: 1 }}>
+                              <Skeleton variant="rounded" height={32} />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <span>{t("skeleton.noData")}</span>
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             )}

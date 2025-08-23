@@ -1,3 +1,7 @@
+// ============================================
+// COMPLETE use-more-circle.tsx UPDATE
+// ============================================
+
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
@@ -11,10 +15,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { BoardMissionStatusForFilter } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import {
-  addBoardMissionsToFileUploaderApi,
-  printJobUsingPrintNodeApi,
-} from "@/services/api-service/board-missions/board-missions-table";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRecoilState } from "recoil";
 import {
   fileUploaderConnectionIdState,
@@ -30,6 +31,7 @@ import {
   moveBoardMissionStatusToWaitingApi,
   tryMoveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 
 const useMoreCircle = ({
   mission,
@@ -45,6 +47,8 @@ const useMoreCircle = ({
   isDoneJobs,
   handleClickBackToProcess,
   onOpenMarkReadyModalForHasJobs,
+  printJobUsingPrintNode,
+  onOpenMarkReadyTypeModal, // ✅ ADD THIS NEW PROP
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -55,6 +59,10 @@ const useMoreCircle = ({
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [companyProfile] = useRecoilState(printHouseProfile);
+
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(
+    selectedMissionsState
+  );
 
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -67,6 +75,7 @@ const useMoreCircle = ({
     });
     anchor.click();
   };
+
   const GetPrintingTicketPDF = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -82,6 +91,7 @@ const useMoreCircle = ({
   };
 
   const addBoardMissionsToFileUploader = async (mission) => {
+    setSelectedMission(mission);
     const callBack = (res) => {
       if (res?.success) {
         setOpenFileUploader(true);
@@ -96,33 +106,35 @@ const useMoreCircle = ({
     });
   };
 
+  // ✅ UPDATED handleClickMarkAsReady FUNCTION
   const handleClickMarkAsReady = () => {
     if (mission?.isReady) {
+      // If already ready, mark as unready
       onClickReturnToProduction(mission);
     } else {
-      tryMoveBoardMissionsToDone(mission);
-      // if (mission?.productType === null || mission?.productType === "") {
-      //   onClickMarksAsDone(mission);
-      // } else {
-      //   onClickMarksAsDoneForProductType(mission);
-      // }
+      // Check if mission has productType
+      if (mission?.productType) {
+        onOpenMarkReadyTypeModal(mission);
+      } else {
+        tryMoveBoardMissionsToDone(mission);
+      }
     }
   };
 
+  //  UPDATED tryMoveBoardMissionsToDone FUNCTION
+  // This is now only called when there's NO productType
+  // OR from the modal handler after user makes their choice
   const tryMoveBoardMissionsToDone = async (boardMission) => {
     const callBack = (res) => {
       if (res.success) {
-        if (boardMission.productType) {
-          // moveBoardMissionToDone(boardMission);
-          onClickMarksAsDoneForProductType(mission);
+        // Since this is only called when NO productType exists,
+        // we handle the normal flow
+        if (res.data) {
+          // Has jobs - show has jobs modal
+          onOpenMarkReadyModalForHasJobs(boardMission);
         } else {
-          if (res.data) {
-            // onClickMarksAsDone(mission)
-            onOpenMarkReadyModalForHasJobs(boardMission);
-          } else {
-            onClickMarksAsDone(mission);
-            // onOpenMarkReadyModal(boardMission.id);
-          }
+          // No jobs - show regular mark ready modal
+          onClickMarksAsDone(boardMission);
         }
       }
     };
@@ -132,20 +144,6 @@ const useMoreCircle = ({
     });
   };
 
-  const printJobUsingPrintNode = async (
-    jobId: string,
-    productType?: string
-  ) => {
-    const callBack = (res) => {
-      if (res.success) {
-      }
-    };
-    let data = jobId;
-    if (productType) {
-      //data = data + "?productType="+productType;
-    }
-    await printJobUsingPrintNodeApi(callApi, callBack, data);
-  };
   const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
   const isSendPaymentToClient = CheckPermission(
@@ -177,17 +175,12 @@ const useMoreCircle = ({
               }&step=stations`
           }
           target="_blank"
-
         >
           {t("boardMissions.viewTask")}
         </a>
       ),
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => { }
-      // navigate(
-      //   `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-      //   }&step=stations`
-      // ),
+      onclick: () => { },
     },
     {
       condition: mission?.isEditable && isCanEditJob,
@@ -263,7 +256,7 @@ const useMoreCircle = ({
       ) : (
         <MarkAsUnReadyIcon />
       ),
-      onclick: () => handleClickMarkAsReady(),
+      onclick: () => handleClickMarkAsReady(), // ✅ This now checks for productType
     },
     {
       condition: true && isSendPaymentToClient && isShowLogs,
@@ -281,9 +274,8 @@ const useMoreCircle = ({
       condition: true && isSendPaymentToClient,
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
-      onclick: () => {
-        printJobUsingPrintNode(mission?.id, mission?.productType).then();
-      },
+      onclick: () =>
+        printJobUsingPrintNode(mission?.id, mission?.productType).then(),
     },
     !!companyProfile.filesApiAddress && {
       condition: true && isSendPaymentToClient,

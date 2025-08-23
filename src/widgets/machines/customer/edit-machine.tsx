@@ -1,12 +1,13 @@
 import { MachineStepper } from "@/widgets/machines/components/stepper/machines-stepper";
-import React, { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useEffect, useState, useCallback } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { IStep } from "@/widgets/machines/utils/interface/step";
 import { getSteps } from "@/widgets/machines/utils/steps";
 import { useRouter } from "next/router";
 import { usePrintHouseMachines } from "@/widgets/machines/hooks/use-print-house-machines";
 import { machineState } from "@/widgets/machines/state/machine-state";
+import { machinesListState } from "@/widgets/machines/state/machines";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { usePrintHouseAddMachine } from "@/widgets/machines/hooks/use-print-house-add-machine";
 import { useTranslation } from "react-i18next";
@@ -19,46 +20,107 @@ import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { AddMachineModal } from "@/widgets/machines/customer/add-machine-modal";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ModalType } from "@/enums";
+import { useGomakeAxios } from "@/hooks";
+import { Typography } from "@mui/material";
+import { useCustomerMachinesGrouped } from "./use-customer-machines-grouped";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
-    const { categoryId } = router.query;
+    const { categoryId, machineId } = router.query;
     const [activeStep, setActiveStep] = useState<number>(-1);
     const categories = useRecoilValue(machineCategoriesState);
     const [categoryName, setCategoryName] = useState<string>();
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
-    const { getPrintHouseMachinesList, setMachine, getAndSetMachines } = usePrintHouseMachines();
     const { updateMachine, setOpenOptionsModal, openUpdateOptionsModal, updateProfitProfile } = usePrintHouseAddMachine();
     const { t } = useTranslation();
     const [openAddMachineModal, setOpenAddMachineModal] = useState<boolean>(false);
     const { CheckPermission } = useUserPermission();
+    const { callApi } = useGomakeAxios();
+    const [machines, setMachines] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [currentMachineId, setCurrentMachineId] = useState<string>('');
+    
+    // Get admin machines functionality
+    const { allAdminMachines, loadAdminMachines } = useCustomerMachinesGrouped();
+    
+    // Proper Recoil setters
+    const setMachineState = useSetRecoilState(machineState);
+    const setMachinesListState = useSetRecoilState(machinesListState);
+
+    // Function to fetch machines
+    const fetchMachines = useCallback(async () => {
+        if (!categoryId) return;
+        
+        try {
+            setIsLoading(true);
+            const res = await callApi("Get", `/v1/machines/category/${categoryId}`);
+            
+            if (res?.data?.data?.data?.length > 0) {
+                const machinesList = res.data.data.data;
+                setMachines(machinesList);
+                
+                // Set machines in Recoil state
+                setMachinesListState(machinesList);
+                
+                // Select machine from URL or first machine
+                if (machineId && typeof machineId === 'string') {
+                    const targetMachine = machinesList.find((m: any) => m.id === machineId);
+                    if (targetMachine) {
+                        setCurrentMachineId(machineId);
+                        setMachineState(targetMachine);
+                    } else {
+                        setCurrentMachineId(machinesList[0].id);
+                        setMachineState(machinesList[0]);
+                    }
+                } else {
+                    setCurrentMachineId(machinesList[0].id);
+                    setMachineState(machinesList[0]);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching machines:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [categoryId, machineId, callApi, setMachineState, setMachinesListState]);
 
     useEffect(() => {
-        getAndSetMachines();
         if (categoryId) {
-            const category = categories.find(category => category.id === categoryId)
+            fetchMachines();
+            
+            const category = categories.find(category => category.id === categoryId);
             setCategoryName(category?.name ? category?.name : '');
             if (category) setMachineSteps(getSteps(category.id, false, CheckPermission));
         }
-    }, [categoryId]);
+    }, [categoryId, fetchMachines]);
+
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
     }
+    
     const navigateNext = () => {
         setActiveStep(activeStep + 1);
     }
+    
     const onSelectMachine = (value: string) => {
-        setMachine(value);
+        console.log('Selecting machine:', value);
+        setCurrentMachineId(value);
+        
+        const machine = machines.find((m: any) => m.id === value);
+        if (machine) {
+            setMachineState(machine);
+            
+            // Update the URL to reflect the selected machine
+            router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, { shallow: true });
+        }
         setActiveStep(-1);
-        setTimeout(() => {
-            setMachine(value);
-            setActiveStep(-1);
-        }, 0);
     }
+    
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
     }
+    
     const ActionsFooter = () => {
         return activeStep >= 0 &&
             <NavigationButtons canAddMachine={activeStep + 1 === machineSteps.length}
@@ -67,12 +129,20 @@ const CustomerEditMachines = () => {
                 onClickUpdate={updateMachine} onClickNext={navigateNext} onClickBack={navigateBack}
                 hasBack={activeStep > 0} hasNext={activeStep + 1 < machineSteps.length} />
     }
+    
     const Side = () => {
-        return <MachinesSideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id}
+        return <MachinesSideList 
+            list={machines.map((machine: any) => ({
+                text: machine.nickName || machine.manufacturer || machine.model || 'Unknown Machine',
+                value: machine.id,
+            }))}
+            selectedItem={currentMachineId}
             onSelect={onSelectMachine}
-            title={t("machineAttributes.machines")} quickActions={true}>
-        </MachinesSideList>
+            title={t("machineAttributes.machines")} 
+            quickActions={true}
+        />
     }
+    
     const editMachinesSteps: StepType[] = [
         {
             selector: '[data-tour="machinesList"]',
@@ -95,7 +165,17 @@ const CustomerEditMachines = () => {
             },
         },
     ]
+    
     const { } = useGoMakeTour(editMachinesSteps, []);
+    
+    if (isLoading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+                <Typography>{t('machineAttributes.loadingMachines')}</Typography>
+            </div>
+        );
+    }
+    
     return (
         <>
             <MachinesContainer side={Side()} header={t(categoryName)}
@@ -106,7 +186,7 @@ const CustomerEditMachines = () => {
                     variant={'contained'} style={{
                         width: '80%',
                         margin: 'auto'
-                    }}>{t('navigationButtons.add')}</SecondaryButton>}
+                    }}>{t('tabs.addMachine')}</SecondaryButton>}
                 subHeader={selectedMachine?.nickName}>
                 {!!selectedMachine?.id &&
                     <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
@@ -116,7 +196,11 @@ const CustomerEditMachines = () => {
                 }
             </MachinesContainer>
             <GoMakeModal insideStyle={{ width: 'fit-content', height: 'fit-content' }} openModal={openAddMachineModal} onClose={() => setOpenAddMachineModal(false)} modalTitle={t('tabs.addMachine')}>
-                <AddMachineModal closeModal={() => setOpenAddMachineModal(false)} />
+                <AddMachineModal 
+                    closeModal={() => setOpenAddMachineModal(false)} 
+                    allAdminMachines={allAdminMachines}
+                    loadAdminMachines={loadAdminMachines}
+                />
             </GoMakeModal>
             <GoMakeDeleteModal
                 openModal={openUpdateOptionsModal}
@@ -135,9 +219,7 @@ const CustomerEditMachines = () => {
                 }}
             />
         </>
-
     );
 }
-
 
 export { CustomerEditMachines }

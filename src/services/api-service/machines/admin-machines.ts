@@ -29,11 +29,23 @@ const getManufacturerModels: ICallAndSetData = async (callApi, setState, {catego
     return await getSetApiData(callApi, EHttpMethod.GET, `${GET_MANUFACTURER_MODELS_URL}/${category}/${manufacturer}`, setState);
 }
 
+// Search all admin machines across all categories
+const searchAllAdminMachines: ICallAndSetData = async (callApi, setState, searchTerm) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, `/v1/administrator/machines/search?q=${searchTerm}`, setState);
+}
+
+// Get all admin machines from all categories
+const getAllAdminMachines: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, '/v1/administrator/machines/all', setState);
+}
+
 export {
     adminAddNewMachine,
     adminUpdateMachine,
     adminGetAllMachineByCategory,
     getAdminMachinesByCategories,
     getCategoryManufacturers,
-    getManufacturerModels
+    getManufacturerModels,
+    searchAllAdminMachines,
+    getAllAdminMachines
 };
