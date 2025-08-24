@@ -209,7 +209,8 @@ const useMoreCircle = ({
         onClickWorkMissionPdf(
           mission?.id,
           mission?.actionId,
-          mission?.productType
+          mission?.productType,
+          mission?.productTypeName
         ),
     },
     {
@@ -275,7 +276,7 @@ const useMoreCircle = ({
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () =>
-        printJobUsingPrintNode(mission?.id, mission?.productType).then(),
+        printJobUsingPrintNode(mission?.id, mission?.productType, mission?.productTypeName).then(),
     },
     !!companyProfile.filesApiAddress && {
       condition: true && isSendPaymentToClient,

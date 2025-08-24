@@ -187,7 +187,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isJobsTableError,
     isSocketRefreshingJobs,
   } = useBoardMissions({ isPurchaseJobs });
-
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -885,13 +884,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+              productType: pendingPrintParams?.productTypeName || pendingPrintParams?.productName || pendingPrintParams?.productType
             })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
         noBtn={t("boardMissions.printProductTypeOnly", {
-          productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+          productType: pendingPrintParams?.productTypeName || pendingPrintParams?.productType
         })}
         openModal={openPrintTypeModal}
         onClose={onClosePrintTypeModal}
