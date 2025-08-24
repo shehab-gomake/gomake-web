@@ -6,15 +6,18 @@ import { useRouter } from "next/router";
 import { useDrag } from "react-dnd";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   resetProductionFloorJobColorApi,
   updateProductionFloorJobColorApi,
+  updateBoardMissionCurrentStationApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { ColoredCycle } from "@/components";
+import { ColoredCycle, GoMakeDeleteModal } from "@/components";
 import { ResetColorIcon } from "../../table-view/status-table/table-row/more-circle/icons/reset-color";
+import { ArrowRightIcon } from "@/icons";
 import { SketchPicker } from "react-color";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums/tabs-icon-enums";
 
 interface IProps {
   mission: IBoardMissions;
@@ -35,6 +38,7 @@ const JobCard: React.FC<IProps> = ({
   const { t } = useTranslation();
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
   // Context menu state
   const [contextMenuPosition, setContextMenuPosition] = useState<{
@@ -44,6 +48,7 @@ const JobCard: React.FC<IProps> = ({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [color, setColor] = useState(mission?.productionFloorJobColor ?? "");
   const [initialColor, setInitialColor] = useState(color);
+  const [openNextStationModal, setOpenNextStationModal] = useState(false);
 
   // Check if user can drag
   const canDrag = CheckPermission(
@@ -115,6 +120,35 @@ const JobCard: React.FC<IProps> = ({
     });
   };
 
+  const handleMoveToNextStation = async () => {
+    if (!mission?.nextStation?.nextStationId) {
+      console.warn("No next station available for this mission");
+      return;
+    }
+
+    const callBack = (res: any) => {
+      if (res.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await updateBoardMissionCurrentStationApi(callApi, callBack, {
+      boardId: mission?.id,
+      stationId: mission?.nextStation?.nextStationId,
+      productType: mission?.productType,
+    });
+  };
+
+  const handleOpenNextStationModal = () => {
+    setOpenNextStationModal(true);
+  };
+
+  const handleCloseNextStationModal = () => {
+    setOpenNextStationModal(false);
+  };
+
   const handleChangeColorClick = () => {
     setInitialColor(color);
     setShowColorPicker(true);
@@ -149,6 +183,19 @@ const JobCard: React.FC<IProps> = ({
         handleCloseContextMenu();
       },
     },
+    ...(mission?.nextStation?.nextStationId
+      ? [
+          {
+            label: t("productionFloor.nextStation"),
+            icon: <ArrowRightIcon />,
+            onClick: (e: any) => {
+              e.stopPropagation();
+              handleOpenNextStationModal();
+              handleCloseContextMenu();
+            },
+          },
+        ]
+      : []),
   ];
 
   const handleColorPickerClose = () => {
@@ -204,7 +251,7 @@ const JobCard: React.FC<IProps> = ({
   return (
     <Box
       ref={cardRef}
-      onClick={handleOpenMission}
+      onClick={openNextStationModal ? undefined : handleOpenMission}
       onContextMenu={handleContextMenu}
       sx={{
         backgroundColor: "white",
@@ -443,6 +490,19 @@ const JobCard: React.FC<IProps> = ({
           </Box>,
           document.body
         )}
+
+      {/* Next Station Modal */}
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("customers.modal.nextStationModalTitle")}
+        // subTitle={t("productionFloor.nextStationModalSubTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={openNextStationModal}
+        onClose={handleCloseNextStationModal}
+        onClickDelete={handleMoveToNextStation}
+      />
     </Box>
   );
 };
