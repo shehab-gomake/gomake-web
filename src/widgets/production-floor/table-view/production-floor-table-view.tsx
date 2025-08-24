@@ -460,105 +460,105 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   ]);
 
   return (
-    <ZoomWrapper>
-      <Stack gap={"20px"}>
-        {renderContent}
+    // <ZoomWrapper>
+    <Stack gap={"20px"}>
+      {renderContent}
 
-        <CustomerCardWidget
-          customerAction={CUSTOMER_ACTIONS.Edit}
-          typeClient={CLIENT_TYPE.CUSTOMER}
-          openModal={openCustomerModal}
-          onClose={() => setOpenCustomerModal(false)}
-          customer={customer}
-          setCustomer={setCustomer}
-        />
+      <CustomerCardWidget
+        customerAction={CUSTOMER_ACTIONS.Edit}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        openModal={openCustomerModal}
+        onClose={() => setOpenCustomerModal(false)}
+        customer={customer}
+        setCustomer={setCustomer}
+      />
 
-        <FloatingBulkActionsMenu
-          selectedJobs={selectedIds}
-          onUpdateStatus={handleBulkUpdateStatus}
-          onMoveToNextStation={moveToNextStation.open}
-          onGroupJobs={handleCheckIfCanMakeGroupedBoardMissions}
-          onMoveToDone={moveToDone.open}
-          onClearSelection={handleClearSelection}
-          statusOptions={statusOptions}
-          t={t}
-        />
+      <FloatingBulkActionsMenu
+        selectedJobs={selectedIds}
+        onUpdateStatus={handleBulkUpdateStatus}
+        onMoveToNextStation={moveToNextStation.open}
+        onGroupJobs={handleCheckIfCanMakeGroupedBoardMissions}
+        onMoveToDone={moveToDone.open}
+        onClearSelection={handleClearSelection}
+        statusOptions={statusOptions}
+        t={t}
+      />
 
-        <ThreeOptionsModal
-          modalType={ModalType.WARNING}
-          title={t("boardMissions.markDoneModalTitle")}
-          subTitle={t("boardMissions.markDoneModalSubTitle")}
-          yesBtn={"boardMissions.markDoneModalYes"}
-          noBtn={"boardMissions.markDoneModalNo"}
-          openModal={moveToDone.isOpen}
-          onClose={moveToDone.close}
-          onClickYes={() => handleBulkMoveToDone(selectedIds, true)}
-          onClickNo={() => handleBulkMoveToDone(selectedIds, false)}
-        >
-          <div style={{ width: "100%", minWidth: 300 }}>
-            <GoMakeAutoComplate
-              options={
-                storageList?.find(
-                  (option: any) => option.storage === inputValue
-                ) || inputValue === ""
-                  ? storageList
-                  : [
-                      {
-                        storage: `Add "${inputValue}" as a new storage`,
-                        id: "new",
-                      },
-                      ...storageList,
-                    ]
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={moveToDone.isOpen}
+        onClose={moveToDone.close}
+        onClickYes={() => handleBulkMoveToDone(selectedIds, true)}
+        onClickNo={() => handleBulkMoveToDone(selectedIds, false)}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{ width: "100%", border: "none", height: 45 }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
               }
-              placeholder={t("boardMissions.selectStorage")}
-              key={defaultValue}
-              style={{ width: "100%", border: "none", height: 45 }}
-              getOptionLabel={(option: any) => option?.storage}
-              value={defaultValue}
-              onChange={(e: any, value: any) => {
-                if (value?.id === "new") {
-                  addPrintHouseJobsStorage(inputValue);
-                  setInputValue("");
-                } else {
-                  handleStorageChange(e, value);
-                  setInputValue("");
-                }
-              }}
-              onInputChange={(event: any, newInputValue: string) => {
-                setInputValue(newInputValue);
-              }}
-            />
-          </div>
-        </ThreeOptionsModal>
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </ThreeOptionsModal>
 
-        <GoMakeDeleteModal
-          hideIcon={true}
-          modalType={ModalType.WARNING}
-          title={t("customers.modal.nextStationModalTitle")}
-          yesBtn={t("sales.quote.yesBtn")}
-          cancelBtn={t("modal.no")}
-          openModal={moveToNextStation.isOpen}
-          onClose={moveToNextStation.close}
-          onClickDelete={() => {
-            handleBulkMoveToNextStation(selectedIds);
-          }}
-        />
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("customers.modal.nextStationModalTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={moveToNextStation.isOpen}
+        onClose={moveToNextStation.close}
+        onClickDelete={() => {
+          handleBulkMoveToNextStation(selectedIds);
+        }}
+      />
 
-        <GoMakeDeleteModal
-          hideIcon={true}
-          modalType={ModalType.WARNING}
-          title={t("sales.modals.groupJobsModalTitle")}
-          subTitle={t("sales.modals.groupJobsModalSubTitle")}
-          yesBtn={t("sales.quote.yesBtn")}
-          cancelBtn={t("modal.no")}
-          openModal={isOpenGroupJobsModal.isOpen}
-          onClose={isOpenGroupJobsModal.close}
-          onClickDelete={() => {
-            handleGroupJobs(selectedIds);
-          }}
-        />
-      </Stack>
-    </ZoomWrapper>
+      <GoMakeDeleteModal
+        hideIcon={true}
+        modalType={ModalType.WARNING}
+        title={t("sales.modals.groupJobsModalTitle")}
+        subTitle={t("sales.modals.groupJobsModalSubTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("modal.no")}
+        openModal={isOpenGroupJobsModal.isOpen}
+        onClose={isOpenGroupJobsModal.close}
+        onClickDelete={() => {
+          handleGroupJobs(selectedIds);
+        }}
+      />
+    </Stack>
+    // </ZoomWrapper>
   );
 };
 

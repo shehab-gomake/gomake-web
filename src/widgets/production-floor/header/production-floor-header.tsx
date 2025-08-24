@@ -49,7 +49,7 @@ const ProductionFloorHeader = ({
   const isMobileScreen = useIsMobile();
 
   // Zoom control hook
-  const zoomControl = useZoomContext();
+  // const zoomControl = useZoomContext();
 
   // State for column settings menu
   const [columnSettingsAnchorEl, setColumnSettingsAnchorEl] = useState(null);
@@ -251,14 +251,14 @@ const ProductionFloorHeader = ({
         </ButtonGroup>
 
         {/* Zoom Control */}
-        <ZoomControl
+        {/* <ZoomControl
           onZoomIn={zoomControl.zoomIn}
           onZoomOut={zoomControl.zoomOut}
           onZoomReset={zoomControl.resetZoom}
           currentZoom={zoomControl.currentZoom}
           minZoom={zoomControl.minZoom}
           maxZoom={zoomControl.maxZoom}
-        />
+        /> */}
       </Stack>
     </Stack>
   );

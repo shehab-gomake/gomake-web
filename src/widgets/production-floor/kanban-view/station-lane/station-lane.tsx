@@ -17,7 +17,6 @@ import {
   boardMissionsUpdateActionMachine,
   boardMissionsUpdateActionEmployee,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { Console } from "console";
 
 interface IProps {
   station: IStation;
