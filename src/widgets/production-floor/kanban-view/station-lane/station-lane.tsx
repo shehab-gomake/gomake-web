@@ -180,9 +180,11 @@ const StationLane: React.FC<IProps> = ({
       await boardMissionsUpdateActionEmployee(callApi, callBack, {
         boardMissionActionId: mission?.currentStation?.id,
         employeeId: targetStationInfo.employeeId,
-        employeeName: targetStationInfo.machineName
-          ? targetStationInfo.machineName.split("(")[0].trim()
-          : "",
+        employeeName:
+          targetStationInfo.employeeName ||
+          (targetStationInfo.machineName
+            ? targetStationInfo.machineName.split("(")[0].trim()
+            : ""),
       });
     }
 
@@ -348,8 +350,8 @@ const StationLane: React.FC<IProps> = ({
               flexDirection: "column",
               gap: "8px",
               overflow: "auto",
-              maxHeight: hasMultipleCards ? "233px" : "106px", // Dynamic height: 2.5 cards if any column has multiple, 1 card if all single
-              minHeight: hasMultipleCards ? "233px" : "106px", // Ensure minimum height for consistent layout
+              maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
+              minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
               border:
                 isOver && canDrop
                   ? "2px dashed #1976d2"
