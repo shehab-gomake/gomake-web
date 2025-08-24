@@ -1,6 +1,7 @@
 import { ICategory } from "../types/kanban-types";
 
 // Example of extended categories for a larger production facility
+//!here not sure
 export const EXTENDED_CATEGORIES: ICategory[] = [
   {
     id: "pre-press",

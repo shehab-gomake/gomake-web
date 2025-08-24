@@ -20,9 +20,15 @@ interface IProps {
   mission: IBoardMissions;
   isMobile?: boolean;
   stationId?: string;
+  categoryName?: string; // Add category name for action boundary validation
 }
 
-const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
+const JobCard: React.FC<IProps> = ({
+  mission,
+  isMobile,
+  stationId,
+  categoryName,
+}) => {
   const { push } = useRouter();
   const { CheckPermission } = useUserPermission();
   const { callApi } = useGomakeAxios();
@@ -179,13 +185,13 @@ const JobCard: React.FC<IProps> = ({ mission, isMobile, stationId }) => {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: "task",
-      item: { ...mission, stationId }, // Include stationId in the dragged item
+      item: { ...mission, stationId, categoryName }, // Include stationId and categoryName in the dragged item
       canDrag: canDrag,
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [canDrag, stationId, mission]
+    [canDrag, stationId, mission, categoryName]
   );
 
   // Handle drag ref

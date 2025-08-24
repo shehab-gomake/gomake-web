@@ -94,6 +94,7 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
               station={station}
               missions={missionsByStation[station.id] || []}
               isMobile={isMobile}
+              categoryName={category.name}
             />
           ))}
         </Stack>

@@ -12,17 +12,30 @@ import {
 import { useRecoilValue } from "recoil";
 import { productionFloorStatusesState } from "../../state/boards";
 import { useTranslation } from "react-i18next";
+import { useGomakeAxios } from "@/hooks";
+import {
+  boardMissionsUpdateActionMachine,
+  boardMissionsUpdateActionEmployee,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
+import { Console } from "console";
 
 interface IProps {
   station: IStation;
   missions: IStatusesBoardsMissions[];
   isMobile?: boolean;
+  categoryName?: string; // Add category name to validate action boundaries
 }
 
-const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
+const StationLane: React.FC<IProps> = ({
+  station,
+  missions,
+  isMobile,
+  categoryName,
+}) => {
   const { updateStatus } = useProductionFloorData();
   const globalStatuses = useRecoilValue(productionFloorStatusesState);
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
 
   // Use fixed status columns that match the header
   const statusColumns = STATUS_COLUMNS;
@@ -91,6 +104,95 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
     return [];
   };
 
+  // Helper function to get station info from missions
+  const getStationInfo = () => {
+    // Get the first mission to extract station info
+    const firstMission = missions.flatMap((m) => m.boardMissions)[0];
+    if (firstMission?.currentStation) {
+      return {
+        machineId: firstMission.currentStation.machineId,
+        machineName: firstMission.currentStation.machineName,
+        employeeId: firstMission.currentStation.employeeId,
+        actionId: firstMission.currentStation.actionId,
+        actionName: firstMission.currentStation.actionName,
+        //!here
+      };
+    }
+    return null;
+  };
+
+  const stationInfo = getStationInfo();
+
+  // Drop functionality for station header
+  const [{ isOver: isHeaderOver, canDrop: canHeaderDrop }, headerDrop] =
+    useDrop(
+      () => ({
+        accept: "task",
+        canDrop: (item: any) => {
+          // Only allow drops from different stations within the same action/category
+          return (
+            item.stationId !== station.id && item.categoryName === categoryName
+          );
+        },
+        drop: (item: any, monitor) => {
+          const didDrop = monitor.didDrop();
+          if (didDrop) {
+            return;
+          }
+          // This is a station change - update machine/employee
+          if (stationInfo) {
+            updateStation(item, stationInfo);
+          }
+        },
+        collect: (monitor) => ({
+          isOver: !!monitor.isOver(),
+          canDrop: !!monitor.canDrop(),
+        }),
+      }),
+      [station.id, stationInfo, categoryName]
+    );
+
+  // Helper function to update station (machine or employee)
+  const updateStation = async (
+    mission: any,
+    targetStationInfo: any,
+    targetStatusId?: string
+  ) => {
+    const callBack = (res: any) => {
+      if (res.success) {
+        console.log("Station updated successfully");
+        // Optionally refresh data or show success message
+      } else {
+        console.error("Failed to update station:", res);
+        // Optionally show error message
+      }
+    };
+
+    if (targetStationInfo.machineId && targetStationInfo.machineName) {
+      // Update machine
+      await boardMissionsUpdateActionMachine(callApi, callBack, {
+        boardMissionActionId: mission?.currentStation?.id,
+        machineId: targetStationInfo.machineId,
+        machineName: targetStationInfo.machineName,
+        workFlowActionId: mission?.currentStation?.workFlowActionId, //!here
+      });
+    } else if (targetStationInfo.employeeId) {
+      // Update employee
+      await boardMissionsUpdateActionEmployee(callApi, callBack, {
+        boardMissionActionId: mission?.currentStation?.id,
+        employeeId: targetStationInfo.employeeId,
+        employeeName: targetStationInfo.machineName
+          ? targetStationInfo.machineName.split("(")[0].trim()
+          : "",
+      });
+    }
+
+    // If we have a target status ID, also update the status
+    if (targetStatusId) {
+      updateStatus([mission], targetStatusId).then();
+    }
+  };
+
   return (
     <Stack
       direction="row"
@@ -102,15 +204,27 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
     >
       {/* Station Header */}
       <Box
+        ref={headerDrop}
         sx={{
           width: isMobile ? "120px" : "200px",
           minWidth: isMobile ? "120px" : "200px",
-          backgroundColor: "#f8f9fa",
+          backgroundColor:
+            isHeaderOver && canHeaderDrop
+              ? "#f0f8ff"
+              : isHeaderOver && !canHeaderDrop
+              ? "#fff5f5"
+              : "#f8f9fa",
           borderRight: "1px solid #e0e0e0",
           padding: "12px 16px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          border:
+            isHeaderOver && canHeaderDrop
+              ? "2px dashed #1976d2"
+              : isHeaderOver && !canHeaderDrop
+              ? "2px dashed #f44336"
+              : "none",
         }}
       >
         <Typography
@@ -123,6 +237,28 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
           }}
         >
           {station.name}
+          {isHeaderOver && canHeaderDrop && (
+            <span
+              style={{
+                color: "#1976d2",
+                fontSize: "0.7rem",
+                marginLeft: "4px",
+              }}
+            >
+              (Drop to change station)
+            </span>
+          )}
+          {isHeaderOver && !canHeaderDrop && (
+            <span
+              style={{
+                color: "#f44336",
+                fontSize: "0.7rem",
+                marginLeft: "4px",
+              }}
+            >
+              (Cannot drop from different action)
+            </span>
+          )}
         </Typography>
         <Typography
           variant="caption"
@@ -151,24 +287,32 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
           () => ({
             accept: "task",
             canDrop: (item: any) => {
-              // Only allow drops within the same station
-              return item.stationId === station.id;
+              // Allow drops from any station within the same action/category
+              return item.categoryName === categoryName;
             },
             drop: (item: any, monitor) => {
               const didDrop = monitor.didDrop();
               if (didDrop) {
                 return;
               }
-              // Get the actual status ID for this status name
-              const actualStatusId = getStatusIdForName(status.name);
 
-              if (actualStatusId) {
-                // Update the mission status
-                updateStatus([item], actualStatusId).then();
+              // Check if this is a station change (different stationId)
+              if (item.stationId !== station.id) {
+                // This is a station change - update machine/employee AND status
+                if (stationInfo) {
+                  const actualStatusId = getStatusIdForName(status.name);
+                  updateStation(item, stationInfo, actualStatusId);
+                }
               } else {
-                console.warn(
-                  `No status ID found for status name: ${status.name}`
-                );
+                // This is a status change within the same station
+                const actualStatusId = getStatusIdForName(status.name);
+                if (actualStatusId) {
+                  updateStatus([item], actualStatusId).then();
+                } else {
+                  console.warn(
+                    `No status ID found for status name: ${status.name}`
+                  );
+                }
               }
             },
             collect: (monitor) => ({
@@ -176,7 +320,13 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               canDrop: !!monitor.canDrop(),
             }),
           }),
-          [status.name, station.id, getStatusIdForName]
+          [
+            status.name,
+            station.id,
+            getStatusIdForName,
+            stationInfo,
+            categoryName,
+          ]
         );
 
         return (
@@ -186,7 +336,12 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
             sx={{
               flex: 1,
               minWidth: isMobile ? "120px" : "150px",
-              backgroundColor: isOver && canDrop ? "#f0f8ff" : "white",
+              backgroundColor:
+                isOver && canDrop
+                  ? "#f0f8ff"
+                  : isOver && !canDrop
+                  ? "#fff5f5"
+                  : "white",
               borderRight: "1px solid #e0e0e0", // Always show right border
               borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
               padding: "8px",
@@ -196,7 +351,12 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
               overflow: "auto",
               maxHeight: hasMultipleCards ? "204px" : "106px", // Dynamic height: 2 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "204px" : "106px", // Ensure minimum height for consistent layout
-              border: isOver && canDrop ? "2px dashed #1976d2" : "none",
+              border:
+                isOver && canDrop
+                  ? "2px dashed #1976d2"
+                  : isOver && !canDrop
+                  ? "2px dashed #f44336"
+                  : "none",
               "::-webkit-scrollbar": {
                 width: "8px",
               },
@@ -225,6 +385,7 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
                     mission={mission}
                     isMobile={isMobile}
                     stationId={station.id}
+                    categoryName={categoryName}
                   />
                 ))}
               </>
@@ -239,7 +400,17 @@ const StationLane: React.FC<IProps> = ({ station, missions, isMobile }) => {
                   fontSize: "0.8rem",
                 }}
               >
-                {t("boardMissions.noTasks")}
+                {isOver && canDrop ? (
+                  <span style={{ color: "#1976d2", fontSize: "0.8rem" }}>
+                    Drop to change station & status
+                  </span>
+                ) : isOver && !canDrop ? (
+                  <span style={{ color: "#f44336", fontSize: "0.8rem" }}>
+                    Cannot drop from different action
+                  </span>
+                ) : (
+                  t("boardMissions.noTasks")
+                )}
               </Box>
             )}
           </Box>
