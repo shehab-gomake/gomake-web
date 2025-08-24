@@ -14,6 +14,7 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { useGomakeAxios } from "@/hooks";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import {useEffect, useState} from "react";
 
 const useUploadFiles = (
   orderItemId, 
@@ -30,9 +31,20 @@ const useUploadFiles = (
   const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const { CheckPreferenceValue } = usePrintHousePreferences();
-
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
   const { callApi } = useGomakeAxios();
+  useEffect(()=>{
+    // Check if we should open printing modal
+    const finalFilesGroup = uploadingFiles?.find(
+        (fg) => fg.orderItemId === orderItemId && fg.productType === productType
+    );
 
+    if (CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && isFileUploaded && finalFilesGroup
+        && finalFilesGroup.filesInfo.length == 1 && finalFilesGroup.filesInfo[0].fileStatus === EUploadingFileStatus.Uploaded) {
+      isOpenPrintingModal?.open();
+      setIsFileUploaded(false)
+    }
+  },[uploadingFiles,isFileUploaded])
   const handleFileUpload = async (file, fileType) => {
     const finalPath = fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
     setShowFileUploader(true);
@@ -162,6 +174,7 @@ const useUploadFiles = (
       currentChunk++;
       
       if (currentChunk === totalChunks) {
+        setIsFileUploaded(true)
         // Update success status for this specific file
         setUploadingFiles(prev =>
           prev.map((fg) =>
@@ -190,16 +203,7 @@ const useUploadFiles = (
           fileId: fileId
         });
         
-        // Check if we should open printing modal
-        const finalFilesGroup = uploadingFiles?.find(
-          (fg) => fg.orderItemId === orderItemId && fg.productType === productType
-        );
         
-        if (response?.success && 
-            CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE) && 
-            (!finalFilesGroup || finalFilesGroup.filesInfo.length <= 1)) {
-          isOpenPrintingModal?.open();
-        }
       }
     }
   };
