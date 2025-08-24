@@ -4915,8 +4915,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const isSide2 = parameterCode === "ColorsLoadAverageSide2";
           const colorParamCode = isSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
           const loadParamCode = isSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
-          const colorsParamVal = temp.find(p => p.parameterCode === colorParamCode);
-          const loadParamValIndex = temp.findIndex(p => p.parameterCode === loadParamCode);
+          const colorParamId = isSide2 ? "8eff3238-a321-48f3-85eb-c14afaccbff3" : "8eff3238-a321-48f3-85eb-c14afaccbff3";
+          const loadParamId = isSide2 ? "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8" : "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8";
+          const colorsParamVal = temp.find(p => p.parameterCode === colorParamCode || p.parameterId === colorParamId);
+          const loadParamValIndex = temp.findIndex(p => p.parameterCode === loadParamCode || p.parameterId === loadParamId);
           if (colorsParamVal && Array.isArray(colorsParamVal.valueIds)) {
             const filledArr = colorsParamVal.valueIds.map(() => data.values);
             if (loadParamValIndex !== -1) {

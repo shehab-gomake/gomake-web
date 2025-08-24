@@ -2606,6 +2606,17 @@
     "Orders":"Orders",
     "OrderItems":"Order Item",
     "EstimationSuccessRate":"Estimation Success Rate(-+5%)"
+  },
+  "productionFloor": {
+    "noStationsSelected": "No stations selected",
+    "QRScanner": "QR Scanner",
+    "scanQRCodeToProceed": "Scan QR code to proceed",
+    "export": {
+      "exportToExcel": "Export to Excel",
+      "noDataToExport": "No data to export",
+      "excelExportSuccess": "Data exported to Excel successfully",
+      "excelExportError": "Failed to export data to Excel"
+    }
   }
   
 }

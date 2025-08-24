@@ -281,7 +281,9 @@ const DocumentsButton = ({ isMobile = false }) => {
             : ""
         }
         yesBtn={t("boardMissions.printAllJobs")}
-        noBtn={t("boardMissions.printProductTypeOnly")}
+        noBtn={t("boardMissions.printProductTypeOnly", {
+          productType: pendingPrintMission?.productTypeName || pendingPrintMission?.productType
+        })}
         openModal={openPrintTypeModal}
         onClose={() => {
           setOpenPrintTypeModal(false);

@@ -885,12 +885,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType: pendingPrintParams.productType
+              productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
             })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
-        noBtn={"boardMissions.printProductTypeOnly"}
+        noBtn={t("boardMissions.printProductTypeOnly", {
+          productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+        })}
         openModal={openPrintTypeModal}
         onClose={onClosePrintTypeModal}
         onClickYes={() => handlePrintTypeChoice(true)}

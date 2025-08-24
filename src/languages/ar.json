@@ -2379,6 +2379,17 @@
     "displayall": "display all types with equal amounts in the PDF of the PACA",
     "ShowStarted": "Show started and finished QRs in the production PDF",
     "deliveryWarning": "هذا الرمز الشريطي مخصص للتسليم. لإكمال المهمة، يجب عليك مسح رمز الإنهاء وليس رمز التسليم."
+  },
+  "productionFloor": {
+    "noStationsSelected": "لم يتم اختيار محطات",
+    "QRScanner": "ماسح الرمز الشريطي",
+    "scanQRCodeToProceed": "امسح الرمز الشريطي للمتابعة",
+    "export": {
+      "exportToExcel": "تصدير إلى Excel",
+      "noDataToExport": "لا توجد بيانات للتصدير",
+      "excelExportSuccess": "تم تصدير البيانات إلى Excel بنجاح",
+      "excelExportError": "فشل في تصدير البيانات إلى Excel"
+    }
   }
 
 }
