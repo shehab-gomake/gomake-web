@@ -1,7 +1,7 @@
 import { deleteDocumentAttachmentApi } from "@/services/api-service/generic-doc/documents-api";
 import { useCallback, useEffect, useState } from "react";
 import { fileItemsState, quoteItemState } from "@/store/quote-item";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { removeQuoteItemFileApi, uploadDocumentAttachmentApi, uploadQuoteItemFileApi, uploadQuoteItemFileForDocumentApi } from "@/services/api-service/materials/materials-endpoints";
@@ -28,6 +28,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedAttachment, setSelectedAttachment] = useState(null);
     const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+    const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
@@ -70,6 +71,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
         if (file) {
             const reader = new FileReader();
             reader.onload = async (event) => {
+                setLoadingWithShadow(true);
                 const arrayBuffer = event.target.result;
                 const data = new Uint8Array(arrayBuffer as ArrayBuffer);
                 const base64Content = `data:${file.type};base64,${btoa(
@@ -98,7 +100,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
                     }
 
                     const res = response.data;
-                    uploadQuoteItemFileForDocument({
+                    await uploadQuoteItemFileForDocument({
                         id: item.id,
                         fileName: file.name,
                         screenShot: res.screenshotUrl,
@@ -137,6 +139,8 @@ const useAddAttachmentsModal = ({ getQuote, documentType, quoteConfirm, isQuoteC
                         }
                     });
                 } catch (error) {
+                } finally {
+                    setLoadingWithShadow(false);
                 }
             };
             reader.readAsArrayBuffer(file);
