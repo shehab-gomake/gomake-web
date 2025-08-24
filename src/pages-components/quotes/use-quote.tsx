@@ -497,13 +497,46 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (res?.success) {
         const downloadLink = document.createElement("a");
         if (typeof res.data === "string") {
-          downloadLink.href = res.data;
+          // For S3 URLs, we need to fetch the file and create a blob to force download
+          fetch(res.data)
+            .then(response => response.blob())
+            .then(blob => {
+              const url = URL.createObjectURL(blob);
+              downloadLink.href = url;
+              // Set appropriate filename based on export type
+              const getFileName = () => {
+                if (exportType === INVOICES_EXPORT_TYPES.ExtendedTxt) {
+                  return "invoices_export.txt";
+                } else if (exportType === INVOICES_EXPORT_TYPES.ExtendedExcel) {
+                  return "invoices_extended.xlsx";
+                } else if (exportType === INVOICES_EXPORT_TYPES.SummeryExcelWithVat) {
+                  return "invoices_summary_with_vat.xlsx";
+                } else if (exportType === INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat) {
+                  return "invoices_summary_without_vat.xlsx";
+                } else {
+                  return "table.xlsx";
+                }
+              };
+              downloadLink.download = getFileName();
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              document.body.removeChild(downloadLink);
+              // Clean up the object URL
+              URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Error downloading file:', error);
+              // Fallback to direct link if fetch fails
+              downloadLink.href = res.data;
+              downloadLink.download = "table.xlsx";
+              downloadLink.click();
+            });
         } else {
           const link = URL.createObjectURL(res.data);
           downloadLink.href = link;
+          downloadLink.download = "table.xlsx";
+          downloadLink.click();
         }
-        downloadLink.download = "table.xlsx";
-        downloadLink.click();
       } else {
       }
     };
