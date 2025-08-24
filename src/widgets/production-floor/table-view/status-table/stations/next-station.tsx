@@ -14,13 +14,13 @@ import { useStations } from "./use-stations";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 interface IProps extends ICurrentStation, INextStation {
   boardMissionId: string;
   status?: any;
   textColor?: string;
-  onClickDone: ()=>void;
+  onClickDone: () => void;
 }
 
 const NextStationComponent = ({
@@ -30,7 +30,7 @@ const NextStationComponent = ({
   status,
   nextStationName,
   nextStationId,
-    onClickDone
+  onClickDone,
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle({ textColor });
@@ -67,12 +67,24 @@ const NextStationComponent = ({
       <PermissionCheck
         userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
       >
-        { (
-          <Button sx={classes.moveToBtn} onClick={ nextStationId ? onClickOpenModal : onClickDone}>
-            <span style={{...classes.actionText,fontSize:GetProductionFontSizeFromPreferences()}}>{nextStationId ? nextStationName : t('productionFloor.moveToDone')}</span>
+        {
+          <Button
+            sx={classes.moveToBtn}
+            onClick={nextStationId ? onClickOpenModal : onClickDone}
+          >
+            <span
+              style={{
+                ...classes.actionText,
+                fontSize: GetProductionFontSizeFromPreferences(),
+              }}
+            >
+              {nextStationId
+                ? nextStationName
+                : t("productionFloor.moveToDone")}
+            </span>
             {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
           </Button>
-        )}
+        }
       </PermissionCheck>
       <GoMakeDeleteModal
         hideIcon={true}

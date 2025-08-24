@@ -23,6 +23,8 @@ import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded
 import { useIsMobile } from "@/hooks/use-responsive";
 import { DoneJobsIcon } from "./components/icons/done-jobs";
 import { ColumnSettingsMenuContent } from "@/widgets/production-floor/table-view/components/column-settings-menu";
+import { ZoomControl } from "@/widgets/production-floor/components/zoom-control";
+import { useZoomContext } from "@/widgets/production-floor/context/zoom-context";
 import { useState } from "react";
 
 const ProductionFloorHeader = ({
@@ -45,6 +47,9 @@ const ProductionFloorHeader = ({
   const updateViewInUrl = useUpdateViewInUrl();
   const { CheckPermission } = useUserPermission();
   const isMobileScreen = useIsMobile();
+
+  // Zoom control hook
+  const zoomControl = useZoomContext();
 
   // State for column settings menu
   const [columnSettingsAnchorEl, setColumnSettingsAnchorEl] = useState(null);
@@ -244,6 +249,16 @@ const ProductionFloorHeader = ({
             </PrimaryButton>
           </Tooltip>
         </ButtonGroup>
+
+        {/* Zoom Control */}
+        <ZoomControl
+          onZoomIn={zoomControl.zoomIn}
+          onZoomOut={zoomControl.zoomOut}
+          onZoomReset={zoomControl.resetZoom}
+          currentZoom={zoomControl.currentZoom}
+          minZoom={zoomControl.minZoom}
+          maxZoom={zoomControl.maxZoom}
+        />
       </Stack>
     </Stack>
   );

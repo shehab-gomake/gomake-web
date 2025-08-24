@@ -12,6 +12,7 @@ import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/p
 import { ICategory, IStation } from "./types/kanban-types";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { ZoomWrapper } from "@/widgets/production-floor/components/zoom-wrapper";
 
 // Helper function to generate categories and stations from actual data
 const generateCategoriesFromData = (
@@ -246,49 +247,51 @@ const ProductionFloorKanbanBoard = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Stack
-        direction="column"
-        sx={{
-          height: isMobile ? "calc(100vh - 100px)" : "100vh",
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
-        {/* Fixed Status Header */}
-        <FixedStatusHeader isMobile={isMobile} />
-
-        {/* Scrollable Content Area */}
+      <ZoomWrapper>
         <Stack
           direction="column"
-          spacing={0}
           sx={{
-            flex: 1,
-            overflow: "auto",
-            "::-webkit-scrollbar": {
-              width: isMobile ? "4px" : "8px",
-            },
-            "::-webkit-scrollbar-thumb": {
-              backgroundColor: "#CCCDCF",
-              borderRadius: isMobile ? "2px" : "4px",
-              cursor: "pointer",
-            },
-            "::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: "#888",
-            },
+            height: isMobile ? "calc(100vh - 100px)" : "100vh",
+            width: "100%",
+            overflow: "hidden",
           }}
         >
-          {updateActiveJobCounts.map((category) => (
-            <KanbanCategoryComponent
-              key={category.id}
-              category={category}
-              missionsByStation={organizeMissionsByStation}
-              isCollapsed={collapsedCategories.has(category.id)}
-              onToggleCollapse={() => toggleCategory(category.id)}
-              isMobile={isMobile}
-            />
-          ))}
+          {/* Fixed Status Header */}
+          <FixedStatusHeader isMobile={isMobile} />
+
+          {/* Scrollable Content Area */}
+          <Stack
+            direction="column"
+            spacing={0}
+            sx={{
+              flex: 1,
+              overflow: "auto",
+              "::-webkit-scrollbar": {
+                width: isMobile ? "4px" : "8px",
+              },
+              "::-webkit-scrollbar-thumb": {
+                backgroundColor: "#CCCDCF",
+                borderRadius: isMobile ? "2px" : "4px",
+                cursor: "pointer",
+              },
+              "::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "#888",
+              },
+            }}
+          >
+            {updateActiveJobCounts.map((category) => (
+              <KanbanCategoryComponent
+                key={category.id}
+                category={category}
+                missionsByStation={organizeMissionsByStation}
+                isCollapsed={collapsedCategories.has(category.id)}
+                onToggleCollapse={() => toggleCategory(category.id)}
+                isMobile={isMobile}
+              />
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
+      </ZoomWrapper>
     </DndProvider>
   );
 };
