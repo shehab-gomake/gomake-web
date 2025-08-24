@@ -157,15 +157,7 @@ const StationLane: React.FC<IProps> = ({
     targetStationInfo: any,
     targetStatusId?: string
   ) => {
-    const callBack = (res: any) => {
-      if (res.success) {
-        console.log("Station updated successfully");
-        // Optionally refresh data or show success message
-      } else {
-        console.error("Failed to update station:", res);
-        // Optionally show error message
-      }
-    };
+    const callBack = (res: any) => {};
 
     if (targetStationInfo.machineId && targetStationInfo.machineName) {
       // Update machine
