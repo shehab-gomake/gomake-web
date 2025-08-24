@@ -533,8 +533,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   useEffect(() => {
     if (isSocketUpdateJobsTable) {
-      getAllData(false, false);
-      setIsSocketUpdateJobsTable(false);
+      (async () => {
+        setIsSocketRefreshingJobs(true);
+        await getAllData(false, false, undefined, true);
+        setIsSocketRefreshingJobs(false);
+        setIsSocketUpdateJobsTable(false);
+      })();
     }
   }, [isSocketUpdateJobsTable]);
 
@@ -549,16 +553,21 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   }, []);
 
   const [missionItem, setMissionItem] = useState<any>();
+  // Loading/Error states for jobs table
+  const [isJobsTableLoading, setIsJobsTableLoading] = useState<boolean>(false);
+  const [isJobsTableError, setIsJobsTableError] = useState<boolean>(false);
+  const [isSocketRefreshingJobs, setIsSocketRefreshingJobs] = useState<boolean>(false);
 
   const getAllData = async (
     isPurchaseJobs: boolean,
     isClear: boolean = false,
-    sortOrder?: any
+    sortOrder?: any,
+    invokedBySocket: boolean = false
   ) => {
     if (isPurchaseJobs) {
-      return await getAllPurchaseJobs(isClear);
+      return await getAllPurchaseJobs(isClear, invokedBySocket);
     } else {
-      return await getAllBoardMissions(isClear, sortOrder);
+      return await getAllBoardMissions(isClear, sortOrder, invokedBySocket);
     }
   };
 
@@ -720,8 +729,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   //!here
-  const getAllBoardMissions = async (isClear: boolean = false, order?: any) => {
+  const getAllBoardMissions = async (isClear: boolean = false, order?: any, invokedBySocket: boolean = false) => {
     const sortOrder = order || currentSortOrder;
+    setIsJobsTableError(false);
+    setIsJobsTableLoading(!isSocketRefreshingJobs);
 
     const callBack = (res) => {
       if (res?.success) {
@@ -848,7 +859,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setAllBoardMissions(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
+        setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
+        setAllBoardMissions([]);
       }
     };
     if (!router.isReady) {
@@ -959,9 +972,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         isPrinted: currentIsPrinted || isPrintedState,
       };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
+    setIsJobsTableLoading(false);
   };
 
-  const getAllPurchaseJobs = async (isClear: boolean = false) => {
+  const getAllPurchaseJobs = async (isClear: boolean = false, invokedBySocket?: any) => {
+    setIsJobsTableError(false);
+    setIsJobsTableLoading(!isSocketRefreshingJobs);
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
@@ -1029,7 +1045,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setAllPurchaseJobs(mapData);
         setPagesCount(Math.ceil(_data?.totalItems / currentPageSize));
       } else {
+        setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
+        setAllPurchaseJobs([]);
       }
     };
 
@@ -1087,6 +1105,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           isPurchaseJobs: true,
         }
     );
+    setIsJobsTableLoading(false);
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
@@ -1122,7 +1141,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onClickWorkMissionPdf = async (
     boardMissionId: string,
     actionId: string,
-    productType: string
+    productType: string,
+    productTypeName: string
   ) => {
     if (productType) {
       // Has productType - show modal
@@ -1130,7 +1150,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         type: 'pdf',
         boardMissionId,
         actionId,
-        productType
+        productType,
+        productTypeName
       });
       setOpenPrintTypeModal(true);
     } else {
@@ -1491,14 +1512,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const printJobUsingPrintNode = async (
     jobId: string,
-    productType?: string
+    productType?: string,
+    productTypeName?: string
   ) => {
     if (productType) {
       // Has productType - show modal
       setPendingPrintParams({
         type: 'printNode',
         jobId,
-        productType
+        productType,
+        productTypeName
       });
       setOpenPrintTypeModal(true);
     } else {
@@ -2051,6 +2074,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onCloseMarkReadyTypeModal,
     onOpenMarkReadyTypeModal,
     handleMarkReadyTypeChoice,
+    isJobsTableLoading,
+    isJobsTableError,
+    isSocketRefreshingJobs,
   };
 };
 

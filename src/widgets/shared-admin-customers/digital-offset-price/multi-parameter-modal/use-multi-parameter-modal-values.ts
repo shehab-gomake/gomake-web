@@ -247,6 +247,23 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         const colorsParameter = parameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
         if (!colorsParameter) return parameters; // Exit if color parameter not found
       
+        // If the edited parameter is the aggregate average load, mirror it to the load-percentage array
+        const isAvgLoadParam = parameters.some(p => p.id === parameterId && (p.code === "ColorsLoadAverage" || p.code === "ColorsLoadAverageSide2"));
+        if (isAvgLoadParam) {
+          const loadParam = parameters.find(p => (p.code === "Colorloadpercentage" || p.code === "ColorloadpercentageSide2") && p.sectionId === colorsParameter.sectionId);
+          if (!loadParam) return parameters;
+          const updated = parameters.map(param => {
+            if (param.id === loadParam.id) {
+              const newDefaultValueArray = Array.isArray(param.defaultValueArray) ? [...param.defaultValueArray] : [];
+              const total = colorsParameter.defaultValueArray?.length ?? newDefaultValueArray.length;
+              const filled = Array(total).fill(textInputVal);
+              return { ...param, defaultValueArray: filled };
+            }
+            return param;
+          });
+          return updated;
+        }
+      
         // Step 2: Find the index of the valueId within the colors parameter
         const valueIndex = colorsParameter.defaultValueArray.findIndex(val => val === value.valueId);
         if (valueIndex === -1) return parameters; // Exit if valueId not found

@@ -49,6 +49,7 @@ import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useSearch } from "rsuite/cjs/internals/Picker";
 import { ZoomWrapper } from "../components/zoom-wrapper/zoom-wrapper";
+import { ProductionFloorExportButtons } from "./export-buttons/production-floor-export-buttons";
 
 // Performance optimization constants
 const ITEMS_PER_PAGE = 50; // Show 50 items per page
@@ -462,6 +463,13 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   return (
     // <ZoomWrapper>
     <Stack gap={"20px"}>
+      {/* Export buttons */}
+      <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+        <ProductionFloorExportButtons 
+          statusBoards={filteredDataByMachine}
+        />
+      </Stack>
+      
       {renderContent}
 
       <CustomerCardWidget

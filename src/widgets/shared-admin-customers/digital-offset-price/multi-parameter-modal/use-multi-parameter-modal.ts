@@ -56,6 +56,56 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
   const onClickSaveParameter = () => {
     setCanCalculation(true)
     let copy = lodashClonedeep(subProductsCopy);
+
+    // Compute average load of selected colors and update average parameter
+    try {
+      const subSectionType = settingParameters?.subSection?.type;
+      const target = copy?.find((sp: any) => sp?.type === subSectionType);
+      if (target && Array.isArray(target.parameters)) {
+        // Detect which side this modal controls by checking which params exist
+        const hasSide2 = !!target.parameters.find((p: any) => p.parameterCode === "printingcolorsDetailSide2");
+        const colorParamCode = hasSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
+        const loadParamCode = hasSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
+        const avgParamCode = hasSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
+
+        // Fallback ids (used in some templates)
+        const COLOR_PARAM_IDS = [
+          "8eff3238-a321-48f3-85eb-c14afaccbff3",
+          "ae8d81d1-a0de-4967-b821-dae6937e7551"
+        ];
+        const LOAD_PARAM_IDS = [
+          "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8"
+        ];
+
+        const colorParamVal = target.parameters.find(
+          (p: any) => p.parameterCode === colorParamCode || (p.parameterId && COLOR_PARAM_IDS.includes(p.parameterId))
+        );
+        const loadParamVal = target.parameters.find(
+          (p: any) => p.parameterCode === loadParamCode || (p.parameterId && LOAD_PARAM_IDS.includes(p.parameterId))
+        );
+        const avgParamIdx = target.parameters.findIndex((p: any) => p.parameterCode === avgParamCode);
+
+        if (colorParamVal && loadParamVal && Array.isArray(colorParamVal.valueIds) && Array.isArray(loadParamVal.values)) {
+          // Average only selected colors' loads
+          const selectedCount = colorParamVal.valueIds.length;
+          const selectedLoads = loadParamVal.values.slice(0, selectedCount).map((v: any) => Number(v)).filter((n: any) => !isNaN(n));
+          if (selectedLoads.length > 0) {
+            const sum = selectedLoads.reduce((acc: number, n: number) => acc + n, 0);
+            const avg = Math.round(sum / selectedLoads.length);
+            if (avgParamIdx !== -1) {
+              target.parameters[avgParamIdx] = {
+                ...target.parameters[avgParamIdx],
+                values: [avg.toString()],
+                valueIds: [avg.toString()],
+              };
+            }
+          }
+        }
+      }
+    } catch (err) {
+      // ignore averaging failure - do not block save
+    }
+
     setSubProducts(copy)
     setSubProductsCopy(copy)
     onClose();
@@ -92,6 +142,27 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
     [router]
   );
   const onClickSaveParameterForSettings = (sectionId,subSectionId,data) => {
+    // Before persisting, compute the average from default arrays and update the average parameter's defaultValue
+    try {
+      const settingParams = data?.settingParameters || [];
+      const hasSide2 = !!settingParams.find((p: any) => p.code === "printingcolorsDetailSide2");
+      const colorParam = settingParams.find((p: any) => p.code === (hasSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail"));
+      const loadParam = settingParams.find((p: any) => p.code === (hasSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage"));
+      const avgParamIdx = settingParams.findIndex((p: any) => p.code === (hasSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage"));
+      if (colorParam && loadParam && avgParamIdx !== -1) {
+        const selectedIds = colorParam?.defaultValueArray || [];
+        const loads = (loadParam?.defaultValueArray || []).slice(0, selectedIds.length).map((n: any) => Number(n)).filter((n: any) => !isNaN(n));
+        if (loads.length > 0) {
+          const sum = loads.reduce((a: number, b: number) => a + b, 0);
+          const avg = Math.round(sum / loads.length);
+          data.settingParameters[avgParamIdx] = {
+            ...data.settingParameters[avgParamIdx],
+            defaultValue: avg,
+          };
+        }
+      }
+    } catch {}
+
     updatedProductParameteDefaultValue(sectionId,subSectionId,data)
     getProductById()
     onClose();

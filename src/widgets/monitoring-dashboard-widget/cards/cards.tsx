@@ -28,11 +28,13 @@ const Cards = ({
       labelTranslationKey: "totalSales",
       value: data?.totalPrice,
       unit: currUnit,
+      growth: data?.salesGrowth ?? null,
     },
     {
       labelTranslationKey: "totalCost",
       value: data.totalCost,
       unit: currUnit,
+      growth: data?.costGrowth ?? null,
     },
     {
       labelTranslationKey: "totalProfit",
@@ -41,18 +43,13 @@ const Cards = ({
       margin: data?.totalPrice
         ? ((data?.totalProfit / data.totalPrice) * 100).toFixed(2)
         : 0,
+      growth: data?.profitGrowth ?? null,
     },
-    // {
-    //   labelTranslationKey: "profitMargin",
-    //   value: data.totalPrice
-    //     ? ((data.totalProfit / data.totalPrice) * 100).toFixed(2)
-    //     : 0,
-    //   unit: "%",
-    // },
     {
       labelTranslationKey: "successRate",
       value: data.successRate,
       unit: "%",
+      growth: data?.successRateGrowth ?? null,
     },
     {
       labelTranslationKey: "totalActualCost",
@@ -75,6 +72,7 @@ const Cards = ({
                 bgColor={colors[index % colors.length]}
                 unit={item?.unit}
                 margin={Number(item?.margin)}
+                growth={item?.growth as any}
               >
                 <GoMakeCurrency
                   color={colors[index % colors.length]}

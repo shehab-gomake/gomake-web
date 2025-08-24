@@ -20,9 +20,11 @@ export const exportDashboardToExcel = (
 
   // Export Agents Performance Data
   if (data.agentsData && data.agentsData.length > 0) {
+    const serializeRow = (row: any[]) =>
+      row.map((cell) => (typeof cell === "string" || typeof cell === "number" ? cell : String(cell)));
     const agentsWorksheet = XLSX.utils.aoa_to_sheet([
       data.agentHeaders,
-      ...data.agentsData,
+      ...data.agentsData.map(serializeRow),
     ]);
     XLSX.utils.book_append_sheet(
       workbook,
@@ -36,7 +38,7 @@ export const exportDashboardToExcel = (
   if (data.productsData && data.productsData.length > 0) {
     const productsWorksheet = XLSX.utils.aoa_to_sheet([
       data.productHeaders,
-      ...data.productsData,
+      ...data.productsData.map((r) => r.map((c) => (typeof c === "string" || typeof c === "number" ? c : String(c)))),
     ]);
     XLSX.utils.book_append_sheet(
       workbook,
@@ -50,7 +52,7 @@ export const exportDashboardToExcel = (
   if (data.clientsData && data.clientsData.length > 0) {
     const clientsWorksheet = XLSX.utils.aoa_to_sheet([
       data.clientHeaders,
-      ...data.clientsData,
+      ...data.clientsData.map((r) => r.map((c) => (typeof c === "string" || typeof c === "number" ? c : String(c)))),
     ]);
     XLSX.utils.book_append_sheet(
       workbook,

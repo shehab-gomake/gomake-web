@@ -54,11 +54,16 @@ const usePrintHouseAddMachine = () => {
         delete payload['_id'];
         delete payload['id'];
         payload.nickName = payload.nickName + ' - Duplicated'
-        const callBack = (res) => {
+        const callBack = async (res) => {
             if (res?.success) {
                 setMachineState(res.data);
                 addMachineToList(res.data)
                 alertSuccessAdded();
+                
+                // Navigate to the newly duplicated machine
+                if (res.data?.id && res.data?.category) {
+                    await push(`/machines/category/${res.data.category}?machineId=${res.data.id}`);
+                }
             } else {
                 alertFaultAdded();
             }
@@ -72,6 +77,11 @@ const usePrintHouseAddMachine = () => {
                 alertSuccessDelete();
                 deleteMachineFromArray(machineState.id);
                 setMachineState({});
+                
+                // Navigate to category page after successful deletion
+                if (machineState?.category) {
+                    push(`/machines/category/${machineState.category}`);
+                }
             } else {
                 alertFaultDelete();
             }
