@@ -68,8 +68,21 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
         const loadParamCode = hasSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
         const avgParamCode = hasSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
 
-        const colorParamVal = target.parameters.find((p: any) => p.parameterCode === colorParamCode);
-        const loadParamVal = target.parameters.find((p: any) => p.parameterCode === loadParamCode);
+        // Fallback ids (used in some templates)
+        const COLOR_PARAM_IDS = [
+          "8eff3238-a321-48f3-85eb-c14afaccbff3",
+          "ae8d81d1-a0de-4967-b821-dae6937e7551"
+        ];
+        const LOAD_PARAM_IDS = [
+          "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8"
+        ];
+
+        const colorParamVal = target.parameters.find(
+          (p: any) => p.parameterCode === colorParamCode || (p.parameterId && COLOR_PARAM_IDS.includes(p.parameterId))
+        );
+        const loadParamVal = target.parameters.find(
+          (p: any) => p.parameterCode === loadParamCode || (p.parameterId && LOAD_PARAM_IDS.includes(p.parameterId))
+        );
         const avgParamIdx = target.parameters.findIndex((p: any) => p.parameterCode === avgParamCode);
 
         if (colorParamVal && loadParamVal && Array.isArray(colorParamVal.valueIds) && Array.isArray(loadParamVal.values)) {
