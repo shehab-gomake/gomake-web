@@ -14,9 +14,14 @@ import { quoteItemState } from "@/store/quote-item";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { areAllItemsChecked } from "@/utils/helpers";
+import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
+import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow/loading";
 
-const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfirmation, quoteConfirm }) => {
-
+const ButtonsConfirmContainer = ({
+  onClickOpenAddAttachmentsModal,
+  isQuoteConfirmation,
+  quoteConfirm,
+}) => {
   const { alertFault } = useSnackBar();
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -42,6 +47,12 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
     approveSignatureModal,
     onClickOpenApproveSignatureModal,
     onClickCloseApproveSignatureModal,
+    isUploading,
+    onContinueApprovalFromAttachmentsModal,
+    onFileUploadStart,
+    onFileUploadComplete,
+    openAttachmentsModal,
+    onClickCloseAddAttachmentsModal,
   } = useButtonsConfirmContainer();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   return (
@@ -71,15 +82,16 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
               if (areAllItemsChecked(quoteConfirm)) {
                 alertFault("reports.pleaseSelectOneItem");
               } else {
-                onClickOpenAddAttachmentsModal()
+                onClickOpenAddAttachmentsModal();
               }
             } else {
-              onClickOpenAddAttachmentsModal()
+              onClickOpenAddAttachmentsModal();
             }
           }}
         >
           {t("sales.quote.attachFiles")}
         </SecondaryButton>
+        {/* !here  */}
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
@@ -89,10 +101,10 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
               if (areAllItemsChecked(quoteConfirm)) {
                 alertFault("reports.pleaseSelectOneItem");
               } else {
-                onClickOpenApproveModal()
+                onClickOpenApproveModal();
               }
             } else {
-              onClickOpenApproveModal()
+              onClickOpenApproveModal();
             }
           }}
         >
@@ -136,11 +148,10 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}
         title={t("sales.quote.approveOffer")}
-        yesBtn={t("sales.quote.yesBtn")}
+        yesBtn={t("sales.quote.approveAndSign")}
         openModal={approveModal}
         onClose={onClickCloseApproveModal}
         subTitle={t("sales.cart.approveOfferQuestion")}
-        // onClickDelete={onClickApprove}
         onClickDelete={onClickOpenApproveSignatureModal}
         hideIcon={true}
       />
@@ -149,6 +160,22 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
         onClose={onClickCloseApproveSignatureModal}
         onClickApprove={onClickApprove}
       />
+      <AddAttachmentsModal
+        openModal={openAttachmentsModal}
+        onClose={onClickCloseAddAttachmentsModal}
+        documentType={1}
+        getQuote={() => {}}
+        isQuoteConfirmation={true}
+        quoteConfirm={quoteConfirm}
+        onFileUploadStart={onFileUploadStart}
+        onFileUploadComplete={onFileUploadComplete}
+        onContinueApproval={onContinueApprovalFromAttachmentsModal}
+      />
+      {isUploading && (
+        <GomakeLoadingWithShadow
+          style={{ backgroundColor: "transparent", zIndex: 1 }}
+        />
+      )}
     </div>
   );
 };

@@ -9,6 +9,8 @@ import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-
 import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { ApproveSignatureModal } from "@/widgets/quote-new/total-price-and-vat/approve-signature-modal";
 import { ModalType } from "@/enums";
+import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
+import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow/loading";
 
 const ButtonsConfirmContainer = ({ isMobile }) => {
   const { classes } = useStyle();
@@ -36,6 +38,13 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
     approveModal,
     onClickCloseApproveModal,
     onClickOpenApproveModal,
+    isUploading,
+    onContinueApprovalFromAttachmentsModal,
+    onFileUploadStart,
+    onFileUploadComplete,
+    openAttachmentsModal,
+    onClickOpenAddAttachmentsModal,
+    onClickCloseAddAttachmentsModal,
   } = useButtonsConfirmContainer();
 
   return (
@@ -57,7 +66,11 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
         >
           {t("sales.quote.print")}
         </SecondaryButton>
-        <SecondaryButton variant="outlined" style={classes.btnStyle}>
+        <SecondaryButton
+          variant="outlined"
+          style={classes.btnStyle}
+          onClick={onClickOpenAddAttachmentsModal}
+        >
           {t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
@@ -102,11 +115,13 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
           onClickDelete={onClickReject}
           style={{ width: "unset" }}
         />
+        {/* !here after click yes open modal Add attachments if there is no files attachech just in this case and two buttons contiue confirmAndApprove  and chnage theto note that we dont have files
+         */}
         <GoMakeDeleteModal
           modalType={ModalType.EDIT}
           style={{ width: "90%" }}
           title={t("sales.quote.approveOffer")}
-          yesBtn={t("sales.quote.yesBtn")}
+          yesBtn={t("sales.quote.approveAndSign")}
           openModal={approveModal}
           onClose={onClickCloseApproveModal}
           subTitle={t("sales.cart.approveOfferQuestion")}
@@ -119,6 +134,22 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
           onClickApprove={onClickApprove}
           isMobile={isMobile}
         />
+        <AddAttachmentsModal
+          openModal={openAttachmentsModal}
+          onClose={onClickCloseAddAttachmentsModal}
+          documentType={1}
+          getQuote={() => {}}
+          isQuoteConfirmation={true}
+          quoteConfirm={quoteConfirm}
+          onFileUploadStart={onFileUploadStart}
+          onFileUploadComplete={onFileUploadComplete}
+          onContinueApproval={onContinueApprovalFromAttachmentsModal}
+        />
+        {isUploading && (
+          <GomakeLoadingWithShadow
+            style={{ backgroundColor: "transparent", zIndex: 1 }}
+          />
+        )}
       </div>
     )
   );
