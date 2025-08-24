@@ -10,14 +10,14 @@ interface IBoardMissionsProps {
   onClickMarksAsDone?: (mission?: any, markAllReady?: boolean) => void;
   onClickReturnToProduction?: (mission?: any) => void;
   onClickOrderSummeryPdf?: (id: string) => void;
-  onClickWorkMissionPdf?: (id: string, actionId: string, productType: string) => void;
+  onClickWorkMissionPdf?: (id: string, actionId: string, productType: string, productName: string) => void;
   onOpenModal?: (mission?: any) => void;
   onClickPrintPackagingSlip?: (mission?: any) => void;
   onClickMarksAsDoneForProductType?: (mission?: any) => void;
   isDoneJobs?: boolean;
   handleClickBackToProcess?: (mission?: any) => void;
   onOpenMarkReadyModalForHasJobs?: (mission?: any, markAllReady?: boolean) => void;
-  printJobUsingPrintNode?: (jobId: string, productType?: string) => void;
+  printJobUsingPrintNode?: (jobId: string, productType?: string, productName?: string) => void;
   onOpenMarkReadyTypeModal?: (mission?: any) => void;
 }
 const MoreMenuWidget = ({
