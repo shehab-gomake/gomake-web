@@ -1141,7 +1141,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onClickWorkMissionPdf = async (
     boardMissionId: string,
     actionId: string,
-    productType: string
+    productType: string,
+    productTypeName: string
   ) => {
     if (productType) {
       // Has productType - show modal
@@ -1149,7 +1150,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         type: 'pdf',
         boardMissionId,
         actionId,
-        productType
+        productType,
+        productTypeName
       });
       setOpenPrintTypeModal(true);
     } else {
@@ -1510,14 +1512,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const printJobUsingPrintNode = async (
     jobId: string,
-    productType?: string
+    productType?: string,
+    productTypeName?: string
   ) => {
     if (productType) {
       // Has productType - show modal
       setPendingPrintParams({
         type: 'printNode',
         jobId,
-        productType
+        productType,
+        productTypeName
       });
       setOpenPrintTypeModal(true);
     } else {
