@@ -5,6 +5,7 @@ import { adaptRight } from "@/utils/adapter";
 import { useStyle } from "./style";
 import { EStatus } from "@/shared";
 import { formatValueWithUnit } from "@/utils/is-currency";
+import { GrowthBadge } from "../growth-badge";
 
 export interface IDashboardCard {
   label: string;
@@ -17,6 +18,7 @@ export interface IDashboardCard {
   productionTime?: number;
   unit?: string;
   margin?: number;
+  growth?: number | null;
 }
 
 const DashboardCard = ({
@@ -26,6 +28,7 @@ const DashboardCard = ({
   children,
   unit,
   margin,
+  growth,
 }: IDashboardCard) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -59,9 +62,6 @@ const DashboardCard = ({
         </div>
         <Stack gap={"4px"}>
           <span style={classes.label}>{t(`dashboard.${label}`)}</span>
-          {/* <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
-            <div style={classes.value}>{formatValueWithUnit(value, unit)}</div>
-          </Stack> */}
           <Stack gap={"2px"}>
             <div style={classes.value}>{formatValueWithUnit(value, unit)}</div>
             {label === "totalProfit" &&
@@ -69,8 +69,14 @@ const DashboardCard = ({
               margin !== null && (
                 <div style={classes.marginLabel}>
                   {t("dashboard.profitMargin")}: {margin.toFixed(2)}%
+                  {typeof growth === "number" && (
+                    <GrowthBadge value={growth} />
+                  )}
                 </div>
               )}
+            {typeof growth === "number" && (
+              <GrowthBadge value={growth} />
+            )}
           </Stack>
         </Stack>
       </Stack>
