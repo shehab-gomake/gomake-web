@@ -48,7 +48,6 @@ import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 import { useUserPermission } from "@/hooks/use-permission";
 import { useSearch } from "rsuite/cjs/internals/Picker";
-import { ZoomWrapper } from "../components/zoom-wrapper/zoom-wrapper";
 import { ProductionFloorExportButtons } from "./export-buttons/production-floor-export-buttons";
 import { ZoomWrapper } from "../components/zoom-wrapper/zoom-wrapper";
 
@@ -466,11 +465,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     <Stack gap={"20px"}>
       {/* Export buttons */}
       <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-        <ProductionFloorExportButtons 
+        <ProductionFloorExportButtons
           statusBoards={filteredDataByMachine}
         />
       </Stack>
-      
+
       {renderContent}
 
       <CustomerCardWidget
@@ -512,12 +511,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
