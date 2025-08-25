@@ -118,7 +118,7 @@ const useMonitoringDashboard = () => {
         documentType: filters.selectedDocumentType,
       }),
       ...(filters?.selectedDocumentStatuses?.length && {
-        documentstatuses: filters.selectedDocumentStatuses,
+        documentStatuses: filters.selectedDocumentStatuses,
       }),
       ...extraCostData,
     };
@@ -162,7 +162,7 @@ const useMonitoringDashboard = () => {
         documentType: filters.selectedDocumentType,
       }),
       ...(filters?.selectedDocumentStatuses?.length && {
-        documentstatuses: filters.selectedDocumentStatuses,
+        documentStatuses: filters.selectedDocumentStatuses,
       }),
     };
 
@@ -209,7 +209,7 @@ const useMonitoringDashboard = () => {
         documentType: filters.selectedDocumentType,
       }),
       ...(filters?.selectedDocumentStatuses?.length && {
-        documentstatuses: filters.selectedDocumentStatuses,
+        documentStatuses: filters.selectedDocumentStatuses,
       }),
     };
     const callBack = (res) => {
