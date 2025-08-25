@@ -208,17 +208,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-      ? RoundTableCell
-      : PrimaryTableCell;
+        ? RoundTableCell
+        : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-      ? OddEvenTableRow
-      : variant === "RoundTable"
-      ? RoundTableRow
-      : PrimaryTableRow;
+        ? OddEvenTableRow
+        : variant === "RoundTable"
+          ? RoundTableRow
+          : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -231,10 +231,10 @@ const PrimaryTable = ({
       const result = sortFn
         ? sortFn(a, b)
         : a[key] < b[key]
-        ? -1
-        : a[key] > b[key]
-        ? 1
-        : 0;
+          ? -1
+          : a[key] > b[key]
+            ? 1
+            : 0;
       return direction === "asc" ? result : -result;
     });
   }, [rows, sortConfig, customSortFns]);
@@ -310,22 +310,26 @@ const PrimaryTable = ({
                     }}
                   >
                     {isAgingeport ? header?.name : header}
-                    {/* Show sorting icon only when it's the sorted header */}
-                    {(withSort || withSortBE) && isAgingeport
-                      ? header?.name
-                      : header !== "" &&
-                        sortConfig?.key === index && (
-                          <IconButton
-                            size="small"
-                            style={{ ...adaptMarginRight(dir, 4) }}
-                          >
-                            {sortConfig.direction === "asc" ? (
+                    {/* Show sorting icon: on hover OR when this header is sorted (for FE sort) */}
+                    {withSort && !isAgingeport && header !== "" &&
+                      (sortConfig?.key === index || hoveredColumn === header) && (
+                        <IconButton
+                          size="small"
+                          style={{ ...adaptMarginRight(dir, 4) }}
+                        >
+                          {sortConfig?.key === index
+                            ? sortConfig.direction === "asc"
+                              ? (
+                                <ArrowUpward sx={{ fontSize: "18px" }} />
+                              )
+                              : (
+                                <ArrowDownward sx={{ fontSize: "18px" }} />
+                              )
+                            : (
                               <ArrowUpward sx={{ fontSize: "18px" }} />
-                            ) : (
-                              <ArrowDownward sx={{ fontSize: "18px" }} />
                             )}
-                          </IconButton>
-                        )}
+                        </IconButton>
+                      )}
                     {isAgingeport &&
                       (header?.key === "cardName" ||
                         header?.key === "cardCode" ||
@@ -374,8 +378,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                      ? "#EFDDFF"
-                      : "inherit",
+                        ? "#EFDDFF"
+                        : "inherit",
                 }}
               >
                 {enableCheckboxes && (
