@@ -4,226 +4,323 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { ModalType } from "@/enums";
 import { useAddAttachmentsModal } from "./use-add-attachments-modal";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { PrimaryButton } from "@/components/button/primary-button";
 
-
-const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuoteConfirmation, quoteConfirm }) => {
+const AddAttachmentsModal = ({
+  openModal,
+  onClose,
+  documentType,
+  getQuote,
+  isQuoteConfirmation,
+  quoteConfirm,
+  onFileUploadStart,
+  onFileUploadComplete,
+  onContinueApproval = undefined,
+}) => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
   const {
-    t,
     onClickCloseDeleteModal,
     selectedAttachment,
     openDeleteModal,
     handleFileUploadQuoteConfirmation,
     getAttachmentsRowsQuoteConfirmation,
-    handleDeleteFileFromItems
-  } = useAddAttachmentsModal({ getQuote, documentType, quoteConfirm, isQuoteConfirmation });
+    handleDeleteFileFromItems,
+  } = useAddAttachmentsModal({
+    getQuote,
+    documentType,
+    quoteConfirm,
+    isQuoteConfirmation,
+    onFileUploadStart,
+    onFileUploadComplete,
+    onContinueApproval,
+  });
   const [isDragging, setIsDragging] = useState(false);
+
+  // Determine modal title based on whether onContinueApproval is provided
+  const getModalTitle = () => {
+    if (onContinueApproval) {
+      return t("sales.quote.noFilesAttached");
+    }
+    return quoteConfirm?.attachments?.length > 0
+      ? t("sales.quote.editAttachments")
+      : t("sales.quote.addAttachments");
+  };
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={quoteConfirm?.attachments?.length > 0
-          ? t("sales.quote.editAttachments")
-          : t("sales.quote.addAttachments")}
+        modalTitle={getModalTitle()}
         onClose={onClose}
         insideStyle={classes.insideStyle}
       >
-        {
-          isQuoteConfirmation ? <div>
-            {quoteConfirm?.documentItems?.map((item: any, index: number) => {
-              return (
-                item.isChecked && (
-                  <div key={index} >
-                    <h4 style={{ marginBottom: '10px', marginTop: '10px' }}>{item.productName} ({item?.workName})</h4>
-                    <div >
-
-                      <PrimaryTable
-                        stickyFirstCol={false}
-                        stickyHeader={true}
-                        maxHeight={400}
-                        rows={getAttachmentsRowsQuoteConfirmation(item)}
-                        headers={[
-                          t("fileUploader.fileName"),
-                          t("fileUploader.downloadFile"),
-                          t("fileUploader.deleteFile"),
-                        ]}
-                        columnWidths={["70%", "15%", "15%", "15%"]}
-                      />
-                      <div
-                        onClick={() => document.getElementById(`file-upload-${index}`).click()}
-                        role="region"
-                        aria-label="File Upload Drop Area"
-                        aria-describedby={`upload-instruction-${index}`}
-                        tabIndex={0}
-                        className={`drop-area ${isDragging ? 'dragging' : ''}`}
-                        style={{
-                          ...classes.attachmentsContainer,
-                          border: '2px dashed #ccc',
-                          borderTop: 'none',
-                          backgroundColor: isDragging ? 'rgba(0, 123, 255, 0.1)' : 'transparent',
-                          transition: 'all 0.3s ease',
-                          padding: '20px',
-                          borderRadius: '4px',
-                          textAlign: 'center',
-                          cursor: 'pointer',
-                        }}
-                        onDragEnter={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsDragging(true);
-                        }}
-                        onDragLeave={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsDragging(false);
-                        }}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsDragging(false);
-                          const files = e.dataTransfer.files;
-                          if (files.length > 0) {
-                            const event = { target: { files } } as any;
-                            handleFileUploadQuoteConfirmation(event, item);
-
-                            // Reset the file input value so the same file can be selected again
-                            const fileInput = document.getElementById(`file-upload-${index}`) as HTMLInputElement;
-                            if (fileInput) {
-                              fileInput.value = "";
-                            }
-                          }
-                        }}
-                      >
-                        <p id={`upload-instruction-${index}`} className="sr-only">
-                          {t("fileUploader.dragAndDropUpload")}
-                        </p>
-                      </div>
-                    </div>
-                    <input
-                      id={`file-upload-${index}`}
-                      type="file"
-                      style={{ display: 'none' }}
-                      onChange={(e) => handleFileUploadQuoteConfirmation(e, item)}
-                    />
-
-                    <GoMakeDeleteModal
-                      modalType={ModalType.DELETE}
-                      title={t("sales.quote.deleteAttachment")}
-                      yesBtn={t("sales.quote.yesBtn")}
-                      openModal={openDeleteModal}
-                      onClose={onClickCloseDeleteModal}
-                      onClickDelete={() => handleDeleteFileFromItems(selectedAttachment.parentItem.id, selectedAttachment.fileName, selectedAttachment.url)}
-                    />
-                  </div>
-                )
-              )
-            }
-            )}
-          </div> :
-            <div>
-              {quoteConfirm?.documentItems?.map((item: any, index: number) => {
-                return (
-                  item.isSelected && (
-                    <div key={index} >
-                      <h4 style={{ marginBottom: '10px', marginTop: '10px' }}>{item.productName} ({item?.workName})</h4>
-                      <div >
-
-                        <PrimaryTable
-                          stickyFirstCol={false}
-                          stickyHeader={true}
-                          maxHeight={400}
-                          rows={getAttachmentsRowsQuoteConfirmation(item)}
-                          headers={[
-                            t("fileUploader.fileName"),
-                            t("fileUploader.downloadFile"),
-                            // t("fileUploader.deleteFile"),
-                          ]}
-                          columnWidths={["70%", "15%", "15%", "15%"]}
-                        />
-                        <div
-                          onClick={() => document.getElementById(`file-upload-${index}`).click()}
-                          role="region"
-                          aria-label="File Upload Drop Area"
-                          aria-describedby={`upload-instruction-${index}`}
-                          tabIndex={0}
-                          className={`drop-area ${isDragging ? 'dragging' : ''}`}
-                          style={{
-                            ...classes.attachmentsContainer,
-                            border: '2px dashed #ccc',
-                            borderTop: 'none',
-                            backgroundColor: isDragging ? 'rgba(0, 123, 255, 0.1)' : 'transparent',
-                            transition: 'all 0.3s ease',
-                            padding: '20px',
-                            borderRadius: '4px',
-                            textAlign: 'center',
-                            cursor: 'pointer',
-                          }}
-                          onDragEnter={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setIsDragging(true);
-                          }}
-                          onDragLeave={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setIsDragging(false);
-                          }}
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setIsDragging(false);
-                            const files = e.dataTransfer.files;
-                            if (files.length > 0) {
-                              const event = { target: { files } } as any;
-                              handleFileUploadQuoteConfirmation(event, item);
-
-                              // Reset the file input value so the same file can be selected again
-                              const fileInput = document.getElementById(`file-upload-${index}`) as HTMLInputElement;
-                              if (fileInput) {
-                                fileInput.value = "";
+        <div style={classes.modalContentContainer}>
+          {/* Scrollable Content Area */}
+          <div style={classes.scrollableContent}>
+            {isQuoteConfirmation ? (
+              <div>
+                {quoteConfirm?.documentItems?.map(
+                  (item: any, index: number) => {
+                    return (
+                      item.isChecked && (
+                        <div key={index}>
+                          <h4
+                            style={{ marginBottom: "10px", marginTop: "10px" }}
+                          >
+                            {item.productName} ({item?.workName})
+                          </h4>
+                          <div>
+                            <PrimaryTable
+                              stickyFirstCol={false}
+                              stickyHeader={true}
+                              maxHeight={400}
+                              rows={getAttachmentsRowsQuoteConfirmation(item)}
+                              headers={[
+                                t("fileUploader.fileName"),
+                                t("fileUploader.downloadFile"),
+                                t("fileUploader.deleteFile"),
+                              ]}
+                              columnWidths={["70%", "15%", "15%", "15%"]}
+                            />
+                            <div
+                              onClick={() =>
+                                document
+                                  .getElementById(`file-upload-${index}`)
+                                  .click()
                               }
+                              role="region"
+                              aria-label="File Upload Drop Area"
+                              aria-describedby={`upload-instruction-${index}`}
+                              tabIndex={0}
+                              className={`drop-area ${
+                                isDragging ? "dragging" : ""
+                              }`}
+                              style={{
+                                ...classes.attachmentsContainer,
+                                border: "2px dashed #ccc",
+                                borderTop: "none",
+                                backgroundColor: isDragging
+                                  ? "rgba(0, 123, 255, 0.1)"
+                                  : "transparent",
+                                transition: "all 0.3s ease",
+                                padding: "20px",
+                                borderRadius: "4px",
+                                textAlign: "center",
+                                cursor: "pointer",
+                              }}
+                              onDragEnter={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(true);
+                              }}
+                              onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(false);
+                              }}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(false);
+                                const files = e.dataTransfer.files;
+                                if (files.length > 0) {
+                                  const event = { target: { files } } as any;
+                                  handleFileUploadQuoteConfirmation(
+                                    event,
+                                    item
+                                  );
+
+                                  // Reset the file input value so the same file can be selected again
+                                  const fileInput = document.getElementById(
+                                    `file-upload-${index}`
+                                  ) as HTMLInputElement;
+                                  if (fileInput) {
+                                    fileInput.value = "";
+                                  }
+                                }
+                              }}
+                            >
+                              <p
+                                id={`upload-instruction-${index}`}
+                                className="sr-only"
+                              >
+                                {t("fileUploader.dragAndDropUpload")}
+                              </p>
+                            </div>
+                          </div>
+                          <input
+                            id={`file-upload-${index}`}
+                            type="file"
+                            style={{ display: "none" }}
+                            onChange={(e) =>
+                              handleFileUploadQuoteConfirmation(e, item)
                             }
-                          }}
-                        >
-                          <p id={`upload-instruction-${index}`} className="sr-only">
-                            {t("fileUploader.dragAndDropUpload")}
-                          </p>
+                          />
+
+                          <GoMakeDeleteModal
+                            modalType={ModalType.DELETE}
+                            title={t("sales.quote.deleteAttachment")}
+                            yesBtn={t("sales.quote.yesBtn")}
+                            openModal={openDeleteModal}
+                            onClose={onClickCloseDeleteModal}
+                            onClickDelete={() =>
+                              handleDeleteFileFromItems(
+                                selectedAttachment.parentItem.id,
+                                selectedAttachment.fileName,
+                                selectedAttachment.url
+                              )
+                            }
+                          />
                         </div>
-                      </div>
-                      <input
-                        id={`file-upload-${index}`}
-                        type="file"
-                        style={{ display: 'none' }}
-                        onChange={(e) => handleFileUploadQuoteConfirmation(e, item)}
-                      />
+                      )
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              <div>
+                {quoteConfirm?.documentItems?.map(
+                  (item: any, index: number) => {
+                    return (
+                      item.isSelected && (
+                        <div key={index}>
+                          <h4
+                            style={{ marginBottom: "10px", marginTop: "10px" }}
+                          >
+                            {item.productName} ({item?.workName})
+                          </h4>
+                          <div>
+                            <PrimaryTable
+                              stickyFirstCol={false}
+                              stickyHeader={true}
+                              maxHeight={400}
+                              rows={getAttachmentsRowsQuoteConfirmation(item)}
+                              headers={[
+                                t("fileUploader.fileName"),
+                                t("fileUploader.downloadFile"),
+                                // t("fileUploader.deleteFile"),
+                              ]}
+                              columnWidths={["70%", "15%", "15%", "15%"]}
+                            />
+                            <div
+                              onClick={() =>
+                                document
+                                  .getElementById(`file-upload-${index}`)
+                                  .click()
+                              }
+                              role="region"
+                              aria-label="File Upload Drop Area"
+                              aria-describedby={`upload-instruction-${index}`}
+                              tabIndex={0}
+                              className={`drop-area ${
+                                isDragging ? "dragging" : ""
+                              }`}
+                              style={{
+                                ...classes.attachmentsContainer,
+                                border: "2px dashed #ccc",
+                                borderTop: "none",
+                                backgroundColor: isDragging
+                                  ? "rgba(0, 123, 255, 0.1)"
+                                  : "transparent",
+                                transition: "all 0.3s ease",
+                                padding: "20px",
+                                borderRadius: "4px",
+                                textAlign: "center",
+                                cursor: "pointer",
+                              }}
+                              onDragEnter={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(true);
+                              }}
+                              onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(false);
+                              }}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDragging(false);
+                                const files = e.dataTransfer.files;
+                                if (files.length > 0) {
+                                  const event = { target: { files } } as any;
+                                  handleFileUploadQuoteConfirmation(
+                                    event,
+                                    item
+                                  );
 
-                      <GoMakeDeleteModal
-                        modalType={ModalType.DELETE}
-                        title={t("sales.quote.deleteAttachment")}
-                        yesBtn={t("sales.quote.yesBtn")}
-                        openModal={openDeleteModal}
-                        onClose={onClickCloseDeleteModal}
-                        onClickDelete={() => handleDeleteFileFromItems(selectedAttachment.parentItem.id, selectedAttachment.fileName, selectedAttachment.url)}
-                      />
-                    </div>
-                  )
-                )
-              }
-              )}
+                                  // Reset the file input value so the same file can be selected again
+                                  const fileInput = document.getElementById(
+                                    `file-upload-${index}`
+                                  ) as HTMLInputElement;
+                                  if (fileInput) {
+                                    fileInput.value = "";
+                                  }
+                                }
+                              }}
+                            >
+                              <p
+                                id={`upload-instruction-${index}`}
+                                className="sr-only"
+                              >
+                                {t("fileUploader.dragAndDropUpload")}
+                              </p>
+                            </div>
+                          </div>
+                          <input
+                            id={`file-upload-${index}`}
+                            type="file"
+                            style={{ display: "none" }}
+                            onChange={(e) =>
+                              handleFileUploadQuoteConfirmation(e, item)
+                            }
+                          />
+
+                          <GoMakeDeleteModal
+                            modalType={ModalType.DELETE}
+                            title={t("sales.quote.deleteAttachment")}
+                            yesBtn={t("sales.quote.yesBtn")}
+                            openModal={openDeleteModal}
+                            onClose={onClickCloseDeleteModal}
+                            onClickDelete={() =>
+                              handleDeleteFileFromItems(
+                                selectedAttachment.parentItem.id,
+                                selectedAttachment.fileName,
+                                selectedAttachment.url
+                              )
+                            }
+                          />
+                        </div>
+                      )
+                    );
+                  }
+                )}
+              </div>
+            )}
+          </div>
+          {/* Fixed Footer Buttons */}
+          {onContinueApproval && (
+            <div style={classes.fixedFooter}>
+              <PrimaryButton variant="outlined" onClick={onClose}>
+                {t("sales.quote.cancel")}
+              </PrimaryButton>
+              <PrimaryButton variant="contained" onClick={onContinueApproval}>
+                {t("sales.quote.continueToSign")}
+              </PrimaryButton>
             </div>
-
-        }
-
-
+          )}
+        </div>
       </GoMakeModal>
     </>
   );
