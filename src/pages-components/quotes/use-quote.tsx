@@ -187,6 +187,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
+  // Loading/Error states for document table
+  const [isDocumentTableLoading, setIsDocumentTableLoading] = useState<boolean>(false);
+  const [isDocumentTableError, setIsDocumentTableError] = useState<boolean>(false);
+  const [isSocketRefreshingDocuments, setIsSocketRefreshingDocuments] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
@@ -493,13 +497,46 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (res?.success) {
         const downloadLink = document.createElement("a");
         if (typeof res.data === "string") {
-          downloadLink.href = res.data;
+          // For S3 URLs, we need to fetch the file and create a blob to force download
+          fetch(res.data)
+            .then(response => response.blob())
+            .then(blob => {
+              const url = URL.createObjectURL(blob);
+              downloadLink.href = url;
+              // Set appropriate filename based on export type
+              const getFileName = () => {
+                if (exportType === INVOICES_EXPORT_TYPES.ExtendedTxt) {
+                  return "invoices_export.txt";
+                } else if (exportType === INVOICES_EXPORT_TYPES.ExtendedExcel) {
+                  return "invoices_extended.xlsx";
+                } else if (exportType === INVOICES_EXPORT_TYPES.SummeryExcelWithVat) {
+                  return "invoices_summary_with_vat.xlsx";
+                } else if (exportType === INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat) {
+                  return "invoices_summary_without_vat.xlsx";
+                } else {
+                  return "table.xlsx";
+                }
+              };
+              downloadLink.download = getFileName();
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              document.body.removeChild(downloadLink);
+              // Clean up the object URL
+              URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Error downloading file:', error);
+              // Fallback to direct link if fetch fails
+              downloadLink.href = res.data;
+              downloadLink.download = "table.xlsx";
+              downloadLink.click();
+            });
         } else {
           const link = URL.createObjectURL(res.data);
           downloadLink.href = link;
+          downloadLink.download = "table.xlsx";
+          downloadLink.click();
         }
-        downloadLink.download = "table.xlsx";
-        downloadLink.click();
       } else {
       }
     };
@@ -593,7 +630,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   // Re-map existing data when cellsExpanded changes to update JSX with new state
   useEffect(() => {
-    if (originalData && originalData.length > 0) {
+    if (originalData && originalData.length > 0 && !isReceipt && !isSupplierPayments) {
       // Re-map the original data with the new cellsExpanded value
       const remappedQuotes = originalData.map((quote: any) => {
         const baseRow = {
@@ -633,11 +670,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           discount: quote?.discount,
           totalPriceWithoutVat: isRTL
             ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                quote?.currency
-              )}`
-            : `${getCurrencyUnitText(quote?.currency)} ${
-                quote?.totalPriceWithoutVat
-              }`,
+              quote?.currency
+            )}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
+            }`,
           totalPrice: isRTL
             ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
             : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
@@ -750,15 +786,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote?.jobs
           );
 
-          const paymentStatus = `${
-            isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-          }/${
-            isRTL
+          const paymentStatus = `${isRTL
+            ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+            }/${isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
-          }`;
+            }`;
 
           return {
             ...baseRow,
@@ -1022,8 +1056,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const getAllQuotes = useCallback(
-    async (order?: any) => {
+    async (order?: any, invokedBySocket: boolean = false) => {
       const sortOrder = order || currentSortOrder;
+      setIsDocumentTableError(false);
+      setIsDocumentTableLoading(!invokedBySocket);
 
       const callBack = (res) => {
         if (res?.success) {
@@ -1075,8 +1111,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
-                }`,
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
               notes: quote?.notes,
               status: _renderStatus(docType, quote, t),
               more: (
@@ -1331,132 +1366,88 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             documentStatisticsList: res?.data?.documentStatisticsList ?? [],
             totalItems: totalItems ?? 0,
           });
+        } else {
+          // Mark error only for non-200 responses
+          setIsDocumentTableError(res?.status && res.status !== 200);
+          setAllQuotes([]);
         }
       };
 
-      if (!router.isReady) return;
+      try {
+        if (!router.isReady) return;
 
-      const currentPageNumber = router.query.pageNumber;
-      const currentStatusId = router.query.statusId;
-      const currentFinalPatternSearch = router.query.finalPatternSearch;
-      const currentCustomerId = router.query.customerId;
-      const currentAgentId = router.query.agentId;
-      const currentApprovalStatusId = router.query.approvalStatusId;
-      const currentMinPrice = router.query.minPrice || minPrice;
-      const currentMaxPrice = router.query.maxPrice || maxPrice;
-      const currentFromDate = router.query.fromDate
-        ? new Date(
-          Array.isArray(router.query.fromDate)
-            ? router.query.fromDate[0]
-            : router.query.fromDate
-        )
-        : null;
-      const currentToDate = router.query.toDate
-        ? new Date(
-          Array.isArray(router.query.toDate)
-            ? router.query.toDate[0]
-            : router.query.toDate
-        )
-        : null;
+        const currentPageNumber = router.query.pageNumber;
+        const currentStatusId = router.query.statusId;
+        const currentFinalPatternSearch = router.query.finalPatternSearch;
+        const currentCustomerId = router.query.customerId;
+        const currentAgentId = router.query.agentId;
+        const currentApprovalStatusId = router.query.approvalStatusId;
+        const currentMinPrice = router.query.minPrice || minPrice;
+        const currentMaxPrice = router.query.maxPrice || maxPrice;
+        const currentFromDate = router.query.fromDate
+          ? new Date(
+            Array.isArray(router.query.fromDate)
+              ? router.query.fromDate[0]
+              : router.query.fromDate
+          )
+          : null;
+        const currentToDate = router.query.toDate
+          ? new Date(
+            Array.isArray(router.query.toDate)
+              ? router.query.toDate[0]
+              : router.query.toDate
+          )
+          : null;
 
-      const currentAccountingStatus = router.query.accountingStatus
-        ? accountingStatuses.find(
-          (status) => status.value === Number(router.query.accountingStatus)
-        )
-        : null;
+        const currentAccountingStatus = router.query.accountingStatus
+          ? accountingStatuses.find(
+            (status) => status.value === Number(router.query.accountingStatus)
+          )
+          : null;
 
-      const currentDeliveryStatusStatus = router.query.deliveryStatus
-        ? deliveryStatuses.find(
-          (status) => status.value === Number(router.query.deliveryStatus)
-        )
-        : null;
+        const currentDeliveryStatusStatus = router.query.deliveryStatus
+          ? deliveryStatuses.find(
+            (status) => status.value === Number(router.query.deliveryStatus)
+          )
+          : null;
 
-      const currentProductionStatus = router.query.productionStatus
-        ? productionStatuses.find(
-          (status) => status.value === Number(router.query.productionStatus)
-        )
-        : null;
+        const currentProductionStatus = router.query.productionStatus
+          ? productionStatuses.find(
+            (status) => status.value === Number(router.query.productionStatus)
+          )
+          : null;
 
-      const currentIsCanceled = router.query.isCanceled;
-      const currentIsPaused = router.query.isPaused;
+        const currentIsCanceled = router.query.isCanceled;
+        const currentIsPaused = router.query.isPaused;
 
-      const currentProductsIds = Array.isArray(router.query.productsIds)
-        ? router.query.productsIds
-        : router.query.productsIds
-          ? [router.query.productsIds]
-          : productIds;
+        const currentProductsIds = Array.isArray(router.query.productsIds)
+          ? router.query.productsIds
+          : router.query.productsIds
+            ? [router.query.productsIds]
+            : productIds;
 
-      const currentCurrency = router.query.currency
-        ? currencies.find(
-          (curr) => curr.value === router.query.currency
-        )
-        : null;
+        const currentCurrency = router.query.currency
+          ? currencies.find(
+            (curr) => curr.value === router.query.currency
+          )
+          : null;
 
-      const currentPaymentType = router.query.paymentType
-        ? typeOfPayments.find(
-          (type) => type.value === Number(router.query.paymentType)
-        )
-        : null;
+        const currentPaymentType = router.query.paymentType
+          ? typeOfPayments.find(
+            (type) => type.value === Number(router.query.paymentType)
+          )
+          : null;
 
-      // keep your API call logic unchanged
-      if (isReceipt || isSupplierPayments) {
-        await getAllReceiptsApi(callApi, callBack, {
-          ...(!isReceipt && {
-            isOutgoingPayments: true,
-          }),
-          clientId: currentCustomerId || customerId?.id,
-          agentId: currentAgentId || agentId?.id,
-          status: currentAccountingStatus?.value ?? accountingStatus?.value,
-          paymentType: currentPaymentType?.value ?? paymentType?.value,
-          patternSearch:
-            finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-
-          ...(currentFromDate
-            ? { fromDate: GetDateFormat(currentFromDate) }
-            : {}),
-          ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
-
-          ...(currentMinPrice && currentMinPrice !== ""
-            ? { minPrice: currentMinPrice }
-            : {}),
-          ...(currentMaxPrice && currentMaxPrice !== ""
-            ? { maxPrice: currentMaxPrice }
-            : {}),
-
-          model: {
-            pageNumber: currentPageNumber || page,
-            pageSize: pageSize,
-            order: sortOrder,
-          },
-        });
-      } else {
-        await getAllDocumentsApi(callApi, callBack, {
-          documentType: docType,
-          data: {
-            model: {
-              pageNumber: currentPageNumber || page,
-              pageSize: pageSize,
-              order: sortOrder,
-            },
-            dateRange,
-            customerId: currentCustomerId || customerId?.id,
+        // keep your API call logic unchanged
+        if (isReceipt || isSupplierPayments) {
+          await getAllReceiptsApi(callApi, callBack, {
+            ...(!isReceipt && {
+              isOutgoingPayments: true,
+            }),
+            clientId: currentCustomerId || customerId?.id,
             agentId: currentAgentId || agentId?.id,
-            statusId:
-              quoteStatusId?.value || currentStatusId || statusId?.value,
-            approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
-            currency: currentCurrency?.value ?? currencyFilter?.value,
-
-            ...(currentMinPrice && currentMinPrice !== ""
-              ? { minPrice: currentMinPrice }
-              : {}),
-            ...(currentMaxPrice && currentMaxPrice !== ""
-              ? { maxPrice: currentMaxPrice }
-              : {}),
-
+            status: currentAccountingStatus?.value ?? accountingStatus?.value,
+            paymentType: currentPaymentType?.value ?? paymentType?.value,
             patternSearch:
               finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
@@ -1469,23 +1460,76 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               : {}),
             ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
 
-            ...(currentProductsIds?.length
-              ? { productList: currentProductsIds }
+            ...(currentMinPrice && currentMinPrice !== ""
+              ? { minPrice: currentMinPrice }
+              : {}),
+            ...(currentMaxPrice && currentMaxPrice !== ""
+              ? { maxPrice: currentMaxPrice }
               : {}),
 
-            closeStatus:
-              currentAccountingStatus?.value ?? accountingStatus?.value,
-            deliveryStatus:
-              currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
-            productionStatus:
-              currentProductionStatus?.value ?? productionStatus?.value,
+            model: {
+              pageNumber: currentPageNumber || page,
+              pageSize: pageSize,
+              order: sortOrder,
+            },
+          });
+        } else {
+          await getAllDocumentsApi(callApi, callBack, {
+            documentType: docType,
+            data: {
+              model: {
+                pageNumber: currentPageNumber || page,
+                pageSize: pageSize,
+                order: sortOrder,
+              },
+              dateRange,
+              customerId: currentCustomerId || customerId?.id,
+              agentId: currentAgentId || agentId?.id,
+              statusId:
+                quoteStatusId?.value || currentStatusId || statusId?.value,
+              approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
+              currency: currentCurrency?.value ?? currencyFilter?.value,
 
-            isCanceled: currentIsCanceled || isCanceledState,
-            isPaused: currentIsPaused || isPausedOrders,
-            isOrderInTracking: isOrdersTracking,
+              ...(currentMinPrice && currentMinPrice !== ""
+                ? { minPrice: currentMinPrice }
+                : {}),
+              ...(currentMaxPrice && currentMaxPrice !== ""
+                ? { maxPrice: currentMaxPrice }
+                : {}),
 
-          },
-        });
+              patternSearch:
+                finalPatternSearch !== null &&
+                  finalPatternSearch !== undefined &&
+                  finalPatternSearch !== ""
+                  ? finalPatternSearch
+                  : currentFinalPatternSearch,
+
+              ...(currentFromDate
+                ? { fromDate: GetDateFormat(currentFromDate) }
+                : {}),
+              ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+              ...(currentProductsIds?.length
+                ? { productList: currentProductsIds }
+                : {}),
+
+              closeStatus:
+                currentAccountingStatus?.value ?? accountingStatus?.value,
+              deliveryStatus:
+                currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
+              productionStatus:
+                currentProductionStatus?.value ?? productionStatus?.value,
+
+              isCanceled: currentIsCanceled || isCanceledState,
+              isPaused: currentIsPaused || isPausedOrders,
+              isOrderInTracking: isOrdersTracking,
+
+            },
+          });
+        }
+      } finally {
+        setIsDocumentTableLoading(false);
+        if (invokedBySocket) setIsSocketRefreshingDocuments(false);
       }
     },
     [
@@ -1520,6 +1564,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   );
 
   const getAllQuotesInitial = async () => {
+    setIsDocumentTableError(false);
+    setIsDocumentTableLoading(true);
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
@@ -1809,32 +1855,39 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentStatisticsList: res?.data?.documentStatisticsList ?? [],
           totalItems: totalItems ?? 0,
         });
+      } else {
+        setIsDocumentTableError(res?.status && res.status !== 200);
+        setAllQuotes([]);
       }
     };
 
-    if (!router.isReady) return;
+    try {
+      if (!router.isReady) return;
 
-    if (isReceipt || isSupplierPayments) {
-      await getAllReceiptsApi(callApi, callBack, {
-        model: {
-          pageNumber: page,
-          pageSize: pageSize,
-        },
-        ...(!isReceipt && {
-          isOutgoingPayments: true,
-        }),
-      });
-    } else {
-      await getAllDocumentsApi(callApi, callBack, {
-        documentType: docType,
-        data: {
-          isOrderInTracking: isOrdersTracking,
+      if (isReceipt || isSupplierPayments) {
+        await getAllReceiptsApi(callApi, callBack, {
           model: {
             pageNumber: page,
             pageSize: pageSize,
           },
-        },
-      });
+          ...(!isReceipt && {
+            isOutgoingPayments: true,
+          }),
+        });
+      } else {
+        await getAllDocumentsApi(callApi, callBack, {
+          documentType: docType,
+          data: {
+            isOrderInTracking: isOrdersTracking,
+            model: {
+              pageNumber: page,
+              pageSize: pageSize,
+            },
+          },
+        });
+      }
+    } finally {
+      setIsDocumentTableLoading(false);
     }
   };
 
@@ -1843,7 +1896,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   useEffect(() => {
     if (isSocketUpdateDocumentsTable) {
-      getAllQuotes();
+      setIsSocketRefreshingDocuments(true);
+      getAllQuotes(undefined, true);
       setIsSocketUpdateDocumentsTable(false);
     }
   }, [isSocketUpdateDocumentsTable]);
@@ -4017,6 +4071,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     currencyFilter,
     setCurrencyFilter,
     currencies,
+    isDocumentTableLoading,
+    isDocumentTableError,
+    isSocketRefreshingDocuments,
   };
 };
 

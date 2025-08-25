@@ -2,7 +2,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { cancelDepositApi, getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
+import { cancelDepositApi, getAllDepositsApi, showDepositApi, getDepositPdfApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import {
@@ -132,6 +132,7 @@ const useDeposits = () => {
             onClickLoggers={() => onClickDocumentLogs(deposit)}
             onClickShowDeposit={() => getDepositBYId(deposit?.id)}
             onClickCancel={() => cancelDeposit(deposit?.id)}
+            onClickPdf={() => getDepositPdf(deposit?.id)}
           />,
         ]);
         setAllDeposits(mapData);
@@ -211,6 +212,24 @@ const useDeposits = () => {
       }
     };
     await cancelDepositApi(callApi, callBack, { Id: depositId });
+  };
+
+  const getDepositPdf = async (depositId: string) => {
+    const downloadPdf = (url: string) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.click();
+    };
+
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+      }
+    };
+
+    await getDepositPdfApi(callApi, callBack, { depositId: depositId });
   };
 
   const handleDepositTypeChange = (e: any, value: any) => {

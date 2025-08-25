@@ -5,4 +5,8 @@ export interface IStatisticValue {
   successRate: number;
   totalActualCost: number | null;
   profitMargin: number | null;
+  salesGrowth?: number | null;
+  costGrowth?: number | null;
+  profitGrowth?: number | null;
+  successRateGrowth?: number | null;
 }
