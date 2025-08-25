@@ -40,10 +40,10 @@ const CustomerEditMachines = () => {
     const [machines, setMachines] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentMachineId, setCurrentMachineId] = useState<string>('');
-    
+
     // Get admin machines functionality
     const { allAdminMachines, loadAdminMachines } = useCustomerMachinesGrouped();
-    
+
     // Proper Recoil setters
     const setMachineState = useSetRecoilState(machineState);
     const setMachinesListState = useSetRecoilState(machinesListState);
@@ -51,18 +51,18 @@ const CustomerEditMachines = () => {
     // Function to fetch machines
     const fetchMachines = useCallback(async () => {
         if (!categoryId) return;
-        
+
         try {
             setIsLoading(true);
             const res = await callApi("Get", `/v1/machines/category/${categoryId}`);
-            
+
             if (res?.data?.data?.data?.length > 0) {
                 const machinesList = res.data.data.data;
                 setMachines(machinesList);
-                
+
                 // Set machines in Recoil state
                 setMachinesListState(machinesList);
-                
+
                 // Select machine from URL or first machine
                 if (machineId && typeof machineId === 'string') {
                     const targetMachine = machinesList.find((m: any) => m.id === machineId);
@@ -88,7 +88,7 @@ const CustomerEditMachines = () => {
     useEffect(() => {
         if (categoryId) {
             fetchMachines();
-            
+
             const category = categories.find(category => category.id === categoryId);
             setCategoryName(category?.name ? category?.name : '');
             if (category) setMachineSteps(getSteps(category.id, false, CheckPermission));
@@ -98,29 +98,28 @@ const CustomerEditMachines = () => {
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
     }
-    
+
     const navigateNext = () => {
         setActiveStep(activeStep + 1);
     }
-    
+
     const onSelectMachine = (value: string) => {
-        console.log('Selecting machine:', value);
         setCurrentMachineId(value);
-        
+
         const machine = machines.find((m: any) => m.id === value);
         if (machine) {
             setMachineState(machine);
-            
+
             // Update the URL to reflect the selected machine
             router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, { shallow: true });
         }
         setActiveStep(-1);
     }
-    
+
     const moveToStepByIndex = (stepIndex: number) => {
         setActiveStep(stepIndex)
     }
-    
+
     const ActionsFooter = () => {
         return activeStep >= 0 &&
             <NavigationButtons canAddMachine={activeStep + 1 === machineSteps.length}
@@ -129,20 +128,20 @@ const CustomerEditMachines = () => {
                 onClickUpdate={updateMachine} onClickNext={navigateNext} onClickBack={navigateBack}
                 hasBack={activeStep > 0} hasNext={activeStep + 1 < machineSteps.length} />
     }
-    
+
     const Side = () => {
-        return <MachinesSideList 
+        return <MachinesSideList
             list={machines.map((machine: any) => ({
                 text: machine.nickName || machine.manufacturer || machine.model || 'Unknown Machine',
                 value: machine.id,
             }))}
             selectedItem={currentMachineId}
             onSelect={onSelectMachine}
-            title={t("machineAttributes.machines")} 
+            title={t("machineAttributes.machines")}
             quickActions={true}
         />
     }
-    
+
     const editMachinesSteps: StepType[] = [
         {
             selector: '[data-tour="machinesList"]',
@@ -165,9 +164,9 @@ const CustomerEditMachines = () => {
             },
         },
     ]
-    
+
     const { } = useGoMakeTour(editMachinesSteps, []);
-    
+
     if (isLoading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
@@ -175,7 +174,7 @@ const CustomerEditMachines = () => {
             </div>
         );
     }
-    
+
     return (
         <>
             <MachinesContainer side={Side()} header={t(categoryName)}
@@ -196,8 +195,8 @@ const CustomerEditMachines = () => {
                 }
             </MachinesContainer>
             <GoMakeModal insideStyle={{ width: 'fit-content', height: 'fit-content' }} openModal={openAddMachineModal} onClose={() => setOpenAddMachineModal(false)} modalTitle={t('tabs.addMachine')}>
-                <AddMachineModal 
-                    closeModal={() => setOpenAddMachineModal(false)} 
+                <AddMachineModal
+                    closeModal={() => setOpenAddMachineModal(false)}
                     allAdminMachines={allAdminMachines}
                     loadAdminMachines={loadAdminMachines}
                 />

@@ -1,8 +1,9 @@
 import Stack from "@mui/material/Stack";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { printHouseAddNewMachine } from "@/services/api-service/machines/print-house-machines";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { adminSearchMachines } from "@/services/api-service/machines/admin-machines";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { machinesListState } from "@/widgets/machines/state/machines";
@@ -40,11 +41,14 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     const [machines, setMachines] = useRecoilState(machinesListState);
     const categories = useRecoilValue(machineCategoriesState);
     const [filteredAdminMachines, setFilteredAdminMachines] = useState<IAdminMachine[]>([]);
+    const [selectedAdminMachine, setSelectedAdminMachine] = useState<IAdminMachine | null>(null);
     const [state, setState] = useState<IAddMachine>({
         machineName: '',
         category: ''
     });
     const [loading, setLoading] = useState(false);
+    const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
+    const suppressSearchRef = useRef(false);
     const [hasLoadedAdminMachines, setHasLoadedAdminMachines] = useState(false);
     const { alertFaultAdded, alertSuccessAdded, setSnackbarStateValue } = useSnackBar();
     const { t } = useTranslation();
@@ -61,31 +65,20 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
         }
     }, []);
 
-    // Load admin machines when modal is opened (only once)
+    // Auto-select category from route when available (edit context)
     useEffect(() => {
-        if (!hasLoadedAdminMachines && allAdminMachines.length === 0) {
-            setLoading(true);
-            loadAdminMachines().then(() => {
-                // Use a timeout to wait for the state to update
-                setTimeout(() => {
-                    if (allAdminMachines.length > 0) {
-                        setHasLoadedAdminMachines(true);
-                        setLoading(false);
-                    } else {
-                        // If still no machines after timeout, mark as loaded but show no machines message
-                        setHasLoadedAdminMachines(true);
-                        setLoading(false);
-                    }
-                }, 500); // Wait 500ms for state to update
-            }).catch(() => {
-                setLoading(false);
-                setHasLoadedAdminMachines(true);
-            });
-        } else if (allAdminMachines.length > 0) {
-            setHasLoadedAdminMachines(true);
-            setLoading(false); // Ensure loading is false when machines are already loaded
+        if (categoryId && String(state.category) !== String(categoryId)) {
+            setState(prev => ({ ...prev, category: String(categoryId) }));
         }
-    }, [loadAdminMachines, hasLoadedAdminMachines, allAdminMachines.length]);
+    }, [categoryId]);
+
+    // Do not preload admin machines; rely on remote search only
+    useEffect(() => {
+        if (allAdminMachines.length > 0) {
+            setHasLoadedAdminMachines(true);
+            setLoading(false);
+        }
+    }, [allAdminMachines.length]);
 
     // Watch for changes in allAdminMachines and update loading state
     useEffect(() => {
@@ -95,30 +88,87 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
         }
     }, [allAdminMachines.length, loading]);
 
-    // Filter machines based on search input
+    // Filter or search machines based on search input (always use remote endpoint)
     useEffect(() => {
-        if (state.machineName.length >= 2) {
-            const searchTerm = state.machineName.toLowerCase();
-            const filtered = allAdminMachines.filter((machine: IAdminMachine) =>
-                machine.displayName?.toLowerCase().includes(searchTerm) ||
-                machine.name?.toLowerCase().includes(searchTerm) ||
-                machine.manufacturer?.toLowerCase().includes(searchTerm) ||
-                machine.model?.toLowerCase().includes(searchTerm)
-            );
-            setFilteredAdminMachines(filtered);
-            console.log('Filtered machines for:', state.machineName, 'Found:', filtered.length);
-        } else {
-            setFilteredAdminMachines([]);
+        if (suppressSearchRef.current) {
+            suppressSearchRef.current = false;
+            return;
         }
-    }, [state.machineName, allAdminMachines]);
+
+        const term = state.machineName.trim();
+        setSelectedAdminMachine(null);
+
+        if (term.length < 2) {
+            setFilteredAdminMachines([]);
+            setAutoCompleteOpen(false);
+            return;
+        }
+
+        let isActive = true;
+        setLoading(true);
+
+        const timer = setTimeout(async () => {
+            try {
+                await adminSearchMachines(callApi, (res) => {
+                    if (!isActive) return;
+                    if (res?.success && res?.data) {
+                        let machinesData: any[] = Array.isArray(res.data) ? res.data : (res.data?.data || res.data?.data?.data || []);
+
+                        // Map simple shape: { name: string, category: string }
+                        let mapped: IAdminMachine[] = machinesData
+                            .map((machine: any) => {
+                                const rawName = typeof machine?.name === 'string' ? machine.name.trim() : '';
+                                const categoryIdVal = String(machine?.category || '').trim();
+                                if (!rawName) return null;
+                                const categoryObj = categories.find((c: any) => String(c.id) === categoryIdVal);
+                                const categoryName = categoryObj?.name || '';
+                                return {
+                                    id: rawName, // no id from API; use name as temporary id
+                                    name: rawName,
+                                    displayName: rawName,
+                                    manufacturer: rawName,
+                                    model: rawName,
+                                    category: categoryName,
+                                    categoryId: categoryIdVal
+                                } as IAdminMachine;
+                            })
+                            .filter(Boolean) as IAdminMachine[];
+                        const currentCatId = String(categoryId || state.category || '').trim();
+                        if (currentCatId) {
+                            mapped = mapped.filter((m: IAdminMachine) => String(m.categoryId) === currentCatId);
+                        }
+                        setFilteredAdminMachines(mapped);
+                        setAutoCompleteOpen(true);
+                    } else {
+                        setFilteredAdminMachines([]);
+                        setAutoCompleteOpen(true);
+                    }
+                    setLoading(false);
+                }, encodeURIComponent(term));
+            } catch (e) {
+                if (!isActive) return;
+                setFilteredAdminMachines([]);
+                setAutoCompleteOpen(true);
+                setLoading(false);
+            }
+        }, 350);
+
+        return () => {
+            isActive = false;
+            clearTimeout(timer);
+        };
+    }, [state.machineName, callApi, categories]);
 
     // Auto-select category when a machine is selected
     const handleMachineSelect = (machine: IAdminMachine) => {
+        suppressSearchRef.current = true;
         setState(prevState => ({
             ...prevState,
             machineName: machine.displayName || machine.name,
             category: machine.categoryId || machine.category
         }));
+        setSelectedAdminMachine(machine);
+        setAutoCompleteOpen(false);
     };
 
     const onAddMachine = async () => {
@@ -149,23 +199,28 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
             }
         }
 
-        // Find the selected admin machine to get full details
-        const selectedAdminMachine = allAdminMachines.find(machine =>
-            machine.id === state.machineName ||
-            machine.name === state.machineName ||
-            machine.displayName === state.machineName
-        );
+        // Try to use the selected machine from state or find it from available lists
+        const selected = selectedAdminMachine ||
+            allAdminMachines.find(machine =>
+                machine.id === state.machineName ||
+                machine.name === state.machineName ||
+                machine.displayName === state.machineName
+            ) ||
+            filteredAdminMachines.find(machine =>
+                machine.id === state.machineName ||
+                machine.name === state.machineName ||
+                machine.displayName === state.machineName
+            );
 
-        if (selectedAdminMachine) {
+        if (selected) {
             // Use the selected admin machine details
             await printHouseAddNewMachine(callApi, callBack, {
-                manufacturer: selectedAdminMachine.manufacturer,
-                model: selectedAdminMachine.model,
+                manufacturer: selected.manufacturer,
+                model: selected.model,
                 category: state.category
             });
         } else {
             // Custom machine: use the machine name as both manufacturer and model
-            console.log('Adding custom machine:', state.machineName);
             await printHouseAddNewMachine(callApi, callBack, {
                 manufacturer: state.machineName,
                 model: state.machineName,
@@ -184,20 +239,69 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                         fullWidth
                         freeSolo
                         loading={loading}
-                        options={filteredAdminMachines}
+                        // Modified: Show dropdown when typing (2+ chars) OR when loading
+                        open={autoCompleteOpen && ((state.machineName || '').trim().length >= 2 || loading)}
+                        onOpen={() => {
+                            // Only open if there's enough input
+                            if ((state.machineName || '').trim().length >= 2) {
+                                setAutoCompleteOpen(true);
+                            }
+                        }}
+                        onClose={() => setAutoCompleteOpen(false)}
+                        options={
+                            filteredAdminMachines.length > 0
+                                ? filteredAdminMachines
+                                : ((state.machineName || '').trim().length >= 2 && !loading
+                                    ? [{
+                                        id: '__no_data__',
+                                        name: t('skeleton.noData'),
+                                        displayName: t('skeleton.noData'),
+                                        manufacturer: '',
+                                        model: '',
+                                        category: '',
+                                        categoryId: '',
+                                        isNoData: true
+                                    } as any]
+                                    : [])
+                        }
+                        noOptionsText={t('machineAttributes.noData')}
+                        loadingText={t('machineAttributes.loadingMachines')}
+                        inputValue={state.machineName}
+                        filterOptions={(x) => x} // Keep custom filtering
+                        isOptionEqualToValue={(option, value) => (option?.id || option?.name) === (value?.id || value?.name)}
+                        getOptionDisabled={(option) => (option as any)?.isNoData === true}
                         getOptionLabel={(option) => {
                             if (typeof option === 'string') return option;
                             return option.displayName || option.name || `${option.manufacturer} ${option.model}`;
                         }}
                         onChange={(e, value) => {
                             if (typeof value === 'object' && value) {
+                                if ((value as any)?.isNoData) {
+                                    return;
+                                }
                                 handleMachineSelect(value);
                             } else if (typeof value === 'string') {
                                 setState(prevState => ({ ...prevState, machineName: value }));
                             }
                         }}
-                        onInputChange={(e, newInputValue) => {
-                            setState(prevState => ({ ...prevState, machineName: newInputValue }));
+                        onInputChange={(e, newInputValue, reason) => {
+                            if (reason === 'input') {
+                                setState(prevState => ({ ...prevState, machineName: newInputValue }));
+                                const hasQuery = (newInputValue || '').trim().length >= 2;
+
+                                // Always open dropdown when user has typed enough characters
+                                if (hasQuery) {
+                                    setAutoCompleteOpen(true);
+                                } else {
+                                    setAutoCompleteOpen(false);
+                                }
+                            } else if (reason === 'clear') {
+                                setState(prevState => ({ ...prevState, machineName: '' }));
+                                setFilteredAdminMachines([]);
+                                setAutoCompleteOpen(false);
+                            } else if (reason === 'reset') {
+                                // reset happens after selection; ignore to avoid re-search
+                            }
                         }}
                         sx={{
                             '& .MuiAutocomplete-endAdornment': {
@@ -224,15 +328,17 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                                 placeholder={t('machineAttributes.startTypingToSearch')}
                             />
                         )}
-                        renderOption={(props, option) => (
-                            <li {...props}>
-                                <div>
-                                    <strong>{option.displayName || option.name || `${option.manufacturer} ${option.model}`}</strong>
-                                    <br />
-                                    <small>{t('machineAttributes.category')}: {t(option.category)}</small>
-                                </div>
-                            </li>
-                        )}
+                        renderOption={(props, option) => {
+                            return (
+                                <li {...props}>
+                                    <div>
+                                        <strong>{option.displayName || option.name || `${option.manufacturer} ${option.model}`}</strong>
+                                        <br />
+                                        {option.id !== '__no_data__' && <small>{t('machineAttributes.category')}: {t(option.category)}</small>}
+                                    </div>
+                                </li>
+                            )
+                        }}
                     />
                 </Stack>
 
