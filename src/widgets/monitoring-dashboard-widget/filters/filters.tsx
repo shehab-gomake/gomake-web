@@ -30,6 +30,11 @@ const DashboardFilters = () => {
     toggleJobType,
     selectedJobTypesIds,
     jobTypesCategories,
+    documentStatusCategories,
+    selectedDocumentStatuses,
+    toggleDocumentStatus,
+    toggleAllDocumentStatuses,
+    showDocumentStatusFilter,
   } = useSalesDashboardFilters();
 
   return (
@@ -38,6 +43,15 @@ const DashboardFilters = () => {
       <FixedDataType />
       <FixedDocumentType />
       <SingleSelectSearchDropdown />
+      {showDocumentStatusFilter && (
+        <MultiSelectDropdown
+          items={documentStatusCategories}
+          selectedIds={selectedDocumentStatuses}
+          onToggle={toggleDocumentStatus}
+          onToggleAll={toggleAllDocumentStatuses}
+          buttonLabel={t("sales.quote.status")}
+        />
+      )}
       <MultiSelectDropdown
         items={clientTypesCategories}
         selectedIds={selectedClientTypesIds}

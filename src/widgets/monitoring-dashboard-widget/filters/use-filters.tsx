@@ -12,6 +12,9 @@ import {
   selectedJobTypesIdsState,
   SourceTypeEnum,
 } from "./states/selected-job-types-ids";
+import { selectedDocumentTypeState } from "./states/selected-document-type";
+import { selectedDocumentStatusesState } from "./states/selected-document-statuses";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
@@ -44,6 +47,10 @@ const useSalesDashboardFilters = () => {
   const [selectedJobTypesIds, setSelectedJobTypesIds] = useRecoilState(
     selectedJobTypesIdsState
   );
+
+  const [selectedDocumentType] = useRecoilState(selectedDocumentTypeState);
+  const [selectedDocumentStatuses, setSelectedDocumentStatuses] =
+    useRecoilState(selectedDocumentStatusesState);
 
   const toggleAgent = (id: string) => {
     setSelectedAgentIds((prev) =>
@@ -117,6 +124,31 @@ const useSalesDashboardFilters = () => {
     setSelectedJobTypesIds(isAllSelected ? [] : allIds);
   };
 
+  // Document status values aligned with backend enum: Open=1, Closed=2, PartialClosed=3
+  const documentStatusCategories = [
+    { id: 1, label: t("sales.quote.open") },
+    { id: 2, label: t("sales.quote.closed") },
+    { id: 3, label: t("sales.quote.partialClosed") },
+  ];
+
+  const showDocumentStatusFilter =
+    selectedDocumentType === DocumentTypeEnums.Invoice ||
+    selectedDocumentType === DocumentTypeEnums.DeliveryNote;
+
+  const toggleDocumentStatus = (id: number) => {
+    setSelectedDocumentStatuses((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllDocumentStatuses = () => {
+    const allIds = documentStatusCategories.map((a) => a.id);
+    const isAllSelected = allIds.every((id) =>
+      selectedDocumentStatuses.includes(id)
+    );
+    setSelectedDocumentStatuses(isAllSelected ? [] : allIds);
+  };
+
   return {
     t,
     agentsCategories,
@@ -140,6 +172,12 @@ const useSalesDashboardFilters = () => {
     toggleJobType,
     selectedJobTypesIds,
     jobTypesCategories,
+    // document statuses
+    documentStatusCategories,
+    selectedDocumentStatuses,
+    toggleDocumentStatus,
+    toggleAllDocumentStatuses,
+    showDocumentStatusFilter,
   };
 };
 
