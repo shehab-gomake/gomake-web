@@ -1,16 +1,16 @@
 import Stack from "@mui/material/Stack";
-import {useEffect, useState} from "react";
-import {PrimaryButton} from "@/components/button/primary-button";
-import {printHouseAddNewMachine} from "@/services/api-service/machines/print-house-machines";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useRouter} from "next/router";
-import {useRecoilState} from "recoil";
-import {machinesListState} from "@/widgets/machines/state/machines";
-import {useTranslation} from "react-i18next";
-import {Autocomplete} from "@mui/material";
-import {StyledTextField} from "@/components";
-import {useRecoilValue} from "recoil";
-import {machineCategoriesState} from "@/store/machine-categories";
+import { useEffect, useState } from "react";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { printHouseAddNewMachine } from "@/services/api-service/machines/print-house-machines";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { machinesListState } from "@/widgets/machines/state/machines";
+import { useTranslation } from "react-i18next";
+import { Autocomplete } from "@mui/material";
+import { StyledTextField } from "@/components";
+import { useRecoilValue } from "recoil";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 interface IAddMachine {
     machineName: string;
@@ -41,14 +41,14 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     const categories = useRecoilValue(machineCategoriesState);
     const [filteredAdminMachines, setFilteredAdminMachines] = useState<IAdminMachine[]>([]);
     const [state, setState] = useState<IAddMachine>({
-        machineName: '', 
+        machineName: '',
         category: ''
     });
     const [loading, setLoading] = useState(false);
     const [hasLoadedAdminMachines, setHasLoadedAdminMachines] = useState(false);
     const { alertFaultAdded, alertSuccessAdded, setSnackbarStateValue } = useSnackBar();
     const { t } = useTranslation();
-    
+
     // Get current direction for RTL support
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
@@ -99,7 +99,7 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     useEffect(() => {
         if (state.machineName.length >= 2) {
             const searchTerm = state.machineName.toLowerCase();
-            const filtered = allAdminMachines.filter((machine: IAdminMachine) => 
+            const filtered = allAdminMachines.filter((machine: IAdminMachine) =>
                 machine.displayName?.toLowerCase().includes(searchTerm) ||
                 machine.name?.toLowerCase().includes(searchTerm) ||
                 machine.manufacturer?.toLowerCase().includes(searchTerm) ||
@@ -136,7 +136,7 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                 setMachines([...machines, res.data]);
                 alertSuccessAdded();
                 closeModal();
-                
+
                 // Navigate to edit view for the newly added machine
                 if (res.data && res.data.id) {
                     router.push(`/machines/category/${state.category}?machineId=${res.data.id}`);
@@ -150,8 +150,8 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
         }
 
         // Find the selected admin machine to get full details
-        const selectedAdminMachine = allAdminMachines.find(machine => 
-            machine.id === state.machineName || 
+        const selectedAdminMachine = allAdminMachines.find(machine =>
+            machine.id === state.machineName ||
             machine.name === state.machineName ||
             machine.displayName === state.machineName
         );
@@ -175,7 +175,7 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     }
 
     return (
-        <Stack gap={'30px'} style={{ padding: '20px' }}>
+        <Stack gap={'30px'} style={{ padding: '20px', minWidth: '700px' }}>
             <Stack direction="row" gap={'30px'} alignItems="flex-start">
                 {/* Machine Name Field with Search */}
                 <Stack gap={'5px'} flex={1}>
@@ -193,11 +193,11 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                             if (typeof value === 'object' && value) {
                                 handleMachineSelect(value);
                             } else if (typeof value === 'string') {
-                                setState(prevState => ({...prevState, machineName: value}));
+                                setState(prevState => ({ ...prevState, machineName: value }));
                             }
                         }}
                         onInputChange={(e, newInputValue) => {
-                            setState(prevState => ({...prevState, machineName: newInputValue}));
+                            setState(prevState => ({ ...prevState, machineName: newInputValue }));
                         }}
                         sx={{
                             '& .MuiAutocomplete-endAdornment': {
@@ -218,9 +218,9 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                             }
                         }}
                         renderInput={(params) => (
-                            <StyledTextField 
-                                {...params} 
-                                style={{height: '40px'}}
+                            <StyledTextField
+                                {...params}
+                                style={{ height: '40px' }}
                                 placeholder={t('machineAttributes.startTypingToSearch')}
                             />
                         )}
@@ -246,7 +246,7 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                         value={categories.find(cat => cat.id === state.category) || null}
                         onChange={(e, value) => {
                             setState(prevState => ({
-                                ...prevState, 
+                                ...prevState,
                                 category: value ? value.id : ''
                             }));
                         }}
@@ -264,27 +264,27 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                             }
                         }}
                         renderInput={(params) => (
-                            <StyledTextField 
-                                {...params} 
-                                style={{height: '40px'}}
+                            <StyledTextField
+                                {...params}
+                                style={{ height: '40px' }}
                                 placeholder={t('machineAttributes.selectCategoryManually')}
                             />
                         )}
                         renderOption={(props, option) => (
                             <li {...props}>
-                                <div style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
                                     gap: '10px',
                                     flexDirection: isRTL ? 'row-reverse' : 'row'
                                 }}>
-                                    <div 
-                                        style={{ 
-                                            width: '12px', 
-                                            height: '12px', 
-                                            borderRadius: '50%', 
-                                            backgroundColor: option.color 
-                                        }} 
+                                    <div
+                                        style={{
+                                            width: '12px',
+                                            height: '12px',
+                                            borderRadius: '50%',
+                                            backgroundColor: option.color
+                                        }}
                                     />
                                     {t(option.name)}
                                 </div>
@@ -296,14 +296,14 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
 
             {/* Status Messages */}
             <Stack direction="row" spacing={2} alignItems="center">
-                {loading && <small style={{color: 'gray'}}>{t('machineAttributes.loadingMachines')}</small>}
+                {loading && <small style={{ color: 'gray' }}>{t('machineAttributes.loadingMachines')}</small>}
                 {!loading && allAdminMachines.length > 0 && (
-                    <small style={{color: 'green'}}>{t('machineAttributes.loadedAdminMachines', { count: allAdminMachines.length })}</small>
+                    <small style={{ color: 'green' }}>{t('machineAttributes.loadedAdminMachines', { count: allAdminMachines.length })}</small>
                 )}
             </Stack>
 
-            <PrimaryButton 
-                onClick={onAddMachine} 
+            <PrimaryButton
+                onClick={onAddMachine}
                 variant={'contained'}
                 disabled={!state.machineName || !state.category}
                 style={{ alignSelf: 'center', minWidth: '120px' }}
@@ -314,4 +314,4 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
     )
 }
 
-export {AddMachineModal}
+export { AddMachineModal }
