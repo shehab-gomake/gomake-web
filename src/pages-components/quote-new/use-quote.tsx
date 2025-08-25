@@ -1986,6 +1986,16 @@ const useQuoteNew = ({
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
+  const onFileUploadStart = () => {
+    setLoadingWithShadow(true);
+  };
+
+  const onFileUploadComplete = () => {
+    setTimeout(() => {
+      setLoadingWithShadow(false);
+    }, 500);
+  };
+
   const handleSaveBtnClickForDocument = async () => {
     // Check if we're creating a new document and if the document already has more than 100 items
     const isNewCreation = router?.query?.isNewCreation === "true";
@@ -2806,6 +2816,8 @@ const useQuoteNew = ({
     openAddAttachmentsModal,
     onOpenAddAttachmentsModal,
     onCloseAddAttachmentsModal,
+    onFileUploadStart,
+    onFileUploadComplete,
     onClickOpenDeleteDeliveryModal,
     onClickCloseDeleteDeliveryModal,
     openDeleteDeliveryModal,

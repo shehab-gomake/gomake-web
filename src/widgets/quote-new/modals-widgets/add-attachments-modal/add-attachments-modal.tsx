@@ -4,7 +4,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { ModalType } from "@/enums";
 import { useAddAttachmentsModal } from "./use-add-attachments-modal";
 import { useState } from "react";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslation } from "react-i18next";
 import { PrimaryButton } from "@/components/button/primary-button";
 
@@ -17,7 +16,7 @@ const AddAttachmentsModal = ({
   quoteConfirm,
   onFileUploadStart,
   onFileUploadComplete,
-  onContinueApproval,
+  onContinueApproval = undefined,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -310,7 +309,6 @@ const AddAttachmentsModal = ({
               </div>
             )}
           </div>
-
           {/* Fixed Footer Buttons */}
           {onContinueApproval && (
             <div style={classes.fixedFooter}>

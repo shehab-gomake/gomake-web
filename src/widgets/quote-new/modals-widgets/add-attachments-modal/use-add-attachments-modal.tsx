@@ -85,6 +85,7 @@ const useAddAttachmentsModal = ({
       if (onFileUploadStart) {
         onFileUploadStart();
       }
+
       const reader = new FileReader();
       reader.onload = async (event) => {
         const arrayBuffer = event.target.result;
@@ -175,12 +176,22 @@ const useAddAttachmentsModal = ({
             onFileUploadComplete();
           }
         } catch (error) {
+          console.error("File upload error:", error);
           // Call onFileUploadComplete even on error
           if (onFileUploadComplete) {
             onFileUploadComplete();
           }
         }
       };
+
+      reader.onerror = () => {
+        console.error("File reader error");
+        // Call onFileUploadComplete on reader error
+        if (onFileUploadComplete) {
+          onFileUploadComplete();
+        }
+      };
+
       reader.readAsArrayBuffer(file);
     }
   };

@@ -38,7 +38,6 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
     approveModal,
     onClickCloseApproveModal,
     onClickOpenApproveModal,
-    isUploading,
     onContinueApprovalFromAttachmentsModal,
     onFileUploadStart,
     onFileUploadComplete,
@@ -115,8 +114,6 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
           onClickDelete={onClickReject}
           style={{ width: "unset" }}
         />
-        {/* !here after click yes open modal Add attachments if there is no files attachech just in this case and two buttons contiue confirmAndApprove  and chnage theto note that we dont have files
-         */}
         <GoMakeDeleteModal
           modalType={ModalType.EDIT}
           style={{ width: "90%" }}
@@ -145,11 +142,6 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
           onFileUploadComplete={onFileUploadComplete}
           onContinueApproval={onContinueApprovalFromAttachmentsModal}
         />
-        {isUploading && (
-          <GomakeLoadingWithShadow
-            style={{ backgroundColor: "transparent", zIndex: 1 }}
-          />
-        )}
       </div>
     )
   );

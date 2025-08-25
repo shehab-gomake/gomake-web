@@ -69,7 +69,6 @@ const ApproveSignatureModal = ({
             {t("sales.cart.signatureLegalConfirmation")}
           </div>
           <div style={clasess.btnsContainer}>
-            {/* !here */}
             <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>
               {t("sales.cart.confirmAndApprove")}
             </GomakePrimaryButton>

@@ -15,7 +15,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { areAllItemsChecked } from "@/utils/helpers";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
-import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow/loading";
 
 const ButtonsConfirmContainer = ({
   onClickOpenAddAttachmentsModal,
@@ -47,7 +46,6 @@ const ButtonsConfirmContainer = ({
     approveSignatureModal,
     onClickOpenApproveSignatureModal,
     onClickCloseApproveSignatureModal,
-    isUploading,
     onContinueApprovalFromAttachmentsModal,
     onFileUploadStart,
     onFileUploadComplete,
@@ -91,7 +89,6 @@ const ButtonsConfirmContainer = ({
         >
           {t("sales.quote.attachFiles")}
         </SecondaryButton>
-        {/* !here  */}
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
@@ -171,11 +168,6 @@ const ButtonsConfirmContainer = ({
         onFileUploadComplete={onFileUploadComplete}
         onContinueApproval={onContinueApprovalFromAttachmentsModal}
       />
-      {isUploading && (
-        <GomakeLoadingWithShadow
-          style={{ backgroundColor: "transparent", zIndex: 1 }}
-        />
-      )}
     </div>
   );
 };

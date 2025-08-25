@@ -4,7 +4,7 @@ import {
   loadingWithShadowState,
 } from "@/store";
 import { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   approveDocumentItemsApi,
@@ -28,7 +28,7 @@ const useButtonsConfirmContainer = () => {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const fileItems = useRecoilValue(fileItemsState);
   const { getQuoteConfirmation } = useQuoteConfirmation();
-  const [isUploading, setIsUploading] = useState(false);
+  const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
   const [openAttachmentsModal, setOpenAttachmentsModal] = useState(false);
 
   const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -150,11 +150,14 @@ const useButtonsConfirmContainer = () => {
   };
 
   const onFileUploadStart = () => {
-    setIsUploading(true);
+    setLoadingWithShadow(true);
   };
 
   const onFileUploadComplete = () => {
-    setIsUploading(false);
+    // Add a small delay to make the loading more visible
+    setTimeout(() => {
+      setLoadingWithShadow(false);
+    }, 500);
   };
 
   const onClickOpenAddAttachmentsModal = () => {
@@ -193,7 +196,6 @@ const useButtonsConfirmContainer = () => {
     approveSignatureModal,
     onClickOpenApproveSignatureModal,
     onClickCloseApproveSignatureModal,
-    isUploading,
     onContinueApprovalFromAttachmentsModal,
     onFileUploadStart,
     onFileUploadComplete,
