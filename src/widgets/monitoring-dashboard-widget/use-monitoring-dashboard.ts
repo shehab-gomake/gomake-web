@@ -34,7 +34,8 @@ type TableRow = [
   number, // avgProfit
   number, // avgPerOrder
   string, // os
-  number // successRate
+  number, // successRate
+  string // growth (formatted percentage)
 ];
 
 const useMonitoringDashboard = () => {
@@ -221,6 +222,15 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            // Render badge via JSX in table cell
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setProductsRow(mapData);
       }
@@ -278,6 +288,14 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setAgentsRow(mapData);
       }
@@ -335,6 +353,14 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setClientsRow(mapData);
       }
@@ -397,6 +423,7 @@ const useMonitoringDashboard = () => {
     t("dashboard.avgPerOrder"),
     t("dashboard.os"),
     t("dashboard.successRate"),
+    t("dashboard.growth"),
   ];
 
   const productTableHeaders = [t("dashboard.productName"), ...baseTableHeaders];

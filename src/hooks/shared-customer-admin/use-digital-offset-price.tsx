@@ -44,6 +44,9 @@ import { DropDownListParameterWidget } from "@/pages-components/products/digital
 import { SelectChildParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/select-child-parameter";
 import { SWITCHParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/switch-parameter";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
+import { IconButton } from "@mui/material";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
+import { pdfjs } from "react-pdf";
 
 import {
   additionalProductItemsState,
@@ -110,6 +113,14 @@ export interface SampleTypeOption {
 }
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
+  if (typeof window !== "undefined") {
+    try {
+      // Ensure pdf worker is set for client-side PDF parsing
+      // This avoids runtime errors when extracting average color from PDFs
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (pdfjs as any).GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+    } catch { }
+  }
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
     openQuantityComponentModalState
   );
@@ -3465,6 +3476,155 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 {parameter?.isRequired ? (
                   <span style={clasess.spanRequierd}> *</span>
                 ) : null}
+                {
+                  // Add upload icon next to Printing Sides label to auto-detect color load from an uploaded file
+                  (() => {
+                    const isPrintingSides =
+                      (parameter?.code && typeof parameter?.code === "string" && parameter.code === "PrintingSides");
+
+                    if (!isPrintingSides) return null;
+
+                    let uploadInputEl: HTMLInputElement | null = null;
+
+                    const computeAverageInkLoadFromImage = async (file: File): Promise<number> => {
+                      const imgUrl = URL.createObjectURL(file);
+                      try {
+                        const img = new Image();
+                        img.crossOrigin = "anonymous";
+                        await new Promise<void>((resolve, reject) => {
+                          img.onload = () => resolve();
+                          img.onerror = (e) => reject(e);
+                          img.src = imgUrl;
+                        });
+                        const canvas = document.createElement("canvas");
+                        const maxDim = 128;
+                        const scale = Math.min(maxDim / (img.width || maxDim), maxDim / (img.height || maxDim)) || 1;
+                        canvas.width = Math.max(1, Math.floor((img.width || maxDim) * scale));
+                        canvas.height = Math.max(1, Math.floor((img.height || maxDim) * scale));
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) return 50;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        let sum = 0;
+                        let count = 0;
+                        for (let i = 0; i < data.length; i += 4) {
+                          const r = data[i];
+                          const g = data[i + 1];
+                          const b = data[i + 2];
+                          // Average brightness
+                          const brightness = (r + g + b) / 3;
+                          sum += brightness;
+                          count++;
+                        }
+                        const avgBrightness = count ? sum / count : 127.5;
+                        const inkLoad = Math.max(0, Math.min(100, Math.round((1 - avgBrightness / 255) * 100)));
+                        return inkLoad;
+                      } finally {
+                        URL.revokeObjectURL(imgUrl);
+                      }
+                    };
+
+                    const computeAverageInkLoadFromPdf = async (file: File): Promise<number> => {
+                      const url = URL.createObjectURL(file);
+                      try {
+                        const loadingTask = pdfjs.getDocument({ url });
+                        const pdf = await loadingTask.promise;
+                        const page = await pdf.getPage(1);
+                        const viewport = page.getViewport({ scale: 0.5 });
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext("2d");
+                        if (!context) return 50;
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        await page.render({ canvasContext: context, viewport }).promise;
+                        const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+                        let sum = 0;
+                        let count = 0;
+                        for (let i = 0; i < data.length; i += 4) {
+                          const r = data[i];
+                          const g = data[i + 1];
+                          const b = data[i + 2];
+                          const brightness = (r + g + b) / 3;
+                          sum += brightness;
+                          count++;
+                        }
+                        const avgBrightness = count ? sum / count : 127.5;
+                        const inkLoad = Math.max(0, Math.min(100, Math.round((1 - avgBrightness / 255) * 100)));
+                        return inkLoad;
+                      } catch {
+                        return 50;
+                      } finally {
+                        URL.revokeObjectURL(url);
+                      }
+                    };
+
+                    const handleUpload = async (file: File) => {
+                      try {
+                        const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+                        const inkLoad = isPdf
+                          ? await computeAverageInkLoadFromPdf(file)
+                          : await computeAverageInkLoadFromImage(file);
+
+                        // Find target ColorsLoadAverage parameters for current section/subSection
+                        const side2Exists = temp.some(
+                          (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === "printingcolorsDetailSide2"
+                        );
+
+                        const targetCodes = side2Exists
+                          ? ["ColorsLoadAverage", "ColorsLoadAverageSide2"]
+                          : ["ColorsLoadAverage"];
+
+                        targetCodes.forEach((code) => {
+                          const target = temp.find(
+                            (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === code
+                          );
+                          if (target) {
+                            onChangeSubProductsForPrice(
+                              target.parameterId,
+                              subSection?.id,
+                              section?.id,
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              (target as any).ParameterType ?? target.parameterType ?? EParameterTypes.INPUT_NUMBER,
+                              target.parameterName ?? code,
+                              target.actionId,
+                              { values: inkLoad, valueIds: inkLoad },
+                              subSection?.type,
+                              index,
+                              target.actionIndex,
+                              code,
+                              null
+                            );
+                          }
+                        });
+                      } catch { }
+                    };
+
+                    const onIconClick = () => {
+                      if (uploadInputEl) {
+                        uploadInputEl.value = "";
+                        uploadInputEl.click();
+                      }
+                    };
+
+                    return (
+                      <>
+                        <input
+                          ref={(el) => (uploadInputEl = el)}
+                          type="file"
+                          accept="image/*,application/pdf"
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            const file = e.target.files && e.target.files[0];
+                            if (file) handleUpload(file);
+                          }}
+                        />
+                        <IconButton size="small" onClick={onIconClick} style={{ marginLeft: 6, padding: 2 }} title="Upload image/PDF to detect color load">
+                          <UploadFileRoundedIcon fontSize="inherit" />
+                        </IconButton>
+                      </>
+                    );
+                  })()
+                }
               </div>
               <div
                 style={
@@ -4915,8 +5075,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const isSide2 = parameterCode === "ColorsLoadAverageSide2";
           const colorParamCode = isSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
           const loadParamCode = isSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
-          const colorsParamVal = temp.find(p => p.parameterCode === colorParamCode);
-          const loadParamValIndex = temp.findIndex(p => p.parameterCode === loadParamCode);
+          const colorParamId = isSide2 ? "8eff3238-a321-48f3-85eb-c14afaccbff3" : "8eff3238-a321-48f3-85eb-c14afaccbff3";
+          const loadParamId = isSide2 ? "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8" : "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8";
+          const colorsParamVal = temp.find(p => p.parameterCode === colorParamCode || p.parameterId === colorParamId);
+          const loadParamValIndex = temp.findIndex(p => p.parameterCode === loadParamCode || p.parameterId === loadParamId);
           if (colorsParamVal && Array.isArray(colorsParamVal.valueIds)) {
             const filledArr = colorsParamVal.valueIds.map(() => data.values);
             if (loadParamValIndex !== -1) {

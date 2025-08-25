@@ -1,4 +1,12 @@
-import { Box, IconButton, Stack, Typography, Button, CardContent, Card } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Stack,
+  Typography,
+  Button,
+  CardContent,
+  Card,
+} from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -23,20 +31,32 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
-import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
+import {
+  abortControllerActivitiesState,
+  abortControllerFilesState,
+  abortControllerStationState,
+  getBoardMissionsByIdState,
+} from "./views/board-missions-view/stations/state";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-import { handleBoardMissionsBarcodeActions, updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  handleBoardMissionsBarcodeActions,
+  updateBoardMissionCurrentStationApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
-import { QR_CODE_LISTENER_FROM, useQrCodeListener } from "@/hooks/use-qr-code-listener";
+import {
+  QR_CODE_LISTENER_FROM,
+  useQrCodeListener,
+} from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -55,7 +75,7 @@ const ProductionFloorWidget = () => {
     onOpenMarkReadyModalForHasJobs,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
-    selectedMission
+    selectedMission,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -81,10 +101,16 @@ const ProductionFloorWidget = () => {
     }
   }, [groupsId, boardMissionsId, step]);
 
-  const setAbortControllerStation = useSetRecoilState(abortControllerStationState);
+  const setAbortControllerStation = useSetRecoilState(
+    abortControllerStationState
+  );
   const setAbortControllerFiles = useSetRecoilState(abortControllerFilesState);
-  const setAbortControllerActivities = useSetRecoilState(abortControllerActivitiesState);
-  const setAbortControllerDetails = useSetRecoilState(getBoardMissionsByIdState);
+  const setAbortControllerActivities = useSetRecoilState(
+    abortControllerActivitiesState
+  );
+  const setAbortControllerDetails = useSetRecoilState(
+    getBoardMissionsByIdState
+  );
 
   useEffect(() => {
     const { view: viewQuery } = query;
@@ -116,7 +142,7 @@ const ProductionFloorWidget = () => {
       // setStations([]);
       // setBoardMissionsDetails(null);
       // setActivities([]);
-    };
+    }
   };
 
   const { t } = useTranslation();
@@ -134,7 +160,7 @@ const ProductionFloorWidget = () => {
   const handleCloseModal = () => {
     setIsOpenModal(false);
     setIsOpenFirstTime(true);
-  }
+  };
 
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -174,7 +200,7 @@ const ProductionFloorWidget = () => {
   };
 
   const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
-    barcode = barcode.replace(/½/g, '-');
+    barcode = barcode.replace(/½/g, "-");
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -184,7 +210,7 @@ const ProductionFloorWidget = () => {
       }
     };
     await handleBoardMissionsBarcodeActions(callApi, callBack, {
-      barcode
+      barcode,
     });
   };
 
@@ -192,23 +218,21 @@ const ProductionFloorWidget = () => {
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setStatusesList(res.data)
+        setStatusesList(res.data);
       }
     };
     await getAllBoardMissionStatusApi(callApi, callBack).then();
   };
 
   useEffect(() => {
-    getAllBoardMissionStatus()
-  }, [])
-
-
+    getAllBoardMissionStatus();
+  }, []);
 
   //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
-  const isOpenDoneModal = useModal()
-
+  const isOpenDoneModal = useModal();
 
   return (
+    // <ZoomProvider>
     <Stack
       // padding={"0 20px"}
       gap={"10px"}
@@ -216,7 +240,6 @@ const ProductionFloorWidget = () => {
       maxHeight={"100%"}
       overflow={"hidden"}
     >
-
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
@@ -233,7 +256,12 @@ const ProductionFloorWidget = () => {
           />
         </Stack>
       )}
-      <Stack overflow={"auto"} maxHeight={"100%"} paddingLeft={"20px"} paddingRight={"20px"}>
+      <Stack
+        overflow={"auto"}
+        maxHeight={"100%"}
+        paddingLeft={"20px"}
+        paddingRight={"20px"}
+      >
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
@@ -295,12 +323,14 @@ const ProductionFloorWidget = () => {
             bgcolor="#f7f7f7"
             p={3}
           >
-            <Card sx={{
-              width: "100%",
-              maxWidth: 400,
-              borderRadius: "15px",
-              boxShadow: 3,
-            }}>
+            <Card
+              sx={{
+                width: "100%",
+                maxWidth: 400,
+                borderRadius: "15px",
+                boxShadow: 3,
+              }}
+            >
               <CardContent>
                 <Typography
                   variant="h5"
@@ -328,8 +358,8 @@ const ProductionFloorWidget = () => {
                         video: {
                           facingMode: "environment",
                           width: { ideal: 1280 },
-                          height: { ideal: 720 }
-                        }
+                          height: { ideal: 720 },
+                        },
                       }}
                       style={{
                         width: "100%",
@@ -347,7 +377,12 @@ const ProductionFloorWidget = () => {
                   </Box>
                 )}
                 {scanResult && (
-                  <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    mt={2}
+                  >
                     <Typography variant="body1" color="primary">
                       Scanned QR Code: {scanResult}
                     </Typography>
@@ -361,23 +396,24 @@ const ProductionFloorWidget = () => {
                     </Button>
                   </Box>
                 )}
-
               </CardContent>
             </Card>
           </Box>
         )}
-
       </Drawer>
       <GoMakeDeleteModal
         hideIcon={true}
         modalType={ModalType.WARNING}
-        title={t("customers.modal.nextStationModalTitle")}
+        title="Move to Next Station"
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("modal.no")}
         openModal={isOpenModal}
         onClose={handleCloseModal}
         onClickDelete={() => {
-          onUpdateToNextStation(boardMissionsId?.toString(), productType?.toString());
+          onUpdateToNextStation(
+            boardMissionsId?.toString(),
+            productType?.toString()
+          );
         }}
       />
 
@@ -395,10 +431,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
@@ -412,9 +448,8 @@ const ProductionFloorWidget = () => {
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
       />
-
-
     </Stack>
+    // </ZoomProvider>
   );
 };
 

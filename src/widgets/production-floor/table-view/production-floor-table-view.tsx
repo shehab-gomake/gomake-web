@@ -34,7 +34,12 @@ import { Paper, Skeleton } from "@mui/material";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { selectedBoardsMissionsState } from "../state/boards";
 import { FloatingBulkActionsMenu } from "./status-table/floating-bulk-actions-menu";
-import { checkIfCanMakeGroupedBoardMissionsApi, groupJobsApi, moveBoardMissionListToDoneApi, updateBoardMissionListCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  checkIfCanMakeGroupedBoardMissionsApi,
+  groupJobsApi,
+  moveBoardMissionListToDoneApi,
+  updateBoardMissionListCurrentStationApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-modal";
 import { ModalType } from "@/enums";
@@ -43,6 +48,7 @@ import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 import { useUserPermission } from "@/hooks/use-permission";
 import { useSearch } from "rsuite/cjs/internals/Picker";
+import { ZoomWrapper } from "../components/zoom-wrapper/zoom-wrapper";
 import { ProductionFloorExportButtons } from "./export-buttons/production-floor-export-buttons";
 
 // Performance optimization constants
@@ -50,8 +56,6 @@ const ITEMS_PER_PAGE = 50; // Show 50 items per page
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
-
-
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
     data,
@@ -113,24 +117,28 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   }, [data, selectedChipId]);
 
   // Optimized search matching function
-  const matchSearch = useCallback((mission) => {
-    if (!search) return true;
+  const matchSearch = useCallback(
+    (mission) => {
+      if (!search) return true;
 
-    const searchLower = search.toLowerCase();
-    const missionNumber = `${mission.boardMissionNumber}\\${mission.orderNumber}`;
-    const clientName = mission.clientName?.toLowerCase() || '';
-    const productName = mission.productName?.toLowerCase() || '';
-    const jobName = mission?.jobName?.toLowerCase() || '';
+      const searchLower = search.toLowerCase();
+      const missionNumber = `${mission.boardMissionNumber}\\${mission.orderNumber}`;
+      const clientName = mission.clientName?.toLowerCase() || "";
+      const productName = mission.productName?.toLowerCase() || "";
+      const jobName = mission?.jobName?.toLowerCase() || "";
 
-    return missionNumber.includes(search) ||
-      clientName.includes(searchLower) ||
-      productName.includes(searchLower) ||
-      jobName.includes(searchLower) ||
-      mission.automatedTags?.some((tag) =>
-        tag.toLowerCase().includes(searchLower)
+      return (
+        missionNumber.includes(search) ||
+        clientName.includes(searchLower) ||
+        productName.includes(searchLower) ||
+        jobName.includes(searchLower) ||
+        mission.automatedTags?.some((tag) =>
+          tag.toLowerCase().includes(searchLower)
+        )
       );
-  }, [search]);
-
+    },
+    [search]
+  );
 
   // Debounced search effect
   useEffect(() => {
@@ -149,119 +157,140 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         }
         setLastSearch(search);
       }
-
     }, DEBOUNCE_DELAY);
 
     return () => clearTimeout(timeoutId);
-  }, [search, filteredDataByMachine, matchSearch, setFilteredMissionsBySearch, getAllBoardMissionsFromSearch]);
+  }, [
+    search,
+    filteredDataByMachine,
+    matchSearch,
+    setFilteredMissionsBySearch,
+    getAllBoardMissionsFromSearch,
+  ]);
 
   // Memoized table headers
-  const tableHeader = useMemo(() => [
-    t("boardMissions.image"),
-    t("boardMissions.creationDate"),
-    t("boardMissions.dueDate"),
-    t("boardMissions.clientName"),
-    t("boardMissions.missionNumber"),
-    t("mailingSettings.orderNumber"),
-    t("boardMissions.outSourceType"),
-    t("boardMissions.quantity"),
-    t("boardMissions.jobName"),
-    t("boardMissions.productName"),
-    t("boardMissions.currentBoardMissionStatus"),
-    t("properties.more"),
-  ].filter(Boolean), [t]);
+  const tableHeader = useMemo(
+    () =>
+      [
+        t("boardMissions.image"),
+        t("boardMissions.creationDate"),
+        t("boardMissions.dueDate"),
+        t("boardMissions.clientName"),
+        t("boardMissions.missionNumber"),
+        t("mailingSettings.orderNumber"),
+        t("boardMissions.outSourceType"),
+        t("boardMissions.quantity"),
+        t("boardMissions.jobName"),
+        t("boardMissions.productName"),
+        t("boardMissions.currentBoardMissionStatus"),
+        t("properties.more"),
+      ].filter(Boolean),
+    [t]
+  );
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
 
   const visibleColumns = useVisibleOrderedColumns();
 
-
   const [columnsReady, setColumnsReady] = useState(false);
-
-
 
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
 
   // Memoized pagination handlers
-  const handlePageChange = useCallback((event, value) => {
-    setPageNumber(value);
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, pageNumber: value },
-    });
-    getAllData(value, pageSize);
-  }, [setPageNumber, router, getAllData, pageSize]);
+  const handlePageChange = useCallback(
+    (event, value) => {
+      setPageNumber(value);
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, pageNumber: value },
+      });
+      getAllData(value, pageSize);
+    },
+    [setPageNumber, router, getAllData, pageSize]
+  );
 
-  const handlePageSizeChange = useCallback((event) => {
-    setPageNumber(1);
-    setPageSize(event.target.value);
-    getAllData(1, event.target.value);
-  }, [setPageNumber, setPageSize, getAllData]);
+  const handlePageSizeChange = useCallback(
+    (event) => {
+      setPageNumber(1);
+      setPageSize(event.target.value);
+      getAllData(1, event.target.value);
+    },
+    [setPageNumber, setPageSize, getAllData]
+  );
 
   // Memoized bulk action handlers
-  const handleBulkUpdateStatus = useCallback(async (selectedJobs, statusId) => {
-    try {
-      await updateStatus(selectedJobs, statusId);
-      setSelectedIds([]);
-    } catch (error) {
-      console.error("Error updating status:", error);
-      alertFaultUpdate();
-    }
-  }, [updateStatus, setSelectedIds, alertFaultUpdate]);
+  const handleBulkUpdateStatus = useCallback(
+    async (selectedJobs, statusId) => {
+      try {
+        await updateStatus(selectedJobs, statusId);
+        setSelectedIds([]);
+      } catch (error) {
+        console.error("Error updating status:", error);
+        alertFaultUpdate();
+      }
+    },
+    [updateStatus, setSelectedIds, alertFaultUpdate]
+  );
 
-  const handleBulkMoveToNextStation = useCallback(async (selectedJobs) => {
-    try {
-      const callBack = (res) => {
-        if (res?.success) {
-          setSelectedIds([]);
-          getData();
-        } else {
-          alertFaultUpdate();
-        }
-      };
-      const jobsData = selectedJobs.map((job) => ({
-        boardMissionId: job.id,
-        productType: job.productType,
-      }));
+  const handleBulkMoveToNextStation = useCallback(
+    async (selectedJobs) => {
+      try {
+        const callBack = (res) => {
+          if (res?.success) {
+            setSelectedIds([]);
+            getData();
+          } else {
+            alertFaultUpdate();
+          }
+        };
+        const jobsData = selectedJobs.map((job) => ({
+          boardMissionId: job.id,
+          productType: job.productType,
+        }));
 
-      await updateBoardMissionListCurrentStationApi(callApi, callBack, {
-        stationId: null,
-        data: jobsData,
-      });
-    } catch (error) {
-      console.error("Error moving to done:", error);
-      alertFaultUpdate();
-    }
-  }, [callApi, setSelectedIds, getData, alertFaultUpdate]);
+        await updateBoardMissionListCurrentStationApi(callApi, callBack, {
+          stationId: null,
+          data: jobsData,
+        });
+      } catch (error) {
+        console.error("Error moving to done:", error);
+        alertFaultUpdate();
+      }
+    },
+    [callApi, setSelectedIds, getData, alertFaultUpdate]
+  );
 
-  const handleBulkMoveToDone = useCallback(async (selectedJobs, sendMessage) => {
-    try {
-      const callBack = (res) => {
-        if (res?.success) {
-          setSelectedIds([]);
-          getData();
-        } else {
-          alertFaultUpdate();
-        }
-      };
-      const jobsData = selectedJobs.map((job) => ({
-        boardMissionId: job.id,
-        productType: job.productType,
-      }));
+  const handleBulkMoveToDone = useCallback(
+    async (selectedJobs, sendMessage) => {
+      try {
+        const callBack = (res) => {
+          if (res?.success) {
+            setSelectedIds([]);
+            getData();
+          } else {
+            alertFaultUpdate();
+          }
+        };
+        const jobsData = selectedJobs.map((job) => ({
+          boardMissionId: job.id,
+          productType: job.productType,
+        }));
 
-      await moveBoardMissionListToDoneApi(callApi, callBack, {
-        sendMessage: sendMessage,
-        storage: inputValue,
-        data: jobsData,
-      });
-    } catch (error) {
-      console.error("Error moving to done:", error);
-      alertFaultUpdate();
-    }
-  }, [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue]);
+        await moveBoardMissionListToDoneApi(callApi, callBack, {
+          sendMessage: sendMessage,
+          storage: inputValue,
+          data: jobsData,
+        });
+      } catch (error) {
+        console.error("Error moving to done:", error);
+        alertFaultUpdate();
+      }
+    },
+    [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue]
+  );
 
   const handleClearSelection = useCallback(() => {
     setSelectedIds([]);
@@ -280,39 +309,45 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
 
   const isOpenGroupJobsModal = useModal();
 
-  const handleCheckIfCanMakeGroupedBoardMissions = useCallback(async (selectedJobIds) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        if (res?.data?.item1) {
-          isOpenGroupJobsModal.open();
+  const handleCheckIfCanMakeGroupedBoardMissions = useCallback(
+    async (selectedJobIds) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          if (res?.data?.item1) {
+            isOpenGroupJobsModal.open();
+          } else {
+            alertFault(res?.data?.item2);
+          }
         } else {
-          alertFault(res?.data?.item2);
+          alertFaultUpdate();
         }
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    const selectedJobsIdsList = selectedJobIds.map(job => job.id);
+      };
+      const selectedJobsIdsList = selectedJobIds.map((job) => job.id);
 
-    await checkIfCanMakeGroupedBoardMissionsApi(callApi, callBack, {
-      selectedJobsIdsList
-    });
-  }, [callApi, isOpenGroupJobsModal, alertFault, alertFaultUpdate]);
+      await checkIfCanMakeGroupedBoardMissionsApi(callApi, callBack, {
+        selectedJobsIdsList,
+      });
+    },
+    [callApi, isOpenGroupJobsModal, alertFault, alertFaultUpdate]
+  );
 
-  const handleGroupJobs = useCallback(async (selectedJobIds) => {
-    const selectedJobsIdsList = selectedJobIds.map(job => job.id);
+  const handleGroupJobs = useCallback(
+    async (selectedJobIds) => {
+      const selectedJobsIdsList = selectedJobIds.map((job) => job.id);
 
-    const callBack = (res) => {
-      if (res?.success) {
-        setSelectedIds([]);
-        getData();
-      } else {
-        alertFaultUpdate();
-      }
-    };
+      const callBack = (res) => {
+        if (res?.success) {
+          setSelectedIds([]);
+          getData();
+        } else {
+          alertFaultUpdate();
+        }
+      };
 
-    await groupJobsApi(callApi, callBack, selectedJobsIdsList);
-  }, [callApi, setSelectedIds, getData, alertFaultUpdate]);
+      await groupJobsApi(callApi, callBack, selectedJobsIdsList);
+    },
+    [callApi, setSelectedIds, getData, alertFaultUpdate]
+  );
 
   const moveToDone = useModal();
   const moveToNextStation = useModal();
@@ -422,10 +457,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     handleStorageChange,
     setInputValue,
     employeesCategories,
-    visibleColumns
+    visibleColumns,
   ]);
 
   return (
+    // <ZoomWrapper>
     <Stack gap={"20px"}>
       {/* Export buttons */}
       <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
@@ -475,12 +511,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -530,6 +566,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         }}
       />
     </Stack>
+    // </ZoomWrapper>
   );
 };
 
