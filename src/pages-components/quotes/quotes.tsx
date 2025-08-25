@@ -689,7 +689,7 @@ const QuotesListPageWidget = ({
                                 value={currencyFilter}
                               />
                             </div>
-                            {isOrder && (
+                            {(isOrder || isPurchaseOrder) && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
                                   {t("sales.quote.canceledOrders")}
