@@ -5,6 +5,11 @@ export const quoteItemState = atom({
   default: [],
 });
 
+export const selectedItemsState = atom({
+  key: "selectedItemsState",
+  default: [],
+});
+
 
 export const quoteConfirmationState = atom<any>({
   key: "quoteConfirmationState",

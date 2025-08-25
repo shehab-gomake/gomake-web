@@ -3,7 +3,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { getClientDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
-import { quoteItemState } from "@/store";
+import { quoteItemState, selectedItemsState } from "@/store";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -56,7 +56,7 @@ const useCopyFromOrderModal = ({
   const { callApi } = useGomakeAxios();
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useRecoilState(selectedItemsState);
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
   const { orderId, deliveryNoteId } = router.query;
@@ -142,7 +142,11 @@ const useCopyFromOrderModal = ({
 
     setTotalPrice(total);
   };
-
+  useEffect(() => {
+    if (router.query.isNewCreation === "true") {
+      setSelectedItems([]);
+    }
+  }, [router.query.isNewCreation]);
   const handleItemSelect = (item) => {
     if (selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
       // If the item is already selected, remove it
@@ -173,16 +177,16 @@ const useCopyFromOrderModal = ({
       const newItems = documentItem?.orderItems.filter(
         (item) => !selectedIds.has(item.id)
       );
-      
+
       // Check if adding these items would exceed 100 items
       const currentCount = selectedItems.length;
       const newItemsCount = newItems.length;
-      
+
       if (currentCount + newItemsCount > 100) {
         // Only add items up to the 100 limit
         const itemsToAdd = newItems.slice(0, 100 - currentCount);
         setSelectedItems([...selectedItems, ...itemsToAdd]);
-        
+
         // Show alert that only first 100 items were selected
         alertWarning("sales.quote.maxItemsReached");
       } else {
@@ -191,18 +195,18 @@ const useCopyFromOrderModal = ({
     }
   };
   const handleSelectAllDocuments = (filteredDocumentItems) => {
-    if(!filteredDocumentItems || !filteredDocumentItems.length){
+    if (!filteredDocumentItems || !filteredDocumentItems.length) {
       return;
     }
     let newSelectedItems = [];
     let totalItemsToAdd = 0;
     let hasReachedLimit = false;
-    
-    for(let i = 0; i < filteredDocumentItems.length; i++) {
+
+    for (let i = 0; i < filteredDocumentItems.length; i++) {
       let documentItem = filteredDocumentItems[i];
       const selectedIds = new Set(selectedItems.map((item) => item.id));
       const sectionItemIds =
-          documentItem?.orderItems?.map((item) => item.id) || [];
+        documentItem?.orderItems?.map((item) => item.id) || [];
 
       const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
 
@@ -212,18 +216,18 @@ const useCopyFromOrderModal = ({
       } else {
         // If any item is not selected, add only missing items
         const newItems = documentItem?.orderItems.filter(
-            (item) => !selectedIds.has(item.id)
+          (item) => !selectedIds.has(item.id)
         );
-        
+
         // Check if adding these items would exceed 100 items
         const currentTotal = selectedItems.length + newSelectedItems.length;
         const remainingSlots = 100 - currentTotal;
-        
+
         if (remainingSlots <= 0) {
           hasReachedLimit = true;
           break;
         }
-        
+
         if (newItems.length > remainingSlots) {
           // Only add items up to the 100 limit
           const itemsToAdd = newItems.slice(0, remainingSlots);
@@ -234,9 +238,9 @@ const useCopyFromOrderModal = ({
         }
       }
     }
-    
+
     setSelectedItems([...selectedItems, ...newSelectedItems]);
-    
+
     // Show alert if we reached the limit
     if (hasReachedLimit) {
       alertWarning("sales.quote.maxItemsReached");

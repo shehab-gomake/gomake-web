@@ -39,6 +39,9 @@ const useStyle = () => {
       marginLabel: {
         ...FONT_FAMILY.Inter(600, 12),
         color: grayColor(700),
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
       },
       value: {
         ...FONT_FAMILY.Inter(600, 14),

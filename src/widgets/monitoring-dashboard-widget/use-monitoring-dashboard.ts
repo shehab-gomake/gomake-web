@@ -22,6 +22,7 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
 import { selectedDocumentTypeState } from "./filters/states/selected-document-type";
+import { selectedDocumentStatusesState } from "./filters/states/selected-document-statuses";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 type TableRow = [
@@ -34,7 +35,8 @@ type TableRow = [
   number, // avgProfit
   number, // avgPerOrder
   string, // os
-  number // successRate
+  number, // successRate
+  string // growth (formatted percentage)
 ];
 
 const useMonitoringDashboard = () => {
@@ -115,6 +117,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
       ...extraCostData,
     };
 
@@ -155,6 +160,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
+      }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
       }),
     };
 
@@ -200,6 +208,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -221,6 +232,15 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            // Render badge via JSX in table cell
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setProductsRow(mapData);
       }
@@ -256,6 +276,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
 
     const callBack = (res) => {
@@ -278,6 +301,14 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setAgentsRow(mapData);
       }
@@ -313,6 +344,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
 
     const callBack = (res) => {
@@ -335,6 +369,14 @@ const useMonitoringDashboard = () => {
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
+          typeof row?.growth === "number" ? (
+            require("react").createElement(
+              require("./growth-badge").GrowthBadge,
+              { value: row.growth }
+            )
+          ) : (
+            "-"
+          ),
         ]);
         setClientsRow(mapData);
       }
@@ -370,6 +412,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -397,6 +442,7 @@ const useMonitoringDashboard = () => {
     t("dashboard.avgPerOrder"),
     t("dashboard.os"),
     t("dashboard.successRate"),
+    t("dashboard.growth"),
   ];
 
   const productTableHeaders = [t("dashboard.productName"), ...baseTableHeaders];
@@ -412,6 +458,9 @@ const useMonitoringDashboard = () => {
   const selectedClient = useRecoilValue(selectedDashClientState);
   const selectedDataType = useRecoilValue(selectedDataTypeState);
   const selectedDocumentType = useRecoilValue(selectedDocumentTypeState);
+  const selectedDocumentStatuses = useRecoilValue(
+    selectedDocumentStatusesState
+  );
 
   const filters = useMemo(
     () => ({
@@ -425,6 +474,7 @@ const useMonitoringDashboard = () => {
       selectedClient,
       selectedDataType,
       selectedDocumentType,
+      selectedDocumentStatuses,
     }),
     [
       dates?.startDate,
@@ -437,6 +487,7 @@ const useMonitoringDashboard = () => {
       selectedClient,
       selectedDataType,
       selectedDocumentType,
+      selectedDocumentStatuses,
     ]
   );
 
@@ -470,6 +521,7 @@ const useMonitoringDashboard = () => {
     selectedClientTypesIds,
     selectedJobTypesIds,
     selectedDocumentType,
+    selectedDocumentStatuses,
     filters,
     currUnit,
     selectedClient,
