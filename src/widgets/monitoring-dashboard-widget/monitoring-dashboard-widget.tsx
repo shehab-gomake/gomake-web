@@ -8,7 +8,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
 import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { exportDashboardToExcel } from "./utils/export-to-excel";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
