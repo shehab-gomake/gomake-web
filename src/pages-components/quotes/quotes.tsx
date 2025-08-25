@@ -76,6 +76,8 @@ import {
   QR_CODE_LISTENER_FROM,
 } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { selectedItemsState } from "@/store";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -446,6 +448,7 @@ const QuotesListPageWidget = ({
 
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
+  const setSelectedItems = useSetRecoilState(selectedItemsState);
   return (
     <>
       {!isFromHomePage && (
@@ -482,7 +485,10 @@ const QuotesListPageWidget = ({
                       ? onclickCreateNew
                       : isSupplierPayments
                         ? () => navigate(`/${documentPath}`)
-                        : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`)
+                        }
                   )}
               </div>
             </div>
