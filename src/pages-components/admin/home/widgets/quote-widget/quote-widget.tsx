@@ -84,16 +84,19 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
       setQuoteNumber(userQuote.number);
       setQuoteIfExist(true);
       setSelectedClient(userQuote.client);
-      const clientType = clientTypesValue.find(
-        (c) => c.id == userQuote?.client?.clientTypeId
-      );
-      setSelectedClientType(clientType);
+      // Only set client type if clientTypesValue is loaded
+      if (clientTypesValue?.length > 0) {
+        const clientType = clientTypesValue.find(
+          (c) => c.id == userQuote?.client?.clientTypeId
+        );
+        setSelectedClientType(clientType);
+      }
     } else {
       setQuoteId(null);
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
-  }, [userQuote]);
+  }, [userQuote, clientTypesValue]);
 
   // this for select customer in home page
   useEffect(() => {
@@ -147,9 +150,18 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
               />
             </div>
             {selectedClient?.id && (
-              <div data-tour="select-type" style={{ width: "30%" }}>
+              <div
+                data-tour="select-type"
+                style={{
+                  width: "30%",
+                  opacity: selectedClient?.id ? 1 : 0,
+                  transform: selectedClient?.id
+                    ? "translateX(0)"
+                    : "translateX(-10px)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >
                 <GoMakeAutoComplate
-                  key={`client-type-${selectedClientType?.id || "none"}`}
                   options={clientTypesValue}
                   placeholder={t("home.admin.selectCostumerType")}
                   style={classes.selectTypeContainer}
