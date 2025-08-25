@@ -78,23 +78,25 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
     onCustomerAddFromOption,
   } = useQuoteWidget();
 
-
   useEffect(() => {
     if (userQuote) {
       setQuoteId(userQuote.id);
       setQuoteNumber(userQuote.number);
       setQuoteIfExist(true);
       setSelectedClient(userQuote.client);
-      const clientType = clientTypesValue.find(
-        (c) => c.id == userQuote?.client?.clientTypeId
-      );
-      setSelectedClientType(clientType);
+      // Only set client type if clientTypesValue is loaded
+      if (clientTypesValue?.length > 0) {
+        const clientType = clientTypesValue.find(
+          (c) => c.id == userQuote?.client?.clientTypeId
+        );
+        setSelectedClientType(clientType);
+      }
     } else {
       setQuoteId(null);
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
-  }, [userQuote]);
+  }, [userQuote, clientTypesValue]);
 
   // this for select customer in home page
   useEffect(() => {
@@ -147,20 +149,32 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
                 onAddCustomer={onCustomerAddFromOption}
               />
             </div>
-            <div data-tour="select-type" style={{ width: "30%" }}>
-              <GoMakeAutoComplate
-                options={clientTypesValue}
-                placeholder={t("home.admin.selectType")}
-                style={classes.selectTypeContainer}
-                getOptionLabel={(option: any) =>
-                  option?.name ? option.name : ""
-                }
-                onChange={(e: any, value: any) => {
-                  setSelectedClientType(value);
+            {selectedClient?.id && (
+              <div
+                data-tour="select-type"
+                style={{
+                  width: "30%",
+                  opacity: selectedClient?.id ? 1 : 0,
+                  transform: selectedClient?.id
+                    ? "translateX(0)"
+                    : "translateX(-10px)",
+                  transition: "all 0.3s ease-in-out",
                 }}
-                value={selectedClientType}
-              />
-            </div>
+              >
+                <GoMakeAutoComplate
+                  options={clientTypesValue}
+                  placeholder={t("home.admin.selectCostumerType")}
+                  style={classes.selectTypeContainer}
+                  getOptionLabel={(option: any) =>
+                    option?.name ? option.name : ""
+                  }
+                  onChange={(e: any, value: any) => {
+                    setSelectedClientType(value);
+                  }}
+                  value={selectedClientType}
+                />
+              </div>
+            )}
           </div>
           <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
             <button

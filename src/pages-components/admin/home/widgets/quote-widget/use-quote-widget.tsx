@@ -28,7 +28,10 @@ import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EStatisticsLabels } from "@/pages-components/quotes/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store/permissions";
-import { getAllStuckJobsApi, getAllStuckJobsByAgentIdApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  getAllStuckJobsApi,
+  getAllStuckJobsByAgentIdApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { userState } from "@/store/user";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 
@@ -109,10 +112,22 @@ const useQuoteWidget = () => {
       handleOpenModal(value);
     } else {
       setSelectedClient(value);
+      // Set client type immediately if available
+      if (value?.clientTypeId && clientTypesValue?.length > 0) {
+        const clientType = clientTypesValue.find(
+          (c) => c.id === value.clientTypeId
+        );
+        if (clientType) {
+          setSelectedClientType(clientType);
+        }
+      }
     }
   };
 
   const getCustomerType = useCallback(() => {
+    if (!selectedClient?.clientTypeId || !clientTypesValue?.length) {
+      return null;
+    }
     const clientType = clientTypesValue.find(
       (c) => c.id === selectedClient?.clientTypeId
     );
@@ -120,8 +135,13 @@ const useQuoteWidget = () => {
   }, [selectedClient, clientTypesValue]);
 
   useEffect(() => {
-    setSelectedClientType(getCustomerType());
-  }, [selectedClient, getCustomerType]); // Ensure client type is updated when selectedClient changes
+    if (selectedClient?.clientTypeId && clientTypesValue?.length > 0) {
+      const clientType = getCustomerType();
+      if (clientType) {
+        setSelectedClientType(clientType);
+      }
+    }
+  }, [selectedClient, clientTypesValue, getCustomerType]); // Also depend on clientTypesValue
 
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
@@ -152,7 +172,7 @@ const useQuoteWidget = () => {
     const callBack = (res) => {
       setAllStuckJobs(res?.data);
     };
-    await getAllStuckJobsByAgentIdApi(callApi, callBack,);
+    await getAllStuckJobsByAgentIdApi(callApi, callBack);
   };
   // useEffect(() => {
   //   getAllStuckJobs();
@@ -197,17 +217,25 @@ const useQuoteWidget = () => {
     } catch (error) {
       console.error("Error fetching client types:", error);
     }
-  }, [callApi, userQuote]);
+  }, [callApi]);
 
   const [allStuckJobs, setAllStuckJobs] = useState(0);
   const user = useRecoilValue<any>(userState);
 
-  const { } = updateQuoteStatusSocketIo({ setUserQuote, setQuoteId, setQuoteNumber, setQuoteIfExist, setSelectedClient, setSelectedClientType, clientTypesValue, isFromHomePage: true });
+  const {} = updateQuoteStatusSocketIo({
+    setUserQuote,
+    setQuoteId,
+    setQuoteNumber,
+    setQuoteIfExist,
+    setSelectedClient,
+    setSelectedClientType,
+    clientTypesValue,
+    isFromHomePage: true,
+  });
   useEffect(() => {
     if (permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS)) {
       getAllStuckJobs();
-    }
-    else {
+    } else {
       if (user?.isAgent) {
         getAllStuckJobsByAgentId();
       }
@@ -217,13 +245,19 @@ const useQuoteWidget = () => {
   const getAllReports = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        if (!permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS) && !user?.isAgent) {
+        if (
+          !permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS) &&
+          !user?.isAgent
+        ) {
           setAllReports(res?.data);
         } else {
-          setAllReports([...res?.data, {
-            key: EStatisticsLabels.STUCK_JOBS,
-            value: allStuckJobs
-          }]);
+          setAllReports([
+            ...res?.data,
+            {
+              key: EStatisticsLabels.STUCK_JOBS,
+              value: allStuckJobs,
+            },
+          ]);
         }
       }
     };
@@ -523,4 +557,3 @@ const useQuoteWidget = () => {
 };
 
 export { useQuoteWidget };
-
