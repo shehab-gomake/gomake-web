@@ -276,6 +276,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
 
     const callBack = (res) => {
@@ -341,6 +344,9 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
+      }),
     };
 
     const callBack = (res) => {
@@ -405,6 +411,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
+      }),
+      ...(filters?.selectedDocumentStatuses?.length && {
+        documentStatuses: filters.selectedDocumentStatuses,
       }),
     };
     const callBack = (res) => {
