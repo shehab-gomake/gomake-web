@@ -5,6 +5,7 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 const ADMIN_ADD_MACHINE_URL = '/v1/administrator/add-machine';
 const ADMIN_UPDATE_MACHINE_URL = '/v1/administrator/update-machine';
 const ADMIN_GET_ALL_MACHINES_URL = '/v1/administrator/machines/category/';
+const ADMIN_SEARCH_MACHINES_URL = '/v1/administrator/machines/search/';
 const ADMIN_GET_CATEGORIES_MACHINES_URL = '/v1/administrator/machines/categories';
 const GET_CATEGORY_MANUFACTURERS_URL = '/v1/administrator/machines/manufacturers/';
 const GET_MANUFACTURER_MODELS_URL = '/v1/administrator/machines/models';
@@ -18,6 +19,9 @@ const adminUpdateMachine: ICallAndSetData = async (callApi, setState, machine) =
 
 const adminGetAllMachineByCategory: ICallAndSetData = async (callApi, setState, category) => {
     return await getSetApiData(callApi, EHttpMethod.GET, ADMIN_GET_ALL_MACHINES_URL + category, setState);
+}
+const adminSearchMachines: ICallAndSetData = async (callApi, setState, searchTerm) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, ADMIN_SEARCH_MACHINES_URL + searchTerm, setState);
 }
 const getAdminMachinesByCategories: ICallAndSetData = async (callApi, setState, categories) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADMIN_GET_CATEGORIES_MACHINES_URL, setState, {categories: categories}, false);
@@ -43,6 +47,7 @@ export {
     adminAddNewMachine,
     adminUpdateMachine,
     adminGetAllMachineByCategory,
+    adminSearchMachines,
     getAdminMachinesByCategories,
     getCategoryManufacturers,
     getManufacturerModels,
