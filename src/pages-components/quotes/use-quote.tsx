@@ -235,8 +235,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     getCurrenciesApi();
   }, []);
 
-  console.log("currencies", currencies)
-
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
