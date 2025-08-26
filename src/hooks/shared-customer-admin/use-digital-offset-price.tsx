@@ -1553,6 +1553,60 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
+                  if (value) {
+                    const data = materialsEnumsValues.find((item) => {
+                      return compareStrings(
+                        item.name,
+                        parameter?.materialPath?.[0]
+                      );
+                    });
+
+                    let existsSubProductParameter = subProduct?.parameters?.find(
+                      (x) =>
+                        x.parameterId === parameter.id &&
+                        x.sectionId === section.id &&
+                        x.subSectionId === subSection.id &&
+                        x.actionIndex === parameter?.actionIndex
+                    );
+
+                    if (!existsSubProductParameter) {
+                      // Handle different types of default values
+                      let defaultValueIds = [];
+                      let defaultValues = [];
+
+                      if (value.materialValueIds && value.materialValueIds.length > 0) {
+                        defaultValueIds = [value.materialValueIds[0]?.valueId];
+                        defaultValues = [value.updateName || value.materialValueIds[0]?.valueId];
+                      } else if (value.id) {
+                        // For non-material parameters with default selection
+                        defaultValueIds = [value.id];
+                        defaultValues = [value.updateName || value.id];
+                      }
+
+                      if (defaultValueIds.length > 0) {
+                        subProduct.parameters.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: value?.activateAction === true ? parameter?.actionId : null,
+                          ...(data?.id > 0 && { material: data?.id }),
+                          parameterType: parameter?.parameterType,
+                          isQuantityParameter: parameter?.isQuantityParameter,
+                          valueIds: defaultValueIds,
+                          values: defaultValues,
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          defaultUnit: parameter?.defaultUnit,
+                          unitType: parameter?.unitType,
+                          factor: parameter?.factor,
+                          isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor,
+                        });
+                      }
+                    }
+                  }
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
@@ -2283,7 +2337,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 // return;
               }
             }
-            if (parameter.materialPath && parameter.materialPath.length > 0) {
+            if (parameter.materialPath && parameter.materialPath.length > 0 && parameter.parameterType !== EParameterTypes.BUTTON) {
               if (parameter.materialPath.length == 1) {
                 const materialData = materials?.find((x) =>
                   compareStrings(x.pathName, parameter.materialPath[0])
@@ -3371,6 +3425,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           template={productTemplate}
           getProductById={getProductById}
           isCreate={widgetType == EWidgetProductType.CREATE}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
         />
       );
     } else if (

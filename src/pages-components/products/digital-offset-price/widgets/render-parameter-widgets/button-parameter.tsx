@@ -24,7 +24,8 @@ const ButtonParameterWidget = ({
   allMaterials,
   template,
   getProductById,
-  isCreate
+  isCreate,
+  onChangeSubProductsForPrice
 }: any) => {
   let Comp;
   const [materialData, setMaterialData] = useRecoilState<any>(materialBtnDataState);
@@ -449,10 +450,10 @@ const ButtonParameterWidget = ({
       if (!materialData || !materialData?.data || materialData?.data?.length === 0) {
         getProductQuoteItemById();
       }
-      const selectedShape = materialData?.data?.find((data) => {
-        const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
-        return data?.id === myDefaultShape?.id;
-      });
+      const defaultConfig = Array.isArray(isSelectedShape)
+        ? isSelectedShape.find((config) => config?.isDefault)
+        : parameter?.valuesConfigs?.find((config) => config?.isDefault);
+      const selectedShape = materialData?.data?.find((data) => data?.id === defaultConfig?.id);
       if (selectedShape) {
         setSelectedShape(selectedShape);
 
@@ -483,8 +484,8 @@ const ButtonParameterWidget = ({
         return acc;
       }, []);
       const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds?.[0]);
-      // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
-      const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
+      const defaultConfigArr = Array.isArray(isSelectedShape) ? isSelectedShape.find((config) => config?.isDefault) : null;
+      const selectedShapeId = isParameterSettings ? defaultConfigArr?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
       const transformedShape: any = transformSelectedShape(selectedMaterial);
       if (!transformedShape) return;
@@ -493,6 +494,39 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
+
+  useEffect(() => {
+    if (parameter?.valuesConfigs && parameter.valuesConfigs?.length > 0) {
+      // Check for default value
+      const defaultConfig = parameter.valuesConfigs.find(config => config.isDefault);
+
+      if (defaultConfig && !isSelectedShape) {
+        // Apply the default value if no shape is selected yet
+        setIsSelectedShape(parameter);
+
+        // Also update subProducts with the default value
+        if (!isParameterSettings) {
+          onChangeSubProductsForPrice(
+            parameter?.id,
+            subSection?.id,
+            section?.id,
+            parameter?.parameterType,
+            parameter?.name,
+            parameter?.actionId,
+            {
+              valueIds: defaultConfig.id,
+              values: defaultConfig.additionalAttribute?.find(attr => attr.valueId === "name")?.value || defaultConfig.updateName
+            },
+            subSection?.type,
+            index,
+            parameter?.actionIndex,
+            parameter?.code,
+            null
+          );
+        }
+      }
+    }
+  }, [parameter, isParameterSettings]);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     console.log("isSelectedShape", { isSelectedShape, selectedShape, hasDieCutOrDieKissCut });
