@@ -2,6 +2,7 @@ import { DemoVideoModal } from "./compoennets/demo-video-modal";
 import { ResetPasswordModal } from "./compoennets/reset-password-modal";
 import { WelcomeModal } from "./compoennets/welcome-modal";
 import { SetupGuideMenu } from "./quick-setup-menu/setup-guide-menu";
+import { QuickSetupModalNew, useQuickSetupModalNew } from "./on-boarding-setup";
 import { SetupModal } from "./quick-setup-modal/quick-setup-modal";
 import { useQuickSetup } from "./use-quick-setup";
 import { useQuickSetupSocketIo } from "@/hooks/socket-io/use-quick-setup-socket-io";
