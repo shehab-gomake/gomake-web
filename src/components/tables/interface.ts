@@ -33,6 +33,13 @@ export interface ITableProps {
   customSortFns?: {
     [key: number]: (a: any, b: any) => number;
   };
+  /**
+   * Optional default sort configuration for client-side sorting.
+   * When provided with withSort=true, the table initializes sorted
+   * by the given column index and direction.
+   */
+  defaultSortIndex?: number;
+  defaultSortDirection?: "asc" | "desc";
 }
 
 export interface ISecondaryTableProps {

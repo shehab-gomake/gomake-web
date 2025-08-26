@@ -127,15 +127,22 @@ const MonitoringDashboardWidget = () => {
       }
     };
 
+    // Ensure default order is by Final Price (column index 3) descending
+    const sortedAllRows = [...rows].sort(
+      (a, b) => parseCurrency(b[3]) - parseCurrency(a[3])
+    );
+
     return (
       <div style={classes.subContainer}>
         <h3 style={classes.labelStyle}>{t(title)}</h3>
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
-          rows={rows.slice(0, visibleCount)}
+          rows={sortedAllRows.slice(0, visibleCount)}
           headers={headers}
           withSort
+          defaultSortIndex={3}
+          defaultSortDirection={"desc"}
           customSortFns={{
             // 0: name (default string compare)
             1: (a, b) => Number(a[1] ?? 0) - Number(b[1] ?? 0), // jobs
