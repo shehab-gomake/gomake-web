@@ -209,7 +209,7 @@ const ButtonParameterWidget = ({
       // Clear all configured values for this parameter in settings mode
       clearProductParameterValuesConfigs(section?.id, subSection?.id, parameter)
       setSelectedShape(null);
-      setIsSelectedShape(null);
+      setIsSelectedShape([]);
     }
     else {
       if (isSelectedShape) {
@@ -495,7 +495,19 @@ const ButtonParameterWidget = ({
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
 
+  const hasData = (value) => {
+    if (!value) return false;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+    return false;
+  };
+
   useEffect(() => {
+    if (
+      (parameter?.code === "DieCut" || parameter?.code === "DieKissCut")
+    ) {
+      return;
+    }
     if (parameter?.valuesConfigs && parameter.valuesConfigs?.length > 0) {
       // Check for default value
       const defaultConfig = parameter.valuesConfigs.find(config => config.isDefault);
@@ -529,7 +541,6 @@ const ButtonParameterWidget = ({
   }, [parameter, isParameterSettings]);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
-    console.log("isSelectedShape", { isSelectedShape, selectedShape, hasDieCutOrDieKissCut });
 
     if (isStraightKnife) {
       Comp = (
@@ -566,7 +577,7 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-    else if ((isSelectedShape || selectedShape) && hasDieCutOrDieKissCut) {
+    else if ((hasData(isSelectedShape) || hasData(selectedShape)) && hasDieCutOrDieKissCut) {
       let configData = selectedShape;
 
       if (!selectedShape && isSelectedShape) {

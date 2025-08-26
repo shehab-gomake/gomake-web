@@ -551,37 +551,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   };
 
   useEffect(() => {
-    // Apply default value if exists and nothing is selected
-    if (!selectedShape && isDiesParameter?.valuesConfigs) {
-      const defaultConfig = isDiesParameter.valuesConfigs.find(config => config.isDefault);
-
-      if (defaultConfig && !isParameterSettings) {
-        // Find the material data for the default config
-        const defaultMaterial = materialData?.data?.find(data => data.id === defaultConfig.id);
-
-        if (defaultMaterial) {
-          setSelectedShape(defaultMaterial);
-          // Trigger the selection to update subProducts
-          onChangeSubProductsForPrice(
-            selectParameterButton?.parameter?.id,
-            selectParameterButton?.subSectionId,
-            selectParameterButton?.sectionId,
-            selectParameterButton?.parameter?.parameterType,
-            selectParameterButton?.parameter?.name,
-            selectParameterButton?.parameter?.actionId,
-            {
-              valueIds: defaultMaterial.id,
-              values: defaultMaterial.rowData?.name?.value,
-            },
-            selectParameterButton?.paameterType,
-            selectParameterButton?.index,
-            selectParameterButton?.parameter?.actionIndex,
-            selectParameterButton?.parameter?.code,
-            defaultMaterial
-          );
-        }
-      }
-    }
+    // Do not auto-apply defaults for dies; always wait for user modal selection
+    return;
   }, [isDiesParameter, materialData, isParameterSettings]);
 
   return {
