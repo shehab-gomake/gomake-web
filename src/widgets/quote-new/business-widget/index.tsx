@@ -315,7 +315,7 @@ const BusinessNewWidget = ({
             placeholder={documentTitle ? documentTitle : t("sales.cart.title")}
             label={t("sales.cart.title")}
             onBlur={() => onBlurTitle(documentTitle)}
-            isUpdate={canEditDocument && isUpdateDocumentTitle}
+            isUpdate={isUpdateDocumentTitle}
             setIsUpdate={
               isQuoteConfirmation ? setIsConfirmation : setIsUpdateDocumentTitle
             }
