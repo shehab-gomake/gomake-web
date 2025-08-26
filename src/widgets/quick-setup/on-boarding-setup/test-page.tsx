@@ -21,8 +21,12 @@ import {
   IconButton,
   Button,
   CircularProgress,
+  OutlinedInput,
+  InputAdornment,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface Machine {
   id: string;
@@ -48,21 +52,68 @@ const TestPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedMachine, setSelectedMachine] = useState<string>("");
   const [machines, setMachines] = useState<Machine[]>([]);
+  const [allMachines, setAllMachines] = useState<Machine[]>([]);
   const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
     []
   );
   const [loading, setLoading] = useState(false);
   const [machinesLoading, setMachinesLoading] = useState(false);
+  const [machineSearchTerm, setMachineSearchTerm] = useState("");
+  const [categorySearchTerm, setCategorySearchTerm] = useState("");
 
-  // Load machines when category changes
+  // Load all machines on component mount
   useEffect(() => {
-    if (selectedCategory) {
-      loadMachinesByCategory(selectedCategory);
+    loadAllMachines();
+  }, []);
+
+  // Filter machines based on search term
+  useEffect(() => {
+    if (machineSearchTerm) {
+      const filtered = allMachines.filter((machine) =>
+        (machine.nickName || `${machine.manufacturer} - ${machine.model}`)
+          .toLowerCase()
+          .includes(machineSearchTerm.toLowerCase())
+      );
+      setMachines(filtered);
     } else {
-      setMachines([]);
+      setMachines(allMachines);
     }
-    setSelectedMachine("");
-  }, [selectedCategory]);
+  }, [machineSearchTerm, allMachines]);
+
+  const loadAllMachines = async () => {
+    setMachinesLoading(true);
+    try {
+      // Load machines for all categories
+      const allMachinesData: Machine[] = [];
+
+      for (const category of categories) {
+        const callBack = (res: any) => {
+          if (res.success) {
+            let machinesData: Machine[] = [];
+
+            if (res.data?.data?.data) {
+              machinesData = res.data.data.data;
+            } else if (res.data?.data) {
+              machinesData = res.data.data;
+            } else if (Array.isArray(res.data)) {
+              machinesData = res.data;
+            }
+
+            allMachinesData.push(...machinesData);
+          }
+        };
+
+        await adminGetAllMachineByCategory(callApi, callBack, category.id);
+      }
+
+      setAllMachines(allMachinesData);
+      setMachines(allMachinesData);
+      setMachinesLoading(false);
+    } catch (error) {
+      console.error("Error loading machines:", error);
+      setMachinesLoading(false);
+    }
+  };
 
   const loadMachinesByCategory = async (categoryId: string) => {
     setMachinesLoading(true);
@@ -71,7 +122,6 @@ const TestPage: React.FC = () => {
         if (res.success) {
           let machinesData: Machine[] = [];
 
-          // Handle different possible response structures
           if (res.data?.data?.data) {
             machinesData = res.data.data.data;
           } else if (res.data?.data) {
@@ -97,6 +147,16 @@ const TestPage: React.FC = () => {
     }
   };
 
+  const handleMachineChange = (machineId: string) => {
+    setSelectedMachine(machineId);
+
+    // Find the machine and set its category as default
+    const machine = allMachines.find((m) => m.id === machineId);
+    if (machine) {
+      setSelectedCategory(machine.category);
+    }
+  };
+
   const handleAddMachine = () => {
     if (!selectedMachine || !selectedCategory) {
       return;
@@ -118,6 +178,9 @@ const TestPage: React.FC = () => {
       if (!isDuplicate) {
         setSelectedMachines([...selectedMachines, newSelectedMachine]);
         setSelectedMachine("");
+        setSelectedCategory("");
+        setMachineSearchTerm("");
+        setCategorySearchTerm("");
       }
     }
   };
@@ -131,6 +194,23 @@ const TestPage: React.FC = () => {
     // Here you can add additional logic like API calls to save the selected machines
   };
 
+  const clearMachineSelection = () => {
+    setSelectedMachine("");
+    setSelectedCategory("");
+    setMachineSearchTerm("");
+    setCategorySearchTerm("");
+  };
+
+  const clearCategorySelection = () => {
+    setSelectedCategory("");
+    setCategorySearchTerm("");
+  };
+
+  // Filter categories based on search term
+  const filteredCategories = categories.filter((category) =>
+    t(category.name).toLowerCase().includes(categorySearchTerm.toLowerCase())
+  );
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
@@ -139,54 +219,151 @@ const TestPage: React.FC = () => {
 
       {/* Main Content - Previously Modal Content */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        {/* <Typography variant="h6" sx={{ mb: 3 }}>
-          {t("quickSetup.selectMachines")}
-        </Typography> */}
-
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             {t("quickSetup.addYourMachines")}
           </Typography>
 
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            {/* Category Selection */}
+            {/* Machine Selection - Now First */}
+            <FormControl fullWidth>
+              <InputLabel>{t("machineAttributes.machineName")}</InputLabel>
+              <Select
+                value={selectedMachine}
+                onChange={(e) => handleMachineChange(e.target.value)}
+                label={t("machineAttributes.machineName")}
+                input={
+                  <OutlinedInput label={t("machineAttributes.machineName")} />
+                }
+                endAdornment={
+                  <InputAdornment position="end">
+                    {selectedMachine && (
+                      <IconButton
+                        onClick={clearMachineSelection}
+                        edge="end"
+                        size="small"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                }
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300,
+                    },
+                  },
+                }}
+              >
+                <MenuItem sx={{ p: 1 }}>
+                  <TextField
+                    placeholder="Search machines..."
+                    value={machineSearchTerm}
+                    onChange={(e) => setMachineSearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    fullWidth
+                    size="small"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: 40,
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </MenuItem>
+                {machinesLoading ? (
+                  <MenuItem disabled sx={{ py: 1 }}>
+                    <CircularProgress size={16} sx={{ mr: 1 }} />
+                    {t("common.loading")}
+                  </MenuItem>
+                ) : (
+                  machines.map((machine) => (
+                    <MenuItem
+                      key={machine.id}
+                      value={machine.id}
+                      sx={{ py: 1, fontSize: "14px" }}
+                    >
+                      {machine.nickName ||
+                        `${machine.manufacturer} - ${machine.model}`}
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
+            </FormControl>
+
+            {/* Category Selection - Now Second */}
             <FormControl fullWidth>
               <InputLabel>{t("machineAttributes.category")}</InputLabel>
               <Select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 label={t("machineAttributes.category")}
+                input={
+                  <OutlinedInput label={t("machineAttributes.category")} />
+                }
+                endAdornment={
+                  <InputAdornment position="end">
+                    {selectedCategory && (
+                      <IconButton
+                        onClick={clearCategorySelection}
+                        edge="end"
+                        size="small"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                }
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300,
+                    },
+                  },
+                }}
               >
-                {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
+                <MenuItem sx={{ p: 1 }}>
+                  <TextField
+                    placeholder="Search categories..."
+                    value={categorySearchTerm}
+                    onChange={(e) => setCategorySearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    fullWidth
+                    size="small"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: 40,
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </MenuItem>
+                {filteredCategories.map((category) => (
+                  <MenuItem
+                    key={category.id}
+                    value={category.id}
+                    sx={{ py: 1, fontSize: "14px" }}
+                  >
                     {t(category.name)}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
-
-            {/* Machine Selection */}
-            <FormControl fullWidth>
-              <InputLabel>{t("machineAttributes.machineName")}</InputLabel>
-              <Select
-                value={selectedMachine}
-                onChange={(e) => setSelectedMachine(e.target.value)}
-                label={t("machineAttributes.machineName")}
-                disabled={!selectedCategory || machinesLoading}
-              >
-                {machinesLoading ? (
-                  <MenuItem disabled>
-                    <CircularProgress size={20} sx={{ mr: 1 }} />
-                    {t("common.loading")}
-                  </MenuItem>
-                ) : (
-                  machines.map((machine) => (
-                    <MenuItem key={machine.id} value={machine.id}>
-                      {machine.nickName ||
-                        `${machine.manufacturer} - ${machine.model}`}
-                    </MenuItem>
-                  ))
-                )}
               </Select>
             </FormControl>
           </Box>
