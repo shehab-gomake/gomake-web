@@ -167,11 +167,11 @@ const TestPage: React.FC = () => {
 
             {/* Machine Selection */}
             <FormControl fullWidth>
-              <InputLabel>{t("machineAttributes.machine")}</InputLabel>
+              <InputLabel>{t("machineAttributes.machineName")}</InputLabel>
               <Select
                 value={selectedMachine}
                 onChange={(e) => setSelectedMachine(e.target.value)}
-                label={t("machineAttributes.machine")}
+                label={t("machineAttributes.machineName")}
                 disabled={!selectedCategory || machinesLoading}
               >
                 {machinesLoading ? (
