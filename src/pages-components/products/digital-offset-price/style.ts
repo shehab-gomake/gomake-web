@@ -228,23 +228,28 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
         width: "fit-content",
+        height: 30,
       },
       underParameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
         color: primaryColor(900),
         width: "fit-content",
+        height: 30,
       },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+        height: 30,
       },
       parameterunderParameterStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
         color: secondColor(500),
+        height: 30,
       },
       parameterRequierdLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
+        height: 30,
       },
       spanRequierd: {
         ...FONT_FAMILY.Lexend(500, 14),
