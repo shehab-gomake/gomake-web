@@ -51,7 +51,7 @@ const CustomerEditMachines = () => {
     // Function to fetch machines
     const fetchMachines = useCallback(async () => {
         if (!categoryId) return;
-
+        if(router.isReady === false) return;
         try {
             setIsLoading(true);
             const res = await callApi("Get", `/v1/machines/category/${categoryId}`);
@@ -65,14 +65,7 @@ const CustomerEditMachines = () => {
 
                 // Select machine from URL or first machine
                 if (machineId && typeof machineId === 'string') {
-                    const targetMachine = machinesList.find((m: any) => m.id === machineId);
-                    if (targetMachine) {
-                        setCurrentMachineId(machineId);
-                        setMachineState(targetMachine);
-                    } else {
-                        setCurrentMachineId(machinesList[0].id);
-                        setMachineState(machinesList[0]);
-                    }
+                    onSelectMachine(machineId,machinesList);
                 } else {
                     setCurrentMachineId(machinesList[0].id);
                     setMachineState(machinesList[0]);
@@ -86,6 +79,7 @@ const CustomerEditMachines = () => {
     }, [categoryId, machineId, callApi, setMachineState, setMachinesListState]);
 
     useEffect(() => {
+        if(router.isReady === false) return;
         if (categoryId) {
             fetchMachines();
 
@@ -103,15 +97,24 @@ const CustomerEditMachines = () => {
         setActiveStep(activeStep + 1);
     }
 
-    const onSelectMachine = (value: string) => {
+    const onSelectMachine = (value: string,machinesList?:any[]) => {
+        debugger
         setCurrentMachineId(value);
-
-        const machine = machines.find((m: any) => m.id === value);
+        let finalMachineList = machinesList;
+        if(!(finalMachineList && finalMachineList.length > 0)){
+            finalMachineList = machines;
+        }
+        const machine = finalMachineList.find((m: any) => m.id === value);
         if (machine) {
+            setCurrentMachineId(value);
             setMachineState(machine);
-
+            setTimeout(() => {
+                setCurrentMachineId(value);
+                setMachineState(machine);
+                setActiveStep(-1);
+            }, 5);
             // Update the URL to reflect the selected machine
-            router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, { shallow: true });
+            router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, {shallow: true}).then(); 
         }
         setActiveStep(-1);
     }
