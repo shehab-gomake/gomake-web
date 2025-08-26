@@ -822,6 +822,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "center",
         gap: 6,
         padding: "8px 0px",
+        width: "100%",
       },
       btnSelectedTextStyle: {
         ...FONT_FAMILY.Lexend(400, 16),

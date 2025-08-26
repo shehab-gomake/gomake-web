@@ -103,7 +103,7 @@ const ButtonParameterWidget = ({
     }
 
     const reqObj = {
-      key: isSelectedShape?.parameterCode,
+      key: isParameterSettings ? parameter?.materialPath?.[0] : isSelectedShape?.parameterCode,
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
       length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
       shape: isParameterSettings ? shapeCodeDefualt?.code : shapeCode || "",
@@ -139,6 +139,17 @@ const ButtonParameterWidget = ({
       });
     },
     [router, isDiesParameter]
+  );
+  const clearProductParameterValuesConfigs = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: [],
+        },
+      });
+    },
+    [router]
   );
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -194,7 +205,8 @@ const ButtonParameterWidget = ({
   };
   const removeParameterFromSubProducts = () => {
     if (isParameterSettings) {
-      updatedProductParameteDefaultValue(section?.id, subSection?.id, parameter)
+      // Clear all configured values for this parameter in settings mode
+      clearProductParameterValuesConfigs(section?.id, subSection?.id, parameter)
       setSelectedShape(null);
       setIsSelectedShape(null);
     }
@@ -433,6 +445,10 @@ const ButtonParameterWidget = ({
   }, [subProductsParameters, isParameterSettings, parameter]);
   useEffect(() => {
     if (isParameterSettings) {
+      // Ensure we have materials loaded for settings mode default rendering
+      if (!materialData || !materialData?.data || materialData?.data?.length === 0) {
+        getProductQuoteItemById();
+      }
       const selectedShape = materialData?.data?.find((data) => {
         const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
         return data?.id === myDefaultShape?.id;
@@ -451,7 +467,10 @@ const ButtonParameterWidget = ({
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
     if (!isCreate) {
-      // if (materialData?.length > 0 || !isSelectedShape) return;
+      // Make sure materials are available to render the default image/name on first load
+      if (!materialData || !materialData?.data || materialData?.data?.length === 0) {
+        getProductQuoteItemById();
+      }
       const materialPath = parameter?.materialPath?.[0];
       const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
       if (!materialDataPath) return;
@@ -476,6 +495,8 @@ const ButtonParameterWidget = ({
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
+    console.log("isSelectedShape", { isSelectedShape, selectedShape, hasDieCutOrDieKissCut });
+
     if (isStraightKnife) {
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
@@ -511,7 +532,6 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-
     else if ((isSelectedShape || selectedShape) && hasDieCutOrDieKissCut) {
       let configData = selectedShape;
 
@@ -541,7 +561,14 @@ const ButtonParameterWidget = ({
         isSelectedShape?.values?.[0];
 
       Comp = (
-        <div style={clasess?.btnSelectedStyle}>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          width: "100%",
+          gap: 10,
+        }}>
           <img
             src={image}
             style={{ width: 24, height: 24 }}

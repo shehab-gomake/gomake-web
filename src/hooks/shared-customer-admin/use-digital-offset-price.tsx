@@ -250,7 +250,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(
     isChangePriceForEditState
   );
-
+  console.log("subProducts", subProducts);
   const [isJobNameValue, setIsJobNameValue] = useState(false);
   const [saveCurrentStation, setSaveCurrentStation] = useState(false);
   const onClickCloseCurrentStationModal = () => {
