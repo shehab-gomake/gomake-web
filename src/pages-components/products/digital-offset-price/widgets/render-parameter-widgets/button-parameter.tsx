@@ -3,7 +3,7 @@ import { EButtonTypes } from "@/enums";
 import { ReChooseIcon } from "@/icons";
 import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
@@ -89,6 +89,9 @@ const ButtonParameterWidget = ({
     }
   }, [isParameterSettings, template])
 
+  const lastMaterialsRequestKeyRef = useRef<string | null>(null);
+  const isLoadingMaterialsRef = useRef<boolean>(false);
+
   const getProductQuoteItemById = useCallback(async () => {
     const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
     let shapeCode = "";
@@ -113,8 +116,17 @@ const ButtonParameterWidget = ({
       finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
       finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
     }
-    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
-    if (res?.data?.length > 0) {
+    const requestKey = JSON.stringify(reqObj);
+    if (isLoadingMaterialsRef.current) return;
+    if (lastMaterialsRequestKeyRef.current === requestKey) return;
+    isLoadingMaterialsRef.current = true;
+    try {
+      const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
+      if (res?.data && Array.isArray(res.data)) {
+        lastMaterialsRequestKeyRef.current = requestKey;
+      }
+    } finally {
+      isLoadingMaterialsRef.current = false;
     }
 
   }, [widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter, isSelectedShape]);
