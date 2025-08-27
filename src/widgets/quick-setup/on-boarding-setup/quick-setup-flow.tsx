@@ -21,7 +21,8 @@ import { useStepNavigation } from "@/widgets/quick-setup/on-boarding-setup/hooks
 // Import components
 import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step1MachineSelection";
 import { Step2FinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step2FinishingSelection";
-import { Step3RollFlexoFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step3RollFlexoFinishingSelection";
+import { Step3BookFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step3BookFinishingSelection";
+import { Step4RollFlexoFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step4RollFlexoFinishingSelection";
 
 const QuickSetupFlow: React.FC = () => {
   // Use custom hooks for data and navigation
@@ -29,6 +30,7 @@ const QuickSetupFlow: React.FC = () => {
     allMachines,
     machinesLoading,
     finishingCategories,
+    bookFinishingCategories,
     rollFlexoFinishingCategories,
   } = useMachinesData();
 
@@ -50,11 +52,19 @@ const QuickSetupFlow: React.FC = () => {
   const [selectedFinishingMachines, setSelectedFinishingMachines] = useState<
     SelectedFinishingMachine[]
   >([]);
+  const [selectedBookFinishingMachines, setSelectedBookFinishingMachines] =
+    useState<SelectedFinishingMachine[]>([]);
   const [
     selectedRollFlexoFinishingMachines,
     setSelectedRollFlexoFinishingMachines,
   ] = useState<SelectedFinishingMachine[]>([]);
   const [selectedCategoryMachines, setSelectedCategoryMachines] = useState<{
+    [categoryId: string]: string;
+  }>({});
+  const [
+    selectedBookFinishingCategoryMachines,
+    setSelectedBookFinishingCategoryMachines,
+  ] = useState<{
     [categoryId: string]: string;
   }>({});
   const [
@@ -119,6 +129,56 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
+  // Book finishing machine management functions
+  const handleAddBookFinishingMachine = (categoryId: string) => {
+    const selectedMachine = selectedBookFinishingCategoryMachines[categoryId];
+    if (!selectedMachine) return;
+
+    const category = bookFinishingCategories.find(
+      (cat) => cat.id === categoryId
+    );
+    if (!category) return;
+
+    const newBookFinishingMachine: SelectedFinishingMachine = {
+      id: `${categoryId}_${selectedMachine}`,
+      name: selectedMachine,
+      categoryId: categoryId,
+      categoryName: category.name,
+    };
+
+    const isDuplicate = selectedBookFinishingMachines.some(
+      (machine) =>
+        machine.categoryId === categoryId && machine.name === selectedMachine
+    );
+
+    if (!isDuplicate) {
+      setSelectedBookFinishingMachines([
+        ...selectedBookFinishingMachines,
+        newBookFinishingMachine,
+      ]);
+      setSelectedBookFinishingCategoryMachines((prev) => ({
+        ...prev,
+        [categoryId]: "",
+      }));
+    }
+  };
+
+  const handleDeleteBookFinishingMachine = (machineId: string) => {
+    setSelectedBookFinishingMachines((prev) =>
+      prev.filter((machine) => machine.id !== machineId)
+    );
+  };
+
+  const handleBookFinishingCategoryMachineChange = (
+    categoryId: string,
+    machineName: string
+  ) => {
+    setSelectedBookFinishingCategoryMachines((prev) => ({
+      ...prev,
+      [categoryId]: machineName,
+    }));
+  };
+
   // Roll/Flexo finishing machine management functions
   const handleAddRollFlexoFinishingMachine = (categoryId: string) => {
     const selectedMachine = selectedRollFlexoCategoryMachines[categoryId];
@@ -174,6 +234,7 @@ const QuickSetupFlow: React.FC = () => {
     handleNext(
       selectedMachines,
       selectedFinishingMachines,
+      selectedBookFinishingMachines,
       selectedRollFlexoFinishingMachines
     );
   };
@@ -216,8 +277,25 @@ const QuickSetupFlow: React.FC = () => {
             selectedMachines
           )}
         />
+      ) : currentStep === 2 ? (
+        <Step3BookFinishingSelection
+          selectedMachines={selectedMachines}
+          bookFinishingCategories={bookFinishingCategories}
+          selectedBookFinishingMachines={selectedBookFinishingMachines}
+          selectedBookFinishingCategoryMachines={
+            selectedBookFinishingCategoryMachines
+          }
+          onAddBookFinishingMachine={handleAddBookFinishingMachine}
+          onDeleteBookFinishingMachine={handleDeleteBookFinishingMachine}
+          onBookFinishingCategoryMachineChange={
+            handleBookFinishingCategoryMachineChange
+          }
+          hasDigitalOrOffsetPrinting={hasDigitalOrOffsetPrinting(
+            selectedMachines
+          )}
+        />
       ) : (
-        <Step3RollFlexoFinishingSelection
+        <Step4RollFlexoFinishingSelection
           selectedMachines={selectedMachines}
           rollFlexoFinishingCategories={rollFlexoFinishingCategories}
           selectedRollFlexoFinishingMachines={
@@ -250,6 +328,7 @@ const QuickSetupFlow: React.FC = () => {
           disabled={isNextDisabled(
             selectedMachines,
             selectedFinishingMachines,
+            selectedBookFinishingMachines,
             selectedRollFlexoFinishingMachines
           )}
         >

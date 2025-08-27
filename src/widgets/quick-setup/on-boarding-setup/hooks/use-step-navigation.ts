@@ -35,6 +35,7 @@ export const useStepNavigation = () => {
     (
       selectedMachines: SelectedMachine[],
       selectedFinishingMachines: SelectedFinishingMachine[],
+      selectedBookFinishingMachines: SelectedFinishingMachine[],
       selectedRollFlexoFinishingMachines: SelectedFinishingMachine[]
     ) => {
       if (currentStep === 0) {
@@ -58,8 +59,21 @@ export const useStepNavigation = () => {
         }
         setCurrentStep(2);
         return true;
+      } else if (currentStep === 2) {
+        // Step 3 - Validate book finishing machines if we have digital/offset printing
+        if (
+          hasDigitalOrOffsetPrinting(selectedMachines) &&
+          selectedBookFinishingMachines.length === 0
+        ) {
+          alert(
+            "Please select at least one book finishing machine for Digital/Offset printing"
+          );
+          return false;
+        }
+        setCurrentStep(3);
+        return true;
       } else {
-        // Step 3 - Validate roll/flexo finishing machines if we have roll/flexo printing
+        // Step 4 - Validate roll/flexo finishing machines if we have roll/flexo printing
         if (
           hasRollOrFlexoPrinting(selectedMachines) &&
           selectedRollFlexoFinishingMachines.length === 0
@@ -69,9 +83,13 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        // Step 3 - Save or complete
+        // Step 4 - Save or complete
         console.log("Selected machines:", selectedMachines);
         console.log("Selected finishing machines:", selectedFinishingMachines);
+        console.log(
+          "Selected book finishing machines:",
+          selectedBookFinishingMachines
+        );
         console.log(
           "Selected roll/flexo finishing machines:",
           selectedRollFlexoFinishingMachines
@@ -91,6 +109,7 @@ export const useStepNavigation = () => {
     (
       selectedMachines: SelectedMachine[],
       selectedFinishingMachines: SelectedFinishingMachine[],
+      selectedBookFinishingMachines: SelectedFinishingMachine[],
       selectedRollFlexoFinishingMachines: SelectedFinishingMachine[]
     ): boolean => {
       if (currentStep === 0) {
@@ -101,6 +120,11 @@ export const useStepNavigation = () => {
           selectedFinishingMachines.length === 0
         );
       } else if (currentStep === 2) {
+        return (
+          hasDigitalOrOffsetPrinting(selectedMachines) &&
+          selectedBookFinishingMachines.length === 0
+        );
+      } else if (currentStep === 3) {
         return (
           hasRollOrFlexoPrinting(selectedMachines) &&
           selectedRollFlexoFinishingMachines.length === 0

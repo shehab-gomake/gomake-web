@@ -17,7 +17,7 @@ export interface FinishingCategory {
   id: string;
   name: string;
   machines: string[];
-  categoryType: "digital_offset" | "roll_flexo";
+  categoryType: "digital_offset" | "roll_flexo" | "book_finishing";
 }
 
 export interface SelectedFinishingMachine {
@@ -31,10 +31,13 @@ export interface StepState {
   currentStep: number;
   selectedMachines: SelectedMachine[];
   selectedFinishingMachines: SelectedFinishingMachine[];
+  selectedBookFinishingMachines: SelectedFinishingMachine[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
   finishingCategories: FinishingCategory[];
+  bookFinishingCategories: FinishingCategory[];
   rollFlexoFinishingCategories: FinishingCategory[];
   selectedCategoryMachines: { [categoryId: string]: string };
+  selectedBookFinishingCategoryMachines: { [categoryId: string]: string };
   selectedRollFlexoCategoryMachines: { [categoryId: string]: string };
 }
 

@@ -136,6 +136,58 @@ export const initializeFinishingCategories = (): FinishingCategory[] => [
   },
 ];
 
+// Book Finishing Categories Configuration
+export const initializeBookFinishingCategories = (): FinishingCategory[] => [
+  {
+    id: "booklet",
+    name: "Booklet",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "perfect_binding",
+    name: "Perfect Binding",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "books_sewing",
+    name: "Books Sewing",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "spiral",
+    name: "Spiral",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "manual_stapler",
+    name: "Manual Stapler",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "hardcover_cover",
+    name: "Hardcover Cover",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "three_knife_trimmer",
+    name: "Three Knife Trimmer",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+  {
+    id: "collector",
+    name: "Collector",
+    machines: [], // Will be populated from API
+    categoryType: "book_finishing",
+  },
+];
+
 // Roll/Flexo Finishing Categories Configuration
 export const initializeRollFlexoFinishingCategories =
   (): FinishingCategory[] => [
@@ -205,12 +257,14 @@ export const initializeRollFlexoFinishingCategories =
 export const STEPS_CONFIG = {
   steps: [
     "Select Machines",
-    "Select Finishing Actions",
+    "Select Sheet Digital/Offset  Finishing",
+    "Select Sheet Digital/Offset Book  Finishing",
     "Select Roll/Flexo Finishing",
   ],
   stepDescriptions: {
     0: "Select your printing machines from any category",
     1: "Configure finishing machines for Digital/Offset printing",
-    2: "Configure finishing machines for Roll/Flexo printing",
+    2: "Based on your selected Digital/Offset printing machines, configure the book finishing machines for each category below.",
+    3: "Configure finishing machines for Roll/Flexo printing",
   },
 };

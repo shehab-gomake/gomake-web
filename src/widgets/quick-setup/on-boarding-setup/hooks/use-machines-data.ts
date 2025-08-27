@@ -10,6 +10,7 @@ import {
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 import {
   initializeFinishingCategories,
+  initializeBookFinishingCategories,
   initializeRollFlexoFinishingCategories,
 } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
 
@@ -24,6 +25,9 @@ export const useMachinesData = () => {
 
   // State for finishing categories with real machine data
   const [finishingCategories, setFinishingCategories] = useState<
+    FinishingCategory[]
+  >([]);
+  const [bookFinishingCategories, setBookFinishingCategories] = useState<
     FinishingCategory[]
   >([]);
   const [rollFlexoFinishingCategories, setRollFlexoFinishingCategories] =
@@ -66,6 +70,7 @@ export const useMachinesData = () => {
   // Load finishing categories with real machine data
   const loadFinishingCategoriesWithMachines = useCallback(async () => {
     const digitalOffsetCategories = initializeFinishingCategories();
+    const bookCategories = initializeBookFinishingCategories();
     const rollFlexoCategories = initializeRollFlexoFinishingCategories();
 
     // Map finishing category names to machine category names for API lookup
@@ -92,6 +97,16 @@ export const useMachinesData = () => {
       "Package tying machine": ["Package Tying", "Tying"],
       "Shrink packaging machine": ["Shrink Packaging", "Shrink"],
       "Plate processor": ["Plate Processor", "Plates"],
+      // Book finishing categories
+      Booklet: ["Booklet", "Booklet Making", "Booklet Machine"],
+      "Perfect Binding": ["Perfect Binding", "Perfect Bind", "Binding"],
+      "Books Sewing": ["Books Sewing", "Book Sewing", "Sewing"],
+      Spiral: ["Spiral", "Spiral Binding", "Spiral Bind"],
+      "Manual Stapler": ["Manual Stapler", "Stapler", "Stapling"],
+      "Hardcover Cover": ["Hardcover Cover", "Hardcover", "Cover"],
+      "Three Knife Trimmer": ["Three Knife Trimmer", "Trimmer", "Cutting"],
+      Collector: ["Collector", "Collection"],
+      // Roll/Flexo categories
       Lamination: ["Lamination", "Laminating"],
       Varnish: ["Varnish", "Varnishing"],
       Embossing: ["Embossing", "Emboss"],
@@ -127,6 +142,12 @@ export const useMachinesData = () => {
       })
     );
 
+    // Populate machines for book finishing categories
+    const populatedBookCategories = bookCategories.map((category) => ({
+      ...category,
+      machines: findMachinesByCategoryName(category.name),
+    }));
+
     // Populate machines for roll/flexo categories
     const populatedRollFlexoCategories = rollFlexoCategories.map(
       (category) => ({
@@ -136,6 +157,7 @@ export const useMachinesData = () => {
     );
 
     setFinishingCategories(populatedDigitalOffsetCategories);
+    setBookFinishingCategories(populatedBookCategories);
     setRollFlexoFinishingCategories(populatedRollFlexoCategories);
   }, [allMachines]);
 
@@ -155,6 +177,7 @@ export const useMachinesData = () => {
     allMachines,
     machinesLoading,
     finishingCategories,
+    bookFinishingCategories,
     rollFlexoFinishingCategories,
     loadAllMachines,
     loadFinishingCategoriesWithMachines,

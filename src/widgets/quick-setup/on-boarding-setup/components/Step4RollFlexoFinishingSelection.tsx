@@ -21,7 +21,7 @@ import {
   FinishingCategory,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 
-interface Step3RollFlexoFinishingSelectionProps {
+interface Step4RollFlexoFinishingSelectionProps {
   selectedMachines: SelectedMachine[];
   rollFlexoFinishingCategories: FinishingCategory[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
@@ -35,8 +35,8 @@ interface Step3RollFlexoFinishingSelectionProps {
   hasRollOrFlexoPrinting: boolean;
 }
 
-export const Step3RollFlexoFinishingSelection: React.FC<
-  Step3RollFlexoFinishingSelectionProps
+export const Step4RollFlexoFinishingSelection: React.FC<
+  Step4RollFlexoFinishingSelectionProps
 > = ({
   selectedMachines,
   rollFlexoFinishingCategories,
