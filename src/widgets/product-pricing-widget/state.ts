@@ -92,6 +92,11 @@ export const additionalProductItemsState = atom<any[]>({
   default: [],
 });
 
+export const deliveryPriceState = atom<number>({
+  key: "deliveryPriceState",
+  default: 0,
+});
+
 export const sliderCurrentProductItemValuePriceState = atom<number>({
   key: "sliderCurrentProductItemValuePriceState",
   default: null,

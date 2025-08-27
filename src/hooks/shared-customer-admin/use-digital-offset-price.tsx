@@ -60,6 +60,7 @@ import {
   currentProductItemValuePriceState,
   currentProductItemValueState,
   currentProductItemValueTotalWorkFlowsState,
+  deliveryPriceState,
   jobActionsState,
   jobDetailsState,
   lastProductItemValuePriceState,
@@ -190,6 +191,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  const setDeliveryPrice = useSetRecoilState<number>(deliveryPriceState);
   const [isFlowChanged, stIsFlowChanged] = useState(false);
   const [isOpenCreateDefaultWorkFlow, setIsOpenCreateDefaultWorkFlow] =
     useState(false);
@@ -468,6 +470,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculationSessionId(result.productItemValueDraftId);
       stIsFlowChanged(result.isFlowChanged);
       setAdditionalProductItems(result.additionalProductItems);
+      setDeliveryPrice(result.deliveryPrice);
 
       setCalculationProgress({
         totalWorkFlowsCount: 0,
