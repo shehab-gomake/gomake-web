@@ -904,7 +904,7 @@ const QuotesListPageWidget = ({
           maxHeight={"calc(100vh)"}
           rows={allDocuments}
           headers={tableHomeHeader}
-          variant="ClassicTable"
+          variant="OddEvenTable"
           withoutShadow={true}
         />
       )}
