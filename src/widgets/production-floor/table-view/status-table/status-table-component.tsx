@@ -2,6 +2,7 @@ import { useStatusTable } from "@/widgets/production-floor/table-view/status-tab
 import {
   Collapse,
   IconButton,
+  Tooltip,
   Paper,
   Stack,
   Table,
@@ -96,6 +97,8 @@ const StatusTableComponent = ({
   }>({ key: "", direction: CurrentStationOrderingEnum.NONE });
 
   const virtuosoRef = useRef<any>(null);
+
+  const [heightMultiplier, setHeightMultiplier] = useState<number>(1);
 
   const reSortingCurrentStation = useCallback(
     async (direction: CurrentStationOrderingEnum) => {
@@ -387,7 +390,6 @@ const StatusTableComponent = ({
     setCurrentStationOrdering,
     reSortingCurrentStation,
   ]);
-  console.log("columnVisibility", columnVisibility)
 
   const TABLE_CONFIG = {
     ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
@@ -397,15 +399,13 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    if(boardsCount < 10){
-      return `500px`;
-    }
-    const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
-    const totalHeight = (visibleItems * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+    const visibleLimit = heightMultiplier === 1 ? TABLE_CONFIG.MAX_VISIBLE_ITEMS : 30;
+    const baseHeight =
+      boardsCount < 10
+        ? 500
+        : (Math.min(boardsCount, visibleLimit) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
 
-    console.log("totalHeight", { boardsCount, totalHeight, visibleItems })
-
-    return `${totalHeight}px`;
+    return `${baseHeight}px`;
   };
 
 
@@ -440,6 +440,41 @@ const StatusTableComponent = ({
             : status.name
             } (${getBoards().length})`}
         </Button>
+        {getBoards().length > 20 && (
+          <Tooltip
+            title={
+              heightMultiplier === 1
+                ? t("productionFloor.increaseItemsTo30", { count: 30 })
+                : t("productionFloor.decreaseItemsTo10", { count: 10 })
+            }
+            arrow
+          >
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => setHeightMultiplier((m) => (m === 1 ? 2 : 1))}
+              startIcon={
+                heightMultiplier === 1 ? (
+                  <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
+                ) : (
+                  <KeyboardArrowUpIcon sx={{ fontSize: "18px" }} />
+                )
+              }
+              sx={{
+                height: "32px",
+                borderRadius: "999px",
+                textTransform: "none",
+                px: 1.5,
+                boxShadow: "0 1px 2px rgba(16,24,40,0.1)",
+                backgroundColor: "#EEF2FF",
+                color: "#3538CD",
+                "&:hover": { backgroundColor: "#E0E7FF" },
+              }}
+            >
+              {heightMultiplier === 1 ? t("productionFloor.expand") : t("productionFloor.reset")}
+            </Button>
+          </Tooltip>
+        )}
       </Stack>
 
       {getBoards().length > 0 && (
@@ -452,7 +487,7 @@ const StatusTableComponent = ({
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
-            
+
               fixedHeaderContent={fixedHeaderContent}
               itemContent={(index: number, boardMission: IBoardMissions) => (
                 <TableRowComponent
@@ -477,29 +512,29 @@ const StatusTableComponent = ({
                   <TableHead style={{ backgroundColor: status.backgroundColor }}>
                     {fixedHeaderContent()}
                   </TableHead>
-                    <TableBody>
-                        {sortedBoards.map((boardMission, index) => (
-                        <TableRowComponent
-                            key={boardMission.id}
-                            boardMission={boardMission}
-                            status={status}
-                            onClickDone={tryMoveBoardMissionsToDone}
-                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                            index={index}
-                            onClickClient={onClickClient}
-                            isMobileScreen={isMobileScreen}
-                            isRTL={RTL}
-                            isUrgentWork={hasUrgentOrApproval}
-                            onUpdateJobDueDate={updateJobDueDate}
-                            employeesCategories={employeesCategories}
-                            visibleColumns={visibleColumns}
-                        />
-                        ))}
-                    </TableBody>
+                  <TableBody>
+                    {sortedBoards.map((boardMission, index) => (
+                      <TableRowComponent
+                        key={boardMission.id}
+                        boardMission={boardMission}
+                        status={status}
+                        onClickDone={tryMoveBoardMissionsToDone}
+                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                        index={index}
+                        onClickClient={onClickClient}
+                        isMobileScreen={isMobileScreen}
+                        isRTL={RTL}
+                        isUrgentWork={hasUrgentOrApproval}
+                        onUpdateJobDueDate={updateJobDueDate}
+                        employeesCategories={employeesCategories}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))}
+                  </TableBody>
                 </Table>
               </TableContainer>
-             
-            </div> }
+
+            </div>}
           </Paper>
         </Collapse>
       )}
