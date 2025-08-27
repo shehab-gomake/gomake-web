@@ -431,10 +431,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />

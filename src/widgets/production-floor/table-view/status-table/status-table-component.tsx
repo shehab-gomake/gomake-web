@@ -97,6 +97,8 @@ const StatusTableComponent = ({
 
   const virtuosoRef = useRef<any>(null);
 
+  const [heightMultiplier, setHeightMultiplier] = useState<number>(1);
+
   const reSortingCurrentStation = useCallback(
     async (direction: CurrentStationOrderingEnum) => {
       await setFilters({
@@ -387,7 +389,6 @@ const StatusTableComponent = ({
     setCurrentStationOrdering,
     reSortingCurrentStation,
   ]);
-  console.log("columnVisibility", columnVisibility)
 
   const TABLE_CONFIG = {
     ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
@@ -397,15 +398,12 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    if(boardsCount < 10){
-      return `500px`;
-    }
-    const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
-    const totalHeight = (visibleItems * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+    const baseHeight =
+      boardsCount < 10
+        ? 500
+        : (Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
 
-    console.log("totalHeight", { boardsCount, totalHeight, visibleItems })
-
-    return `${totalHeight}px`;
+    return `${baseHeight * heightMultiplier}px`;
   };
 
 
@@ -440,6 +438,16 @@ const StatusTableComponent = ({
             : status.name
             } (${getBoards().length})`}
         </Button>
+        {getBoards().length > 20 && (
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => setHeightMultiplier((m) => (m === 1 ? 2 : 1))}
+            sx={{ height: "32px" }}
+          >
+            {heightMultiplier === 1 ? "Increase height" : "Reset height"}
+          </Button>
+        )}
       </Stack>
 
       {getBoards().length > 0 && (
@@ -452,7 +460,7 @@ const StatusTableComponent = ({
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
-            
+
               fixedHeaderContent={fixedHeaderContent}
               itemContent={(index: number, boardMission: IBoardMissions) => (
                 <TableRowComponent
@@ -477,29 +485,29 @@ const StatusTableComponent = ({
                   <TableHead style={{ backgroundColor: status.backgroundColor }}>
                     {fixedHeaderContent()}
                   </TableHead>
-                    <TableBody>
-                        {sortedBoards.map((boardMission, index) => (
-                        <TableRowComponent
-                            key={boardMission.id}
-                            boardMission={boardMission}
-                            status={status}
-                            onClickDone={tryMoveBoardMissionsToDone}
-                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                            index={index}
-                            onClickClient={onClickClient}
-                            isMobileScreen={isMobileScreen}
-                            isRTL={RTL}
-                            isUrgentWork={hasUrgentOrApproval}
-                            onUpdateJobDueDate={updateJobDueDate}
-                            employeesCategories={employeesCategories}
-                            visibleColumns={visibleColumns}
-                        />
-                        ))}
-                    </TableBody>
+                  <TableBody>
+                    {sortedBoards.map((boardMission, index) => (
+                      <TableRowComponent
+                        key={boardMission.id}
+                        boardMission={boardMission}
+                        status={status}
+                        onClickDone={tryMoveBoardMissionsToDone}
+                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                        index={index}
+                        onClickClient={onClickClient}
+                        isMobileScreen={isMobileScreen}
+                        isRTL={RTL}
+                        isUrgentWork={hasUrgentOrApproval}
+                        onUpdateJobDueDate={updateJobDueDate}
+                        employeesCategories={employeesCategories}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))}
+                  </TableBody>
                 </Table>
               </TableContainer>
-             
-            </div> }
+
+            </div>}
           </Paper>
         </Collapse>
       )}
