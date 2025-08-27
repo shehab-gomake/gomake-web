@@ -343,22 +343,45 @@ export const initializeDtfSublimationFinishingCategories =
     // },
   ];
 
+export const initializePackagingCategories = (): FinishingCategory[] => [
+  {
+    id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+    name: "machinesCategories.cartoonPackaging",
+    machines: [],
+    categoryType: "packaging",
+  },
+  {
+    id: ECategoryId.PACKAGE_TYING_MACHINE,
+    name: "machinesCategories.packageTying",
+    machines: [],
+    categoryType: "packaging",
+  },
+  {
+    id: ECategoryId.SHRINK_PACKING_MACHINE,
+    name: "machinesCategories.shrinkPackaging",
+    machines: [],
+    categoryType: "packaging",
+  },
+];
+
 // Step configuration
 export const STEPS_CONFIG = {
   steps: [
     "Select Machines",
-    "Select Sheet Digital/Offset  Finishing",
-    "Select Sheet Digital/Offset Book  Finishing",
-    "Select Roll/Flexo Finishing",
-    "Select Wide Format Finishing",
-    "Select DTF & Sublimation Finishing",
+    "Digital/Sheet Finishing",
+    "Book Finishing",
+    "Roll/Flexo Finishing",
+    "Wide Format Finishing",
+    "DTF & Sublimation Finishing",
+    "Select Packaging Machines",
   ],
   stepDescriptions: {
-    0: "Select your printing machines from any category",
+    0: "Select the machines you want to configure",
     1: "Configure finishing machines for Digital/Offset printing",
-    2: "Based on your selected Digital/Offset printing machines, configure the book finishing machines for each category below.",
+    2: "Configure book finishing machines for Digital/Offset printing",
     3: "Configure finishing machines for Roll/Flexo printing",
-    4: "Based on your selected Wide printer machines, configure the Wide format finishing machines for each category below.",
-    5: "Based on your selected DTF & Sublimation machines, configure the Wide format finishing machines for each category below.",
+    4: "Configure finishing machines for Wide format printing",
+    5: "Configure finishing machines for DTF & Sublimation printing",
+    6: "Configure packaging machines",
   },
 };

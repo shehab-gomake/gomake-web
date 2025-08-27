@@ -13,6 +13,7 @@ import {
   initializeWideFormatFinishingCategories,
   initializeDtfSublimationFinishingCategories,
   initializeRollFlexoFinishingCategories,
+  initializePackagingCategories,
 } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
 
 export const useMachinesData = () => {
@@ -38,6 +39,9 @@ export const useMachinesData = () => {
   ] = useState<FinishingCategory[]>([]);
   const [rollFlexoFinishingCategories, setRollFlexoFinishingCategories] =
     useState<FinishingCategory[]>([]);
+  const [packagingCategories, setPackagingCategories] = useState<
+    FinishingCategory[]
+  >([]);
 
   // Load all machines from API
   const loadAllMachines = useCallback(async () => {
@@ -81,6 +85,7 @@ export const useMachinesData = () => {
     const dtfSublimationCategories =
       initializeDtfSublimationFinishingCategories();
     const rollFlexoCategories = initializeRollFlexoFinishingCategories();
+    const packagingCategories = initializePackagingCategories();
 
     // Function to find machines by category ID
     const findMachinesByCategoryId = (categoryId: string): string[] => {
@@ -141,11 +146,20 @@ export const useMachinesData = () => {
       })
     );
 
+    // Populate machines for packaging categories
+    const populatedPackagingCategories = packagingCategories.map(
+      (category) => ({
+        ...category,
+        machines: findMachinesByCategoryId(category.id),
+      })
+    );
+
     setFinishingCategories(populatedDigitalOffsetCategories);
     setBookFinishingCategories(populatedBookCategories);
     setWideFormatFinishingCategories(populatedWideFormatCategories);
     setDtfSublimationFinishingCategories(populatedDtfSublimationCategories);
     setRollFlexoFinishingCategories(populatedRollFlexoCategories);
+    setPackagingCategories(populatedPackagingCategories);
   }, [allMachines]);
 
   // Initialize data on mount
@@ -168,6 +182,7 @@ export const useMachinesData = () => {
     wideFormatFinishingCategories,
     dtfSublimationFinishingCategories,
     rollFlexoFinishingCategories,
+    packagingCategories,
     loadAllMachines,
     loadFinishingCategoriesWithMachines,
   };

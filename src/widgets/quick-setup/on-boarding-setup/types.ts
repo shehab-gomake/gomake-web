@@ -24,7 +24,8 @@ export interface FinishingCategory {
     | "roll_flexo"
     | "book_finishing"
     | "wide_format"
-    | "dtf_sublimation";
+    | "dtf_sublimation"
+    | "packaging";
 }
 
 //!here
@@ -43,11 +44,13 @@ export interface StepState {
   selectedWideFormatFinishingMachines: SelectedFinishingMachine[];
   selectedDtfSublimationFinishingMachines: SelectedFinishingMachine[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
+  selectedPackagingMachines: SelectedFinishingMachine[];
   finishingCategories: FinishingCategory[];
   bookFinishingCategories: FinishingCategory[];
   wideFormatFinishingCategories: FinishingCategory[];
   dtfSublimationFinishingCategories: FinishingCategory[];
   rollFlexoFinishingCategories: FinishingCategory[];
+  packagingCategories: FinishingCategory[];
   selectedCategoryMachines: { [categoryId: string]: string };
   selectedBookFinishingCategoryMachines: { [categoryId: string]: string };
   selectedWideFormatFinishingCategoryMachines: { [categoryId: string]: string };
@@ -55,6 +58,7 @@ export interface StepState {
     [categoryId: string]: string;
   };
   selectedRollFlexoCategoryMachines: { [categoryId: string]: string };
+  selectedPackagingCategoryMachines: { [categoryId: string]: string };
 }
 
 export interface MachineCategory {

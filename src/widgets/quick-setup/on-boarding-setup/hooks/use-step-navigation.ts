@@ -61,56 +61,21 @@ export const useStepNavigation = () => {
       if (currentStep === 0) {
         return 1; // Always go to step 1 after step 0
       } else if (currentStep === 1) {
-        // After step 1, check what should be next based on selected machines
-        if (hasDigitalOrOffsetPrinting(selectedMachines)) {
-          return 2; // Go to step 2 (book finishing)
-        } else if (hasRollOrFlexoPrinting(selectedMachines)) {
-          return 3; // Go to step 3 (roll/flexo finishing)
-        } else if (hasWidePrinting(selectedMachines)) {
-          return 4; // Go to step 4 (wide format finishing)
-        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
-          return 5; // Go to step 5 (DTF/sublimation finishing)
-        } else {
-          return 6; // Complete setup
-        }
+        return 2; // Always go to step 2 after step 1
       } else if (currentStep === 2) {
-        // After step 2 (book finishing), check what should be next
-        if (hasRollOrFlexoPrinting(selectedMachines)) {
-          return 3; // Go to step 3 (roll/flexo finishing)
-        } else if (hasWidePrinting(selectedMachines)) {
-          return 4; // Go to step 4 (wide format finishing)
-        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
-          return 5; // Go to step 5 (DTF/sublimation finishing)
-        } else {
-          return 6; // Complete setup
-        }
+        return 3; // Always go to step 3 after step 2
       } else if (currentStep === 3) {
-        // After step 3 (roll/flexo finishing), check what should be next
-        if (hasWidePrinting(selectedMachines)) {
-          return 4; // Go to step 4 (wide format finishing)
-        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
-          return 5; // Go to step 5 (DTF/sublimation finishing)
-        } else {
-          return 6; // Complete setup
-        }
+        return 4; // Always go to step 4 after step 3
       } else if (currentStep === 4) {
-        // After step 4 (wide format finishing), check what should be next
-        if (hasDtfOrSublimationPrinting(selectedMachines)) {
-          return 5; // Go to step 5 (DTF/sublimation finishing)
-        } else {
-          return 6; // Complete setup
-        }
+        return 5; // Always go to step 5 after step 4
       } else if (currentStep === 5) {
-        return 6; // Complete setup
+        return 6; // Always go to step 6 after step 5
+      } else if (currentStep === 6) {
+        return 6; // Stay on step 6 (final step)
       }
       return currentStep; // Default case
     },
-    [
-      hasDigitalOrOffsetPrinting,
-      hasRollOrFlexoPrinting,
-      hasWidePrinting,
-      hasDtfOrSublimationPrinting,
-    ]
+    []
   );
 
   const handleNext = useCallback(
@@ -120,7 +85,8 @@ export const useStepNavigation = () => {
       selectedBookFinishingMachines: SelectedFinishingMachine[],
       selectedWideFormatFinishingMachines: SelectedFinishingMachine[],
       selectedDtfSublimationFinishingMachines: SelectedFinishingMachine[],
-      selectedRollFlexoFinishingMachines: SelectedFinishingMachine[]
+      selectedRollFlexoFinishingMachines: SelectedFinishingMachine[],
+      selectedPackagingMachines: SelectedFinishingMachine[]
     ) => {
       if (currentStep === 0) {
         // Validate step 1 - only require at least one machine
@@ -187,8 +153,8 @@ export const useStepNavigation = () => {
         const nextStep = getNextStep(currentStep, selectedMachines);
         setCurrentStep(nextStep);
         return true;
-      } else {
-        // Step 6 - Validate DTF/sublimation finishing machines if we have DTF/sublimation printing
+      } else if (currentStep === 5) {
+        // Step 6 - Only validate if we have DTF/sublimation printing machines
         if (
           hasDtfOrSublimationPrinting(selectedMachines) &&
           selectedDtfSublimationFinishingMachines.length === 0
@@ -198,7 +164,11 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        // Step 6 - Save or complete
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
+        return true;
+      } else if (currentStep === 6) {
+        // Step 7 - Save or complete
         console.log("Selected machines:", selectedMachines);
         console.log("Selected finishing machines:", selectedFinishingMachines);
         console.log(
@@ -217,6 +187,7 @@ export const useStepNavigation = () => {
           "Selected roll/flexo finishing machines:",
           selectedRollFlexoFinishingMachines
         );
+        console.log("Selected packaging machines:", selectedPackagingMachines);
         alert("Setup completed!");
         return true;
       }
@@ -235,7 +206,8 @@ export const useStepNavigation = () => {
       selectedBookFinishingMachines: SelectedFinishingMachine[],
       selectedWideFormatFinishingMachines: SelectedFinishingMachine[],
       selectedDtfSublimationFinishingMachines: SelectedFinishingMachine[],
-      selectedRollFlexoFinishingMachines: SelectedFinishingMachine[]
+      selectedRollFlexoFinishingMachines: SelectedFinishingMachine[],
+      selectedPackagingMachines: SelectedFinishingMachine[]
     ): boolean => {
       if (currentStep === 0) {
         return selectedMachines.length === 0;
@@ -264,6 +236,8 @@ export const useStepNavigation = () => {
           hasDtfOrSublimationPrinting(selectedMachines) &&
           selectedDtfSublimationFinishingMachines.length === 0
         );
+      } else if (currentStep === 6) {
+        return false; // Step 7 (packaging) is optional, so never disabled
       }
       return false;
     },
@@ -308,32 +282,10 @@ export const useStepNavigation = () => {
 
   const getNextButtonText = useCallback(
     (selectedMachines: SelectedMachine[]) => {
-      // Check if we're on the last relevant step
-      const hasMoreSteps =
-        currentStep === 0 ||
-        (currentStep === 1 &&
-          (shouldShowStep3(selectedMachines) ||
-            shouldShowStep4(selectedMachines) ||
-            shouldShowStep5(selectedMachines) ||
-            shouldShowStep6(selectedMachines))) ||
-        (currentStep === 2 &&
-          (shouldShowStep4(selectedMachines) ||
-            shouldShowStep5(selectedMachines) ||
-            shouldShowStep6(selectedMachines))) ||
-        (currentStep === 3 &&
-          (shouldShowStep5(selectedMachines) ||
-            shouldShowStep6(selectedMachines))) ||
-        (currentStep === 4 && shouldShowStep6(selectedMachines));
-
-      return hasMoreSteps ? "Next" : "Complete Setup";
+      // Show "Complete Setup" on the final step (step 6)
+      return currentStep === 6 ? "Complete Setup" : "Next";
     },
-    [
-      currentStep,
-      shouldShowStep3,
-      shouldShowStep4,
-      shouldShowStep5,
-      shouldShowStep6,
-    ]
+    [currentStep]
   );
 
   return {
