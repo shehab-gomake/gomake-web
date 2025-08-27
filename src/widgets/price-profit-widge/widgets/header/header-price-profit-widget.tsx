@@ -114,10 +114,12 @@ const PriceProfitHeaderWidget = ({
           profitsPricingTables &&
           profitsPricingTables.length > 0 && (
             <GoMakeAutoComplate
-              options={(profitsPricingTables ?? []).map((table) => ({
-                value: table.id,
-                label: table.name,
-              }))}
+              options={(profitsPricingTables ?? [])
+                .filter((table) => table.pricingBy === 1)
+                .map((table) => ({
+                  value: table.id,
+                  label: table.name,
+                }))}
               value={selectedPricingTable}
               onChange={onSelectPricingTable}
               getOptionLabel={(o) => o.label}
