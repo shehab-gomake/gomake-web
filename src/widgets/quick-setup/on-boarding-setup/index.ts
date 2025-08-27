@@ -1,4 +1,4 @@
-export { default as TestPageRefactored } from "./quick-setup-flow";
+export { default as QuickSetupFlow } from "./quick-setup-flow";
 
 // Export new modular structure
 export * from "./types";
