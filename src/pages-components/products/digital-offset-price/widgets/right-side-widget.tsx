@@ -106,8 +106,8 @@ const RightSideWidget = ({
     primaryColor,
     alertFault,
     t,
+    deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
-
 
 
   return (
@@ -441,6 +441,7 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+
         {template?.minimumPrice > 0 &&
           !sliderCurrentProductItemValueTotalPrice && (
             <div style={{ ...clasess.secondText, marginBottom: 10 }}>
@@ -501,6 +502,20 @@ const RightSideWidget = ({
             </PermissionCheck>
           )}
         {/* Slider */}
+        {
+          deliveryPrice > 0 && (
+            <div style={clasess.deliveryPriceContainer}>
+              <div style={clasess.deliveryPriceItem}>
+                {t("sales.quote.deliveryPrice")}
+              </div>
+              <div style={clasess.deliveryPriceItem}>
+                {!isRTL && systemCurrency}
+                {roundPrice(Number(deliveryPrice) || 0)}
+                {isRTL && systemCurrency}
+              </div>
+            </div>
+          )
+        }
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>

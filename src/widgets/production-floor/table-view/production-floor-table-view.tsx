@@ -38,8 +38,6 @@ import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
-// Removed export buttons from table view; moved to header
-
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
@@ -450,7 +448,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   return (
     <Stack gap={"20px"}>
       {renderContent}
-
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
         typeClient={CLIENT_TYPE.CUSTOMER}
