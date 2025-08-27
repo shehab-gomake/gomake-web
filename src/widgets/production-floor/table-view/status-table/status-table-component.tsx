@@ -174,6 +174,12 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
+          } else if (status.key === "Stuck") {
+            handleOpenStuckModal(
+              status.id,
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              item.board.id
+            );
           } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
@@ -397,7 +403,7 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    if(boardsCount < 10){
+    if (boardsCount < 10) {
       return `500px`;
     }
     const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
@@ -452,7 +458,7 @@ const StatusTableComponent = ({
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
-            
+
               fixedHeaderContent={fixedHeaderContent}
               itemContent={(index: number, boardMission: IBoardMissions) => (
                 <TableRowComponent
@@ -469,6 +475,7 @@ const StatusTableComponent = ({
                   employeesCategories={employeesCategories}
                   visibleColumns={visibleColumns}
                   cellsOnly
+                  handleOpenStuckModal={handleOpenStuckModal}
                 />
               )}
             /> : <div>
@@ -477,29 +484,30 @@ const StatusTableComponent = ({
                   <TableHead style={{ backgroundColor: status.backgroundColor }}>
                     {fixedHeaderContent()}
                   </TableHead>
-                    <TableBody>
-                        {sortedBoards.map((boardMission, index) => (
-                        <TableRowComponent
-                            key={boardMission.id}
-                            boardMission={boardMission}
-                            status={status}
-                            onClickDone={tryMoveBoardMissionsToDone}
-                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                            index={index}
-                            onClickClient={onClickClient}
-                            isMobileScreen={isMobileScreen}
-                            isRTL={RTL}
-                            isUrgentWork={hasUrgentOrApproval}
-                            onUpdateJobDueDate={updateJobDueDate}
-                            employeesCategories={employeesCategories}
-                            visibleColumns={visibleColumns}
-                        />
-                        ))}
-                    </TableBody>
+                  <TableBody>
+                    {sortedBoards.map((boardMission, index) => (
+                      <TableRowComponent
+                        key={boardMission.id}
+                        boardMission={boardMission}
+                        status={status}
+                        onClickDone={tryMoveBoardMissionsToDone}
+                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                        index={index}
+                        onClickClient={onClickClient}
+                        isMobileScreen={isMobileScreen}
+                        isRTL={RTL}
+                        isUrgentWork={hasUrgentOrApproval}
+                        onUpdateJobDueDate={updateJobDueDate}
+                        employeesCategories={employeesCategories}
+                        visibleColumns={visibleColumns}
+                        handleOpenStuckModal={handleOpenStuckModal}
+                      />
+                    ))}
+                  </TableBody>
                 </Table>
               </TableContainer>
-             
-            </div> }
+
+            </div>}
           </Paper>
         </Collapse>
       )}
