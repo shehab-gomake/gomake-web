@@ -11,13 +11,14 @@ export interface SelectedMachine {
   id: string;
   name: string;
   category: string;
+  categoryId?: string;
   categoryName: string;
 }
 
 export interface FinishingCategory {
   id: string;
   name: string;
-  machines: string[];
+  machines: string[]; //!here should be machine structure
   categoryType:
     | "digital_offset"
     | "roll_flexo"
@@ -26,6 +27,7 @@ export interface FinishingCategory {
     | "dtf_sublimation";
 }
 
+//!here
 export interface SelectedFinishingMachine {
   id: string;
   name: string;

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -12,18 +13,17 @@ import {
   Button,
   OutlinedInput,
   InputAdornment,
+  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useTranslation } from "react-i18next";
+import SearchIcon from "@mui/icons-material/Search";
 import {
-  SelectedMachine,
-  SelectedFinishingMachine,
   FinishingCategory,
+  SelectedFinishingMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 
 interface Step4RollFlexoFinishingSelectionProps {
-  selectedMachines: SelectedMachine[];
   rollFlexoFinishingCategories: FinishingCategory[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
   selectedRollFlexoFinishingCategoryMachines: { [categoryId: string]: string };
@@ -33,136 +33,74 @@ interface Step4RollFlexoFinishingSelectionProps {
     categoryId: string,
     machineName: string
   ) => void;
-  hasRollOrFlexoPrinting: boolean;
 }
 
 export const Step4RollFlexoFinishingSelection: React.FC<
   Step4RollFlexoFinishingSelectionProps
 > = ({
-  selectedMachines,
   rollFlexoFinishingCategories,
   selectedRollFlexoFinishingMachines,
   selectedRollFlexoFinishingCategoryMachines,
   onAddRollFlexoFinishingMachine,
   onDeleteRollFlexoFinishingMachine,
   onRollFlexoFinishingCategoryMachineChange,
-  hasRollOrFlexoPrinting,
 }) => {
   const { t } = useTranslation();
+  const [searchTerms, setSearchTerms] = useState<{
+    [categoryId: string]: string;
+  }>({});
 
   const clearCategorySelection = (categoryId: string) => {
     onRollFlexoFinishingCategoryMachineChange(categoryId, "");
   };
 
-  if (!hasRollOrFlexoPrinting) {
-    return (
+  const handleSearchChange = (categoryId: string, value: string) => {
+    setSearchTerms((prev) => ({
+      ...prev,
+      [categoryId]: value,
+    }));
+  };
+
+  const getFilteredMachines = (category: FinishingCategory) => {
+    const searchTerm = searchTerms[category.id] || "";
+    if (!searchTerm) return category.machines;
+
+    return category.machines.filter((machine) =>
+      machine.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  return (
+    <Box>
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Roll/Flexo Finishing Machines Configuration
+          {t("quickSetup.selectRollFlexoFinishingMachines")}
         </Typography>
 
         <Box sx={{ mb: 3 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Roll/Flexo finishing machines are only available for Roll Digital
-            and/or Flexo printing machines.
+          <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+            {t("quickSetup.rollFlexoFinishingMachinesDescription")}
           </Typography>
 
-          <Paper sx={{ p: 2, mb: 3, backgroundColor: "#f5f5f5" }}>
+          <Paper sx={{ p: 2, backgroundColor: "#f8f9fa" }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Selected Printing Machines:
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {selectedMachines.map((machine) => (
-                <Chip
-                  key={machine.id}
-                  label={machine.name}
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                />
-              ))}
-            </Box>
-          </Paper>
-        </Box>
-
-        <Paper
-          sx={{
-            p: 3,
-            backgroundColor: "#fff3cd",
-            border: "1px solid #ffeaa7",
-          }}
-        >
-          <Typography variant="body1" color="warning.main" sx={{ mb: 1 }}>
-            ⚠️ No Roll/Flexo Printing Machines Selected
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            You have selected machines that don't require Roll/Flexo finishing
-            configuration. You can proceed to complete the setup or go back to
-            add Roll Digital and/or Flexo printing machines.
-          </Typography>
-        </Paper>
-      </Paper>
-    );
-  }
-
-  return (
-    <Box
-      sx={{
-        maxHeight: "calc(100vh - 300px)", // Leave space for header, stepper, and navigation buttons
-        overflowY: "auto",
-        "&::-webkit-scrollbar": { width: "8px" },
-        "&::-webkit-scrollbar-track": {
-          background: "#f1f1f1",
-          borderRadius: "4px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "#c1c1c1",
-          borderRadius: "4px",
-          "&:hover": { background: "#a8a8a8" },
-        },
-      }}
-    >
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Select Finishing Machines for Roll/Flexo Printing
-        </Typography>
-
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Based on your selected Roll Digital and/or Flexo printing machines,
-            configure the finishing machines for each category below. You must
-            choose at least one finishing machine.
-          </Typography>
-
-          <Paper sx={{ p: 2, mb: 3, backgroundColor: "#f5f5f5" }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Selected Roll/Flexo Printing Machines:
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {selectedMachines
-                .filter((machine) => {
-                  const categoryName = machine.categoryName.toLowerCase();
-                  return (
-                    categoryName.includes("roll") ||
-                    categoryName.includes("flexo")
-                  );
-                })
-                .map((machine) => (
-                  <Chip
-                    key={machine.id}
-                    label={machine.name}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                ))}
+              {/* This would show selected printing machines from step 1 */}
+              <Chip
+                label="Roll/Flexo Printing"
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
             </Box>
           </Paper>
         </Box>
 
         <Box>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            Finishing Categories
+            Roll/Flexo Finishing Categories
           </Typography>
 
           {rollFlexoFinishingCategories.map((category) => (
@@ -208,9 +146,42 @@ export const Step4RollFlexoFinishingSelection: React.FC<
                         )}
                       </InputAdornment>
                     }
+                    MenuProps={{
+                      PaperProps: { style: { maxHeight: 300 } },
+                    }}
                   >
-                    {category.machines.map((machine) => (
-                      <MenuItem key={machine} value={machine}>
+                    <MenuItem sx={{ p: 1 }}>
+                      <TextField
+                        placeholder="Search machines..."
+                        value={searchTerms[category.id] || ""}
+                        onChange={(e) =>
+                          handleSearchChange(category.id, e.target.value)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        fullWidth
+                        size="small"
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            height: 40,
+                            fontSize: "14px",
+                          },
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon fontSize="small" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </MenuItem>
+                    {getFilteredMachines(category).map((machine) => (
+                      <MenuItem
+                        key={machine}
+                        value={machine}
+                        sx={{ py: 1, fontSize: "14px" }}
+                      >
                         {machine}
                       </MenuItem>
                     ))}

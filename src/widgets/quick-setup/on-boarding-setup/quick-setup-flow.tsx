@@ -48,6 +48,11 @@ const QuickSetupFlow: React.FC = () => {
     hasRollOrFlexoPrinting,
     hasWidePrinting,
     hasDtfOrSublimationPrinting,
+    shouldShowStep2,
+    shouldShowStep3,
+    shouldShowStep4,
+    shouldShowStep5,
+    shouldShowStep6,
     handleNext,
     handleBack,
     isNextDisabled,
@@ -376,15 +381,50 @@ const QuickSetupFlow: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Quick Setup - Multi-Step Configuration (Refactored)
+        Quick Setup - Multi-Step Configuration
       </Typography>
 
       <Stepper activeStep={currentStep} sx={{ mb: 4 }}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
+        {steps.map((label, index) => {
+          // Only show steps that are relevant based on selected machines
+          if (index === 0)
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          if (index === 1 && shouldShowStep2(selectedMachines))
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          if (index === 2 && shouldShowStep3(selectedMachines))
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          if (index === 3 && shouldShowStep4(selectedMachines))
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          if (index === 4 && shouldShowStep5(selectedMachines))
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          if (index === 5 && shouldShowStep6(selectedMachines))
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          return null;
+        })}
       </Stepper>
 
       {currentStep === 0 ? (
@@ -398,22 +438,17 @@ const QuickSetupFlow: React.FC = () => {
             selectedMachines
           )}
         />
-      ) : currentStep === 1 ? (
+      ) : currentStep === 1 && shouldShowStep2(selectedMachines) ? (
         <Step2FinishingSelection
-          selectedMachines={selectedMachines}
           finishingCategories={finishingCategories}
           selectedFinishingMachines={selectedFinishingMachines}
           selectedCategoryMachines={selectedCategoryMachines}
           onAddFinishingMachine={handleAddFinishingMachine}
           onDeleteFinishingMachine={handleDeleteFinishingMachine}
           onCategoryMachineChange={handleCategoryMachineChange}
-          hasDigitalOrOffsetPrinting={hasDigitalOrOffsetPrinting(
-            selectedMachines
-          )}
         />
-      ) : currentStep === 2 ? (
+      ) : currentStep === 2 && shouldShowStep3(selectedMachines) ? (
         <Step3BookFinishingSelection
-          selectedMachines={selectedMachines}
           bookFinishingCategories={bookFinishingCategories}
           selectedBookFinishingMachines={selectedBookFinishingMachines}
           selectedBookFinishingCategoryMachines={
@@ -424,13 +459,9 @@ const QuickSetupFlow: React.FC = () => {
           onBookFinishingCategoryMachineChange={
             handleBookFinishingCategoryMachineChange
           }
-          hasDigitalOrOffsetPrinting={hasDigitalOrOffsetPrinting(
-            selectedMachines
-          )}
         />
-      ) : currentStep === 3 ? (
+      ) : currentStep === 3 && shouldShowStep4(selectedMachines) ? (
         <Step4RollFlexoFinishingSelection
-          selectedMachines={selectedMachines}
           rollFlexoFinishingCategories={rollFlexoFinishingCategories}
           selectedRollFlexoFinishingMachines={
             selectedRollFlexoFinishingMachines
@@ -445,11 +476,9 @@ const QuickSetupFlow: React.FC = () => {
           onRollFlexoFinishingCategoryMachineChange={
             handleRollFlexoFinishingCategoryMachineChange
           }
-          hasRollOrFlexoPrinting={hasRollOrFlexoPrinting(selectedMachines)}
         />
-      ) : currentStep === 4 ? (
+      ) : currentStep === 4 && shouldShowStep5(selectedMachines) ? (
         <Step5WideFormatFinishingSelection
-          selectedMachines={selectedMachines}
           wideFormatFinishingCategories={wideFormatFinishingCategories}
           selectedWideFormatFinishingMachines={
             selectedWideFormatFinishingMachines
@@ -464,11 +493,9 @@ const QuickSetupFlow: React.FC = () => {
           onWideFormatFinishingCategoryMachineChange={
             handleWideFormatFinishingCategoryMachineChange
           }
-          hasWidePrinting={hasWidePrinting(selectedMachines)}
         />
-      ) : (
+      ) : currentStep === 5 && shouldShowStep6(selectedMachines) ? (
         <Step6DtfSublimationFinishingSelection
-          selectedMachines={selectedMachines}
           dtfSublimationFinishingCategories={dtfSublimationFinishingCategories}
           selectedDtfSublimationFinishingMachines={
             selectedDtfSublimationFinishingMachines
@@ -485,10 +512,13 @@ const QuickSetupFlow: React.FC = () => {
           onDtfSublimationFinishingCategoryMachineChange={
             handleDtfSublimationFinishingCategoryMachineChange
           }
-          hasDtfOrSublimationPrinting={hasDtfOrSublimationPrinting(
-            selectedMachines
-          )}
         />
+      ) : (
+        <Box sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="h6" color="text.secondary">
+            Setup completed! All steps have been configured.
+          </Typography>
+        </Box>
       )}
 
       <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
@@ -512,7 +542,7 @@ const QuickSetupFlow: React.FC = () => {
             selectedRollFlexoFinishingMachines
           )}
         >
-          {getNextButtonText()}
+          {getNextButtonText(selectedMachines)}
         </Button>
       </Box>
     </Box>

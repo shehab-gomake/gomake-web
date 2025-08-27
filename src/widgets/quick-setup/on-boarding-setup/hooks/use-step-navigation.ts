@@ -4,6 +4,7 @@ import {
   SelectedFinishingMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 import { STEPS_CONFIG } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
+import { ECategoryId } from "@/widgets/machines/enums/category-id";
 
 export const useStepNavigation = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -14,28 +15,33 @@ export const useStepNavigation = () => {
     selectedMachines: SelectedMachine[]
   ): boolean => {
     return selectedMachines.some((machine) => {
-      const categoryName = machine.categoryName.toLowerCase();
+      const categoryId = machine.categoryId || machine.category;
       return (
-        categoryName.includes("digital") || categoryName.includes("offset")
+        categoryId === ECategoryId.DIGITAL_PRINTING ||
+        categoryId === ECategoryId.OFSSET_PRINTING
       );
     });
   };
 
-  // Check if we have roll or flexo printing machines
+  // Check if we have roll, flexo, or roll sheet machines
   const hasRollOrFlexoPrinting = (
     selectedMachines: SelectedMachine[]
   ): boolean => {
     return selectedMachines.some((machine) => {
-      const categoryName = machine.categoryName.toLowerCase();
-      return categoryName.includes("roll") || categoryName.includes("flexo");
+      const categoryId = machine.categoryId || machine.category;
+      return (
+        categoryId === ECategoryId.ROLL_DIGITAL_PRINTING ||
+        categoryId === ECategoryId.ROLL_SHEET_MACHINE ||
+        categoryId === ECategoryId.FLEXO_PRINTING
+      );
     });
   };
 
   // Check if we have wide printing machines
   const hasWidePrinting = (selectedMachines: SelectedMachine[]): boolean => {
     return selectedMachines.some((machine) => {
-      const categoryName = machine.categoryName.toLowerCase();
-      return categoryName.includes("wide");
+      const categoryId = machine.categoryId || machine.category;
+      return categoryId === ECategoryId.ROLL_WIDE_PRINTING;
     });
   };
 
@@ -44,12 +50,68 @@ export const useStepNavigation = () => {
     selectedMachines: SelectedMachine[]
   ): boolean => {
     return selectedMachines.some((machine) => {
-      const categoryName = machine.categoryName.toLowerCase();
-      return (
-        categoryName.includes("dtf") || categoryName.includes("sublimation")
-      );
+      const categoryId = machine.categoryId || machine.category;
+      return categoryId === ECategoryId.SUBLIMATION;
     });
   };
+
+  // Helper function to get the next step based on current step and selected machines
+  const getNextStep = useCallback(
+    (currentStep: number, selectedMachines: SelectedMachine[]): number => {
+      if (currentStep === 0) {
+        return 1; // Always go to step 1 after step 0
+      } else if (currentStep === 1) {
+        // After step 1, check what should be next based on selected machines
+        if (hasDigitalOrOffsetPrinting(selectedMachines)) {
+          return 2; // Go to step 2 (book finishing)
+        } else if (hasRollOrFlexoPrinting(selectedMachines)) {
+          return 3; // Go to step 3 (roll/flexo finishing)
+        } else if (hasWidePrinting(selectedMachines)) {
+          return 4; // Go to step 4 (wide format finishing)
+        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
+          return 5; // Go to step 5 (DTF/sublimation finishing)
+        } else {
+          return 6; // Complete setup
+        }
+      } else if (currentStep === 2) {
+        // After step 2 (book finishing), check what should be next
+        if (hasRollOrFlexoPrinting(selectedMachines)) {
+          return 3; // Go to step 3 (roll/flexo finishing)
+        } else if (hasWidePrinting(selectedMachines)) {
+          return 4; // Go to step 4 (wide format finishing)
+        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
+          return 5; // Go to step 5 (DTF/sublimation finishing)
+        } else {
+          return 6; // Complete setup
+        }
+      } else if (currentStep === 3) {
+        // After step 3 (roll/flexo finishing), check what should be next
+        if (hasWidePrinting(selectedMachines)) {
+          return 4; // Go to step 4 (wide format finishing)
+        } else if (hasDtfOrSublimationPrinting(selectedMachines)) {
+          return 5; // Go to step 5 (DTF/sublimation finishing)
+        } else {
+          return 6; // Complete setup
+        }
+      } else if (currentStep === 4) {
+        // After step 4 (wide format finishing), check what should be next
+        if (hasDtfOrSublimationPrinting(selectedMachines)) {
+          return 5; // Go to step 5 (DTF/sublimation finishing)
+        } else {
+          return 6; // Complete setup
+        }
+      } else if (currentStep === 5) {
+        return 6; // Complete setup
+      }
+      return currentStep; // Default case
+    },
+    [
+      hasDigitalOrOffsetPrinting,
+      hasRollOrFlexoPrinting,
+      hasWidePrinting,
+      hasDtfOrSublimationPrinting,
+    ]
+  );
 
   const handleNext = useCallback(
     (
@@ -66,7 +128,8 @@ export const useStepNavigation = () => {
           alert("Please select at least one machine");
           return false;
         }
-        setCurrentStep(1);
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
         return true;
       } else if (currentStep === 1) {
         // Step 2 - Validate finishing machines if we have digital/offset printing
@@ -79,7 +142,8 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        setCurrentStep(2);
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
         return true;
       } else if (currentStep === 2) {
         // Step 3 - Validate book finishing machines if we have digital/offset printing
@@ -92,7 +156,8 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        setCurrentStep(3);
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
         return true;
       } else if (currentStep === 3) {
         // Step 4 - Validate roll/flexo finishing machines if we have roll/flexo printing
@@ -105,7 +170,8 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        setCurrentStep(4);
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
         return true;
       } else if (currentStep === 4) {
         // Step 5 - Validate wide format finishing machines if we have wide printing
@@ -118,7 +184,8 @@ export const useStepNavigation = () => {
           );
           return false;
         }
-        setCurrentStep(5);
+        const nextStep = getNextStep(currentStep, selectedMachines);
+        setCurrentStep(nextStep);
         return true;
       } else {
         // Step 6 - Validate DTF/sublimation finishing machines if we have DTF/sublimation printing
@@ -154,7 +221,7 @@ export const useStepNavigation = () => {
         return true;
       }
     },
-    [currentStep]
+    [currentStep, getNextStep]
   );
 
   const handleBack = useCallback(() => {
@@ -203,9 +270,71 @@ export const useStepNavigation = () => {
     [currentStep]
   );
 
-  const getNextButtonText = useCallback(() => {
-    return currentStep === steps.length - 1 ? "Complete Setup" : "Next";
-  }, [currentStep, steps.length]);
+  // Helper functions to determine which steps should be shown
+  const shouldShowStep2 = useCallback(
+    (selectedMachines: SelectedMachine[]): boolean => {
+      return hasDigitalOrOffsetPrinting(selectedMachines);
+    },
+    [hasDigitalOrOffsetPrinting]
+  );
+
+  const shouldShowStep3 = useCallback(
+    (selectedMachines: SelectedMachine[]): boolean => {
+      return hasDigitalOrOffsetPrinting(selectedMachines);
+    },
+    [hasDigitalOrOffsetPrinting]
+  );
+
+  const shouldShowStep4 = useCallback(
+    (selectedMachines: SelectedMachine[]): boolean => {
+      return hasRollOrFlexoPrinting(selectedMachines);
+    },
+    [hasRollOrFlexoPrinting]
+  );
+
+  const shouldShowStep5 = useCallback(
+    (selectedMachines: SelectedMachine[]): boolean => {
+      return hasWidePrinting(selectedMachines);
+    },
+    [hasWidePrinting]
+  );
+
+  const shouldShowStep6 = useCallback(
+    (selectedMachines: SelectedMachine[]): boolean => {
+      return hasDtfOrSublimationPrinting(selectedMachines);
+    },
+    [hasDtfOrSublimationPrinting]
+  );
+
+  const getNextButtonText = useCallback(
+    (selectedMachines: SelectedMachine[]) => {
+      // Check if we're on the last relevant step
+      const hasMoreSteps =
+        currentStep === 0 ||
+        (currentStep === 1 &&
+          (shouldShowStep3(selectedMachines) ||
+            shouldShowStep4(selectedMachines) ||
+            shouldShowStep5(selectedMachines) ||
+            shouldShowStep6(selectedMachines))) ||
+        (currentStep === 2 &&
+          (shouldShowStep4(selectedMachines) ||
+            shouldShowStep5(selectedMachines) ||
+            shouldShowStep6(selectedMachines))) ||
+        (currentStep === 3 &&
+          (shouldShowStep5(selectedMachines) ||
+            shouldShowStep6(selectedMachines))) ||
+        (currentStep === 4 && shouldShowStep6(selectedMachines));
+
+      return hasMoreSteps ? "Next" : "Complete Setup";
+    },
+    [
+      currentStep,
+      shouldShowStep3,
+      shouldShowStep4,
+      shouldShowStep5,
+      shouldShowStep6,
+    ]
+  );
 
   return {
     currentStep,
@@ -214,6 +343,11 @@ export const useStepNavigation = () => {
     hasRollOrFlexoPrinting,
     hasWidePrinting,
     hasDtfOrSublimationPrinting,
+    shouldShowStep2,
+    shouldShowStep3,
+    shouldShowStep4,
+    shouldShowStep5,
+    shouldShowStep6,
     handleNext,
     handleBack,
     isNextDisabled,
