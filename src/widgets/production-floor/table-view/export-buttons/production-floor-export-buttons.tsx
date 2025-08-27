@@ -4,8 +4,8 @@ import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useSnackBar } from '@/hooks/use-snack-bar';
 import { PrimaryButton } from '@/components/button/primary-button';
-import { 
-  exportProductionFloorToExcel, 
+import {
+  exportProductionFloorToExcel,
   getExportFilename
 } from '@/utils/production-floor-export';
 import { IStatusesBoardsMissions } from '@/widgets/production-floor/interfaces/production-floor-data-response';
@@ -24,7 +24,7 @@ const ProductionFloorExportButtons: React.FC<ProductionFloorExportButtonsProps> 
   const handleExportToExcel = async () => {
     try {
       setIsExporting(true);
-      
+
       if (!statusBoards || statusBoards.length === 0) {
         alertFault(t('productionFloor.export.noDataToExport'));
         return;
@@ -32,18 +32,18 @@ const ProductionFloorExportButtons: React.FC<ProductionFloorExportButtonsProps> 
 
       const filename = getExportFilename('production-floor-data', 'xlsx');
       exportProductionFloorToExcel(statusBoards, filename);
-      
-      alertSuccess(t('productionFloor.export.excelExportSuccess'));
+
+      alertSuccess(t('productionFloor.excelExportSuccess'));
     } catch (error) {
       console.error('Excel export error:', error);
-      alertFault(t('productionFloor.export.excelExportError'));
+      alertFault(t('productionFloor.excelExportError'));
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <Tooltip title={t('productionFloor.export.exportToExcel')}>
+    <Tooltip title={t('dashboard.exportToExcel')}>
       <PrimaryButton
         variant="outlined"
         onClick={handleExportToExcel}

@@ -1,8 +1,8 @@
 import { StatusTableComponent } from "@/widgets/production-floor/table-view/status-table/status-table-component";
 import { useProductionFloorTable } from "@/widgets/production-floor/table-view/use-production-floor-table";
 import Stack from "@mui/material/Stack";
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -21,16 +21,8 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { useRouter } from "next/router";
 import { useEmployeeList } from "@/hooks/use-employee-list";
 import { useVisibleOrderedColumns } from "@/hooks/use-visible-ordered-columns";
-import {
-  allColumnKeys,
-  columnOrderState,
-  ColumnSetting,
-  columnVisibilityState,
-  parseSavedColumnSettings,
-} from "../state/production-floor-coulmns-table-settings";
-import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
+
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { Paper, Skeleton } from "@mui/material";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { selectedBoardsMissionsState } from "../state/boards";
 import { FloatingBulkActionsMenu } from "./status-table/floating-bulk-actions-menu";
@@ -46,13 +38,8 @@ import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
-import { useUserPermission } from "@/hooks/use-permission";
-import { useSearch } from "rsuite/cjs/internals/Picker";
-import { ZoomWrapper } from "../components/zoom-wrapper/zoom-wrapper";
-import { ProductionFloorExportButtons } from "./export-buttons/production-floor-export-buttons";
+// Removed export buttons from table view; moved to header
 
-// Performance optimization constants
-const ITEMS_PER_PAGE = 50; // Show 50 items per page
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
@@ -78,7 +65,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
-  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
+  const { alertFaultUpdate, alertFault } = useSnackBar();
   const { initialPageSize } = useListPagination();
 
   const {
@@ -461,15 +448,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   ]);
 
   return (
-    // <ZoomWrapper>
     <Stack gap={"20px"}>
-      {/* Export buttons */}
-      <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-        <ProductionFloorExportButtons 
-          statusBoards={filteredDataByMachine}
-        />
-      </Stack>
-      
       {renderContent}
 
       <CustomerCardWidget
@@ -511,12 +490,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
