@@ -2,6 +2,7 @@ import { useStatusTable } from "@/widgets/production-floor/table-view/status-tab
 import {
   Collapse,
   IconButton,
+  Tooltip,
   Paper,
   Stack,
   Table,
@@ -398,12 +399,13 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
+    const visibleLimit = heightMultiplier === 1 ? TABLE_CONFIG.MAX_VISIBLE_ITEMS : 30;
     const baseHeight =
       boardsCount < 10
         ? 500
-        : (Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+        : (Math.min(boardsCount, visibleLimit) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
 
-    return `${baseHeight * heightMultiplier}px`;
+    return `${baseHeight}px`;
   };
 
 
@@ -439,14 +441,39 @@ const StatusTableComponent = ({
             } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => setHeightMultiplier((m) => (m === 1 ? 2 : 1))}
-            sx={{ height: "32px" }}
+          <Tooltip
+            title={
+              heightMultiplier === 1
+                ? t("productionFloor.increaseItemsTo30", { count: 30 })
+                : t("productionFloor.decreaseItemsTo10", { count: 10 })
+            }
+            arrow
           >
-            {heightMultiplier === 1 ? "Increase height" : "Reset height"}
-          </Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => setHeightMultiplier((m) => (m === 1 ? 2 : 1))}
+              startIcon={
+                heightMultiplier === 1 ? (
+                  <KeyboardArrowDownIcon sx={{ fontSize: "18px" }} />
+                ) : (
+                  <KeyboardArrowUpIcon sx={{ fontSize: "18px" }} />
+                )
+              }
+              sx={{
+                height: "32px",
+                borderRadius: "999px",
+                textTransform: "none",
+                px: 1.5,
+                boxShadow: "0 1px 2px rgba(16,24,40,0.1)",
+                backgroundColor: "#EEF2FF",
+                color: "#3538CD",
+                "&:hover": { backgroundColor: "#E0E7FF" },
+              }}
+            >
+              {heightMultiplier === 1 ? t("productionFloor.expand") : t("productionFloor.reset")}
+            </Button>
+          </Tooltip>
         )}
       </Stack>
 
