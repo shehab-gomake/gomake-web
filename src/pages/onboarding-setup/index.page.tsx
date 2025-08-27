@@ -1,10 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
-import TestPage from "@/widgets/quick-setup/on-boarding-setup/test-page";
+import QuickSetupFlow from "@/widgets/quick-setup/on-boarding-setup/quick-setup-flow";
 
 export default function QuickSetupPage() {
   return (
     <CustomerAuthLayout>
-      <TestPage />
+      <QuickSetupFlow />
     </CustomerAuthLayout>
   );
 }
