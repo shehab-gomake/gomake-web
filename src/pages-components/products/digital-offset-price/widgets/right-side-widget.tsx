@@ -106,6 +106,7 @@ const RightSideWidget = ({
     primaryColor,
     alertFault,
     t,
+    deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
 
 
@@ -502,14 +503,14 @@ const RightSideWidget = ({
           )}
         {/* Slider */}
         {
-          template?.docmentItem?.deliveryPrice > 0 && (
+          deliveryPrice > 0 && (
             <div style={clasess.deliveryPriceContainer}>
               <div style={clasess.deliveryPriceItem}>
                 {t("sales.quote.deliveryPrice")}
               </div>
               <div style={clasess.deliveryPriceItem}>
                 {!isRTL && systemCurrency}
-                {roundPrice(Number(template?.docmentItem?.deliveryPrice) || 0)}
+                {roundPrice(Number(deliveryPrice) || 0)}
                 {isRTL && systemCurrency}
               </div>
             </div>
