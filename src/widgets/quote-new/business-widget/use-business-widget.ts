@@ -190,6 +190,7 @@ const useBusinessWidget = ({
     taxConfirmationNumber,
     setTaxConfirmationNumber,
     isInvoice,
+    isDeliveryNote,
     isUpdateTaxNumber,
     setIsUpdateTaxNumber,
     onBlurTaxNumber,

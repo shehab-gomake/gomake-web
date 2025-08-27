@@ -235,8 +235,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     getCurrenciesApi();
   }, []);
 
-  console.log("currencies", currencies)
-
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
@@ -499,11 +497,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         if (typeof res.data === "string") {
           // For S3 URLs, we need to fetch the file and create a blob to force download
           fetch(res.data)
-            .then(response => response.blob())
-            .then(blob => {
-              const url = URL.createObjectURL(blob);
-              downloadLink.href = url;
-              // Set appropriate filename based on export type
+            .then(response => {
+              // Get appropriate filename based on export type
               const getFileName = () => {
                 if (exportType === INVOICES_EXPORT_TYPES.ExtendedTxt) {
                   return "invoices_export.txt";
@@ -517,7 +512,57 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   return "table.xlsx";
                 }
               };
-              downloadLink.download = getFileName();
+              
+              const fileName = getFileName();
+              
+              // For text files, handle encoding properly to preserve Hebrew characters
+              if (exportType === INVOICES_EXPORT_TYPES.ExtendedTxt) {
+                return response.arrayBuffer().then(arrayBuffer => {
+                  // Try to decode as UTF-8 first, then fallback to other encodings
+                  let text;
+                  try {
+                    // Try UTF-8 first
+                    const decoder = new TextDecoder('utf-8');
+                    text = decoder.decode(arrayBuffer);
+                    
+                    // If we see replacement characters, try other encodings
+                    if (text.includes('�')) {
+                      // Try Windows-1255 (Hebrew encoding)
+                      const hebrewDecoder = new TextDecoder('windows-1255');
+                      const hebrewText = hebrewDecoder.decode(arrayBuffer);
+                      if (!hebrewText.includes('�')) {
+                        text = hebrewText;
+                      } else {
+                        // Try ISO-8859-8 (Hebrew encoding)
+                        const iso8859Decoder = new TextDecoder('iso-8859-8');
+                        const isoText = iso8859Decoder.decode(arrayBuffer);
+                        if (!isoText.includes('�')) {
+                          text = isoText;
+                        }
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error decoding text:', error);
+                    // Fallback to default UTF-8
+                    const decoder = new TextDecoder('utf-8');
+                    text = decoder.decode(arrayBuffer);
+                  }
+                  
+                  // Create blob with UTF-8 BOM for better Hebrew support
+                  const BOM = '\uFEFF';
+                  const textWithBOM = BOM + text;
+                  const blob = new Blob([textWithBOM], { type: 'text/plain;charset=utf-8' });
+                  return { blob, fileName };
+                });
+              } else {
+                // For Excel files, use blob directly
+                return response.blob().then(blob => ({ blob, fileName }));
+              }
+            })
+            .then(({ blob, fileName }) => {
+              const url = URL.createObjectURL(blob);
+              downloadLink.href = url;
+              downloadLink.download = fileName;
               document.body.appendChild(downloadLink);
               downloadLink.click();
               document.body.removeChild(downloadLink);

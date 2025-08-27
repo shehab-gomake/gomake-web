@@ -18,6 +18,8 @@ import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import {
@@ -101,6 +103,7 @@ const RowMappingWidget = ({
     documentType,
   });
 
+  const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isQuote = documentType === DOCUMENT_TYPE.quote;
@@ -111,7 +114,25 @@ const RowMappingWidget = ({
   const isInvoice =
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
+
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
+  const canUpdatePrices = router.query.isNewCreation
+    ? true
+    : item?.isEditable &&
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+    );
+  const canUpdateDeliveryPrices = router.query.isNewCreation
+    ? true
+    : item?.isEditable &&
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+    );
+  const canUpdatePricesBasedOnType =
+    item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
+
   const hasChilds = quoteItems?.documentItems?.some(
     (q) =>
       q.childsDocumentItems && Object.keys(q.childsDocumentItems).length > 0
@@ -291,7 +312,7 @@ const RowMappingWidget = ({
           isUpdateApproveAmount={isUpdateApproveAmount}
           setIsUpdateApproveAmount={setIsUpdateApproveAmount}
           onInputChangeAmount={onInputChangeAmount}
-          canUpdatePricesBasedOnType={canUpdate}
+          canUpdatePricesBasedOnType={canUpdatePricesBasedOnType}
           isUpdateAmount={isUpdateAmount}
           setIsUpdateAmount={setIsUpdateAmount}
           onBlurAmount={onBlurAmount}
@@ -314,7 +335,7 @@ const RowMappingWidget = ({
               <InputUpdatedValues
                 value={item.price}
                 onBlur={onBlurPrice}
-                isUpdate={canUpdate && isUpdatePrice && !isPrePaymentPage}
+                isUpdate={canUpdatePricesBasedOnType && isUpdatePrice && !isPrePaymentPage}
                 setIsUpdate={
                   isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
                 }
@@ -342,7 +363,7 @@ const RowMappingWidget = ({
               <InputUpdatedValues
                 value={item.discount ? item.discount : "0"}
                 onBlur={onBlurDiscount}
-                isUpdate={canUpdate && isUpdateDiscount && !isPrePaymentPage}
+                isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount && !isPrePaymentPage}
                 setIsUpdate={
                   isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
                 }
@@ -373,7 +394,7 @@ const RowMappingWidget = ({
                 currency={getCurrencyUnitText(quoteItems?.currency)}
                 item={item}
                 onBlurFinalPrice={onBlurFinalPrice}
-                canUpdatePricesBasedOnType={canUpdate}
+                canUpdatePricesBasedOnType={canUpdatePricesBasedOnType}
                 isUpdateFinalPrice={isUpdateFinalPrice}
                 isQuoteConfirmation={isQuoteConfirmation}
                 setIsConfirmation={setIsConfirmation}
@@ -388,7 +409,7 @@ const RowMappingWidget = ({
                   <InputUpdatedValues
                     value={item.finalPrice}
                     onBlur={onBlurFinalPrice}
-                    isUpdate={canUpdate && isUpdateFinalPrice && !isPrePaymentPage}
+                    isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice && !isPrePaymentPage}
                     setIsUpdate={
                       isQuoteConfirmation
                         ? setIsConfirmation
