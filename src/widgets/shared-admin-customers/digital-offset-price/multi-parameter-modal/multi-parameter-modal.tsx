@@ -88,17 +88,40 @@ const MultiParameterModal = ({
             :
             <div style={clasess.mainContainer}>
               <div style={clasess.multiSelectMainContainer}>
-                {_renderParameterType(
-                  settingParameters?.parameter,
-                  settingParameters?.subSection,
-                  settingParameters?.section,
-                  settingParameters?.parameter,
-                  settingParameters?.value,
-                  settingParameters?.list,
-                  false,
-                  false,
-                  false
-                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  {_renderParameterType(
+                    settingParameters?.parameter,
+                    settingParameters?.subSection,
+                    settingParameters?.section,
+                    settingParameters?.parameter,
+                    settingParameters?.value,
+                    settingParameters?.list,
+                    false,
+                    false,
+                    false
+                  )}
+                  {
+                    (() => {
+                      // Render ColorsLoadAverage next to printing colors inside the modal
+                      const currentParamCode = settingParameters?.parameter?.code as string;
+                      const isSide2 = currentParamCode?.toLowerCase()?.includes("side2");
+                      const avgCode = isSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
+                      const avgParam = settingParameters?.list?.find((p: any) => p?.code === avgCode);
+                      if (!avgParam) return null;
+                      return _renderParameterType(
+                        avgParam,
+                        settingParameters?.subSection,
+                        settingParameters?.section,
+                        avgParam,
+                        null,
+                        settingParameters?.list,
+                        false,
+                        false,
+                        false
+                      );
+                    })()
+                  }
+                </div>
               </div>
               <div style={clasess.tableContainer}>
                 <div

@@ -3,7 +3,7 @@ import { EButtonTypes } from "@/enums";
 import { ReChooseIcon } from "@/icons";
 import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
@@ -24,7 +24,8 @@ const ButtonParameterWidget = ({
   allMaterials,
   template,
   getProductById,
-  isCreate
+  isCreate,
+  onChangeSubProductsForPrice
 }: any) => {
   let Comp;
   const [materialData, setMaterialData] = useRecoilState<any>(materialBtnDataState);
@@ -88,6 +89,9 @@ const ButtonParameterWidget = ({
     }
   }, [isParameterSettings, template])
 
+  const lastMaterialsRequestKeyRef = useRef<string | null>(null);
+  const isLoadingMaterialsRef = useRef<boolean>(false);
+
   const getProductQuoteItemById = useCallback(async () => {
     const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
     let shapeCode = "";
@@ -103,7 +107,7 @@ const ButtonParameterWidget = ({
     }
 
     const reqObj = {
-      key: isSelectedShape?.parameterCode,
+      key: isParameterSettings ? parameter?.materialPath?.[0] : isSelectedShape?.parameterCode,
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
       length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
       shape: isParameterSettings ? shapeCodeDefualt?.code : shapeCode || "",
@@ -112,8 +116,17 @@ const ButtonParameterWidget = ({
       finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
       finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
     }
-    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
-    if (res?.data?.length > 0) {
+    const requestKey = JSON.stringify(reqObj);
+    if (isLoadingMaterialsRef.current) return;
+    if (lastMaterialsRequestKeyRef.current === requestKey) return;
+    isLoadingMaterialsRef.current = true;
+    try {
+      const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
+      if (res?.data && Array.isArray(res.data)) {
+        lastMaterialsRequestKeyRef.current = requestKey;
+      }
+    } finally {
+      isLoadingMaterialsRef.current = false;
     }
 
   }, [widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter, isSelectedShape]);
@@ -139,6 +152,17 @@ const ButtonParameterWidget = ({
       });
     },
     [router, isDiesParameter]
+  );
+  const clearProductParameterValuesConfigs = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          valuesConfigs: [],
+        },
+      });
+    },
+    [router]
   );
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -194,9 +218,10 @@ const ButtonParameterWidget = ({
   };
   const removeParameterFromSubProducts = () => {
     if (isParameterSettings) {
-      updatedProductParameteDefaultValue(section?.id, subSection?.id, parameter)
+      // Clear all configured values for this parameter in settings mode
+      clearProductParameterValuesConfigs(section?.id, subSection?.id, parameter)
       setSelectedShape(null);
-      setIsSelectedShape(null);
+      setIsSelectedShape([]);
     }
     else {
       if (isSelectedShape) {
@@ -433,10 +458,14 @@ const ButtonParameterWidget = ({
   }, [subProductsParameters, isParameterSettings, parameter]);
   useEffect(() => {
     if (isParameterSettings) {
-      const selectedShape = materialData?.data?.find((data) => {
-        const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
-        return data?.id === myDefaultShape?.id;
-      });
+      // Ensure we have materials loaded for settings mode default rendering
+      if (!materialData || !materialData?.data || materialData?.data?.length === 0) {
+        getProductQuoteItemById();
+      }
+      const defaultConfig = Array.isArray(isSelectedShape)
+        ? isSelectedShape.find((config) => config?.isDefault)
+        : parameter?.valuesConfigs?.find((config) => config?.isDefault);
+      const selectedShape = materialData?.data?.find((data) => data?.id === defaultConfig?.id);
       if (selectedShape) {
         setSelectedShape(selectedShape);
 
@@ -451,7 +480,10 @@ const ButtonParameterWidget = ({
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
     if (!isCreate) {
-      // if (materialData?.length > 0 || !isSelectedShape) return;
+      // Make sure materials are available to render the default image/name on first load
+      if (!materialData || !materialData?.data || materialData?.data?.length === 0) {
+        getProductQuoteItemById();
+      }
       const materialPath = parameter?.materialPath?.[0];
       const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
       if (!materialDataPath) return;
@@ -464,8 +496,8 @@ const ButtonParameterWidget = ({
         return acc;
       }, []);
       const selectedShapeIdWhenEdit = allDataList.find((data) => data.valueId === isSelectedShape?.valueIds?.[0]);
-      // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
-      const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
+      const defaultConfigArr = Array.isArray(isSelectedShape) ? isSelectedShape.find((config) => config?.isDefault) : null;
+      const selectedShapeId = isParameterSettings ? defaultConfigArr?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
       const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
       const transformedShape: any = transformSelectedShape(selectedMaterial);
       if (!transformedShape) return;
@@ -475,7 +507,53 @@ const ButtonParameterWidget = ({
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
 
+  const hasData = (value) => {
+    if (!value) return false;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+    return false;
+  };
+
+  useEffect(() => {
+    if (
+      (parameter?.code === "DieCut" || parameter?.code === "DieKissCut")
+    ) {
+      return;
+    }
+    if (parameter?.valuesConfigs && parameter.valuesConfigs?.length > 0) {
+      // Check for default value
+      const defaultConfig = parameter.valuesConfigs.find(config => config.isDefault);
+
+      if (defaultConfig && !isSelectedShape) {
+        // Apply the default value if no shape is selected yet
+        setIsSelectedShape(parameter);
+
+        // Also update subProducts with the default value
+        if (!isParameterSettings) {
+          onChangeSubProductsForPrice(
+            parameter?.id,
+            subSection?.id,
+            section?.id,
+            parameter?.parameterType,
+            parameter?.name,
+            parameter?.actionId,
+            {
+              valueIds: defaultConfig.id,
+              values: defaultConfig.additionalAttribute?.find(attr => attr.valueId === "name")?.value || defaultConfig.updateName
+            },
+            subSection?.type,
+            index,
+            parameter?.actionIndex,
+            parameter?.code,
+            null
+          );
+        }
+      }
+    }
+  }, [parameter, isParameterSettings]);
+
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
+
     if (isStraightKnife) {
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
@@ -511,8 +589,7 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-
-    else if ((isSelectedShape || selectedShape) && hasDieCutOrDieKissCut) {
+    else if ((hasData(isSelectedShape) || hasData(selectedShape)) && hasDieCutOrDieKissCut) {
       let configData = selectedShape;
 
       if (!selectedShape && isSelectedShape) {
@@ -541,7 +618,14 @@ const ButtonParameterWidget = ({
         isSelectedShape?.values?.[0];
 
       Comp = (
-        <div style={clasess?.btnSelectedStyle}>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          width: "100%",
+          gap: 10,
+        }}>
           <img
             src={image}
             style={{ width: 24, height: 24 }}

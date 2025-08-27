@@ -164,6 +164,8 @@ const PrimaryTable = ({
   isHeaderSortable,
   docType,
   customSortFns, // Optional. Provide column-specific sort functions (by column index). Defaults to basic comparison if not passed.
+  defaultSortIndex,
+  defaultSortDirection,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -175,7 +177,11 @@ const PrimaryTable = ({
   const [sortConfig, setSortConfig] = useState<{
     key: number;
     direction: "asc" | "desc";
-  } | null>(null);
+  } | null>(
+    withSort && defaultSortIndex !== undefined
+      ? { key: defaultSortIndex as number, direction: defaultSortDirection || "desc" }
+      : null
+  );
   const handleRowSelection = (rowIndex: number) => {
     setSelectedRows((prevSelectedRows) => {
       const newSelectedRows = new Set(prevSelectedRows);
