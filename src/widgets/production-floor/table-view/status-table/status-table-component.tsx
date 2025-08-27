@@ -177,6 +177,12 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
+          } else if (status.key === "Stuck") {
+            handleOpenStuckModal(
+              status.id,
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              item.board.id
+            );
           } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
@@ -504,6 +510,7 @@ const StatusTableComponent = ({
                   employeesCategories={employeesCategories}
                   visibleColumns={visibleColumns}
                   cellsOnly
+                  handleOpenStuckModal={handleOpenStuckModal}
                 />
               )}
             /> : <div>
@@ -528,6 +535,7 @@ const StatusTableComponent = ({
                         onUpdateJobDueDate={updateJobDueDate}
                         employeesCategories={employeesCategories}
                         visibleColumns={visibleColumns}
+                        handleOpenStuckModal={handleOpenStuckModal}
                       />
                     ))}
                   </TableBody>
