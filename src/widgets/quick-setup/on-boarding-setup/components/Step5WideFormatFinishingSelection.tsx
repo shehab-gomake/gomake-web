@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useTranslation } from "react-i18next";
 import {
   SelectedMachine,
   SelectedFinishingMachine,
@@ -47,6 +48,8 @@ export const Step5WideFormatFinishingSelection: React.FC<
   onWideFormatFinishingCategoryMachineChange,
   hasWidePrinting,
 }) => {
+  const { t } = useTranslation();
+
   const clearCategorySelection = (categoryId: string) => {
     onWideFormatFinishingCategoryMachineChange(categoryId, "");
   };
@@ -164,7 +167,7 @@ export const Step5WideFormatFinishingSelection: React.FC<
               sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
             >
               <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
-                {category.name}
+                {t(category.name)}
               </Typography>
 
               <Box

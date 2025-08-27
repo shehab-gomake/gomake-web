@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
@@ -17,7 +16,6 @@ import {
 } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
 
 export const useMachinesData = () => {
-  const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const categories = useRecoilValue(machineCategoriesState);
 
@@ -84,73 +82,21 @@ export const useMachinesData = () => {
       initializeDtfSublimationFinishingCategories();
     const rollFlexoCategories = initializeRollFlexoFinishingCategories();
 
-    // Map finishing category names to machine category names for API lookup
-    const categoryNameMapping: { [key: string]: string[] } = {
-      CNC: ["CNC", "Digital Diecut", "Diecut"],
-      Guillotine: ["Guillotine", "Cutting"],
-      "Diecut analog": ["Diecut", "Analog Diecut"],
-      "Punching/Driling": ["Punching", "Drilling", "Punch"],
-      "Rounding corners": ["Rounding", "Corner Rounding"],
-      Folding: ["Folding", "Folder"],
-      "Pasting Blocks": ["Pasting", "Gluing", "Adhesive"],
-      "Scoring & Perforation": ["Scoring", "Perforation", "Score"],
-      "Folding and gluining": ["Folding", "Gluing", "Folder"],
-      "Digital Foil": ["Foil", "Digital Enhancement"],
-      "Foil/Embossing stamp": ["Foil", "Embossing", "Stamp"],
-      "Digital Selective Lamination": ["Lamination", "Selective Lamination"],
-      Encapsulation: ["Encapsulation", "Sheet Encapsulation"],
-      "Manual Sewing": ["Sewing", "Manual Sewing"],
-      "Card cutting": ["Card Cutting", "Cutting"],
-      Embroidery: ["Embroidery"],
-      "Cartoon cups": ["Cartoon", "Cups"],
-      Linkage: ["Linkage", "Cold Lamination"],
-      "Cartoon packaging machine": ["Carton Packaging", "Packaging"],
-      "Package tying machine": ["Package Tying", "Tying"],
-      "Shrink packaging machine": ["Shrink Packaging", "Shrink"],
-      "Plate processor": ["Plate Processor", "Plates"],
-      // Book finishing categories
-      Booklet: ["Booklet", "Booklet Making", "Booklet Machine"],
-      "Perfect Binding": ["Perfect Binding", "Perfect Bind", "Binding"],
-      "Books Sewing": ["Books Sewing", "Book Sewing", "Sewing"],
-      Spiral: ["Spiral", "Spiral Binding", "Spiral Bind"],
-      "Manual Stapler": ["Manual Stapler", "Stapler", "Stapling"],
-      "Hardcover Cover": ["Hardcover Cover", "Hardcover", "Cover"],
-      "Three Knife Trimmer": ["Three Knife Trimmer", "Trimmer", "Cutting"],
-      Collector: ["Collector", "Collection"],
-      // Wide format categories
-      "Manual cutting": ["Manual Cutting", "Cutting"],
-      "Stickers Peeling": ["Stickers Peeling", "Peeling"],
-      "Ring eyelet punching": ["Ring Eyelet", "Eyelet", "Punching"],
-      "PVC Bending": ["PVC Bending", "Bending"],
-      "Letter sides bending": ["Letter Sides", "Bending"],
-      "Light boxes & letter assembly": ["Light Boxes", "Letter Assembly"],
-      "Cold Lamination": ["Cold Lamination", "Lamination"],
-      // DTF & Sublimation categories
-      "Silk mesh procesor": ["Silk Mesh", "Mesh Processor"],
-      "Silk printer": ["Silk Printer", "Printer"],
-      "Press machine": ["Press Machine", "Press"],
-      // Roll/Flexo categories
-      Lamination: ["Lamination", "Laminating"],
-      Varnish: ["Varnish", "Varnishing"],
-      Embossing: ["Embossing", "Emboss"],
-      "Selective Coating": ["Selective Coating", "Coating"],
-      "Roll Sheeter/Slitter": ["Roll Sheeter", "Slitter", "Sheeter"],
-    };
-
-    // Function to find machines by category name
-    const findMachinesByCategoryName = (categoryName: string): string[] => {
-      const searchTerms = categoryNameMapping[categoryName] || [categoryName];
+    // Function to find machines by category ID
+    const findMachinesByCategoryId = (categoryId: string): string[] => {
       const matchingMachines: string[] = [];
 
       allMachines.forEach((machine) => {
-        const machineName =
-          machine.nickName || `${machine.manufacturer} - ${machine.model}`;
-        const isMatch = searchTerms.some((term) =>
-          machineName.toLowerCase().includes(term.toLowerCase())
-        );
+        // Check if machine belongs to this category by categoryId or category field
+        const machineCategoryId = machine.categoryId || machine.category;
 
-        if (isMatch && !matchingMachines.includes(machineName)) {
-          matchingMachines.push(machineName);
+        if (machineCategoryId === categoryId) {
+          const machineName =
+            machine.nickName || `${machine.manufacturer} - ${machine.model}`;
+
+          if (!matchingMachines.includes(machineName)) {
+            matchingMachines.push(machineName);
+          }
         }
       });
 
@@ -161,21 +107,21 @@ export const useMachinesData = () => {
     const populatedDigitalOffsetCategories = digitalOffsetCategories.map(
       (category) => ({
         ...category,
-        machines: findMachinesByCategoryName(category.name),
+        machines: findMachinesByCategoryId(category.id),
       })
     );
 
     // Populate machines for book finishing categories
     const populatedBookCategories = bookCategories.map((category) => ({
       ...category,
-      machines: findMachinesByCategoryName(category.name),
+      machines: findMachinesByCategoryId(category.id),
     }));
 
     // Populate machines for wide format categories
     const populatedWideFormatCategories = wideFormatCategories.map(
       (category) => ({
         ...category,
-        machines: findMachinesByCategoryName(category.name),
+        machines: findMachinesByCategoryId(category.id),
       })
     );
 
@@ -183,7 +129,7 @@ export const useMachinesData = () => {
     const populatedDtfSublimationCategories = dtfSublimationCategories.map(
       (category) => ({
         ...category,
-        machines: findMachinesByCategoryName(category.name),
+        machines: findMachinesByCategoryId(category.id),
       })
     );
 
@@ -191,7 +137,7 @@ export const useMachinesData = () => {
     const populatedRollFlexoCategories = rollFlexoCategories.map(
       (category) => ({
         ...category,
-        machines: findMachinesByCategoryName(category.name),
+        machines: findMachinesByCategoryId(category.id),
       })
     );
 

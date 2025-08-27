@@ -1,235 +1,310 @@
-import {atom} from "recoil";
-import {ECategoryId} from "@/widgets/machines/enums/category-id";
-import {defaultTheme} from "@/utils/default-theme";
+import { atom } from "recoil";
+import { ECategoryId } from "@/widgets/machines/enums/category-id";
+import { defaultTheme } from "@/utils/default-theme";
 
 interface IMachineCategory {
-    id: ECategoryId;
-    name: string;
-    color: string;
-    isEffectProfitProfile?: boolean;
+  id: ECategoryId;
+  name: string;
+  color: string;
+  isEffectProfitProfile?: boolean;
 }
 
+//!here
+
 export const machineCategoriesState = atom<IMachineCategory[]>({
-    key: "machinesCategoryState",
-    default: [
-        {
-            id: ECategoryId.DIGITAL_PRINTING,
-            name: 'machinesCategories.digitalPrinting',
-            color: defaultTheme.primary.light["500"],
-            isEffectProfitProfile: true
-        },
-        {
-            id: ECategoryId.OFSSET_PRINTING,
-            name: 'machinesCategories.ofssetPrinting',
-            color: defaultTheme.primary.light["400"]
-        },
-        {
-            id: ECategoryId.ROLL_DIGITAL_PRINTING,
-            name: 'machinesCategories.rollDigitalPrinting',
-            color: defaultTheme.primary.light["300"]
-        },
-        {
-            id: ECategoryId.FLEXO_PRINTING,
-            name: 'machinesCategories.flexoPrinting',
-            color: defaultTheme.second.light["500"]
-        },
-        {
-            id: ECategoryId.ROLL_WIDE_PRINTING,
-            name: 'machinesCategories.rollWidePrinting',
-            color: defaultTheme.second.light["400"]
-        },
-        {
-            id: ECategoryId.LAMINATION_MACHINE,
-            name: 'machinesCategories.lamination',
-            color: defaultTheme.second.light["300"]
-        },
-        {
-            id: ECategoryId.PUNCHING_MACHINE,
-            name: 'machinesCategories.punching',
-            color: defaultTheme.success.light["500"]
-        },
-        {
-            id: ECategoryId.ROUNDING_CORNERS_MACHINE,
-            name: 'machinesCategories.roundingCorners',
-            color: defaultTheme.success.light["400"]
-        },
-        {id: ECategoryId.FOLDING_MACHINE, name: 'machinesCategories.folding', color: defaultTheme.success.light["300"]},
-        {
-            id: ECategoryId.PASTING_BLOCKS_MACHINE,
-            name: 'machinesCategories.pastingBlocks',
-            color: defaultTheme.success.light["200"]
-        },
-        {id: ECategoryId.SCORING_MACHINE, name: 'machinesCategories.scoring', color: defaultTheme.success.light["100"]},
-        {
-            id: ECategoryId.FOLDING_GLUING_MACHINE,
-            name: 'machinesCategories.foldingGluing',
-            color: defaultTheme.warning.light["500"]
-        },
-        {
-            id: ECategoryId.DIGITAL_ENHANCEMENT_MACHINE,
-            name: 'machinesCategories.digitalEnhancement',
-            color: defaultTheme.warning.light["400"]
-        },
-        {
-            id: ECategoryId.ANALOG_ENHANCEMENT_MACHINE,
-            name: 'machinesCategories.analogEnhancement',
-            color: defaultTheme.warning.light["300"]
-        },
-        {
-            id: ECategoryId.ENCAPSULATION_MACHINE,
-            name: 'machinesCategories.encapsulation',
-            color: defaultTheme.warning.light["200"]
-        },
-        {
-            id: ECategoryId.SIDE_COLORING,
-            name: 'machinesCategories.sideColoring',
-            color: defaultTheme.error.light["500"]
-        },
-        {id: ECategoryId.GUILLOTINE, name: 'machinesCategories.guillottine', color: defaultTheme.error.light["400"]},
-        {
-            id: ECategoryId.FLATBED_CUTTING_MACHINE,
-            name: 'machinesCategories.flatbedCutting',
-            color: defaultTheme.error.light["300"]
-        },
-        {
-            id: ECategoryId.ROLL_FED_CUTTING_PLOTTERS,
-            name: 'machinesCategories.rollFedCutting',
-            color: defaultTheme.error.light["200"]
-        },
-        {id: ECategoryId.STAPLER_MACHINE, name: 'machinesCategories.stapler', color: defaultTheme.error.light["100"]},
-        {
-            id: ECategoryId.MANUAL_PEELING_STICKERS,
-            name: 'machinesCategories.manualPeelingStickers',
-            color: defaultTheme.neutral.light["500"]
-        },
-        {
-            id: ECategoryId.PIERCING_MACHINE,
-            name: 'machinesCategories.piercingMachine',
-            color: defaultTheme.neutral.light["400"]
-        },
-        {id: ECategoryId.LINKAGE, name: 'machinesCategories.linkage', color: defaultTheme.neutral.light["300"]},
-        {
-            id: ECategoryId.PVC_BENDING_MACHINE,
-            name: 'machinesCategories.PVCBending',
-            color: defaultTheme.neutral.light["200"]
-        },
-        {id: ECategoryId.COLLECTOR, name: 'machinesCategories.collector', color: defaultTheme.neutral.light["100"]},
-        {id: ECategoryId.BOOKLET_MACHINE, name: 'machinesCategories.booklet', color: defaultTheme.gray.light["500"]},
-        {
-            id: ECategoryId.BOOKS_BINDER_MACHINE,
-            name: 'machinesCategories.booksBinder',
-            color: defaultTheme.gray.light["500"]
-        },
-        {
-            id: ECategoryId.BOOKS_SEWING_MACHINE,
-            name: 'machinesCategories.booksSewing',
-            color: defaultTheme.gray.light["400"]
-        },
-        {
-            id: ECategoryId.SPIRAL_CLOSING_MACHINE,
-            name: 'machinesCategories.spiralClosing',
-            color: defaultTheme.gray.light["300"]
-        },
-        {
-            id: ECategoryId.SPIRAL_PERFORATION_MACHINE,
-            name: 'machinesCategories.spiralPerforation',
-            color: defaultTheme.gray.light["200"]
-        },
-        {
-            id: ECategoryId.HARD_COVER_MAKING_MACHINE,
-            name: 'machinesCategories.hardCover',
-            color: defaultTheme.gray.light["100"]
-        },
-        {
-            id: ECategoryId.BOOK_PRESSING_MACHINE,
-            name: 'machinesCategories.pressing',
-            color: defaultTheme.primary.dark["600"]
-        },
-        {
-            id: ECategoryId.MANUAL_SEWING_MACHINE,
-            name: 'machinesCategories.manualSewing',
-            color: defaultTheme.primary.dark["700"]
-        },
-        {
-            id: ECategoryId.SHRINK_PACKING_MACHINE,
-            name: 'machinesCategories.shrinkPackaging',
-            color: defaultTheme.error.dark["600"]
-        },
-        {
-            id: ECategoryId.PACKAGE_TYING_MACHINE,
-            name: 'machinesCategories.packageTying',
-            color: defaultTheme.error.dark["700"]
-        },
-        {
-            id: ECategoryId.BOOK_CASING_IN_MACHINE,
-            name: 'machinesCategories.bookCasingIn',
-            color: defaultTheme.warning.dark["600"]
-        },
-        {
-            id: ECategoryId.CARTOON_PACKAGING_MACHINE,
-            name: 'machinesCategories.cartoonPackaging',
-            color: defaultTheme.warning.dark["700"]
-        },
-        {
-            id: ECategoryId.ROLL_FINISH_MACHINE,
-            name: 'machinesCategories.rollFinishMachine',
-            color: defaultTheme.success.dark["600"]
-        },
-        {
-            id: ECategoryId.ROLL_SHEET_MACHINE,
-            name: 'machinesCategories.rollSheeter',
-            color: defaultTheme.success.dark["700"]
-        },
-        {
-            id: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
-            name: 'machinesCategories.rollDigitalEnhancement',
-            color: defaultTheme.second.dark["600"]
-        },
-        {
-            id: ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
-            name: 'machinesCategories.autoBookCutting',
-            color: defaultTheme.second.dark["700"]
-        },
-        {
-            id: ECategoryId.THERMAL_PLATE_PROCESSOR,
-            name: 'machinesCategories.thermalPlateProcessor',
-            color: defaultTheme.gray.dark["600"]
-        },
-        {
-            id: ECategoryId.CREATING_DIES_MACHINE,
-            name: 'machinesCategories.creatingDiesMachine',
-            color: defaultTheme.gray.dark["700"]
-        },
-        {
-            id: ECategoryId.MESH_PROCESSORS,
-            name: 'machinesCategories.meshProcessorsMachine',
-            color: defaultTheme.neutral.dark["600"]
-        },
-        {id: ECategoryId.SILK_PRINTER, name: 'machinesCategories.silkPrinter', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.CARD_CUTTING, name: 'machinesCategories.cardCutting', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.CARTOON_CUPS, name: 'machinesCategories.cartoonCups', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.PAINTING, name: 'machinesCategories.painting', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.SUBLIMATION, name: 'machinesCategories.sublimation', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.PRESS_MACHINE, name: 'machinesCategories.pressMachine', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.EMBROIDERY_MACHINE, name: 'machinesCategories.embroideryMachine', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.LETTER_SIDES_BENDING_MACHINE, name: 'machinesCategories.letterSidesBendingMachine', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY, name: 'machinesCategories.lightBoxesLetterAssembly', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.ADHESIVE_TAPE, name: 'machinesCategories.adhesiveTape', color: defaultTheme.neutral.dark["700"]},
-        {id: ECategoryId.ROLL_OFF_SET_PRINTING, name: 'machinesCategories.rollOffSetPrinting', color: defaultTheme.neutral.dark["700"]},
-        {
-            id: ECategoryId.BOOK_BLOCK_MACHINE,
-            name: 'machinesCategories.bookBlockMachine',
-            color: defaultTheme.success.dark["600"]
-        },
-        {
-            id: ECategoryId.DEVICE_MAKING_MACHINE,
-            name: 'machinesCategories.deviceMakingMachine',
-            color: defaultTheme.success.dark["600"]
-        },
-        {
-            id: ECategoryId.UV_COATING_VARNISH_MACHINE,
-            name: 'machinesCategories.uvCoatingVarnishMachine',
-            color: defaultTheme.success.dark["600"]
-        },
-    ],
+  key: "machinesCategoryState",
+  default: [
+    {
+      id: ECategoryId.DIGITAL_PRINTING,
+      name: "machinesCategories.digitalPrinting",
+      color: defaultTheme.primary.light["500"],
+      isEffectProfitProfile: true,
+    },
+    {
+      id: ECategoryId.OFSSET_PRINTING,
+      name: "machinesCategories.ofssetPrinting",
+      color: defaultTheme.primary.light["400"],
+    },
+    {
+      id: ECategoryId.ROLL_DIGITAL_PRINTING,
+      name: "machinesCategories.rollDigitalPrinting",
+      color: defaultTheme.primary.light["300"],
+    },
+    {
+      id: ECategoryId.FLEXO_PRINTING,
+      name: "machinesCategories.flexoPrinting",
+      color: defaultTheme.second.light["500"],
+    },
+    {
+      id: ECategoryId.ROLL_WIDE_PRINTING,
+      name: "machinesCategories.rollWidePrinting",
+      color: defaultTheme.second.light["400"],
+    },
+    {
+      id: ECategoryId.LAMINATION_MACHINE,
+      name: "machinesCategories.lamination",
+      color: defaultTheme.second.light["300"],
+    },
+    {
+      id: ECategoryId.PUNCHING_MACHINE,
+      name: "machinesCategories.punching",
+      color: defaultTheme.success.light["500"],
+    },
+    {
+      id: ECategoryId.ROUNDING_CORNERS_MACHINE,
+      name: "machinesCategories.roundingCorners",
+      color: defaultTheme.success.light["400"],
+    },
+    {
+      id: ECategoryId.FOLDING_MACHINE,
+      name: "machinesCategories.folding",
+      color: defaultTheme.success.light["300"],
+    },
+    {
+      id: ECategoryId.PASTING_BLOCKS_MACHINE,
+      name: "machinesCategories.pastingBlocks",
+      color: defaultTheme.success.light["200"],
+    },
+    {
+      id: ECategoryId.SCORING_MACHINE,
+      name: "machinesCategories.scoring",
+      color: defaultTheme.success.light["100"],
+    },
+    {
+      id: ECategoryId.FOLDING_GLUING_MACHINE,
+      name: "machinesCategories.foldingGluing",
+      color: defaultTheme.warning.light["500"],
+    },
+    {
+      id: ECategoryId.DIGITAL_ENHANCEMENT_MACHINE,
+      name: "machinesCategories.digitalEnhancement",
+      color: defaultTheme.warning.light["400"],
+    },
+    {
+      id: ECategoryId.ANALOG_ENHANCEMENT_MACHINE,
+      name: "machinesCategories.analogEnhancement",
+      color: defaultTheme.warning.light["300"],
+    },
+    {
+      id: ECategoryId.ENCAPSULATION_MACHINE,
+      name: "machinesCategories.encapsulation",
+      color: defaultTheme.warning.light["200"],
+    },
+    {
+      id: ECategoryId.SIDE_COLORING,
+      name: "machinesCategories.sideColoring",
+      color: defaultTheme.error.light["500"],
+    },
+    {
+      id: ECategoryId.GUILLOTINE,
+      name: "machinesCategories.guillottine",
+      color: defaultTheme.error.light["400"],
+    },
+    //cnc
+    {
+      id: ECategoryId.FLATBED_CUTTING_MACHINE,
+      name: "machinesCategories.flatbedCutting",
+      color: defaultTheme.error.light["300"],
+    },
+    {
+      id: ECategoryId.ROLL_FED_CUTTING_PLOTTERS,
+      name: "machinesCategories.rollFedCutting",
+      color: defaultTheme.error.light["200"],
+    },
+    {
+      id: ECategoryId.STAPLER_MACHINE,
+      name: "machinesCategories.stapler",
+      color: defaultTheme.error.light["100"],
+    },
+    {
+      id: ECategoryId.MANUAL_PEELING_STICKERS,
+      name: "machinesCategories.manualPeelingStickers",
+      color: defaultTheme.neutral.light["500"],
+    },
+    {
+      id: ECategoryId.PIERCING_MACHINE,
+      name: "machinesCategories.piercingMachine",
+      color: defaultTheme.neutral.light["400"],
+    },
+    {
+      id: ECategoryId.LINKAGE,
+      name: "machinesCategories.linkage",
+      color: defaultTheme.neutral.light["300"],
+    },
+    {
+      id: ECategoryId.PVC_BENDING_MACHINE,
+      name: "machinesCategories.PVCBending",
+      color: defaultTheme.neutral.light["200"],
+    },
+    {
+      id: ECategoryId.COLLECTOR,
+      name: "machinesCategories.collector",
+      color: defaultTheme.neutral.light["100"],
+    },
+    {
+      id: ECategoryId.BOOKLET_MACHINE,
+      name: "machinesCategories.booklet",
+      color: defaultTheme.gray.light["500"],
+    },
+    {
+      id: ECategoryId.BOOKS_BINDER_MACHINE,
+      name: "machinesCategories.booksBinder",
+      color: defaultTheme.gray.light["500"],
+    },
+    {
+      id: ECategoryId.BOOKS_SEWING_MACHINE,
+      name: "machinesCategories.booksSewing",
+      color: defaultTheme.gray.light["400"],
+    },
+    {
+      id: ECategoryId.SPIRAL_CLOSING_MACHINE,
+      name: "machinesCategories.spiralClosing",
+      color: defaultTheme.gray.light["300"],
+    },
+    {
+      id: ECategoryId.SPIRAL_PERFORATION_MACHINE,
+      name: "machinesCategories.spiralPerforation",
+      color: defaultTheme.gray.light["200"],
+    },
+    {
+      id: ECategoryId.HARD_COVER_MAKING_MACHINE,
+      name: "machinesCategories.hardCover",
+      color: defaultTheme.gray.light["100"],
+    },
+    {
+      id: ECategoryId.BOOK_PRESSING_MACHINE,
+      name: "machinesCategories.pressing",
+      color: defaultTheme.primary.dark["600"],
+    },
+    {
+      id: ECategoryId.MANUAL_SEWING_MACHINE,
+      name: "machinesCategories.manualSewing",
+      color: defaultTheme.primary.dark["700"],
+    },
+    {
+      id: ECategoryId.SHRINK_PACKING_MACHINE,
+      name: "machinesCategories.shrinkPackaging",
+      color: defaultTheme.error.dark["600"],
+    },
+    {
+      id: ECategoryId.PACKAGE_TYING_MACHINE,
+      name: "machinesCategories.packageTying",
+      color: defaultTheme.error.dark["700"],
+    },
+    {
+      id: ECategoryId.BOOK_CASING_IN_MACHINE,
+      name: "machinesCategories.bookCasingIn",
+      color: defaultTheme.warning.dark["600"],
+    },
+    {
+      id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+      name: "machinesCategories.cartoonPackaging",
+      color: defaultTheme.warning.dark["700"],
+    },
+    {
+      id: ECategoryId.ROLL_FINISH_MACHINE,
+      name: "machinesCategories.rollFinishMachine",
+      color: defaultTheme.success.dark["600"],
+    },
+    {
+      id: ECategoryId.ROLL_SHEET_MACHINE,
+      name: "machinesCategories.rollSheeter",
+      color: defaultTheme.success.dark["700"],
+    },
+    {
+      id: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
+      name: "machinesCategories.rollDigitalEnhancement",
+      color: defaultTheme.second.dark["600"],
+    },
+    {
+      id: ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
+      name: "machinesCategories.autoBookCutting",
+      color: defaultTheme.second.dark["700"],
+    },
+    {
+      id: ECategoryId.THERMAL_PLATE_PROCESSOR,
+      name: "machinesCategories.thermalPlateProcessor",
+      color: defaultTheme.gray.dark["600"],
+    },
+    {
+      id: ECategoryId.CREATING_DIES_MACHINE,
+      name: "machinesCategories.creatingDiesMachine",
+      color: defaultTheme.gray.dark["700"],
+    },
+    {
+      id: ECategoryId.MESH_PROCESSORS,
+      name: "machinesCategories.meshProcessorsMachine",
+      color: defaultTheme.neutral.dark["600"],
+    },
+    {
+      id: ECategoryId.SILK_PRINTER,
+      name: "machinesCategories.silkPrinter",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.CARD_CUTTING,
+      name: "machinesCategories.cardCutting",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.CARTOON_CUPS,
+      name: "machinesCategories.cartoonCups",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.PAINTING,
+      name: "machinesCategories.painting",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.SUBLIMATION,
+      name: "machinesCategories.sublimation",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.PRESS_MACHINE,
+      name: "machinesCategories.pressMachine",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.EMBROIDERY_MACHINE,
+      name: "machinesCategories.embroideryMachine",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.LETTER_SIDES_BENDING_MACHINE,
+      name: "machinesCategories.letterSidesBendingMachine",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY,
+      name: "machinesCategories.lightBoxesLetterAssembly",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.ADHESIVE_TAPE,
+      name: "machinesCategories.adhesiveTape",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.ROLL_OFF_SET_PRINTING,
+      name: "machinesCategories.rollOffSetPrinting",
+      color: defaultTheme.neutral.dark["700"],
+    },
+    {
+      id: ECategoryId.BOOK_BLOCK_MACHINE,
+      name: "machinesCategories.bookBlockMachine",
+      color: defaultTheme.success.dark["600"],
+    },
+    {
+      id: ECategoryId.DEVICE_MAKING_MACHINE,
+      name: "machinesCategories.deviceMakingMachine",
+      color: defaultTheme.success.dark["600"],
+    },
+    {
+      id: ECategoryId.UV_COATING_VARNISH_MACHINE,
+      name: "machinesCategories.uvCoatingVarnishMachine",
+      color: defaultTheme.success.dark["600"],
+    },
+  ],
 });

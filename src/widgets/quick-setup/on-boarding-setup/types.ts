@@ -4,6 +4,7 @@ export interface Machine {
   model: string;
   nickName?: string;
   category: string;
+  categoryId?: string;
 }
 
 export interface SelectedMachine {

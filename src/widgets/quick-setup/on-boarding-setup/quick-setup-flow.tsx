@@ -7,6 +7,7 @@ import {
   Step,
   StepLabel,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 // Import types and interfaces
 import {
@@ -27,6 +28,8 @@ import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boar
 import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 
 const QuickSetupFlow: React.FC = () => {
+  const { t } = useTranslation();
+
   // Use custom hooks for data and navigation
   const {
     allMachines,
@@ -94,8 +97,8 @@ const QuickSetupFlow: React.FC = () => {
     [categoryId: string]: string;
   }>({});
   const [
-    selectedRollFlexoCategoryMachines,
-    setSelectedRollFlexoCategoryMachines,
+    selectedRollFlexoFinishingCategoryMachines,
+    setSelectedRollFlexoFinishingCategoryMachines,
   ] = useState<{ [categoryId: string]: string }>({});
 
   // Machine management functions
@@ -119,7 +122,7 @@ const QuickSetupFlow: React.FC = () => {
       id: `${categoryId}_${selectedMachine}`,
       name: selectedMachine,
       categoryId: categoryId,
-      categoryName: category.name,
+      categoryName: t(category.name),
     };
 
     const isDuplicate = selectedFinishingMachines.some(
@@ -169,7 +172,7 @@ const QuickSetupFlow: React.FC = () => {
       id: `${categoryId}_${selectedMachine}`,
       name: selectedMachine,
       categoryId: categoryId,
-      categoryName: category.name,
+      categoryName: t(category.name),
     };
 
     const isDuplicate = selectedBookFinishingMachines.some(
@@ -220,7 +223,7 @@ const QuickSetupFlow: React.FC = () => {
       id: `${categoryId}_${selectedMachine}`,
       name: selectedMachine,
       categoryId: categoryId,
-      categoryName: category.name,
+      categoryName: t(category.name),
     };
 
     const isDuplicate = selectedWideFormatFinishingMachines.some(
@@ -271,7 +274,7 @@ const QuickSetupFlow: React.FC = () => {
       id: `${categoryId}_${selectedMachine}`,
       name: selectedMachine,
       categoryId: categoryId,
-      categoryName: category.name,
+      categoryName: t(category.name),
     };
 
     const isDuplicate = selectedDtfSublimationFinishingMachines.some(
@@ -309,7 +312,8 @@ const QuickSetupFlow: React.FC = () => {
 
   // Roll/Flexo finishing machine management functions
   const handleAddRollFlexoFinishingMachine = (categoryId: string) => {
-    const selectedMachine = selectedRollFlexoCategoryMachines[categoryId];
+    const selectedMachine =
+      selectedRollFlexoFinishingCategoryMachines[categoryId];
     if (!selectedMachine) return;
 
     const category = rollFlexoFinishingCategories.find(
@@ -317,11 +321,11 @@ const QuickSetupFlow: React.FC = () => {
     );
     if (!category) return;
 
-    const newFinishingMachine: SelectedFinishingMachine = {
+    const newRollFlexoFinishingMachine: SelectedFinishingMachine = {
       id: `${categoryId}_${selectedMachine}`,
       name: selectedMachine,
       categoryId: categoryId,
-      categoryName: category.name,
+      categoryName: t(category.name),
     };
 
     const isDuplicate = selectedRollFlexoFinishingMachines.some(
@@ -332,9 +336,9 @@ const QuickSetupFlow: React.FC = () => {
     if (!isDuplicate) {
       setSelectedRollFlexoFinishingMachines([
         ...selectedRollFlexoFinishingMachines,
-        newFinishingMachine,
+        newRollFlexoFinishingMachine,
       ]);
-      setSelectedRollFlexoCategoryMachines((prev) => ({
+      setSelectedRollFlexoFinishingCategoryMachines((prev) => ({
         ...prev,
         [categoryId]: "",
       }));
@@ -347,11 +351,11 @@ const QuickSetupFlow: React.FC = () => {
     );
   };
 
-  const handleRollFlexoCategoryMachineChange = (
+  const handleRollFlexoFinishingCategoryMachineChange = (
     categoryId: string,
     machineName: string
   ) => {
-    setSelectedRollFlexoCategoryMachines((prev) => ({
+    setSelectedRollFlexoFinishingCategoryMachines((prev) => ({
       ...prev,
       [categoryId]: machineName,
     }));
@@ -431,13 +435,15 @@ const QuickSetupFlow: React.FC = () => {
           selectedRollFlexoFinishingMachines={
             selectedRollFlexoFinishingMachines
           }
-          selectedRollFlexoCategoryMachines={selectedRollFlexoCategoryMachines}
+          selectedRollFlexoFinishingCategoryMachines={
+            selectedRollFlexoFinishingCategoryMachines
+          }
           onAddRollFlexoFinishingMachine={handleAddRollFlexoFinishingMachine}
           onDeleteRollFlexoFinishingMachine={
             handleDeleteRollFlexoFinishingMachine
           }
-          onRollFlexoCategoryMachineChange={
-            handleRollFlexoCategoryMachineChange
+          onRollFlexoFinishingCategoryMachineChange={
+            handleRollFlexoFinishingCategoryMachineChange
           }
           hasRollOrFlexoPrinting={hasRollOrFlexoPrinting(selectedMachines)}
         />

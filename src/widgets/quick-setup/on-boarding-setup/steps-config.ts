@@ -1,136 +1,137 @@
 import { FinishingCategory } from "@/widgets/quick-setup/on-boarding-setup/types";
+import { ECategoryId } from "@/widgets/machines/enums/category-id";
 
 // Digital/Offset Finishing Categories Configuration
 export const initializeFinishingCategories = (): FinishingCategory[] => [
   {
-    id: "cnc_digital_diecut",
-    name: "CNC",
+    id: ECategoryId.FLATBED_CUTTING_MACHINE,
+    name: "machinesCategories.flatbedCutting",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "guillotine",
-    name: "Guillotine",
+    id: ECategoryId.GUILLOTINE,
+    name: "machinesCategories.guillottine",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "diecut_analog",
-    name: "Diecut analog",
+    id: ECategoryId.ROLL_FED_CUTTING_PLOTTERS,
+    name: "machinesCategories.rollFedCutting",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "punching_drilling",
-    name: "Punching/Driling",
+    id: ECategoryId.PUNCHING_MACHINE,
+    name: "machinesCategories.punching",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "rounding_corners",
-    name: "Rounding corners",
+    id: ECategoryId.ROUNDING_CORNERS_MACHINE,
+    name: "machinesCategories.roundingCorners",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "folding",
-    name: "Folding",
+    id: ECategoryId.FOLDING_MACHINE,
+    name: "machinesCategories.folding",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "pasting_blocks",
-    name: "Pasting Blocks",
+    id: ECategoryId.PASTING_BLOCKS_MACHINE,
+    name: "machinesCategories.pastingBlocks",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "scoring_and_perforation",
-    name: "Scoring & Perforation",
+    id: ECategoryId.SCORING_MACHINE,
+    name: "machinesCategories.scoring",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "folding_and_gluing",
-    name: "Folding and gluining",
+    id: ECategoryId.FOLDING_GLUING_MACHINE,
+    name: "machinesCategories.foldingGluing",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "digital_foil",
-    name: "Digital Foil",
+    id: ECategoryId.DIGITAL_ENHANCEMENT_MACHINE,
+    name: "machinesCategories.digitalEnhancement",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "foil_embossing_stamp",
-    name: "Foil/Embossing stamp",
+    id: ECategoryId.ANALOG_ENHANCEMENT_MACHINE,
+    name: "machinesCategories.analogEnhancement",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "digital_selective_lamination",
-    name: "Digital Selective Lamination",
+    id: ECategoryId.LAMINATION_MACHINE,
+    name: "machinesCategories.lamination",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "encapsulation",
-    name: "Encapsulation",
+    id: ECategoryId.ENCAPSULATION_MACHINE,
+    name: "machinesCategories.encapsulation",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "manual_sewing",
-    name: "Manual Sewing",
+    id: ECategoryId.MANUAL_SEWING_MACHINE,
+    name: "machinesCategories.manualSewing",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "card_cutting",
-    name: "Card cutting",
+    id: ECategoryId.CARD_CUTTING,
+    name: "machinesCategories.cardCutting",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "embroidery",
-    name: "Embroidery",
+    id: ECategoryId.EMBROIDERY_MACHINE,
+    name: "machinesCategories.embroideryMachine",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "cartoon_cups",
-    name: "Cartoon cups",
+    id: ECategoryId.CARTOON_CUPS,
+    name: "machinesCategories.cartoonCups",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "linkage",
-    name: "Linkage",
+    id: ECategoryId.LINKAGE,
+    name: "machinesCategories.linkage",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "cartoon_packaging_machine",
-    name: "Cartoon packaging machine",
+    id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+    name: "machinesCategories.cartoonPackaging",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "package_tying_machine",
-    name: "Package tying machine",
+    id: ECategoryId.PACKAGE_TYING_MACHINE,
+    name: "machinesCategories.packageTying",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "shrink_packaging_machine",
-    name: "Shrink packaging machine",
+    id: ECategoryId.SHRINK_PACKING_MACHINE,
+    name: "machinesCategories.shrinkPackaging",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
   {
-    id: "plate_processor",
-    name: "Plate processor",
+    id: ECategoryId.THERMAL_PLATE_PROCESSOR,
+    name: "machinesCategories.thermalPlateProcessor",
     machines: [], // Will be populated from API
     categoryType: "digital_offset",
   },
@@ -139,50 +140,50 @@ export const initializeFinishingCategories = (): FinishingCategory[] => [
 // Book Finishing Categories Configuration
 export const initializeBookFinishingCategories = (): FinishingCategory[] => [
   {
-    id: "booklet",
-    name: "Booklet",
+    id: ECategoryId.BOOKLET_MACHINE,
+    name: "machinesCategories.booklet",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "perfect_binding",
-    name: "Perfect Binding",
+    id: ECategoryId.BOOKS_BINDER_MACHINE,
+    name: "machinesCategories.booksBinder",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "books_sewing",
-    name: "Books Sewing",
+    id: ECategoryId.BOOKS_SEWING_MACHINE,
+    name: "machinesCategories.booksSewing",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "spiral",
-    name: "Spiral",
+    id: ECategoryId.SPIRAL_CLOSING_MACHINE,
+    name: "machinesCategories.spiralClosing",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "manual_stapler",
-    name: "Manual Stapler",
+    id: ECategoryId.STAPLER_MACHINE,
+    name: "machinesCategories.stapler",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "hardcover_cover",
-    name: "Hardcover Cover",
+    id: ECategoryId.HARD_COVER_MAKING_MACHINE,
+    name: "machinesCategories.hardCover",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "three_knife_trimmer",
-    name: "Three Knife Trimmer",
+    id: ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
+    name: "machinesCategories.autoBookCutting",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
   {
-    id: "collector",
-    name: "Collector",
+    id: ECategoryId.COLLECTOR,
+    name: "machinesCategories.collector",
     machines: [], // Will be populated from API
     categoryType: "book_finishing",
   },
@@ -192,74 +193,74 @@ export const initializeBookFinishingCategories = (): FinishingCategory[] => [
 export const initializeWideFormatFinishingCategories =
   (): FinishingCategory[] => [
     {
-      id: "cnc_wide",
-      name: "CNC",
+      id: ECategoryId.FLATBED_CUTTING_MACHINE,
+      name: "machinesCategories.flatbedCutting",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "manual_cutting",
-      name: "Manual cutting",
+      id: ECategoryId.ROLL_FED_CUTTING_PLOTTERS,
+      name: "machinesCategories.rollFedCutting",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "stickers_peeling",
-      name: "Stickers Peeling",
+      id: ECategoryId.MANUAL_PEELING_STICKERS,
+      name: "machinesCategories.manualPeelingStickers",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "ring_eyelet_punching",
-      name: "Ring eyelet punching",
+      id: ECategoryId.PIERCING_MACHINE,
+      name: "machinesCategories.piercingMachine",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "linkage_wide",
-      name: "Linkage",
+      id: ECategoryId.LINKAGE,
+      name: "machinesCategories.linkage",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "pvc_bending",
-      name: "PVC Bending",
+      id: ECategoryId.PVC_BENDING_MACHINE,
+      name: "machinesCategories.PVCBending",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "letter_sides_bending",
-      name: "Letter sides bending",
+      id: ECategoryId.LETTER_SIDES_BENDING_MACHINE,
+      name: "machinesCategories.letterSidesBendingMachine",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "light_boxes_letter_assembly",
-      name: "Light boxes & letter assembly",
+      id: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY,
+      name: "machinesCategories.lightBoxesLetterAssembly",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "cold_lamination",
-      name: "Cold Lamination",
+      id: ECategoryId.LAMINATION_MACHINE,
+      name: "machinesCategories.lamination",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "cartoon_packaging_machine_wide",
-      name: "Cartoon packaging machine",
+      id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+      name: "machinesCategories.cartoonPackaging",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "package_tying_machine_wide",
-      name: "Package tying machine",
+      id: ECategoryId.PACKAGE_TYING_MACHINE,
+      name: "machinesCategories.packageTying",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
     {
-      id: "shrink_packaging_machine_wide",
-      name: "Shrink packaging machine",
+      id: ECategoryId.SHRINK_PACKING_MACHINE,
+      name: "machinesCategories.shrinkPackaging",
       machines: [], // Will be populated from API
       categoryType: "wide_format",
     },
@@ -269,38 +270,38 @@ export const initializeWideFormatFinishingCategories =
 export const initializeDtfSublimationFinishingCategories =
   (): FinishingCategory[] => [
     {
-      id: "silk_mesh_processor",
-      name: "Silk mesh procesor",
+      id: ECategoryId.MESH_PROCESSORS,
+      name: "machinesCategories.meshProcessorsMachine",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
     {
-      id: "silk_printer",
-      name: "Silk printer",
+      id: ECategoryId.SILK_PRINTER,
+      name: "machinesCategories.silkPrinter",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
     {
-      id: "press_machine",
-      name: "Press machine",
+      id: ECategoryId.PRESS_MACHINE,
+      name: "machinesCategories.pressMachine",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
     {
-      id: "cartoon_packaging_machine_dtf",
-      name: "Cartoon packaging machine",
+      id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+      name: "machinesCategories.cartoonPackaging",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
     {
-      id: "package_tying_machine_dtf",
-      name: "Package tying machine",
+      id: ECategoryId.PACKAGE_TYING_MACHINE,
+      name: "machinesCategories.packageTying",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
     {
-      id: "shrink_packaging_machine_dtf",
-      name: "Shrink packaging machine",
+      id: ECategoryId.SHRINK_PACKING_MACHINE,
+      name: "machinesCategories.shrinkPackaging",
       machines: [], // Will be populated from API
       categoryType: "dtf_sublimation",
     },
@@ -310,62 +311,62 @@ export const initializeDtfSublimationFinishingCategories =
 export const initializeRollFlexoFinishingCategories =
   (): FinishingCategory[] => [
     {
-      id: "cnc_digital_diecut_roll",
-      name: "CNC (Digital Diecut)",
+      id: ECategoryId.FLATBED_CUTTING_MACHINE,
+      name: "machinesCategories.flatbedCutting",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "die_cut_roll",
-      name: "Die Cut",
+      id: ECategoryId.ROLL_DIE_CUT_MACHINE,
+      name: "machinesCategories.creatingDiesMachine",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "lamination_roll",
-      name: "Lamination",
+      id: ECategoryId.ROLL_LAMINATION_MACHINE,
+      name: "machinesCategories.lamination",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "varnish_roll",
-      name: "Varnish",
+      id: ECategoryId.ROLL_VARNISH_MACHINE,
+      name: "machinesCategories.uvCoatingVarnishMachine",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "embossing_roll",
-      name: "Embossing",
+      id: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
+      name: "machinesCategories.rollDigitalEnhancement",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "selective_coating_roll",
-      name: "Selective Coating",
+      id: ECategoryId.UV_COATING_VARNISH_MACHINE,
+      name: "machinesCategories.uvCoatingVarnishMachine",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "roll_sheeter_slitter",
-      name: "Roll Sheeter/Slitter",
+      id: ECategoryId.ROLL_SHEET_MACHINE,
+      name: "machinesCategories.rollSheeter",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "carton_packaging_machine_roll",
-      name: "Carton Packaging Machine",
+      id: ECategoryId.CARTOON_PACKAGING_MACHINE,
+      name: "machinesCategories.cartoonPackaging",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "package_tying_machine_roll",
-      name: "Package Tying Machine",
+      id: ECategoryId.PACKAGE_TYING_MACHINE,
+      name: "machinesCategories.packageTying",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },
     {
-      id: "shrink_packaging_machine_roll",
-      name: "Shrink Packaging Machine",
+      id: ECategoryId.SHRINK_PACKING_MACHINE,
+      name: "machinesCategories.shrinkPackaging",
       machines: [], // Will be populated from API
       categoryType: "roll_flexo",
     },

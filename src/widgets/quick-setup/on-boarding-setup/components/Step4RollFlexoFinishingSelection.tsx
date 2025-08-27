@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useTranslation } from "react-i18next";
 import {
   SelectedMachine,
   SelectedFinishingMachine,
@@ -25,10 +26,10 @@ interface Step4RollFlexoFinishingSelectionProps {
   selectedMachines: SelectedMachine[];
   rollFlexoFinishingCategories: FinishingCategory[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
-  selectedRollFlexoCategoryMachines: { [categoryId: string]: string };
+  selectedRollFlexoFinishingCategoryMachines: { [categoryId: string]: string };
   onAddRollFlexoFinishingMachine: (categoryId: string) => void;
   onDeleteRollFlexoFinishingMachine: (machineId: string) => void;
-  onRollFlexoCategoryMachineChange: (
+  onRollFlexoFinishingCategoryMachineChange: (
     categoryId: string,
     machineName: string
   ) => void;
@@ -41,14 +42,16 @@ export const Step4RollFlexoFinishingSelection: React.FC<
   selectedMachines,
   rollFlexoFinishingCategories,
   selectedRollFlexoFinishingMachines,
-  selectedRollFlexoCategoryMachines,
+  selectedRollFlexoFinishingCategoryMachines,
   onAddRollFlexoFinishingMachine,
   onDeleteRollFlexoFinishingMachine,
-  onRollFlexoCategoryMachineChange,
+  onRollFlexoFinishingCategoryMachineChange,
   hasRollOrFlexoPrinting,
 }) => {
+  const { t } = useTranslation();
+
   const clearCategorySelection = (categoryId: string) => {
-    onRollFlexoCategoryMachineChange(categoryId, "");
+    onRollFlexoFinishingCategoryMachineChange(categoryId, "");
   };
 
   if (!hasRollOrFlexoPrinting) {
@@ -168,7 +171,7 @@ export const Step4RollFlexoFinishingSelection: React.FC<
               sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
             >
               <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
-                {category.name}
+                {t(category.name)}
               </Typography>
 
               <Box
@@ -177,9 +180,12 @@ export const Step4RollFlexoFinishingSelection: React.FC<
                 <FormControl fullWidth>
                   <InputLabel>Select Machine</InputLabel>
                   <Select
-                    value={selectedRollFlexoCategoryMachines[category.id] || ""}
+                    value={
+                      selectedRollFlexoFinishingCategoryMachines[category.id] ||
+                      ""
+                    }
                     onChange={(e) =>
-                      onRollFlexoCategoryMachineChange(
+                      onRollFlexoFinishingCategoryMachineChange(
                         category.id,
                         e.target.value
                       )
@@ -188,7 +194,9 @@ export const Step4RollFlexoFinishingSelection: React.FC<
                     input={<OutlinedInput label="Select Machine" />}
                     endAdornment={
                       <InputAdornment position="end">
-                        {selectedRollFlexoCategoryMachines[category.id] && (
+                        {selectedRollFlexoFinishingCategoryMachines[
+                          category.id
+                        ] && (
                           <IconButton
                             onClick={() => clearCategorySelection(category.id)}
                             edge="end"
@@ -212,7 +220,9 @@ export const Step4RollFlexoFinishingSelection: React.FC<
                 <Button
                   variant="contained"
                   onClick={() => onAddRollFlexoFinishingMachine(category.id)}
-                  disabled={!selectedRollFlexoCategoryMachines[category.id]}
+                  disabled={
+                    !selectedRollFlexoFinishingCategoryMachines[category.id]
+                  }
                   sx={{ minWidth: 100 }}
                 >
                   Add
