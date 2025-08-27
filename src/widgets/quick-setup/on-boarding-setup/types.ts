@@ -17,7 +17,12 @@ export interface FinishingCategory {
   id: string;
   name: string;
   machines: string[];
-  categoryType: "digital_offset" | "roll_flexo" | "book_finishing";
+  categoryType:
+    | "digital_offset"
+    | "roll_flexo"
+    | "book_finishing"
+    | "wide_format"
+    | "dtf_sublimation";
 }
 
 export interface SelectedFinishingMachine {
@@ -32,12 +37,20 @@ export interface StepState {
   selectedMachines: SelectedMachine[];
   selectedFinishingMachines: SelectedFinishingMachine[];
   selectedBookFinishingMachines: SelectedFinishingMachine[];
+  selectedWideFormatFinishingMachines: SelectedFinishingMachine[];
+  selectedDtfSublimationFinishingMachines: SelectedFinishingMachine[];
   selectedRollFlexoFinishingMachines: SelectedFinishingMachine[];
   finishingCategories: FinishingCategory[];
   bookFinishingCategories: FinishingCategory[];
+  wideFormatFinishingCategories: FinishingCategory[];
+  dtfSublimationFinishingCategories: FinishingCategory[];
   rollFlexoFinishingCategories: FinishingCategory[];
   selectedCategoryMachines: { [categoryId: string]: string };
   selectedBookFinishingCategoryMachines: { [categoryId: string]: string };
+  selectedWideFormatFinishingCategoryMachines: { [categoryId: string]: string };
+  selectedDtfSublimationFinishingCategoryMachines: {
+    [categoryId: string]: string;
+  };
   selectedRollFlexoCategoryMachines: { [categoryId: string]: string };
 }
 

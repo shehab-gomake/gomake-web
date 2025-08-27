@@ -23,6 +23,8 @@ import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/c
 import { Step2FinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step2FinishingSelection";
 import { Step3BookFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step3BookFinishingSelection";
 import { Step4RollFlexoFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step4RollFlexoFinishingSelection";
+import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step5WideFormatFinishingSelection";
+import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 
 const QuickSetupFlow: React.FC = () => {
   // Use custom hooks for data and navigation
@@ -31,6 +33,8 @@ const QuickSetupFlow: React.FC = () => {
     machinesLoading,
     finishingCategories,
     bookFinishingCategories,
+    wideFormatFinishingCategories,
+    dtfSublimationFinishingCategories,
     rollFlexoFinishingCategories,
   } = useMachinesData();
 
@@ -39,6 +43,8 @@ const QuickSetupFlow: React.FC = () => {
     steps,
     hasDigitalOrOffsetPrinting,
     hasRollOrFlexoPrinting,
+    hasWidePrinting,
+    hasDtfOrSublimationPrinting,
     handleNext,
     handleBack,
     isNextDisabled,
@@ -55,6 +61,14 @@ const QuickSetupFlow: React.FC = () => {
   const [selectedBookFinishingMachines, setSelectedBookFinishingMachines] =
     useState<SelectedFinishingMachine[]>([]);
   const [
+    selectedWideFormatFinishingMachines,
+    setSelectedWideFormatFinishingMachines,
+  ] = useState<SelectedFinishingMachine[]>([]);
+  const [
+    selectedDtfSublimationFinishingMachines,
+    setSelectedDtfSublimationFinishingMachines,
+  ] = useState<SelectedFinishingMachine[]>([]);
+  const [
     selectedRollFlexoFinishingMachines,
     setSelectedRollFlexoFinishingMachines,
   ] = useState<SelectedFinishingMachine[]>([]);
@@ -64,6 +78,18 @@ const QuickSetupFlow: React.FC = () => {
   const [
     selectedBookFinishingCategoryMachines,
     setSelectedBookFinishingCategoryMachines,
+  ] = useState<{
+    [categoryId: string]: string;
+  }>({});
+  const [
+    selectedWideFormatFinishingCategoryMachines,
+    setSelectedWideFormatFinishingCategoryMachines,
+  ] = useState<{
+    [categoryId: string]: string;
+  }>({});
+  const [
+    selectedDtfSublimationFinishingCategoryMachines,
+    setSelectedDtfSublimationFinishingCategoryMachines,
   ] = useState<{
     [categoryId: string]: string;
   }>({});
@@ -179,6 +205,108 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
+  // Wide format finishing machine management functions
+  const handleAddWideFormatFinishingMachine = (categoryId: string) => {
+    const selectedMachine =
+      selectedWideFormatFinishingCategoryMachines[categoryId];
+    if (!selectedMachine) return;
+
+    const category = wideFormatFinishingCategories.find(
+      (cat) => cat.id === categoryId
+    );
+    if (!category) return;
+
+    const newWideFormatFinishingMachine: SelectedFinishingMachine = {
+      id: `${categoryId}_${selectedMachine}`,
+      name: selectedMachine,
+      categoryId: categoryId,
+      categoryName: category.name,
+    };
+
+    const isDuplicate = selectedWideFormatFinishingMachines.some(
+      (machine) =>
+        machine.categoryId === categoryId && machine.name === selectedMachine
+    );
+
+    if (!isDuplicate) {
+      setSelectedWideFormatFinishingMachines([
+        ...selectedWideFormatFinishingMachines,
+        newWideFormatFinishingMachine,
+      ]);
+      setSelectedWideFormatFinishingCategoryMachines((prev) => ({
+        ...prev,
+        [categoryId]: "",
+      }));
+    }
+  };
+
+  const handleDeleteWideFormatFinishingMachine = (machineId: string) => {
+    setSelectedWideFormatFinishingMachines((prev) =>
+      prev.filter((machine) => machine.id !== machineId)
+    );
+  };
+
+  const handleWideFormatFinishingCategoryMachineChange = (
+    categoryId: string,
+    machineName: string
+  ) => {
+    setSelectedWideFormatFinishingCategoryMachines((prev) => ({
+      ...prev,
+      [categoryId]: machineName,
+    }));
+  };
+
+  // DTF & Sublimation finishing machine management functions
+  const handleAddDtfSublimationFinishingMachine = (categoryId: string) => {
+    const selectedMachine =
+      selectedDtfSublimationFinishingCategoryMachines[categoryId];
+    if (!selectedMachine) return;
+
+    const category = dtfSublimationFinishingCategories.find(
+      (cat) => cat.id === categoryId
+    );
+    if (!category) return;
+
+    const newDtfSublimationFinishingMachine: SelectedFinishingMachine = {
+      id: `${categoryId}_${selectedMachine}`,
+      name: selectedMachine,
+      categoryId: categoryId,
+      categoryName: category.name,
+    };
+
+    const isDuplicate = selectedDtfSublimationFinishingMachines.some(
+      (machine) =>
+        machine.categoryId === categoryId && machine.name === selectedMachine
+    );
+
+    if (!isDuplicate) {
+      setSelectedDtfSublimationFinishingMachines([
+        ...selectedDtfSublimationFinishingMachines,
+        newDtfSublimationFinishingMachine,
+      ]);
+      setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
+        ...prev,
+        [categoryId]: "",
+      }));
+    }
+  };
+
+  const handleDeleteDtfSublimationFinishingMachine = (machineId: string) => {
+    setSelectedDtfSublimationFinishingMachines((prev) =>
+      prev.filter((machine) => machine.id !== machineId)
+    );
+  };
+
+  const handleDtfSublimationFinishingCategoryMachineChange = (
+    categoryId: string,
+    machineName: string
+  ) => {
+    setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
+      ...prev,
+      [categoryId]: machineName,
+    }));
+  };
+
   // Roll/Flexo finishing machine management functions
   const handleAddRollFlexoFinishingMachine = (categoryId: string) => {
     const selectedMachine = selectedRollFlexoCategoryMachines[categoryId];
@@ -235,6 +363,8 @@ const QuickSetupFlow: React.FC = () => {
       selectedMachines,
       selectedFinishingMachines,
       selectedBookFinishingMachines,
+      selectedWideFormatFinishingMachines,
+      selectedDtfSublimationFinishingMachines,
       selectedRollFlexoFinishingMachines
     );
   };
@@ -294,7 +424,7 @@ const QuickSetupFlow: React.FC = () => {
             selectedMachines
           )}
         />
-      ) : (
+      ) : currentStep === 3 ? (
         <Step4RollFlexoFinishingSelection
           selectedMachines={selectedMachines}
           rollFlexoFinishingCategories={rollFlexoFinishingCategories}
@@ -310,6 +440,48 @@ const QuickSetupFlow: React.FC = () => {
             handleRollFlexoCategoryMachineChange
           }
           hasRollOrFlexoPrinting={hasRollOrFlexoPrinting(selectedMachines)}
+        />
+      ) : currentStep === 4 ? (
+        <Step5WideFormatFinishingSelection
+          selectedMachines={selectedMachines}
+          wideFormatFinishingCategories={wideFormatFinishingCategories}
+          selectedWideFormatFinishingMachines={
+            selectedWideFormatFinishingMachines
+          }
+          selectedWideFormatFinishingCategoryMachines={
+            selectedWideFormatFinishingCategoryMachines
+          }
+          onAddWideFormatFinishingMachine={handleAddWideFormatFinishingMachine}
+          onDeleteWideFormatFinishingMachine={
+            handleDeleteWideFormatFinishingMachine
+          }
+          onWideFormatFinishingCategoryMachineChange={
+            handleWideFormatFinishingCategoryMachineChange
+          }
+          hasWidePrinting={hasWidePrinting(selectedMachines)}
+        />
+      ) : (
+        <Step6DtfSublimationFinishingSelection
+          selectedMachines={selectedMachines}
+          dtfSublimationFinishingCategories={dtfSublimationFinishingCategories}
+          selectedDtfSublimationFinishingMachines={
+            selectedDtfSublimationFinishingMachines
+          }
+          selectedDtfSublimationFinishingCategoryMachines={
+            selectedDtfSublimationFinishingCategoryMachines
+          }
+          onAddDtfSublimationFinishingMachine={
+            handleAddDtfSublimationFinishingMachine
+          }
+          onDeleteDtfSublimationFinishingMachine={
+            handleDeleteDtfSublimationFinishingMachine
+          }
+          onDtfSublimationFinishingCategoryMachineChange={
+            handleDtfSublimationFinishingCategoryMachineChange
+          }
+          hasDtfOrSublimationPrinting={hasDtfOrSublimationPrinting(
+            selectedMachines
+          )}
         />
       )}
 
@@ -329,6 +501,8 @@ const QuickSetupFlow: React.FC = () => {
             selectedMachines,
             selectedFinishingMachines,
             selectedBookFinishingMachines,
+            selectedWideFormatFinishingMachines,
+            selectedDtfSublimationFinishingMachines,
             selectedRollFlexoFinishingMachines
           )}
         >

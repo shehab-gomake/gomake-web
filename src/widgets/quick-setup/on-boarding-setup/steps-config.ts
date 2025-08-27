@@ -188,6 +188,124 @@ export const initializeBookFinishingCategories = (): FinishingCategory[] => [
   },
 ];
 
+// Wide Format Finishing Categories Configuration
+export const initializeWideFormatFinishingCategories =
+  (): FinishingCategory[] => [
+    {
+      id: "cnc_wide",
+      name: "CNC",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "manual_cutting",
+      name: "Manual cutting",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "stickers_peeling",
+      name: "Stickers Peeling",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "ring_eyelet_punching",
+      name: "Ring eyelet punching",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "linkage_wide",
+      name: "Linkage",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "pvc_bending",
+      name: "PVC Bending",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "letter_sides_bending",
+      name: "Letter sides bending",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "light_boxes_letter_assembly",
+      name: "Light boxes & letter assembly",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "cold_lamination",
+      name: "Cold Lamination",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "cartoon_packaging_machine_wide",
+      name: "Cartoon packaging machine",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "package_tying_machine_wide",
+      name: "Package tying machine",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+    {
+      id: "shrink_packaging_machine_wide",
+      name: "Shrink packaging machine",
+      machines: [], // Will be populated from API
+      categoryType: "wide_format",
+    },
+  ];
+
+// DTF & Sublimation Finishing Categories Configuration
+export const initializeDtfSublimationFinishingCategories =
+  (): FinishingCategory[] => [
+    {
+      id: "silk_mesh_processor",
+      name: "Silk mesh procesor",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+    {
+      id: "silk_printer",
+      name: "Silk printer",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+    {
+      id: "press_machine",
+      name: "Press machine",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+    {
+      id: "cartoon_packaging_machine_dtf",
+      name: "Cartoon packaging machine",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+    {
+      id: "package_tying_machine_dtf",
+      name: "Package tying machine",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+    {
+      id: "shrink_packaging_machine_dtf",
+      name: "Shrink packaging machine",
+      machines: [], // Will be populated from API
+      categoryType: "dtf_sublimation",
+    },
+  ];
+
 // Roll/Flexo Finishing Categories Configuration
 export const initializeRollFlexoFinishingCategories =
   (): FinishingCategory[] => [
@@ -260,11 +378,15 @@ export const STEPS_CONFIG = {
     "Select Sheet Digital/Offset  Finishing",
     "Select Sheet Digital/Offset Book  Finishing",
     "Select Roll/Flexo Finishing",
+    "Select Wide Format Finishing",
+    "Select DTF & Sublimation Finishing",
   ],
   stepDescriptions: {
     0: "Select your printing machines from any category",
     1: "Configure finishing machines for Digital/Offset printing",
     2: "Based on your selected Digital/Offset printing machines, configure the book finishing machines for each category below.",
     3: "Configure finishing machines for Roll/Flexo printing",
+    4: "Based on your selected Wide printer machines, configure the Wide format finishing machines for each category below.",
+    5: "Based on your selected DTF & Sublimation machines, configure the Wide format finishing machines for each category below.",
   },
 };

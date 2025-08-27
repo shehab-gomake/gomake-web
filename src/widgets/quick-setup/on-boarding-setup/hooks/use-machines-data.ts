@@ -11,6 +11,8 @@ import {
 import {
   initializeFinishingCategories,
   initializeBookFinishingCategories,
+  initializeWideFormatFinishingCategories,
+  initializeDtfSublimationFinishingCategories,
   initializeRollFlexoFinishingCategories,
 } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
 
@@ -30,6 +32,12 @@ export const useMachinesData = () => {
   const [bookFinishingCategories, setBookFinishingCategories] = useState<
     FinishingCategory[]
   >([]);
+  const [wideFormatFinishingCategories, setWideFormatFinishingCategories] =
+    useState<FinishingCategory[]>([]);
+  const [
+    dtfSublimationFinishingCategories,
+    setDtfSublimationFinishingCategories,
+  ] = useState<FinishingCategory[]>([]);
   const [rollFlexoFinishingCategories, setRollFlexoFinishingCategories] =
     useState<FinishingCategory[]>([]);
 
@@ -71,6 +79,9 @@ export const useMachinesData = () => {
   const loadFinishingCategoriesWithMachines = useCallback(async () => {
     const digitalOffsetCategories = initializeFinishingCategories();
     const bookCategories = initializeBookFinishingCategories();
+    const wideFormatCategories = initializeWideFormatFinishingCategories();
+    const dtfSublimationCategories =
+      initializeDtfSublimationFinishingCategories();
     const rollFlexoCategories = initializeRollFlexoFinishingCategories();
 
     // Map finishing category names to machine category names for API lookup
@@ -106,6 +117,18 @@ export const useMachinesData = () => {
       "Hardcover Cover": ["Hardcover Cover", "Hardcover", "Cover"],
       "Three Knife Trimmer": ["Three Knife Trimmer", "Trimmer", "Cutting"],
       Collector: ["Collector", "Collection"],
+      // Wide format categories
+      "Manual cutting": ["Manual Cutting", "Cutting"],
+      "Stickers Peeling": ["Stickers Peeling", "Peeling"],
+      "Ring eyelet punching": ["Ring Eyelet", "Eyelet", "Punching"],
+      "PVC Bending": ["PVC Bending", "Bending"],
+      "Letter sides bending": ["Letter Sides", "Bending"],
+      "Light boxes & letter assembly": ["Light Boxes", "Letter Assembly"],
+      "Cold Lamination": ["Cold Lamination", "Lamination"],
+      // DTF & Sublimation categories
+      "Silk mesh procesor": ["Silk Mesh", "Mesh Processor"],
+      "Silk printer": ["Silk Printer", "Printer"],
+      "Press machine": ["Press Machine", "Press"],
       // Roll/Flexo categories
       Lamination: ["Lamination", "Laminating"],
       Varnish: ["Varnish", "Varnishing"],
@@ -148,6 +171,22 @@ export const useMachinesData = () => {
       machines: findMachinesByCategoryName(category.name),
     }));
 
+    // Populate machines for wide format categories
+    const populatedWideFormatCategories = wideFormatCategories.map(
+      (category) => ({
+        ...category,
+        machines: findMachinesByCategoryName(category.name),
+      })
+    );
+
+    // Populate machines for DTF/sublimation categories
+    const populatedDtfSublimationCategories = dtfSublimationCategories.map(
+      (category) => ({
+        ...category,
+        machines: findMachinesByCategoryName(category.name),
+      })
+    );
+
     // Populate machines for roll/flexo categories
     const populatedRollFlexoCategories = rollFlexoCategories.map(
       (category) => ({
@@ -158,6 +197,8 @@ export const useMachinesData = () => {
 
     setFinishingCategories(populatedDigitalOffsetCategories);
     setBookFinishingCategories(populatedBookCategories);
+    setWideFormatFinishingCategories(populatedWideFormatCategories);
+    setDtfSublimationFinishingCategories(populatedDtfSublimationCategories);
     setRollFlexoFinishingCategories(populatedRollFlexoCategories);
   }, [allMachines]);
 
@@ -178,6 +219,8 @@ export const useMachinesData = () => {
     machinesLoading,
     finishingCategories,
     bookFinishingCategories,
+    wideFormatFinishingCategories,
+    dtfSublimationFinishingCategories,
     rollFlexoFinishingCategories,
     loadAllMachines,
     loadFinishingCategoriesWithMachines,
