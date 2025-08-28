@@ -91,32 +91,38 @@ const DateField: React.FC<IDateFieldProps> = ({
 
   const textFieldSlot = useMemo(
     () => (params: any) =>
-      (
-        <TextField
-          {...params}
-          size={compactMode ? "small" : "medium"}
-          placeholder={t("sales.quote.selectDate")}
-          disabled={!isEditable}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: isEditable && (
-              <InputAdornment position="end">
-                {params.InputProps?.endAdornment}
-              </InputAdornment>
-            ),
-          }}
-          // onClick={!compactMode ? handleOpenPicker : undefined}
-          onClick={handleOpenPicker}
-          sx={{
-            marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
-            marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
-            "& .MuiInputAdornment-root": {
-              marginLeft: isRTL ? "0px" : withTime ? "-10px" : "-30px",
-              marginRight: isRTL ? (withTime ? "-10px" : "-30px") : "0px",
-            },
-          }}
-        />
-      ),
+    (
+      <TextField
+        {...params}
+        size={compactMode ? "small" : "medium"}
+        placeholder={t("sales.quote.selectDate")}
+        disabled={!isEditable}
+        InputProps={{
+          ...params.InputProps,
+          endAdornment: isEditable && (
+            <InputAdornment
+              position="end"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenPicker(e as any);
+              }}
+            >
+              {params.InputProps?.endAdornment}
+            </InputAdornment>
+          ),
+        }}
+        // Do not open picker when clicking the input; open only from icon
+        sx={{
+          marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
+          marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
+          "& .MuiInputAdornment-root": {
+            marginLeft: isRTL ? "0px" : withTime ? "-10px" : "-30px",
+            marginRight: isRTL ? (withTime ? "-10px" : "-30px") : "0px",
+          },
+        }}
+      />
+    ),
     [t, isEditable, preventOpenCondition, withTime]
   );
 
@@ -151,7 +157,6 @@ const DateField: React.FC<IDateFieldProps> = ({
         {withTime ? (
           <DateTimePicker
             open={open}
-            onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             value={date ? moment(date) : null}
             // onChange={handleDateChange}
@@ -167,7 +172,6 @@ const DateField: React.FC<IDateFieldProps> = ({
         ) : (
           <DatePicker
             open={open}
-            onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             value={date ? moment(date) : null}
             onChange={handleDateChange}

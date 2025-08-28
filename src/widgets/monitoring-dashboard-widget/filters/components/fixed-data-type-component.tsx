@@ -17,8 +17,9 @@ import { useStyle } from "./style";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export enum CalculationDataTypeEnum {
-  CalculatedOnly,
-  EstimatedOnly,
+  DataWithPriceAndCostCalculatedByGoMake = 0,
+  DataWithPriceAndCostEnteredByUser,
+  DataWithPriceAndEstimatedCostByGoMake,
 }
 
 const FixedDataType = () => {
@@ -32,17 +33,29 @@ const FixedDataType = () => {
   const options = useMemo(
     () => [
       {
-        label: "dashboard.allDataType",
+        label: "dashboard.allDataType2",
         value: null,
       },
       {
-        label: "dashboard.calculatedOnly",
-        value: CalculationDataTypeEnum.CalculatedOnly,
+        label: "dashboard.datawithPriceAndCostCalculatedByGoMake",
+        value: CalculationDataTypeEnum.DataWithPriceAndCostCalculatedByGoMake,
       },
       {
-        label: "dashboard.estimatedOnly",
-        value: CalculationDataTypeEnum.EstimatedOnly,
+        label: "dashboard.dataWithPriceAndCostEnteredByUser",
+        value: CalculationDataTypeEnum.DataWithPriceAndCostEnteredByUser,
       },
+      {
+        label: "dashboard.dataWithPriceAndEstimatedCostByGoMake",
+        value: CalculationDataTypeEnum.DataWithPriceAndEstimatedCostByGoMake,
+      },
+      // {
+      //   label: "dashboard.calculatedOnly",
+      //   value: CalculationDataTypeEnum.CalculatedOnly,
+      // },
+      // {
+      //   label: "dashboard.estimatedOnly",
+      //   value: CalculationDataTypeEnum.EstimatedOnly,
+      // },
     ],
     []
   );
@@ -64,14 +77,14 @@ const FixedDataType = () => {
   return (
     <div>
       <List component="nav">
-        <ListItemButton style={classes.listItemButton} onClick={handleClick}>
+        <ListItemButton style={{ ...classes.listItemButton, }} onClick={handleClick}>
           <Box sx={classes.boxStyle}>
             <span style={classes.buttonLabel}>{selectedLabel}</span>
 
             {selectedType !== null && (
               <Tooltip
                 title={
-                  selectedType === CalculationDataTypeEnum.CalculatedOnly
+                  selectedType === CalculationDataTypeEnum.DataWithPriceAndCostCalculatedByGoMake
                     ? t("dashboard.calculatedOnlyDesc")
                     : t("dashboard.estimatedOnlyDesc")
                 }
@@ -104,7 +117,7 @@ const FixedDataType = () => {
         onClose={() => setAnchorEl(null)}
         PaperProps={{
           sx: {
-            width: anchorEl?.offsetWidth,
+            width: "380px",
           },
         }}
       >
