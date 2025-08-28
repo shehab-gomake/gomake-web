@@ -137,6 +137,11 @@ const StatusTableComponent = ({
     openMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     onClickMarkReadyModalForHasJobs,
+    // Done scope modal
+    openDoneScopeModal,
+    onCloseDoneScopeModal,
+    onClickDoneScopeAllJobs,
+    onClickDoneScopeProductType,
   } = useProductionFloorData();
 
   const {
@@ -397,7 +402,7 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    if(boardsCount < 10){
+    if (boardsCount < 10) {
       return `500px`;
     }
     const visibleItems = Math.min(boardsCount, TABLE_CONFIG.MAX_VISIBLE_ITEMS);
@@ -452,7 +457,7 @@ const StatusTableComponent = ({
               data={sortedBoards}
               overscan={5}
               components={TableComponents}
-            
+
               fixedHeaderContent={fixedHeaderContent}
               itemContent={(index: number, boardMission: IBoardMissions) => (
                 <TableRowComponent
@@ -477,29 +482,29 @@ const StatusTableComponent = ({
                   <TableHead style={{ backgroundColor: status.backgroundColor }}>
                     {fixedHeaderContent()}
                   </TableHead>
-                    <TableBody>
-                        {sortedBoards.map((boardMission, index) => (
-                        <TableRowComponent
-                            key={boardMission.id}
-                            boardMission={boardMission}
-                            status={status}
-                            onClickDone={tryMoveBoardMissionsToDone}
-                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                            index={index}
-                            onClickClient={onClickClient}
-                            isMobileScreen={isMobileScreen}
-                            isRTL={RTL}
-                            isUrgentWork={hasUrgentOrApproval}
-                            onUpdateJobDueDate={updateJobDueDate}
-                            employeesCategories={employeesCategories}
-                            visibleColumns={visibleColumns}
-                        />
-                        ))}
-                    </TableBody>
+                  <TableBody>
+                    {sortedBoards.map((boardMission, index) => (
+                      <TableRowComponent
+                        key={boardMission.id}
+                        boardMission={boardMission}
+                        status={status}
+                        onClickDone={tryMoveBoardMissionsToDone}
+                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                        index={index}
+                        onClickClient={onClickClient}
+                        isMobileScreen={isMobileScreen}
+                        isRTL={RTL}
+                        isUrgentWork={hasUrgentOrApproval}
+                        onUpdateJobDueDate={updateJobDueDate}
+                        employeesCategories={employeesCategories}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))}
+                  </TableBody>
                 </Table>
               </TableContainer>
-             
-            </div> }
+
+            </div>}
           </Paper>
         </Collapse>
       )}
@@ -555,6 +560,34 @@ const StatusTableComponent = ({
           />
         </div>
       </ThreeOptionsModal>
+
+      {/* Done scope selection when productType exists */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={"Select Jobs to Mark as Ready"}
+        subTitle={
+          selectedMission?.productType
+            ? t("boardMissions.askDoneScope", {
+              productType:
+                selectedMission?.productTypeName || selectedMission?.productType,
+            })
+            : ""
+        }
+        yesBtn={t("boardMissions.markAllJobsReady", { defaultValue: "Mark All Jobs Ready" })}
+        noBtn={
+          selectedMission?.productType
+            ? t("boardMissions.markProductTypeOnly", {
+              productType:
+                selectedMission?.productTypeName || selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"} Only`,
+            })
+            : undefined
+        }
+        openModal={openDoneScopeModal}
+        onClose={onCloseDoneScopeModal}
+        onClickYes={onClickDoneScopeAllJobs}
+        onClickNo={onClickDoneScopeProductType}
+      />
 
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}

@@ -36,7 +36,8 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
-import { GomakeTextInput } from "@/components";
+import { GomakeTextInput, ThreeOptionsModal } from "@/components";
+import { ModalType } from "@/enums";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -335,19 +336,16 @@ const BoardMissionsStationActionItem = ({
     });
   };
 
-  const onClickDoneWithMaterials = async (
-    updatedState: {
-      currentStationId: string;
-      boardMissionActionId: string;
-      productionTime: string;
-      materials: {
-        ProductType: string;
-        WorkFlowActionId: string;
-        materialKey: string;
-        currentValue: string;
-      }[];
-    },
-    sendMSg?: boolean
+  // ===== Done scope selection (All jobs vs product type only) =====
+  const [openDoneScopeModal, setOpenDoneScopeModal] = useState<boolean>(false);
+  const [pendingDoneData, setPendingDoneData] = useState<
+    { updatedState: any; sendMSg?: boolean } | null
+  >(null);
+
+  const performDoneWithMaterials = async (
+    updatedStateArg: any,
+    productTypeArg: string,
+    sendMSgArg?: boolean
   ) => {
     setLoading(true);
     const callBack = (res) => {
@@ -364,7 +362,7 @@ const BoardMissionsStationActionItem = ({
                 isDone: true,
                 boardMissionActionTimer: {
                   isTimerRunning: false,
-                  totalRunningTime: Number(updatedState.productionTime),
+                  totalRunningTime: Number(updatedStateArg.productionTime),
                 },
               };
             }
@@ -394,10 +392,35 @@ const BoardMissionsStationActionItem = ({
       }
     };
     await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
-      updatedState,
-      productType: productType,
-      isSendMessage: !!sendMSg,
+      updatedState: updatedStateArg,
+      productType: productTypeArg,
+      isSendMessage: !!sendMSgArg,
     });
+  };
+
+  const onClickDoneWithMaterials = async (
+    updatedState: {
+      currentStationId: string;
+      boardMissionActionId: string;
+      productionTime: string;
+      materials: {
+        ProductType: string;
+        WorkFlowActionId: string;
+        materialKey: string;
+        currentValue: string;
+      }[];
+    },
+    sendMSg?: boolean
+  ) => {
+    // If there is a product type, ask scope: all jobs vs product type only
+    if (productType) {
+      setPendingDoneData({ updatedState, sendMSg });
+      setOpenDoneScopeModal(true);
+      return;
+    }
+
+    // No product type → mark whole job
+    await performDoneWithMaterials(updatedState, "", sendMSg);
   };
 
   const [isHovered, setIsHovered] = useState(false);
@@ -1032,6 +1055,33 @@ const BoardMissionsStationActionItem = ({
           showIsReady={isReadyModal}
         />
       )}
+      {/* Select Done Scope Modal */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={"Select Jobs to Mark as Ready"}
+        subTitle={
+          productType
+            ? `Would you like to mark all jobs as ready or only ${productType} jobs?`
+            : ""
+        }
+        yesBtn={"Mark All Jobs Ready"}
+        noBtn={productType ? `Mark ${productType} Only` : ""}
+        openModal={openDoneScopeModal}
+        onClose={() => {
+          setOpenDoneScopeModal(false);
+          setPendingDoneData(null);
+        }}
+        onClickYes={() => {
+          if (pendingDoneData) {
+            performDoneWithMaterials(pendingDoneData.updatedState, "", pendingDoneData.sendMSg);
+          }
+        }}
+        onClickNo={() => {
+          if (pendingDoneData) {
+            performDoneWithMaterials(pendingDoneData.updatedState, productType, pendingDoneData.sendMSg);
+          }
+        }}
+      />
       <PrintPackingSlipModalWidget
         boardMissionId={boardMissions.boardMissionId}
         quantity={boardMissions.quantity}
