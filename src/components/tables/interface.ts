@@ -33,6 +33,25 @@ export interface ITableProps {
   customSortFns?: {
     [key: number]: (a: any, b: any) => number;
   };
+  /**
+   * Optional controlled sorting configuration. When provided, sorting is controlled by the parent
+   * component and header clicks will invoke onSortChange instead of changing internal state.
+   */
+  sortConfig?: {
+    key: number;
+    direction: "asc" | "desc";
+  };
+  /**
+   * Called when a sortable header is clicked and sorting is controlled by the parent.
+   */
+  onSortChange?: (config: { key: number; direction: "asc" | "desc" }) => void;
+  /**
+   * Optional default sort configuration for client-side sorting.
+   * When provided with withSort=true, the table initializes sorted
+   * by the given column index and direction.
+   */
+  defaultSortIndex?: number;
+  defaultSortDirection?: "asc" | "desc";
 }
 
 export interface ISecondaryTableProps {

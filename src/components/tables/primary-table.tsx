@@ -164,6 +164,10 @@ const PrimaryTable = ({
   isHeaderSortable,
   docType,
   customSortFns, // Optional. Provide column-specific sort functions (by column index). Defaults to basic comparison if not passed.
+  sortConfig: externalSortConfig,
+  onSortChange,
+  defaultSortIndex,
+  defaultSortDirection,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -171,11 +175,16 @@ const PrimaryTable = ({
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
 
-  // State for sorting
-  const [sortConfig, setSortConfig] = useState<{
+  // State for sorting (uncontrolled mode)
+  const [internalSortConfig, setInternalSortConfig] = useState<{
     key: number;
     direction: "asc" | "desc";
-  } | null>(null);
+  } | null>(
+    withSort && defaultSortIndex !== undefined
+      ? { key: defaultSortIndex as number, direction: defaultSortDirection || "desc" }
+      : null
+  );
+  const sortConfig = externalSortConfig ?? internalSortConfig;
   const handleRowSelection = (rowIndex: number) => {
     setSelectedRows((prevSelectedRows) => {
       const newSelectedRows = new Set(prevSelectedRows);
@@ -240,17 +249,18 @@ const PrimaryTable = ({
   }, [rows, sortConfig, customSortFns]);
 
   const handleSort = (index: number) => {
-    setSortConfig((prev) => {
-      if (prev?.key === index) {
-        // Toggle direction
-        return {
-          key: index,
-          direction: prev.direction === "asc" ? "desc" : "asc",
-        };
+    const next = (() => {
+      if (sortConfig?.key === index) {
+        return { key: index, direction: sortConfig.direction === "asc" ? "desc" : "asc" as const };
       }
-      // New sort column
-      return { key: index, direction: "asc" };
-    });
+      return { key: index, direction: "asc" as const };
+    })();
+
+    if (onSortChange) {
+      onSortChange(next as { key: number; direction: "asc" | "desc" });
+    } else {
+      setInternalSortConfig(next as { key: number; direction: "asc" | "desc" });
+    }
   };
 
   return (
