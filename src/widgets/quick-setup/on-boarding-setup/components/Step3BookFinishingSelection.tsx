@@ -75,31 +75,6 @@ export const Step3BookFinishingSelection: React.FC<
   return (
     <Box>
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          {t("quickSetup.selectBookFinishingMachines")}
-        </Typography>
-
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-            {t("quickSetup.bookFinishingMachinesDescription")}
-          </Typography>
-
-          <Paper sx={{ p: 2, backgroundColor: "#f8f9fa" }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Selected Printing Machines:
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {/* This would show selected printing machines from step 1 */}
-              <Chip
-                label="Digital/Offset Printing"
-                size="small"
-                color="primary"
-                variant="outlined"
-              />
-            </Box>
-          </Paper>
-        </Box>
-
         <Box>
           <Typography variant="h6" sx={{ mb: 2 }}>
             Book Finishing Categories

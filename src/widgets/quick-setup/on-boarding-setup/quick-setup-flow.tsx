@@ -593,7 +593,7 @@ const QuickSetupFlow: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: "0px 24px 24px 24px" }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
         {t("Quick Machines Setup")}
       </Typography>
