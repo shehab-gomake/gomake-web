@@ -140,6 +140,11 @@ const StatusTableComponent = ({
     openMarkReadyModalForHasJobs,
     onCloseMarkReadyModalForHasJobs,
     onClickMarkReadyModalForHasJobs,
+    // Done scope modal
+    openDoneScopeModal,
+    onCloseDoneScopeModal,
+    onClickDoneScopeAllJobs,
+    onClickDoneScopeProductType,
   } = useProductionFloorData();
 
   const {
@@ -412,7 +417,7 @@ const StatusTableComponent = ({
         : (Math.min(boardsCount, visibleLimit) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
 
     return `${baseHeight}px`;
-  };
+  };;
 
 
   return (
@@ -598,6 +603,34 @@ const StatusTableComponent = ({
           />
         </div>
       </ThreeOptionsModal>
+
+      {/* Done scope selection when productType exists */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={"Select Jobs to Mark as Ready"}
+        subTitle={
+          selectedMission?.productType
+            ? t("boardMissions.askDoneScope", {
+              productType:
+                selectedMission?.productTypeName || selectedMission?.productType,
+            })
+            : ""
+        }
+        yesBtn={t("boardMissions.markAllJobsReady", { defaultValue: "Mark All Jobs Ready" })}
+        noBtn={
+          selectedMission?.productType
+            ? t("boardMissions.markProductTypeOnly", {
+              productType:
+                selectedMission?.productTypeName || selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"} Only`,
+            })
+            : undefined
+        }
+        openModal={openDoneScopeModal}
+        onClose={onCloseDoneScopeModal}
+        onClickYes={onClickDoneScopeAllJobs}
+        onClickNo={onClickDoneScopeProductType}
+      />
 
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
