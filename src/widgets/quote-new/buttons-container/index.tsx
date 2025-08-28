@@ -394,7 +394,7 @@ const ButtonsContainer = ({
         )}
         {(isQuote ||
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
-          (isPurchaseOrder &&
+          ((isPurchaseOrder && !isNewCreation) &&
             quoteItemValue?.documentStatus !==
             PURCHASE_ORDER_STATUSES.Canceled)) && (
             <GomakePrimaryButton
