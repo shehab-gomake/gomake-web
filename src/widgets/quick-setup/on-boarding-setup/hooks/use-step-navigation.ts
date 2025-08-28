@@ -190,7 +190,7 @@ export const useStepNavigation = (
           selectedRollFlexoFinishingMachines
         );
         console.log("Selected packaging machines:", selectedPackagingMachines);
-        alert("Setup completed!");
+        // alert("Setup completed!");
         return true;
       }
     },

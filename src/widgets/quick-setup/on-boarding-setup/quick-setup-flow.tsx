@@ -595,7 +595,7 @@ const QuickSetupFlow: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        {t("Quick Setup - Multi-Step Configuration")}
+        {t("Quick Machines Setup")}
       </Typography>
 
       {/* Stepper */}
