@@ -413,7 +413,7 @@ const BoardMissionsStationActionItem = ({
     sendMSg?: boolean
   ) => {
     // If there is a product type, ask scope: all jobs vs product type only
-    if (productType) {
+    if (productType && isLastStation) {
       setPendingDoneData({ updatedState, sendMSg });
       setOpenDoneScopeModal(true);
       return;
