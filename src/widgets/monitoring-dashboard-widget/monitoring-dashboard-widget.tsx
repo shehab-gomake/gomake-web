@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Skeleton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
@@ -73,6 +73,11 @@ const MonitoringDashboardWidget = () => {
     primaryColor,
   } = useMonitoringDashboard();
 
+  // Controlled sort state per table (default: Final Price desc at column index 3)
+  const [agentSort, setAgentSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
+  const [productSort, setProductSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
+  const [clientSort, setClientSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
+
   useEffect(() => {
     const fetchAllData = async () => {
       await Promise.all([
@@ -115,7 +120,9 @@ const MonitoringDashboardWidget = () => {
     rows: any[],
     headers: any[],
     visibleCount: number,
-    setVisibleCount: React.Dispatch<React.SetStateAction<number>>
+    setVisibleCount: React.Dispatch<React.SetStateAction<number>>,
+    sortConfig: { key: number; direction: "asc" | "desc" },
+    onSortChange: (config: { key: number; direction: "asc" | "desc" }) => void
   ) => {
     const hasMore = rows.length > visibleCount;
 
@@ -127,15 +134,44 @@ const MonitoringDashboardWidget = () => {
       }
     };
 
+    // Sort all rows according to current sort config before slicing
+    const sortFns: { [key: number]: (a: any, b: any) => number } = {
+      1: (a, b) => Number(a[1] ?? 0) - Number(b[1] ?? 0),
+      2: (a, b) => Number(a[2] ?? 0) - Number(b[2] ?? 0),
+      3: (a, b) => parseCurrency(a[3]) - parseCurrency(b[3]),
+      4: (a, b) => parseCurrency(a[4]) - parseCurrency(b[4]),
+      5: (a, b) => parseCurrency(a[5]) - parseCurrency(b[5]),
+      6: (a, b) => parseCurrency(a[6]) - parseCurrency(b[6]),
+      7: (a, b) => parseCurrency(a[7]) - parseCurrency(b[7]),
+      8: (a, b) => parsePercent(a[8]) - parsePercent(b[8]),
+      9: (a, b) => Number(a[9] ?? 0) - Number(b[9] ?? 0),
+      10: (a, b) => parsePercent(a[10]) - parsePercent(b[10]),
+      11: (a, b) => parsePercent(a[11]) - parsePercent(b[11]),
+      12: (a, b) => growthValue(a[12]) - growthValue(b[12]),
+    };
+    const fullSorted = (() => {
+      if (!sortConfig) return rows;
+      const fn = sortFns[sortConfig.key];
+      const sorted = [...rows].sort((a, b) => {
+        const result = fn ? fn(a, b) : (a[sortConfig.key] < b[sortConfig.key] ? -1 : a[sortConfig.key] > b[sortConfig.key] ? 1 : 0);
+        return sortConfig.direction === "asc" ? result : -result;
+      });
+      return sorted;
+    })();
+
     return (
       <div style={classes.subContainer}>
         <h3 style={classes.labelStyle}>{t(title)}</h3>
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
-          rows={rows.slice(0, visibleCount)}
+          rows={fullSorted.slice(0, visibleCount)}
           headers={headers}
           withSort
+          sortConfig={sortConfig}
+          onSortChange={onSortChange}
+          defaultSortIndex={sortConfig?.key ?? 3}
+          defaultSortDirection={sortConfig?.direction ?? "desc"}
           customSortFns={{
             // 0: name (default string compare)
             1: (a, b) => Number(a[1] ?? 0) - Number(b[1] ?? 0), // jobs
@@ -238,21 +274,27 @@ const MonitoringDashboardWidget = () => {
         agentsRow,
         agentTableHeaders,
         visibleAgentRows,
-        setVisibleAgentRows
+        setVisibleAgentRows,
+        agentSort,
+        setAgentSort
       )}
       {renderTableSection(
         "dashboard.productPerformanceTitle",
         productsRow,
         productTableHeaders,
         visibleProductRows,
-        setVisibleProductRows
+        setVisibleProductRows,
+        productSort,
+        setProductSort
       )}
       {renderTableSection(
         "dashboard.clientPerformanceTitle",
         clientsRow,
         clientTableHeaders,
         visibleClientRows,
-        setVisibleClientRows
+        setVisibleClientRows,
+        clientSort,
+        setClientSort
       )}
     </div>
   );
