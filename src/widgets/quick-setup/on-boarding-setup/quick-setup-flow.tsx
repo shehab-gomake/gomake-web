@@ -137,7 +137,7 @@ const QuickSetupFlow: React.FC = () => {
   ): SelectedMachine => {
     return {
       id: machine.id,
-      name: machine.nickName || `${machine.manufacturer} - ${machine.model}`,
+      name: `${machine.manufacturer} - ${machine.model}` || machine.nickName,
       category: categoryId,
       categoryId: categoryId,
       categoryName: categoryName(categoryId), // Use the translated category name
@@ -154,7 +154,7 @@ const QuickSetupFlow: React.FC = () => {
   ): SelectedFinishingMachine => {
     return {
       id: machine.id,
-      name: machine.nickName || `${machine.manufacturer} - ${machine.model}`,
+      name: `${machine.manufacturer} - ${machine.model}` || machine.nickName,
       categoryId: categoryId,
       categoryName: categoryName(categoryId), // Use the translated category name
       stepAdded,
