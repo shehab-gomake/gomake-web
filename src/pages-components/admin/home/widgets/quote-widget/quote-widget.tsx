@@ -26,7 +26,12 @@ import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
-const QuoteWidget = ({ isMobileScreen = false, title = "" }) => {
+interface QuoteWidgetProps {
+  isMobileScreen?: boolean;
+  title?: string;
+}
+
+const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
@@ -120,6 +125,12 @@ const QuoteWidget = ({ isMobileScreen = false, title = "" }) => {
       }
     }
   }, [listClient]);
+
+  const defaultTitle = QuoteId
+    ? t("home.admin.addNewItemToQuote") + " " + QuoteId
+    : t("home.admin.startQuote");
+
+  const displayTitle = title || defaultTitle;
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
