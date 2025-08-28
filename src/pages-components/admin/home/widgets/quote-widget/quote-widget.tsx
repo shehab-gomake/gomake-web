@@ -26,7 +26,7 @@ import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
-const QuoteWidget = ({ isMobileScreen = false }) => {
+const QuoteWidget = ({ isMobileScreen = false, title = "" }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
@@ -123,6 +123,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
+      <div style={classes.titleStyle}>{title}</div>
       <PermissionCheck
         userPermission={Permissions.CAN_SELECT_CLIENT_IN_HOME_PAGE}
       >
