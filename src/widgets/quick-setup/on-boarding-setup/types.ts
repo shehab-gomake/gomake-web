@@ -11,14 +11,16 @@ export interface SelectedMachine {
   id: string;
   name: string;
   category: string;
-  categoryId?: string;
+  categoryId: string | number; // Allow both string and number (ECategoryId enum)
   categoryName: string;
+  stepAdded?: number; // Track which step this machine was added from
+  machineType?: "printing" | "finishing"; // Distinguish between printing and finishing machines
 }
 
 export interface FinishingCategory {
   id: string;
   name: string;
-  machines: string[]; //!here should be machine structure
+  machines: Machine[]; // Changed from string[] to Machine[]
   categoryType:
     | "digital_offset"
     | "roll_flexo"
@@ -28,17 +30,19 @@ export interface FinishingCategory {
     | "packaging";
 }
 
-//!here
+// Keep for backward compatibility but mark as deprecated
 export interface SelectedFinishingMachine {
   id: string;
   name: string;
   categoryId: string;
   categoryName: string;
+  stepAdded?: number;
 }
 
 export interface StepState {
   currentStep: number;
-  selectedMachines: SelectedMachine[];
+  selectedMachines: SelectedMachine[]; // Unified array for all machines
+  // Individual step selections for UI state management
   selectedFinishingMachines: SelectedFinishingMachine[];
   selectedBookFinishingMachines: SelectedFinishingMachine[];
   selectedWideFormatFinishingMachines: SelectedFinishingMachine[];

@@ -99,24 +99,6 @@ export const initializeFinishingCategories = (): FinishingCategory[] => [
     machines: [],
     categoryType: "digital_offset",
   },
-  // {
-  //   id: ECategoryId.CARTOON_PACKAGING_MACHINE,
-  //   name: "machinesCategories.cartoonPackaging",
-  //   machines: [],
-  //   categoryType: "digital_offset",
-  // },
-  // {
-  //   id: ECategoryId.PACKAGE_TYING_MACHINE,
-  //   name: "machinesCategories.packageTying",
-  //   machines: [],
-  //   categoryType: "digital_offset",
-  // },
-  // {
-  //   id: ECategoryId.SHRINK_PACKING_MACHINE,
-  //   name: "machinesCategories.shrinkPackaging",
-  //   machines: [],
-  //   categoryType: "digital_offset",
-  // },
   //!here only for
   {
     id: ECategoryId.THERMAL_PLATE_PROCESSOR,
@@ -217,24 +199,6 @@ export const initializeRollFlexoFinishingCategories =
       machines: [],
       categoryType: "roll_flexo",
     },
-    // {
-    //   id: ECategoryId.CARTOON_PACKAGING_MACHINE,
-    //   name: "machinesCategories.cartoonPackaging",
-    //   machines: [],
-    //   categoryType: "roll_flexo",
-    // },
-    // {
-    //   id: ECategoryId.PACKAGE_TYING_MACHINE,
-    //   name: "machinesCategories.packageTying",
-    //   machines: [],
-    //   categoryType: "roll_flexo",
-    // },
-    // {
-    //   id: ECategoryId.SHRINK_PACKING_MACHINE,
-    //   name: "machinesCategories.shrinkPackaging",
-    //   machines: [],
-    //   categoryType: "roll_flexo",
-    // },
   ];
 
 // Wide Format Finishing Categories Configuration
@@ -282,24 +246,6 @@ export const initializeWideFormatFinishingCategories =
       machines: [],
       categoryType: "wide_format",
     },
-    // {
-    //   id: ECategoryId.CARTOON_PACKAGING_MACHINE,
-    //   name: "machinesCategories.cartoonPackaging",
-    //   machines: [],
-    //   categoryType: "wide_format",
-    // },
-    // {
-    //   id: ECategoryId.PACKAGE_TYING_MACHINE,
-    //   name: "machinesCategories.packageTying",
-    //   machines: [],
-    //   categoryType: "wide_format",
-    // },
-    // {
-    //   id: ECategoryId.SHRINK_PACKING_MACHINE,
-    //   name: "machinesCategories.shrinkPackaging",
-    //   machines: [],
-    //   categoryType: "wide_format",
-    // },
   ];
 
 // DTF & Sublimation Finishing Categories Configuration
@@ -323,24 +269,6 @@ export const initializeDtfSublimationFinishingCategories =
       machines: [],
       categoryType: "dtf_sublimation",
     },
-    // {
-    //   id: ECategoryId.CARTOON_PACKAGING_MACHINE,
-    //   name: "machinesCategories.cartoonPackaging",
-    //   machines: [],
-    //   categoryType: "dtf_sublimation",
-    // },
-    // {
-    //   id: ECategoryId.PACKAGE_TYING_MACHINE,
-    //   name: "machinesCategories.packageTying",
-    //   machines: [],
-    //   categoryType: "dtf_sublimation",
-    // },
-    // {
-    //   id: ECategoryId.SHRINK_PACKING_MACHINE,
-    //   name: "machinesCategories.shrinkPackaging",
-    //   machines: [],
-    //   categoryType: "dtf_sublimation",
-    // },
   ];
 
 export const initializePackagingCategories = (): FinishingCategory[] => [

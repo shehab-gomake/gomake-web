@@ -88,24 +88,12 @@ export const useMachinesData = () => {
     const packagingCategories = initializePackagingCategories();
 
     // Function to find machines by category ID
-    const findMachinesByCategoryId = (categoryId: string): string[] => {
-      const matchingMachines: string[] = [];
-
-      allMachines.forEach((machine) => {
+    const findMachinesByCategoryId = (categoryId: string): Machine[] => {
+      return allMachines.filter((machine) => {
         // Check if machine belongs to this category by categoryId or category field
         const machineCategoryId = machine.categoryId || machine.category;
-
-        if (machineCategoryId === categoryId) {
-          const machineName =
-            machine.nickName || `${machine.manufacturer} - ${machine.model}`;
-
-          if (!matchingMachines.includes(machineName)) {
-            matchingMachines.push(machineName);
-          }
-        }
+        return machineCategoryId === categoryId;
       });
-
-      return matchingMachines;
     };
 
     // Populate machines for digital/offset categories

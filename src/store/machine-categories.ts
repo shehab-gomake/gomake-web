@@ -9,8 +9,6 @@ interface IMachineCategory {
   isEffectProfitProfile?: boolean;
 }
 
-//!here
-
 export const machineCategoriesState = atom<IMachineCategory[]>({
   key: "machinesCategoryState",
   default: [

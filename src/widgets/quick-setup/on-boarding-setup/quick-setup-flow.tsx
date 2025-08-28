@@ -6,11 +6,14 @@ import {
   Stepper,
   Step,
   StepLabel,
+  Paper,
+  Chip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 // Import types and interfaces
 import {
+  Machine,
   SelectedMachine,
   SelectedFinishingMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
@@ -18,6 +21,7 @@ import {
 // Import custom hooks
 import { useMachinesData } from "@/widgets/quick-setup/on-boarding-setup/hooks/use-machines-data";
 import { useStepNavigation } from "@/widgets/quick-setup/on-boarding-setup/hooks/use-step-navigation";
+import { useMachinesCategories } from "@/widgets/machines/hooks/use-machines-categories";
 
 // Import components
 import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step1MachineSelection";
@@ -28,8 +32,12 @@ import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boar
 import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 import { Step7PackagingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step7PackagingSelection";
 
+// Import step configuration
+import { STEPS_CONFIG } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
+
 const QuickSetupFlow: React.FC = () => {
   const { t } = useTranslation();
+  const { categoryName } = useMachinesCategories();
 
   // Use custom hooks for data and navigation
   const {
@@ -43,20 +51,22 @@ const QuickSetupFlow: React.FC = () => {
     packagingCategories,
   } = useMachinesData();
 
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // Navigation - MUST be called before any conditional returns
   const {
-    currentStep,
-    steps,
-    hasDigitalOrOffsetPrinting,
-    hasRollOrFlexoPrinting,
-    hasWidePrinting,
-    hasDtfOrSublimationPrinting,
     handleNext,
     handleBack,
     isNextDisabled,
     getNextButtonText,
-  } = useStepNavigation();
+    hasDigitalOrOffsetPrinting,
+    hasRollOrFlexoPrinting,
+    hasWidePrinting,
+    hasDtfOrSublimationPrinting,
+    steps,
+  } = useStepNavigation(currentStep, setCurrentStep);
 
-  // State management
+  // State management - MUST be called before any conditional returns
   const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
     []
   );
@@ -110,51 +120,217 @@ const QuickSetupFlow: React.FC = () => {
     setSelectedPackagingCategoryMachines,
   ] = useState<{ [categoryId: string]: string }>({});
 
-  // Machine management functions
-  const handleAddMachine = (machine: SelectedMachine) => {
-    setSelectedMachines([...selectedMachines, machine]);
+  // if (machinesLoading) {
+  //   return (
+  //     <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+  //       <Typography>Loading machines...</Typography>
+  //     </Box>
+  //   );
+  // }
+
+  // Helper function to convert Machine to SelectedMachine
+  const convertMachineToSelectedMachine = (
+    machine: Machine,
+    categoryId: string,
+    stepAdded: number = 0,
+    machineType: "printing" | "finishing" = "printing"
+  ): SelectedMachine => {
+    return {
+      id: machine.id,
+      name: machine.nickName || `${machine.manufacturer} - ${machine.model}`,
+      category: categoryId,
+      categoryId: categoryId,
+      categoryName: categoryName(categoryId), // Use the translated category name
+      stepAdded,
+      machineType,
+    };
+  };
+
+  // Helper function to convert Machine to SelectedFinishingMachine
+  const convertMachineToSelectedFinishingMachine = (
+    machine: Machine,
+    categoryId: string,
+    stepAdded: number = 0
+  ): SelectedFinishingMachine => {
+    return {
+      id: machine.id,
+      name: machine.nickName || `${machine.manufacturer} - ${machine.model}`,
+      categoryId: categoryId,
+      categoryName: categoryName(categoryId), // Use the translated category name
+      stepAdded,
+    };
+  };
+
+  // Step 1: All Machines Selection (Printing machines)
+  const handleAddMachine = (machine: Machine, categoryId: string) => {
+    const newSelectedMachine = convertMachineToSelectedMachine(
+      machine,
+      categoryId,
+      0,
+      "printing"
+    );
+
+    // Check if machine already exists
+    const existingIndex = selectedMachines.findIndex(
+      (m) => m.id === machine.id
+    );
+    if (existingIndex === -1) {
+      setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+    }
+
+    // Bidirectional synchronization: If machine belongs to a finishing category,
+    // also add it to the corresponding finishing step selection
+    const newSelectedFinishingMachine =
+      convertMachineToSelectedFinishingMachine(machine, categoryId, 0);
+
+    // Check which finishing step this machine belongs to and add it there
+    if (finishingCategories.some((cat) => cat.id === categoryId)) {
+      // Step 2: Digital/Sheet Finishing
+      const existingFinishingIndex = selectedFinishingMachines.findIndex(
+        (m) => m.id === machine.id
+      );
+      if (existingFinishingIndex === -1) {
+        setSelectedFinishingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    } else if (bookFinishingCategories.some((cat) => cat.id === categoryId)) {
+      // Step 3: Book Finishing
+      const existingBookFinishingIndex =
+        selectedBookFinishingMachines.findIndex((m) => m.id === machine.id);
+      if (existingBookFinishingIndex === -1) {
+        setSelectedBookFinishingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    } else if (
+      rollFlexoFinishingCategories.some((cat) => cat.id === categoryId)
+    ) {
+      // Step 4: Roll/Flexo Finishing
+      const existingRollFlexoIndex =
+        selectedRollFlexoFinishingMachines.findIndex(
+          (m) => m.id === machine.id
+        );
+      if (existingRollFlexoIndex === -1) {
+        setSelectedRollFlexoFinishingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    } else if (
+      wideFormatFinishingCategories.some((cat) => cat.id === categoryId)
+    ) {
+      // Step 5: Wide Format Finishing
+      const existingWideFormatIndex =
+        selectedWideFormatFinishingMachines.findIndex(
+          (m) => m.id === machine.id
+        );
+      if (existingWideFormatIndex === -1) {
+        setSelectedWideFormatFinishingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    } else if (
+      dtfSublimationFinishingCategories.some((cat) => cat.id === categoryId)
+    ) {
+      // Step 6: DTF & Sublimation Finishing
+      const existingDtfSublimationIndex =
+        selectedDtfSublimationFinishingMachines.findIndex(
+          (m) => m.id === machine.id
+        );
+      if (existingDtfSublimationIndex === -1) {
+        setSelectedDtfSublimationFinishingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    } else if (packagingCategories.some((cat) => cat.id === categoryId)) {
+      // Step 7: Packaging
+      const existingPackagingIndex = selectedPackagingMachines.findIndex(
+        (m) => m.id === machine.id
+      );
+      if (existingPackagingIndex === -1) {
+        setSelectedPackagingMachines((prev) => [
+          ...prev,
+          newSelectedFinishingMachine,
+        ]);
+      }
+    }
   };
 
   const handleDeleteMachine = (machineId: string) => {
-    setSelectedMachines(selectedMachines.filter((m) => m.id !== machineId));
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
+
+    // Also remove from individual step selections
+    setSelectedFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedBookFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedWideFormatFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedDtfSublimationFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedRollFlexoFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedPackagingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
   };
 
-  // Finishing machine management functions
+  // Step 2: Digital/Sheet Finishing
   const handleAddFinishingMachine = (categoryId: string) => {
-    const selectedMachine = selectedCategoryMachines[categoryId];
-    if (!selectedMachine) return;
+    const machineName = selectedCategoryMachines[categoryId];
+    if (machineName) {
+      const category = finishingCategories.find((cat) => cat.id === categoryId);
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            1,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 1);
 
-    const category = finishingCategories.find((cat) => cat.id === categoryId);
-    if (!category) return;
+          // Add to unified selection
+          const existingIndex = selectedMachines.findIndex(
+            (m) => m.id === machine.id
+          );
+          if (existingIndex === -1) {
+            setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          }
 
-    const newFinishingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
+          // Add to step-specific selection
+          setSelectedFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
 
-    const isDuplicate = selectedFinishingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
-    );
-
-    if (!isDuplicate) {
-      setSelectedFinishingMachines([
-        ...selectedFinishingMachines,
-        newFinishingMachine,
-      ]);
-      setSelectedCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
+          // Clear selection
+          setSelectedCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
     }
   };
 
   const handleDeleteFinishingMachine = (machineId: string) => {
     setSelectedFinishingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
+      prev.filter((m) => m.id !== machineId)
     );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
   };
 
   const handleCategoryMachineChange = (
@@ -167,44 +343,44 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
-  // Book finishing machine management functions
+  // Step 3: Book Finishing
   const handleAddBookFinishingMachine = (categoryId: string) => {
-    const selectedMachine = selectedBookFinishingCategoryMachines[categoryId];
-    if (!selectedMachine) return;
+    const machineName = selectedBookFinishingCategoryMachines[categoryId];
+    if (machineName) {
+      const category = bookFinishingCategories.find(
+        (cat) => cat.id === categoryId
+      );
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            2,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 2);
 
-    const category = bookFinishingCategories.find(
-      (cat) => cat.id === categoryId
-    );
-    if (!category) return;
-
-    const newBookFinishingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
-
-    const isDuplicate = selectedBookFinishingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
-    );
-
-    if (!isDuplicate) {
-      setSelectedBookFinishingMachines([
-        ...selectedBookFinishingMachines,
-        newBookFinishingMachine,
-      ]);
-      setSelectedBookFinishingCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
+          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          setSelectedBookFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+          setSelectedBookFinishingCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
     }
   };
 
   const handleDeleteBookFinishingMachine = (machineId: string) => {
     setSelectedBookFinishingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
+      prev.filter((m) => m.id !== machineId)
     );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
   };
 
   const handleBookFinishingCategoryMachineChange = (
@@ -217,147 +393,44 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
-  // Wide format finishing machine management functions
-  const handleAddWideFormatFinishingMachine = (categoryId: string) => {
-    const selectedMachine =
-      selectedWideFormatFinishingCategoryMachines[categoryId];
-    if (!selectedMachine) return;
-
-    const category = wideFormatFinishingCategories.find(
-      (cat) => cat.id === categoryId
-    );
-    if (!category) return;
-
-    const newWideFormatFinishingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
-
-    const isDuplicate = selectedWideFormatFinishingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
-    );
-
-    if (!isDuplicate) {
-      setSelectedWideFormatFinishingMachines([
-        ...selectedWideFormatFinishingMachines,
-        newWideFormatFinishingMachine,
-      ]);
-      setSelectedWideFormatFinishingCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
-    }
-  };
-
-  const handleDeleteWideFormatFinishingMachine = (machineId: string) => {
-    setSelectedWideFormatFinishingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
-    );
-  };
-
-  const handleWideFormatFinishingCategoryMachineChange = (
-    categoryId: string,
-    machineName: string
-  ) => {
-    setSelectedWideFormatFinishingCategoryMachines((prev) => ({
-      ...prev,
-      [categoryId]: machineName,
-    }));
-  };
-
-  // DTF & Sublimation finishing machine management functions
-  const handleAddDtfSublimationFinishingMachine = (categoryId: string) => {
-    const selectedMachine =
-      selectedDtfSublimationFinishingCategoryMachines[categoryId];
-    if (!selectedMachine) return;
-
-    const category = dtfSublimationFinishingCategories.find(
-      (cat) => cat.id === categoryId
-    );
-    if (!category) return;
-
-    const newDtfSublimationFinishingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
-
-    const isDuplicate = selectedDtfSublimationFinishingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
-    );
-
-    if (!isDuplicate) {
-      setSelectedDtfSublimationFinishingMachines([
-        ...selectedDtfSublimationFinishingMachines,
-        newDtfSublimationFinishingMachine,
-      ]);
-      setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
-    }
-  };
-
-  const handleDeleteDtfSublimationFinishingMachine = (machineId: string) => {
-    setSelectedDtfSublimationFinishingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
-    );
-  };
-
-  const handleDtfSublimationFinishingCategoryMachineChange = (
-    categoryId: string,
-    machineName: string
-  ) => {
-    setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
-      ...prev,
-      [categoryId]: machineName,
-    }));
-  };
-
-  // Roll/Flexo finishing machine management functions
+  // Step 4: Roll/Flexo Finishing
   const handleAddRollFlexoFinishingMachine = (categoryId: string) => {
-    const selectedMachine =
-      selectedRollFlexoFinishingCategoryMachines[categoryId];
-    if (!selectedMachine) return;
+    const machineName = selectedRollFlexoFinishingCategoryMachines[categoryId];
+    if (machineName) {
+      const category = rollFlexoFinishingCategories.find(
+        (cat) => cat.id === categoryId
+      );
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            3,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 3);
 
-    const category = rollFlexoFinishingCategories.find(
-      (cat) => cat.id === categoryId
-    );
-    if (!category) return;
-
-    const newRollFlexoFinishingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
-
-    const isDuplicate = selectedRollFlexoFinishingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
-    );
-
-    if (!isDuplicate) {
-      setSelectedRollFlexoFinishingMachines([
-        ...selectedRollFlexoFinishingMachines,
-        newRollFlexoFinishingMachine,
-      ]);
-      setSelectedRollFlexoFinishingCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
+          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          setSelectedRollFlexoFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+          setSelectedRollFlexoFinishingCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
     }
   };
 
   const handleDeleteRollFlexoFinishingMachine = (machineId: string) => {
     setSelectedRollFlexoFinishingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
+      prev.filter((m) => m.id !== machineId)
     );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
   };
 
   const handleRollFlexoFinishingCategoryMachineChange = (
@@ -370,39 +443,143 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
-  // Packaging machine management functions
-  const handleAddPackagingMachine = (categoryId: string) => {
-    const selectedMachine = selectedPackagingCategoryMachines[categoryId];
-    if (!selectedMachine) return;
+  // Step 5: Wide Format Finishing
+  const handleAddWideFormatFinishingMachine = (categoryId: string) => {
+    const machineName = selectedWideFormatFinishingCategoryMachines[categoryId];
+    if (machineName) {
+      const category = wideFormatFinishingCategories.find(
+        (cat) => cat.id === categoryId
+      );
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            4,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 4);
 
-    const category = packagingCategories.find((cat) => cat.id === categoryId);
-    if (!category) return;
+          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          setSelectedWideFormatFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+          setSelectedWideFormatFinishingCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
+    }
+  };
 
-    const newPackagingMachine: SelectedFinishingMachine = {
-      id: `${categoryId}_${selectedMachine}`,
-      name: selectedMachine,
-      categoryId: categoryId,
-      categoryName: t(category.name),
-    };
-
-    const isDuplicate = selectedPackagingMachines.some(
-      (machine) =>
-        machine.categoryId === categoryId && machine.name === selectedMachine
+  const handleDeleteWideFormatFinishingMachine = (machineId: string) => {
+    setSelectedWideFormatFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
     );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
+  };
 
-    if (!isDuplicate) {
-      setSelectedPackagingMachines((prev) => [...prev, newPackagingMachine]);
-      setSelectedPackagingCategoryMachines((prev) => ({
-        ...prev,
-        [categoryId]: "",
-      }));
+  const handleWideFormatFinishingCategoryMachineChange = (
+    categoryId: string,
+    machineName: string
+  ) => {
+    setSelectedWideFormatFinishingCategoryMachines((prev) => ({
+      ...prev,
+      [categoryId]: machineName,
+    }));
+  };
+
+  // Step 6: DTF/Sublimation Finishing
+  const handleAddDtfSublimationFinishingMachine = (categoryId: string) => {
+    const machineName =
+      selectedDtfSublimationFinishingCategoryMachines[categoryId];
+    if (machineName) {
+      const category = dtfSublimationFinishingCategories.find(
+        (cat) => cat.id === categoryId
+      );
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            5,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 5);
+
+          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          setSelectedDtfSublimationFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+          setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
+    }
+  };
+
+  const handleDeleteDtfSublimationFinishingMachine = (machineId: string) => {
+    setSelectedDtfSublimationFinishingMachines((prev) =>
+      prev.filter((m) => m.id !== machineId)
+    );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
+  };
+
+  const handleDtfSublimationFinishingCategoryMachineChange = (
+    categoryId: string,
+    machineName: string
+  ) => {
+    setSelectedDtfSublimationFinishingCategoryMachines((prev) => ({
+      ...prev,
+      [categoryId]: machineName,
+    }));
+  };
+
+  // Step 7: Packaging
+  const handleAddPackagingMachine = (categoryId: string) => {
+    const machineName = selectedPackagingCategoryMachines[categoryId];
+    if (machineName) {
+      const category = packagingCategories.find((cat) => cat.id === categoryId);
+      if (category) {
+        const machine = category.machines.find((m) => m.model === machineName);
+        if (machine) {
+          const newSelectedMachine = convertMachineToSelectedMachine(
+            machine,
+            categoryId,
+            6,
+            "finishing"
+          );
+          const newSelectedFinishingMachine =
+            convertMachineToSelectedFinishingMachine(machine, categoryId, 6);
+
+          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+          setSelectedPackagingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+          setSelectedPackagingCategoryMachines((prev) => ({
+            ...prev,
+            [categoryId]: "",
+          }));
+        }
+      }
     }
   };
 
   const handleDeletePackagingMachine = (machineId: string) => {
     setSelectedPackagingMachines((prev) =>
-      prev.filter((machine) => machine.id !== machineId)
+      prev.filter((m) => m.id !== machineId)
     );
+    setSelectedMachines((prev) => prev.filter((m) => m.id !== machineId));
   };
 
   const handlePackagingCategoryMachineChange = (
@@ -415,213 +592,241 @@ const QuickSetupFlow: React.FC = () => {
     }));
   };
 
-  // Navigation handler
-  const onNext = () => {
-    handleNext(
-      selectedMachines,
-      selectedFinishingMachines,
-      selectedBookFinishingMachines,
-      selectedWideFormatFinishingMachines,
-      selectedDtfSublimationFinishingMachines,
-      selectedRollFlexoFinishingMachines,
-      selectedPackagingMachines
-    );
-  };
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Quick Setup - Multi-Step Configuration
+        {t("Quick Setup - Multi-Step Configuration")}
       </Typography>
 
-      <Stepper activeStep={currentStep} sx={{ mb: 4 }}>
-        {steps.map((label, index) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+      {/* Stepper */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Stepper activeStep={currentStep} alternativeLabel>
+          {STEPS_CONFIG.steps.map((step, index) => (
+            <Step key={index}>
+              <StepLabel>{t(step)}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Paper>
 
-      {currentStep === 0 ? (
-        <Step1MachineSelection
-          allMachines={allMachines}
-          machinesLoading={machinesLoading}
-          selectedMachines={selectedMachines}
-          onAddMachine={handleAddMachine}
-          onDeleteMachine={handleDeleteMachine}
-          hasDigitalOrOffsetPrinting={hasDigitalOrOffsetPrinting(
-            selectedMachines
-          )}
-        />
-      ) : currentStep === 1 ? (
-        hasDigitalOrOffsetPrinting(selectedMachines) ? (
-          <Step2FinishingSelection
-            finishingCategories={finishingCategories}
-            selectedFinishingMachines={selectedFinishingMachines}
-            selectedCategoryMachines={selectedCategoryMachines}
-            onAddFinishingMachine={handleAddFinishingMachine}
-            onDeleteFinishingMachine={handleDeleteFinishingMachine}
-            onCategoryMachineChange={handleCategoryMachineChange}
-          />
-        ) : (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No Digital/Offset printing machines selected. This step is not
-              applicable.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              You can proceed to the next step or go back to select
-              Digital/Offset printing machines.
-            </Typography>
-          </Box>
-        )
-      ) : currentStep === 2 ? (
-        hasDigitalOrOffsetPrinting(selectedMachines) ? (
-          <Step3BookFinishingSelection
-            bookFinishingCategories={bookFinishingCategories}
-            selectedBookFinishingMachines={selectedBookFinishingMachines}
-            selectedBookFinishingCategoryMachines={
-              selectedBookFinishingCategoryMachines
-            }
-            onAddBookFinishingMachine={handleAddBookFinishingMachine}
-            onDeleteBookFinishingMachine={handleDeleteBookFinishingMachine}
-            onBookFinishingCategoryMachineChange={
-              handleBookFinishingCategoryMachineChange
-            }
-          />
-        ) : (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No Digital/Offset printing machines selected. This step is not
-              applicable.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              You can proceed to the next step or go back to select
-              Digital/Offset printing machines.
-            </Typography>
-          </Box>
-        )
-      ) : currentStep === 3 ? (
-        hasRollOrFlexoPrinting(selectedMachines) ? (
-          <Step4RollFlexoFinishingSelection
-            rollFlexoFinishingCategories={rollFlexoFinishingCategories}
-            selectedRollFlexoFinishingMachines={
-              selectedRollFlexoFinishingMachines
-            }
-            selectedRollFlexoFinishingCategoryMachines={
-              selectedRollFlexoFinishingCategoryMachines
-            }
-            onAddRollFlexoFinishingMachine={handleAddRollFlexoFinishingMachine}
-            onDeleteRollFlexoFinishingMachine={
-              handleDeleteRollFlexoFinishingMachine
-            }
-            onRollFlexoFinishingCategoryMachineChange={
-              handleRollFlexoFinishingCategoryMachineChange
-            }
-          />
-        ) : (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No Roll/Flexo printing machines selected. This step is not
-              applicable.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              You can proceed to the next step or go back to select Roll/Flexo
-              printing machines.
-            </Typography>
-          </Box>
-        )
-      ) : currentStep === 4 ? (
-        hasWidePrinting(selectedMachines) ? (
-          <Step5WideFormatFinishingSelection
-            wideFormatFinishingCategories={wideFormatFinishingCategories}
-            selectedWideFormatFinishingMachines={
-              selectedWideFormatFinishingMachines
-            }
-            selectedWideFormatFinishingCategoryMachines={
-              selectedWideFormatFinishingCategoryMachines
-            }
-            onAddWideFormatFinishingMachine={
-              handleAddWideFormatFinishingMachine
-            }
-            onDeleteWideFormatFinishingMachine={
-              handleDeleteWideFormatFinishingMachine
-            }
-            onWideFormatFinishingCategoryMachineChange={
-              handleWideFormatFinishingCategoryMachineChange
-            }
-          />
-        ) : (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No Wide Format printing machines selected. This step is not
-              applicable.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              You can proceed to the next step or go back to select Wide Format
-              printing machines.
-            </Typography>
-          </Box>
-        )
-      ) : currentStep === 5 ? (
-        hasDtfOrSublimationPrinting(selectedMachines) ? (
-          <Step6DtfSublimationFinishingSelection
-            dtfSublimationFinishingCategories={
-              dtfSublimationFinishingCategories
-            }
-            selectedDtfSublimationFinishingMachines={
-              selectedDtfSublimationFinishingMachines
-            }
-            selectedDtfSublimationFinishingCategoryMachines={
-              selectedDtfSublimationFinishingCategoryMachines
-            }
-            onAddDtfSublimationFinishingMachine={
-              handleAddDtfSublimationFinishingMachine
-            }
-            onDeleteDtfSublimationFinishingMachine={
-              handleDeleteDtfSublimationFinishingMachine
-            }
-            onDtfSublimationFinishingCategoryMachineChange={
-              handleDtfSublimationFinishingCategoryMachineChange
-            }
-          />
-        ) : (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No DTF/Sublimation printing machines selected. This step is not
-              applicable.
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              You can proceed to the next step or go back to select
-              DTF/Sublimation printing machines.
-            </Typography>
-          </Box>
-        )
-      ) : currentStep === 6 ? (
-        <Step7PackagingSelection
-          packagingCategories={packagingCategories}
-          selectedPackagingMachines={selectedPackagingMachines}
-          selectedPackagingCategoryMachines={selectedPackagingCategoryMachines}
-          onAddPackagingMachine={handleAddPackagingMachine}
-          onDeletePackagingMachine={handleDeletePackagingMachine}
-          onPackagingCategoryMachineChange={
-            handlePackagingCategoryMachineChange
-          }
-        />
-      ) : null}
+      {/* Step Content */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {t(STEPS_CONFIG.steps[currentStep])}
+        </Typography>
+        <Typography variant="body2" sx={{ mb: 3, color: "text.secondary" }}>
+          {t(STEPS_CONFIG.stepDescriptions[currentStep])}
+        </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        {/* Step 1: All Machines Selection */}
+        {currentStep === 0 && (
+          <Step1MachineSelection
+            allMachines={allMachines}
+            machinesLoading={machinesLoading}
+            selectedMachines={selectedMachines}
+            onAddMachine={handleAddMachine}
+            onDeleteMachine={handleDeleteMachine}
+            hasDigitalOrOffsetPrinting={selectedMachines.some(
+              (m) => m.machineType === "printing"
+            )}
+          />
+        )}
+
+        {/* Step 2: Digital/Sheet Finishing */}
+        {currentStep === 1 &&
+          (hasDigitalOrOffsetPrinting(selectedMachines) ? (
+            <Step2FinishingSelection
+              finishingCategories={finishingCategories}
+              selectedFinishingMachines={selectedFinishingMachines}
+              selectedCategoryMachines={selectedCategoryMachines}
+              onAddFinishingMachine={handleAddFinishingMachine}
+              onDeleteFinishingMachine={handleDeleteFinishingMachine}
+              onCategoryMachineChange={handleCategoryMachineChange}
+            />
+          ) : (
+            <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No Digital/Offset printing machines selected. This step is not
+                applicable.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                You can proceed to the next step or go back to select
+                Digital/Offset printing machines.
+              </Typography>
+            </Box>
+          ))}
+
+        {/* Step 3: Book Finishing */}
+        {currentStep === 2 &&
+          (hasDigitalOrOffsetPrinting(selectedMachines) ? (
+            <Step3BookFinishingSelection
+              bookFinishingCategories={bookFinishingCategories}
+              selectedBookFinishingMachines={selectedBookFinishingMachines}
+              selectedBookFinishingCategoryMachines={
+                selectedBookFinishingCategoryMachines
+              }
+              onAddBookFinishingMachine={handleAddBookFinishingMachine}
+              onDeleteBookFinishingMachine={handleDeleteBookFinishingMachine}
+              onBookFinishingCategoryMachineChange={
+                handleBookFinishingCategoryMachineChange
+              }
+            />
+          ) : (
+            <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No Digital/Offset printing machines selected. This step is not
+                applicable.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                You can proceed to the next step or go back to select
+                Digital/Offset printing machines.
+              </Typography>
+            </Box>
+          ))}
+
+        {/* Step 4: Roll/Flexo Finishing */}
+        {currentStep === 3 &&
+          (hasRollOrFlexoPrinting(selectedMachines) ? (
+            <Step4RollFlexoFinishingSelection
+              rollFlexoFinishingCategories={rollFlexoFinishingCategories}
+              selectedRollFlexoFinishingMachines={
+                selectedRollFlexoFinishingMachines
+              }
+              selectedRollFlexoFinishingCategoryMachines={
+                selectedRollFlexoFinishingCategoryMachines
+              }
+              onAddRollFlexoFinishingMachine={
+                handleAddRollFlexoFinishingMachine
+              }
+              onDeleteRollFlexoFinishingMachine={
+                handleDeleteRollFlexoFinishingMachine
+              }
+              onRollFlexoFinishingCategoryMachineChange={
+                handleRollFlexoFinishingCategoryMachineChange
+              }
+            />
+          ) : (
+            <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No Roll/Flexo printing machines selected. This step is not
+                applicable.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                You can proceed to the next step or go back to select Roll/Flexo
+                printing machines.
+              </Typography>
+            </Box>
+          ))}
+
+        {/* Step 5: Wide Format Finishing */}
+        {currentStep === 4 &&
+          (hasWidePrinting(selectedMachines) ? (
+            <Step5WideFormatFinishingSelection
+              wideFormatFinishingCategories={wideFormatFinishingCategories}
+              selectedWideFormatFinishingMachines={
+                selectedWideFormatFinishingMachines
+              }
+              selectedWideFormatFinishingCategoryMachines={
+                selectedWideFormatFinishingCategoryMachines
+              }
+              onAddWideFormatFinishingMachine={
+                handleAddWideFormatFinishingMachine
+              }
+              onDeleteWideFormatFinishingMachine={
+                handleDeleteWideFormatFinishingMachine
+              }
+              onWideFormatFinishingCategoryMachineChange={
+                handleWideFormatFinishingCategoryMachineChange
+              }
+            />
+          ) : (
+            <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No Wide Format printing machines selected. This step is not
+                applicable.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                You can proceed to the next step or go back to select Wide
+                Format printing machines.
+              </Typography>
+            </Box>
+          ))}
+
+        {/* Step 6: DTF/Sublimation Finishing */}
+        {currentStep === 5 &&
+          (hasDtfOrSublimationPrinting(selectedMachines) ? (
+            <Step6DtfSublimationFinishingSelection
+              dtfSublimationFinishingCategories={
+                dtfSublimationFinishingCategories
+              }
+              selectedDtfSublimationFinishingMachines={
+                selectedDtfSublimationFinishingMachines
+              }
+              selectedDtfSublimationFinishingCategoryMachines={
+                selectedDtfSublimationFinishingCategoryMachines
+              }
+              onAddDtfSublimationFinishingMachine={
+                handleAddDtfSublimationFinishingMachine
+              }
+              onDeleteDtfSublimationFinishingMachine={
+                handleDeleteDtfSublimationFinishingMachine
+              }
+              onDtfSublimationFinishingCategoryMachineChange={
+                handleDtfSublimationFinishingCategoryMachineChange
+              }
+            />
+          ) : (
+            <Box sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No DTF/Sublimation printing machines selected. This step is not
+                applicable.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                You can proceed to the next step or go back to select
+                DTF/Sublimation printing machines.
+              </Typography>
+            </Box>
+          ))}
+
+        {/* Step 7: Packaging */}
+        {currentStep === 6 && (
+          <Step7PackagingSelection
+            packagingCategories={packagingCategories}
+            selectedPackagingMachines={selectedPackagingMachines}
+            selectedPackagingCategoryMachines={
+              selectedPackagingCategoryMachines
+            }
+            onAddPackagingMachine={handleAddPackagingMachine}
+            onDeletePackagingMachine={handleDeletePackagingMachine}
+            onPackagingCategoryMachineChange={
+              handlePackagingCategoryMachineChange
+            }
+          />
+        )}
+      </Paper>
+
+      {/* Navigation Buttons */}
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Button
+          variant="outlined"
           onClick={handleBack}
           disabled={currentStep === 0}
-          variant="outlined"
         >
-          Back
+          {t("Back")}
         </Button>
-
         <Button
-          onClick={onNext}
           variant="contained"
+          onClick={() =>
+            handleNext(
+              selectedMachines,
+              selectedFinishingMachines,
+              selectedBookFinishingMachines,
+              selectedWideFormatFinishingMachines,
+              selectedDtfSublimationFinishingMachines,
+              selectedRollFlexoFinishingMachines,
+              selectedPackagingMachines
+            )
+          }
           disabled={isNextDisabled(
             selectedMachines,
             selectedFinishingMachines,
@@ -632,9 +837,31 @@ const QuickSetupFlow: React.FC = () => {
             selectedPackagingMachines
           )}
         >
-          {getNextButtonText(selectedMachines)}
+          {t(getNextButtonText(selectedMachines))}
         </Button>
       </Box>
+
+      {/* Summary - Show all selected machines */}
+      {selectedMachines.length > 0 && (
+        <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Total Selected Machines: {selectedMachines.length}
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {selectedMachines.map((machine) => (
+              <Chip
+                key={machine.id}
+                label={`${machine.name} (${machine.machineType || "printing"})`}
+                size="small"
+                color={
+                  machine.machineType === "finishing" ? "secondary" : "primary"
+                }
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        </Paper>
+      )}
     </Box>
   );
 };

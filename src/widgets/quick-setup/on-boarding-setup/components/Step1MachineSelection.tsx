@@ -34,7 +34,7 @@ interface Step1MachineSelectionProps {
   allMachines: Machine[];
   machinesLoading: boolean;
   selectedMachines: SelectedMachine[];
-  onAddMachine: (machine: SelectedMachine) => void;
+  onAddMachine: (machine: Machine, categoryId: string) => void;
   onDeleteMachine: (machineId: string) => void;
   hasDigitalOrOffsetPrinting: boolean;
 }
@@ -89,16 +89,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
     const category = categories.find((c) => c.id === selectedCategory);
 
     if (machine && category) {
-      const newSelectedMachine: SelectedMachine = {
-        id: machine.id,
-        name: machine.nickName || `${machine.manufacturer} - ${machine.model}`,
-        category: category.id,
-        categoryName: t(category.name),
-      };
-
       const isDuplicate = selectedMachines.some((m) => m.id === machine.id);
       if (!isDuplicate) {
-        onAddMachine(newSelectedMachine);
+        onAddMachine(machine, selectedCategory);
         setSelectedMachine("");
         setSelectedCategory("");
         setMachineSearchTerm("");

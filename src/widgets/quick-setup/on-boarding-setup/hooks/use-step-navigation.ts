@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import {
   SelectedMachine,
   SelectedFinishingMachine,
@@ -6,8 +6,10 @@ import {
 import { STEPS_CONFIG } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
 import { ECategoryId } from "@/widgets/machines/enums/category-id";
 
-export const useStepNavigation = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+export const useStepNavigation = (
+  currentStep: number,
+  setCurrentStep: (step: number) => void
+) => {
   const { steps } = STEPS_CONFIG;
 
   // Check if we have digital or offset printing machines
@@ -192,12 +194,12 @@ export const useStepNavigation = () => {
         return true;
       }
     },
-    [currentStep, getNextStep]
+    [currentStep, getNextStep, setCurrentStep]
   );
 
   const handleBack = useCallback(() => {
-    setCurrentStep((prev) => Math.max(0, prev - 1));
-  }, []);
+    setCurrentStep(Math.max(0, currentStep - 1));
+  }, [currentStep, setCurrentStep]);
 
   const isNextDisabled = useCallback(
     (

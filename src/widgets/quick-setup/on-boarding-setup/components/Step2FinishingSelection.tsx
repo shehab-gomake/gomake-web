@@ -64,15 +64,15 @@ export const Step2FinishingSelection: React.FC<
     const searchTerm = searchTerms[category.id] || "";
     if (!searchTerm) return category.machines;
 
-    return category.machines.filter((machine) =>
-      machine.toLowerCase().includes(searchTerm.toLowerCase())
+    return category.machines.filter(
+      (machine) =>
+        machine.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        machine.manufacturer.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
   // Helper function to check if a machine is auto-selected
-  //!here
   const isAutoSelected = (machineId: string): boolean => {
-    // debugger;
     return autoSelectedMachines.some((machine) => machine.id === machineId);
   };
 
@@ -176,11 +176,11 @@ export const Step2FinishingSelection: React.FC<
                     </MenuItem>
                     {getFilteredMachines(category).map((machine) => (
                       <MenuItem
-                        key={machine}
-                        value={machine}
+                        key={machine.id}
+                        value={machine.model}
                         sx={{ py: 1, fontSize: "14px" }}
                       >
-                        {machine}
+                        {machine.manufacturer} - {machine.model}
                       </MenuItem>
                     ))}
                   </Select>
