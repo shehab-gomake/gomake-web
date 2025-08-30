@@ -42,7 +42,6 @@ const DashboardFilters = () => {
       <GoMakeDatepicker />
       <FixedDataType />
       <FixedDocumentType />
-      <SingleSelectSearchDropdown />
       {showDocumentStatusFilter && (
         <MultiSelectDropdown
           items={documentStatusCategories}
@@ -52,6 +51,8 @@ const DashboardFilters = () => {
           buttonLabel={t("sales.quote.status")}
         />
       )}
+      <SingleSelectSearchDropdown />
+
       <MultiSelectDropdown
         items={clientTypesCategories}
         selectedIds={selectedClientTypesIds}
