@@ -61,6 +61,12 @@ interface IProps {
   visibleColumns: string[];
   // NEW: when true, render only <TableCell> elements (for TableVirtuoso itemContent)
   cellsOnly?: boolean;
+  handleOpenStuckModal?: (
+    newStatusId: string,
+    boards: IBoardMissions[],
+    boardMissionId?: string,
+    productType?: string
+  ) => void;
 }
 
 enum EDropArea {
@@ -83,6 +89,7 @@ const TableRowComponent = ({
   employeesCategories,
   visibleColumns,
   cellsOnly = false,
+  handleOpenStuckModal
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -202,7 +209,7 @@ const TableRowComponent = ({
     handleCloseModal,
     handleConfirm,
     openSimpleStuckModal,
-    handleOpenStuckModal,
+    // handleOpenStuckModal,
     handleCloseStuckModal,
     stuckReason,
     setStuckReason,
@@ -668,7 +675,7 @@ const TableRowComponent = ({
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
-      <GoMakeDeleteModal
+      {/* <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}
         modalType={ModalType.WARNING}
@@ -681,7 +688,7 @@ const TableRowComponent = ({
           stuckReason={stuckReason}
           setStuckReason={setStuckReason}
         />
-      </GoMakeDeleteModal>
+      </GoMakeDeleteModal> */}
     </>
   );
 };
