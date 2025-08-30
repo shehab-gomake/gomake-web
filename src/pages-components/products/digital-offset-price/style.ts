@@ -460,6 +460,19 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 16),
       },
+      deliveryPriceContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 10,
+      },
+      deliveryPriceItem: {
+        color: primaryColor(500),
+        justifyContent: "space-between",
+        ...FONT_FAMILY.Lexend(700, 14),
+      },
       additionalPrices: {
         display: "flex",
         flexDirection: "row" as "row",
