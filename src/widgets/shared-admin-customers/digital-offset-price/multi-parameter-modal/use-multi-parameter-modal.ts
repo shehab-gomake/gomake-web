@@ -62,28 +62,77 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
       const subSectionType = settingParameters?.subSection?.type;
       const target = copy?.find((sp: any) => sp?.type === subSectionType);
       if (target && Array.isArray(target.parameters)) {
-        // Detect which side this modal controls by checking which params exist
-        const hasSide2 = !!target.parameters.find((p: any) => p.parameterCode === "printingcolorsDetailSide2");
-        const colorParamCode = hasSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
-        const loadParamCode = hasSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
-        const avgParamCode = hasSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
+        // Determine side strictly from the parameter being edited (not from existence of Side2 in template)
+        const currentParamCode: string = settingParameters?.parameter?.code;
+        const isSide2 = typeof currentParamCode === "string" && currentParamCode.toLowerCase().includes("side2");
+        const colorParamCode = isSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
+        const loadParamCode = isSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
+        const avgParamCode = isSide2 ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
 
         // Fallback ids (used in some templates)
         const COLOR_PARAM_IDS = [
           "8eff3238-a321-48f3-85eb-c14afaccbff3",
-          "ae8d81d1-a0de-4967-b821-dae6937e7551"
+          "ae8d81d1-a0de-4967-b821-dae6937e7551",
         ];
-        const LOAD_PARAM_IDS = [
-          "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8"
-        ];
+        const LOAD_PARAM_IDS = ["8b43efba-f28c-4e73-8fa0-cc64f3ea06f8"];
 
-        const colorParamVal = target.parameters.find(
-          (p: any) => p.parameterCode === colorParamCode || (p.parameterId && COLOR_PARAM_IDS.includes(p.parameterId))
+        const sectionId = settingParameters?.section?.id;
+        const subSectionId = settingParameters?.subSection?.id;
+        const actionIndex = settingParameters?.parameter?.actionIndex;
+
+        // Strictly resolve color and load parameters for the same side, section, subSection and actionIndex
+        let colorParamVal = target.parameters.find(
+          (p: any) =>
+            p.parameterCode === colorParamCode &&
+            p.sectionId === sectionId &&
+            p.subSectionId === subSectionId &&
+            (typeof actionIndex === "number" ? p.actionIndex === actionIndex : true)
         );
-        const loadParamVal = target.parameters.find(
-          (p: any) => p.parameterCode === loadParamCode || (p.parameterId && LOAD_PARAM_IDS.includes(p.parameterId))
+        if (!colorParamVal) {
+          colorParamVal = target.parameters.find(
+            (p: any) =>
+              COLOR_PARAM_IDS.includes(p.parameterId) &&
+              p.sectionId === sectionId &&
+              p.subSectionId === subSectionId &&
+              (typeof actionIndex === "number" ? p.actionIndex === actionIndex : true)
+          );
+        }
+
+        let loadParamVal = target.parameters.find(
+          (p: any) =>
+            p.parameterCode === loadParamCode &&
+            p.sectionId === sectionId &&
+            p.subSectionId === subSectionId &&
+            (typeof actionIndex === "number" ? p.actionIndex === actionIndex : true)
         );
-        const avgParamIdx = target.parameters.findIndex((p: any) => p.parameterCode === avgParamCode);
+        if (!loadParamVal) {
+          loadParamVal = target.parameters.find(
+            (p: any) =>
+              LOAD_PARAM_IDS.includes(p.parameterId) &&
+              p.sectionId === sectionId &&
+              p.subSectionId === subSectionId &&
+              (typeof actionIndex === "number" ? p.actionIndex === actionIndex : true)
+          );
+        }
+        // Find exact avg parameter instance for this subSection/section
+        let avgParamIdx = target.parameters.findIndex(
+          (p: any) =>
+            p.parameterCode === avgParamCode &&
+            p.sectionId === settingParameters?.section?.id &&
+            p.subSectionId === settingParameters?.subSection?.id
+        );
+        if (avgParamIdx === -1) {
+          const avgDef = (settingParameters?.list || []).find((p: any) => p.code === avgParamCode);
+          if (avgDef) {
+            avgParamIdx = target.parameters.findIndex(
+              (p: any) =>
+                p.parameterId === avgDef.id &&
+                p.sectionId === settingParameters?.section?.id &&
+                p.subSectionId === settingParameters?.subSection?.id &&
+                (typeof avgDef.actionIndex === "number" ? p.actionIndex === avgDef.actionIndex : true)
+            );
+          }
+        }
 
         if (colorParamVal && loadParamVal && Array.isArray(colorParamVal.valueIds) && Array.isArray(loadParamVal.values)) {
           // Average only selected colors' loads
