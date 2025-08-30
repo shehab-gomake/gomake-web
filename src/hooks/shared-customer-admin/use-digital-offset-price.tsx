@@ -779,16 +779,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let sectionCopy = cloneDeep(section);
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
 
-    const numberOfCopies = productTemplateCopy.sections.filter(
-      (x) => x.duplicatedFromSectionId === item.id
-    ).length;
+    // Determine next sequential suffix based on existing sections, even if
+    // previous duplicates weren't flagged via duplicatedFromSectionId.
+    const baseName = (() => {
+      const name = sectionCopy.name || "";
+      const match = name.match(/^(.*?)(?:\s+(\d+))?$/);
+      if (!match) return name;
+      const [, base, num] = match;
+      // If the original already ends with a number, strip it to get the base
+      return num ? base : name;
+    })();
 
-    if (!numberOfCopies) {
+    // Helper to safely test name matches and collect max suffix and last index
+    let maxSuffix = 1; // original counts as 1
+    let lastMatchArrayIndex = -1;
+    productTemplateCopy.sections.forEach((sec, idx) => {
+      const secName = sec?.name || "";
+      const reg = new RegExp(`^${baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s+(\\d+))?$`);
+      const m = secName.match(reg);
+      if (m) {
+        const n = m[1] ? parseInt(m[1], 10) : 1;
+        if (!isNaN(n)) {
+          if (n > maxSuffix) maxSuffix = n;
+          lastMatchArrayIndex = idx; // track the last occurrence
+        }
+      }
+    });
+
+    // Maintain internal index semantics used elsewhere (0 for original)
+    // New duplicate gets index equal to current maxSuffix (since original is 0)
+    if (section.index == null) {
       section.index = 0;
     }
-
-    sectionCopy.index = numberOfCopies + 1;
-    sectionCopy.name = sectionCopy.name + " " + (sectionCopy.index + 1);
+    sectionCopy.index = maxSuffix;
+    sectionCopy.name = `${baseName} ${maxSuffix + 1}`;
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
@@ -797,20 +821,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       sub.duplicatedFromSubSectionId = sub.id;
       sub.id = sub.id; // Keep the same ID as requested
       if (sub.type) {
-        sub.type = sub.type + numberOfCopies + 1;
+        sub.type = sub.type + sectionCopy.index + 1;
       }
     });
 
-    // Add section to productTemplate
-    const sectionsArr = [];
-    productTemplateCopy.sections.forEach((sec) => {
-      sectionsArr.push(sec);
-      if (!numberOfCopies && sec.id === item.id) {
-        sectionsArr.push(sectionCopy);
-      } else if (numberOfCopies && sec.index == numberOfCopies) {
-        sectionsArr.push(sectionCopy);
-      }
-    });
+    // Add section to productTemplate after the last matching section
+    const sectionsArr = [...productTemplateCopy.sections];
+    const insertionIndex = lastMatchArrayIndex !== -1
+      ? lastMatchArrayIndex + 1
+      : sectionsArr.findIndex((s) => s.id === item.id) + 1;
+    if (insertionIndex >= 0) {
+      sectionsArr.splice(insertionIndex, 0, sectionCopy);
+    } else {
+      sectionsArr.push(sectionCopy);
+    }
     productTemplateCopy.sections = sectionsArr;
 
     // Add section to subProducts manually
