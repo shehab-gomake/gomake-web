@@ -698,7 +698,7 @@ const QuotesListPageWidget = ({
                             {(isOrder || isPurchaseOrder) && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
-                                  {t("sales.quote.canceledOrders")}
+                                  {isPurchaseOrder ? t("sales.quote.canceledPurchaseOrders") : t("sales.quote.canceledOrders")}
                                 </h3>
                                 <SecondSwitch
                                   checked={isCanceledState}
