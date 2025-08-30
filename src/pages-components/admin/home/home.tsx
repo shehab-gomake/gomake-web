@@ -16,7 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 const HomePageComponentForAdmin = ({ isMobileScreen }) => {
   const { classes } = useStyle();
-  const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
+  const { setIsDisplay, isDisplay, flag, selectedClient, t, Title } = useHome();
   const allReports = useRecoilValue<any>(homeReportsState);
 
   const homeSteps: StepType[] = [
@@ -78,7 +78,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
     },
   ];
 
-  const { } = useGoMakeTour(homeSteps, []);
+  const {} = useGoMakeTour(homeSteps, []);
 
   useEffect(() => {
     setIsDisplay(flag);
@@ -88,7 +88,6 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
     <div style={classes.mainContainer}>
       <div style={classes.firstRowContainer}>
         <ChatBotComponent />
-        <div style={classes.titleStyle}>{Title}</div>
         <div
           style={
             isMobileScreen
@@ -97,7 +96,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
           }
         >
           <div style={classes.widgetStyle}>
-            <QuoteWidget isMobileScreen={isMobileScreen} />
+            <QuoteWidget isMobileScreen={isMobileScreen} title={Title} />
           </div>
 
           {!isMobileScreen && (
