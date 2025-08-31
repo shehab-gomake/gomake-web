@@ -350,10 +350,7 @@ const StationLane: React.FC<IProps> = ({
               maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
               // Border styling - use outline for hover states to avoid conflicts
-              borderRight:
-                index === statusColumns.length - 1
-                  ? "none"
-                  : "1px solid #e0e0e0", // Show right border except for last column
+              borderRight: "1px solid #e0e0e0", // Show right border except for last column
               outline:
                 isOver && canDrop
                   ? "2px dashed #1976d2"
