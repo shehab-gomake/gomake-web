@@ -18,6 +18,7 @@ import { ArrowRightIcon } from "@/icons";
 import { SketchPicker } from "react-color";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums/tabs-icon-enums";
+import { STATUS_COLUMNS } from "../constants/status-columns";
 
 interface IProps {
   mission: IBoardMissions;
@@ -41,6 +42,14 @@ const JobCard: React.FC<IProps> = ({
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+
+  // Get "Upcoming Works" status colors
+  const upcomingWorksStatus = STATUS_COLUMNS.find(
+    (status) => status.name === "Upcoming Works"
+  );
+  const upcomingWorksColor = mission.productionFloorJobColor || "#3949ab";
+  // const upcomingWorksColor = upcomingWorksStatus?.color || "#3949ab";
+  const upcomingWorksBgColor = upcomingWorksStatus?.bgColor || "#e8eaf6";
 
   // Context menu state
   const [contextMenuPosition, setContextMenuPosition] = useState<{
@@ -256,10 +265,10 @@ const JobCard: React.FC<IProps> = ({
       onClick={openNextStationModal ? undefined : handleOpenMission}
       onContextMenu={handleContextMenu}
       sx={{
-        backgroundColor: isDisabled ? "#f5f5f5" : "white",
+        backgroundColor: "white",
         border: `2px solid ${
           isDisabled
-            ? "#cccccc"
+            ? upcomingWorksColor
             : color || mission.productionFloorJobColor || "#e0e0e0"
         }`,
         borderRadius: "8px",
@@ -270,11 +279,12 @@ const JobCard: React.FC<IProps> = ({
           ? "grabbing"
           : "pointer",
         transition: "all 0.2s ease",
-        opacity: isDragging ? 0.5 : isDisabled ? 0.6 : 1,
+        opacity: isDragging ? 0.5 : isDisabled ? 0.8 : 1,
         minHeight: "90px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        position: "relative",
         "&:hover": {
           boxShadow: isDisabled ? "none" : "0 4px 12px rgba(0,0,0,0.15)",
           transform: isDisabled
@@ -283,8 +293,49 @@ const JobCard: React.FC<IProps> = ({
             ? "none"
             : "translateY(-2px)",
         },
+        // Add disabled overlay effect
+        "&::before": isDisabled
+          ? {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
+              pointerEvents: "none",
+              zIndex: 1,
+            }
+          : {},
       }}
     >
+      {/* Disabled indicator for upcoming works */}
+      {isDisabled && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "4px",
+            right: "4px",
+            width: "16px",
+            height: "16px",
+            borderRadius: "50%",
+            backgroundColor: upcomingWorksColor,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2,
+            "&::after": {
+              content: '""',
+              width: "8px",
+              height: "2px",
+              backgroundColor: "white",
+              borderRadius: "1px",
+            },
+          }}
+        />
+      )}
+
       {/* Top Row: Job Code, Job Name, and Priority Dot */}
       <Box
         sx={{
@@ -292,6 +343,8 @@ const JobCard: React.FC<IProps> = ({
           justifyContent: "space-between",
           alignItems: "flex-start",
           marginBottom: "8px",
+          position: "relative",
+          zIndex: 3, // Above overlay
         }}
       >
         {/* Job Code and Job Name */}
@@ -310,7 +363,7 @@ const JobCard: React.FC<IProps> = ({
             sx={{
               fontWeight: 700,
               color: isDisabled
-                ? "#999999"
+                ? upcomingWorksColor
                 : color || mission.productionFloorJobColor || "#1976d2",
               fontSize: isMobile ? "0.8rem" : "0.9rem",
               lineHeight: 1.2,
@@ -325,10 +378,11 @@ const JobCard: React.FC<IProps> = ({
               variant="body2"
               sx={{
                 fontWeight: 500,
-                color: isDisabled ? "#b0b0b0" : "#6c757d",
+                color: isDisabled ? upcomingWorksColor : "#6c757d",
                 fontSize: isMobile ? "0.65rem" : "0.75rem",
                 fontStyle: "italic",
                 lineHeight: 1.2,
+                opacity: isDisabled ? 0.7 : 1,
               }}
             >
               {mission.jobName}
@@ -342,9 +396,12 @@ const JobCard: React.FC<IProps> = ({
             width: "8px",
             height: "8px",
             borderRadius: "50%",
-            backgroundColor: getPriorityColor(mission.priority || 0),
+            backgroundColor: isDisabled
+              ? upcomingWorksColor
+              : getPriorityColor(mission.priority || 0),
             marginLeft: "4px",
             flexShrink: 0,
+            opacity: isDisabled ? 0.6 : 1,
           }}
         />
       </Box>
@@ -363,12 +420,13 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 500,
-            color: isDisabled ? "#b0b0b0" : "#495057",
+            color: isDisabled ? upcomingWorksColor : "#495057",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             maxWidth: "60%",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            opacity: isDisabled ? 0.7 : 1,
           }}
         >
           {mission.clientName}
@@ -379,9 +437,10 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 500,
-            color: isDisabled ? "#b0b0b0" : "#6c757d",
+            color: isDisabled ? upcomingWorksColor : "#6c757d",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             textAlign: "right",
+            opacity: isDisabled ? 0.7 : 1,
           }}
         >
           {mission.dueDate ? formatDate(mission.dueDate) : "No due date"}
@@ -401,12 +460,13 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 700,
-            color: isDisabled ? "#b0b0b0" : "#495057",
+            color: isDisabled ? upcomingWorksColor : "#495057",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             maxWidth: "60%",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            opacity: isDisabled ? 0.7 : 1,
           }}
         >
           {mission.productName}
@@ -423,9 +483,9 @@ const JobCard: React.FC<IProps> = ({
               height: "18px",
               fontSize: isMobile ? "0.65rem" : "0.7rem",
               backgroundColor: isDisabled
-                ? "#cccccc"
+                ? upcomingWorksBgColor
                 : color || mission.productionFloorJobColor || "#e3f2fd",
-              color: isDisabled ? "#666666" : "white",
+              color: isDisabled ? upcomingWorksColor : "white",
               fontWeight: 600,
             }}
           />

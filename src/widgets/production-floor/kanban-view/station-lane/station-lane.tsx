@@ -351,9 +351,7 @@ const StationLane: React.FC<IProps> = ({
               maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
               border:
-                status.name === "Upcoming Works"
-                  ? "2px dashed #cccccc"
-                  : isOver && canDrop
+                isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
                   ? "2px dashed #f44336"
