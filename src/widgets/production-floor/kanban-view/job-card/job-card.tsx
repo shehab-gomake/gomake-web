@@ -43,6 +43,9 @@ const JobCard: React.FC<IProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
+  // Get current direction for RTL support
+  const dir: "rtl" | "ltr" = t("direction");
+
   // Get "Upcoming Works" status colors
   const upcomingWorksStatus = STATUS_COLUMNS.find(
     (status) => status.name === "Upcoming Works"
@@ -316,7 +319,7 @@ const JobCard: React.FC<IProps> = ({
           sx={{
             position: "absolute",
             top: "4px",
-            right: "4px",
+            ...(dir === "rtl" ? { left: "4px" } : { right: "4px" }),
             width: "16px",
             height: "16px",
             borderRadius: "50%",
