@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
-import { MailTestProvider, ThemeProvider } from "@/providers";
+import { ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
 import { GoMakeSnackBar } from "@/components";
 import { DndProvider } from "react-dnd";
@@ -40,29 +40,27 @@ export default function App({ Component, pageProps }: AppProps) {
     <DndProvider backend={HTML5Backend}>
       <RecoilRoot>
         <FileUploaderProvider>
-          <MailTestProvider>
-            <UpdatePathWrapper>
-              <EnhancedErrorBoundary>
-                <ThemeProvider />
-                <LocalizationProvider
-                  dateAdapter={AdapterMoment}
-                  adapterLocale="en-gb"
-                >
-                  <style jsx global>{`
+          <UpdatePathWrapper>
+            <EnhancedErrorBoundary>
+              <ThemeProvider />
+              <LocalizationProvider
+                dateAdapter={AdapterMoment}
+                adapterLocale="en-gb"
+              >
+                <style jsx global>{`
                   html {
                     direction: ${t("direction")};
                   }
                 `}</style>
-                  <GoMakeTourProvider>
-                    <Component {...pageProps} />
-                  </GoMakeTourProvider>
-                  <GoMakeSnackBar />
-                  <GomakeLoading />
-                  <GomakeLoadingWithShadow />
-                </LocalizationProvider>
-              </EnhancedErrorBoundary>
-            </UpdatePathWrapper>
-          </MailTestProvider>
+                <GoMakeTourProvider>
+                  <Component {...pageProps} />
+                </GoMakeTourProvider>
+                <GoMakeSnackBar />
+                <GomakeLoading />
+                <GomakeLoadingWithShadow />
+              </LocalizationProvider>
+            </EnhancedErrorBoundary>
+          </UpdatePathWrapper>
         </FileUploaderProvider>
       </RecoilRoot>
     </DndProvider>
