@@ -52,7 +52,7 @@ export const parseSavedColumnSettings = (
 
 export const columnWidthsMap: Record<string, string> = {
   checkbox: "3%",
-  job_order: "13%",
+  job_order: "12%",
   deliveryDate: "7%",
   totalTime: "7%",
   customer: "9%",
