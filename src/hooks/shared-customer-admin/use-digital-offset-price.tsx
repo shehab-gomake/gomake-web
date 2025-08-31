@@ -3561,7 +3561,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   <span style={clasess.spanRequierd}> *</span>
                 ) : null}
                 {
-                  // Show upload icon next to Color load average fields (Side 1 and Side 2)
+                  // Fixed Color Load Average Calculator - Accurate Ink Coverage
                   (() => {
                     const isColorLoadAverage =
                       parameter?.code === "ColorsLoadAverage" || parameter?.code === "ColorsLoadAverageSide2";
@@ -3575,34 +3575,116 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       try {
                         const img = new Image();
                         img.crossOrigin = "anonymous";
+
                         await new Promise<void>((resolve, reject) => {
                           img.onload = () => resolve();
                           img.onerror = (e) => reject(e);
                           img.src = imgUrl;
                         });
+
                         const canvas = document.createElement("canvas");
-                        const maxDim = 128;
-                        const scale = Math.min(maxDim / (img.width || maxDim), maxDim / (img.height || maxDim)) || 1;
-                        canvas.width = Math.max(1, Math.floor((img.width || maxDim) * scale));
-                        canvas.height = Math.max(1, Math.floor((img.height || maxDim) * scale));
+
+                        // Good resolution for accuracy without being too slow
+                        const maxDim = 400;
+                        const scale = Math.min(maxDim / img.width, maxDim / img.height);
+                        canvas.width = Math.max(1, Math.floor(img.width * scale));
+                        canvas.height = Math.max(1, Math.floor(img.height * scale));
+
                         const ctx = canvas.getContext("2d");
-                        if (!ctx) return 50;
+                        if (!ctx) return 25;
+
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        let sum = 0;
-                        let count = 0;
+
+                        let totalCoverage = 0;
+                        let pixelCount = 0;
+                        let nonWhitePixelCount = 0;
+
+                        // Process each pixel
                         for (let i = 0; i < data.length; i += 4) {
                           const r = data[i];
                           const g = data[i + 1];
                           const b = data[i + 2];
-                          // Average brightness
-                          const brightness = (r + g + b) / 3;
-                          sum += brightness;
-                          count++;
+                          const a = data[i + 3];
+
+                          // Skip transparent pixels
+                          if (a < 10) continue;
+
+                          // Convert RGB to proper CMYK values
+                          const rNorm = r / 255;
+                          const gNorm = g / 255;
+                          const bNorm = b / 255;
+
+                          // Calculate CMY
+                          let c = 1 - rNorm;
+                          let m = 1 - gNorm;
+                          let y = 1 - bNorm;
+
+                          // Calculate true K (black) value
+                          let k = Math.min(c, m, y);
+
+                          // Apply GCR (Gray Component Replacement) - standard in printing
+                          // This prevents overestimating ink when all CMY contribute to black
+                          if (k > 0) {
+                            c = (c - k) / (1 - k + 0.001);
+                            m = (m - k) / (1 - k + 0.001);
+                            y = (y - k) / (1 - k + 0.001);
+                          }
+
+                          // Calculate TAC (Total Area Coverage) - industry standard
+                          // Each color channel contributes independently to coverage
+                          // Maximum theoretical is 400% (100% each CMYK), but practically it's much lower
+                          const tac = (c + m + y + k) * 100;
+
+                          // Apply realistic ink limits based on printing standards
+                          // Most printing processes limit TAC to 240-320%
+                          const limitedTAC = Math.min(tac, 320);
+
+                          // Convert TAC to average coverage percentage
+                          // Divide by 4 since we're averaging across 4 channels
+                          const pixelCoverage = limitedTAC / 4;
+
+                          // Check if pixel is essentially white (very low coverage)
+                          const isWhite = (r > 250 && g > 250 && b > 250) || pixelCoverage < 2;
+
+                          if (!isWhite) {
+                            nonWhitePixelCount++;
+                            totalCoverage += pixelCoverage;
+                          }
+
+                          pixelCount++;
                         }
-                        const avgBrightness = count ? sum / count : 127.5;
-                        const inkLoad = Math.max(0, Math.min(100, Math.round((1 - avgBrightness / 255) * 100)));
-                        return inkLoad;
+
+                        if (pixelCount === 0) return 25;
+
+                        // Calculate the actual printed area (non-white percentage)
+                        const printedAreaRatio = nonWhitePixelCount / pixelCount;
+
+                        // Calculate average ink density for printed areas only
+                        const avgInkDensity = nonWhitePixelCount > 0
+                          ? totalCoverage / nonWhitePixelCount
+                          : 0;
+
+                        // Final calculation: printed area × average density
+                        // This gives true average coverage across the entire image
+                        let finalCoverage = printedAreaRatio * avgInkDensity;
+
+                        // Apply adjustment factor based on typical printing scenarios
+                        // Most designs have 15-35% coverage, adjust if we're calculating too high
+                        if (finalCoverage > 50) {
+                          // Apply logarithmic scaling for high coverage values
+                          finalCoverage = 50 + Math.log10(finalCoverage - 49) * 10;
+                        }
+
+                        // Round to nearest integer
+                        finalCoverage = Math.round(finalCoverage);
+
+                        // Ensure bounds
+                        return Math.max(1, Math.min(100, finalCoverage));
+
+                      } catch (error) {
+                        console.error("Error processing image:", error);
+                        return 25;
                       } finally {
                         URL.revokeObjectURL(imgUrl);
                       }
@@ -3613,30 +3695,121 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       try {
                         const loadingTask = pdfjs.getDocument({ url });
                         const pdf = await loadingTask.promise;
-                        const page = await pdf.getPage(1);
-                        const viewport = page.getViewport({ scale: 0.5 });
-                        const canvas = document.createElement("canvas");
-                        const context = canvas.getContext("2d");
-                        if (!context) return 50;
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        await page.render({ canvasContext: context, viewport }).promise;
-                        const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
-                        let sum = 0;
-                        let count = 0;
-                        for (let i = 0; i < data.length; i += 4) {
-                          const r = data[i];
-                          const g = data[i + 1];
-                          const b = data[i + 2];
-                          const brightness = (r + g + b) / 3;
-                          sum += brightness;
-                          count++;
+
+                        // Sample up to 3 pages for speed
+                        const numPages = Math.min(pdf.numPages, 3);
+                        let totalCoverage = 0;
+                        let processedPages = 0;
+
+                        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                          try {
+                            const page = await pdf.getPage(pageNum);
+
+                            // Lower scale for PDFs to process faster
+                            const scale = 0.5;
+                            const viewport = page.getViewport({ scale });
+
+                            const canvas = document.createElement("canvas");
+                            const context = canvas.getContext("2d");
+
+                            if (!context) continue;
+
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+
+                            // White background for PDFs
+                            context.fillStyle = "white";
+                            context.fillRect(0, 0, canvas.width, canvas.height);
+
+                            await page.render({
+                              canvasContext: context,
+                              viewport
+                            }).promise;
+
+                            const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+
+                            let pageCoverage = 0;
+                            let pixelCount = 0;
+                            let nonWhiteCount = 0;
+
+                            // Sample every 8th pixel for performance on PDFs
+                            const sampleRate = 8;
+                            for (let i = 0; i < data.length; i += 4 * sampleRate) {
+                              const r = data[i];
+                              const g = data[i + 1];
+                              const b = data[i + 2];
+
+                              // RGB to CMYK conversion
+                              const rNorm = r / 255;
+                              const gNorm = g / 255;
+                              const bNorm = b / 255;
+
+                              let c = 1 - rNorm;
+                              let m = 1 - gNorm;
+                              let y = 1 - bNorm;
+                              let k = Math.min(c, m, y);
+
+                              // GCR adjustment
+                              if (k > 0 && k < 1) {
+                                c = (c - k) / (1 - k);
+                                m = (m - k) / (1 - k);
+                                y = (y - k) / (1 - k);
+                              }
+
+                              // For text documents, special handling
+                              const isBlackText = k > 0.9 && c < 0.1 && m < 0.1 && y < 0.1;
+                              const isWhite = r > 250 && g > 250 && b > 250;
+
+                              if (!isWhite) {
+                                let coverage;
+                                if (isBlackText) {
+                                  // Black text typically counts as 100% K coverage for that pixel
+                                  // But for average, we consider it as single color coverage
+                                  coverage = k * 100;
+                                } else {
+                                  // Color elements - use TAC/4 formula
+                                  const tac = (c + m + y + k) * 100;
+                                  coverage = Math.min(tac, 320) / 4;
+                                }
+
+                                nonWhiteCount++;
+                                pageCoverage += coverage;
+                              }
+
+                              pixelCount++;
+                            }
+
+                            if (pixelCount > 0 && nonWhiteCount > 0) {
+                              const printedArea = nonWhiteCount / pixelCount;
+                              const avgDensity = pageCoverage / nonWhiteCount;
+                              let pageAvg = printedArea * avgDensity;
+
+                              // PDF text documents typically have 5-15% coverage
+                              // Full color PDFs typically have 20-40% coverage
+                              // Adjust if calculation seems too high
+                              if (pageAvg > 45) {
+                                pageAvg = 45 + Math.log10(pageAvg - 44) * 8;
+                              }
+
+                              totalCoverage += pageAvg;
+                              processedPages++;
+                            }
+
+                          } catch (pageError) {
+                            console.error(`Error processing page ${pageNum}:`, pageError);
+                          }
                         }
-                        const avgBrightness = count ? sum / count : 127.5;
-                        const inkLoad = Math.max(0, Math.min(100, Math.round((1 - avgBrightness / 255) * 100)));
-                        return inkLoad;
-                      } catch {
-                        return 50;
+
+                        if (processedPages === 0) return 25;
+
+                        let finalCoverage = totalCoverage / processedPages;
+
+                        // Round and bound
+                        return Math.max(1, Math.min(100, Math.round(finalCoverage)));
+
+                      } catch (error) {
+                        console.error("Error processing PDF:", error);
+                        return 25;
                       } finally {
                         URL.revokeObjectURL(url);
                       }
@@ -3645,21 +3818,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const handleUpload = async (file: File) => {
                       try {
                         const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+
                         const inkLoad = isPdf
                           ? await computeAverageInkLoadFromPdf(file)
                           : await computeAverageInkLoadFromImage(file);
 
-                        // Update only the ColorsLoadAverage parameter that corresponds to the current field
-                        const code = parameter?.code === "ColorsLoadAverageSide2" ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
+                        // Log for debugging
+                        console.log(`Calculated ink load for ${file.name}: ${inkLoad}%`);
+
+                        // Update the corresponding ColorsLoadAverage parameter
+                        const code = parameter?.code === "ColorsLoadAverageSide2"
+                          ? "ColorsLoadAverageSide2"
+                          : "ColorsLoadAverage";
+
                         const target = temp.find(
-                          (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === code
+                          (p) => p.sectionId === section?.id &&
+                            p.subSectionId === subSection?.id &&
+                            p.parameterCode === code
                         );
+
                         if (target) {
                           onChangeSubProductsForPrice(
                             target.parameterId,
                             subSection?.id,
                             section?.id,
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (target as any).ParameterType ?? target.parameterType ?? EParameterTypes.INPUT_NUMBER,
                             target.parameterName ?? code,
                             target.actionId,
@@ -3671,7 +3853,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             null
                           );
                         }
-                      } catch { }
+                      } catch (error) {
+                        console.error("Error handling upload:", error);
+                      }
                     };
 
                     const onIconClick = () => {
@@ -3689,7 +3873,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           accept="image/*,application/pdf"
                           style={{ display: "none" }}
                           onChange={(e) => {
-                            const file = e.target.files && e.target.files[0];
+                            const file = e.target.files?.[0];
                             if (file) handleUpload(file);
                           }}
                         />
