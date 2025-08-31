@@ -89,12 +89,16 @@ const PricingList = ({
       );
       setSelectedSupplier(supplier);
     }
+    else {
+      setSelectedSupplier(null);
+    }
   }, [
     selectedPricingTableItems,
     supplierList,
     actionProfitByActionId,
     getProfitsPricingTables,
   ]);
+
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
