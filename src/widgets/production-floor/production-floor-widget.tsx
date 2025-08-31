@@ -214,6 +214,7 @@ const ProductionFloorWidget = () => {
     });
   };
 
+  //!here
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
@@ -431,10 +432,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />

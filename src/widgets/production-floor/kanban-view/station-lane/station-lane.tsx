@@ -280,6 +280,10 @@ const StationLane: React.FC<IProps> = ({
           () => ({
             accept: "task",
             canDrop: (item: any) => {
+              // Prevent drops into "Upcoming Works" column
+              if (status.name === "Upcoming Works") {
+                return false;
+              }
               // Allow drops from any station within the same action/category
               return item.categoryName === categoryName;
             },
@@ -330,7 +334,9 @@ const StationLane: React.FC<IProps> = ({
               flex: 1,
               minWidth: isMobile ? "120px" : "150px",
               backgroundColor:
-                isOver && canDrop
+                status.name === "Upcoming Works"
+                  ? "#f8f9fa"
+                  : isOver && canDrop
                   ? "#f0f8ff"
                   : isOver && !canDrop
                   ? "#fff5f5"
@@ -345,7 +351,9 @@ const StationLane: React.FC<IProps> = ({
               maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
               border:
-                isOver && canDrop
+                status.name === "Upcoming Works"
+                  ? "2px dashed #cccccc"
+                  : isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
                   ? "2px dashed #f44336"
@@ -379,6 +387,7 @@ const StationLane: React.FC<IProps> = ({
                     isMobile={isMobile}
                     stationId={station.id}
                     categoryName={categoryName}
+                    isDisabled={status.name === "Upcoming Works"}
                   />
                 ))}
               </>
@@ -389,11 +398,16 @@ const StationLane: React.FC<IProps> = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#6c757d",
+                  color:
+                    status.name === "Upcoming Works" ? "#999999" : "#6c757d",
                   fontSize: "0.8rem",
                 }}
               >
-                {isOver && canDrop ? (
+                {status.name === "Upcoming Works" ? (
+                  <span style={{ color: "#999999", fontSize: "0.8rem" }}>
+                    {t("boardMissions.noUpcomingWorks")}
+                  </span>
+                ) : isOver && canDrop ? (
                   <span style={{ color: "#1976d2", fontSize: "0.8rem" }}>
                     Drop to change station & status
                   </span>
