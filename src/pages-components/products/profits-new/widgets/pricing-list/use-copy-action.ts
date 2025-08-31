@@ -17,7 +17,6 @@ interface EAction {
   index: number | null; // index can be a number or null
 }
 const useCopyAction = ({ getAllActionProfitRowsByActionId,selectedPricingTableItems,getProfitsPricingTables }) => {
-
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -125,7 +124,7 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId,selectedPricingTableIt
     } else {
       alertFaultUpdate();
     }
-  }, [router.query.actionId,selectedPricingTableItems]);
+  }, [router.query.actionId]);
 
   return {
     router,
