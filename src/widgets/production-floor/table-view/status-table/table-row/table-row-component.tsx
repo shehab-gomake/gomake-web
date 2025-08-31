@@ -89,7 +89,7 @@ const TableRowComponent = ({
   employeesCategories,
   visibleColumns,
   cellsOnly = false,
-  handleOpenStuckModal
+  handleOpenStuckModal,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -234,9 +234,7 @@ const TableRowComponent = ({
     setSelectedIds(
       checked
         ? [...selectedIds, boardMission] // Add the full object, not just the ID
-        : selectedIds.filter(
-          (selectedBoard) => selectedBoard.id !== id
-        )
+        : selectedIds.filter((selectedBoard) => selectedBoard.id !== id)
     );
   };
   const onClickOpenDatePicker = () => {
@@ -365,8 +363,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission.jobDeliveryTimeAlertColor
                   ? boardMission.jobDeliveryTimeAlertColor
                   : index % 2 === 0
-                    ? "#FFFFFF"
-                    : "#F9F9F9",
+                  ? "#FFFFFF"
+                  : "#F9F9F9",
               }}
             >
               <div
@@ -557,8 +555,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission?.currentStationColor
                   ? boardMission?.currentStationColor
                   : index % 2 === 0
-                    ? "#FFFFFF"
-                    : "#F9F9F9",
+                  ? "#FFFFFF"
+                  : "#F9F9F9",
               }}
             >
               <CurrentStationComponent
@@ -586,9 +584,46 @@ const TableRowComponent = ({
             </SecondaryTableCell>
           );
 
+        case "totalTime":
+          return (
+            <SecondaryTableCell align="center" style={commonStyle}>
+              <div
+                style={{
+                  fontSize: GetProductionFontSizeFromPreferences(),
+                  fontWeight: "bold",
+                  fontFamily: "monospace",
+                }}
+              >
+                {(() => {
+                  const totalTime =
+                    boardMission?.currentStation
+                      ?.totalProductionTimeForAllStations;
+                  if (!totalTime || totalTime === 0) return "00:00:00";
+
+                  // Convert to seconds if it's in minutes
+                  const totalSeconds =
+                    typeof totalTime === "number" && totalTime < 1000
+                      ? totalTime * 60
+                      : totalTime;
+
+                  const hours = Math.floor(totalSeconds / 3600);
+                  const minutes = Math.floor((totalSeconds % 3600) / 60);
+                  const seconds = Math.floor(totalSeconds % 60);
+
+                  return `${hours.toString().padStart(2, "0")}:${minutes
+                    .toString()
+                    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+                })()}
+              </div>
+            </SecondaryTableCell>
+          );
+
         case "more":
           return (
-            <SecondaryTableCell align="center" style={{ ...commonStyle, padding: "0px" }}>
+            <SecondaryTableCell
+              align="center"
+              style={{ ...commonStyle, padding: "0px" }}
+            >
               <MoreMenuWidget
                 boardMission={boardMission}
                 onClickDone={onClickDone}

@@ -280,6 +280,10 @@ const StationLane: React.FC<IProps> = ({
           () => ({
             accept: "task",
             canDrop: (item: any) => {
+              // Prevent drops into "Upcoming Works" column
+              if (status.name === "Upcoming Works") {
+                return false;
+              }
               // Allow drops from any station within the same action/category
               return item.categoryName === categoryName;
             },
@@ -330,13 +334,14 @@ const StationLane: React.FC<IProps> = ({
               flex: 1,
               minWidth: isMobile ? "120px" : "150px",
               backgroundColor:
-                isOver && canDrop
+                status.name === "Upcoming Works"
+                  ? // ? "#f8f9fa"
+                    "white"
+                  : isOver && canDrop
                   ? "#f0f8ff"
                   : isOver && !canDrop
                   ? "#fff5f5"
                   : "white",
-              borderRight: "1px solid #e0e0e0", // Always show right border
-              borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
               padding: "8px",
               display: "flex",
               flexDirection: "column",
@@ -344,12 +349,15 @@ const StationLane: React.FC<IProps> = ({
               overflow: "auto",
               maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
-              border:
+              // Border styling - use outline for hover states to avoid conflicts
+              borderRight: "1px solid #e0e0e0",
+              outline:
                 isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
                   ? "2px dashed #f44336"
                   : "none",
+              outlineOffset: "-2px", // Adjust outline position
               "::-webkit-scrollbar": {
                 width: "8px",
               },
@@ -379,6 +387,7 @@ const StationLane: React.FC<IProps> = ({
                     isMobile={isMobile}
                     stationId={station.id}
                     categoryName={categoryName}
+                    isDisabled={status.name === "Upcoming Works"}
                   />
                 ))}
               </>
@@ -389,11 +398,16 @@ const StationLane: React.FC<IProps> = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#6c757d",
+                  color:
+                    status.name === "Upcoming Works" ? "#999999" : "#6c757d",
                   fontSize: "0.8rem",
                 }}
               >
-                {isOver && canDrop ? (
+                {status.name === "Upcoming Works" ? (
+                  <span style={{ color: "#999999", fontSize: "0.8rem" }}>
+                    {t("boardMissions.noUpcomingWorks")}
+                  </span>
+                ) : isOver && canDrop ? (
                   <span style={{ color: "#1976d2", fontSize: "0.8rem" }}>
                     Drop to change station & status
                   </span>
