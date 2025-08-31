@@ -334,6 +334,7 @@ const getLabel = (t, key: string): string => {
     currentStation: t("productionFloor.currentStation"),
     nextStation: t("productionFloor.nextStation"),
     more: t("productionFloor.moreMenu"),
+    totalTime: t("productionFloor.totalTime"),
   };
   return map[key] ?? key;
 };

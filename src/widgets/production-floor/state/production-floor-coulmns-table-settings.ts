@@ -4,6 +4,7 @@ export const allColumnKeys = [
   "checkbox",
   "job_order",
   "deliveryDate",
+  "totalTime",
   "customer",
   "agent",
   "productName",
@@ -12,7 +13,6 @@ export const allColumnKeys = [
   "status",
   "currentStation",
   "nextStation",
-  "totalTime",
   "more",
 ];
 
@@ -54,6 +54,7 @@ export const columnWidthsMap: Record<string, string> = {
   checkbox: "3%",
   job_order: "13%",
   deliveryDate: "7%",
+  totalTime: "7%",
   customer: "9%",
   agent: "9%",
   productName: "8%",
@@ -62,7 +63,6 @@ export const columnWidthsMap: Record<string, string> = {
   status: "11%",
   currentStation: "15%",
   nextStation: "12%",
-  totalTime: "8%",
   more: "2%",
 };
 
