@@ -335,7 +335,8 @@ const StationLane: React.FC<IProps> = ({
               minWidth: isMobile ? "120px" : "150px",
               backgroundColor:
                 status.name === "Upcoming Works"
-                  ? "#f8f9fa"
+                  ? // ? "#f8f9fa"
+                    "white"
                   : isOver && canDrop
                   ? "#f0f8ff"
                   : isOver && !canDrop
