@@ -1,6 +1,6 @@
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { updateTokenStorage } from "@/services/storage-data";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { companyProfileState } from "@/store/company-profile";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,7 @@ const useGomakeLogin = () => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const setUserProfile = useSetRecoilState(companyProfileState);
-  const [state, setState] = useState<any>({});
+  const [state, setState] = useState<any>({ username: "", password: "" });
   const { isModalOpen, setIsModalOpen, setIsTermsAccepted } = useTermsFlag();
   const showLoginModal = useSetRecoilState(tokenExpiredState);
 
@@ -66,6 +66,19 @@ const useGomakeLogin = () => {
     }
   }, [state]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get("email");
+    const passwordParam = params.get("password");
+    if (emailParam || passwordParam) {
+      setState((prev) => ({
+        ...prev,
+        username: emailParam || prev.username,
+        password: passwordParam || prev.password,
+      }));
+    }
+  }, []);
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       onClickLogin();
@@ -112,6 +125,7 @@ const useGomakeLogin = () => {
     isModalOpen,
     setIsModalOpen,
     setIsTermsAccepted,
+    state,
   };
 };
 
