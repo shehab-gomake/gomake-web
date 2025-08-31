@@ -342,8 +342,6 @@ const StationLane: React.FC<IProps> = ({
                   : isOver && !canDrop
                   ? "#fff5f5"
                   : "white",
-              borderRight: "1px solid #e0e0e0", // Always show right border
-              borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
               padding: "8px",
               display: "flex",
               flexDirection: "column",
@@ -351,12 +349,18 @@ const StationLane: React.FC<IProps> = ({
               overflow: "auto",
               maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
               minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
-              border:
+              // Border styling - use outline for hover states to avoid conflicts
+              borderRight:
+                index === statusColumns.length - 1
+                  ? "none"
+                  : "1px solid #e0e0e0", // Show right border except for last column
+              outline:
                 isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
                   ? "2px dashed #f44336"
                   : "none",
+              outlineOffset: "-2px", // Adjust outline position
               "::-webkit-scrollbar": {
                 width: "8px",
               },
