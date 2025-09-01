@@ -28,7 +28,10 @@ import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { filterGroupsState, patternSearchState } from "@/widgets/production-floor/state/filter-group";
+import {
+  filterGroupsState,
+  patternSearchState,
+} from "@/widgets/production-floor/state/filter-group";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -142,7 +145,7 @@ const CustomGroupComponent = ({
   isFromMenu,
   handleClickMenu,
   setSelectedGroup,
-  isDoneJobs
+  isDoneJobs,
 }: CustomGroupsProps) => {
   return (
     <CustomGroup
@@ -184,7 +187,7 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
-        {!isDoneJobs &&
+        {!isDoneJobs && (
           <Box
             sx={{
               display: "flex",
@@ -235,7 +238,7 @@ const CustomGroupComponent = ({
               </Circle>
             )}
           </Box>
-        }
+        )}
       </CardContent>
     </CustomGroup>
   );
@@ -253,7 +256,7 @@ const ProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
   isMobile,
-  view
+  view,
 }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
@@ -318,7 +321,7 @@ const ProductionFloorFilters = ({
     setGlobalSearch,
     localSearch,
     setLocalSearch,
-    debouncedSearch
+    debouncedSearch,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -419,7 +422,9 @@ const ProductionFloorFilters = ({
 
   //!there is no productType
   const handleMissionClick = (id, productType) => {
-    push(`/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`).then(() => {
+    push(
+      `/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`
+    ).then(() => {
       setGlobalSearch("");
       setLocalSearch("");
       setMissionsList([]);
@@ -462,7 +467,8 @@ const ProductionFloorFilters = ({
     }
   }, [debouncedSearchValue]);
 
-  const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
+  const [patternSearch, setPatternSearch] =
+    useRecoilState<any>(patternSearchState);
   const debouncedPatternSearch = useDebounce(patternSearch, 500);
 
   const onChangeMissionsSearch = (value: string) => {
@@ -473,16 +479,14 @@ const ProductionFloorFilters = ({
     if (view === EProductionFloorView.DONE_JOBS) {
       if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
         getAllData(1, 10, debouncedPatternSearch);
-      }
-      else {
+      } else {
         getAllData(1, 10);
       }
     }
   }, [debouncedPatternSearch]);
 
-
   return (
-    <Stack style={classes.headerFilterContainer} >
+    <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
         onClickAway={(event) => {
           if (
@@ -496,51 +500,68 @@ const ProductionFloorFilters = ({
       >
         <Stack>
           <div ref={searchInputRef}>
-            {view === EProductionFloorView.DONE_JOBS && <SearchInputComponent
-              bgColor={"#F8F8F8"}
-              onChange={onChangeMissionsSearch}
-              value={patternSearch}
-              inputRef={searchInputFilterRef}
-              filtersButton={
-                isSearchLoading && (
-                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-                )
-              }
-            />}
-            {view !== EProductionFloorView.DONE_JOBS && <SearchInputComponent
-              bgColor={"#F8F8F8"}
-              value={localSearch} // Use local state for immediate updates
-              onChange={handleSearchChange}
-              filtersButton={
-                isSearchLoading && (
-                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-                )
-              }
-            />}
+            {view === EProductionFloorView.DONE_JOBS && (
+              <SearchInputComponent
+                bgColor={"#F8F8F8"}
+                onChange={onChangeMissionsSearch}
+                value={patternSearch}
+                inputRef={searchInputFilterRef}
+                filtersButton={
+                  isSearchLoading && (
+                    <CircularProgress
+                      color="inherit"
+                      size={20}
+                      sx={{ ml: 2 }}
+                    />
+                  )
+                }
+              />
+            )}
+            {view !== EProductionFloorView.DONE_JOBS && (
+              <SearchInputComponent
+                bgColor={"#F8F8F8"}
+                value={localSearch} // Use local state for immediate updates
+                onChange={handleSearchChange}
+                filtersButton={
+                  isSearchLoading && (
+                    <CircularProgress
+                      color="inherit"
+                      size={20}
+                      sx={{ ml: 2 }}
+                    />
+                  )
+                }
+              />
+            )}
           </div>
-          {getMissionsList().length !== 0 && isListOpen && view !== EProductionFloorView.DONE_JOBS && (
-            <SearchMissionList
-              missionsList={getMissionsList()}
-              handleMissionClick={handleMissionClick}
-            />
-          )}
+          {getMissionsList().length !== 0 &&
+            isListOpen &&
+            view !== EProductionFloorView.DONE_JOBS && (
+              <SearchMissionList
+                missionsList={getMissionsList()}
+                handleMissionClick={handleMissionClick}
+              />
+            )}
         </Stack>
       </ClickAwayListener>
-      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && view !== EProductionFloorView.DONE_JOBS && (
-        <AgentsList onClickApply={handleAgentChange} applyButton={true} />
+      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) &&
+        view !== EProductionFloorView.DONE_JOBS && (
+          <AgentsList onClickApply={handleAgentChange} applyButton={true} />
+        )}
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <GoMakeDatepicker
+          value={deliveryDateFilter}
+          onChange={onSelectDeliveryTimeDates}
+          placeholder={t("sales.quote.deliveryDate")}
+        />
       )}
-      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
-        value={deliveryDateFilter}
-        onChange={onSelectDeliveryTimeDates}
-        placeholder={t("sales.quote.deliveryDate")}
-      />
-      }
-      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
-        value={createDateFilter}
-        onChange={onSelectCreateDates}
-        placeholder={t("productionFloor.createTime")}
-      />
-      }
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <GoMakeDatepicker
+          value={createDateFilter}
+          onChange={onSelectCreateDates}
+          placeholder={t("productionFloor.createTime")}
+        />
+      )}
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
@@ -562,8 +583,7 @@ const ProductionFloorFilters = ({
         {hiddenFilterGroups.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
-              {/* <MoreHorizIcon /> */}
-              +1
+              {/* <MoreHorizIcon /> */}+{hiddenFilterGroups.length}
             </CustomIconButton>
             <Menu
               transformOrigin={{
