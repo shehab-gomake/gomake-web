@@ -18,7 +18,7 @@ import "rsuite/dist/rsuite-no-reset.min.css";
 import { FileUploaderProvider } from "@/providers/signalr-provider/file-uploader-provider";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
+import {MailTestProvider} from "@/providers/signalr-provider/mail-test-provider";
 
 i18n
   .use(Backend)
