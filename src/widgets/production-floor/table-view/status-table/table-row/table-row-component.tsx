@@ -45,6 +45,7 @@ import { boardMissionsStationsState } from "@/widgets/production-floor/views/boa
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
+import { ChangeMachineEmployeeComponent } from "../stations/change-machine-employee";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -580,6 +581,19 @@ const TableRowComponent = ({
                 status={status}
                 textColor={boardMission.productionFloorJobColor}
                 onClickDone={() => onClickDone(boardMission)}
+              />
+            </SecondaryTableCell>
+          );
+
+        case "changeMachineEmployee":
+          return (
+            <SecondaryTableCell align="center" style={commonStyle}>
+              <ChangeMachineEmployeeComponent
+                {...boardMission.currentStation}
+                boardMissionId={boardMission.id}
+                status={status}
+                textColor={boardMission?.productionFloorJobColor}
+                employeesCategories={employeesCategories}
               />
             </SecondaryTableCell>
           );

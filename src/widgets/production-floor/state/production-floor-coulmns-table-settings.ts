@@ -13,6 +13,7 @@ export const allColumnKeys = [
   "status",
   "currentStation",
   "nextStation",
+  "changeMachineEmployee",
   "more",
 ];
 
@@ -63,6 +64,7 @@ export const columnWidthsMap: Record<string, string> = {
   status: "11%",
   currentStation: "15%",
   nextStation: "12%",
+  changeMachineEmployee: "12%",
   more: "2%",
 };
 

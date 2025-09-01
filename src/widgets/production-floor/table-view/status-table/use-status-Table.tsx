@@ -109,6 +109,7 @@ const useStatusTable = () => {
       status: t("productionFloor.status"),
       currentStation: t("productionFloor.currentStation"),
       nextStation: t("productionFloor.nextStation"),
+      changeMachineEmployee: t("productionFloor.changeMachineEmployee"),
       totalTime: t("productionFloor.totalTime"),
       more: " ",
     };
