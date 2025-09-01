@@ -224,7 +224,7 @@ const StationLane: React.FC<IProps> = ({
       direction="row"
       spacing={0}
       sx={{
-        borderBottom: "1px solid #e0e0e0",
+        borderBottom: "5px solid #e0e0e0",
         minHeight: "120px",
       }}
     >
@@ -438,7 +438,8 @@ const StationLane: React.FC<IProps> = ({
                     isMobile={isMobile}
                     stationId={station.id}
                     categoryName={categoryName}
-                    isDisabled={status.name === "Upcoming Works"}
+                    // isDisabled={status.name === "Upcoming Works"}
+                    isDisabled={false}
                   />
                 ))}
               </>
