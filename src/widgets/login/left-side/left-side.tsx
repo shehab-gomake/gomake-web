@@ -25,6 +25,7 @@ const LoginLeftSide = () => {
     isModalOpen,
     setIsModalOpen,
     setIsTermsAccepted,
+    state,
   } = useGomakeLogin();
 
   return (
@@ -60,6 +61,7 @@ const LoginLeftSide = () => {
             error={errors[input.key]}
             placeholder={t(input.placeholder)}
             handleKeyPress={handleKeyPress}
+            value={state[input.key]}
           />
         ))}
         <Link
