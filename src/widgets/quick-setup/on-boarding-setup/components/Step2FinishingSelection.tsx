@@ -14,10 +14,12 @@ import {
   OutlinedInput,
   InputAdornment,
   TextField,
+  Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
 import {
   FinishingCategory,
   SelectedFinishingMachine,
@@ -30,6 +32,7 @@ interface Step2FinishingSelectionProps {
   onAddFinishingMachine: (categoryId: string) => void;
   onDeleteFinishingMachine: (machineId: string) => void;
   onCategoryMachineChange: (categoryId: string, machineName: string) => void;
+  onAddNewMachine?: (categoryId: string, machineName: string) => void;
   autoSelectedMachines?: SelectedFinishingMachine[]; // New prop for auto-selected machines
 }
 
@@ -42,6 +45,7 @@ export const Step2FinishingSelection: React.FC<
   onAddFinishingMachine,
   onDeleteFinishingMachine,
   onCategoryMachineChange,
+  onAddNewMachine,
   autoSelectedMachines = [],
 }) => {
   const { t } = useTranslation();
@@ -71,6 +75,18 @@ export const Step2FinishingSelection: React.FC<
     );
   };
 
+  const handleAddNewMachine = (categoryId: string) => {
+    const searchTerm = searchTerms[categoryId];
+    if (searchTerm && onAddNewMachine) {
+      onAddNewMachine(categoryId, searchTerm);
+      // Clear the search term after adding
+      setSearchTerms((prev) => ({
+        ...prev,
+        [categoryId]: "",
+      }));
+    }
+  };
+
   // Helper function to check if a machine is auto-selected
   const isAutoSelected = (machineId: string): boolean => {
     return autoSelectedMachines.some((machine) => machine.id === machineId);
@@ -84,156 +100,193 @@ export const Step2FinishingSelection: React.FC<
             Finishing Categories
           </Typography>
 
-          {finishingCategories.map((category) => (
-            <Paper
-              key={category.id}
-              sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
-            >
-              <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
-                {t(category.name)}
-              </Typography>
+          {finishingCategories.map((category) => {
+            const filteredMachines = getFilteredMachines(category);
+            const searchTerm = searchTerms[category.id] || "";
+            const hasSearchTerm = searchTerm.length > 0;
+            const hasNoResults = hasSearchTerm && filteredMachines.length === 0;
 
-              <Box
-                sx={{ display: "flex", gap: 2, mb: 2, alignItems: "flex-end" }}
+            return (
+              <Paper
+                key={category.id}
+                sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
               >
-                <FormControl fullWidth>
-                  <InputLabel>Select Machine</InputLabel>
-                  <Select
-                    value={selectedCategoryMachines[category.id] || ""}
-                    onChange={(e) =>
-                      onCategoryMachineChange(category.id, e.target.value)
-                    }
-                    label="Select Machine"
-                    input={<OutlinedInput label="Select Machine" />}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        {selectedCategoryMachines[category.id] && (
-                          <IconButton
-                            onClick={() => clearCategorySelection(category.id)}
-                            edge="end"
-                            size="small"
-                            sx={{ mr: 3 }}
-                          >
-                            <ClearIcon />
-                          </IconButton>
-                        )}
-                      </InputAdornment>
-                    }
-                    MenuProps={{
-                      PaperProps: { style: { maxHeight: 300 } },
-                    }}
-                  >
-                    <MenuItem sx={{ p: 1 }}>
-                      <TextField
-                        placeholder="Search machines..."
-                        value={searchTerms[category.id] || ""}
-                        onChange={(e) =>
-                          handleSearchChange(category.id, e.target.value)
-                        }
-                        onClick={(e) => e.stopPropagation()}
-                        onKeyDown={(e) => e.stopPropagation()}
-                        fullWidth
-                        size="small"
-                        sx={{
-                          "& .MuiInputBase-root": {
-                            height: 40,
-                            fontSize: "14px",
-                          },
-                        }}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon fontSize="small" />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </MenuItem>
-                    {getFilteredMachines(category).map((machine) => (
-                      <MenuItem
-                        key={machine.id}
-                        value={machine.model}
-                        sx={{ py: 1, fontSize: "14px" }}
-                      >
-                        {machine.manufacturer} - {machine.model}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
+                  {t(category.name)}
+                </Typography>
 
-                <Button
-                  variant="contained"
-                  onClick={() => onAddFinishingMachine(category.id)}
-                  disabled={!selectedCategoryMachines[category.id]}
-                  sx={{ minWidth: 100 }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    mb: 2,
+                    alignItems: "flex-end",
+                  }}
                 >
-                  Add
-                </Button>
-              </Box>
-
-              {/* Selected machines list */}
-              {selectedFinishingMachines.filter(
-                (machine) => machine.categoryId === category.id
-              ).length > 0 && (
-                <Box>
-                  {selectedFinishingMachines
-                    .filter((machine) => machine.categoryId === category.id)
-                    .map((machine) => (
-                      <Paper
-                        key={machine.id}
-                        sx={{
-                          p: 2,
-                          mb: 1,
-                          backgroundColor: isAutoSelected(machine.id)
-                            ? "#fff3cd"
-                            : "#f8f9fa",
-                          border: `1px solid ${
-                            isAutoSelected(machine.id) ? "#ffc107" : "#dee2e6"
-                          }`,
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Box
+                  <FormControl fullWidth>
+                    <InputLabel>Select Machine</InputLabel>
+                    <Select
+                      value={selectedCategoryMachines[category.id] || ""}
+                      onChange={(e) =>
+                        onCategoryMachineChange(category.id, e.target.value)
+                      }
+                      label="Select Machine"
+                      input={<OutlinedInput label="Select Machine" />}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          {selectedCategoryMachines[category.id] && (
+                            <IconButton
+                              onClick={() =>
+                                clearCategorySelection(category.id)
+                              }
+                              edge="end"
+                              size="small"
+                              sx={{ mr: 3 }}
+                            >
+                              <ClearIcon />
+                            </IconButton>
+                          )}
+                        </InputAdornment>
+                      }
+                      MenuProps={{
+                        PaperProps: { style: { maxHeight: 300 } },
+                      }}
+                    >
+                      <MenuItem sx={{ p: 1 }}>
+                        <TextField
+                          placeholder="Search machines..."
+                          value={searchTerms[category.id] || ""}
+                          onChange={(e) =>
+                            handleSearchChange(category.id, e.target.value)
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          fullWidth
+                          size="small"
                           sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            "& .MuiInputBase-root": {
+                              height: 40,
+                              fontSize: "14px",
+                            },
                           }}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon fontSize="small" />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </MenuItem>
+
+                      {filteredMachines.map((machine) => (
+                        <MenuItem
+                          key={machine.id}
+                          value={machine.model}
+                          sx={{ py: 1, fontSize: "14px" }}
                         >
-                          <Box
+                          {machine.manufacturer} - {machine.model}
+                        </MenuItem>
+                      ))}
+
+                      {hasNoResults && onAddNewMachine && (
+                        <>
+                          <Divider sx={{ my: 1 }} />
+                          <MenuItem
+                            onClick={() => handleAddNewMachine(category.id)}
                             sx={{
+                              py: 1,
+                              fontSize: "14px",
+                              color: "primary.main",
                               display: "flex",
                               alignItems: "center",
                               gap: 1,
                             }}
                           >
-                            <Typography variant="body1">
-                              {machine.name}
-                            </Typography>
-                            {isAutoSelected(machine.id) && (
-                              <Chip
-                                label="Auto-selected"
-                                size="small"
-                                color="warning"
-                                variant="outlined"
-                                sx={{ fontSize: "0.7rem" }}
-                              />
-                            )}
-                          </Box>
-                          <IconButton
-                            onClick={() => onDeleteFinishingMachine(machine.id)}
-                            color="error"
-                            size="small"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </Paper>
-                    ))}
+                            <AddIcon fontSize="small" />
+                            Add new machine "{searchTerm}"
+                          </MenuItem>
+                        </>
+                      )}
+                    </Select>
+                  </FormControl>
+
+                  <Button
+                    variant="contained"
+                    onClick={() => onAddFinishingMachine(category.id)}
+                    disabled={!selectedCategoryMachines[category.id]}
+                    sx={{ minWidth: 100 }}
+                  >
+                    Add
+                  </Button>
                 </Box>
-              )}
-            </Paper>
-          ))}
+
+                {/* Selected machines list */}
+                {selectedFinishingMachines.filter(
+                  (machine) => machine.categoryId === category.id
+                ).length > 0 && (
+                  <Box>
+                    {selectedFinishingMachines
+                      .filter((machine) => machine.categoryId === category.id)
+                      .map((machine) => (
+                        <Paper
+                          key={machine.id}
+                          sx={{
+                            p: 2,
+                            mb: 1,
+                            backgroundColor: isAutoSelected(machine.id)
+                              ? "#fff3cd"
+                              : "#f8f9fa",
+                            border: `1px solid ${
+                              isAutoSelected(machine.id) ? "#ffc107" : "#dee2e6"
+                            }`,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <Typography variant="body1">
+                                {machine.name}
+                              </Typography>
+                              {isAutoSelected(machine.id) && (
+                                <Chip
+                                  label="Auto-selected"
+                                  size="small"
+                                  color="warning"
+                                  variant="outlined"
+                                  sx={{ fontSize: "0.7rem" }}
+                                />
+                              )}
+                            </Box>
+                            <IconButton
+                              onClick={() =>
+                                onDeleteFinishingMachine(machine.id)
+                              }
+                              color="error"
+                              size="small"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Paper>
+                      ))}
+                  </Box>
+                )}
+              </Paper>
+            );
+          })}
         </Box>
 
         {selectedFinishingMachines.length > 0 && (
