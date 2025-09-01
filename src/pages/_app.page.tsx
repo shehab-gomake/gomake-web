@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
-import { MailTestProvider, ThemeProvider } from "@/providers";
+import {  ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
 import { GoMakeSnackBar } from "@/components";
 import { DndProvider } from "react-dnd";
@@ -18,6 +18,7 @@ import "rsuite/dist/rsuite-no-reset.min.css";
 import { FileUploaderProvider } from "@/providers/signalr-provider/file-uploader-provider";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import {MailTestProvider} from "@/providers/signalr-provider/mail-test-provider";
 
 i18n
   .use(Backend)
