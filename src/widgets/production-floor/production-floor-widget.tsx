@@ -66,6 +66,18 @@ const ProductionFloorWidget = () => {
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
 
+  const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    if (boardMissionsId) {
+      setSelectedBoardMissionId(boardMissionsId as string);
+    }
+    else if (!boardMissionsId) {
+      setSelectedBoardMissionId(null);
+    }
+  }, [boardMissionsId]);
+
   const {
     filterGroups,
     setFilterGroups,
@@ -129,6 +141,7 @@ const ProductionFloorWidget = () => {
 
   const onClose = () => {
     {
+      setSelectedBoardMissionId(null);
       const newRequestAbortController = new AbortController();
       const currentView = EProductionFloorView[view].toLowerCase();
       push(`/production-floor?view=${currentView}`, undefined, {
@@ -138,10 +151,6 @@ const ProductionFloorWidget = () => {
       setAbortControllerFiles(newRequestAbortController);
       setAbortControllerActivities(newRequestAbortController);
       setAbortControllerDetails(newRequestAbortController);
-      // setFiles([]);
-      // setStations([]);
-      // setBoardMissionsDetails(null);
-      // setActivities([]);
     }
   };
 
@@ -280,9 +289,11 @@ const ProductionFloorWidget = () => {
 
       <Drawer
         sx={{ zIndex: 999999 }}
-        open={!!boardMissionsId}
+        open={!!selectedBoardMissionId}
         anchor={"bottom"}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+        }}
       >
         <Stack
           paddingBottom={"10px"}
