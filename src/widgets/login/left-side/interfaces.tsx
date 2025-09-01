@@ -12,4 +12,5 @@ export interface IInputContainer {
   error: boolean;
   placeholder?: string;
   handleKeyPress?: any
+  value?: any
 }

@@ -11,6 +11,7 @@ const InputContainer = ({
   changeState,
   placeholder,
   handleKeyPress,
+  value,
 }: IInputContainer) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -27,6 +28,7 @@ const InputContainer = ({
           onChange={onChangeState}
           type={input.type}
           error={error}
+          value={value}
           placeholder={placeholder}
           onKeyDown={handleKeyPress}
         />
