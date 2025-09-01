@@ -67,8 +67,7 @@ const CustomerEditMachines = () => {
                 if (machineId && typeof machineId === 'string') {
                     onSelectMachine(machineId,machinesList);
                 } else {
-                    setCurrentMachineId(machinesList[0].id);
-                    setMachineState(machinesList[0]);
+                    onSelectMachine(machinesList[0].id,machinesList[0]);
                 }
             }
         } catch (error) {
