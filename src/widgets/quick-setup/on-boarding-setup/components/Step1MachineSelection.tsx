@@ -21,10 +21,12 @@ import {
   CircularProgress,
   OutlinedInput,
   InputAdornment,
+  Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Machine,
   SelectedMachine,
@@ -37,6 +39,7 @@ interface Step1MachineSelectionProps {
   onAddMachine: (machine: Machine, categoryId: string) => void;
   onDeleteMachine: (machineId: string) => void;
   hasDigitalOrOffsetPrinting: boolean;
+  onAddNewMachine?: (categoryId: string, machineName: string) => void;
 }
 
 export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
@@ -46,6 +49,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   onAddMachine,
   onDeleteMachine,
   hasDigitalOrOffsetPrinting,
+  onAddNewMachine,
 }) => {
   const { t } = useTranslation();
   const categories = useRecoilValue(machineCategoriesState);
@@ -100,6 +104,17 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
     }
   };
 
+  const handleAddNewMachine = () => {
+    if (machineSearchTerm && selectedCategory && onAddNewMachine) {
+      onAddNewMachine(selectedCategory, machineSearchTerm);
+      // Clear the search term after adding
+      setMachineSearchTerm("");
+      setSelectedMachine("");
+      setSelectedCategory("");
+      setCategorySearchTerm("");
+    }
+  };
+
   const clearMachineSelection = () => {
     setSelectedMachine("");
     setSelectedCategory("");
@@ -115,6 +130,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   const filterCategories = categories.filter((category) =>
     t(category.name).toLowerCase().includes(categorySearchTerm.toLowerCase())
   );
+
+  const hasNoResults = machineSearchTerm.length > 0 && machines.length === 0;
+  const canAddNewMachine = hasNoResults && selectedCategory && onAddNewMachine;
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
@@ -189,6 +207,30 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                     `${machine.manufacturer} - ${machine.model}`}
                 </MenuItem>
               ))
+            )}
+
+            {canAddNewMachine && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <MenuItem
+                  onClick={handleAddNewMachine}
+                  sx={{
+                    py: 1,
+                    fontSize: "14px",
+                    color: "primary.main",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                  Add new machine "{machineSearchTerm}" to{" "}
+                  {t(
+                    categories.find((c) => c.id === selectedCategory)?.name ||
+                      selectedCategory
+                  )}
+                </MenuItem>
+              </>
             )}
           </Select>
         </FormControl>
@@ -268,6 +310,14 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           {t("navigationButtons.add")}
         </Button>
       </Box>
+
+      {/* Help text for adding new machines */}
+      {hasNoResults && !selectedCategory && (
+        <Typography variant="body2" color="info.main" sx={{ mb: 2 }}>
+          💡 No machines found. Select a category above to add a new machine "
+          {machineSearchTerm}"
+        </Typography>
+      )}
 
       {/* Selected Machines List with contained scroll */}
       {selectedMachines.length > 0 && (
