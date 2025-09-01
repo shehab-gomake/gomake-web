@@ -23,9 +23,11 @@ import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded
 import { useIsMobile } from "@/hooks/use-responsive";
 import { DoneJobsIcon } from "./components/icons/done-jobs";
 import { ColumnSettingsMenuContent } from "@/widgets/production-floor/table-view/components/column-settings-menu";
-import { ZoomControl } from "@/widgets/production-floor/components/zoom-control";
-import { useZoomContext } from "@/widgets/production-floor/context/zoom-context";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { selectedChipIdsState } from "@/widgets/production-floor/state/text-search";
+import { ProductionFloorExportButtons } from "@/widgets/production-floor/table-view/export-buttons/production-floor-export-buttons";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -48,12 +50,29 @@ const ProductionFloorHeader = ({
   const { CheckPermission } = useUserPermission();
   const isMobileScreen = useIsMobile();
 
-  // Zoom control hook
-  // const zoomControl = useZoomContext();
-
-  // State for column settings menu
   const [columnSettingsAnchorEl, setColumnSettingsAnchorEl] = useState(null);
   const columnSettingsOpen = Boolean(columnSettingsAnchorEl);
+
+  // Data for export button: mirror table view filtering by selected chips
+  const boardsData = useRecoilValue(boardsMissionsState);
+  const selectedChipId = useRecoilValue(selectedChipIdsState);
+  const filteredDataByMachine = useMemo(() => {
+    if (!selectedChipId?.length) return boardsData;
+
+    return boardsData.map((item: any) => {
+      const filteredBoardMissions = item.boardMissions?.filter((mission: any) =>
+        selectedChipId.some(
+          (chipId: any) =>
+            mission?.currentStation?.machineId === chipId ||
+            mission?.currentStation?.employeeId === chipId
+        )
+      );
+      return {
+        ...item,
+        boardMissions: filteredBoardMissions,
+      };
+    });
+  }, [boardsData, selectedChipId]);
 
   const handleColumnSettingsOpen = (event) => {
     setColumnSettingsAnchorEl(event.currentTarget);
@@ -178,6 +197,9 @@ const ProductionFloorHeader = ({
                 open={columnSettingsOpen}
                 onClose={handleColumnSettingsClose}
               />
+            )}
+            {view === EProductionFloorView.TABLE && (
+              <ProductionFloorExportButtons statusBoards={filteredDataByMachine} />
             )}
           </>
         )}

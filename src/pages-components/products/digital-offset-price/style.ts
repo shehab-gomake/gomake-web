@@ -228,23 +228,28 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
         width: "fit-content",
+        height: 30,
       },
       underParameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
         color: primaryColor(900),
         width: "fit-content",
+        height: 30,
       },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+        height: 30,
       },
       parameterunderParameterStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
         color: secondColor(500),
+        height: 30,
       },
       parameterRequierdLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
+        height: 30,
       },
       spanRequierd: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -454,6 +459,19 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       additionalProductItem: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 16),
+      },
+      deliveryPriceContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 10,
+      },
+      deliveryPriceItem: {
+        color: primaryColor(500),
+        justifyContent: "space-between",
+        ...FONT_FAMILY.Lexend(700, 14),
       },
       additionalPrices: {
         display: "flex",
@@ -822,6 +840,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "center",
         gap: 6,
         padding: "8px 0px",
+        width: "100%",
       },
       btnSelectedTextStyle: {
         ...FONT_FAMILY.Lexend(400, 16),

@@ -550,7 +550,8 @@ const useProductionFloorData = () => {
     const callBack = (res) => {
       if (res.success) {
         if (boardMission.productType) {
-          moveBoardMissionToDone(boardMission);
+          // Ask whether to mark all jobs or only product type
+          setOpenDoneScopeModal(true);
         } else {
           if (res.data) {
             onOpenMarkReadyModalForHasJobs(boardMission);
@@ -568,6 +569,28 @@ const useProductionFloorData = () => {
     await tryMoveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMission.id,
     });
+  };
+
+  // ===== Done scope modal (All jobs vs Product type only) =====
+  const [openDoneScopeModal, setOpenDoneScopeModal] = useState<boolean>(false);
+
+  const onCloseDoneScopeModal = () => {
+    setOpenDoneScopeModal(false);
+  };
+
+  const onClickDoneScopeAllJobs = () => {
+    if (selectedMission) {
+      // Call move to done with empty product type to mark entire job
+      moveBoardMissionToDone({ ...selectedMission, productType: "" });
+      setOpenDoneScopeModal(false);
+    }
+  };
+
+  const onClickDoneScopeProductType = () => {
+    if (selectedMission) {
+      moveBoardMissionToDone(selectedMission);
+      setOpenDoneScopeModal(false);
+    }
   };
 
   const onOpenMarkReadyModal = (missionId) => {
@@ -839,6 +862,11 @@ const useProductionFloorData = () => {
     setSelectedMission,
     getAllData,
     searchInputFilterRef,
+    // Done scope modal
+    openDoneScopeModal,
+    onCloseDoneScopeModal,
+    onClickDoneScopeAllJobs,
+    onClickDoneScopeProductType,
   };
 };
 

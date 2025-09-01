@@ -182,7 +182,7 @@ const useCopyFromOrderModal = ({
       const currentCount = selectedItems.length;
       const newItemsCount = newItems.length;
 
-      if (currentCount + newItemsCount > 100) {
+      /*if (currentCount + newItemsCount > 100) {
         // Only add items up to the 100 limit
         const itemsToAdd = newItems.slice(0, 100 - currentCount);
         setSelectedItems([...selectedItems, ...itemsToAdd]);
@@ -191,7 +191,8 @@ const useCopyFromOrderModal = ({
         alertWarning("sales.quote.maxItemsReached");
       } else {
         setSelectedItems([...selectedItems, ...newItems]);
-      }
+      }*/
+      setSelectedItems([...selectedItems, ...newItems]);
     }
   };
   const handleSelectAllDocuments = (filteredDocumentItems) => {
@@ -225,26 +226,27 @@ const useCopyFromOrderModal = ({
 
         if (remainingSlots <= 0) {
           hasReachedLimit = true;
-          break;
+          //break;
         }
 
-        if (newItems.length > remainingSlots) {
-          // Only add items up to the 100 limit
-          const itemsToAdd = newItems.slice(0, remainingSlots);
-          newSelectedItems = [...newSelectedItems, ...itemsToAdd];
-          hasReachedLimit = true;
-        } else {
-          newSelectedItems = [...newSelectedItems, ...newItems];
-        }
+        // if (newItems.length > remainingSlots) {
+        //   // Only add items up to the 100 limit
+        //   const itemsToAdd = newItems.slice(0, remainingSlots);
+        //   newSelectedItems = [...newSelectedItems, ...itemsToAdd];
+        //   hasReachedLimit = true;
+        // } else {
+        //   newSelectedItems = [...newSelectedItems, ...newItems];
+        // }
+        newSelectedItems = [...newSelectedItems, ...newItems];
       }
     }
 
     setSelectedItems([...selectedItems, ...newSelectedItems]);
 
     // Show alert if we reached the limit
-    if (hasReachedLimit) {
-      alertWarning("sales.quote.maxItemsReached");
-    }
+    //if (hasReachedLimit) {
+      //alertWarning("sales.quote.maxItemsReached");
+    //}
   };
 
   const areAllItemsSelected = (documentItemId) => {

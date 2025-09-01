@@ -38,8 +38,12 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
   const dieCutParameterForSettings = findParameterByCode(template, "DieCut")
   const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
+  const dieCutterParameterForSettings = findParameterByCode(template, "DieCutter")
   const dieStampParameterForSettings = findParameterByCode(template, selectParameterButton?.parameter?.materialPath[0] === "DieStamp" ? "Enhancementtype" : "Shape")
-  const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
+  const isDiesParameter =
+    (selectParameterButton?.parameter?.code
+      ? findParameterByCode(template, selectParameterButton?.parameter?.code)
+      : null) || dieCutParameterForSettings || dieKissCutParameterForSettings || dieCutterParameterForSettings
   const filteredMaterialData = !isParameterSettings
     ? materialData?.data?.filter(item => {
       const config = isDiesParameter?.valuesConfigs.find(config => config.id === item.id);
@@ -353,24 +357,91 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [widthParameter, heightParameter, shapeParameter, LabelShapeParameter, selectParameterButton]);
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      const isDefaultParameter = isDiesParameter?.valuesConfigs.find((config) => config?.isDefault);
-      if (changeDefaultValue?.id !== isDefaultParameter?.id) {
-        // Update all isDefault to false
-        const updatedValuesConfigs = isDiesParameter?.valuesConfigs.map(config => ({
-          ...config,
-          isDefault: false
-        }));
-
-        await updateProductParameterEndPoint(sectionId, subSectionId, {
-          parameter: {
-            ...isDiesParameter,
-            valuesConfigs: [...updatedValuesConfigs, changeDefaultValue]
-          },
-        });
+      if (!isDiesParameter || !isDiesParameter?.valuesConfigs) return;
+      const currentDefault = isDiesParameter.valuesConfigs.find((config) => config?.isDefault);
+      const selectedId = changeDefaultValue?.id;
+      if (!selectedId) return;
+      if (currentDefault?.id === selectedId) {
         setChangeDefaultValue("");
+        return;
       }
+      // Ensure name/image are persisted for the selected die so UI can render after refresh
+      const rd = changeDefaultValue?.rowData || {};
+      const get = (k: string) => rd?.[k]?.value;
+      const additionalAttribute = [
+        { valueId: "name", value: get("name") },
+        { valueId: "image", value: get("image") },
+        { valueId: "width", value: get("width") },
+        { valueId: "length", value: get("length") },
+        { valueId: "code", value: get("code") },
+        { valueId: "shape", value: get("shape") },
+        { valueId: "type", value: get("type") },
+        { valueId: "unitWidth", value: get("unitWidth") },
+        { valueId: "unitLength", value: get("unitLength") },
+        { valueId: "finalUnitWidth", value: get("finalUnitWidth") },
+        { valueId: "finalUnitLength", value: get("finalUnitLength") },
+        { valueId: "finalUnitHeight", value: get("finalUnitHeight") },
+        { valueId: "columnsAmount", value: get("columnsAmount") },
+        { valueId: "linesAmount", value: get("linesAmount") },
+        { valueId: "cuttingLineLength", value: get("cuttingLineLength") },
+        { valueId: "scoringLineLength", value: get("scoringLineLength") },
+        { valueId: "perforationLineLength", value: get("perforationLineLength") },
+        { valueId: "dieUnitWidth", value: get("dieUnitWidth") },
+        { valueId: "dieUnitLength", value: get("dieUnitLength") },
+      ].filter((x) => x.value !== undefined && x.value !== null);
+
+      // Sanitize existing configs to only allowed fields
+      const sanitizeConfig = (cfg: any, makeDefault: boolean) => ({
+        id: cfg?.id,
+        activateAction: cfg?.activateAction || false,
+        isDefault: !!makeDefault,
+        isDeleted: !!cfg?.isDeleted,
+        isHidden: !!cfg?.isHidden,
+        materialValueIds: cfg?.materialValueIds ?? null,
+        selectedParameterValues: cfg?.selectedParameterValues ?? null,
+        updateName: makeDefault ? (get("name") || cfg?.updateName) : cfg?.updateName,
+        // API expects a dictionary here; ensure object, not array
+        values: (cfg && typeof cfg.values === 'object' && !Array.isArray(cfg.values)) ? cfg.values : {},
+        additionalAttribute: makeDefault
+          ? (additionalAttribute?.length > 0 ? additionalAttribute : cfg?.additionalAttribute)
+          : cfg?.additionalAttribute,
+        ...(rd?.currency?.value ? { currency: rd?.currency?.value } : (cfg?.currency ? { currency: cfg.currency } : {})),
+      });
+
+      // Map or append
+      let found = false;
+      const updatedValuesConfigs = (isDiesParameter.valuesConfigs || []).map((config) => {
+        if (config.id === selectedId) {
+          found = true;
+          return sanitizeConfig(config, true);
+        }
+        return sanitizeConfig(config, false);
+      });
+
+      if (!found) {
+        updatedValuesConfigs.push({
+          id: selectedId,
+          activateAction: false,
+          isDefault: true,
+          isDeleted: false,
+          isHidden: false,
+          materialValueIds: null,
+          selectedParameterValues: null,
+          updateName: get("name"),
+          values: {},
+          additionalAttribute: additionalAttribute,
+          ...(rd?.currency?.value ? { currency: rd?.currency?.value } : {}),
+        });
+      }
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...isDiesParameter,
+          valuesConfigs: updatedValuesConfigs,
+        },
+      });
+      setChangeDefaultValue("");
     },
-    [router, changeDefaultValue]
+    [router, changeDefaultValue, isDiesParameter]
   );
 
 
@@ -478,6 +549,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
     return true;
   };
+
+  useEffect(() => {
+    // Do not auto-apply defaults for dies; always wait for user modal selection
+    return;
+  }, [isDiesParameter, materialData, isParameterSettings]);
 
   return {
     materialData,
