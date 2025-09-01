@@ -226,17 +226,18 @@ const useCopyFromOrderModal = ({
 
         if (remainingSlots <= 0) {
           hasReachedLimit = true;
-          break;
+          //break;
         }
 
-        if (newItems.length > remainingSlots) {
-          // Only add items up to the 100 limit
-          const itemsToAdd = newItems.slice(0, remainingSlots);
-          newSelectedItems = [...newSelectedItems, ...itemsToAdd];
-          hasReachedLimit = true;
-        } else {
-          newSelectedItems = [...newSelectedItems, ...newItems];
-        }
+        // if (newItems.length > remainingSlots) {
+        //   // Only add items up to the 100 limit
+        //   const itemsToAdd = newItems.slice(0, remainingSlots);
+        //   newSelectedItems = [...newSelectedItems, ...itemsToAdd];
+        //   hasReachedLimit = true;
+        // } else {
+        //   newSelectedItems = [...newSelectedItems, ...newItems];
+        // }
+        newSelectedItems = [...newSelectedItems, ...newItems];
       }
     }
 
