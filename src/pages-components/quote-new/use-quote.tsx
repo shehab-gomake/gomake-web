@@ -1908,10 +1908,10 @@ const useQuoteNew = ({
 
   const handleSaveDraftBtnClick = async () => {
     const currentItemsCount = quoteItemValue?.documentItems?.length || 0;
-    if (currentItemsCount > 100) {
+    /*if (currentItemsCount > 100) {
       alertWarning("sales.quote.maxItemsReached");
       return;
-    }
+    }*/
 
     const callBack = (res) => {
       if (res?.success) {
@@ -2003,10 +2003,10 @@ const useQuoteNew = ({
     const isNewCreation = router?.query?.isNewCreation === "true";
     const currentItemCount = quoteItemValue?.documentItems?.length || 0;
 
-    if (isNewCreation && currentItemCount > 100) {
+    /*if (isNewCreation && currentItemCount > 100) {
       alertWarning("sales.quote.maxItemsReached");
       return;
-    }
+    }*/
 
     // const validationError = validateDocument(quoteItemValue);
     // if (validationError) {
