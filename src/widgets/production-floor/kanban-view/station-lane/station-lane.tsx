@@ -122,6 +122,39 @@ const StationLane: React.FC<IProps> = ({
 
   const stationInfo = getStationInfo();
 
+  // Helper function to calculate total production time across all status columns
+  const getTotalProductionTime = () => {
+    let totalTime = 0;
+
+    missions.forEach((statusGroup) => {
+      statusGroup.boardMissions.forEach((mission) => {
+        if (mission?.currentStation?.totalProductionTime) {
+          totalTime += mission.currentStation.totalProductionTime;
+        }
+      });
+    });
+
+    return totalTime;
+  };
+
+  // Helper function to format time from minutes to HH:MM:SS
+  const formatTimeToHHMMSS = (minutes: number) => {
+    if (!minutes || minutes === 0) return "00:00:00";
+
+    // Convert minutes to seconds first
+    const totalSeconds = minutes * 60;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = Math.floor(totalSeconds % 60);
+
+    return `${hours.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const totalProductionTime = getTotalProductionTime();
+
   // Drop functionality for station header
   const [{ isOver: isHeaderOver, canDrop: canHeaderDrop }, headerDrop] =
     useDrop(
@@ -258,10 +291,28 @@ const StationLane: React.FC<IProps> = ({
           sx={{
             color: "#6c757d",
             fontSize: "0.75rem",
+            marginBottom: "4px",
           }}
         >
           {t("boardMissions.capacity")}: {station.capacity} |{" "}
           {station.activeJobs} {t("boardMissions.active")}
+        </Typography>
+
+        {/* Total Production Time Display */}
+        <Typography
+          variant="caption"
+          sx={{
+            color: "#1976d2",
+            fontSize: "0.8rem",
+            fontWeight: 700,
+            fontFamily: "monospace",
+            backgroundColor: "#f0f8ff",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            border: "1px solid #e3f2fd",
+          }}
+        >
+          {t("sales.quote.total")}: {formatTimeToHHMMSS(totalProductionTime)}
         </Typography>
       </Box>
 
@@ -347,8 +398,8 @@ const StationLane: React.FC<IProps> = ({
               flexDirection: "column",
               gap: "8px",
               overflow: "auto",
-              maxHeight: hasMultipleCards ? "302px" : "106px", // Dynamic height: maximum 3 cards if any column has multiple, 1 card if all single
-              minHeight: hasMultipleCards ? "302px" : "106px", // Ensure minimum height for consistent layout
+              maxHeight: hasMultipleCards ? "302px" : "118px",
+              minHeight: hasMultipleCards ? "302px" : "118px",
               // Border styling - use outline for hover states to avoid conflicts
               borderRight: "1px solid #e0e0e0",
               outline:
