@@ -3839,7 +3839,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               );
                               return (
                                 <React.Fragment>
-                                  {myParameter.isStartNewLine ? (
+                                  {myParameter?.isStartNewLine ? (
                                     <div
                                       style={{ flexBasis: "100%", height: 0 }}
                                     />
@@ -3873,7 +3873,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                 );
                                 return (
                                   <React.Fragment>
-                                    {myParameter.isStartNewLine ? (
+                                    {myParameter?.isStartNewLine ? (
                                       <div
                                         style={{ flexBasis: "100%", height: 0 }}
                                       />
