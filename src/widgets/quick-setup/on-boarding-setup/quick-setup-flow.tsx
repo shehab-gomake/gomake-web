@@ -37,9 +37,6 @@ import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boar
 import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 import { Step7PackagingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step7PackagingSelection";
 
-// Import step configuration
-import { STEPS_CONFIG } from "@/widgets/quick-setup/on-boarding-setup/steps-config";
-
 const QuickSetupFlow: React.FC = () => {
   const { t } = useTranslation();
   const { categoryName } = useMachinesCategories();
@@ -60,6 +57,11 @@ const QuickSetupFlow: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
 
+  // State management - MUST be called before any conditional returns
+  const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
+    []
+  );
+
   // Navigation - MUST be called before any conditional returns
   const {
     handleNext,
@@ -70,13 +72,8 @@ const QuickSetupFlow: React.FC = () => {
     hasRollOrFlexoPrinting,
     hasWidePrinting,
     hasDtfOrSublimationPrinting,
-    steps,
-  } = useStepNavigation(currentStep, setCurrentStep);
-
-  // State management - MUST be called before any conditional returns
-  const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
-    []
-  );
+    dynamicSteps,
+  } = useStepNavigation(currentStep, setCurrentStep, selectedMachines);
   const [selectedFinishingMachines, setSelectedFinishingMachines] = useState<
     SelectedFinishingMachine[]
   >([]);
@@ -771,10 +768,13 @@ const QuickSetupFlow: React.FC = () => {
 
       {/* Stepper */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Stepper activeStep={currentStep} alternativeLabel>
-          {STEPS_CONFIG.steps.map((step, index) => (
-            <Step key={index}>
-              <StepLabel>{t(step)}</StepLabel>
+        <Stepper
+          activeStep={dynamicSteps.findIndex((step) => step.id === currentStep)}
+          alternativeLabel
+        >
+          {dynamicSteps.map((step, index) => (
+            <Step key={step.id}>
+              <StepLabel>{t(step.title)}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -783,10 +783,11 @@ const QuickSetupFlow: React.FC = () => {
       {/* Step Content */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          {t(STEPS_CONFIG.steps[currentStep])}
+          {t(dynamicSteps.find((step) => step.id === currentStep)?.title || "")}
         </Typography>
         <Typography variant="body2" sx={{ mb: 3, color: "text.secondary" }}>
-          {t(STEPS_CONFIG.stepDescriptions[currentStep])}
+          {dynamicSteps.find((step) => step.id === currentStep)?.description ||
+            ""}
         </Typography>
 
         {/* Step 1: All Machines Selection */}
@@ -806,7 +807,7 @@ const QuickSetupFlow: React.FC = () => {
 
         {/* Step 2: Digital/Sheet Finishing */}
         {currentStep === 1 &&
-          (hasDigitalOrOffsetPrinting(selectedMachines) ? (
+          (hasDigitalOrOffsetPrinting() ? (
             <Step2FinishingSelection
               finishingCategories={finishingCategories}
               selectedFinishingMachines={selectedFinishingMachines}
@@ -831,7 +832,7 @@ const QuickSetupFlow: React.FC = () => {
 
         {/* Step 3: Book Finishing */}
         {currentStep === 2 &&
-          (hasDigitalOrOffsetPrinting(selectedMachines) ? (
+          (hasDigitalOrOffsetPrinting() ? (
             <Step3BookFinishingSelection
               bookFinishingCategories={bookFinishingCategories}
               selectedBookFinishingMachines={selectedBookFinishingMachines}
@@ -860,7 +861,7 @@ const QuickSetupFlow: React.FC = () => {
 
         {/* Step 4: Roll/Flexo Finishing */}
         {currentStep === 3 &&
-          (hasRollOrFlexoPrinting(selectedMachines) ? (
+          (hasRollOrFlexoPrinting() ? (
             <Step4RollFlexoFinishingSelection
               rollFlexoFinishingCategories={rollFlexoFinishingCategories}
               selectedRollFlexoFinishingMachines={
@@ -895,7 +896,7 @@ const QuickSetupFlow: React.FC = () => {
 
         {/* Step 5: Wide Format Finishing */}
         {currentStep === 4 &&
-          (hasWidePrinting(selectedMachines) ? (
+          (hasWidePrinting() ? (
             <Step5WideFormatFinishingSelection
               wideFormatFinishingCategories={wideFormatFinishingCategories}
               selectedWideFormatFinishingMachines={
@@ -930,7 +931,7 @@ const QuickSetupFlow: React.FC = () => {
 
         {/* Step 6: DTF/Sublimation Finishing */}
         {currentStep === 5 &&
-          (hasDtfOrSublimationPrinting(selectedMachines) ? (
+          (hasDtfOrSublimationPrinting() ? (
             <Step6DtfSublimationFinishingSelection
               dtfSublimationFinishingCategories={
                 dtfSublimationFinishingCategories
