@@ -47,16 +47,12 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
-import {
-  QR_CODE_LISTENER_FROM,
-  useQrCodeListener,
-} from "@/hooks/use-qr-code-listener";
+import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
-import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -228,7 +224,6 @@ const ProductionFloorWidget = () => {
     getAllBoardMissionStatus();
   }, []);
 
-  //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
   const isOpenDoneModal = useModal();
 
   return (
