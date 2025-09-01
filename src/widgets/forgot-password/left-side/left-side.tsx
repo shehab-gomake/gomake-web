@@ -1,10 +1,13 @@
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GoMakeAlertModal } from "@/components/modal/alert-modal";
 import { useStyle } from "./style";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMobileHeight } from "@/hooks/use-responsive";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { forgetPasswordApi } from "@/services/api-service/users/users-auth";
 
 interface ForgotPasswordLeftSideProps {
   isMobile?: boolean;
@@ -17,14 +20,26 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
   const [error, setError] = useState(false);
   const { classes } = useStyle();
   const mobileHeight = useMobileHeight();
+  const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
+  const { alertFaultUpdate } = useSnackBar();
+  const [openSuccessModal, setOpenSuccessModal] = useState(false);
 
-  const onClickSendEmail = () => {
+  const onClickSendEmail = async () => {
     if (email?.length <= 0) {
       setErrorMsg(t("login.thisFieldRequired"));
       setError(true);
     } else {
       setErrorMsg("");
       setError(false);
+      const callBack = (res) => {
+        if (res?.success) {
+          setOpenSuccessModal(true);
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await forgetPasswordApi(callApi, callBack, { email });
     }
   };
 
@@ -34,10 +49,10 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
         ...classes.leftContainer,
         ...(isMobile
           ? {
-              width: "100%",
-              height: mobileHeight,
-              minHeight: "unset",
-            }
+            width: "100%",
+            height: mobileHeight,
+            minHeight: "unset",
+          }
           : {}),
       }}
     >
@@ -78,6 +93,18 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
             {t("login.send")}
           </GomakePrimaryButton>
         </div>
+        <GoMakeAlertModal
+          openModal={openSuccessModal}
+          onClose={() => setOpenSuccessModal(false)}
+          title={t("login.forgotPassword")}
+          subTitle={"login.forgotPasswordEmailSent"}
+          yesBtn={"login.goToLogin"}
+          withCancelBtn={false}
+          onClickConfirm={() => {
+            setOpenSuccessModal(false);
+            navigate("/login");
+          }}
+        />
       </div>
     </div>
   );
