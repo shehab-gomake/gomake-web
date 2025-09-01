@@ -41,6 +41,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { useDebounce } from "@/utils/use-debounce";
+import { adaptMarginLeft, adaptMarginRight } from "@/utils/adapter";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -110,31 +111,11 @@ const CustomGroup = styled(Card)<{
   alignItems: "center",
   justifyContent: "space-between",
   width: isFromMenu ? "100%" : "fit-content",
-  maxWidth: "250px",
+  maxWidth: "300px",
   "&:hover": {
     boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
   },
 }));
-
-const Circle = styled(Box)<{ numColor: string; dir: string }>(
-  ({ numColor, dir }) => ({
-    width: "18px",
-    height: "18px",
-    borderRadius: "50%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    marginLeft: dir === "rtl" ? 0 : 4,
-    marginRight: dir === "rtl" ? 4 : 0,
-    fontSize: 12,
-    fontWeight: 600,
-    color: numColor,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  })
-);
 
 const CustomGroupComponent = ({
   onClick,
@@ -147,6 +128,18 @@ const CustomGroupComponent = ({
   setSelectedGroup,
   isDoneJobs,
 }: CustomGroupsProps) => {
+  // Format time as HH:MM (input is already in minutes)
+  const formatTime = (totalMinutes: number) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.round(totalMinutes % 60);
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  // Calculate sum of both old numbers
+  const totalCount = (group?.inProcessCount || 0) + (group?.stuckCount || 0);
+
   return (
     <CustomGroup
       onClick={onClick}
@@ -187,55 +180,79 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
+
         {!isDoneJobs && (
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               flexShrink: 0,
-              // gap: "6px",
             }}
           >
-            {
-              <Circle numColor="#E7D000" dir={dir}>
-                {group?.inProcessCount}
-              </Circle>
-            }
-            {
-              <Circle numColor="#D92D20" dir={dir}>
-                {group?.stuckCount}
-              </Circle>
-            }
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(500, 12),
+                fontFamily: "monospace",
+                minWidth: "fit-content",
+                ...adaptMarginLeft(dir, 1),
+              }}
+            >
+              |
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(500, 12),
+                fontFamily: "monospace",
+                minWidth: "fit-content",
+                ...adaptMarginLeft(dir, 1),
+              }}
+            >
+              {formatTime(group?.inProcessTotalProductionTime)}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(600, 12),
+                backgroundColor: isSelected
+                  ? "rgba(255,255,255,0.2)"
+                  : `${group?.color}15`,
+                borderRadius: "12px",
+                padding: "2px 6px",
+                minWidth: "fit-content",
+                textAlign: "center",
+                border: isSelected
+                  ? "1px solid rgba(255,255,255,0.3)"
+                  : `1px solid ${group?.color}30`,
+              }}
+            >
+              {totalCount}
+            </Typography>
             {group.id !== "all" && (
-              <Circle
-                numColor={group?.color}
-                dir={dir}
-                sx={{
-                  backgroundColor: "transparent",
+              <IconButton
+                onClick={(e) => {
+                  handleClickMenu(e);
+                  setSelectedGroup(group);
+                }}
+                size="small"
+                style={{
+                  padding: "2px",
+                  cursor: "pointer",
+                  ...adaptMarginRight(dir, 1),
                 }}
               >
-                (
-                <IconButton
-                  onClick={(e) => {
-                    handleClickMenu(e);
-                    setSelectedGroup(group);
-                  }}
-                  size="small"
+                <MoreVertIcon
                   style={{
-                    padding: "4px",
                     cursor: "pointer",
+                    fontSize: "16px",
+                    color: isSelected ? "#FFF" : group?.color,
                   }}
-                >
-                  <MoreVertIcon
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      color: isSelected ? "#FFF" : group?.color,
-                    }}
-                  />
-                </IconButton>
-                )
-              </Circle>
+                />
+              </IconButton>
             )}
           </Box>
         )}
@@ -368,16 +385,31 @@ const ProductionFloorFilters = ({
           inProcessCount = 0,
           stuckCount = 0,
           color = "#7355de",
+          inProcessTotalProductionTime = 0,
         } = item;
 
-        const cardWidth = 240;
+        const cardWidth = 300;
 
         totalWidth += cardWidth;
 
         if (totalWidth <= containerWidth) {
-          visible.push({ id, name, inProcessCount, stuckCount, color });
+          visible.push({
+            id,
+            name,
+            inProcessCount,
+            stuckCount,
+            color,
+            inProcessTotalProductionTime,
+          });
         } else {
-          hidden.push({ id, name, inProcessCount, stuckCount, color });
+          hidden.push({
+            id,
+            name,
+            inProcessCount,
+            stuckCount,
+            color,
+            inProcessTotalProductionTime,
+          });
         }
       });
 
