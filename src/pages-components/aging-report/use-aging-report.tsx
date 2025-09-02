@@ -309,6 +309,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       customer,
       selectDate,
       byReferenceDate,
+      agingReportByCreationDate
     ]
   );
 
@@ -355,6 +356,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     byReferenceDate,
     orderBy,
     isDescOrder,
+    agingReportByCreationDate
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -413,6 +415,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     customer,
     selectDate,
     byReferenceDate,
+    agingReportByCreationDate
   ]);
 
   // New function to handle opening customer modal
