@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput, GomakePrimaryButton } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import {
   Checkbox,
@@ -66,7 +66,14 @@ const RightSideWidget = ({
   subProducts,
   setCanCalculation,
   showCalculationInCompletedAlert,
+  // New props for explicit calculate button
+  isCalculateDisabled,
+  shouldPulseCalculateButton,
+  onClickCalculate,
+  canCalculation
+
 }: any) => {
+
   const {
     direction,
     isRtl,
@@ -109,9 +116,23 @@ const RightSideWidget = ({
     deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
 
+  console.log("canCalculation", { canCalculation, sliderCurrentProductItemValueTotalPrice });
 
   return (
     <div style={clasess.rightSideMainContainer}>
+      {/* Simple pulse animation for the calculate button */}
+      <style>
+        {`
+          @keyframes pulseCalc {
+            0% { box-shadow: 0 0 0 0 rgba(46,48,146,0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 0 8px rgba(46,48,146,0.0); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(46,48,146,0.0); transform: scale(1); }
+          }
+          .pulse-calc {
+            animation: pulseCalc 1.4s ease-out 1;
+          }
+        `}
+      </style>
       <div style={clasess.rightSideContainer}>
         {router?.query?.documentNumber && (
           <div
@@ -298,6 +319,17 @@ const RightSideWidget = ({
               </IconButton>
             </Tooltip>
           </span>
+        </div>
+        {/* Calculate button under the price range */}
+        <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 6px" }}>
+          <GomakePrimaryButton
+            onClick={onClickCalculate}
+            disabled={!!isCalculateDisabled}
+            style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
+
+          >
+            {"Calculate"}
+          </GomakePrimaryButton>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
