@@ -240,7 +240,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   );
   const onClickBtn1 = () => {
     setShowTable(false);
-    getAgingReportFilter(detailedReport);
+    getAgingReportFilter(detailedReport, agingReportByCreationDate);
   };
 
   const onClickBtn2 = () => {
