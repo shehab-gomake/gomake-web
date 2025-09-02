@@ -116,8 +116,6 @@ const RightSideWidget = ({
     deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
 
-  console.log("canCalculation", { canCalculation, sliderCurrentProductItemValueTotalPrice });
-
   return (
     <div style={clasess.rightSideMainContainer}>
       {/* Simple pulse animation for the calculate button */}
@@ -320,16 +318,7 @@ const RightSideWidget = ({
             </Tooltip>
           </span>
         </div>
-        {/* Calculate button under the price range */}
-        <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 6px" }}>
-          <GomakePrimaryButton
-            onClick={onClickCalculate}
-            className={!isCalculateDisabled && (!localStateValue || !sliderCurrentProductItemValueTotalPrice) ? "pulse-calc" : ""}
-            style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
-          >
-            {t("products.offsetPrice.admin.calculate") || "Calculate"}
-          </GomakePrimaryButton>
-        </div>
+
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
@@ -421,6 +410,8 @@ const RightSideWidget = ({
           </>
         )}
 
+
+
         {widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE ? (
           <div
@@ -472,6 +463,8 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+
+
 
         {template?.minimumPrice > 0 &&
           !sliderCurrentProductItemValueTotalPrice && (
@@ -547,6 +540,16 @@ const RightSideWidget = ({
             </div>
           )
         }
+        {/* Calculate button under the price range */}
+        <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 6px" }}>
+          <GomakePrimaryButton
+            onClick={onClickCalculate}
+            className={!isCalculateDisabled && (!localStateValue || !sliderCurrentProductItemValueTotalPrice) ? "pulse-calc" : ""}
+            style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
+          >
+            {t("products.offsetPrice.admin.calculate") || "Calculate"}
+          </GomakePrimaryButton>
+        </div>
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>
