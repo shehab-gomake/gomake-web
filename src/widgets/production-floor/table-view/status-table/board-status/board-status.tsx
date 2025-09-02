@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Menu } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilValue } from "recoil";
-import { productionFloorStatusesState, statusesListState } from "@/widgets/production-floor/state/boards";
+import {
+  productionFloorStatusesState,
+  statusesListState,
+} from "@/widgets/production-floor/state/boards";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
@@ -31,7 +34,7 @@ const BoardStatusComponent = ({
   statusColorText,
   statusColorBg,
   statusText,
-  productType
+  productType,
 }: IStatusBtnProps) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
@@ -40,8 +43,10 @@ const BoardStatusComponent = ({
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
-  const statuses = useRecoilValue(productionFloorStatusesState);
   const statusesList = useRecoilValue(statusesListState);
+  const statuses = useRecoilValue(productionFloorStatusesState)?.filter(
+    (status) => status.key !== "upcomingWorks"
+  );
 
   const open = Boolean(anchorEl);
   const [menuWidth, setMenuWidth] = useState<number>(0);
@@ -72,7 +77,9 @@ const BoardStatusComponent = ({
   };
 
   const boardStatus = useCallback(() => {
-    return isFromMissionView ? statusesList?.find((status) => status.id === statusId) : statuses?.find((status) => status.id === statusId);
+    return isFromMissionView
+      ? statusesList?.find((status) => status.id === statusId)
+      : statuses?.find((status) => status.id === statusId);
   }, [statuses, statusId, statusesList, isFromMissionView]);
 
   const newBgColor = isFromMissionView
@@ -121,13 +128,20 @@ const BoardStatusComponent = ({
         }}
         disabled={!canChangeStatus}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: GetProductionFontSizeFromPreferences(), }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: GetProductionFontSizeFromPreferences(),
+          }}
+        >
           <div style={{ width: "max-content" }}>
             {anchorEl
               ? t("customers.selectStatus")
               : isFromMissionView
-                ? `${statusText} / ${currentStation}`
-                : t("productionStatuses." + boardStatus()?.name)}
+              ? `${statusText} / ${currentStation}`
+              : t("productionStatuses." + boardStatus()?.name)}
           </div>
           {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </div>
@@ -146,53 +160,55 @@ const BoardStatusComponent = ({
           },
         }}
       >
-        {isFromMissionView ? statusesList?.map((status) => (
-          <Button
-            sx={{
-              ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
-              width: "100%",
-              textTransform: "capitalize",
-              justifyContent: "center",
-              boxSizing: "border-box",
-              display: "flex",
-              fontSize: GetProductionFontSizeFromPreferences(),
-              backgroundColor: status.backgroundColor,
-              color: status.textColor,
-              borderRadius: 0,
-              "&:hover": {
-                opacity: 0.7,
-                backgroundColor: status.backgroundColor,
-                color: status.textColor,
-              },
-            }}
-            onClick={() => onSelectNewStatus(status.id)}
-          >
-            {t("productionStatuses." + status.name)}
-          </Button>
-        )) : statuses?.map((status) => (
-          <Button
-            sx={{
-              ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
-              width: "100%",
-              textTransform: "capitalize",
-              justifyContent: "center",
-              boxSizing: "border-box",
-              display: "flex",
-              fontSize: GetProductionFontSizeFromPreferences(),
-              backgroundColor: status.backgroundColor,
-              color: status.textColor,
-              borderRadius: 0,
-              "&:hover": {
-                opacity: 0.7,
-                backgroundColor: status.backgroundColor,
-                color: status.textColor,
-              },
-            }}
-            onClick={() => onSelectNewStatus(status.id)}
-          >
-            {t("productionStatuses." + status.name)}
-          </Button>
-        ))}
+        {isFromMissionView
+          ? statusesList?.map((status) => (
+              <Button
+                sx={{
+                  ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
+                  width: "100%",
+                  textTransform: "capitalize",
+                  justifyContent: "center",
+                  boxSizing: "border-box",
+                  display: "flex",
+                  fontSize: GetProductionFontSizeFromPreferences(),
+                  backgroundColor: status.backgroundColor,
+                  color: status.textColor,
+                  borderRadius: 0,
+                  "&:hover": {
+                    opacity: 0.7,
+                    backgroundColor: status.backgroundColor,
+                    color: status.textColor,
+                  },
+                }}
+                onClick={() => onSelectNewStatus(status.id)}
+              >
+                {t("productionStatuses." + status.name)}
+              </Button>
+            ))
+          : statuses?.map((status) => (
+              <Button
+                sx={{
+                  ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
+                  width: "100%",
+                  textTransform: "capitalize",
+                  justifyContent: "center",
+                  boxSizing: "border-box",
+                  display: "flex",
+                  fontSize: GetProductionFontSizeFromPreferences(),
+                  backgroundColor: status.backgroundColor,
+                  color: status.textColor,
+                  borderRadius: 0,
+                  "&:hover": {
+                    opacity: 0.7,
+                    backgroundColor: status.backgroundColor,
+                    color: status.textColor,
+                  },
+                }}
+                onClick={() => onSelectNewStatus(status.id)}
+              >
+                {t("productionStatuses." + status.name)}
+              </Button>
+            ))}
       </Menu>
     </>
   );
