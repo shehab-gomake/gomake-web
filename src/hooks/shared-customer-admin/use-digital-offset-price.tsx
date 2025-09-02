@@ -6357,6 +6357,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setCanCalculation(false);
         setActiveIndex(index);
         setCanCalculation(false);
+        // If clicked Pricing tab (last tab), auto-calculate when possible
+        if (index === filteredproductTemplate.length && validateParameters(subProducts) && isCanAutoCalculate) {
+          calculationProduct(subProducts);
+        }
       } else {
         // Show error if trying to move to the next tab but checkParameter is false
         alertFault("products.offsetPrice.admin.errorReq");
@@ -6365,6 +6369,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     // No action needed if clicking on the current tab
   };
+  const [isCanAutoCalculate, setIsCanAutoCalculate] = useState(true);
   const handleNextClick = () => {
     setErrorText(false);
     let filteredproductTemplate = productTemplate.sections.filter(
@@ -6375,7 +6380,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (checkParameter) {
       const isLastVisibleSection = activeIndex + 1 >= filteredproductTemplate.length;
       if (isLastVisibleSection) {
-        setActiveTab(t("quality.production"));
+        // Move to Pricing tab (the appended last tab) and auto-calculate when possible
+        setActiveIndex(filteredproductTemplate.length);
+        if (validateParameters(subProducts) && isCanAutoCalculate) {
+          calculationProduct(subProducts);
+        }
       } else {
         if (activeIndex < productTemplate.sections.length) {
           setActiveIndex(activeIndex + 1);
@@ -7692,11 +7701,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setcalculationServerErrorState(false);
       setShowCalculationInCompletedAlert(false);
       setShowCalculationInCompletedModal(false);
+      setIsCanAutoCalculate(true);
     }
   }, [isCalculateDisabled]);
 
   const onClickCalculate = () => {
-    console.log("111", isCalculateDisabled);
+    setIsCanAutoCalculate(false);
     if (isCalculateDisabled) {
       setErrorText(true);
       alertFault(t("products.offsetPrice.admin.errorReq"));
