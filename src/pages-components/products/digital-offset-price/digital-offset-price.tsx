@@ -587,12 +587,12 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   <GomakePrimaryButton
                     data-tour="addPricingBtn"
                     style={
-                      isLoadingPrice && isCalculateDisabled
+                      isLoadingPrice
                         ? clasess.addOrderDisabledBtn
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={(isLoadingPrice && isCalculateDisabled) || widgetType === EWidgetProductType.CALCULATION_ERROR}
+                    disabled={(isLoadingPrice) || widgetType === EWidgetProductType.CALCULATION_ERROR}
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>
