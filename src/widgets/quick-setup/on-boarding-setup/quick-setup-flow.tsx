@@ -766,8 +766,8 @@ const QuickSetupFlow: React.FC = () => {
       const callBack = (res: any) => {
         if (res.success) {
           alertSuccessAdded();
-          // Navigate back to home on success
           navigate("/");
+          //!here
         } else {
           alertFaultAdded();
         }

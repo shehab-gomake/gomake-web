@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilValue } from "recoil";
-import { machineCategoriesState } from "@/store/machine-categories";
-import { adminGetAllMachineByCategory } from "@/services/api-service/machines/admin-machines";
+import { getAllMachinesNew } from "@/services/api-service/machines/admin-machines";
 import {
   Machine,
   FinishingCategory,
@@ -18,7 +16,6 @@ import {
 
 export const useMachinesData = () => {
   const { callApi } = useGomakeAxios();
-  const categories = useRecoilValue(machineCategoriesState);
 
   // State for all machines
   const [allMachines, setAllMachines] = useState<Machine[]>([]);
@@ -47,35 +44,23 @@ export const useMachinesData = () => {
   const loadAllMachines = useCallback(async () => {
     setMachinesLoading(true);
     try {
-      const allMachinesData: Machine[] = [];
-
-      for (const category of categories) {
-        const callBack = (res: any) => {
-          if (res.success) {
-            let machinesData: Machine[] = [];
-
-            if (res.data?.data?.data) {
-              machinesData = res.data.data.data;
-            } else if (res.data?.data) {
-              machinesData = res.data.data;
-            } else if (Array.isArray(res.data)) {
-              machinesData = res.data;
-            }
-
-            allMachinesData.push(...machinesData);
+      const callBack = (res: any) => {
+        if (res.success) {
+          let machinesData: Machine[] = [];
+          if (Array.isArray(res.data)) {
+            machinesData = res.data;
           }
-        };
+          setAllMachines(machinesData);
+        }
+      };
 
-        await adminGetAllMachineByCategory(callApi, callBack, category.id);
-      }
-
-      setAllMachines(allMachinesData);
+      await getAllMachinesNew(callApi, callBack);
       setMachinesLoading(false);
     } catch (error) {
       console.error("Error loading machines:", error);
       setMachinesLoading(false);
     }
-  }, [callApi, categories]);
+  }, [callApi]);
 
   // Load finishing categories with real machine data
   const loadFinishingCategoriesWithMachines = useCallback(async () => {
