@@ -17,6 +17,7 @@ import {
   SelectedMachine,
   SelectedFinishingMachine,
   FinishingCategory,
+  IQuickSetupAddMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 
 // Import custom hooks
@@ -25,7 +26,10 @@ import { useStepNavigation } from "@/widgets/quick-setup/on-boarding-setup/hooks
 import { useMachinesCategories } from "@/widgets/machines/hooks/use-machines-categories";
 
 // Import hooks
-import { useSnackBar } from "@/hooks";
+import { useSnackBar, useGomakeAxios, useGomakeRouter } from "@/hooks";
+
+// Import API services
+import { quickSetupAddMachines } from "@/services/api-service/machines/print-house-machines";
 
 // Import components
 import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step1MachineSelection";
@@ -39,7 +43,9 @@ import { Step7PackagingSelection } from "@/widgets/quick-setup/on-boarding-setup
 const QuickSetupFlow: React.FC = () => {
   const { t } = useTranslation();
   const { categoryName } = useMachinesCategories();
+  const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { navigate } = useGomakeRouter();
 
   // Use custom hooks for data and navigation
   const {
@@ -735,6 +741,47 @@ const QuickSetupFlow: React.FC = () => {
     }
   };
 
+  // Function to complete the quick setup flow
+  const handleCompleteSetup = async () => {
+    try {
+      const machinesToAdd: IQuickSetupAddMachine[] = selectedMachines.map(
+        (machine) => {
+          const isNewMachine = machine.id.startsWith("temp-");
+
+          if (isNewMachine) {
+            return {
+              name: machine.name,
+              category: machine.category,
+              isAdminMachine: false,
+            };
+          } else {
+            return {
+              id: machine.id,
+              name: machine.name,
+              category: machine.category,
+              isAdminMachine: true,
+            };
+          }
+        }
+      );
+
+      const callBack = (res: any) => {
+        if (res.success) {
+          alertSuccessAdded();
+          // Navigate back to home on success
+          navigate("/");
+        } else {
+          alertFaultAdded();
+        }
+      };
+
+      await quickSetupAddMachines(callApi, callBack, machinesToAdd);
+    } catch (error) {
+      console.error("Error completing setup:", error);
+      alertFaultAdded();
+    }
+  };
+
   return (
     <Box sx={{ p: "0px 24px 24px 24px" }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
@@ -968,10 +1015,22 @@ const QuickSetupFlow: React.FC = () => {
         >
           {t("Back")}
         </Button>
-        <Button
-          variant="contained"
-          onClick={() =>
-            handleNext(
+        {/* Only show Next button if not on the final step */}
+        {currentStep < 6 && (
+          <Button
+            variant="contained"
+            onClick={() =>
+              handleNext(
+                selectedMachines,
+                selectedFinishingMachines,
+                selectedBookFinishingMachines,
+                selectedWideFormatFinishingMachines,
+                selectedDtfSublimationFinishingMachines,
+                selectedRollFlexoFinishingMachines,
+                selectedPackagingMachines
+              )
+            }
+            disabled={isNextDisabled(
               selectedMachines,
               selectedFinishingMachines,
               selectedBookFinishingMachines,
@@ -979,20 +1038,11 @@ const QuickSetupFlow: React.FC = () => {
               selectedDtfSublimationFinishingMachines,
               selectedRollFlexoFinishingMachines,
               selectedPackagingMachines
-            )
-          }
-          disabled={isNextDisabled(
-            selectedMachines,
-            selectedFinishingMachines,
-            selectedBookFinishingMachines,
-            selectedWideFormatFinishingMachines,
-            selectedDtfSublimationFinishingMachines,
-            selectedRollFlexoFinishingMachines,
-            selectedPackagingMachines
-          )}
-        >
-          {t(getNextButtonText(selectedMachines))}
-        </Button>
+            )}
+          >
+            {t("Next")}
+          </Button>
+        )}
       </Box>
 
       {/* Summary - Show all selected machines */}
@@ -1015,6 +1065,21 @@ const QuickSetupFlow: React.FC = () => {
             ))}
           </Box>
         </Paper>
+      )}
+
+      {/* Complete Setup Button */}
+      {selectedMachines.length > 0 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <Button
+            variant="contained"
+            color="success"
+            size="large"
+            onClick={handleCompleteSetup}
+            sx={{ px: 4, py: 1.5 }}
+          >
+            {t("Complete Setup")}
+          </Button>
+        </Box>
       )}
     </Box>
   );

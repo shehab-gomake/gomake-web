@@ -186,7 +186,7 @@ export const useStepNavigation = (
           selectedDtfSublimationFinishingMachines.length === 0
         );
       } else if (currentStep === 6) {
-        return false; // Step 7 (packaging) is optional, so never disabled
+        return true; // Disable Next button on final step since we have a separate Complete Setup button
       }
       return false;
     },
@@ -201,8 +201,8 @@ export const useStepNavigation = (
 
   const getNextButtonText = useCallback(
     (selectedMachines: SelectedMachine[]) => {
-      // Show "Complete Setup" on the final step (step 6)
-      return currentStep === 6 ? "Complete Setup" : "Next";
+      // Always return "Next" since we conditionally show the button
+      return "Next";
     },
     [currentStep]
   );

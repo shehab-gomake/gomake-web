@@ -70,3 +70,10 @@ export interface MachineCategory {
   name: string;
   machines?: Machine[];
 }
+
+export interface IQuickSetupAddMachine {
+  id?: string; // Optional since new machines won't have an ID
+  name: string;
+  category: string;
+  isAdminMachine: boolean;
+}
