@@ -124,12 +124,12 @@ const RightSideWidget = ({
       <style>
         {`
           @keyframes pulseCalc {
-            0% { box-shadow: 0 0 0 0 rgba(46,48,146,0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 0 8px rgba(46,48,146,0.0); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(46,48,146,0.0); transform: scale(1); }
+            0% { box-shadow: 0 0 0 0 rgba(46,48,146,0.35); transform: scale(1); }
+            50% { box-shadow: 0 0 0 8px rgba(46,48,146,0.00); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(46,48,146,0.00); transform: scale(1); }
           }
           .pulse-calc {
-            animation: pulseCalc 1.4s ease-out 1;
+            animation: pulseCalc 1.4s ease-out infinite;
           }
         `}
       </style>
@@ -324,11 +324,10 @@ const RightSideWidget = ({
         <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 6px" }}>
           <GomakePrimaryButton
             onClick={onClickCalculate}
-            disabled={!!isCalculateDisabled}
+            className={!isCalculateDisabled && (!localStateValue || !sliderCurrentProductItemValueTotalPrice) ? "pulse-calc" : ""}
             style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
-
           >
-            {"Calculate"}
+            {t("products.offsetPrice.admin.calculate") || "Calculate"}
           </GomakePrimaryButton>
         </div>
         {calculationProgress &&

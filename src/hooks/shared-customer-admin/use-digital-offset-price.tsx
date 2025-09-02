@@ -7674,9 +7674,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const t = setTimeout(() => setShouldPulseCalculateButton(false), 2000);
       return () => clearTimeout(t);
     }
+    else {
+      setWorkFlows([]);
+      setCurrentProductItemValueTotalPrice(null);
+      setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
+      setCurrentCalculatedTotalPrice(null);
+      setJobActions([]);
+      setIsCalculationFinished(false);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+
+      setCalculationExceptionsLogs([]);
+      setAdditionalProductItems([]);
+      setcalculationServerErrorState(false);
+      setShowCalculationInCompletedAlert(false);
+      setShowCalculationInCompletedModal(false);
+    }
   }, [isCalculateDisabled]);
 
-  console.log("isCalculateDisabled", isCalculateDisabled);
   const onClickCalculate = () => {
     console.log("111", isCalculateDisabled);
     if (isCalculateDisabled) {
