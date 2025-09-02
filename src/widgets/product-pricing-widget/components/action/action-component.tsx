@@ -240,6 +240,7 @@ const ActionContainerComponent = ({
   productType,
   actionIndex,
   categoryId,
+  mongoDBMachineId,
   actionException,
   materials,
   employeeName,
@@ -1402,9 +1403,9 @@ const ActionContainerComponent = ({
                 anchorEl={anchorEl}
                 actionId={actionId}
                 actionName={actionName}
-                currentProductItemValue={currentProductItemValue}
                 machineName={machineName}
                 categoryId={categoryId}
+                mongoDBMachineId={mongoDBMachineId}
                 id={id}
                 productType={productType}
                 sectionName={sectionName}
