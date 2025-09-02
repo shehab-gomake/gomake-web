@@ -1,56 +1,151 @@
-import {getSetApiData} from "@/services/api-service/get-set-api-data";
-import {EHttpMethod} from "@/services/api-service/enums";
-import {ICallAndSetData} from "@/services/api-service/interface";
+import { getSetApiData } from "@/services/api-service/get-set-api-data";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { ICallAndSetData } from "@/services/api-service/interface";
 
-const ADMIN_ADD_MACHINE_URL = '/v1/administrator/add-machine';
-const ADMIN_UPDATE_MACHINE_URL = '/v1/administrator/update-machine';
-const ADMIN_GET_ALL_MACHINES_URL = '/v1/administrator/machines/category/';
-const ADMIN_SEARCH_MACHINES_URL = '/v1/administrator/machines/search/';
-const ADMIN_GET_CATEGORIES_MACHINES_URL = '/v1/administrator/machines/categories';
-const GET_CATEGORY_MANUFACTURERS_URL = '/v1/administrator/machines/manufacturers/';
-const GET_MANUFACTURER_MODELS_URL = '/v1/administrator/machines/models';
-const adminAddNewMachine: ICallAndSetData = async (callApi, setState, machine) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, ADMIN_ADD_MACHINE_URL, setState, machine);
-}
+const ADMIN_ADD_MACHINE_URL = "/v1/administrator/add-machine";
+const ADMIN_UPDATE_MACHINE_URL = "/v1/administrator/update-machine";
+const ADMIN_GET_ALL_MACHINES_URL = "/v1/administrator/machines/category/";
+const ADMIN_SEARCH_MACHINES_URL = "/v1/administrator/machines/search/";
+const ADMIN_GET_CATEGORIES_MACHINES_URL =
+  "/v1/administrator/machines/categories";
+const GET_CATEGORY_MANUFACTURERS_URL =
+  "/v1/administrator/machines/manufacturers/";
+const GET_MANUFACTURER_MODELS_URL = "/v1/administrator/machines/models";
 
-const adminUpdateMachine: ICallAndSetData = async (callApi, setState, machine) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, ADMIN_UPDATE_MACHINE_URL, setState, machine);
-}
+const adminAddNewMachine: ICallAndSetData = async (
+  callApi,
+  setState,
+  machine
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADMIN_ADD_MACHINE_URL,
+    setState,
+    machine
+  );
+};
 
-const adminGetAllMachineByCategory: ICallAndSetData = async (callApi, setState, category) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, ADMIN_GET_ALL_MACHINES_URL + category, setState);
-}
-const adminSearchMachines: ICallAndSetData = async (callApi, setState, searchTerm) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, ADMIN_SEARCH_MACHINES_URL + searchTerm, setState);
-}
-const getAdminMachinesByCategories: ICallAndSetData = async (callApi, setState, categories) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, ADMIN_GET_CATEGORIES_MACHINES_URL, setState, {categories: categories}, false);
-}
-const getCategoryManufacturers: ICallAndSetData = async (callApi, setState, category) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_CATEGORY_MANUFACTURERS_URL + category, setState);
-}
-const getManufacturerModels: ICallAndSetData = async (callApi, setState, {category, manufacturer}) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, `${GET_MANUFACTURER_MODELS_URL}/${category}/${manufacturer}`, setState);
-}
+const adminUpdateMachine: ICallAndSetData = async (
+  callApi,
+  setState,
+  machine
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADMIN_UPDATE_MACHINE_URL,
+    setState,
+    machine
+  );
+};
+
+const adminGetAllMachineByCategory: ICallAndSetData = async (
+  callApi,
+  setState,
+  category
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    ADMIN_GET_ALL_MACHINES_URL + category,
+    setState
+  );
+};
+const adminSearchMachines: ICallAndSetData = async (
+  callApi,
+  setState,
+  searchTerm
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    ADMIN_SEARCH_MACHINES_URL + searchTerm,
+    setState
+  );
+};
+const getAdminMachinesByCategories: ICallAndSetData = async (
+  callApi,
+  setState,
+  categories
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADMIN_GET_CATEGORIES_MACHINES_URL,
+    setState,
+    { categories: categories },
+    false
+  );
+};
+const getCategoryManufacturers: ICallAndSetData = async (
+  callApi,
+  setState,
+  category
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_CATEGORY_MANUFACTURERS_URL + category,
+    setState
+  );
+};
+const getManufacturerModels: ICallAndSetData = async (
+  callApi,
+  setState,
+  { category, manufacturer }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_MANUFACTURER_MODELS_URL}/${category}/${manufacturer}`,
+    setState
+  );
+};
 
 // Search all admin machines across all categories
-const searchAllAdminMachines: ICallAndSetData = async (callApi, setState, searchTerm) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, `/v1/administrator/machines/search?q=${searchTerm}`, setState);
-}
+const searchAllAdminMachines: ICallAndSetData = async (
+  callApi,
+  setState,
+  searchTerm
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `/v1/administrator/machines/search?q=${searchTerm}`,
+    setState
+  );
+};
 
 // Get all admin machines from all categories
 const getAllAdminMachines: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, '/v1/administrator/machines/all', setState);
-}
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    "/v1/administrator/machines/all",
+    setState
+  );
+};
+
+// Get all machines from the new endpoint
+const getAllMachinesNew: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    "/v1/administrator/get-all-machines",
+    setState
+  );
+};
 
 export {
-    adminAddNewMachine,
-    adminUpdateMachine,
-    adminGetAllMachineByCategory,
-    adminSearchMachines,
-    getAdminMachinesByCategories,
-    getCategoryManufacturers,
-    getManufacturerModels,
-    searchAllAdminMachines,
-    getAllAdminMachines
+  adminAddNewMachine,
+  adminUpdateMachine,
+  adminGetAllMachineByCategory,
+  adminSearchMachines,
+  getAdminMachinesByCategories,
+  getCategoryManufacturers,
+  getManufacturerModels,
+  searchAllAdminMachines,
+  getAllAdminMachines,
+  getAllMachinesNew,
 };

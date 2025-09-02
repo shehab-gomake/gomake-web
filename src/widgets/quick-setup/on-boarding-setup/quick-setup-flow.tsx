@@ -17,6 +17,7 @@ import {
   SelectedMachine,
   SelectedFinishingMachine,
   FinishingCategory,
+  IQuickSetupAddMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
 
 // Import custom hooks
@@ -24,9 +25,11 @@ import { useMachinesData } from "@/widgets/quick-setup/on-boarding-setup/hooks/u
 import { useStepNavigation } from "@/widgets/quick-setup/on-boarding-setup/hooks/use-step-navigation";
 import { useMachinesCategories } from "@/widgets/machines/hooks/use-machines-categories";
 
+// Import hooks
+import { useSnackBar, useGomakeAxios, useGomakeRouter } from "@/hooks";
+
 // Import API services
-import { printHouseAddNewMachine } from "@/services/api-service/machines/print-house-machines";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { quickSetupAddMachines } from "@/services/api-service/machines/print-house-machines";
 
 // Import components
 import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step1MachineSelection";
@@ -42,6 +45,7 @@ const QuickSetupFlow: React.FC = () => {
   const { categoryName } = useMachinesCategories();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { navigate } = useGomakeRouter();
 
   // Use custom hooks for data and navigation
   const {
@@ -66,8 +70,6 @@ const QuickSetupFlow: React.FC = () => {
   const {
     handleNext,
     handleBack,
-    isNextDisabled,
-    getNextButtonText,
     hasDigitalOrOffsetPrinting,
     hasRollOrFlexoPrinting,
     hasWidePrinting,
@@ -597,165 +599,183 @@ const QuickSetupFlow: React.FC = () => {
   };
 
   // Function to handle adding new machines when search results are empty
-  const handleAddNewMachine = async (
-    categoryId: string,
-    machineName: string
-  ) => {
+  const handleAddNewMachine = (categoryId: string, machineName: string) => {
     try {
       // Create a new machine object based on the search term
-      const newMachine = {
+      const manufacturer = machineName.split(" ")[0] || machineName;
+      const model = machineName.split(" ").slice(1).join(" ") || machineName;
+
+      // Create a machine object that matches our Machine interface
+      const createdMachine: Machine = {
+        id: `temp-${Date.now()}`, // Generate a temporary ID
+        manufacturer: manufacturer,
+        model: model,
         nickName: machineName,
-        manufacturer: machineName.split(" ")[0] || machineName, // Use first word as manufacturer
-        model: machineName.split(" ").slice(1).join(" ") || machineName, // Rest as model
         category: categoryId,
+        categoryId: categoryId,
       };
+
+      // Determine which step this machine belongs to and add it to the appropriate category
+      let targetCategory: FinishingCategory | undefined;
+      let stepNumber = 0; // Default to step 0 (printing machines)
+      let machineType: "printing" | "finishing" = "printing"; // Default to printing
+
+      // Check if this is a finishing category
+      if (finishingCategories.some((cat) => cat.id === categoryId)) {
+        targetCategory = finishingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 1;
+        machineType = "finishing";
+      } else if (bookFinishingCategories.some((cat) => cat.id === categoryId)) {
+        targetCategory = bookFinishingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 2;
+        machineType = "finishing";
+      } else if (
+        rollFlexoFinishingCategories.some((cat) => cat.id === categoryId)
+      ) {
+        targetCategory = rollFlexoFinishingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 3;
+        machineType = "finishing";
+      } else if (
+        wideFormatFinishingCategories.some((cat) => cat.id === categoryId)
+      ) {
+        targetCategory = wideFormatFinishingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 4;
+        machineType = "finishing";
+      } else if (
+        dtfSublimationFinishingCategories.some((cat) => cat.id === categoryId)
+      ) {
+        targetCategory = dtfSublimationFinishingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 5;
+        machineType = "finishing";
+      } else if (packagingCategories.some((cat) => cat.id === categoryId)) {
+        targetCategory = packagingCategories.find(
+          (cat) => cat.id === categoryId
+        );
+        stepNumber = 6;
+        machineType = "finishing";
+      }
+
+      if (targetCategory) {
+        // Add the new machine to the category's machines array
+        targetCategory.machines.push(createdMachine);
+      }
+
+      // Add the machine to the selected machines
+      const newSelectedMachine = convertMachineToSelectedMachine(
+        createdMachine,
+        categoryId,
+        stepNumber,
+        machineType
+      );
+
+      // Add to unified selection
+      setSelectedMachines((prev) => [...prev, newSelectedMachine]);
+
+      // If it's a finishing machine, also add to step-specific selection
+      if (machineType === "finishing") {
+        const newSelectedFinishingMachine =
+          convertMachineToSelectedFinishingMachine(
+            createdMachine,
+            categoryId,
+            stepNumber
+          );
+
+        // Add to step-specific selection based on the category
+        if (finishingCategories.some((cat) => cat.id === categoryId)) {
+          setSelectedFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        } else if (
+          bookFinishingCategories.some((cat) => cat.id === categoryId)
+        ) {
+          setSelectedBookFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        } else if (
+          rollFlexoFinishingCategories.some((cat) => cat.id === categoryId)
+        ) {
+          setSelectedRollFlexoFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        } else if (
+          wideFormatFinishingCategories.some((cat) => cat.id === categoryId)
+        ) {
+          setSelectedWideFormatFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        } else if (
+          dtfSublimationFinishingCategories.some((cat) => cat.id === categoryId)
+        ) {
+          setSelectedDtfSublimationFinishingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        } else if (packagingCategories.some((cat) => cat.id === categoryId)) {
+          setSelectedPackagingMachines((prev) => [
+            ...prev,
+            newSelectedFinishingMachine,
+          ]);
+        }
+      }
+
+      alertSuccessAdded();
+    } catch (error) {
+      console.error("Error adding new machine:", error);
+      alertFaultAdded();
+    }
+  };
+
+  // Function to complete the quick setup flow
+  const handleCompleteSetup = async () => {
+    try {
+      const machinesToAdd: IQuickSetupAddMachine[] = selectedMachines.map(
+        (machine) => {
+          const isNewMachine = machine.id.startsWith("temp-");
+
+          if (isNewMachine) {
+            return {
+              name: machine.name,
+              category: machine.category,
+              isAdminMachine: false,
+            };
+          } else {
+            return {
+              id: machine.id,
+              name: machine.name,
+              category: machine.category,
+              isAdminMachine: true,
+            };
+          }
+        }
+      );
 
       const callBack = (res: any) => {
         if (res.success) {
-          // Create a machine object that matches our Machine interface
-          const createdMachine: Machine = {
-            id: res.data.id,
-            manufacturer: res.data.manufacturer || newMachine.manufacturer,
-            model: res.data.model || newMachine.model,
-            nickName: res.data.nickName || newMachine.nickName,
-            category: res.data.category || categoryId,
-            categoryId: categoryId,
-          };
-
-          // Determine which step this machine belongs to and add it to the appropriate category
-          let targetCategory: FinishingCategory | undefined;
-          let stepNumber = 0; // Default to step 0 (printing machines)
-          let machineType: "printing" | "finishing" = "printing"; // Default to printing
-
-          // Check if this is a finishing category
-          if (finishingCategories.some((cat) => cat.id === categoryId)) {
-            targetCategory = finishingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 1;
-            machineType = "finishing";
-          } else if (
-            bookFinishingCategories.some((cat) => cat.id === categoryId)
-          ) {
-            targetCategory = bookFinishingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 2;
-            machineType = "finishing";
-          } else if (
-            rollFlexoFinishingCategories.some((cat) => cat.id === categoryId)
-          ) {
-            targetCategory = rollFlexoFinishingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 3;
-            machineType = "finishing";
-          } else if (
-            wideFormatFinishingCategories.some((cat) => cat.id === categoryId)
-          ) {
-            targetCategory = wideFormatFinishingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 4;
-            machineType = "finishing";
-          } else if (
-            dtfSublimationFinishingCategories.some(
-              (cat) => cat.id === categoryId
-            )
-          ) {
-            targetCategory = dtfSublimationFinishingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 5;
-            machineType = "finishing";
-          } else if (packagingCategories.some((cat) => cat.id === categoryId)) {
-            targetCategory = packagingCategories.find(
-              (cat) => cat.id === categoryId
-            );
-            stepNumber = 6;
-            machineType = "finishing";
-          }
-
-          if (targetCategory) {
-            // Add the new machine to the category's machines array
-            targetCategory.machines.push(createdMachine);
-          }
-
-          // Add the machine to the selected machines
-          const newSelectedMachine = convertMachineToSelectedMachine(
-            createdMachine,
-            categoryId,
-            stepNumber,
-            machineType
-          );
-
-          // Add to unified selection
-          setSelectedMachines((prev) => [...prev, newSelectedMachine]);
-
-          // If it's a finishing machine, also add to step-specific selection
-          if (machineType === "finishing") {
-            const newSelectedFinishingMachine =
-              convertMachineToSelectedFinishingMachine(
-                createdMachine,
-                categoryId,
-                stepNumber
-              );
-
-            // Add to step-specific selection based on the category
-            if (finishingCategories.some((cat) => cat.id === categoryId)) {
-              setSelectedFinishingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            } else if (
-              bookFinishingCategories.some((cat) => cat.id === categoryId)
-            ) {
-              setSelectedBookFinishingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            } else if (
-              rollFlexoFinishingCategories.some((cat) => cat.id === categoryId)
-            ) {
-              setSelectedRollFlexoFinishingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            } else if (
-              wideFormatFinishingCategories.some((cat) => cat.id === categoryId)
-            ) {
-              setSelectedWideFormatFinishingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            } else if (
-              dtfSublimationFinishingCategories.some(
-                (cat) => cat.id === categoryId
-              )
-            ) {
-              setSelectedDtfSublimationFinishingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            } else if (
-              packagingCategories.some((cat) => cat.id === categoryId)
-            ) {
-              setSelectedPackagingMachines((prev) => [
-                ...prev,
-                newSelectedFinishingMachine,
-              ]);
-            }
-          }
-
           alertSuccessAdded();
+          navigate("/");
+          //!here
         } else {
           alertFaultAdded();
         }
       };
 
-      await printHouseAddNewMachine(callApi, callBack, newMachine);
+      await quickSetupAddMachines(callApi, callBack, machinesToAdd);
     } catch (error) {
-      console.error("Error adding new machine:", error);
+      console.error("Error completing setup:", error);
       alertFaultAdded();
     }
   };
@@ -993,33 +1013,37 @@ const QuickSetupFlow: React.FC = () => {
         >
           {t("Back")}
         </Button>
-        <Button
-          variant="contained"
-          onClick={() =>
-            handleNext(
-              selectedMachines,
-              selectedFinishingMachines,
-              selectedBookFinishingMachines,
-              selectedWideFormatFinishingMachines,
-              selectedDtfSublimationFinishingMachines,
-              selectedRollFlexoFinishingMachines,
-              selectedPackagingMachines
-            )
-          }
-          disabled={isNextDisabled(
-            selectedMachines,
-            selectedFinishingMachines,
-            selectedBookFinishingMachines,
-            selectedWideFormatFinishingMachines,
-            selectedDtfSublimationFinishingMachines,
-            selectedRollFlexoFinishingMachines,
-            selectedPackagingMachines
-          )}
-        >
-          {t(getNextButtonText(selectedMachines))}
-        </Button>
+        {currentStep === 6 ? (
+          // Show Complete Setup button on last step
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleCompleteSetup}
+            disabled={selectedMachines.length === 0}
+          >
+            {t("Complete Setup")}
+          </Button>
+        ) : (
+          // Show Next button on other steps
+          <Button
+            variant="contained"
+            onClick={() =>
+              handleNext(
+                selectedMachines,
+                selectedFinishingMachines,
+                selectedBookFinishingMachines,
+                selectedWideFormatFinishingMachines,
+                selectedDtfSublimationFinishingMachines,
+                selectedRollFlexoFinishingMachines,
+                selectedPackagingMachines
+              )
+            }
+            disabled={selectedMachines.length === 0}
+          >
+            {t("Next")}
+          </Button>
+        )}
       </Box>
-
       {/* Summary - Show all selected machines */}
       {selectedMachines.length > 0 && (
         <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
