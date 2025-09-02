@@ -70,8 +70,6 @@ const QuickSetupFlow: React.FC = () => {
   const {
     handleNext,
     handleBack,
-    isNextDisabled,
-    getNextButtonText,
     hasDigitalOrOffsetPrinting,
     hasRollOrFlexoPrinting,
     hasWidePrinting,
@@ -1015,8 +1013,18 @@ const QuickSetupFlow: React.FC = () => {
         >
           {t("Back")}
         </Button>
-        {/* Only show Next button if not on the final step */}
-        {currentStep < 6 && (
+        {currentStep === 6 ? (
+          // Show Complete Setup button on last step
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleCompleteSetup}
+            disabled={selectedMachines.length === 0}
+          >
+            {t("Complete Setup")}
+          </Button>
+        ) : (
+          // Show Next button on other steps
           <Button
             variant="contained"
             onClick={() =>
@@ -1030,21 +1038,12 @@ const QuickSetupFlow: React.FC = () => {
                 selectedPackagingMachines
               )
             }
-            disabled={isNextDisabled(
-              selectedMachines,
-              selectedFinishingMachines,
-              selectedBookFinishingMachines,
-              selectedWideFormatFinishingMachines,
-              selectedDtfSublimationFinishingMachines,
-              selectedRollFlexoFinishingMachines,
-              selectedPackagingMachines
-            )}
+            disabled={selectedMachines.length === 0}
           >
             {t("Next")}
           </Button>
         )}
       </Box>
-
       {/* Summary - Show all selected machines */}
       {selectedMachines.length > 0 && (
         <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
@@ -1065,21 +1064,6 @@ const QuickSetupFlow: React.FC = () => {
             ))}
           </Box>
         </Paper>
-      )}
-
-      {/* Complete Setup Button */}
-      {selectedMachines.length > 0 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-          <Button
-            variant="contained"
-            color="success"
-            size="large"
-            onClick={handleCompleteSetup}
-            sx={{ px: 4, py: 1.5 }}
-          >
-            {t("Complete Setup")}
-          </Button>
-        </Box>
       )}
     </Box>
   );

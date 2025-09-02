@@ -41,96 +41,77 @@ export const useStepNavigation = (
         return true;
       } else if (currentStep === 1) {
         // Step 2 - Validate finishing machines if we have digital/offset printing
-        if (
-          hasDigitalOrOffsetPrinting() &&
-          selectedFinishingMachines.length === 0
-        ) {
-          alert(
-            "Please select at least one finishing machine for Digital/Offset printing"
-          );
-          return false;
-        }
+        // if (
+        //   hasDigitalOrOffsetPrinting() &&
+        //   selectedFinishingMachines.length === 0
+        // ) {
+        //   alert(
+        //     "Please select at least one finishing machine for Digital/Offset printing"
+        //   );
+        //   return false;
+        // }
         const nextStepId = getNextStepId(currentStep);
         setCurrentStep(nextStepId);
         return true;
       } else if (currentStep === 2) {
         // Step 3 - Validate book finishing machines if we have digital/offset printing
-        if (
-          hasDigitalOrOffsetPrinting() &&
-          selectedBookFinishingMachines.length === 0
-        ) {
-          alert(
-            "Please select at least one book finishing machine for Digital/Offset printing"
-          );
-          return false;
-        }
+        // if (
+        //   hasDigitalOrOffsetPrinting() &&
+        //   selectedBookFinishingMachines.length === 0
+        // ) {
+        //   alert(
+        //     "Please select at least one book finishing machine for Digital/Offset printing"
+        //   );
+        //   return false;
+        // }
         const nextStepId = getNextStepId(currentStep);
         setCurrentStep(nextStepId);
         return true;
       } else if (currentStep === 3) {
         // Step 4 - Validate roll/flexo finishing machines if we have roll/flexo printing
-        if (
-          hasRollOrFlexoPrinting() &&
-          selectedRollFlexoFinishingMachines.length === 0
-        ) {
-          alert(
-            "Please select at least one finishing machine for Roll/Flexo printing"
-          );
-          return false;
-        }
+        // if (
+        //   hasRollOrFlexoPrinting() &&
+        //   selectedRollFlexoFinishingMachines.length === 0
+        // ) {
+        //   alert(
+        //     "Please select at least one finishing machine for Roll/Flexo printing"
+        //   );
+        //   return false;
+        // }
         const nextStepId = getNextStepId(currentStep);
         setCurrentStep(nextStepId);
         return true;
       } else if (currentStep === 4) {
         // Step 5 - Validate wide format finishing machines if we have wide printing
-        if (
-          hasWidePrinting() &&
-          selectedWideFormatFinishingMachines.length === 0
-        ) {
-          alert(
-            "Please select at least one finishing machine for Wide format printing"
-          );
-          return false;
-        }
+        // if (
+        //   hasWidePrinting() &&
+        //   selectedWideFormatFinishingMachines.length === 0
+        // ) {
+        //   alert(
+        //     "Please select at least one finishing machine for Wide format printing"
+        //   );
+        //   return false;
+        // }
         const nextStepId = getNextStepId(currentStep);
         setCurrentStep(nextStepId);
         return true;
       } else if (currentStep === 5) {
         // Step 6 - Only validate if we have DTF/sublimation printing machines
-        if (
-          hasDtfOrSublimationPrinting() &&
-          selectedDtfSublimationFinishingMachines.length === 0
-        ) {
-          alert(
-            "Please select at least one finishing machine for DTF & Sublimation printing"
-          );
-          return false;
-        }
+        // if (
+        //   hasDtfOrSublimationPrinting() &&
+        //   selectedDtfSublimationFinishingMachines.length === 0
+        // ) {
+        //   alert(
+        //     "Please select at least one finishing machine for DTF & Sublimation printing"
+        //   );
+        //   return false;
+        // }
         const nextStepId = getNextStepId(currentStep);
         setCurrentStep(nextStepId);
         return true;
       } else if (currentStep === 6) {
         // Step 7 - Save or complete
         console.log("Selected machines:", selectedMachines);
-        console.log("Selected finishing machines:", selectedFinishingMachines);
-        console.log(
-          "Selected book finishing machines:",
-          selectedBookFinishingMachines
-        );
-        console.log(
-          "Selected wide format finishing machines:",
-          selectedWideFormatFinishingMachines
-        );
-        console.log(
-          "Selected DTF & sublimation finishing machines:",
-          selectedDtfSublimationFinishingMachines
-        );
-        console.log(
-          "Selected roll/flexo finishing machines:",
-          selectedRollFlexoFinishingMachines
-        );
-        console.log("Selected packaging machines:", selectedPackagingMachines);
-        // alert("Setup completed!");
         return true;
       }
     },
