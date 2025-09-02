@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput, GomakePrimaryButton } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import {
   Checkbox,
@@ -66,7 +66,14 @@ const RightSideWidget = ({
   subProducts,
   setCanCalculation,
   showCalculationInCompletedAlert,
+  // New props for explicit calculate button
+  isCalculateDisabled,
+  shouldPulseCalculateButton,
+  onClickCalculate,
+  canCalculation
+
 }: any) => {
+
   const {
     direction,
     isRtl,
@@ -109,9 +116,21 @@ const RightSideWidget = ({
     deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
 
-
   return (
     <div style={clasess.rightSideMainContainer}>
+      {/* Simple pulse animation for the calculate button */}
+      <style>
+        {`
+          @keyframes pulseCalc {
+            0% { box-shadow: 0 0 0 0 rgba(46,48,146,0.35); transform: scale(1); }
+            50% { box-shadow: 0 0 0 8px rgba(46,48,146,0.00); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(46,48,146,0.00); transform: scale(1); }
+          }
+          .pulse-calc {
+            animation: pulseCalc 1.4s ease-out infinite;
+          }
+        `}
+      </style>
       <div style={clasess.rightSideContainer}>
         {router?.query?.documentNumber && (
           <div
@@ -299,6 +318,7 @@ const RightSideWidget = ({
             </Tooltip>
           </span>
         </div>
+
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
@@ -390,6 +410,8 @@ const RightSideWidget = ({
           </>
         )}
 
+
+
         {widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE ? (
           <div
@@ -441,6 +463,8 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+
+
 
         {template?.minimumPrice > 0 &&
           !sliderCurrentProductItemValueTotalPrice && (
@@ -516,6 +540,16 @@ const RightSideWidget = ({
             </div>
           )
         }
+        {/* Calculate button under the price range */}
+        <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 6px" }}>
+          <GomakePrimaryButton
+            onClick={onClickCalculate}
+            className={!isCalculateDisabled && (!localStateValue || !sliderCurrentProductItemValueTotalPrice) ? "pulse-calc" : ""}
+            style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
+          >
+            {t("products.offsetPrice.admin.calculate") || "Calculate"}
+          </GomakePrimaryButton>
+        </div>
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>

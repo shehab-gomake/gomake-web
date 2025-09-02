@@ -375,6 +375,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isButtonDisabledState, setIsButtonDisabledState] = useState(false);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
+  const [shouldPulseCalculateButton, setShouldPulseCalculateButton] = useState(false);
 
   const priceToUse = currentCalculatedTotalPrice;
   const minDiscount =
@@ -485,6 +486,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculatedTotalPrice(parseFloat(result.calculatedPrice));
       setJobActions(result?.productItemValue.actions);
       setCalculationResult(result);
+      // Show errors modal only if there are errors (ignore warnings-only)
+      try {
+        const exceptions = result?.productItemValue?.exceptions || [];
+        if (Array.isArray(exceptions) && exceptions.length > 0) {
+          const toLower = (v) => (v || "").toString().toLowerCase();
+          const isWarning = (ex) => {
+            const level = toLower(ex.level || ex.logLevel || ex.severity || ex.type || ex.category);
+            if (level.includes("warn")) return true;
+            if (ex.isWarning === true) return true;
+            if (ex.severityId === 1 || ex.levelId === 1) return true;
+            return false;
+          };
+          const isError = (ex) => {
+            const level = toLower(ex.level || ex.logLevel || ex.severity || ex.type || ex.category);
+            if (level.includes("error") || level.includes("err")) return true;
+            if (ex.isError === true) return true;
+            if (ex.severityId === 2 || ex.levelId === 2) return true;
+            return !isWarning(ex);
+          };
+          const errors = exceptions.filter(isError);
+          if (errors.length > 0) {
+            const msg = errors
+              .map((e) => e.message || e.errorMessage || e.text || e.name || JSON.stringify(e))
+              .join("\n");
+            setErrorMsg(msg);
+            isOpenErrorsModal.open();
+          }
+        }
+        // Validate workflows and open modal when invalid
+        const validation = validateWorkflows(result?.productItemValue?.workFlows?.[0]);
+        if (validation && validation.isValid === false) {
+          setErrorMsg(validation.errors.join(", "));
+          isOpenErrorsModal.open();
+        }
+      } catch { }
       if (
         (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) &&
         (isActionEmployeeUpdated || isJobNameValue)
@@ -2887,11 +2923,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [widgetType, documentItemByEdit]);
 
-  useEffect(() => {
-    if (canCalculation) {
-      calculationProduct(subProducts);
-    }
-  }, [subProducts, canCalculation, productTemplate, router]);
+
+
+  // useEffect(() => {
+  //   if (canCalculation) {
+  //     calculationProduct(subProducts);
+  //   }
+  // }, [subProducts, canCalculation, productTemplate, router]);
 
   interface BillingMethod {
     value: string;
@@ -6503,6 +6541,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setCanCalculation(false);
         setActiveIndex(index);
         setCanCalculation(false);
+        // If clicked Pricing tab (last tab), auto-calculate when possible
+        if (index === filteredproductTemplate.length && validateParameters(subProducts) && isCanAutoCalculate) {
+          calculationProduct(subProducts);
+        }
       } else {
         // Show error if trying to move to the next tab but checkParameter is false
         alertFault("products.offsetPrice.admin.errorReq");
@@ -6511,6 +6553,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     // No action needed if clicking on the current tab
   };
+  const [isCanAutoCalculate, setIsCanAutoCalculate] = useState(true);
   const handleNextClick = () => {
     setErrorText(false);
     let filteredproductTemplate = productTemplate.sections.filter(
@@ -6519,9 +6562,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let currentSection = filteredproductTemplate[activeIndex].id;
     let checkParameter = validateParameters(subProducts, currentSection);
     if (checkParameter) {
-      if (activeIndex < productTemplate.sections.length) {
-        setActiveIndex(activeIndex + 1);
-        setCanCalculation(false);
+      const isLastVisibleSection = activeIndex + 1 >= filteredproductTemplate.length;
+      if (isLastVisibleSection) {
+        // Move to Pricing tab (the appended last tab) and auto-calculate when possible
+        setActiveIndex(filteredproductTemplate.length);
+        if (validateParameters(subProducts) && isCanAutoCalculate) {
+          calculationProduct(subProducts);
+        }
+      } else {
+        if (activeIndex < productTemplate.sections.length) {
+          setActiveIndex(activeIndex + 1);
+          setCanCalculation(false);
+        }
       }
     } else {
       setErrorText(true);
@@ -7801,6 +7853,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     setIsButtonDisabledState(isButtonDisabled(localStateValue, priceChangePercents, maxIncrease, minDiscount));
   }, [localStateValue, priceChangePercents, maxIncrease, minDiscount]);
+  // Calculate button disabled state and pulse hint when becomes enabled
+  const isCalculateDisabled = useMemo(() => {
+    try {
+      return !validateParameters(subProducts);
+    } catch {
+      return true;
+    }
+  }, [subProducts, productTemplate]);
+  useEffect(() => {
+    if (!isCalculateDisabled) {
+      setShouldPulseCalculateButton(true);
+      const t = setTimeout(() => setShouldPulseCalculateButton(false), 2000);
+      return () => clearTimeout(t);
+    }
+    else {
+      setWorkFlows([]);
+      setCurrentProductItemValueTotalPrice(null);
+      setSliderCurrentProductItemValueTotalPrice(null);
+      setLocalStateValue(null);
+      setCurrentCalculatedTotalPrice(null);
+      setJobActions([]);
+      setIsCalculationFinished(false);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+
+      setCalculationExceptionsLogs([]);
+      setAdditionalProductItems([]);
+      setcalculationServerErrorState(false);
+      setShowCalculationInCompletedAlert(false);
+      setShowCalculationInCompletedModal(false);
+      setIsCanAutoCalculate(true);
+    }
+  }, [isCalculateDisabled]);
+
+  const onClickCalculate = () => {
+    setIsCanAutoCalculate(false);
+    if (isCalculateDisabled) {
+      setErrorText(true);
+      alertFault(t("products.offsetPrice.admin.errorReq"));
+      return;
+    }
+    setCanCalculation(true);
+    calculationProduct(subProducts);
+  };
+
+
 
   return {
     t,
@@ -7885,7 +7985,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
-    isButtonDisabledState
+    isButtonDisabledState,
+    isCalculateDisabled,
+    shouldPulseCalculateButton,
+    onClickCalculate,
   };
 };
 

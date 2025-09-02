@@ -112,6 +112,11 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
+    // New for calculate button
+    isCalculateDisabled,
+    shouldPulseCalculateButton,
+    onClickCalculate,
+    canCalculation,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
@@ -451,6 +456,10 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 subProducts={subProducts}
                 showCalculationInCompletedAlert={showCalculationInCompletedAlert}
                 setCanCalculation={setCanCalculation}
+                isCalculateDisabled={isCalculateDisabled}
+                shouldPulseCalculateButton={shouldPulseCalculateButton}
+                onClickCalculate={onClickCalculate}
+                canCalculation={canCalculation}
               />
             )}
           </div>
@@ -583,7 +592,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={isLoadingPrice || widgetType === EWidgetProductType.CALCULATION_ERROR}
+                    disabled={(isLoadingPrice) || widgetType === EWidgetProductType.CALCULATION_ERROR}
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>
