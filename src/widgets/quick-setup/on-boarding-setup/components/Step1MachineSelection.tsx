@@ -65,7 +65,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   useEffect(() => {
     if (machineSearchTerm) {
       const filtered = allMachines.filter((machine) =>
-        (machine.nickName || `${machine.manufacturer} - ${machine.model}`)
+        (`${machine.manufacturer} - ${machine.model}` || machine.nickName)
           .toLowerCase()
           .includes(machineSearchTerm.toLowerCase())
       );
@@ -203,8 +203,8 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   value={machine.id}
                   sx={{ py: 1, fontSize: "14px" }}
                 >
-                  {machine.nickName ||
-                    `${machine.manufacturer} - ${machine.model}`}
+                  {`${machine.manufacturer} - ${machine.model}` ||
+                    machine.nickName}
                 </MenuItem>
               ))
             )}
