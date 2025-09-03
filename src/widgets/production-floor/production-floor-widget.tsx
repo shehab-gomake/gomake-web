@@ -427,8 +427,8 @@ const ProductionFloorWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true,true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false,true)}
         style={
           isMobile
             ? {
