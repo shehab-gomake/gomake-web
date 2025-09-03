@@ -16,7 +16,8 @@ import {
 } from "@/widgets/production-floor/state/production-floor-filters";
 import {
   boardsMissionsState,
-  jobsStatusesState, selectedMissionsState,
+  jobsStatusesState,
+  selectedMissionsState,
 } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
@@ -50,7 +51,11 @@ import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
-import { getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
+import {
+  getOrderSummeryPdfApi,
+  getWorkMissionPdfApi,
+  setBoardMissionsFiltersApi,
+} from "@/services/api-service/board-missions/board-missions-table";
 import { EWorkSource } from "../product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -69,8 +74,9 @@ const useProductionFloorData = () => {
   const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-  const [selectedMission, setSelectedMission] =
-    useRecoilState<any>(selectedMissionsState);
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(
+    selectedMissionsState
+  );
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -90,114 +96,144 @@ const useProductionFloorData = () => {
 
   // Flag to prevent multiple calls to getStationFilterGroups
   const [isLoadingFilterGroups, setIsLoadingFilterGroups] = useState(false);
-  const getData = useCallback(async (connectionId?: string) => {
-    if (view === EProductionFloorView.FILTER_GROUPS) {
-      return await getDataByGroups(connectionId, filtersState);
-    }
-
-    if (view === EProductionFloorView.DONE_JOBS) {
-      return await getAllBoardMissions();
-    }
-
-    const callBack = (res) => {
-      if (res.success) {
-        setData(res?.data?.boardMissionsCollections);
-        setFilters(res?.data?.filter);
-        let currentStationOrdering = res?.data?.filter?.currentStationOrdering;
-        if (!currentStationOrdering) {
-          currentStationOrdering = CurrentStationOrderingEnum.NONE;
-        }
-        setStationOrdering(currentStationOrdering);
-        setSelectedGroupId(res?.data?.filter?.groupId);
-        setTags(res?.data?.automatedTagsFilter);
-        setUserGroups(res?.data?.groups);
-        setPath(res?.data?.path ? res?.data?.path : []);
-
-        const agentIdsFromServer = res?.data?.filter?.agentIds || [];
-        setAgents((prevAgents) =>
-          prevAgents.map((agent) => ({
-            ...agent,
-            checked: agentIdsFromServer.includes(agent.id),
-          }))
-        );
-
-        // Only call getStationFilterGroups once per successful data fetch
-        getStationFilterGroups();
+  const getData = useCallback(
+    async (connectionId?: string) => {
+      if (view === EProductionFloorView.FILTER_GROUPS) {
+        return await getDataByGroups(connectionId, filtersState);
       }
-    };
-    if (abortController) {
-      abortController.abort();
-    }
-    const newRequestAbortController = new AbortController();
-    setAbortController(newRequestAbortController);
-    return await getProductionFloorData(
-      callApi,
-      callBack,
-      {
-        connectionId: connectionId,
-      },
-      false,
-      newRequestAbortController
-    );
-  }, [view, filtersState, abortController, callApi, setData, setFilters, setStationOrdering, setSelectedGroupId, setTags, setUserGroups, setPath, setAgents]);
 
-  const getDataByGroups = useCallback(async (
-    connectionId?: string,
-    currentFilters?: IProductionFloorFilter,
-    clearData?: boolean,
-    isFirstLoad?: boolean
-  ) => {
-    if (clearData) {
-      setData([]);
-      setJobsStatuses([]);
-    }
-    if (abortController) {
-      abortController.abort();
-    }
-    if (!currentFilters) {
-      currentFilters = filtersState;
-    }
-    const newRequestAbortController = new AbortController();
-    setAbortController(newRequestAbortController);
-    const callBack = (res) => {
-      if (res.success) {
-        setData(res?.data?.boardMissionsCollections);
-        setFilters(res?.data?.filter);
-        const agentIdsFromServer = res?.data?.filter?.agentIds || [];
-        setAgents((prevAgents) =>
-          prevAgents.map((agent) => ({
-            ...agent,
-            checked: agentIdsFromServer.includes(agent.id),
-          }))
-        );
-        setJobsStatuses(res?.data?.boardMissionStatuses);
-        setSelectedGroupId("all");
-        setTags(res?.data?.automatedTagsFilter);
-        setUserGroups(res?.data?.groups);
-        setPath(res?.data?.path ? res?.data?.path : []);
-        if (filterGroups && filterGroups.length > 0) {
-          setFilterGroups(
-            filterGroups.map((x) =>
-              x.id === "all"
-                ? {
-                  ...x,
-                  stuckCount: res?.data?.boradMisstionsStuckCount,
-                  inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                }
-                : x
-            )
+      if (view === EProductionFloorView.DONE_JOBS) {
+        return await getAllBoardMissions();
+      }
+
+      const callBack = (res) => {
+        if (res.success) {
+          setData(res?.data?.boardMissionsCollections);
+          setFilters(res?.data?.filter);
+          let currentStationOrdering =
+            res?.data?.filter?.currentStationOrdering;
+          if (!currentStationOrdering) {
+            currentStationOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setStationOrdering(currentStationOrdering);
+          setSelectedGroupId(res?.data?.filter?.groupId);
+          setTags(res?.data?.automatedTagsFilter);
+          setUserGroups(res?.data?.groups);
+          setPath(res?.data?.path ? res?.data?.path : []);
+
+          const agentIdsFromServer = res?.data?.filter?.agentIds || [];
+          setAgents((prevAgents) =>
+            prevAgents.map((agent) => ({
+              ...agent,
+              checked: agentIdsFromServer.includes(agent.id),
+            }))
           );
+
+          // Only call getStationFilterGroups once per successful data fetch
+          getStationFilterGroups();
         }
+      };
+      if (abortController) {
+        abortController.abort();
       }
-    };
-    await getJobsByGroups(
+      const newRequestAbortController = new AbortController();
+      setAbortController(newRequestAbortController);
+      return await getProductionFloorData(
+        callApi,
+        callBack,
+        {
+          connectionId: connectionId,
+        },
+        false,
+        newRequestAbortController
+      );
+    },
+    [
+      view,
+      filtersState,
+      abortController,
       callApi,
-      callBack,
-      { connectionId: connectionId, filters: currentFilters },
-      false,
-      newRequestAbortController
-    );
-  }, [callApi, setData, setFilters, setAgents, setJobsStatuses, setSelectedGroupId, setTags, setUserGroups, setPath]);
+      setData,
+      setFilters,
+      setStationOrdering,
+      setSelectedGroupId,
+      setTags,
+      setUserGroups,
+      setPath,
+      setAgents,
+    ]
+  );
+
+  const getDataByGroups = useCallback(
+    async (
+      connectionId?: string,
+      currentFilters?: IProductionFloorFilter,
+      clearData?: boolean,
+      isFirstLoad?: boolean
+    ) => {
+      if (clearData) {
+        setData([]);
+        setJobsStatuses([]);
+      }
+      if (abortController) {
+        abortController.abort();
+      }
+      if (!currentFilters) {
+        currentFilters = filtersState;
+      }
+      const newRequestAbortController = new AbortController();
+      setAbortController(newRequestAbortController);
+      const callBack = (res) => {
+        if (res.success) {
+          setData(res?.data?.boardMissionsCollections);
+          setFilters(res?.data?.filter);
+          const agentIdsFromServer = res?.data?.filter?.agentIds || [];
+          setAgents((prevAgents) =>
+            prevAgents.map((agent) => ({
+              ...agent,
+              checked: agentIdsFromServer.includes(agent.id),
+            }))
+          );
+          setJobsStatuses(res?.data?.boardMissionStatuses);
+          setSelectedGroupId("all");
+          setTags(res?.data?.automatedTagsFilter);
+          setUserGroups(res?.data?.groups);
+          setPath(res?.data?.path ? res?.data?.path : []);
+          if (filterGroups && filterGroups.length > 0) {
+            setFilterGroups(
+              filterGroups.map((x) =>
+                x.id === "all"
+                  ? {
+                      ...x,
+                      stuckCount: res?.data?.boradMisstionsStuckCount,
+                      inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                    }
+                  : x
+              )
+            );
+          }
+        }
+      };
+      await getJobsByGroups(
+        callApi,
+        callBack,
+        { connectionId: connectionId, filters: currentFilters },
+        false,
+        newRequestAbortController
+      );
+    },
+    [
+      callApi,
+      setData,
+      setFilters,
+      setAgents,
+      setJobsStatuses,
+      setSelectedGroupId,
+      setTags,
+      setUserGroups,
+      setPath,
+    ]
+  );
 
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
@@ -265,164 +301,188 @@ const useProductionFloorData = () => {
     return "";
   };
 
-  const getAllBoardMissions = useCallback(async (
-    pageNumberInput?: number,
-    pageSizeInput?: number,
-    patternSearchInput?: string
-  ) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        const _data = res?.data;
-        const mapData = _data.data?.map((mission: any) => {
-          const itemCalculatedPrice =
-            mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
-              ? mission?.calculatedPrice
-              : 0;
-          return [
-            <a
-              href={mission?.boardMissionImage}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={mission?.boardMissionImage}
-                alt=""
-                style={{
-                  width: "45px",
-                  height: "45px",
-                  objectFit: "contain",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              />
-            </a>,
-            formatISODateTime(mission?.createdDate),
-            formatISODateTime(mission?.dueDate),
-            <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
-            mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName
-                ? mission?.productTypeName
-                : mission?.productType
-              }`
-              : mission?.number,
-            <a href={`/order?Id=${mission?.orderID}`}>
-              {mission?.orderNumber}
-            </a>,
-            mission?.outSourceType === null
-              ? `${t("boardMissions." + EWorkSource[0])}`
-              : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
-            mission?.quantity,
-            // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-            //   ? [
-            //       RTL
-            //         ? mission?.cost +
-            //           " " +
-            //           getCurrencyUnitText(mission?.currency)
-            //         : getCurrencyUnitText(mission?.currency) +
-            //           " " +
-            //           mission?.cost,
-            //     ]
-            //   : []),
-            // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-            //   ? [
-            //       [
-            //         RTL
-            //           ? mission?.price +
-            //             (itemCalculatedPrice
-            //               ? ` (${itemCalculatedPrice})`
-            //               : " ") +
-            //             getCurrencyUnitText(mission?.currency)
-            //           : getCurrencyUnitText(mission?.currency) +
-            //             " " +
-            //             mission?.price +
-            //             (itemCalculatedPrice
-            //               ? ` (${itemCalculatedPrice})`
-            //               : " "),
-            //       ],
-            //     ]
-            //   : []),
-            mission?.jobName,
-            // mission?.numberOfBoardMissions,
-            mission?.productName,
-            <div style={{ whiteSpace: "break-spaces" }}>
-              {getJobStatus(mission)}
-            </div>,
-            <MoreMenuWidget
-              mission={mission}
-              isDoneJobs={true}
-              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-              onClickWorkMissionPdf={onClickWorkMissionPdf}
-            />,
-          ];
-        });
-        setAllBoardMissions(mapData);
-        setPagesCount(Math.ceil(_data?.totalItems / pageSize));
-      } else {
-        setAllBoardMissions([]);
-      }
-    };
-
-    const onClickWorkMissionPdf = async (
-      boardMissionId: string,
-      actionId: string,
-      productType: string
+  const getAllBoardMissions = useCallback(
+    async (
+      pageNumberInput?: number,
+      pageSizeInput?: number,
+      patternSearchInput?: string
     ) => {
       const callBack = (res) => {
         if (res?.success) {
-          const pdfLink = res.data;
-          window.open(pdfLink, "_blank");
+          const _data = res?.data;
+          const mapData = _data.data?.map((mission: any) => {
+            const itemCalculatedPrice =
+              mission?.calculatedPrice &&
+              mission?.calculatedPrice != mission?.price
+                ? mission?.calculatedPrice
+                : 0;
+            return [
+              <a
+                href={mission?.boardMissionImage}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={mission?.boardMissionImage}
+                  alt=""
+                  style={{
+                    width: "45px",
+                    height: "45px",
+                    objectFit: "contain",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                />
+              </a>,
+              formatISODateTime(mission?.createdDate),
+              formatISODateTime(mission?.dueDate),
+              <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
+              mission?.productType
+                ? `${mission?.number} / ${
+                    mission?.productTypeName
+                      ? mission?.productTypeName
+                      : mission?.productType
+                  }`
+                : mission?.number,
+              <a href={`/order?Id=${mission?.orderID}`}>
+                {mission?.orderNumber}
+              </a>,
+              mission?.outSourceType === null
+                ? `${t("boardMissions." + EWorkSource[0])}`
+                : `${t(
+                    "boardMissions." + EWorkSource[mission?.outSourceType]
+                  )}`,
+              mission?.quantity,
+              // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+              //   ? [
+              //       RTL
+              //         ? mission?.cost +
+              //           " " +
+              //           getCurrencyUnitText(mission?.currency)
+              //         : getCurrencyUnitText(mission?.currency) +
+              //           " " +
+              //           mission?.cost,
+              //     ]
+              //   : []),
+              // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+              //   ? [
+              //       [
+              //         RTL
+              //           ? mission?.price +
+              //             (itemCalculatedPrice
+              //               ? ` (${itemCalculatedPrice})`
+              //               : " ") +
+              //             getCurrencyUnitText(mission?.currency)
+              //           : getCurrencyUnitText(mission?.currency) +
+              //             " " +
+              //             mission?.price +
+              //             (itemCalculatedPrice
+              //               ? ` (${itemCalculatedPrice})`
+              //               : " "),
+              //       ],
+              //     ]
+              //   : []),
+              mission?.jobName,
+              // mission?.numberOfBoardMissions,
+              mission?.productName,
+              <div style={{ whiteSpace: "break-spaces" }}>
+                {getJobStatus(mission)}
+              </div>,
+              <MoreMenuWidget
+                mission={mission}
+                isDoneJobs={true}
+                onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+                onClickWorkMissionPdf={onClickWorkMissionPdf}
+              />,
+            ];
+          });
+          setAllBoardMissions(mapData);
+          setPagesCount(Math.ceil(_data?.totalItems / pageSize));
         } else {
-          // alertFaultGetData();
+          setAllBoardMissions([]);
         }
       };
-      await getWorkMissionPdfApi(callApi, callBack, {
-        boardMissionId,
-        isPurchaseJobs: false,
-        actionId: actionId,
-        productType: productType ?? "",
-      });
-    };
 
-    const onClickOrderSummeryPdf = async (boardMissionId: string) => {
-      const callBack = (res) => {
-        if (res?.success) {
-          const pdfLink = res.data;
-          window.open(pdfLink, "_blank");
-        } else {
-          // alertFaultGetData();
-        }
+      const onClickWorkMissionPdf = async (
+        boardMissionId: string,
+        actionId: string,
+        productType: string
+      ) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const pdfLink = res.data;
+            window.open(pdfLink, "_blank");
+          } else {
+            // alertFaultGetData();
+          }
+        };
+        await getWorkMissionPdfApi(callApi, callBack, {
+          boardMissionId,
+          isPurchaseJobs: false,
+          actionId: actionId,
+          productType: productType ?? "",
+        });
       };
-      await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
-    };
 
-    const data = {
-      fromDate: null,
-      toDate: null,
-      fromDueDate: null,
-      toDueDate: null,
-      fromReadyDate: null,
-      toReadyDate: null,
-      productsIds: [],
-      productionStatus: "6",
-      pageNumber: pageNumberInput ?? pageNumber,
-      pageSize: pageSizeInput ?? pageSize,
-      search:
-        patternSearchInput !== null &&
+      const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const pdfLink = res.data;
+            window.open(pdfLink, "_blank");
+          } else {
+            // alertFaultGetData();
+          }
+        };
+        await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
+      };
+
+      const data = {
+        fromDate: null,
+        toDate: null,
+        fromDueDate: null,
+        toDueDate: null,
+        fromReadyDate: null,
+        toReadyDate: null,
+        productsIds: [],
+        productionStatus: "6",
+        pageNumber: pageNumberInput ?? pageNumber,
+        pageSize: pageSizeInput ?? pageSize,
+        search:
+          patternSearchInput !== null &&
           patternSearchInput !== undefined &&
-          patternSearchInput !== "" ?
-          patternSearchInput : "",
-    };
-    await setBoardMissionsFiltersApi(callApi, callBack, data);
-  }, [callApi, setAllBoardMissions, setPagesCount, pageNumber, pageSize, patternSearch, router, t, CheckPermission]);
+          patternSearchInput !== ""
+            ? patternSearchInput
+            : "",
+      };
+      await setBoardMissionsFiltersApi(callApi, callBack, data);
+    },
+    [
+      callApi,
+      setAllBoardMissions,
+      setPagesCount,
+      pageNumber,
+      pageSize,
+      patternSearch,
+      router,
+      t,
+      CheckPermission,
+    ]
+  );
 
-  const getAllData = useCallback(async (
-    pageNumber: number,
-    pageSize: number,
-    patternSearchInput?: string
-  ) => {
-    return await getAllBoardMissions(pageNumber, pageSize, patternSearchInput);
-  }, [getAllBoardMissions]);
+  const getAllData = useCallback(
+    async (
+      pageNumber: number,
+      pageSize: number,
+      patternSearchInput?: string
+    ) => {
+      return await getAllBoardMissions(
+        pageNumber,
+        pageSize,
+        patternSearchInput
+      );
+    },
+    [getAllBoardMissions]
+  );
 
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -507,20 +567,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                ...s,
-                boardMissions: s.boardMissions?.map((board) => {
-                  const match = updatedBoards?.find(
-                    (updatedBoard) => updatedBoard.id === board.id
-                  );
-                  if (match) {
-                    return {
-                      ...board,
-                      priority: match.priority,
-                    };
-                  }
-                  return board;
-                }),
-              }
+                  ...s,
+                  boardMissions: s.boardMissions?.map((board) => {
+                    const match = updatedBoards?.find(
+                      (updatedBoard) => updatedBoard.id === board.id
+                    );
+                    if (match) {
+                      return {
+                        ...board,
+                        priority: match.priority,
+                      };
+                    }
+                    return board;
+                  }),
+                }
               : s
           )
         );
@@ -533,7 +593,8 @@ const useProductionFloorData = () => {
 
   const [, setSelectedMissionId] = useState<any>(null);
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
-  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
+    useState<boolean>(false);
 
   const onCloseMarkReadyModal = () => {
     setSelectedMissionId(null);
@@ -662,7 +723,6 @@ const useProductionFloorData = () => {
         }
       } else {
         alertFaultUpdate();
-
       }
     };
     await moveBoardMissionToDoneApi(callApi, callBack, {
@@ -702,7 +762,7 @@ const useProductionFloorData = () => {
   const onClickUnGroupJob = async (boardMissionId) => {
     const callBack = (res) => {
       if (res?.success) {
-        getData()
+        getData();
         alertSuccessUpdate();
       }
     };
@@ -717,7 +777,9 @@ const useProductionFloorData = () => {
   };
 
   const onClosePrintDeliverTicketModal = () => {
-    handleRemoveBoardMission(selectedMission.id || selectedMission.boardMissionId);
+    handleRemoveBoardMission(
+      selectedMission.id || selectedMission.boardMissionId
+    );
     setSelectedMission(null);
     setOpenPackagesModal(false);
   };
@@ -748,6 +810,7 @@ const useProductionFloorData = () => {
             color: group?.color || "#7355de",
             stuckCount: group?.stuckCount,
             inProcessCount: group?.inProcessCount,
+            inProcessTotalProductionTime: group?.inProcessTotalProductionTime,
           })
         );
         let inProcessSum = filterGroupsList.reduce(
@@ -759,12 +822,21 @@ const useProductionFloorData = () => {
         let stuckSum = filterGroupsList.reduce((accumulator, currentValue) => {
           return accumulator + (currentValue.stuckCount ?? 0);
         }, 0);
+        let totalProductionTimeSum = filterGroupsList.reduce(
+          (accumulator, currentValue) => {
+            return (
+              accumulator + (currentValue.inProcessTotalProductionTime ?? 0)
+            );
+          },
+          0
+        );
         const allGroupViewFilter: IFilterGroupsList = {
           id: "all",
           name: t("productionFloor.allFilterGroupsViewName"),
           color: "#7355de",
           stuckCount: stuckSum,
           inProcessCount: inProcessSum,
+          inProcessTotalProductionTime: totalProductionTimeSum,
         };
 
         setFilterGroups([allGroupViewFilter, ...filterGroupsList]);
@@ -786,17 +858,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-            ...status,
-            boardMissions: status.boardMissions.map((bm) =>
-              bm.id === boardMisionId
-                ? { ...bm, dueDate: formattedDueDate }
-                : bm
-            ),
-          }
+              ...status,
+              boardMissions: status.boardMissions.map((bm) =>
+                bm.id === boardMisionId
+                  ? { ...bm, dueDate: formattedDueDate }
+                  : bm
+              ),
+            }
           : status
       )
     );
-    const callBack = () => { };
+    const callBack = () => {};
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,

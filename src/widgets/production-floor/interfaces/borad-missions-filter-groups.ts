@@ -6,6 +6,7 @@ export interface IFilterGroupsList {
   inProcessCount?: number;
   stuckCount?: number;
   color?: string | null;
+  inProcessTotalProductionTime?: number;
 }
 
 export interface IStationFilterGroup {

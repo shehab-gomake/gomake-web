@@ -305,12 +305,34 @@ const useActionsList = ({
             color: group?.color || "#7355de",
             stuckCount: group?.stuckCount,
             inProcessCount: group?.inProcessCount,
+            inProcessTotalProductionTime: group?.inProcessTotalProductionTime,
           })
+        );
+        let inProcessSum = filterGroupsList.reduce(
+          (accumulator, currentValue) => {
+            return accumulator + (currentValue.inProcessCount ?? 0);
+          },
+          0
+        );
+        let stuckSum = filterGroupsList.reduce((accumulator, currentValue) => {
+          return accumulator + (currentValue.stuckCount ?? 0);
+        }, 0);
+        let totalProductionTimeSum = filterGroupsList.reduce(
+          (accumulator, currentValue) => {
+            return (
+              accumulator + (currentValue.inProcessTotalProductionTime ?? 0)
+            );
+          },
+          0
         );
         setFilterGroups([
           {
             id: "all",
             name: t("productionFloor.allFilterGroupsViewName"),
+            color: "#7355de",
+            stuckCount: stuckSum,
+            inProcessCount: inProcessSum,
+            inProcessTotalProductionTime: totalProductionTimeSum,
           },
           ...filterGroupsList,
         ]);
