@@ -3517,6 +3517,50 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
 
+    // Calculate number of pages based on InternalPagesNumber and PrintingSides
+    const calculateNumberOfPages = () => {
+      // Only show for Internal pages section, not for Cover section
+      if (subSection?.type === "Cover" || subSection?.name?.toLowerCase().includes("cover")) {
+        return null;
+      }
+
+      // Use primary parameters or fallback to alternative search
+      const pagesParam = internalPagesNumberParam || internalPagesNumberParamAlt;
+      const sidesParam = printingSidesParam || printingSidesParamAlt;
+
+
+      if (!sidesParam) {
+        return null;
+      }
+
+      const printingSidesID = sidesParam.valueIds?.[0];
+
+      if (!printingSidesID) {
+        return null;
+      }
+
+      // For Internal pages section, use the calculation based on InternalPagesNumber
+      if (pagesParam) {
+        const internalPages = parseInt(pagesParam.values?.[0] || "0");
+
+        if (!internalPages) {
+          return null;
+        }
+
+        // If two sides printing, divide by 2, otherwise use the same number
+        if (printingSidesID === "a3bc4267-9cca-4b35-a849-2d30aa8bf2d4") {
+          const result = Math.ceil(internalPages / 2);
+          return result;
+        } else {
+          return internalPages;
+        }
+      }
+
+      return null;
+    };
+
+    const numberOfPages = calculateNumberOfPages();
+
     return (
       <>
         {!parameter?.isHiddenInSetting && (
@@ -3711,11 +3755,55 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               </div>
               <div
-                style={
-                  inRow ? { width: "5%" } : clasess.renderParameterTypeContainer
-                }
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  gap: 15,
+                }}
               >
-                {Comp}
+                <div
+                  style={
+                    inRow ? { width: "5%" } : clasess.renderParameterTypeContainer
+                  }
+                >
+                  {Comp}
+                </div>
+                {/* Show calculated number of pages next to PrintingSides parameter */}
+                {parameter?.code === "PrintingSides" && numberOfPages !== null && (
+                  <div
+                    style={
+                      inRow
+                        ? { ...clasess.parameterRowContainer, position: "relative" }
+                        : { ...clasess.parameterContainer, position: "relative" }
+                    }
+                  >
+                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, left: 0, height: 30 }}>
+                      {t("products.offsetPrice.admin.numberOfPapers")}
+                    </div>
+                    <div
+                      style={
+                        inRow ? { width: "5%" } : clasess.renderParameterTypeContainer
+                      }
+                    >
+                      <div
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #e0e0e0",
+                          borderRadius: "4px",
+                          backgroundColor: "#ffffff",
+                          fontSize: "14px",
+                          color: "#333",
+                          minWidth: "180px",
+                          textAlign: "center",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        {numberOfPages}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               {!inunderParameter && (
                 <div style={clasess.oldSystemValueText}>
@@ -7081,6 +7169,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const heightParam = getParameterByParameterCode(subProducts, "Height");
   const jobNameParameter = getParameterByParameterCode(subProducts, "JobName");
   const isSetsParameter = getParameterByParameterCode(subProducts, "Sets");
+  const internalPagesNumberParam = getParameterByParameterCode(subProducts, "InternalPagesNumber");
+  const printingSidesParam = getParameterByParameterCode(subProducts, "PrintingSides");
+
+  // Debug: Log all available parameter codes
+  console.log("Debug - All available parameter codes:",
+    subProducts?.flatMap(item => item.parameters?.map(p => p.parameterCode)).filter(Boolean)
+  );
+
+  // Alternative search methods in case the exact codes don't match
+  const internalPagesNumberParamAlt = subProducts?.flatMap(item => item.parameters)
+    .find(p => p.parameterCode?.toLowerCase().includes("internalpages") ||
+      p.parameterCode?.toLowerCase().includes("pagesnumber") ||
+      p.parameterCode?.toLowerCase().includes("internalpagesnumber"));
+
+  const printingSidesParamAlt = subProducts?.flatMap(item => item.parameters)
+    .find(p => p.parameterCode?.toLowerCase().includes("printingsides") ||
+      p.parameterCode?.toLowerCase().includes("printingside"));
+
+  console.log("Debug - Alternative internalPagesNumberParam:", internalPagesNumberParamAlt);
+  console.log("Debug - Alternative printingSidesParam:", printingSidesParamAlt);
 
   const addItemForQuotes = async () => {
     setLoadingWithLockScreen(true);
