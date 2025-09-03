@@ -3516,7 +3516,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
+    const getParameterByCodeInSection = (subProducts, code, currentSection, currentSubSection) => {
+      // Find the section that matches the current section ID
+      const currentSectionData = subProducts?.find(
+        item => item.sectionId === currentSection?.id
+      );
 
+      // Then find the parameter within that section that matches the code and subsection
+      return currentSectionData?.parameters?.find(p =>
+        p.parameterCode === code && p.subSectionId === currentSubSection?.id
+      );
+    };
     // Calculate number of pages based on InternalPagesNumber and PrintingSides
     const calculateNumberOfPages = () => {
       // Only show for Internal pages section, not for Cover section
@@ -3524,10 +3534,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         return null;
       }
 
-      // Use primary parameters or fallback to alternative search
-      const pagesParam = internalPagesNumberParam || internalPagesNumberParamAlt;
-      const sidesParam = printingSidesParam || printingSidesParamAlt;
-
+      // Get parameters for the current section only
+      const pagesParam = getParameterByCodeInSection(subProducts, "InternalPagesNumber", section, subSection);
+      const sidesParam = getParameterByCodeInSection(subProducts, "PrintingSides", section, subSection);
 
       if (!sidesParam) {
         return null;
@@ -3789,14 +3798,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       <div
                         style={{
                           padding: "8px 12px",
-                          border: "1px solid #e0e0e0",
                           borderRadius: "4px",
-                          backgroundColor: "#ffffff",
-                          fontSize: "14px",
-                          color: "#333",
+                          backgroundColor: "#fff",
+                          color: "#888",
                           minWidth: "180px",
                           textAlign: "center",
-                          fontFamily: "inherit",
+                          height: 40,
+                          ...FONT_FAMILY.Lexend(700, 16),
+
                         }}
                       >
                         {numberOfPages}
