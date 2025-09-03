@@ -31,20 +31,30 @@ const useStatusTable = () => {
   };
 
   const onChangeHeaderCheckBox = (statusId: string, checked: boolean) => {
-    let selected = [...selectedBoards];
-    status(statusId).boardMissions.forEach((boardMission) => {
-      const isSelectedBoard = !!selected?.find((b) => b.id === boardMission.id);
-      if (checked) {
-        if (!isSelectedBoard) {
-          selected.concat([boardMission]);
-        }
-      } else {
-        if (isSelectedBoard) {
-          selected = selected.filter((b) => b.id !== boardMission.id);
-        }
-      }
-    });
-    setSelectedBoards(Array.from(selected));
+    const currentStatus = status(statusId);
+    if (!currentStatus) return;
+
+    const boardsInStatus = currentStatus.boardMissions || [];
+
+    if (checked) {
+      // Add all boards in this status that are not already selected (by id + productType)
+      const toAdd = boardsInStatus.filter(
+        (b) =>
+          !selectedBoards?.some(
+            (sb) => sb.id === b.id && sb.productType === b.productType
+          )
+      );
+      setSelectedBoards([...(selectedBoards || []), ...toAdd]);
+    } else {
+      // Remove all boards in this status (by id + productType)
+      const keysToRemove = new Set(
+        boardsInStatus.map((b) => `${b.id}__${b.productType}`)
+      );
+      const remaining = (selectedBoards || []).filter(
+        (sb) => !keysToRemove.has(`${sb.id}__${sb.productType}`)
+      );
+      setSelectedBoards(remaining);
+    }
   };
   const status = (statusId: string) =>
     boardsMissions.find(
@@ -67,6 +77,18 @@ const useStatusTable = () => {
                 (sb) => sb.id === b.id && sb.productType === b.productType
               )
             )}
+            indeterminate={
+              status(statusId).boardMissions.some((b) =>
+                selectedBoards?.find(
+                  (sb) => sb.id === b.id && sb.productType === b.productType
+                )
+              ) &&
+              !status(statusId).boardMissions.every((b) =>
+                selectedBoards?.find(
+                  (sb) => sb.id === b.id && sb.productType === b.productType
+                )
+              )
+            }
             onChange={(e, checked) => {
               onChangeHeaderCheckBox(statusId, checked);
             }}
@@ -78,7 +100,7 @@ const useStatusTable = () => {
         ),
       }),
       job_order: `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
-      deliveryDate: t("sales.quote.deliveryDate"), //!here after
+      deliveryDate: t("sales.quote.deliveryDate"),
       customer: t("productionFloor.customer"),
       agent: t("productionFloor.agent"),
       productName: t("sales.quote.productName"),
@@ -87,6 +109,8 @@ const useStatusTable = () => {
       status: t("productionFloor.status"),
       currentStation: t("productionFloor.currentStation"),
       nextStation: t("productionFloor.nextStation"),
+      changeMachineEmployee: t("productionFloor.changeMachineEmployee"),
+      totalTime: t("productionFloor.totalTime"),
       more: " ",
     };
 

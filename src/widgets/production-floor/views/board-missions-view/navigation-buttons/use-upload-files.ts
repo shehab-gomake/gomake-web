@@ -202,7 +202,19 @@ const useUploadFiles = (
           fileType,
           fileId: fileId
         });
-        
+        if(response.jdfFileUrl){
+          await setOrderItemFileStatus({
+            orderItemId,
+            filename: file?.jdfFileName,
+            source: response.source,
+            screenShot: "",
+            productType: !!productType ? productType.toString() : "",
+            signalRConnectId: connectionId,
+            status: EUploadingFileStatus.Uploaded,
+            fileType,
+            fileId: fileId
+          });
+        }
         
       }
     }

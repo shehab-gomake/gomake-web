@@ -28,7 +28,10 @@ import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { filterGroupsState, patternSearchState } from "@/widgets/production-floor/state/filter-group";
+import {
+  filterGroupsState,
+  patternSearchState,
+} from "@/widgets/production-floor/state/filter-group";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -38,6 +41,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { useDebounce } from "@/utils/use-debounce";
+import { adaptMarginLeft, adaptMarginRight } from "@/utils/adapter";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -107,31 +111,11 @@ const CustomGroup = styled(Card)<{
   alignItems: "center",
   justifyContent: "space-between",
   width: isFromMenu ? "100%" : "fit-content",
-  maxWidth: "250px",
+  maxWidth: "300px",
   "&:hover": {
     boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
   },
 }));
-
-const Circle = styled(Box)<{ numColor: string; dir: string }>(
-  ({ numColor, dir }) => ({
-    width: "18px",
-    height: "18px",
-    borderRadius: "50%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    marginLeft: dir === "rtl" ? 0 : 4,
-    marginRight: dir === "rtl" ? 4 : 0,
-    fontSize: 12,
-    fontWeight: 600,
-    color: numColor,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  })
-);
 
 const CustomGroupComponent = ({
   onClick,
@@ -142,8 +126,20 @@ const CustomGroupComponent = ({
   isFromMenu,
   handleClickMenu,
   setSelectedGroup,
-  isDoneJobs
+  isDoneJobs,
 }: CustomGroupsProps) => {
+  // Format time as HH:MM (input is already in minutes)
+  const formatTime = (totalMinutes: number) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.round(totalMinutes % 60);
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  // Calculate sum of both old numbers
+  const totalCount = (group?.inProcessCount || 0) + (group?.stuckCount || 0);
+
   return (
     <CustomGroup
       onClick={onClick}
@@ -184,58 +180,82 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
-        {!isDoneJobs &&
+
+        {!isDoneJobs && (
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               flexShrink: 0,
-              // gap: "6px",
             }}
           >
-            {
-              <Circle numColor="#E7D000" dir={dir}>
-                {group?.inProcessCount}
-              </Circle>
-            }
-            {
-              <Circle numColor="#D92D20" dir={dir}>
-                {group?.stuckCount}
-              </Circle>
-            }
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(500, 12),
+                fontFamily: "monospace",
+                minWidth: "fit-content",
+                ...adaptMarginLeft(dir, 1),
+              }}
+            >
+              |
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(500, 12),
+                fontFamily: "monospace",
+                minWidth: "fit-content",
+                ...adaptMarginLeft(dir, 1),
+              }}
+            >
+              {formatTime(group?.inProcessTotalProductionTime)}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(600, 12),
+                backgroundColor: isSelected
+                  ? "rgba(255,255,255,0.2)"
+                  : `${group?.color}15`,
+                borderRadius: "12px",
+                padding: "2px 6px",
+                minWidth: "fit-content",
+                textAlign: "center",
+                border: isSelected
+                  ? "1px solid rgba(255,255,255,0.3)"
+                  : `1px solid ${group?.color}30`,
+              }}
+            >
+              {totalCount}
+            </Typography>
             {group.id !== "all" && (
-              <Circle
-                numColor={group?.color}
-                dir={dir}
-                sx={{
-                  backgroundColor: "transparent",
+              <IconButton
+                onClick={(e) => {
+                  handleClickMenu(e);
+                  setSelectedGroup(group);
+                }}
+                size="small"
+                style={{
+                  padding: "2px",
+                  cursor: "pointer",
+                  ...adaptMarginRight(dir, 1),
                 }}
               >
-                (
-                <IconButton
-                  onClick={(e) => {
-                    handleClickMenu(e);
-                    setSelectedGroup(group);
-                  }}
-                  size="small"
+                <MoreVertIcon
                   style={{
-                    padding: "4px",
                     cursor: "pointer",
+                    fontSize: "16px",
+                    color: isSelected ? "#FFF" : group?.color,
                   }}
-                >
-                  <MoreVertIcon
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      color: isSelected ? "#FFF" : group?.color,
-                    }}
-                  />
-                </IconButton>
-                )
-              </Circle>
+                />
+              </IconButton>
             )}
           </Box>
-        }
+        )}
       </CardContent>
     </CustomGroup>
   );
@@ -253,7 +273,7 @@ const ProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
   isMobile,
-  view
+  view,
 }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
@@ -318,7 +338,7 @@ const ProductionFloorFilters = ({
     setGlobalSearch,
     localSearch,
     setLocalSearch,
-    debouncedSearch
+    debouncedSearch,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -365,16 +385,31 @@ const ProductionFloorFilters = ({
           inProcessCount = 0,
           stuckCount = 0,
           color = "#7355de",
+          inProcessTotalProductionTime = 0,
         } = item;
 
-        const cardWidth = 240;
+        const cardWidth = 300;
 
         totalWidth += cardWidth;
 
         if (totalWidth <= containerWidth) {
-          visible.push({ id, name, inProcessCount, stuckCount, color });
+          visible.push({
+            id,
+            name,
+            inProcessCount,
+            stuckCount,
+            color,
+            inProcessTotalProductionTime,
+          });
         } else {
-          hidden.push({ id, name, inProcessCount, stuckCount, color });
+          hidden.push({
+            id,
+            name,
+            inProcessCount,
+            stuckCount,
+            color,
+            inProcessTotalProductionTime,
+          });
         }
       });
 
@@ -419,7 +454,9 @@ const ProductionFloorFilters = ({
 
   //!there is no productType
   const handleMissionClick = (id, productType) => {
-    push(`/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`).then(() => {
+    push(
+      `/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`
+    ).then(() => {
       setGlobalSearch("");
       setLocalSearch("");
       setMissionsList([]);
@@ -462,7 +499,8 @@ const ProductionFloorFilters = ({
     }
   }, [debouncedSearchValue]);
 
-  const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
+  const [patternSearch, setPatternSearch] =
+    useRecoilState<any>(patternSearchState);
   const debouncedPatternSearch = useDebounce(patternSearch, 500);
 
   const onChangeMissionsSearch = (value: string) => {
@@ -473,16 +511,14 @@ const ProductionFloorFilters = ({
     if (view === EProductionFloorView.DONE_JOBS) {
       if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
         getAllData(1, 10, debouncedPatternSearch);
-      }
-      else {
+      } else {
         getAllData(1, 10);
       }
     }
   }, [debouncedPatternSearch]);
 
-
   return (
-    <Stack style={classes.headerFilterContainer} >
+    <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
         onClickAway={(event) => {
           if (
@@ -496,51 +532,68 @@ const ProductionFloorFilters = ({
       >
         <Stack>
           <div ref={searchInputRef}>
-            {view === EProductionFloorView.DONE_JOBS && <SearchInputComponent
-              bgColor={"#F8F8F8"}
-              onChange={onChangeMissionsSearch}
-              value={patternSearch}
-              inputRef={searchInputFilterRef}
-              filtersButton={
-                isSearchLoading && (
-                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-                )
-              }
-            />}
-            {view !== EProductionFloorView.DONE_JOBS && <SearchInputComponent
-              bgColor={"#F8F8F8"}
-              value={localSearch} // Use local state for immediate updates
-              onChange={handleSearchChange}
-              filtersButton={
-                isSearchLoading && (
-                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-                )
-              }
-            />}
+            {view === EProductionFloorView.DONE_JOBS && (
+              <SearchInputComponent
+                bgColor={"#F8F8F8"}
+                onChange={onChangeMissionsSearch}
+                value={patternSearch}
+                inputRef={searchInputFilterRef}
+                filtersButton={
+                  isSearchLoading && (
+                    <CircularProgress
+                      color="inherit"
+                      size={20}
+                      sx={{ ml: 2 }}
+                    />
+                  )
+                }
+              />
+            )}
+            {view !== EProductionFloorView.DONE_JOBS && (
+              <SearchInputComponent
+                bgColor={"#F8F8F8"}
+                value={localSearch} // Use local state for immediate updates
+                onChange={handleSearchChange}
+                filtersButton={
+                  isSearchLoading && (
+                    <CircularProgress
+                      color="inherit"
+                      size={20}
+                      sx={{ ml: 2 }}
+                    />
+                  )
+                }
+              />
+            )}
           </div>
-          {getMissionsList().length !== 0 && isListOpen && view !== EProductionFloorView.DONE_JOBS && (
-            <SearchMissionList
-              missionsList={getMissionsList()}
-              handleMissionClick={handleMissionClick}
-            />
-          )}
+          {getMissionsList().length !== 0 &&
+            isListOpen &&
+            view !== EProductionFloorView.DONE_JOBS && (
+              <SearchMissionList
+                missionsList={getMissionsList()}
+                handleMissionClick={handleMissionClick}
+              />
+            )}
         </Stack>
       </ClickAwayListener>
-      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && view !== EProductionFloorView.DONE_JOBS && (
-        <AgentsList onClickApply={handleAgentChange} applyButton={true} />
+      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) &&
+        view !== EProductionFloorView.DONE_JOBS && (
+          <AgentsList onClickApply={handleAgentChange} applyButton={true} />
+        )}
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <GoMakeDatepicker
+          value={deliveryDateFilter}
+          onChange={onSelectDeliveryTimeDates}
+          placeholder={t("sales.quote.deliveryDate")}
+        />
       )}
-      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
-        value={deliveryDateFilter}
-        onChange={onSelectDeliveryTimeDates}
-        placeholder={t("sales.quote.deliveryDate")}
-      />
-      }
-      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
-        value={createDateFilter}
-        onChange={onSelectCreateDates}
-        placeholder={t("productionFloor.createTime")}
-      />
-      }
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <GoMakeDatepicker
+          value={createDateFilter}
+          onChange={onSelectCreateDates}
+          placeholder={t("productionFloor.createTime")}
+        />
+      )}
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
@@ -562,8 +615,7 @@ const ProductionFloorFilters = ({
         {hiddenFilterGroups.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
-              {/* <MoreHorizIcon /> */}
-              +1
+              {/* <MoreHorizIcon /> */}+{hiddenFilterGroups.length}
             </CustomIconButton>
             <Menu
               transformOrigin={{

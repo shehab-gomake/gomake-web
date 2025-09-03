@@ -17,7 +17,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         height: "100%",
-        paddingTop: 40,
+        paddingTop: 20,
         paddingBottom: 40,
         paddingLeft: 20,
         paddingRight: 20,
@@ -87,6 +87,11 @@ const useStyle = () => {
         width: 120,
         height: 120,
         color: errorColor(300),
+      },
+      titleStyle: {
+        ...FONT_FAMILY.Lexend(600, 25),
+        color: primaryColor(500),
+        marginBottom: 16,
       },
     };
   }, [theme]);

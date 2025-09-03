@@ -60,6 +60,7 @@ import {
   currentProductItemValuePriceState,
   currentProductItemValueState,
   currentProductItemValueTotalWorkFlowsState,
+  deliveryPriceState,
   jobActionsState,
   jobDetailsState,
   lastProductItemValuePriceState,
@@ -106,6 +107,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useModal } from "../use-modal";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export interface SampleTypeOption {
   value: number;
@@ -128,6 +130,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const direction = t("direction");
+  const { secondColor } = useGomakeTheme();
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false);
@@ -188,6 +191,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  const setDeliveryPrice = useSetRecoilState<number>(deliveryPriceState);
   const [isFlowChanged, stIsFlowChanged] = useState(false);
   const [isOpenCreateDefaultWorkFlow, setIsOpenCreateDefaultWorkFlow] =
     useState(false);
@@ -250,7 +254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(
     isChangePriceForEditState
   );
-
+  console.log("subProducts", subProducts);
   const [isJobNameValue, setIsJobNameValue] = useState(false);
   const [saveCurrentStation, setSaveCurrentStation] = useState(false);
   const onClickCloseCurrentStationModal = () => {
@@ -466,6 +470,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculationSessionId(result.productItemValueDraftId);
       stIsFlowChanged(result.isFlowChanged);
       setAdditionalProductItems(result.additionalProductItems);
+      setDeliveryPrice(result.deliveryPrice);
 
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -774,16 +779,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let sectionCopy = cloneDeep(section);
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
 
-    const numberOfCopies = productTemplateCopy.sections.filter(
-      (x) => x.duplicatedFromSectionId === item.id
-    ).length;
+    // Determine next sequential suffix based on existing sections, even if
+    // previous duplicates weren't flagged via duplicatedFromSectionId.
+    const baseName = (() => {
+      const name = sectionCopy.name || "";
+      const match = name.match(/^(.*?)(?:\s+(\d+))?$/);
+      if (!match) return name;
+      const [, base, num] = match;
+      // If the original already ends with a number, strip it to get the base
+      return num ? base : name;
+    })();
 
-    if (!numberOfCopies) {
+    // Helper to safely test name matches and collect max suffix and last index
+    let maxSuffix = 1; // original counts as 1
+    let lastMatchArrayIndex = -1;
+    productTemplateCopy.sections.forEach((sec, idx) => {
+      const secName = sec?.name || "";
+      const reg = new RegExp(`^${baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\s+(\\d+))?$`);
+      const m = secName.match(reg);
+      if (m) {
+        const n = m[1] ? parseInt(m[1], 10) : 1;
+        if (!isNaN(n)) {
+          if (n > maxSuffix) maxSuffix = n;
+          lastMatchArrayIndex = idx; // track the last occurrence
+        }
+      }
+    });
+
+    // Maintain internal index semantics used elsewhere (0 for original)
+    // New duplicate gets index equal to current maxSuffix (since original is 0)
+    if (section.index == null) {
       section.index = 0;
     }
-
-    sectionCopy.index = numberOfCopies + 1;
-    sectionCopy.name = sectionCopy.name + " " + (sectionCopy.index + 1);
+    sectionCopy.index = maxSuffix;
+    sectionCopy.name = `${baseName} ${maxSuffix + 1}`;
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
@@ -792,20 +821,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       sub.duplicatedFromSubSectionId = sub.id;
       sub.id = sub.id; // Keep the same ID as requested
       if (sub.type) {
-        sub.type = sub.type + numberOfCopies + 1;
+        sub.type = sub.type + sectionCopy.index + 1;
       }
     });
 
-    // Add section to productTemplate
-    const sectionsArr = [];
-    productTemplateCopy.sections.forEach((sec) => {
-      sectionsArr.push(sec);
-      if (!numberOfCopies && sec.id === item.id) {
-        sectionsArr.push(sectionCopy);
-      } else if (numberOfCopies && sec.index == numberOfCopies) {
-        sectionsArr.push(sectionCopy);
-      }
-    });
+    // Add section to productTemplate after the last matching section
+    const sectionsArr = [...productTemplateCopy.sections];
+    const insertionIndex = lastMatchArrayIndex !== -1
+      ? lastMatchArrayIndex + 1
+      : sectionsArr.findIndex((s) => s.id === item.id) + 1;
+    if (insertionIndex >= 0) {
+      sectionsArr.splice(insertionIndex, 0, sectionCopy);
+    } else {
+      sectionsArr.push(sectionCopy);
+    }
     productTemplateCopy.sections = sectionsArr;
 
     // Add section to subProducts manually
@@ -1553,6 +1582,60 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
                   );
+                  if (value) {
+                    const data = materialsEnumsValues.find((item) => {
+                      return compareStrings(
+                        item.name,
+                        parameter?.materialPath?.[0]
+                      );
+                    });
+
+                    let existsSubProductParameter = subProduct?.parameters?.find(
+                      (x) =>
+                        x.parameterId === parameter.id &&
+                        x.sectionId === section.id &&
+                        x.subSectionId === subSection.id &&
+                        x.actionIndex === parameter?.actionIndex
+                    );
+
+                    if (!existsSubProductParameter) {
+                      // Handle different types of default values
+                      let defaultValueIds = [];
+                      let defaultValues = [];
+
+                      if (value.materialValueIds && value.materialValueIds.length > 0) {
+                        defaultValueIds = [value.materialValueIds[0]?.valueId];
+                        defaultValues = [value.updateName || value.materialValueIds[0]?.valueId];
+                      } else if (value.id) {
+                        // For non-material parameters with default selection
+                        defaultValueIds = [value.id];
+                        defaultValues = [value.updateName || value.id];
+                      }
+
+                      if (defaultValueIds.length > 0) {
+                        subProduct.parameters.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: value?.activateAction === true ? parameter?.actionId : null,
+                          ...(data?.id > 0 && { material: data?.id }),
+                          parameterType: parameter?.parameterType,
+                          isQuantityParameter: parameter?.isQuantityParameter,
+                          valueIds: defaultValueIds,
+                          values: defaultValues,
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          defaultUnit: parameter?.defaultUnit,
+                          unitType: parameter?.unitType,
+                          factor: parameter?.factor,
+                          isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor,
+                        });
+                      }
+                    }
+                  }
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
@@ -2283,7 +2366,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 // return;
               }
             }
-            if (parameter.materialPath && parameter.materialPath.length > 0) {
+            if (parameter.materialPath && parameter.materialPath.length > 0 && parameter.parameterType !== EParameterTypes.BUTTON) {
               if (parameter.materialPath.length == 1) {
                 const materialData = materials?.find((x) =>
                   compareStrings(x.pathName, parameter.materialPath[0])
@@ -3371,6 +3454,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           template={productTemplate}
           getProductById={getProductById}
           isCreate={widgetType == EWidgetProductType.CREATE}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
         />
       );
     } else if (
@@ -3477,12 +3561,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   <span style={clasess.spanRequierd}> *</span>
                 ) : null}
                 {
-                  // Add upload icon next to Printing Sides label to auto-detect color load from an uploaded file
+                  // Show upload icon next to Color load average fields (Side 1 and Side 2)
                   (() => {
-                    const isPrintingSides =
-                      (parameter?.code && typeof parameter?.code === "string" && parameter.code === "PrintingSides");
+                    const isColorLoadAverage =
+                      parameter?.code === "ColorsLoadAverage" || parameter?.code === "ColorsLoadAverageSide2";
 
-                    if (!isPrintingSides) return null;
+                    if (!isColorLoadAverage) return null;
 
                     let uploadInputEl: HTMLInputElement | null = null;
 
@@ -3565,37 +3649,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ? await computeAverageInkLoadFromPdf(file)
                           : await computeAverageInkLoadFromImage(file);
 
-                        // Find target ColorsLoadAverage parameters for current section/subSection
-                        const side2Exists = temp.some(
-                          (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === "printingcolorsDetailSide2"
+                        // Update only the ColorsLoadAverage parameter that corresponds to the current field
+                        const code = parameter?.code === "ColorsLoadAverageSide2" ? "ColorsLoadAverageSide2" : "ColorsLoadAverage";
+                        const target = temp.find(
+                          (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === code
                         );
-
-                        const targetCodes = side2Exists
-                          ? ["ColorsLoadAverage", "ColorsLoadAverageSide2"]
-                          : ["ColorsLoadAverage"];
-
-                        targetCodes.forEach((code) => {
-                          const target = temp.find(
-                            (p) => p.sectionId === section?.id && p.subSectionId === subSection?.id && p.parameterCode === code
+                        if (target) {
+                          onChangeSubProductsForPrice(
+                            target.parameterId,
+                            subSection?.id,
+                            section?.id,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            (target as any).ParameterType ?? target.parameterType ?? EParameterTypes.INPUT_NUMBER,
+                            target.parameterName ?? code,
+                            target.actionId,
+                            { values: inkLoad, valueIds: inkLoad },
+                            subSection?.type,
+                            index,
+                            target.actionIndex,
+                            code,
+                            null
                           );
-                          if (target) {
-                            onChangeSubProductsForPrice(
-                              target.parameterId,
-                              subSection?.id,
-                              section?.id,
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              (target as any).ParameterType ?? target.parameterType ?? EParameterTypes.INPUT_NUMBER,
-                              target.parameterName ?? code,
-                              target.actionId,
-                              { values: inkLoad, valueIds: inkLoad },
-                              subSection?.type,
-                              index,
-                              target.actionIndex,
-                              code,
-                              null
-                            );
-                          }
-                        });
+                        }
                       } catch { }
                     };
 
@@ -3618,7 +3693,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             if (file) handleUpload(file);
                           }}
                         />
-                        <IconButton size="small" onClick={onIconClick} style={{ marginLeft: 6, padding: 2 }} title="Upload image/PDF to detect color load">
+                        <IconButton
+                          size="small"
+                          onClick={onIconClick}
+                          sx={{
+                            ml: 0.75,
+                            p: 0.5,
+                            color: secondColor(500),
+                          }}
+                          title={t("products.offsetPrice.admin.uploadToDetectColorLoad")}
+                        >
                           <UploadFileRoundedIcon fontSize="inherit" />
                         </IconButton>
                       </>
@@ -5070,15 +5154,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionId: valueConfig && (ParameterType !== EParameterTypes.SELECT_MATERIALS && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY && ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME) ? valueConfig?.activateAction ? subSectionParameter?.actionId : null : subSectionParameter?.actionId,
         };
 
-        // NEW: If ColorsLoadAverage changed, mirror to per-color load values for selected colors
+        // If ColorsLoadAverage changed, mirror to per-color load values for selected colors
         if (parameterCode === "ColorsLoadAverage" || parameterCode === "ColorsLoadAverageSide2") {
           const isSide2 = parameterCode === "ColorsLoadAverageSide2";
           const colorParamCode = isSide2 ? "printingcolorsDetailSide2" : "printingcolorsDetail";
           const loadParamCode = isSide2 ? "ColorloadpercentageSide2" : "Colorloadpercentage";
-          const colorParamId = isSide2 ? "8eff3238-a321-48f3-85eb-c14afaccbff3" : "8eff3238-a321-48f3-85eb-c14afaccbff3";
-          const loadParamId = isSide2 ? "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8" : "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8";
-          const colorsParamVal = temp.find(p => p.parameterCode === colorParamCode || p.parameterId === colorParamId);
-          const loadParamValIndex = temp.findIndex(p => p.parameterCode === loadParamCode || p.parameterId === loadParamId);
+          // Scope strictly to the current section/subSection to avoid cross-side updates
+          const colorsParamVal = temp.find(
+            (p) => (p.parameterCode === colorParamCode) && p.sectionId === sectionId && p.subSectionId === subSectionId
+          );
+          const loadParamValIndex = temp.findIndex(
+            (p) => (p.parameterCode === loadParamCode) && p.sectionId === sectionId && p.subSectionId === subSectionId
+          );
           if (colorsParamVal && Array.isArray(colorsParamVal.valueIds)) {
             const filledArr = colorsParamVal.valueIds.map(() => data.values);
             if (loadParamValIndex !== -1) {

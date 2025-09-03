@@ -20,6 +20,7 @@ import {
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
   workFlowsState,
+  deliveryPriceState,
 } from "@/widgets/product-pricing-widget/state";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const { alertFault } = useSnackBar();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useRecoilState<any>(calculationExceptionsLogsState);
+  const deliveryPrice = useRecoilValue<number>(deliveryPriceState);
   const [isLoading, setIsLoading] = useRecoilState(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
@@ -413,6 +415,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     primaryColor,
     alertFault,
     t,
+    deliveryPrice,
   };
 };
 
