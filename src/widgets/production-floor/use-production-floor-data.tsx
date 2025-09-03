@@ -612,7 +612,8 @@ const useProductionFloorData = () => {
       if (res.success) {
         if (boardMission.productType) {
           // Ask whether to mark all jobs or only product type
-          setOpenDoneScopeModal(true);
+          //setOpenDoneScopeModal(true);
+          moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
             onOpenMarkReadyModalForHasJobs(boardMission);
