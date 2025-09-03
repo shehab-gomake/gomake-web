@@ -183,6 +183,7 @@ export interface IExceptionsLog {
   exceptionKey: string;
   title?: string;
   exceptionType?: ECalculationLogType;
+  exception?: any;
 }
 
 interface TableHeader {

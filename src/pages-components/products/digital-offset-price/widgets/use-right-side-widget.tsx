@@ -400,6 +400,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     workFlows,
     additionalProductItems,
     logsArray,
+    selectedWorkFlowExceptions: selectedWorkFlow?.exceptions || [],
+    calculationExceptionsLogs,
     permissions,
     router,
     clientTypesCategories,
