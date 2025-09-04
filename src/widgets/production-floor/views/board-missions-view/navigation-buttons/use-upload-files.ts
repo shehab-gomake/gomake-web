@@ -205,8 +205,8 @@ const useUploadFiles = (
         if(response.jdfFileUrl){
           await setOrderItemFileStatus({
             orderItemId,
-            filename: file?.jdfFileName,
-            source: response.source,
+            filename: response.jdfFileName,
+            source: response.jdfFileUrl,
             screenShot: "",
             productType: !!productType ? productType.toString() : "",
             signalRConnectId: connectionId,
