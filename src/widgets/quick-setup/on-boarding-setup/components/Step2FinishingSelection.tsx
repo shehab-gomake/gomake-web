@@ -124,14 +124,32 @@ export const Step2FinishingSelection: React.FC<
                   }}
                 >
                   <FormControl fullWidth>
-                    <InputLabel>Select Machine</InputLabel>
+                    <InputLabel>search for your machine</InputLabel>
                     <Select
                       value={selectedCategoryMachines[category.id] || ""}
                       onChange={(e) =>
                         onCategoryMachineChange(category.id, e.target.value)
                       }
-                      label="Select Machine"
-                      input={<OutlinedInput label="Select Machine" />}
+                      label="search for your machine"
+                      input={<OutlinedInput label="search for your machine" />}
+                      sx={{
+                        borderBottom: '2px solid #e0e0e0',
+                        '&:hover': {
+                          borderBottom: '2px solid #bdbdbd',
+                        },
+                        '&.Mui-focused': {
+                          borderBottom: '2px solid #1976d2',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          borderBottom: '2px solid #e0e0e0',
+                          '&:hover': {
+                            borderBottom: '2px solid #bdbdbd',
+                          },
+                          '&.Mui-focused': {
+                            borderBottom: '2px solid #1976d2',
+                          },
+                        },
+                      }}
                       endAdornment={
                         <InputAdornment position="end">
                           {selectedCategoryMachines[category.id] && (
@@ -154,7 +172,7 @@ export const Step2FinishingSelection: React.FC<
                     >
                       <MenuItem sx={{ p: 1 }}>
                         <TextField
-                          placeholder="Search machines..."
+                          placeholder="search for your machine"
                           value={searchTerms[category.id] || ""}
                           onChange={(e) =>
                             handleSearchChange(category.id, e.target.value)
