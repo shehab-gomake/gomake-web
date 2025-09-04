@@ -1579,10 +1579,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
+                        actionId: value?.activateAction === true ? parameter?.actionId :
+                          (
+                            parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                            ||
+                            parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                            || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                          ) ? parameter?.actionId : null,
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
@@ -1655,7 +1658,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
-                          actionId: value?.activateAction === true ? parameter?.actionId : null,
+                          actionId: value?.activateAction === true ? parameter?.actionId :
+                            (
+                              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                              ||
+                              parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                              || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ) ? parameter?.actionId : null,
                           ...(data?.id > 0 && { material: data?.id }),
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
@@ -1789,9 +1798,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         const newParameter = {
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
-                          actionId: value?.activateAction
-                            ? parameter?.actionId
-                            : null,
+                          actionId: value?.activateAction === true ? parameter?.actionId :
+                            (
+                              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                              ||
+                              parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                              || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ) ? parameter?.actionId : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           valueIds: [value?.id],
@@ -1842,10 +1855,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
-                          actionId:
-                            value?.activateAction === true
-                              ? parameter?.actionId
-                              : null,
+                          actionId: value?.activateAction === true ? parameter?.actionId :
+                            (
+                              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                              ||
+                              parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                              || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ) ? parameter?.actionId : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(isDieCutExisting?.valueIds[0] && {
@@ -1888,10 +1904,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
-                          actionId:
-                            value?.activateAction === true
-                              ? parameter?.actionId
-                              : null,
+                          actionId: value?.activateAction === true ? parameter?.actionId :
+                            (
+                              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                              ||
+                              parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                              || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ) ? parameter?.actionId : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
@@ -1933,10 +1952,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
+                        actionId: value?.activateAction === true ? parameter?.actionId :
+                          (
+                            parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+                            ||
+                            parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                            || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+                          ) ? parameter?.actionId : null,
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
                         ...(isDieCutExisting?.valueIds[0] && {
