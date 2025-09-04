@@ -9,6 +9,7 @@ export interface IUploadingFileGroup {
   extension?: any;
   isComplexProduct?: boolean;
   hotFolderName?: string;
+  onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void;
 }
 
 export interface IUploadingFile {
@@ -16,6 +17,10 @@ export interface IUploadingFile {
   fileStatus: EUploadingFileStatus;
   fileType?: FileTypeENUM;
   uploadId?:any;
+  filePath?: string;
+  orderItemId?: string;
+  productType?: string;
+  downloadFilePath?: string;
 }
 
 export enum EUploadingFileStatus {
