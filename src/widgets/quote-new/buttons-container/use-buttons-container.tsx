@@ -195,11 +195,18 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       return;
     }
 
-    const hasItemsRequiringEditing = quoteItemValue?.documentItems?.some(
-      (item) => item?.isRequiredEditing
-    );
-    if (hasItemsRequiringEditing) {
-      alertFault("alerts.itemsMustBeEdited");
+    const itemsRequiringEditing = [];
+    quoteItemValue?.documentItems?.forEach((item, index) => {
+      if (item?.isRequiredEditing) {
+        itemsRequiringEditing.push(index + 1);
+      }
+    });
+
+    if (itemsRequiringEditing.length > 0) {
+      const itemNumbers = itemsRequiringEditing.join(", ");
+      alertFault(t("alerts.itemsMustBeEdited", {
+        itemNumbers: itemNumbers
+      }));
       return;
     }
 
