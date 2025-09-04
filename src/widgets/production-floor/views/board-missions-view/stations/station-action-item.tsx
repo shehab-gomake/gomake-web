@@ -426,9 +426,7 @@ const BoardMissionsStationActionItem = ({
   const [isHovered, setIsHovered] = useState(false);
 
   // Modify the modal close handler
-  const handleClosePackagingModal = () => {
-    setOpenPackagingModal(false);
-  };
+
 
   return (
     <>
@@ -1082,12 +1080,7 @@ const BoardMissionsStationActionItem = ({
           }
         }}
       />
-      <PrintPackingSlipModalWidget
-        boardMissionId={boardMissions.boardMissionId}
-        quantity={boardMissions.quantity}
-        openModal={openPackagingModal}
-        onClose={handleClosePackagingModal}
-      />
+
     </>
   );
 };
