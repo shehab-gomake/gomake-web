@@ -4,6 +4,7 @@ import {
   pinFileUploaderState,
   uploadingFilesState,
 } from "@/store/file-uploader-state";
+import { FileTypeENUM } from "@/widgets/file-uploader-widget/interface";
 import Stack from "@mui/material/Stack";
 import { Collapse, IconButton, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,7 +20,7 @@ import { clearUploadingFilesListApi } from "@/services/api-service/production-fl
 import { useGomakeAxios } from "@/hooks";
 
 const FilesUploaderWidget = () => {
-  const [files] = useRecoilState(uploadingFilesState);
+  const [files, setFiles] = useRecoilState(uploadingFilesState);
   const [open, setOpen] = useRecoilState(openFileUploaderList);
   const [show, setShow] = useRecoilState(pinFileUploaderState);
   const { grayColor } = useGomakeTheme();
@@ -29,7 +30,18 @@ const FilesUploaderWidget = () => {
   const onClickClear = async () => {
     setShow(false);
     setOpen(false);
-    await clearUploadingFilesListApi(callApi, () => {});
+    await clearUploadingFilesListApi(callApi, () => { });
+  };
+
+  const handleFileDeleted = (fileName: string, fileType: FileTypeENUM) => {
+    setFiles(prevFiles =>
+      prevFiles.map(fileGroup => ({
+        ...fileGroup,
+        filesInfo: fileGroup.filesInfo.filter(file =>
+          !(file.fileName === fileName && file.fileType === fileType)
+        )
+      })).filter(fileGroup => fileGroup.filesInfo.length > 0)
+    );
   };
 
   return (
@@ -42,7 +54,7 @@ const FilesUploaderWidget = () => {
           zIndex: 9,
         }}
       >
-        {}
+        { }
         <Collapse in={show} orientation={"vertical"} collapsedSize={0}>
           <Stack
             justifyContent={"space-between"}
@@ -81,7 +93,7 @@ const FilesUploaderWidget = () => {
             <Stack padding={"7px"} gap={"16px"}>
               {files.map((fileGroup, index) => (
                 <Stack gap={"5px"}>
-                  <FilesGroupComponent {...fileGroup} />
+                  <FilesGroupComponent {...fileGroup} onFileDeleted={handleFileDeleted} />
                   <Divider />
                   {/* {index < files.length - 1 && <Divider />} */}
                 </Stack>

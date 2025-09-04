@@ -30,7 +30,8 @@ const FilesGroupComponent = ({
   graphicsFilePath,
   boardMissionId,
   isComplexProduct,
-  productType
+  productType,
+  onFileDeleted
 }: IUploadingFileGroup) => {
   const { primaryColor } = useGomakeTheme();
   const [isOverGraphics, setIsOverGraphics] = useState(false);
@@ -262,7 +263,14 @@ const FilesGroupComponent = ({
                 overflowX: 'hidden',
               }}>
                 {graphicsFiles.map((file, index) => (
-                  <FileComponent key={`${file.fileName}-${file.uploadId || index}`} {...file} />
+                  <FileComponent
+                    key={`${file.fileName}-${file.uploadId || index}`}
+                    {...file}
+                    filePath={filePath}
+                    orderItemId={orderItemId}
+                    productType={productType}
+                    onFileDeleted={onFileDeleted}
+                  />
                 ))}
               </div>
             </Stack>
@@ -335,7 +343,14 @@ const FilesGroupComponent = ({
                 overflowX: 'hidden',
               }}>
                 {printingFiles.map((file, index) => (
-                  <FileComponent key={`${file.fileName}-${file.uploadId || index}`} {...file} />
+                  <FileComponent
+                    key={`${file.fileName}-${file.uploadId || index}`}
+                    {...file}
+                    filePath={filePath}
+                    orderItemId={orderItemId}
+                    productType={productType}
+                    onFileDeleted={onFileDeleted}
+                  />
                 ))}
               </div>
             </Stack>
