@@ -114,7 +114,6 @@ const StationLane: React.FC<IProps> = ({
         employeeId: firstMission.currentStation.employeeId,
         actionId: firstMission.currentStation.actionId,
         actionName: firstMission.currentStation.actionName,
-        //!here
       };
     }
     return null;
@@ -198,7 +197,7 @@ const StationLane: React.FC<IProps> = ({
         boardMissionActionId: mission?.currentStation?.id,
         machineId: targetStationInfo.machineId,
         machineName: targetStationInfo.machineName,
-        workFlowActionId: mission?.currentStation?.workFlowActionId, //!here
+        workFlowActionId: mission?.currentStation?.workFlowActionId,
       });
     } else if (targetStationInfo.employeeId) {
       // Update employee

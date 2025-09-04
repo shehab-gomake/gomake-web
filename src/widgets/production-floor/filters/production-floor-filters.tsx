@@ -189,7 +189,6 @@ const CustomGroupComponent = ({
               flexShrink: 0,
             }}
           >
-            {/* !here */}
             {/* <Typography
               variant="caption"
               sx={{

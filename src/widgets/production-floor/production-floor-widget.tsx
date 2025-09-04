@@ -8,7 +8,7 @@ import {
   Card,
 } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -58,120 +58,6 @@ import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missio
 import { statusesListState } from "./state/boards";
 import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
 import { boardsMissionsState } from "./state/boards";
-import { filterGroupsState } from "./state/filter-group";
-
-// Production Summary Component
-const ProductionSummary = () => {
-  const { t } = useTranslation();
-  const boardsMissions = useRecoilValue(boardsMissionsState);
-
-  // Calculate total jobs count
-  const totalJobs = boardsMissions.reduce((total, statusGroup) => {
-    return total + (statusGroup.boardMissions?.length || 0);
-  }, 0);
-
-  // Calculate total production time from currentStation.totalProductionTimeForAllStations for each mission
-  const totalProductionTime = boardsMissions.reduce((total, statusGroup) => {
-    return (
-      total +
-      (statusGroup.boardMissions?.reduce((missionTotal, mission) => {
-        return (
-          missionTotal +
-          (mission.currentStation?.totalProductionTimeForAllStations || 0)
-        );
-      }, 0) || 0)
-    );
-  }, 0);
-
-  // Format time function (similar to the one used in filters)
-  const formatTime = (totalMinutes: number) => {
-    if (!totalMinutes || totalMinutes <= 0) return "00:00";
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  if (totalJobs === 0) return null;
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 2,
-        alignItems: "center",
-        padding: "12px 16px",
-        backgroundColor: "#f8f9fa",
-        borderRadius: "8px",
-        marginTop: "12px",
-        border: "1px solid #e9ecef",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <Typography
-          variant="body2"
-          sx={{
-            color: "#6c757d",
-            fontWeight: 500,
-          }}
-        >
-          {t("dashboard.totalJobs")}:
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            color: "#2e3092",
-            fontWeight: 600,
-          }}
-        >
-          {totalJobs}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          width: "1px",
-          height: "24px",
-          backgroundColor: "#dee2e6",
-        }}
-      />
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <Typography
-          variant="body2"
-          sx={{
-            color: "#6c757d",
-            fontWeight: 600,
-          }}
-        >
-          {t("products.offsetPrice.admin.totalProductionTime")}:
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            color: "#2e3092",
-            fontWeight: 600,
-          }}
-        >
-          {formatTime(totalProductionTime)}
-        </Typography>
-      </Box>
-    </Box>
-  );
-};
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -369,9 +255,6 @@ const ProductionFloorWidget = () => {
             isMobile={isMobile}
             view={view}
           />
-
-          {/* Production Summary */}
-          <ProductionSummary />
         </Stack>
       )}
       <Stack
