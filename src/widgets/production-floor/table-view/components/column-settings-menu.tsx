@@ -333,6 +333,7 @@ const getLabel = (t, key: string): string => {
     status: t("productionFloor.status"),
     currentStation: t("productionFloor.currentStation"),
     nextStation: t("productionFloor.nextStation"),
+    changeMachineEmployee: t("productionFloor.changeMachineEmployee"),
     more: t("productionFloor.moreMenu"),
     totalTime: t("productionFloor.totalTime"),
   };
