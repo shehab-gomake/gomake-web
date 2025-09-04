@@ -11,15 +11,23 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { JobComponent } from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { IconButton } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { useStyle } from "./style";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import BoltIcon from "@mui/icons-material/Bolt";
+import EventIcon from "@mui/icons-material/Event";
 import { TimeFrameTabs } from "./state";
 
 const TimelineWidget = () => {
+  const { classes } = useStyle();
   const {
     t,
     groups,
@@ -136,44 +144,106 @@ const TimelineWidget = () => {
 
   return (
     <Stack gap={"10px"}>
-      <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
-        bgcolor={"#fff"}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "200px",
-            ...FONT_FAMILY.Inter(500, 14),
-            position: "relative",
-          }}
-        >
-          <IconButton
-            style={{ position: "absolute", left: 0 }}
-            onClick={() => navigateTimeline(-1)} // Go backward
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          {getDateLabel()}
+      <Box sx={classes.headerContainer}>
+        <Stack sx={classes.headerContent}>
+          {/* Date Selector */}
+          <Stack sx={classes.dateSelector}>
+            <IconButton
+              onClick={() => navigateTimeline(-1)}
+              size="small"
+              sx={classes.dateSelectorButton}
+            >
+              <KeyboardArrowLeftIcon />
+            </IconButton>
 
-          <IconButton
-            style={{ position: "absolute", right: 0 }}
-            onClick={() => navigateTimeline(1)} // Go forward
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </div>
-        <PrimaryTabsComponent
-          selectedTabIndex={activeTab}
-          tabs={timeFrameTabs}
-          selectedColor="primary"
-          // variant="ButtonedTabs"
-          onSelectTab={handleTabChange}
-        />
-      </Stack>
+            <Typography variant="body1" sx={classes.dateLabel}>
+              {getDateLabel()}
+            </Typography>
+
+            <IconButton
+              onClick={() => navigateTimeline(1)}
+              size="small"
+              sx={classes.dateSelectorButton}
+            >
+              <KeyboardArrowRightIcon />
+            </IconButton>
+          </Stack>
+
+          {/* Tabs */}
+          <Stack direction="row" sx={classes.tabsContainer}>
+            {timeFrameTabs.map((tab, index) => {
+              // Get the appropriate icon for each tab
+              const getTabIcon = (tabIndex: number) => {
+                switch (tabIndex) {
+                  case 0: // Hour
+                    return <AccessTimeIcon sx={{ fontSize: "18px" }} />;
+                  case 1: // Day
+                    return <CalendarTodayIcon sx={{ fontSize: "18px" }} />;
+                  case 2: // Week
+                    return <ViewWeekIcon sx={{ fontSize: "18px" }} />;
+                  case 3: // Month
+                    return <CalendarMonthIcon sx={{ fontSize: "18px" }} />;
+                  case 4: // Year
+                    return <EventIcon sx={{ fontSize: "18px" }} />;
+                  default:
+                    return <CalendarTodayIcon sx={{ fontSize: "18px" }} />;
+                }
+              };
+
+              return (
+                <Button
+                  key={index}
+                  onClick={() => handleTabChange(index)}
+                  variant="text"
+                  startIcon={getTabIcon(index)}
+                  sx={{
+                    color: activeTab === index ? "#2e3092" : "white",
+                    backgroundColor:
+                      activeTab === index ? "white" : "transparent",
+                    borderRadius: "6px",
+                    padding: "8px 16px",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    minWidth: "auto",
+                    transition: "all 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor:
+                        activeTab === index
+                          ? "white"
+                          : "rgba(255, 255, 255, 0.1)",
+                      transform: "translateY(-1px)",
+                    },
+                    "& .MuiButton-startIcon": {
+                      marginRight: "8px",
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: activeTab === index ? "#2e3092" : "white",
+                    },
+                  }}
+                >
+                  {tab.title}
+                </Button>
+              );
+            })}
+          </Stack>
+
+          <Stack direction="row" gap={1}>
+            <Button
+              variant="contained"
+              startIcon={<BoltIcon />}
+              sx={{
+                backgroundColor: "#FD7E14",
+                "&:hover": { backgroundColor: "#E8690B" },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              Auto-Schedule
+            </Button>
+          </Stack>
+        </Stack>
+      </Box>
 
       <div style={{ position: "relative", direction: "ltr" }}>
         <Stack
