@@ -11,7 +11,14 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { JobComponent } from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -25,6 +32,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BoltIcon from "@mui/icons-material/Bolt";
 import EventIcon from "@mui/icons-material/Event";
 import { TimeFrameTabs } from "./state";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const { classes } = useStyle();
@@ -52,13 +60,14 @@ const TimelineWidget = () => {
     handleTabChange,
     timeFrameTabs,
     scrollTimeline,
+    dir,
   } = useGantt();
 
   useEffect(() => {
     getData(currentMonth.clone().month());
   }, [currentMonth.valueOf()]);
 
-  const filteredGroups = useMemo(() => {
+  const filteredGroupsold = useMemo(() => {
     return groups
       .filter(
         (group) =>
@@ -110,6 +119,194 @@ const TimelineWidget = () => {
       }));
   }, [groups, openGroups, items]);
 
+  const getGroupColor = (title: string) => {
+    // Generate a consistent color based on the title string hash
+    // This ensures the same title always gets the same color without hardcoding
+    const colors = [
+      "#007BFF", // Blue
+      "#28A745", // Green
+      "#FD7E14", // Orange
+      "#DC3545", // Red
+      "#6F42C1", // Purple
+      "#20C997", // Teal
+      "#FF9800", // Amber
+      "#795548", // Brown
+      "#9C27B0", // Deep Purple
+      "#607D8B", // Blue Grey
+      "#E91E63", // Pink
+      "#00BCD4", // Cyan
+    ];
+
+    // Create a simple hash from the title string
+    let hash = 0;
+    for (let i = 0; i < title.length; i++) {
+      const char = title.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Use the hash to select a color
+    const colorIndex = Math.abs(hash) % colors.length;
+    return colors[colorIndex];
+  };
+
+  const getGroupStats = (groupId: string) => {
+    const groupItems = items.filter((item) => item.group === groupId);
+    const totalJobs = groupItems.length; //!here fix this
+    const completedJobs = groupItems.filter(
+      (item) => item.statusColor === "#28A745"
+    ).length;
+    const inProgressJobs = groupItems.filter(
+      (item) => item.statusColor === "#FD7E14"
+    ).length;
+    const pendingJobs = groupItems.filter(
+      (item) => item.statusColor === "#DC3545"
+    ).length;
+
+    return { totalJobs, completedJobs, inProgressJobs, pendingJobs };
+  };
+
+  const getStationStats = (stationId: string) => {
+    const stationItems = items.filter((item) => item.group === stationId);
+    return stationItems.length;
+  };
+
+  const filteredGroups = useMemo(() => {
+    return groups
+      .filter(
+        (group) =>
+          group.isRoot ||
+          openGroups[group.parent] ||
+          items.some(
+            (item) =>
+              item.group === group.id && item.isHasSelected && item.selected
+          )
+      )
+      .map((group) => {
+        const stats = getGroupStats(group.id);
+        return {
+          ...group,
+          height: 50,
+          title: group.isRoot ? (
+            <Stack
+              bgcolor={openGroups[group.id] ? "#F8F9FA" : "#FFF"}
+              onClick={() => toggleGroup(group.id)}
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                cursor: "pointer",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                border: "1px solid #E9ECEF",
+                ...FONT_FAMILY.Inter(600, 14),
+                color: "#495057",
+                "&:hover": {
+                  backgroundColor: "#F8F9FA",
+                  borderColor: getGroupColor(group.title),
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
+            >
+              <Stack direction="row" alignItems="center" gap={1}>
+                {openGroups[group.id] ? (
+                  <KeyboardArrowUpIcon
+                    sx={{ color: "#6C757D", fontSize: 20 }}
+                  />
+                ) : (
+                  <KeyboardArrowDownIcon
+                    sx={{ color: "#6C757D", fontSize: 20 }}
+                  />
+                )}
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: getGroupColor(group.title),
+                  }}
+                />
+                <Typography variant="body2" fontWeight={600}>
+                  {group.title}
+                </Typography>
+                <Chip
+                  label={groups.filter((g) => g.parent === group.id).length}
+                  size="small"
+                  sx={{
+                    backgroundColor: getGroupColor(group.title),
+                    color: "white",
+                    fontSize: "11px",
+                    height: "20px",
+                    fontWeight: 600,
+                  }}
+                />
+              </Stack>
+              <Stack direction="row" alignItems="center" gap={1}>
+                {/* !here need to fix */}
+                <Typography variant="caption" color="#6C757D" fontSize="11px">
+                  {stats.totalJobs} jobs
+                </Typography>
+                {stats.inProgressJobs > 0 && (
+                  <Badge
+                    badgeContent={stats.inProgressJobs}
+                    color="warning"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: "#FD7E14",
+                        color: "white",
+                        fontSize: "10px",
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#FD7E14",
+                      }}
+                    />
+                  </Badge>
+                )}
+              </Stack>
+            </Stack>
+          ) : (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                padding: "8px 12px 8px 32px",
+                backgroundColor: "#FFF",
+                borderBottom: "1px solid #F1F3F4",
+                ...FONT_FAMILY.Inter(500, 13),
+                color: "#495057",
+                "&:hover": {
+                  backgroundColor: "#F8F9FA",
+                },
+                transition: "background-color 0.2s ease",
+              }}
+            >
+              <Typography variant="body2" fontWeight={600}>
+                {group.title}
+              </Typography>
+              <Chip
+                label={getStationStats(group.id)}
+                size="small"
+                sx={{
+                  backgroundColor: "#E9ECEF",
+                  color: "#495057",
+                  fontSize: "11px",
+                  height: "20px",
+                  fontWeight: 600,
+                }}
+              />
+            </Stack>
+          ),
+        };
+      });
+  }, [groups, openGroups, items]);
+
   useEffect(() => {
     let start, end;
     switch (activeTab) {
@@ -143,7 +340,8 @@ const TimelineWidget = () => {
   }, [currentDate, activeTab]);
 
   return (
-    <Stack gap={"10px"}>
+    <Stack gap={3} sx={classes.mainContainer}>
+      {/* Time Frame Tabs */}
       <Box sx={classes.headerContainer}>
         <Stack sx={classes.headerContent}>
           {/* Date Selector */}
@@ -247,14 +445,19 @@ const TimelineWidget = () => {
 
       <div style={{ position: "relative", direction: "ltr" }}>
         <Stack
-          alignItems={"center"}
-          direction={"row"}
-          position={"absolute"}
-          right={"0px"}
-          top={"0px"}
+          alignItems="center"
+          direction="row"
+          position="absolute"
+          right="0px"
+          top="0px"
           zIndex={99999}
-          height={"60px"}
-          style={{ background: "#fff" }}
+          height="60px"
+          sx={{
+            background: "#fff",
+            borderRadius: "8px",
+            padding: "8px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
         >
           <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
@@ -294,14 +497,13 @@ const TimelineWidget = () => {
                   },
                 ]
           }
-          // items={items.length > 0 ? items : []}
           items={items.filter((item) => {
             const isGroupOpen = openGroups[item.group];
             return isGroupOpen ? item.isEditable : true;
           })}
           defaultTimeStart={timeRange.defaultTimeStart}
           defaultTimeEnd={timeRange.defaultTimeEnd}
-          sidebarWidth={200}
+          sidebarWidth={240}
           onItemMove={handleItemMove}
           onItemResize={handleItemResize}
           onZoom={handleZoom}
@@ -317,37 +519,52 @@ const TimelineWidget = () => {
           onItemDeselect={handleItemDeselect}
           selected={items.filter((item) => !!item.selected).map((i) => i.id)}
           dragSnap={1000 * 60}
+          // !here new
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          }}
         >
           <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
             <SidebarHeader>
               {({ getRootProps }) => {
                 return (
-                  <div
+                  <Box
                     {...getRootProps()}
-                    style={{
+                    sx={{
                       display: "flex",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      width: "200px",
-                      ...FONT_FAMILY.Inter(500, 14),
-                      position: "relative",
-                      // background: "#504fa11a",
+                      width: "280px",
+                      ...adaptPaddingRight(dir, 3),
+                      backgroundColor: "#F8F9FA",
+                      // borderBottom: "2px solid #E9ECEF", //!here
+                      ...FONT_FAMILY.Inter(600, 14),
+                      color: "#495057",
                     }}
                   >
-                    {t("productionFloor.stations")}
-                    <div
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      {t("productionFloor.stations")}
+                    </Typography>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
                       style={{
-                        position: "absolute",
+                        height: "60px",
                         right: 0,
                         pointerEvents: "auto",
                         zIndex: 10,
+                        background: "#fff",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                       }}
                     >
                       <IconButton onClick={() => scrollTimeline("left")}>
                         <KeyboardArrowLeftIcon />
                       </IconButton>
-                    </div>
-                  </div>
+                    </Stack>
+                  </Box>
                 );
               }}
             </SidebarHeader>
@@ -366,7 +583,6 @@ const TimelineWidget = () => {
                   case "hour":
                     // return `${momentStart?.format("hh:mm A")}`;
                     return `${momentStart.format("ha")}`; // <-- Simplified format here
-
                   case "minute":
                     return `${momentStart?.format("mm")}`;
                   default:
