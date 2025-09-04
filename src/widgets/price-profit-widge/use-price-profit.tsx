@@ -547,7 +547,7 @@ const usePriceProfit = () => {
     if (action?.actionId) {
       await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
         actionIdOrProductId: action.actionId,
-        isOutSource: false, //!here You can make this configurable if needed
+        isOutSource: false,
       });
     }
   }, [action, callApi]);

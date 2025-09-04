@@ -53,6 +53,8 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
+import { boardsMissionsState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -219,7 +221,6 @@ const ProductionFloorWidget = () => {
     });
   };
 
-  //!here
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
