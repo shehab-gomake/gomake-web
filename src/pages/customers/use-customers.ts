@@ -85,6 +85,7 @@ const useCustomers = (
   };
 
   const tableHeaders = [
+    t("boardMissions.creationDate"),
     clientType == "C"
       ? t("customers.customerCode")
       : t("suppliers.supplierCode"),
@@ -94,9 +95,9 @@ const useCustomers = (
     t("customers.status"),
     CheckPermission(Permissions.EDIT_CLIENT) ? t("customers.hashtag") : null,
   ];
-
   const getCustomersRows = useCallback(() => {
     return allCustomers?.map((customer) => [
+      customer?.createDate,
       customer?.customerCode,
       customer?.name,
       customer?.email,
