@@ -4024,12 +4024,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         style={{
                           padding: "8px 12px",
                           borderRadius: "4px",
-                          backgroundColor: "#fff",
-                          color: "#888",
-                          minWidth: "180px",
-                          textAlign: "center",
+                          backgroundColor: "#ddd",
+                          color: "#666",
+                          minWidth: "220px",
+                          // textAlign: "center",
                           height: 40,
-                          ...FONT_FAMILY.Lexend(700, 16),
+                          ...FONT_FAMILY.Lexend(500, 16),
 
                         }}
                       >
