@@ -25,7 +25,7 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 
-const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
+const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted ,downloadFilePath}: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
   console.log("fileName", fileName);
   console.log("fileStatus", fileStatus);
   console.log("filePath", filePath);
@@ -80,7 +80,7 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
           body: JSON.stringify({
             orderItemId: orderItemId || boardMissions.orderItemId,
             filename: fileName,
-            source: filePath,
+            source: downloadFilePath,
           }),
           headers: {
             authorization: "Bearer " + getUserToken(),
