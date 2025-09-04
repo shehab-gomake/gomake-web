@@ -57,6 +57,7 @@ const QuickSetupFlow: React.FC = () => {
     dtfSublimationFinishingCategories,
     rollFlexoFinishingCategories,
     packagingCategories,
+    addNewMachine,
   } = useMachinesData();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -666,8 +667,11 @@ const QuickSetupFlow: React.FC = () => {
       }
 
       if (targetCategory) {
-        // Add the new machine to the category's machines array
+        // Add the new machine to the category's machines array (for finishing machines)
         targetCategory.machines.push(createdMachine);
+      } else {
+        // For printing machines (not in finishing categories), add to allMachines
+        addNewMachine(createdMachine);
       }
 
       // Add the machine to the selected machines
