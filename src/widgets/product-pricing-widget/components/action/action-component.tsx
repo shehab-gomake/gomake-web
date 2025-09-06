@@ -362,7 +362,8 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true) &&
+      !(source === EWorkSource.INTERNAL && (parameter?.name === "Purchase Order Details" || parameter?.orginalName === "PurchaseOrderDetails"))
   );
 
   const tableOutputs = outputs?.filter(

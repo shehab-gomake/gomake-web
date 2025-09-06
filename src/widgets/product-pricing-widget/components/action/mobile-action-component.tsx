@@ -27,19 +27,13 @@ import {
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
-import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import { SettingsIcon } from "@/icons/settings";
-import { SettingsMenu } from "./settings-menu";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { isActionEmployeeUpdatedState, permissionsState } from "@/store";
-import { Draggable } from "react-beautiful-dnd";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { SortIcon } from "@/icons/sort-icon";
 import { ModalType } from "@/enums";
 import { _renderDeliveryDate, renderExceptionMessage } from "@/utils/helpers";
 import { formatValueWithUnit } from "@/utils/is-currency";
@@ -221,7 +215,8 @@ const MobileActionContainerComponent = ({
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
-      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
+      !(source === EWorkSource.INTERNAL && (parameter?.name === "Purchase Order Details" || parameter?.orginalName === "PurchaseOrderDetails"))
   );
 
   const tableOutputs = outputs?.filter(
