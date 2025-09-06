@@ -51,7 +51,7 @@ const CustomerEditMachines = () => {
     // Function to fetch machines
     const fetchMachines = useCallback(async () => {
         if (!categoryId) return;
-        if(router.isReady === false) return;
+        if (router.isReady === false) return;
         try {
             setIsLoading(true);
             const res = await callApi("Get", `/v1/machines/category/${categoryId}`);
@@ -65,9 +65,9 @@ const CustomerEditMachines = () => {
 
                 // Select machine from URL or first machine
                 if (machineId && typeof machineId === 'string') {
-                    onSelectMachine(machineId,machinesList);
+                    onSelectMachine(machineId, machinesList);
                 } else {
-                    onSelectMachine(machinesList[0].id,machinesList[0]);
+                    onSelectMachine(machinesList[0].id, machinesList[0]);
                 }
             }
         } catch (error) {
@@ -78,7 +78,7 @@ const CustomerEditMachines = () => {
     }, [categoryId, machineId, callApi, setMachineState, setMachinesListState]);
 
     useEffect(() => {
-        if(router.isReady === false) return;
+        if (router.isReady === false) return;
         if (categoryId) {
             fetchMachines();
 
@@ -96,11 +96,11 @@ const CustomerEditMachines = () => {
         setActiveStep(activeStep + 1);
     }
 
-    const onSelectMachine = (value: string,machinesList?:any[]) => {
+    const onSelectMachine = (value: string, machinesList?: any[]) => {
         debugger
         setCurrentMachineId(value);
         let finalMachineList = machinesList;
-        if(!(finalMachineList && finalMachineList.length > 0)){
+        if (!(finalMachineList && finalMachineList.length > 0)) {
             finalMachineList = machines;
         }
         const machine = finalMachineList.find((m: any) => m.id === value);
@@ -113,7 +113,7 @@ const CustomerEditMachines = () => {
                 setActiveStep(-1);
             }, 5);
             // Update the URL to reflect the selected machine
-            router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, {shallow: true}).then(); 
+            router.replace(`/machines/category/${categoryId}?machineId=${value}`, undefined, { shallow: true }).then();
         }
         setActiveStep(-1);
     }

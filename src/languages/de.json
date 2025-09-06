@@ -21,6 +21,8 @@
     "forgotPassword": "Passwort vergessen",
     "enterYourEmail": "Geben Sie Ihre E-Mail ein",
     "send": "Senden",
+    "goToLogin": "Zum Login",
+    "forgotPasswordEmailSent": "Ein temporäres Passwort wurde an Ihre E-Mail gesendet.",
     "resetPassword": "Passwort zurücksetzen",
     "newPassword": "Neues Passwort",
     "confirmPassword": "Passwort bestätigen",

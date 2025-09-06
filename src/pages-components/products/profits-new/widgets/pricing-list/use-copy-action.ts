@@ -124,7 +124,7 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId,selectedPricingTableIt
     } else {
       alertFaultUpdate();
     }
-  }, [router.query.actionId]);
+  }, [router.query.actionId,selectedPricingTableItems]);
 
   return {
     router,
