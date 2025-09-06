@@ -410,7 +410,7 @@ const StatusTableComponent = ({
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    const visibleLimit = heightMultiplier === 1 ? TABLE_CONFIG.MAX_VISIBLE_ITEMS : 30;
+    const visibleLimit = heightMultiplier === 1 ? TABLE_CONFIG.MAX_VISIBLE_ITEMS : 50;
     const baseHeight =
       boardsCount < 10
         ? 500
@@ -455,8 +455,8 @@ const StatusTableComponent = ({
           <Tooltip
             title={
               heightMultiplier === 1
-                ? t("productionFloor.increaseItemsTo30", { count: 30 })
-                : t("productionFloor.decreaseItemsTo10", { count: 10 })
+                ? t("productionFloor.increaseItemsTo50", { count: 50, defaultValue: `Increase items to ${50}` })
+                : t("productionFloor.decreaseItemsTo10", { count: 10, defaultValue: `Decrease items to ${10}` })
             }
             arrow
           >
@@ -482,7 +482,9 @@ const StatusTableComponent = ({
                 "&:hover": { backgroundColor: "#E0E7FF" },
               }}
             >
-              {heightMultiplier === 1 ? t("productionFloor.expand") : t("productionFloor.reset")}
+              {heightMultiplier === 1
+                ? t("productionFloor.expand")
+                : t("productionFloor.collapse")}
             </Button>
           </Tooltip>
         )}
