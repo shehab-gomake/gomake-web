@@ -189,7 +189,7 @@ const CustomGroupComponent = ({
               flexShrink: 0,
             }}
           >
-            <Typography
+            {/* <Typography
               variant="caption"
               sx={{
                 color: isSelected ? "#FFF" : group?.color,
@@ -231,7 +231,7 @@ const CustomGroupComponent = ({
               }}
             >
               {totalCount}
-            </Typography>
+            </Typography> */}
             {group.id !== "all" && (
               <IconButton
                 onClick={(e) => {
