@@ -183,7 +183,7 @@ const useUploadFiles = (
                   ...fg,
                   filesInfo: fg.filesInfo.map(fileInfo =>
                     fileInfo.uploadId === uploadId
-                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded }
+                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded,downloadFilePath:response.source }
                       : fileInfo
                   ),
                 }
@@ -212,8 +212,26 @@ const useUploadFiles = (
             signalRConnectId: connectionId,
             status: EUploadingFileStatus.Uploaded,
             fileType,
-            fileId: fileId
+            fileId: response.jdfFileId,
           });
+          setUploadingFiles(prev =>
+              prev.map((fg) =>
+                  fg.orderItemId === orderItemId && fg.productType === productType
+                      ? {
+                        ...fg,
+                        filesInfo: [...fg.filesInfo.map(fileInfo =>
+                            fileInfo.uploadId === uploadId
+                                ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded,downloadFilePath:response.source }
+                                : fileInfo
+                        ),...fg.filesInfo.map(fileInfo =>
+                            fileInfo.uploadId === uploadId
+                                ? { ...fileInfo,fileName:response.jdfFileName, fileStatus: EUploadingFileStatus.Uploaded,downloadFilePath:response.jdfFileUrl }
+                                : fileInfo
+                        ),]
+                      }
+                      : fg
+              )
+          );
         }
         
       }

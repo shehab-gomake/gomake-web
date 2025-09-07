@@ -22,6 +22,10 @@ import {
   OutlinedInput,
   InputAdornment,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -60,15 +64,18 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   const [machines, setMachines] = useState<Machine[]>([]);
   const [machineSearchTerm, setMachineSearchTerm] = useState("");
   const [categorySearchTerm, setCategorySearchTerm] = useState("");
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [pendingMachineName, setPendingMachineName] = useState("");
 
   // Filter machines based on search term
   useEffect(() => {
     if (machineSearchTerm) {
-      const filtered = allMachines.filter((machine) =>
-        (`${machine.manufacturer} - ${machine.model}` || machine.nickName)
-          .toLowerCase()
-          .includes(machineSearchTerm.toLowerCase())
-      );
+      const filtered = allMachines.filter((machine) => {
+        const machineName = machine.manufacturer && machine.model 
+          ? `${machine.manufacturer} - ${machine.model}` 
+          : machine.nickName || '';
+        return machineName.toLowerCase().includes(machineSearchTerm.toLowerCase());
+      });
       setMachines(filtered);
     } else {
       setMachines(allMachines);
@@ -105,14 +112,29 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   };
 
   const handleAddNewMachine = () => {
-    if (machineSearchTerm && selectedCategory && onAddNewMachine) {
-      onAddNewMachine(selectedCategory, machineSearchTerm);
-      // Clear the search term after adding
+    if (machineSearchTerm) {
+      setPendingMachineName(machineSearchTerm);
+      setShowCategoryModal(true);
+    }
+  };
+
+  const handleCategoryModalConfirm = () => {
+    if (pendingMachineName && selectedCategory && onAddNewMachine) {
+      onAddNewMachine(selectedCategory, pendingMachineName);
+      // Clear the search term and close modal after adding
       setMachineSearchTerm("");
       setSelectedMachine("");
       setSelectedCategory("");
       setCategorySearchTerm("");
+      setPendingMachineName("");
+      setShowCategoryModal(false);
     }
+  };
+
+  const handleCategoryModalCancel = () => {
+    setShowCategoryModal(false);
+    setPendingMachineName("");
+    setSelectedCategory("");
   };
 
   const clearMachineSelection = () => {
@@ -132,7 +154,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   );
 
   const hasNoResults = machineSearchTerm.length > 0 && machines.length === 0;
-  const canAddNewMachine = hasNoResults && selectedCategory && onAddNewMachine;
+  const canAddNewMachine = hasNoResults && onAddNewMachine;
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
@@ -143,12 +165,30 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
       <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "flex-end" }}>
         {/* Machine Selection */}
         <FormControl fullWidth>
-          <InputLabel>{t("machineAttributes.machineName")}</InputLabel>
+          <InputLabel>search for your machine</InputLabel>
           <Select
             value={selectedMachine}
             onChange={(e) => handleMachineChange(e.target.value)}
-            label={t("machineAttributes.machineName")}
-            input={<OutlinedInput label={t("machineAttributes.machineName")} />}
+            label="search for your machine"
+            input={<OutlinedInput label="search for your machine" />}
+            sx={{
+              borderBottom: '2px solid #e0e0e0',
+              '&:hover': {
+                borderBottom: '2px solid #bdbdbd',
+              },
+              '&.Mui-focused': {
+                borderBottom: '2px solid #1976d2',
+              },
+              '& .MuiOutlinedInput-root': {
+                borderBottom: '2px solid #e0e0e0',
+                '&:hover': {
+                  borderBottom: '2px solid #bdbdbd',
+                },
+                '&.Mui-focused': {
+                  borderBottom: '2px solid #1976d2',
+                },
+              },
+            }}
             endAdornment={
               <InputAdornment position="end">
                 {selectedMachine && (
@@ -169,7 +209,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           >
             <MenuItem sx={{ p: 1 }}>
               <TextField
-                placeholder="Search machines..."
+                placeholder="search for your machine"
                 value={machineSearchTerm}
                 onChange={(e) => setMachineSearchTerm(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
@@ -203,8 +243,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   value={machine.id}
                   sx={{ py: 1, fontSize: "14px" }}
                 >
-                  {`${machine.manufacturer} - ${machine.model}` ||
-                    machine.nickName}
+                  {machine.manufacturer && machine.model 
+                    ? `${machine.manufacturer} - ${machine.model}` 
+                    : machine.nickName || 'Unknown Machine'}
                 </MenuItem>
               ))
             )}
@@ -224,11 +265,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   }}
                 >
                   <AddIcon fontSize="small" />
-                  Add new machine "{machineSearchTerm}" to{" "}
-                  {t(
-                    categories.find((c) => c.id === selectedCategory)?.name ||
-                      selectedCategory
-                  )}
+                  Add new machine "{machineSearchTerm}"
                 </MenuItem>
               </>
             )}
@@ -243,6 +280,24 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
             onChange={(e) => setSelectedCategory(e.target.value)}
             label={t("machineAttributes.category")}
             input={<OutlinedInput label={t("machineAttributes.category")} />}
+            sx={{
+              borderBottom: '2px solid #e0e0e0',
+              '&:hover': {
+                borderBottom: '2px solid #bdbdbd',
+              },
+              '&.Mui-focused': {
+                borderBottom: '2px solid #1976d2',
+              },
+              '& .MuiOutlinedInput-root': {
+                borderBottom: '2px solid #e0e0e0',
+                '&:hover': {
+                  borderBottom: '2px solid #bdbdbd',
+                },
+                '&.Mui-focused': {
+                  borderBottom: '2px solid #1976d2',
+                },
+              },
+            }}
             endAdornment={
               <InputAdornment position="end">
                 {selectedCategory && (
@@ -312,9 +367,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
       </Box>
 
       {/* Help text for adding new machines */}
-      {hasNoResults && !selectedCategory && (
+      {hasNoResults && (
         <Typography variant="body2" color="info.main" sx={{ mb: 2 }}>
-          💡 No machines found. Select a category above to add a new machine "
+          💡 No machines found. Click the "Add new machine" option in the dropdown above to add "
           {machineSearchTerm}"
         </Typography>
       )}
@@ -394,6 +449,68 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           available for Digital/Offset printing machines
         </Typography>
       )}
+
+      {/* Category Selection Modal */}
+      <Dialog
+        open={showCategoryModal}
+        onClose={handleCategoryModalCancel}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Select Category for "{pendingMachineName}"
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+            Please select a category for the new machine "{pendingMachineName}"
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>{t("machineAttributes.category")}</InputLabel>
+            <Select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              label={t("machineAttributes.category")}
+              input={<OutlinedInput label={t("machineAttributes.category")} />}
+              sx={{
+                borderBottom: '2px solid #e0e0e0',
+                '&:hover': {
+                  borderBottom: '2px solid #bdbdbd',
+                },
+                '&.Mui-focused': {
+                  borderBottom: '2px solid #1976d2',
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderBottom: '2px solid #e0e0e0',
+                  '&:hover': {
+                    borderBottom: '2px solid #bdbdbd',
+                  },
+                  '&.Mui-focused': {
+                    borderBottom: '2px solid #1976d2',
+                  },
+                },
+              }}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {t(category.name)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCategoryModalCancel} color="inherit">
+            {t("navigationButtons.cancel")}
+          </Button>
+          <Button
+            onClick={handleCategoryModalConfirm}
+            variant="contained"
+            disabled={!selectedCategory}
+          >
+            {t("navigationButtons.add")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

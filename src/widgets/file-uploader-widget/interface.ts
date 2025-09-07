@@ -20,6 +20,7 @@ export interface IUploadingFile {
   filePath?: string;
   orderItemId?: string;
   productType?: string;
+  downloadFilePath?: string;
 }
 
 export enum EUploadingFileStatus {

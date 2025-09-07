@@ -147,6 +147,11 @@ export const useMachinesData = () => {
     }
   }, [allMachines, loadFinishingCategoriesWithMachines]);
 
+  // Function to add a new machine to allMachines
+  const addNewMachine = useCallback((machine: Machine) => {
+    setAllMachines((prev) => [...prev, machine]);
+  }, []);
+
   return {
     allMachines,
     machinesLoading,
@@ -158,5 +163,6 @@ export const useMachinesData = () => {
     packagingCategories,
     loadAllMachines,
     loadFinishingCategoriesWithMachines,
+    addNewMachine,
   };
 };

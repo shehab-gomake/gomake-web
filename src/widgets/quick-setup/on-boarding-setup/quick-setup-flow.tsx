@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -30,6 +30,10 @@ import { useSnackBar, useGomakeAxios, useGomakeRouter } from "@/hooks";
 
 // Import API services
 import { quickSetupAddMachines } from "@/services/api-service/machines/print-house-machines";
+import { updatePrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
+
+// Import setup step enums
+import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
 
 // Import components
 import { Step1MachineSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step1MachineSelection";
@@ -57,6 +61,7 @@ const QuickSetupFlow: React.FC = () => {
     dtfSublimationFinishingCategories,
     rollFlexoFinishingCategories,
     packagingCategories,
+    addNewMachine,
   } = useMachinesData();
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -125,6 +130,28 @@ const QuickSetupFlow: React.FC = () => {
     selectedPackagingCategoryMachines,
     setSelectedPackagingCategoryMachines,
   ] = useState<{ [categoryId: string]: string }>({});
+
+  // Function to update print house setup steps
+  const updatePrintHouseSetupSteps = async (
+    step: SetupStep,
+    status: StepStatus = StepStatus.DONE
+  ) => {
+    try {
+      const updatedStep = {
+        step: step,
+        status: status,
+      };
+
+      await updatePrintHouseSetupStepsApi(callApi, () => {}, updatedStep);
+    } catch (error) {
+      console.error("Error updating setup steps:", error);
+    }
+  };
+
+  // Mark products setup as in progress when component mounts
+  useEffect(() => {
+    updatePrintHouseSetupSteps(SetupStep.PRODUCTS_SETUPS, StepStatus.IN_PROGRESS);
+  }, []);
 
   // if (machinesLoading) {
   //   return (
@@ -666,8 +693,11 @@ const QuickSetupFlow: React.FC = () => {
       }
 
       if (targetCategory) {
-        // Add the new machine to the category's machines array
+        // Add the new machine to the category's machines array (for finishing machines)
         targetCategory.machines.push(createdMachine);
+      } else {
+        // For printing machines (not in finishing categories), add to allMachines
+        addNewMachine(createdMachine);
       }
 
       // Add the machine to the selected machines
@@ -763,11 +793,13 @@ const QuickSetupFlow: React.FC = () => {
         }
       );
 
-      const callBack = (res: any) => {
+      const callBack = async (res: any) => {
         if (res.success) {
+          // Update the products setup step to completed
+          await updatePrintHouseSetupSteps(SetupStep.PRODUCTS_SETUPS, StepStatus.DONE);
+          
           alertSuccessAdded();
           navigate("/");
-          //!here
         } else {
           alertFaultAdded();
         }
