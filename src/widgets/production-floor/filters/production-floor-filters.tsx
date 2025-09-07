@@ -631,6 +631,7 @@ const ProductionFloorFilters = ({
                   marginTop: 8,
                   padding: "0px 8px",
                   maxHeight: "438px",
+                  zIndex: 1300,
                 },
               }}
               anchorEl={anchorEl}

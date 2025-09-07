@@ -481,7 +481,7 @@ const TimelineWidget = () => {
           position="absolute"
           right="0px"
           top="0px"
-          zIndex={99999}
+          zIndex={1200}
           height="60px"
           sx={{
             background: "#fff",
