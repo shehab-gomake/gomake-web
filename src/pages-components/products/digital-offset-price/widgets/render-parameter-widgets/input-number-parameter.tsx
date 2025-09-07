@@ -62,7 +62,7 @@ const InputNumberParameterWidget = ({
           extraOnChange && e?.target.value > 1 && extraOnChange()
         }}
         type={type}
-        InputProps={{ inputProps: { min: type === "number" ? 0 : undefined } }}
+        InputProps={{ inputProps: { min: type === "number" ? 0 : undefined, step: type === "number" ? "any" : undefined } }}
       />
       {productTypesNumber > 1 && productSetsParam != "true" && parameter?.code == "quantity" && (
         <IconButton
