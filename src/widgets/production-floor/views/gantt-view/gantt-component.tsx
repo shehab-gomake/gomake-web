@@ -241,7 +241,12 @@ const TimelineWidget = () => {
                   }}
                 />
               </Stack>
-              <Stack direction="row" alignItems="center" gap={1}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1}
+                height={"31px"}
+              >
                 {/* !here need to fix */}
                 <Typography variant="caption" color="#6C757D" fontSize="11px">
                   {stats.totalJobs} jobs
@@ -277,6 +282,7 @@ const TimelineWidget = () => {
               justifyContent="space-between"
               sx={{
                 padding: "8px 12px 8px 32px",
+                height: "50px", //!here new to hide or not
                 backgroundColor: "#FFF",
                 borderBottom: "1px solid #F1F3F4",
                 ...FONT_FAMILY.Inter(500, 13),
