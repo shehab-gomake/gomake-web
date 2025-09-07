@@ -8,6 +8,8 @@ const GET_TIME_LINE_JOBS_URL =
 const UPDATE_JOB_TIME_URL = "/v1/erp-service/job-time-line/update-job-time";
 const RESCHEDULE_ACTIONS_URL =
   "/v1/timeline-service/job-rescheduling/reschedule-actions";
+const RECOVER_OVERDUE_URL =
+  "/v1/timeline-service/job-rescheduling/re-cover-overdue";
 
 const getTimeLineJobsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -43,4 +45,22 @@ const rescheduleActionsApi: ICallAndSetData = async (
   );
 };
 
-export { getTimeLineJobsApi, updateJobTimeApi, rescheduleActionsApi };
+const recoverOverdueApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  printHouseId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${RECOVER_OVERDUE_URL}/${printHouseId}`,
+    setState
+  );
+};
+
+export {
+  getTimeLineJobsApi,
+  updateJobTimeApi,
+  rescheduleActionsApi,
+  recoverOverdueApi,
+};

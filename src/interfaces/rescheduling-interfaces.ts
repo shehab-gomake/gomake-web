@@ -13,6 +13,7 @@ export interface IReschedulingAction {
   type: number; // ReschedulingType enum value
   changes: IReschedulingChanges;
   reason: string;
+  productType?: string; // Optional product type
 }
 
 export interface IReschedulingRequest {
@@ -33,4 +34,5 @@ export interface ILocalReschedulingChange {
   type: number;
   reason?: string;
   isModified: boolean;
+  productType?: string; // Optional product type
 }

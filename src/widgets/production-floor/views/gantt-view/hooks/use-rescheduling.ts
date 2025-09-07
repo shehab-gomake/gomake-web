@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { useGomakeAxios } from "./use-gomake-axios";
-import { useSnackBar } from "./use-snack-bar";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useSnackBar } from "@/hooks/use-snack-bar";
 import { rescheduleActionsApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import {
   ILocalReschedulingChange,
@@ -29,7 +29,8 @@ export const useRescheduling = () => {
       newStartTime?: string,
       newEndTime?: string,
       originalStartTime?: string,
-      originalEndTime?: string
+      originalEndTime?: string,
+      productType?: string
     ) => {
       setLocalChanges((prev) => {
         // Use itemId as unique key since each job has a unique itemId
@@ -48,6 +49,7 @@ export const useRescheduling = () => {
           type: existingChange?.type || ReschedulingType.ResourceChange,
           reason: reason || existingChange?.reason || "",
           isModified: true,
+          productType: productType || existingChange?.productType,
         };
 
         // Set original values if not already set
@@ -121,7 +123,8 @@ export const useRescheduling = () => {
       endTime?: string,
       originalStartTime?: string,
       originalEndTime?: string,
-      reason?: string
+      reason?: string,
+      productType?: string
     ) => {
       setLocalChanges((prev) => {
         // Use itemId as unique key since each job has a unique itemId
@@ -141,6 +144,7 @@ export const useRescheduling = () => {
           type: ReschedulingType.TimeSlotModification,
           reason: reason || existingChange?.reason || "",
           isModified: true,
+          productType: productType || existingChange?.productType,
         };
 
         const newMap = new Map(prev);
@@ -237,7 +241,7 @@ export const useRescheduling = () => {
             }
           }
 
-          return {
+          const rescheduleAction: IReschedulingAction = {
             actionId: change.actionId,
             machineId: machineId,
             employeeId: employeeId,
@@ -251,6 +255,13 @@ export const useRescheduling = () => {
             },
             reason: change.reason || "",
           };
+
+          // Only include productType if it's not empty or null
+          if (change.productType && change.productType.trim() !== "") {
+            rescheduleAction.productType = change.productType;
+          }
+
+          return rescheduleAction;
         }
       );
 

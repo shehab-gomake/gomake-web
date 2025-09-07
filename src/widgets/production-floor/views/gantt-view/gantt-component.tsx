@@ -3,9 +3,11 @@ import Timeline, {
   TimelineHeaders,
   SidebarHeader,
   DateHeader,
+  TimelineMarkers,
+  TodayMarker,
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
-import { useRescheduling } from "@/hooks";
+import { useRescheduling, useRecoverOverdue } from "./hooks";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -31,15 +33,19 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BoltIcon from "@mui/icons-material/Bolt";
+import RestoreIcon from "@mui/icons-material/Restore";
 import EventIcon from "@mui/icons-material/Event";
 import { TimeFrameTabs } from "./state";
-import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const { classes } = useStyle();
 
   // Initialize rescheduling hook at component level
   const reschedulingHook = useRescheduling();
+
+  // Initialize recover overdue hook
+  const { recoverOverdue, isRecovering } = useRecoverOverdue();
 
   const {
     t,
@@ -112,8 +118,17 @@ const TimelineWidget = () => {
   };
 
   const getGroupStats = (groupId: string) => {
-    const groupItems = items.filter((item) => item.group === groupId);
-    const totalJobs = groupItems.length; //!here fix this
+    // Get all items in this group AND its children
+    const groupItems = items.filter((item) => {
+      // Include items directly in this group
+      if (item.group === groupId) return true;
+
+      // Include items in child groups of this group
+      const childGroups = groups.filter((group) => group.parent === groupId);
+      return childGroups.some((childGroup) => item.group === childGroup.id);
+    });
+
+    const totalJobs = groupItems.length;
     const completedJobs = groupItems.filter(
       (item) => item.statusColor === "#28A745"
     ).length;
@@ -128,7 +143,16 @@ const TimelineWidget = () => {
   };
 
   const getStationStats = (stationId: string) => {
-    const stationItems = items.filter((item) => item.group === stationId);
+    // Get all items in this station AND its children
+    const stationItems = items.filter((item) => {
+      // Include items directly in this station
+      if (item.group === stationId) return true;
+
+      // Include items in child groups of this station
+      const childGroups = groups.filter((group) => group.parent === stationId);
+      return childGroups.some((childGroup) => item.group === childGroup.id);
+    });
+
     return stationItems.length;
   };
 
@@ -208,9 +232,8 @@ const TimelineWidget = () => {
                 gap={1}
                 height={"31px"}
               >
-                {/* !here need to fix */}
                 <Typography variant="caption" color="#6C757D" fontSize="11px">
-                  {stats.totalJobs} jobs
+                  {stats.totalJobs} {t("sales.quote.jobs")}
                 </Typography>
                 {stats.inProgressJobs > 0 && (
                   <Badge
@@ -420,7 +443,32 @@ const TimelineWidget = () => {
                 fontWeight: 600,
               }}
             >
-              {isSubmitting ? "Submitting..." : "Re-Schedule"}
+              {isSubmitting ? "Submitting..." : t("productionFloor.reSchedule")}
+            </Button>
+
+            <Button
+              variant="contained"
+              startIcon={<RestoreIcon />}
+              disabled={isRecovering}
+              onClick={async () => {
+                await recoverOverdue(() => {
+                  getData(currentMonth.clone().month());
+                });
+              }}
+              sx={{
+                backgroundColor: "#DC3545",
+                "&:hover": { backgroundColor: "#C82333" },
+                "&:disabled": {
+                  backgroundColor: "#ccc",
+                  color: "#666",
+                },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              {isRecovering
+                ? "Recovering..."
+                : t("productionFloor.recoverOverdue")}
             </Button>
           </Stack>
         </Stack>
@@ -502,13 +550,27 @@ const TimelineWidget = () => {
           onItemDeselect={handleItemDeselect}
           selected={items.filter((item) => !!item.selected).map((i) => i.id)}
           dragSnap={1000 * 60}
-          // !here new
           style={{
             backgroundColor: "#fff",
             borderRadius: "12px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
           }}
         >
+          {/* Red Overdue Indicator */}
+          <TimelineMarkers>
+            <TodayMarker>
+              {({ styles }) => (
+                <div
+                  style={{
+                    ...styles,
+                    backgroundColor: "red",
+                    width: "2px",
+                    zIndex: 10,
+                  }}
+                />
+              )}
+            </TodayMarker>
+          </TimelineMarkers>
           <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
             <SidebarHeader>
               {({ getRootProps }) => {
@@ -522,7 +584,6 @@ const TimelineWidget = () => {
                       width: "280px",
                       ...adaptPaddingRight(dir, 3),
                       backgroundColor: "#F8F9FA",
-                      // borderBottom: "2px solid #E9ECEF", //!here
                       ...FONT_FAMILY.Inter(600, 14),
                       color: "#495057",
                     }}

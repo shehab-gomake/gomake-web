@@ -129,7 +129,8 @@ const useGantt = (reschedulingHook?: any) => {
       updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
       `Time slot modification - ${
         edge === "left" ? "start" : "end"
-      } time changed`
+      } time changed`,
+      updatedItem.productType // Pass productType from job data
     );
 
     setLoadingItemId("");
@@ -236,7 +237,8 @@ const useGantt = (reschedulingHook?: any) => {
         newStartTime.utc().format("YYYY-MM-DD HH:mm:ss"),
         newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
         updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
-        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss")
+        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        updatedItem.productType // Pass productType from job data
       );
     } else if (isResourceChange) {
       debugger;
@@ -274,7 +276,12 @@ const useGantt = (reschedulingHook?: any) => {
         changeType,
         newGroup.id,
         updatedItem.group,
-        reason
+        reason,
+        undefined, // newStartTime
+        undefined, // newEndTime
+        undefined, // originalStartTime
+        undefined, // originalEndTime
+        updatedItem.productType // Pass productType from job data
       );
     } else if (isTimeChange) {
       debugger;
@@ -287,7 +294,8 @@ const useGantt = (reschedulingHook?: any) => {
         newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
         updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
         updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
-        "Time slot modification - job moved to new time slot"
+        "Time slot modification - job moved to new time slot",
+        updatedItem.productType // Pass productType from job data
       );
     }
 
