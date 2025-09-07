@@ -47,16 +47,14 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
 import QrReader from "react-qr-scanner";
-import {
-  QR_CODE_LISTENER_FROM,
-  useQrCodeListener,
-} from "@/hooks/use-qr-code-listener";
+import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
 import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
+import { boardsMissionsState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -65,6 +63,18 @@ const ProductionFloorWidget = () => {
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+
+  const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    if (boardMissionsId) {
+      setSelectedBoardMissionId(boardMissionsId as string);
+    }
+    else if (!boardMissionsId) {
+      setSelectedBoardMissionId(null);
+    }
+  }, [boardMissionsId]);
 
   const {
     filterGroups,
@@ -129,6 +139,7 @@ const ProductionFloorWidget = () => {
 
   const onClose = () => {
     {
+      setSelectedBoardMissionId(null);
       const newRequestAbortController = new AbortController();
       const currentView = EProductionFloorView[view].toLowerCase();
       push(`/production-floor?view=${currentView}`, undefined, {
@@ -138,10 +149,6 @@ const ProductionFloorWidget = () => {
       setAbortControllerFiles(newRequestAbortController);
       setAbortControllerActivities(newRequestAbortController);
       setAbortControllerDetails(newRequestAbortController);
-      // setFiles([]);
-      // setStations([]);
-      // setBoardMissionsDetails(null);
-      // setActivities([]);
     }
   };
 
@@ -214,7 +221,6 @@ const ProductionFloorWidget = () => {
     });
   };
 
-  //!here
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
@@ -229,7 +235,6 @@ const ProductionFloorWidget = () => {
     getAllBoardMissionStatus();
   }, []);
 
-  //const { isOpenDoneModal } = useQrCodeListener({ qrCodeListenerFrom: QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR })
   const isOpenDoneModal = useModal();
 
   return (
@@ -281,9 +286,11 @@ const ProductionFloorWidget = () => {
 
       <Drawer
         sx={{ zIndex: 999999 }}
-        open={!!boardMissionsId}
+        open={!!selectedBoardMissionId}
         anchor={"bottom"}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+        }}
       >
         <Stack
           paddingBottom={"10px"}

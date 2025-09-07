@@ -115,7 +115,9 @@ const PriceProfitHeaderWidget = ({
           profitsPricingTables.length > 0 && (
             <GoMakeAutoComplate
               options={(profitsPricingTables ?? [])
-                .filter((table) => table.pricingBy === 1)
+                .filter(
+                  (table) => table.pricingBy === 1 && table.name !== "Default"
+                )
                 .map((table) => ({
                   value: table.id,
                   label: table.name,

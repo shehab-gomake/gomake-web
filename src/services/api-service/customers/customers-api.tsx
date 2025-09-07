@@ -51,6 +51,7 @@ const customerMapFunction = (
   inActiveText
 ) => {
   return {
+    createDate: customer.createDate?.split("T")[0],
     customerCode: customer.code,
     name: customer.name,
     email: customer.mail ? customer.mail : <HorizontalRuleIcon />,

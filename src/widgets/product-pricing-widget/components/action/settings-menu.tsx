@@ -1,7 +1,7 @@
-import { GoMakeDeleteModal, GoMakeMenu, ThreeOptionsModal } from "@/components";
+import { GoMakeMenu, ThreeOptionsModal } from "@/components";
 import { Divider, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { currentCalculationConnectionId } from "@/store";
 import { DeleteSettingsIcon, OsSettingsIcon, PrinterIcon, ProfitIcon, ProportiesIcon } from "@/icons";
 import { deleteActionToWorkFlowApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
@@ -18,8 +18,8 @@ const SettingsMenu = ({
   anchorEl,
   actionId,
   actionName,
-  currentProductItemValue,
   machineName,
+  mongoDBMachineId,
   categoryId,
   productType,
   id,
@@ -54,7 +54,7 @@ const SettingsMenu = ({
     handleClose();
   };
   const onClickMachine = () => {
-    const uri = `/machines/category/${categoryId}`;
+    const uri = `/machines/category/${categoryId}?machineId=${mongoDBMachineId}`;
     window.open(uri, "_blank");
     handleClose();
   };

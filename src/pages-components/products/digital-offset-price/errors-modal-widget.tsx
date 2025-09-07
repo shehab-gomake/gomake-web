@@ -16,9 +16,9 @@ const ErrorsModalWidget = ({ errors, onClose, clasess }) => {
 
   return (
     <div style={clasess.mainContainerErrors}>
-      <div style={clasess.iconContainer}>
+      {/* <div style={clasess.iconContainer}>
         <ErrorIcon width={40} height={40} fill={errorColor(500)} />
-      </div>
+      </div> */}
 
       <div>
         <div style={clasess.titleStyleErrors}>
@@ -38,11 +38,11 @@ const ErrorsModalWidget = ({ errors, onClose, clasess }) => {
         ))}
       </div>
 
-      <div style={clasess.summaryContainerErrors}>
+      {/* <div style={clasess.summaryContainerErrors}>
         <span style={clasess.summaryText}>
           {errorList.length} {t("products.offsetPrice.admin.errorsFound")}
         </span>
-      </div>
+      </div> */}
 
       <div style={clasess.buttonContainer}>
         <GomakePrimaryButton

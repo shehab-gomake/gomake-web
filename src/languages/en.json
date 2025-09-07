@@ -21,6 +21,8 @@
     "forgotPassword": "Forgot password",
     "enterYourEmail": "Enter your Email",
     "send": "Send",
+    "goToLogin": "Go to login",
+    "forgotPasswordEmailSent": "A temporary password has been sent to your email.",
     "resetPassword": "Reset Password",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
@@ -43,7 +45,7 @@
     "shoping": "Shoping",
     "customers": "Customers",
     "suppliers": "Suppliers",
-    "companyReports":"company Reports",
+    "companyReports": "company Reports",
     "reports": "Reports",
     "settings": "Settings",
     "employees": "Employees",
@@ -102,7 +104,7 @@
   },
   "properties": {
     "parameter": "Parameter",
-    "unit":"Unit",
+    "unit": "Unit",
     "rule": "Rule",
     "type": "Type",
     "more": "More",
@@ -127,7 +129,7 @@
     "formNotValid": "Form not valid",
     "RequiredFields": "Missing required fields",
     "noMaterialsSelected": "Please select materials",
-    "duplicateFailed" : "Duplicate failed"
+    "duplicateFailed": "Duplicate failed"
   },
   "home": {
     "admin": {
@@ -297,7 +299,7 @@
       "changeImage": "Change image",
       "selectImage": "Select Image",
       "upload": "Upload",
-      "download" : "Download"
+      "download": "Download"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
@@ -1411,8 +1413,8 @@
       "itemName": "Item name",
       "admin": {
         "title": "Profits",
-        "proporties":"Proporties",
-        "OSSettings":"OS settings",
+        "proporties": "Proporties",
+        "OSSettings": "OS settings",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
@@ -1436,11 +1438,11 @@
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
         "testFinalPrice": "Test Final Price",
-        "materialQuantity":"Material Quantity",
-        "beats":"Beats",
-        "linear":"Linear",
-        "steps":"Steps",
-        "pleaseEnterallrequiredvalues":"Please Enter all required values"
+        "materialQuantity": "Material Quantity",
+        "beats": "Beats",
+        "linear": "Linear",
+        "steps": "Steps",
+        "pleaseEnterallrequiredvalues": "Please Enter all required values"
       },
       "exceptions": {
         "title": "Exceptions",
@@ -1462,8 +1464,8 @@
         "deleteExceptionProfit": "Delete Exception Profit ?",
         "updateException": "Update exception",
         "deleteException": "Delete exception",
-        "addNewRule":"Add New Rule",
-        "reorder":"Reorder"
+        "addNewRule": "Add New Rule",
+        "reorder": "Reorder"
       }
     },
     "actions": {
@@ -1500,12 +1502,11 @@
         "addNewProduct": "Add new product",
         "addGoToList": "Add and go to the list of parameters",
         "updateNewProduct": "Update product",
-        "clients":"Clients",
-        "allCustomers":"all customers",
-        "byClient":"by client",
-        "byClientType":"by client type",
-        "uploadImg":"Upload image"
-
+        "clients": "Clients",
+        "allCustomers": "all customers",
+        "byClient": "by client",
+        "byClientType": "by client type",
+        "uploadImg": "Upload image"
       }
     },
     "parameters": {
@@ -1550,11 +1551,10 @@
         "machine": "Machine",
         "loadingOptimalWorkflows": "loading optimal workflows...",
         "includeVAT": "Include VAT",
-        "graphicDesign":"Graphic design",
-        "productionComment":"Production comment",
-        "graphicDesignComment":"Graphic design comment",
-        "Pricing":"Pricing"
-
+        "graphicDesign": "Graphic design",
+        "productionComment": "Production comment",
+        "graphicDesignComment": "Graphic design comment",
+        "Pricing": "Pricing"
       }
     },
     "productManagement": {
@@ -1717,36 +1717,35 @@
       "attachFiles": "Attach Files",
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
-      "dateOfReference" :"Date Of Reference",
+      "dateOfReference": "Date Of Reference",
       "quoteNumber": "Quote number",
       "addressLine1": "Address Line 1",
       "addressLine2": "Address Line 2",
-      "enterYourAddress":"Enter Your Address",
-      "country":"Country",
-      "selectYourCountry":"Select Your Country",
-      "selectYourCity":"Select Your City",
+      "enterYourAddress": "Enter Your Address",
+      "country": "Country",
+      "selectYourCountry": "Select Your Country",
+      "selectYourCity": "Select Your City",
       "zipCode": "Zip Code",
-      "enterYourZipCode":"Enter Your ZipCode",
+      "enterYourZipCode": "Enter Your ZipCode",
       "save": "Save",
       "address": "Address",
       "addressId": "Address ID",
-      "addAddress" :"Add Address",
+      "addAddress": "Add Address",
       "removeAddress": "Remove Address",
-      "actionDate" :"Action Date",
-      "employeeName":"Employee Name",
-      "actionDescription":"Action Description",
-      "selectEmployee":"select employee",
-      "selectDate":"select date",
-      "quoteLogs":"Logs for quote",
+      "actionDate": "Action Date",
+      "employeeName": "Employee Name",
+      "actionDescription": "Action Description",
+      "selectEmployee": "select employee",
+      "selectDate": "select date",
+      "quoteLogs": "Logs for quote",
       "quote": "Quote",
       "order": "Order",
-      "invoice":"Invoice",
+      "invoice": "Invoice",
       "receipt": "Receipt",
-      "deliveryNote" : "Delivery Note",
+      "deliveryNote": "Delivery Note",
       "invoiceNumber": "Invoice Number",
       "receiptNumber": "Receipt Number",
       "deliveryNoteNumber": "Delivery Note Number"
-
     }
   },
   "usersSettings": {
@@ -1837,7 +1836,7 @@
     "productManagement": "Product management",
     "shipmentsSetting": "Shipments setting",
     "pricingSetting": "Pricing setting",
-    "translations" : "Translations"
+    "translations": "Translations"
   },
   "customers": {
     "buttons": {
@@ -2121,11 +2120,11 @@
     "dayOfWork": "Working days",
     "sunday": "Sun",
     "monday": "Mon",
-    "tuesday":"Tue",
-    "wednesday":"Wed",
-    "thursday":"Thu",
-    "friday" :"Fri",
-    "saturday":"Sat"
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat"
   },
   "remainWords": {
     "newQuote": "New quote",
@@ -2462,11 +2461,11 @@
     },
     "sendFrom": "Send From Email",
     "noAttachment": "No Attachment",
-    "selectLanguage" : "Select Language",
+    "selectLanguage": "Select Language",
     "language": "Language",
-    "changeLang" : "Change Language",
-    "changeAnyway" : "Change Anyway",
-    "changeLangSubTitle" :"You may have made changes to the editor content. If so, these changes will be discarded if you proceed to change the language"
+    "changeLang": "Change Language",
+    "changeAnyway": "Change Anyway",
+    "changeLangSubTitle": "You may have made changes to the editor content. If so, these changes will be discarded if you proceed to change the language"
   },
   "partners": {
     "options": {
@@ -2546,12 +2545,12 @@
     "Transfer to partial": "Transfer to partial",
     "Connect with category": "Connect with category",
     "Connect with machine": "Connect with machine",
-    "totalOrdersQuote":"Total Orders Quote",
-    "waitingForReview" :"Waiting for review",
-    "approved":"Approved",
-    "declined":"Declined",
-    "blocked":"Blocked",
-    "waitingToApprove":"Waiting to approve"
+    "totalOrdersQuote": "Total Orders Quote",
+    "waitingForReview": "Waiting for review",
+    "approved": "Approved",
+    "declined": "Declined",
+    "blocked": "Blocked",
+    "waitingToApprove": "Waiting to approve"
   },
   "pricingWidget": {
     "selected": "Selected",
@@ -2569,22 +2568,22 @@
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
   },
-  "translations" : {
-"title" : "Translations",
-"addNew" : "add new",
-"edit" : "Edit" ,
-"add" : "Add" ,
-"addNewBlock" :"Add new block" ,
-"editTranslation" : "Edit Translation",
-"addTranslation" : "Add Translation",
-"arabic": "Arabic",
-"english": "English",
-"hebrew": "Hebrew",
-"deutsche":"Deutsche",
-"key":"Key",
-"path":"Path",
-"download" : "Download",
-"upload":"Upload"
+  "translations": {
+    "title": "Translations",
+    "addNew": "add new",
+    "edit": "Edit",
+    "add": "Add",
+    "addNewBlock": "Add new block",
+    "editTranslation": "Edit Translation",
+    "addTranslation": "Add Translation",
+    "arabic": "Arabic",
+    "english": "English",
+    "hebrew": "Hebrew",
+    "deutsche": "Deutsche",
+    "key": "Key",
+    "path": "Path",
+    "download": "Download",
+    "upload": "Upload"
   },
   "quantityTypes": {
     "quantity": "Quantity",
@@ -2593,19 +2592,19 @@
     "duplicateName": "Duplicate name",
     "typeName": "Type name"
   },
-  "companyReports":{
-    "companyName":"Company Name",
-    "Domain":"Domain",
-    "PhoneNumber":"Phone Number",
-    "Email":"Email",
-    "StartingDate":"Starting Date",
-    "LastUpdateIn30Days":"Last UpdatedI In 30 Days",
-    "Users":"Useres",
-    "Quote":"Quote",
-    "QuoteItems":"Quotes Items",
-    "Orders":"Orders",
-    "OrderItems":"Order Item",
-    "EstimationSuccessRate":"Estimation Success Rate(-+5%)"
+  "companyReports": {
+    "companyName": "Company Name",
+    "Domain": "Domain",
+    "PhoneNumber": "Phone Number",
+    "Email": "Email",
+    "StartingDate": "Starting Date",
+    "LastUpdateIn30Days": "Last UpdatedI In 30 Days",
+    "Users": "Useres",
+    "Quote": "Quote",
+    "QuoteItems": "Quotes Items",
+    "Orders": "Orders",
+    "OrderItems": "Order Item",
+    "EstimationSuccessRate": "Estimation Success Rate(-+5%)"
   },
   "productionFloor": {
     "noStationsSelected": "No stations selected",
@@ -2618,5 +2617,4 @@
       "excelExportError": "Failed to export data to Excel"
     }
   }
-  
 }

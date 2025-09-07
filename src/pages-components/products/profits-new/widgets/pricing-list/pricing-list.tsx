@@ -89,6 +89,9 @@ const PricingList = ({
       );
       setSelectedSupplier(supplier);
     }
+    else {
+      setSelectedSupplier(null);
+    }
   }, [
     selectedPricingTableItems,
     supplierList,

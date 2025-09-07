@@ -1,4 +1,12 @@
-import { Breadcrumbs, ButtonGroup, Link, Stack, Tooltip } from "@mui/material";
+import {
+  Breadcrumbs,
+  ButtonGroup,
+  Link,
+  Stack,
+  Tooltip,
+  Box,
+  Typography,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
@@ -163,117 +171,234 @@ const ProductionFloorHeader = ({
           ))}
         </Breadcrumbs>
       </Stack>
+
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {view !== EProductionFloorView.DASHBOARD && (
-          <>
-            <ActionsListComponent
-              filterGroups={filterGroups}
-              setFilterGroups={setFilterGroups}
-              source={Source.PRODUCTION_FLOOR}
-              onClickApply={onStationsChange}
-              buttonElement={
-                <PrimaryButton
-                  style={{ minWidth: "40px", height: "40px", padding: 0 }}
-                  variant={"outlined"}
-                >
-                  <SettingsIcon />
-                </PrimaryButton>
-              }
-            />
-            {view === EProductionFloorView.TABLE && (
-              <Tooltip title={t("general.columnVisibility")}>
-                <PrimaryButton
-                  style={{ minWidth: "40px", height: "40px", padding: 0 }}
-                  variant={"outlined"}
-                  onClick={handleColumnSettingsOpen}
-                >
-                  <ViewColumnIcon />
-                </PrimaryButton>
-              </Tooltip>
-            )}
-            {view === EProductionFloorView.TABLE && (
-              <ColumnSettingsMenuContent
-                anchorEl={columnSettingsAnchorEl}
-                open={columnSettingsOpen}
-                onClose={handleColumnSettingsClose}
-              />
-            )}
-            {view === EProductionFloorView.TABLE && (
-              <ProductionFloorExportButtons statusBoards={filteredDataByMachine} />
-            )}
-          </>
-        )}
-        <SelectGroup />
-        <ButtonGroup dir={"ltr"}>
-          <Tooltip title={t("productionFloor.archive")}>
-            <PrimaryButton
-              style={{ width: "40px", height: "40px", padding: 0 }}
-              variant={
-                view === EProductionFloorView.DONE_JOBS
-                  ? "contained"
-                  : "outlined"
-              }
-              onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              alignItems: "center",
+              padding: "8px 12px",
+              backgroundColor: "#f8f9fa",
+              borderRadius: "6px",
+              border: "1px solid #e9ecef",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              <DoneJobsIcon />
-            </PrimaryButton>
-          </Tooltip>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#6c757d",
+                  fontWeight: 500,
+                  fontSize: "14px",
+                }}
+              >
+                {t("dashboard.totalJobs")}:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "#2e3092",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                }}
+              >
+                {boardsData.reduce((total, statusGroup) => {
+                  return total + (statusGroup.boardMissions?.length || 0);
+                }, 0)}
+              </Typography>
+            </Box>
 
-          {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
-            <Tooltip title={t("productionFloor.timeline")}>
+            <Box
+              sx={{
+                width: "1px",
+                height: "20px",
+                backgroundColor: "#dee2e6",
+              }}
+            />
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#6c757d",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                }}
+              >
+                {t("products.offsetPrice.admin.totalProductionTime")}:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "#2e3092",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                }}
+              >
+                {(() => {
+                  const totalProductionTime = boardsData.reduce(
+                    (total, statusGroup) => {
+                      return (
+                        total +
+                        (statusGroup.boardMissions?.reduce(
+                          (missionTotal, mission) => {
+                            return (
+                              missionTotal +
+                              (mission.currentStation
+                                ?.totalProductionTimeForAllStations || 0)
+                            );
+                          },
+                          0
+                        ) || 0)
+                      );
+                    },
+                    0
+                  );
+
+                  if (!totalProductionTime || totalProductionTime <= 0)
+                    return "00:00";
+                  const hours = Math.floor(totalProductionTime / 60);
+                  const minutes = Math.floor(totalProductionTime % 60);
+                  return `${hours.toString().padStart(2, "0")}:${minutes
+                    .toString()
+                    .padStart(2, "0")}`;
+                })()}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+
+        <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
+          {view !== EProductionFloorView.DASHBOARD && (
+            <>
+              <ActionsListComponent
+                filterGroups={filterGroups}
+                setFilterGroups={setFilterGroups}
+                source={Source.PRODUCTION_FLOOR}
+                onClickApply={onStationsChange}
+                buttonElement={
+                  <PrimaryButton
+                    style={{ minWidth: "40px", height: "40px", padding: 0 }}
+                    variant={"outlined"}
+                  >
+                    <SettingsIcon />
+                  </PrimaryButton>
+                }
+              />
+              {view === EProductionFloorView.TABLE && (
+                <Tooltip title={t("general.columnVisibility")}>
+                  <PrimaryButton
+                    style={{ minWidth: "40px", height: "40px", padding: 0 }}
+                    variant={"outlined"}
+                    onClick={handleColumnSettingsOpen}
+                  >
+                    <ViewColumnIcon />
+                  </PrimaryButton>
+                </Tooltip>
+              )}
+              {view === EProductionFloorView.TABLE && (
+                <ColumnSettingsMenuContent
+                  anchorEl={columnSettingsAnchorEl}
+                  open={columnSettingsOpen}
+                  onClose={handleColumnSettingsClose}
+                />
+              )}
+              {view === EProductionFloorView.TABLE && (
+                <ProductionFloorExportButtons
+                  statusBoards={filteredDataByMachine}
+                />
+              )}
+            </>
+          )}
+          <SelectGroup />
+          <ButtonGroup dir={"ltr"}>
+            <Tooltip title={t("productionFloor.archive")}>
               <PrimaryButton
                 style={{ width: "40px", height: "40px", padding: 0 }}
                 variant={
-                  view === EProductionFloorView.GANTT ? "contained" : "outlined"
+                  view === EProductionFloorView.DONE_JOBS
+                    ? "contained"
+                    : "outlined"
                 }
-                onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
+                onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
               >
-                <HourglassEmptyRoundedIcon />
+                <DoneJobsIcon />
               </PrimaryButton>
             </Tooltip>
-          )}
 
-          <Tooltip title={t("productionFloor.dashboard")}>
-            <PrimaryButton
-              style={{ width: "40px", height: "40px", padding: 0 }}
-              variant={
-                view === EProductionFloorView.DASHBOARD
-                  ? "contained"
-                  : "outlined"
-              }
-              onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
-            >
-              <AvTimerIcon />
-            </PrimaryButton>
-          </Tooltip>
+            {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
+              <Tooltip title={t("productionFloor.timeline")}>
+                <PrimaryButton
+                  style={{ width: "40px", height: "40px", padding: 0 }}
+                  variant={
+                    view === EProductionFloorView.GANTT
+                      ? "contained"
+                      : "outlined"
+                  }
+                  onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
+                >
+                  <HourglassEmptyRoundedIcon />
+                </PrimaryButton>
+              </Tooltip>
+            )}
 
-          <Tooltip title={t("productionFloor.kanban")}>
-            <PrimaryButton
-              style={{ width: "20px", height: "40px", padding: 0 }}
-              variant={
-                view === EProductionFloorView.KANBAN ? "contained" : "outlined"
-              }
-              onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
-            >
-              <GridViewIcon />
-            </PrimaryButton>
-          </Tooltip>
+            <Tooltip title={t("productionFloor.dashboard")}>
+              <PrimaryButton
+                style={{ width: "40px", height: "40px", padding: 0 }}
+                variant={
+                  view === EProductionFloorView.DASHBOARD
+                    ? "contained"
+                    : "outlined"
+                }
+                onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
+              >
+                <AvTimerIcon />
+              </PrimaryButton>
+            </Tooltip>
 
-          <Tooltip title={t("productionFloor.table")}>
-            <PrimaryButton
-              style={{ width: "20px", height: "40px", padding: 0 }}
-              variant={
-                view === EProductionFloorView.TABLE ? "contained" : "outlined"
-              }
-              onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
-            >
-              <ViewHeadlineIcon />
-            </PrimaryButton>
-          </Tooltip>
-        </ButtonGroup>
+            <Tooltip title={t("productionFloor.kanban")}>
+              <PrimaryButton
+                style={{ width: "20px", height: "40px", padding: 0 }}
+                variant={
+                  view === EProductionFloorView.KANBAN
+                    ? "contained"
+                    : "outlined"
+                }
+                onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
+              >
+                <GridViewIcon />
+              </PrimaryButton>
+            </Tooltip>
 
-        {/* Zoom Control */}
-        {/* <ZoomControl
+            <Tooltip title={t("productionFloor.table")}>
+              <PrimaryButton
+                style={{ width: "20px", height: "40px", padding: 0 }}
+                variant={
+                  view === EProductionFloorView.TABLE ? "contained" : "outlined"
+                }
+                onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
+              >
+                <ViewHeadlineIcon />
+              </PrimaryButton>
+            </Tooltip>
+          </ButtonGroup>
+
+          {/* Zoom Control */}
+          {/* <ZoomControl
           onZoomIn={zoomControl.zoomIn}
           onZoomOut={zoomControl.zoomOut}
           onZoomReset={zoomControl.resetZoom}
@@ -281,6 +406,7 @@ const ProductionFloorHeader = ({
           minZoom={zoomControl.minZoom}
           maxZoom={zoomControl.maxZoom}
         /> */}
+        </Stack>
       </Stack>
     </Stack>
   );

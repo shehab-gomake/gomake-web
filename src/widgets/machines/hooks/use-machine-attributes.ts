@@ -27,9 +27,8 @@ const useMachineAttributes = () => {
     const [errors, setErrors] = useState<Record<string, boolean>>({})
     const printColors = useRecoilValue(printColorsParameterValuesState);
     const [machineHourCostValue, setMachineHourCostValue] = useState<number>();
-
     const machineHourCost = () => {
-        if (machineState?.price?.price && machineState.attributes?.dailyProductivityInHours && machineState.attributes?.lifeExpectancyYears && machineState.attributes?.monthlyMaintenanceCost && machineState.attributes?.monthlyCostOfSpace && machineState.attributes?.electricityCostPerWorkingHour) {
+        if (machineState?.price?.price !==0 && machineState.attributes?.dailyProductivityInHours !==0 && machineState.attributes?.lifeExpectancyYears !==0 && machineState.attributes?.monthlyMaintenanceCost !==0 && machineState.attributes?.monthlyCostOfSpace !==0 && machineState.attributes?.electricityCostPerWorkingHour !==0) {
             return machineState?.price?.price /
                 (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * 22 * 12) +
                 +machineState.attributes?.monthlyMaintenanceCost / (22 * 8) +
@@ -40,8 +39,24 @@ const useMachineAttributes = () => {
 
     // Track changes to machineHourCost calculation values
     useEffect(() => {
-        setMachineHourCostValue(Number(machineHourCost()?.toFixed(2)));
-        setMachine({...machineState, price: {...machineState.price, machineHourCost: machineHourCost()?.toFixed(2)}});
+            const computedCost = Number(machineHourCost()?.toFixed(2));
+            setMachineHourCostValue(computedCost);
+            const currentAttrCost = Number(machineState?.attributes?.machineHourCost);
+            const currentPriceCost = Number(machineState?.price?.machineHourCost);
+            if (currentAttrCost !== computedCost || currentPriceCost !== computedCost) {
+                setMachine({
+                    ...machineState,
+                    attributes: {
+                        ...machineState.attributes,
+                        machineHourCost: computedCost
+                    },
+                    price: {
+                        ...machineState.price,
+                        machineHourCost: computedCost
+                    }
+                });
+            }
+      
     }, [
         machineState?.price?.price,
         machineState?.attributes?.dailyProductivityInHours,
@@ -50,12 +65,15 @@ const useMachineAttributes = () => {
         machineState?.attributes?.monthlyCostOfSpace,
         machineState?.attributes?.electricityCostPerWorkingHour
     ]);
-    // Track changes to direct machineHourCost value
+    // Track initial direct machineHourCost value (if provided explicitly)
     useEffect(() => {
        
         if (machineState.attributes?.machineHourCost !== undefined) {
-            setMachineHourCostValue(Number(machineState.price.machineHourCost));
-            setMachine({...machineState, price: {...machineState.price, machineHourCost: Number(machineState.attributes.machineHourCost)}});
+            const explicitCost = Number(machineState.attributes.machineHourCost);
+            setMachineHourCostValue(explicitCost);
+            if (Number(machineState.price?.machineHourCost) !== explicitCost) {
+                setMachine({...machineState, price: {...machineState.price, machineHourCost: explicitCost}});
+            }
         }
     }, []);
 
