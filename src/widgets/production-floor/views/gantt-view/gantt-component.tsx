@@ -342,24 +342,34 @@ const TimelineWidget = () => {
         <Stack sx={classes.headerContent}>
           {/* Date Selector */}
           <Stack sx={classes.dateSelector}>
+            {/* Previous button */}
             <IconButton
-              onClick={() => navigateTimeline(-1)}
+              onClick={() => navigateTimeline(dir === "rtl" ? 1 : -1)}
               size="small"
               sx={classes.dateSelectorButton}
             >
-              <KeyboardArrowLeftIcon />
+              {dir === "rtl" ? (
+                <KeyboardArrowRightIcon />
+              ) : (
+                <KeyboardArrowLeftIcon />
+              )}
             </IconButton>
 
             <Typography variant="body1" sx={classes.dateLabel}>
               {getDateLabel()}
             </Typography>
 
+            {/* Next button */}
             <IconButton
-              onClick={() => navigateTimeline(1)}
+              onClick={() => navigateTimeline(dir === "rtl" ? -1 : 1)}
               size="small"
               sx={classes.dateSelectorButton}
             >
-              <KeyboardArrowRightIcon />
+              {dir === "rtl" ? (
+                <KeyboardArrowLeftIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
             </IconButton>
           </Stack>
 
@@ -445,6 +455,10 @@ const TimelineWidget = () => {
                   backgroundColor: "#ccc",
                   color: "#666",
                 },
+                "& .MuiButton-startIcon": {
+                  marginRight: dir === "rtl" ? 0 : "8px",
+                  marginLeft: dir === "rtl" ? "8px" : 0,
+                },
                 textTransform: "none",
                 fontWeight: 600,
               }}
@@ -467,6 +481,10 @@ const TimelineWidget = () => {
                 "&:disabled": {
                   backgroundColor: "#ccc",
                   color: "#666",
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: dir === "rtl" ? 0 : "8px",
+                  marginLeft: dir === "rtl" ? "8px" : 0,
                 },
                 textTransform: "none",
                 fontWeight: 600,
