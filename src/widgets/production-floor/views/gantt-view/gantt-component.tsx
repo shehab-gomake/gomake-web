@@ -5,6 +5,7 @@ import Timeline, {
   DateHeader,
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
+import { useRescheduling } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -36,6 +37,10 @@ import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const { classes } = useStyle();
+
+  // Initialize rescheduling hook at component level
+  const reschedulingHook = useRescheduling();
+
   const {
     t,
     groups,
@@ -61,63 +66,19 @@ const TimelineWidget = () => {
     timeFrameTabs,
     scrollTimeline,
     dir,
-  } = useGantt();
+  } = useGantt(reschedulingHook);
+
+  // Extract rescheduling functionality
+  const {
+    hasLocalChanges,
+    submitRescheduleActions,
+    isSubmitting,
+    clearAllLocalChanges,
+  } = reschedulingHook;
 
   useEffect(() => {
     getData(currentMonth.clone().month());
   }, [currentMonth.valueOf()]);
-
-  const filteredGroupsold = useMemo(() => {
-    return groups
-      .filter(
-        (group) =>
-          group.isRoot ||
-          openGroups[group.parent] ||
-          items.some(
-            (item) =>
-              item.group === group.id && item.isHasSelected && item.selected
-          )
-      )
-      .map((group) => ({
-        ...group,
-        height: 40,
-        title: group.isRoot ? (
-          <Stack
-            bgcolor={openGroups[group.id] ? "#F6F6F6" : "#FFF"}
-            onClick={() => toggleGroup(group.id)}
-            direction="row"
-            alignItems="center"
-            style={{
-              cursor: "pointer",
-              ...FONT_FAMILY.Inter(500, 14),
-            }}
-          >
-            {openGroups[group.id] ? (
-              <KeyboardArrowUpIcon
-                sx={{ color: "#757575", marginRight: "5px" }}
-              />
-            ) : (
-              <KeyboardArrowDownIcon
-                sx={{ color: "#757575", marginRight: "5px" }}
-              />
-            )}
-            {group.title}
-          </Stack>
-        ) : (
-          <div
-            style={{
-              paddingLeft: 10,
-              backgroundColor: "#FFF",
-              ...FONT_FAMILY.Inter(500, 14),
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {group.title}
-          </div>
-        ),
-      }));
-  }, [groups, openGroups, items]);
 
   const getGroupColor = (title: string) => {
     // Generate a consistent color based on the title string hash
@@ -197,7 +158,7 @@ const TimelineWidget = () => {
               sx={{
                 cursor: "pointer",
                 padding: "8px 12px",
-                borderRadius: "8px",
+                // borderRadius: "8px",
                 border: "1px solid #E9ECEF",
                 ...FONT_FAMILY.Inter(600, 14),
                 color: "#495057",
@@ -436,14 +397,30 @@ const TimelineWidget = () => {
             <Button
               variant="contained"
               startIcon={<BoltIcon />}
+              disabled={!hasLocalChanges() || isSubmitting}
+              onClick={async () => {
+                const success = await submitRescheduleActions();
+                if (success) {
+                  // Success: refresh the data
+                  getData(currentMonth.clone().month());
+                } else {
+                  // Failure: revert to original state and clear local changes
+                  getData(currentMonth.clone().month()); // Refresh to get original data
+                  clearAllLocalChanges(); // Clear the local changes payload
+                }
+              }}
               sx={{
                 backgroundColor: "#FD7E14",
                 "&:hover": { backgroundColor: "#E8690B" },
+                "&:disabled": {
+                  backgroundColor: "#ccc",
+                  color: "#666",
+                },
                 textTransform: "none",
                 fontWeight: 600,
               }}
             >
-              Auto-Schedule
+              {isSubmitting ? "Submitting..." : "Re-Schedule"}
             </Button>
           </Stack>
         </Stack>
@@ -514,7 +491,7 @@ const TimelineWidget = () => {
           onItemResize={handleItemResize}
           onZoom={handleZoom}
           canResize={"right"}
-          canChangeGroup={false}
+          canChangeGroup={true}
           itemRenderer={(props) => {
             return <JobComponent {...props} toggleGroup={toggleGroup} />;
           }}

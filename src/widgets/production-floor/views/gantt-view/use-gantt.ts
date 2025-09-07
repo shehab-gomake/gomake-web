@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import moment, { Moment } from "moment";
-import {
-  getTimeLineJobsApi,
-  updateJobTimeApi,
-} from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
+import { getTimeLineJobsApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import {
   IGanttGroup,
   IGanttJob,
-} from "@/widgets/production-floor/views/gantt-view/interface";
+} from "@/widgets/production-floor/views/gantt-view/interfaces";
 import { useRecoilState } from "recoil";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import {
@@ -18,11 +15,20 @@ import {
 import { useTranslation } from "react-i18next";
 import { ITab } from "@/components/tabs/interface";
 
-const useGantt = () => {
+const useGantt = (reschedulingHook?: any) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
+
+  // Use rescheduling hook if provided, otherwise create empty functions
+  const {
+    addLocalChange = () => {},
+    updateTimeChange = () => {},
+    hasLocalChanges = () => false,
+    submitRescheduleActions = async () => false,
+    isSubmitting = false,
+  } = reschedulingHook || {};
   const [timeRange, setTimeRange] = useState({
     // defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
     // defaultTimeEnd: moment().startOf("hour").add(3, "hours"),
@@ -59,7 +65,6 @@ const useGantt = () => {
       .utc() // Convert to UTC
       .toISOString();
 
-
     const callBack = (res) => {
       if (res.success) {
         setGroups(res.data.groups);
@@ -80,18 +85,25 @@ const useGantt = () => {
   };
 
   const handleItemResize = async (itemId, time, edge) => {
-    const callBack = (res) => {
-      setLoadingItemId("");
-      if (res.success) {
-        getData(currentMonth.month()).then();
-      } else {
-        setItems((prevState) =>
-          prevState.map((j) => (j.id === updatedItem.id ? updatedItem : j))
-        );
-      }
-    };
     setLoadingItemId(itemId);
     const updatedItem = items.find((j) => j.id === itemId);
+
+    if (!updatedItem) {
+      setLoadingItemId("");
+      return;
+    }
+
+    // Calculate the new times first - use the same format as the original API
+    const newStartTime =
+      edge === "left"
+        ? moment(time).utc().format("YYYY-MM-DD HH:mm:ss")
+        : updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss");
+    const newEndTime =
+      edge === "right"
+        ? moment(time).utc().format("YYYY-MM-DD HH:mm:ss")
+        : updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss");
+
+    // Update local state immediately for UI responsiveness
     const updatedItems = items.map((item) =>
       item.id === itemId
         ? edge === "left"
@@ -100,94 +112,191 @@ const useGantt = () => {
         : item
     );
     setItems(updatedItems);
-    if (updatedItem) {
-      await updateJobTimeApi(callApi, callBack, {
-        id: updatedItem.id,
-        startDate: updatedItem.start_time.toDate().toLocaleString(),
-        endDate: new Date(time).toLocaleString(),
-      });
-    }
+
+    // Get the actionId from the group mapping
+    const currentGroupForAction = groups.find(
+      (g) => g.id === updatedItem.group
+    );
+    const actionId = currentGroupForAction?.parent || updatedItem.id;
+
+    updateTimeChange(
+      itemId, // Use itemId as unique key
+      actionId,
+      updatedItem.boardMissionId || updatedItem.id, // fallback to itemId if boardMissionId not available
+      newStartTime,
+      newEndTime,
+      updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+      updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+      `Time slot modification - ${
+        edge === "left" ? "start" : "end"
+      } time changed`
+    );
+
+    setLoadingItemId("");
   };
 
+  //!here most important
   const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
     const updatedItem = items.find((j) => j.id === itemId);
-    const callBack = (res) => {
-      setLoadingItemId("");
-      if (res.success) {
-        getData(currentMonth.month()).then();
-      } else {
-        setItems((prevState) =>
-          prevState.map((j) => (j.id === updatedItem.id ? updatedItem : j))
-        );
-      }
-    };
-    if (updatedItem.group !== groups[newGroupOrder].id) {
+
+    if (!updatedItem) {
       return;
     }
-    setLoadingItemId(itemId);
-    if (updatedItem) {
-      const updatedItems = items.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              start_time: moment(dragTime),
-              end_time: moment(dragTime).add(
-                item.end_time.diff(item.start_time),
-                "milliseconds"
-              ),
-              group: groups[newGroupOrder].id,
-            }
-          : item
-      );
-      setItems(updatedItems);
 
-      await updateJobTimeApi(callApi, callBack, {
-        id: updatedItem.id,
-        startDate: moment(dragTime),
-        endDate: moment(dragTime).add(
-          updatedItem.end_time.diff(updatedItem.start_time),
-          "milliseconds"
-        ),
-      });
+    const newGroup = groups[newGroupOrder];
+    if (!newGroup) {
+      return;
     }
+
+    // Check if moving within the same parent category
+    const currentGroup = groups.find((g) => g.id === updatedItem.group);
+    const isSameParent =
+      currentGroup && newGroup.parent === currentGroup.parent;
+
+    // Allow moving if it's the same group OR if it's within the same parent category
+    if (updatedItem.group !== newGroup.id && !isSameParent) {
+      return;
+    }
+
+    setLoadingItemId(itemId);
+
+    // Update local state immediately for UI responsiveness
+    const newStartTime = moment(dragTime);
+    const newEndTime = moment(dragTime).add(
+      updatedItem.end_time.diff(updatedItem.start_time),
+      "milliseconds"
+    );
+
+    const updatedItems = items.map((item) =>
+      item.id === itemId
+        ? {
+            ...item,
+            start_time: newStartTime,
+            end_time: newEndTime,
+            group: newGroup.id,
+          }
+        : item
+    );
+
+    setItems(updatedItems);
+
+    // Get the actionId from the group mapping
+    const currentGroupForAction = groups.find(
+      (g) => g.id === updatedItem.group
+    );
+    const actionId = currentGroupForAction?.parent || updatedItem.id;
+
+    // Check if this is a resource change (group change)
+    const isResourceChange = updatedItem.group !== newGroup.id;
+
+    // Check if this is a time change (start or end time changed)
+    const isTimeChange =
+      !updatedItem.start_time.isSame(newStartTime) ||
+      !updatedItem.end_time.isSame(newEndTime);
+
+    if (isResourceChange && isTimeChange) {
+      debugger;
+
+      // Combined change: Resource + Time
+      // Determine if it's an employee or machine change
+      const currentGroupId = updatedItem.group.split(",")[1];
+      const newGroupId = newGroup.id.split(",")[1];
+      const isCurrentEmployee = currentGroupId && currentGroupId.includes("-");
+      const isNewEmployee = newGroupId && newGroupId.includes("-");
+
+      let changeType: "employee" | "machine" | "resource";
+      let reason: string;
+
+      if (isCurrentEmployee && isNewEmployee) {
+        changeType = "employee";
+        reason = `Employee and time changed from ${
+          currentGroup?.title || "Unknown"
+        } to ${newGroup.title}`;
+      } else if (!isCurrentEmployee && !isNewEmployee) {
+        changeType = "machine";
+        reason = `Machine and time changed from ${
+          currentGroup?.title || "Unknown"
+        } to ${newGroup.title}`;
+      } else {
+        changeType = "resource";
+        reason = `Resource and time changed from ${
+          currentGroup?.title || "Unknown"
+        } to ${newGroup.title}`;
+      }
+
+      // Add combined change with both resource and time information
+      addLocalChange(
+        itemId, // Use itemId as unique key
+        actionId,
+        updatedItem.boardMissionId || updatedItem.id,
+        changeType,
+        newGroup.id,
+        updatedItem.group,
+        reason,
+        newStartTime.utc().format("YYYY-MM-DD HH:mm:ss"),
+        newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
+        updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss")
+      );
+    } else if (isResourceChange) {
+      debugger;
+
+      // Only resource change (no time change)
+      const currentGroupId = updatedItem.group.split(",")[1];
+      const newGroupId = newGroup.id.split(",")[1];
+      const isCurrentEmployee = currentGroupId && currentGroupId.includes("-");
+      const isNewEmployee = newGroupId && newGroupId.includes("-");
+
+      let changeType: "employee" | "machine" | "resource";
+      let reason: string;
+
+      if (isCurrentEmployee && isNewEmployee) {
+        changeType = "employee";
+        reason = `Employee changed from ${
+          currentGroup?.title || "Unknown"
+        } to ${newGroup.title}`;
+      } else if (!isCurrentEmployee && !isNewEmployee) {
+        changeType = "machine";
+        reason = `Machine changed from ${currentGroup?.title || "Unknown"} to ${
+          newGroup.title
+        }`;
+      } else {
+        changeType = "resource";
+        reason = `Resource changed from ${
+          currentGroup?.title || "Unknown"
+        } to ${newGroup.title}`;
+      }
+
+      addLocalChange(
+        itemId, // Use itemId as unique key
+        actionId,
+        updatedItem.boardMissionId || updatedItem.id,
+        changeType,
+        newGroup.id,
+        updatedItem.group,
+        reason
+      );
+    } else if (isTimeChange) {
+      debugger;
+      // Only time change (no resource change)
+      updateTimeChange(
+        itemId, // Use itemId as unique key
+        actionId,
+        updatedItem.boardMissionId || updatedItem.id,
+        newStartTime.utc().format("YYYY-MM-DD HH:mm:ss"),
+        newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
+        updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        "Time slot modification - job moved to new time slot"
+      );
+    }
+
+    setLoadingItemId("");
   };
 
   // Toggle group expansion
   const toggleGroup = (id) => {
     setOpenGroups((prevState) => ({ ...prevState, [id]: !prevState[id] }));
-  };
-
-  const handleZoomOld = ({ visibleTimeStart, visibleTimeEnd }) => {
-    const startTime = moment(visibleTimeStart);
-    const endTime = moment(visibleTimeEnd);
-    const durationHours = endTime.diff(startTime, "hours");
-    const monthsDifference = endTime.diff(startTime, "months");
-    const daysDifference = endTime.diff(startTime, "days");
-
-    if (durationHours <= 24 && durationHours > 6) {
-      // Adjust to show only 6 hours from startTime
-      const newEndTime = startTime.clone().add(6, "hours").valueOf();
-      setVisibleTimeRange({
-        start: startTime.valueOf(),
-        end: newEndTime,
-      });
-    } else {
-      // Update the time range state for other cases
-      setVisibleTimeRange({
-        start: visibleTimeStart,
-        end: visibleTimeEnd,
-      });
-    }
-    // Determine the zoom level based on the time difference
-    if (monthsDifference > 1) {
-      // alert("year");
-    } else if (monthsDifference === 1) {
-      setCurrentMonth(startTime);
-    } else if (daysDifference >= 1) {
-      // alert("day");
-    } else {
-      // alert("day"); // Default to day if no significant difference
-    }
   };
 
   const handleZoom = ({ visibleTimeStart, visibleTimeEnd }) => {
@@ -241,35 +350,6 @@ const useGantt = () => {
     setVisibleTimeRange({ start: visibleTimeStart, end: visibleTimeEnd });
   };
 
-  // const scrollTimeline = (direction) => {
-  //   const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
-  //   const startTime = moment(visibleTimeRange.start);
-  //   const endTime = moment(visibleTimeRange.end);
-  //   let scrollAmount: number;
-  //   const durationHours = endTime.diff(startTime, "hours");
-  //   const monthsDifference = endTime.diff(startTime, "months");
-  //   if (durationHours === 1) {
-  //     scrollAmount = visibleDuration;
-  //   } else if (durationHours <= 24) {
-  //     scrollAmount = visibleDuration / 6;
-  //   } else if (monthsDifference <= 1) {
-  //     scrollAmount = visibleDuration / 30;
-  //   } else {
-  //     scrollAmount = visibleDuration / 12;
-  //   }
-  //   if (direction === "left") {
-  //     setVisibleTimeRange((prevState) => ({
-  //       start: prevState.start - scrollAmount,
-  //       end: prevState.end - scrollAmount,
-  //     }));
-  //   } else if (direction === "right") {
-  //     setVisibleTimeRange((prevState) => ({
-  //       start: prevState.start + scrollAmount,
-  //       end: prevState.end + scrollAmount,
-  //     }));
-  //   }
-  // };
-
   const handleClickZoom = (direction) => {
     const MAX_ZOOM_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months
     const MIN_ZOOM_DURATION = 1000 * 60 * 5; // 5 minutes minimum zoom
@@ -303,7 +383,6 @@ const useGantt = () => {
     getGanttData();
   }, [filtersState.stations]);
 
-  /************************************ NEW *******************************/
   const [activeTab, setActiveTab] = useState(TimeFrameTabs.DAY);
 
   const timeFrameTabs: ITab[] = [
@@ -340,16 +419,6 @@ const useGantt = () => {
         }))
       );
     }
-  };
-
-  const handleItemSelectNew = (itemId) => {
-    setItems((prevItems) =>
-      prevItems.map((item) => ({
-        ...item,
-        selected: item.id === itemId,
-        isHasSelected: true,
-      }))
-    );
   };
 
   const handleItemDeselect = () => {
@@ -522,6 +591,10 @@ const useGantt = () => {
     timeFrameTabs,
     dir,
     isRTL,
+    // Rescheduling functionality
+    hasLocalChanges,
+    submitRescheduleActions,
+    isSubmitting,
   };
 };
 

@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { Skeleton, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import { IGanttJob } from "@/widgets/production-floor/views/gantt-view/interface";
+import { IGanttJob } from "@/widgets/production-floor/views/gantt-view/interfaces";
 import { Instance } from "@popperjs/core";
 import { useRef } from "react";
 import { toRgba } from "@/utils/helpers";
