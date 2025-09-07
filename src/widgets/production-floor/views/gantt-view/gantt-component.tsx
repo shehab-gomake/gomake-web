@@ -36,7 +36,13 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import RestoreIcon from "@mui/icons-material/Restore";
 import EventIcon from "@mui/icons-material/Event";
 import { TimeFrameTabs } from "./state";
-import { adaptPaddingRight } from "@/utils/adapter";
+import {
+  adaptLeft,
+  adaptMarginLeft,
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  adaptRight,
+} from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const { classes } = useStyle();
@@ -403,7 +409,7 @@ const TimelineWidget = () => {
                       transform: "translateY(-1px)",
                     },
                     "& .MuiButton-startIcon": {
-                      marginRight: "8px",
+                      ...adaptMarginLeft(dir, 1),
                     },
                     "& .MuiSvgIcon-root": {
                       color: activeTab === index ? "#2e3092" : "white",
@@ -493,7 +499,10 @@ const TimelineWidget = () => {
           <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
           </IconButton>
-          <Stack padding={"0px 8px 0px 0px"} gap={"5px"}>
+          <Stack
+            padding={dir === "rtl" ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
+            gap={"5px"}
+          >
             <AddIcon
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
@@ -582,7 +591,7 @@ const TimelineWidget = () => {
                       justifyContent: "space-between",
                       alignItems: "center",
                       width: "280px",
-                      ...adaptPaddingRight(dir, 3),
+                      paddingLeft: "24px",
                       backgroundColor: "#F8F9FA",
                       ...FONT_FAMILY.Inter(600, 14),
                       color: "#495057",
@@ -596,7 +605,7 @@ const TimelineWidget = () => {
                       alignItems={"center"}
                       style={{
                         height: "60px",
-                        right: 0,
+                        ...adaptRight(dir, 0),
                         pointerEvents: "auto",
                         zIndex: 10,
                         background: "#fff",
