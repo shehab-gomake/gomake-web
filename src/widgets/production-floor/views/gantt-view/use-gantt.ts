@@ -75,8 +75,8 @@ const useGantt = (reschedulingHook?: any) => {
         setItems(
           res.data.items?.map((item) => ({
             ...item,
-            start_time: moment(item.startTime),
-            end_time: moment(item.endTime),
+            start_time: moment(item.startTime).local(),
+            end_time: moment(item.endTime).local(),
           }))
         );
       }
@@ -97,15 +97,15 @@ const useGantt = (reschedulingHook?: any) => {
       return;
     }
 
-    // Calculate the new times first - use the same format as the original API
+    // Calculate the new times - use ISO 8601 format but keep local timezone
     const newStartTime =
       edge === "left"
-        ? moment(time).utc().format("YYYY-MM-DD HH:mm:ss")
-        : updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss");
+        ? moment(time).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+        : updatedItem.start_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
     const newEndTime =
       edge === "right"
-        ? moment(time).utc().format("YYYY-MM-DD HH:mm:ss")
-        : updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss");
+        ? moment(time).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+        : updatedItem.end_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 
     // Update local state immediately for UI responsiveness
     const updatedItems = items.map((item) =>
@@ -129,8 +129,8 @@ const useGantt = (reschedulingHook?: any) => {
       updatedItem.boardMissionId || updatedItem.id, // fallback to itemId if boardMissionId not available
       newStartTime,
       newEndTime,
-      updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
-      updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+      updatedItem.start_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+      updatedItem.end_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
       `Time slot modification - ${
         edge === "left" ? "start" : "end"
       } time changed`,
@@ -200,8 +200,6 @@ const useGantt = (reschedulingHook?: any) => {
       !updatedItem.end_time.isSame(newEndTime);
 
     if (isResourceChange && isTimeChange) {
-      debugger;
-
       // Combined change: Resource + Time
       // Determine if it's an employee or machine change
       const currentGroupId = updatedItem.group.split(",")[1];
@@ -238,15 +236,13 @@ const useGantt = (reschedulingHook?: any) => {
         newGroup.id,
         updatedItem.group,
         reason,
-        newStartTime.utc().format("YYYY-MM-DD HH:mm:ss"),
-        newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
-        updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
-        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        newStartTime.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        newEndTime.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        updatedItem.start_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        updatedItem.end_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         updatedItem.productType // Pass productType from job data
       );
     } else if (isResourceChange) {
-      debugger;
-
       // Only resource change (no time change)
       const currentGroupId = updatedItem.group.split(",")[1];
       const newGroupId = newGroup.id.split(",")[1];
@@ -288,16 +284,15 @@ const useGantt = (reschedulingHook?: any) => {
         updatedItem.productType // Pass productType from job data
       );
     } else if (isTimeChange) {
-      debugger;
       // Only time change (no resource change)
       updateTimeChange(
         itemId, // Use itemId as unique key
         actionId,
         updatedItem.boardMissionId || updatedItem.id,
-        newStartTime.utc().format("YYYY-MM-DD HH:mm:ss"),
-        newEndTime.utc().format("YYYY-MM-DD HH:mm:ss"),
-        updatedItem.start_time.utc().format("YYYY-MM-DD HH:mm:ss"),
-        updatedItem.end_time.utc().format("YYYY-MM-DD HH:mm:ss"),
+        newStartTime.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        newEndTime.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        updatedItem.start_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        updatedItem.end_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         "Time slot modification - job moved to new time slot",
         updatedItem.productType // Pass productType from job data
       );
