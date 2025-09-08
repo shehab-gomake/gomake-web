@@ -138,12 +138,7 @@ const QrCodeReader = (props: IProps) => {
             setOpenMarkReadyModal(false);
             if (res?.success) {
                 alertSuccessUpdate();
-                if (
-                    selectedMission.productType === "" ||
-                    !selectedMission.productType
-                ) {
-                    setOpenPackagesModal(true);
-                }
+                setOpenPackagesModal(true);
                 // handleRemoveBoardMission(selectedMissionId);
             } else {
                 alertFaultUpdate();
@@ -152,7 +147,7 @@ const QrCodeReader = (props: IProps) => {
         await moveBoardMissionToDoneApi(callApi, callBack, {
             boardMissionId: selectedMission.id || selectedMission.boardMissionId,
             sendMessage,
-            productType: selectedMission.productType ?? "",
+            productType: "",
             storage: selectedMission.storage ?? "",
         });
     };
