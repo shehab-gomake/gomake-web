@@ -55,6 +55,7 @@ const DropDownListParameterWidget = ({
   setDeviceSize,
   multiParameterModal,
 }: any) => {
+  console.log("parameter", parameter);
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState(
     index !== -1
@@ -69,7 +70,7 @@ const DropDownListParameterWidget = ({
   }, [parameter, index,]);
 
   useEffect(() => {
-    if (parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
+    if (parameter?.parameterType === EParameterTypes.MACHINES_SELECT || (parameter?.code === "devicesize" || parameter?.code === "devicecategory")) {
       setSelectedValue(
         (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : parameter.valuesConfigs.find((item) => item.isDefault)
       );
