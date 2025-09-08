@@ -52,7 +52,8 @@ const useStyle = () => {
         padding: "5px 16px",
         borderRadius: "8px",
         width: "100%",
-        backgroundColor: primaryColor(300),
+        backgroundColor: "#FFF",
+        color: "#000",
       },
       addNoteBtn: {
         color: "#344054",
