@@ -483,7 +483,7 @@ const BoardMissionsStationActionItem = ({
               justifyContent={"space-between"}
               style={{
                 ...classes.actionContainer,
-                border: selected ? classes.actionContainerBorder : "unset",
+                border: selected ? classes.actionContainerBorder : "1px solid #D0D5DD",
               }}
             >
               <Stack
@@ -493,13 +493,30 @@ const BoardMissionsStationActionItem = ({
                 flexWrap={"wrap"}
               >
                 <Stack
+                  direction={"row"}
+                  gap={"12px"}
+                  flexWrap={"nowrap"}
+                  minWidth={"fit-content"}
+                >
+                  <IconButton
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={classes.toggleSubWorkFlowActionButton}
+                  >
+                    {isOpen ? (
+                      <KeyboardArrowUpIcon />
+                    ) : (
+                      <KeyboardArrowDownIcon />
+                    )}
+                  </IconButton>
+                </Stack>
+                <Stack
                   style={classes.sectionTitle}
                   direction={"row"}
                   alignItems={"center"}
                   gap={"10px"}
                 >
                   <span
-                    style={{ color: "#FFF", ...FONT_FAMILY.Inter(500, 14) }}
+                    style={{ color: "#000", ...FONT_FAMILY.Inter(500, 14) }}
                   >
                     {actionName}
                   </span>
@@ -507,9 +524,9 @@ const BoardMissionsStationActionItem = ({
                 <Divider
                   orientation={"vertical"}
                   flexItem
-                  style={{ background: "#FFF" }}
+                  style={{ background: "#000" }}
                 />
-                <span style={{ ...classes.detailValue, color: "#FFFF" }}>
+                <span style={{ ...classes.detailValue, color: "#000" }}>
                   {DateFormatterShort(convertUtcToLocalIsoString(dueDate))}
                 </span>
                 {isDone && (
@@ -604,23 +621,7 @@ const BoardMissionsStationActionItem = ({
                     </div>
                   )}
                 </PermissionCheck>
-                <Stack
-                  direction={"row"}
-                  gap={"12px"}
-                  flexWrap={"nowrap"}
-                  minWidth={"fit-content"}
-                >
-                  <IconButton
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={classes.toggleSubWorkFlowActionButton}
-                  >
-                    {isOpen ? (
-                      <KeyboardArrowUpIcon />
-                    ) : (
-                      <KeyboardArrowDownIcon />
-                    )}
-                  </IconButton>
-                </Stack>
+
               </Stack>
             </Stack>
           </Fade>
