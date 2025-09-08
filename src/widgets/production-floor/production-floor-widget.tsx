@@ -64,14 +64,14 @@ const ProductionFloorWidget = () => {
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
 
-  const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<string | null>(null);
-
+  const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (boardMissionsId) {
       setSelectedBoardMissionId(boardMissionsId as string);
-    }
-    else if (!boardMissionsId) {
+    } else if (!boardMissionsId) {
       setSelectedBoardMissionId(null);
     }
   }, [boardMissionsId]);
