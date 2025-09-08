@@ -24,7 +24,7 @@ import {
 } from "@/widgets/production-floor/state/filter-group";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
-import { ModalEditGroup } from "./edit-group-modal";
+import { EditGroupModal } from "./components/edit-group-modal";
 import { AgentsList } from "@/widgets/agents/agents-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
@@ -314,8 +314,7 @@ const ProductionFloorFilters = ({
         handleUserSelect={handleUserSelect}
         duplicateStationFilterByGroupId={duplicateStationFilterByGroupId}
       />
-
-      <ModalEditGroup
+      <EditGroupModal
         openModalEditGroup={openModalEditGroup}
         onClickCloseModalEditGroup={onClickCloseModalEditGroup}
         handleCloseMenu={handleCloseMenu}
