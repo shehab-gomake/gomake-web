@@ -83,7 +83,7 @@ const QrCodeReader = (props: IProps) => {
             const callBack = async (res) => {
                 setSelectedMission(res?.data);
                 if (res?.success) {
-                    if (props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId")) {
+                    if (props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId") && router?.query?.boardMissionsId === res?.data?.boardMissionId) {
                         if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
                             if (stations?.length > 0) {
                                 await handleBoardMissionsBarcodeActionsFunction(barcode, res?.data);
