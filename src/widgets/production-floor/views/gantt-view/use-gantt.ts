@@ -21,6 +21,10 @@ const useGantt = (reschedulingHook?: any) => {
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
 
+  // Modal state
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [showRecoverModal, setShowRecoverModal] = useState(false);
+
   // Use rescheduling hook if provided, otherwise create empty functions
   const {
     addLocalChange = () => {},
@@ -599,10 +603,13 @@ const useGantt = (reschedulingHook?: any) => {
     timeFrameTabs,
     dir,
     isRTL,
-    // Rescheduling functionality
     hasLocalChanges,
     submitRescheduleActions,
     isSubmitting,
+    showRecoverModal,
+    setShowRecoverModal,
+    showRescheduleModal,
+    setShowRescheduleModal,
   };
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Timeline, {
   TimelineHeaders,
   SidebarHeader,
@@ -43,6 +43,8 @@ import {
   adaptPaddingRight,
   adaptRight,
 } from "@/utils/adapter";
+import { GoMakeDeleteModal } from "@/components/modal-deleted";
+import { ModalType } from "@/enums";
 
 const TimelineWidget = () => {
   const { classes } = useStyle();
@@ -78,9 +80,13 @@ const TimelineWidget = () => {
     timeFrameTabs,
     scrollTimeline,
     dir,
+    isRTL,
+    showRecoverModal,
+    setShowRecoverModal,
+    showRescheduleModal,
+    setShowRescheduleModal,
   } = useGantt(reschedulingHook);
 
-  // Extract rescheduling functionality
   const {
     hasLocalChanges,
     submitRescheduleActions,
@@ -344,15 +350,11 @@ const TimelineWidget = () => {
           <Stack sx={classes.dateSelector}>
             {/* Previous button */}
             <IconButton
-              onClick={() => navigateTimeline(dir === "rtl" ? 1 : -1)}
+              onClick={() => navigateTimeline(isRTL ? 1 : -1)}
               size="small"
               sx={classes.dateSelectorButton}
             >
-              {dir === "rtl" ? (
-                <KeyboardArrowRightIcon />
-              ) : (
-                <KeyboardArrowLeftIcon />
-              )}
+              {isRTL ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
             </IconButton>
 
             <Typography variant="body1" sx={classes.dateLabel}>
@@ -361,15 +363,11 @@ const TimelineWidget = () => {
 
             {/* Next button */}
             <IconButton
-              onClick={() => navigateTimeline(dir === "rtl" ? -1 : 1)}
+              onClick={() => navigateTimeline(isRTL ? -1 : 1)}
               size="small"
               sx={classes.dateSelectorButton}
             >
-              {dir === "rtl" ? (
-                <KeyboardArrowLeftIcon />
-              ) : (
-                <KeyboardArrowRightIcon />
-              )}
+              {isRTL ? <KeyboardArrowLeftIcon /> : <KeyboardArrowRightIcon />}
             </IconButton>
           </Stack>
 
@@ -437,17 +435,7 @@ const TimelineWidget = () => {
               variant="contained"
               startIcon={<BoltIcon />}
               disabled={!hasLocalChanges() || isSubmitting}
-              onClick={async () => {
-                const success = await submitRescheduleActions();
-                if (success) {
-                  // Success: refresh the data
-                  getData(currentMonth.clone().month());
-                } else {
-                  // Failure: revert to original state and clear local changes
-                  getData(currentMonth.clone().month()); // Refresh to get original data
-                  clearAllLocalChanges(); // Clear the local changes payload
-                }
-              }}
+              onClick={() => setShowRescheduleModal(true)}
               sx={{
                 backgroundColor: "#FD7E14",
                 "&:hover": { backgroundColor: "#E8690B" },
@@ -456,8 +444,8 @@ const TimelineWidget = () => {
                   color: "#666",
                 },
                 "& .MuiButton-startIcon": {
-                  marginRight: dir === "rtl" ? 0 : "8px",
-                  marginLeft: dir === "rtl" ? "8px" : 0,
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
                 },
                 textTransform: "none",
                 fontWeight: 600,
@@ -470,11 +458,7 @@ const TimelineWidget = () => {
               variant="contained"
               startIcon={<RestoreIcon />}
               disabled={isRecovering}
-              onClick={async () => {
-                await recoverOverdue(() => {
-                  getData(currentMonth.clone().month());
-                });
-              }}
+              onClick={() => setShowRecoverModal(true)}
               sx={{
                 backgroundColor: "#DC3545",
                 "&:hover": { backgroundColor: "#C82333" },
@@ -483,8 +467,8 @@ const TimelineWidget = () => {
                   color: "#666",
                 },
                 "& .MuiButton-startIcon": {
-                  marginRight: dir === "rtl" ? 0 : "8px",
-                  marginLeft: dir === "rtl" ? "8px" : 0,
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
                 },
                 textTransform: "none",
                 fontWeight: 600,
@@ -518,7 +502,7 @@ const TimelineWidget = () => {
             <ChevronRightIcon />
           </IconButton>
           <Stack
-            padding={dir === "rtl" ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
+            padding={isRTL ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
             gap={"5px"}
           >
             <AddIcon
@@ -664,6 +648,38 @@ const TimelineWidget = () => {
           </TimelineHeaders>
         </Timeline>
       </div>
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showRescheduleModal}
+        onClose={() => setShowRescheduleModal(false)}
+        title="productionFloor.confirmReschedule"
+        subTitle="productionFloor.confirmRescheduleMessage"
+        onClickDelete={async () => {
+          const success = await submitRescheduleActions();
+          if (success) {
+            // Success: refresh the data
+            getData(currentMonth.clone().month());
+          } else {
+            // Failure: revert to original state and clear local changes
+            getData(currentMonth.clone().month()); // Refresh to get original data
+            clearAllLocalChanges(); // Clear the local changes payload
+          }
+        }}
+        yesBtn={t("sales.quote.Confirm")}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showRecoverModal}
+        onClose={() => setShowRecoverModal(false)}
+        title="productionFloor.confirmRecoverOverdue"
+        subTitle="productionFloor.confirmRecoverOverdueMessage"
+        onClickDelete={async () => {
+          await recoverOverdue(() => {
+            getData(currentMonth.clone().month());
+          });
+        }}
+        yesBtn={t("sales.quote.Confirm")}
+      />
     </Stack>
   );
 };
