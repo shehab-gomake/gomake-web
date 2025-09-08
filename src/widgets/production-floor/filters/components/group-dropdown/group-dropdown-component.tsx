@@ -90,18 +90,20 @@ export const GroupDropdownComponent = ({
             },
             sx: {
               "&::-webkit-scrollbar": {
-                width: "6px",
+                width: "8px",
               },
               "&::-webkit-scrollbar-track": {
-                background: "#f1f1f1",
-                borderRadius: "3px",
+                background: "white",
               },
               "&::-webkit-scrollbar-thumb": {
-                background: "#c1c1c1",
-                borderRadius: "3px",
+                background: "#EAECF0",
+                borderRadius: "8px",
               },
               "&::-webkit-scrollbar-thumb:hover": {
-                background: "#a8a8a8",
+                background: "#b0b0b0",
+              },
+              "&::-webkit-scrollbar-button": {
+                display: "none",
               },
             },
           },
