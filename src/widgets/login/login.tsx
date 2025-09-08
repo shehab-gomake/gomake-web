@@ -27,9 +27,8 @@ const LoginWidget = () => {
   const loginLink = useMemo(() => {
     if (!data) return "";
     const isBrowser = typeof window !== "undefined";
-    const protocol = isBrowser ? window.location.protocol : "https:";
-    const origin = isBrowser ? window.location.origin : "";
-    const base = data.domain ? `${protocol}//${data.domain}` : origin;
+    const origin = data.domain;
+    const base = data.domain ? `https//${data.domain}` : origin;
     if (!base) return "";
     const url = new URL("/login", base);
     if (data?.username) url.searchParams.set("email", data.username);
