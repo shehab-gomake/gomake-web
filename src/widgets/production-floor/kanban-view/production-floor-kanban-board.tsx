@@ -215,7 +215,6 @@ const ProductionFloorKanbanBoard = () => {
     return updatedCategories;
   }, [organizeMissionsByStation, dynamicCategories]);
 
-  //!here
   useEffect(() => {
     setFilteredMissionsBySearch(filteredMissions);
     if (filteredMissions?.length === 0 && search && search.trim() !== "") {
