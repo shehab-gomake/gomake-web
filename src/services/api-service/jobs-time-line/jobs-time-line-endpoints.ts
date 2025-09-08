@@ -1,7 +1,7 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
-import { IReschedulingRequest } from "@/interfaces";
+import { IReschedulingAction } from "@/interfaces";
 
 const GET_TIME_LINE_JOBS_URL =
   "/v1/erp-service/job-time-line/get-jobs-time-line-by-date";
@@ -34,7 +34,7 @@ const updateJobTimeApi: ICallAndSetData = async (callApi, setState, data) => {
 const rescheduleActionsApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: IReschedulingRequest
+  data: IReschedulingAction[]
 ) => {
   return await getSetApiData(
     callApi,

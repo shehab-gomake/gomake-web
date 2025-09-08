@@ -265,10 +265,6 @@ export const useRescheduling = () => {
         }
       );
 
-      const request: IReschedulingRequest = {
-        actions: rescheduleActions,
-      };
-
       let success = false;
       await rescheduleActionsApi(
         callApi,
@@ -282,7 +278,7 @@ export const useRescheduling = () => {
             success = false;
           }
         },
-        request
+        rescheduleActions
       );
 
       return success;
