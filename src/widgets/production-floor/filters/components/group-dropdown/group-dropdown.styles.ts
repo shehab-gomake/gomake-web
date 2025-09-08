@@ -5,8 +5,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 export const GroupDropdown = styled(FormControl)<{ dir?: string }>(
   ({ theme, dir }) => ({
     minWidth: "120px",
-    // border: "1px solid #d0d5dd",
-    // borderRadius: "8px",
+    border: "1px solid #d0d5dd",
+    borderRadius: "8px",
     "& .MuiOutlinedInput-root": {
       height: "35px",
       borderRadius: "4px",
