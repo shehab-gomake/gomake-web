@@ -653,7 +653,7 @@ const StatusTableComponent = ({
       />
 
       <GoMakeDeleteModal
-        title={t("boardMissions.unReadyWitNotification")}
+        title={t("boardMissions.markAsReadyJobsModalTitle")}
         yesBtn={t("modal.yes")}
         modalType={ModalType.WARNING}
         subTitle={" "}
