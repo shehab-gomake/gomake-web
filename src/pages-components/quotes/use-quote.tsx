@@ -236,6 +236,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, []);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
+  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] = useState<boolean>(false);
+  const [openScheduledReportsModal, setOpenScheduledReportsModal] = useState<boolean>(false);
+  const [scheduledReports, setScheduledReports] = useState<any[]>([]);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -351,8 +354,80 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenAddRule(false);
   };
   const onOpenAddRuleModal = () => {
+    // Check if there are active filters
+    const activeFilters = Object.keys(router.query).filter(
+      (key) => key !== "pageNumber"
+    );
+
+    if (activeFilters.length > 0) {
+      setOpenFilterConfirmationModal(true);
+    } else {
+      setOpenAddRule(true);
+    }
+  };
+
+  const onCloseFilterConfirmationModal = () => {
+    setOpenFilterConfirmationModal(false);
+  };
+
+  const onContinueWithFilters = () => {
     setOpenAddRule(true);
   };
+
+  const onResetFiltersAndGenerate = () => {
+    // Reset all filters
+    setPatternSearch("");
+    setStatusId(null);
+    setApprovalStatusId(null);
+    setCustomerId(null);
+    setAgentId(null);
+    setProductionStatus(null);
+    setAccountingStatus(null);
+    setDeliveryStatus(null);
+    setProductIds([]);
+    setCurrencyFilter(null);
+    setIsCanceledState(false);
+    setIsPausedOrders(false);
+    setMinPrice("");
+    setMaxPrice("");
+    setFromDate(null);
+    setToDate(null);
+    setPaymentType(null);
+
+    // Clear URL query parameters
+    router.push({
+      pathname: router.pathname,
+      query: {},
+    });
+
+    setOpenAddRule(true);
+  };
+
+  const onShowScheduledReports = () => {
+    setOpenScheduledReportsModal(true);
+    // TODO: Load scheduled reports from API
+    // For now, using mock data
+    setScheduledReports([]);
+  };
+
+  const onCloseScheduledReportsModal = () => {
+    setOpenScheduledReportsModal(false);
+  };
+
+  const onToggleScheduledReportActive = (id: string, isActive: boolean) => {
+    setScheduledReports(prev =>
+      prev.map(report =>
+        report.id === id ? { ...report, isActive } : report
+      )
+    );
+    // TODO: Call API to update report status
+  };
+
+  const onDeleteScheduledReport = (id: string) => {
+    setScheduledReports(prev => prev.filter(report => report.id !== id));
+    // TODO: Call API to delete report
+  };
+
   const handlePageSizeChange = (event) => {
     setPage(1);
     setPageSize(event.target.value);
@@ -3978,6 +4053,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseAddRuleModal,
     onOpenAddRuleModal,
     openAddRule,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openScheduledReportsModal,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    scheduledReports,
     navigate,
     documentPath,
     resetDatePicker,

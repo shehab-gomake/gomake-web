@@ -33,6 +33,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
+import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -112,6 +113,16 @@ const QuotesListPageWidget = ({
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openScheduledReportsModal,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    scheduledReports,
     navigate,
     onClickQuotePdf,
     allQuotes,
@@ -940,8 +951,29 @@ const QuotesListPageWidget = ({
           onCloseModal={onCloseAddRuleModal}
           isQuoteWidge={true}
           filterData={filterData}
+          documentType={documentType}
+          onShowScheduledReports={onShowScheduledReports}
         />
       )}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.list.filterConfirmationTitle")}
+        subTitle={t(" ")}
+        yesBtn={t("sales.list.continueWithCurrentFilters")}
+        cancelBtn={t("sales.list.resetFiltersAndGenerate")}
+        openModal={openFilterConfirmationModal}
+        onClose={onCloseFilterConfirmationModal}
+        onClickDelete={onContinueWithFilters}
+        onClickCancel={onResetFiltersAndGenerate}
+        style={{ width: "35%" }}
+      />
+      <ScheduledReportsTable
+        openModal={openScheduledReportsModal}
+        onCloseModal={onCloseScheduledReportsModal}
+        scheduledReports={scheduledReports}
+        onToggleActive={onToggleScheduledReportActive}
+        onDelete={onDeleteScheduledReport}
+      />
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
