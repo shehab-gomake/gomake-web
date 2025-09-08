@@ -9,7 +9,7 @@ const UPDATE_JOB_TIME_URL = "/v1/erp-service/job-time-line/update-job-time";
 const RESCHEDULE_ACTIONS_URL =
   "/v1/timeline-service/job-rescheduling/reschedule-actions";
 const RECOVER_OVERDUE_URL =
-  "/v1/timeline-service/job-rescheduling/re-cover-overdue";
+  "/v1/timeline-service/job-rescheduling/recover-overdue";
 
 const getTimeLineJobsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
