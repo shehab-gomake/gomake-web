@@ -28,7 +28,7 @@ const LoginWidget = () => {
     if (!data) return "";
     const isBrowser = typeof window !== "undefined";
     const origin = data.domain;
-    const base = data.domain ? `https//${data.domain}` : origin;
+    const base = data.domain ? `https://${data.domain}` : origin;
     if (!base) return "";
     debugger
     let url =base+"/login";
