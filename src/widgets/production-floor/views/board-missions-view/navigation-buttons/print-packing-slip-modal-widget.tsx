@@ -39,6 +39,12 @@ const PrintPackingSlipModalWidget = ({
 
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
+
+    // Validate input - only allow positive numbers
+    if (isNaN(newQuantityOfPackages) || newQuantityOfPackages <= 0) {
+      return;
+    }
+
     const totalQuantity = quantity || 0;
     const newQuantityPerPackage = Math.ceil(
       totalQuantity / newQuantityOfPackages
@@ -49,16 +55,18 @@ const PrintPackingSlipModalWidget = ({
 
   const handleQuantityPerPackageChange = (event) => {
     const newQuantityPerPackage = parseInt(event.target.value, 10);
+
+    // Validate input - only allow positive numbers
+    if (isNaN(newQuantityPerPackage) || newQuantityPerPackage <= 0) {
+      return;
+    }
+
     const totalQuantity = quantity;
     const newQuantityOfPackages = Math.ceil(
       totalQuantity / newQuantityPerPackage
     );
-    setQuantityPerPackage(
-      isNaN(newQuantityPerPackage) ? 0 : newQuantityPerPackage
-    );
-    setQuantityOfPackages(
-      isNaN(newQuantityOfPackages) ? 1 : newQuantityOfPackages
-    );
+    setQuantityPerPackage(newQuantityPerPackage);
+    setQuantityOfPackages(newQuantityOfPackages);
   };
   const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
     const initialQuantityPerPackage = quantity
@@ -88,6 +96,11 @@ const PrintPackingSlipModalWidget = ({
   }, [quantity, quantityPerPackage]);
 
   const handlePackageQuantityChange = (index: number, newValue: number) => {
+    // Validate input - only allow non-negative numbers
+    if (isNaN(newValue) || newValue < 0) {
+      return;
+    }
+
     setPackageQuantities((prevQuantities) => {
       const updatedQuantities = [...prevQuantities];
       updatedQuantities[index] = newValue;
@@ -104,7 +117,7 @@ const PrintPackingSlipModalWidget = ({
     });
   };
   const packageInputs = useMemo(() => {
-    if (quantityOfPackages) {
+    if (quantityOfPackages && quantityOfPackages > 0 && !isNaN(quantityOfPackages)) {
       return [...Array(quantityOfPackages)].map((_, index) => (
         <div key={index} style={{ width: "30%" }}>
           <h3 style={classes.packageLabelStyle}>
@@ -112,7 +125,7 @@ const PrintPackingSlipModalWidget = ({
           </h3>
           <GomakeTextInput
             type="number"
-            value={packageQuantities[index]}
+            value={packageQuantities[index] || 0}
             onChange={(e) => {
               const newValue = parseInt(e.target.value, 10);
               handlePackageQuantityChange(index, newValue);
