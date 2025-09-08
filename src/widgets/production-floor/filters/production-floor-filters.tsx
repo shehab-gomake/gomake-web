@@ -208,6 +208,23 @@ const GroupDropdownComponent = ({
             style: {
               maxHeight: "300px",
               width: "250px",
+              overflowY: "auto",
+            },
+            sx: {
+              "&::-webkit-scrollbar": {
+                width: "6px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1",
+                borderRadius: "3px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#c1c1c1",
+                borderRadius: "3px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#a8a8a8",
+              },
             },
           },
         }}
