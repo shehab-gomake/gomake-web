@@ -1,8 +1,8 @@
 export interface IReschedulingChanges {
-  NewEmployeeId?: string;
-  NewMachineId?: string;
-  NewStartTime?: string;
-  NewEndTime?: string;
+  newEmployeeId?: string;
+  newMachineId?: string;
+  newStartTime?: string;
+  newEndTime?: string;
 }
 
 export interface IReschedulingAction {

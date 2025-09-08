@@ -248,10 +248,10 @@ export const useRescheduling = () => {
             boardMissionId: change.boardMissionId,
             type: change.type,
             changes: {
-              NewEmployeeId: newEmployeeId,
-              NewMachineId: newMachineId,
-              NewStartTime: change.newStartTime,
-              NewEndTime: change.newEndTime,
+              newEmployeeId: newEmployeeId,
+              newMachineId: newMachineId,
+              newStartTime: change.newStartTime,
+              newEndTime: change.newEndTime,
             },
             reason: change.reason || "",
           };
