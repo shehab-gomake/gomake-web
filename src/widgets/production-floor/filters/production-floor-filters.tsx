@@ -2,15 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
-  Card,
-  CardContent,
   Typography,
-  Menu,
   IconButton,
   Paper,
   MenuItem,
   CircularProgress,
   ClickAwayListener,
+  Select,
+  FormControl,
 } from "@mui/material";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
@@ -18,7 +17,6 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { styled } from "@mui/system";
-import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
@@ -41,18 +39,16 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { useDebounce } from "@/utils/use-debounce";
-import { adaptMarginLeft, adaptMarginRight } from "@/utils/adapter";
 
-interface CustomGroupsProps {
+interface GroupDropdownComponentProps {
+  filterGroups: IFilterGroupsList[];
+  selectedGroupId: string;
+  handleSelectGroup: (groupId: string) => void;
+  handleClickMenu: (e: React.MouseEvent<HTMLElement>) => void;
+  setSelectedGroup: (group: any) => void;
+  onClickOpenModalEditGroup: () => void;
   dir?: string;
-  onClick: () => void;
-  isSelected: boolean;
-  onClickDelete: (v) => void;
-  group: IFilterGroupsList;
-  isFromMenu?: boolean;
-  handleClickMenu?: (e: React.MouseEvent<HTMLElement>) => void;
-  setSelectedGroup?: any;
-  isDoneJobs?: boolean;
+  t?: any;
 }
 
 const ScrollableDiv = styled("div")(({ theme }) => ({
@@ -77,187 +73,175 @@ const ScrollableDiv = styled("div")(({ theme }) => ({
   },
 }));
 
-const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  width: "35px",
-  height: "35px",
-  border: `1.5px solid #2E3092`,
-  borderRadius: "4px",
-  backgroundColor: toRgba("#2E3092", 0.1),
-  "& .MuiSvgIcon-root": {
-    color: "#2E3092",
-  },
-  "&:hover": {
-    backgroundColor: toRgba("#2E3092", 0.1),
-  },
+const GroupDropdown = styled(FormControl)<{ dir?: string }>(
+  ({ theme, dir }) => ({
+    minWidth: "200px",
+    // border: "1px solid #d0d5dd",
+    // borderRadius: "8px",
+    "& .MuiOutlinedInput-root": {
+      height: "35px",
+      borderRadius: "4px",
+      "& fieldset": {
+        borderColor: "#EAECF0",
+      },
+      "&:hover fieldset": {
+        borderColor: "#2E3092",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#2E3092",
+      },
+    },
+    "& .MuiSelect-select": {
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      padding: "8px 12px",
+      ...FONT_FAMILY.Inter(400, 14),
+    },
+    "& .MuiSelect-icon": {
+      ...(dir === "rtl" && {
+        right: "auto",
+        left: "7px",
+      }),
+    },
+    "& .MuiInputBase-input": {
+      ...(dir === "rtl" && {
+        paddingLeft: "32px",
+        paddingRight: "12px !important",
+      }),
+    },
+  })
+);
 
-  ...FONT_FAMILY.Inter(400, 16),
-  color: toRgba("#2E3092", 0.9),
+const ColorIndicator = styled(Box)<{ color: string }>(({ color }) => ({
+  width: "12px",
+  height: "12px",
+  borderRadius: "50%",
+  backgroundColor: color,
+  flexShrink: 0,
 }));
 
-const CustomGroup = styled(Card)<{
-  isSelected?: boolean;
-  color: string;
-  isFromMenu: boolean;
-}>(({ isSelected, color, isFromMenu }) => ({
-  border: isSelected ? `none` : `1.5px solid ${color}`,
-  backgroundColor: isSelected ? color : toRgba(color, 0.1),
-  borderRadius: "4px",
-  transition: "background-color 0.3s ease, border 0.3s ease",
-  cursor: "pointer",
-  boxShadow: "0px 1px 2px rgba(16, 24, 40, 0.05)",
-  padding: "0px",
-  height: "35px",
+const GroupMenuItem = styled(MenuItem)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  width: isFromMenu ? "100%" : "fit-content",
-  maxWidth: "300px",
+  padding: "8px 12px",
+  minHeight: "40px",
   "&:hover": {
-    boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
+    backgroundColor: "#F8F8F8",
   },
 }));
 
-const CustomGroupComponent = ({
-  onClick,
-  onClickDelete,
-  isSelected,
-  group,
-  dir,
-  isFromMenu,
+const GroupDropdownComponent = ({
+  filterGroups,
+  selectedGroupId,
+  handleSelectGroup,
   handleClickMenu,
   setSelectedGroup,
-  isDoneJobs,
-}: CustomGroupsProps) => {
-  // Format time as HH:MM (input is already in minutes)
-  const formatTime = (totalMinutes: number) => {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.round(totalMinutes % 60);
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}`;
+  onClickOpenModalEditGroup,
+  dir,
+  t,
+}: GroupDropdownComponentProps) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const selectedGroup = filterGroups.find(
+    (group) => group.id === selectedGroupId
+  );
+
+  const handleDropdownChange = (event: any) => {
+    const value = event.target.value;
+    if (value === "new-group") {
+      onClickOpenModalEditGroup();
+    } else {
+      handleSelectGroup(value);
+    }
+    setDropdownOpen(false);
   };
 
-  // Calculate sum of both old numbers
-  const totalCount = (group?.inProcessCount || 0) + (group?.stuckCount || 0);
+  const handleMenuClick = (
+    e: React.MouseEvent<HTMLElement>,
+    group: IFilterGroupsList
+  ) => {
+    e.stopPropagation();
+    handleClickMenu(e);
+    setSelectedGroup({
+      id: group.id,
+      name: group.name,
+      inProcessCount: group.inProcessCount || 0,
+      stuckCount: group.stuckCount || 0,
+      color: group.color || "#7355de",
+    });
+  };
 
   return (
-    <CustomGroup
-      onClick={onClick}
-      isSelected={isSelected}
-      color={group?.color}
-      isFromMenu={isFromMenu}
-    >
-      <CardContent
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          justifyContent: "space-between",
-          padding: dir === "rtl" ? "0px 8px !important" : "0px 8px !important",
-          width: "100%",
+    <GroupDropdown dir={dir}>
+      <Select
+        value={selectedGroupId || ""}
+        onChange={handleDropdownChange}
+        open={dropdownOpen}
+        onOpen={() => setDropdownOpen(true)}
+        onClose={() => setDropdownOpen(false)}
+        displayEmpty
+        renderValue={(selected) => {
+          if (!selected || !selectedGroup) {
+            return (
+              <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Typography
+                  sx={{ color: "#9CA3AF", ...FONT_FAMILY.Inter(400, 15) }}
+                >
+                  {t("productionFloor.selectGroup")}
+                </Typography>
+              </Box>
+            );
+          }
+          return (
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <ColorIndicator color={selectedGroup.color || "#7355de"} />
+              <Typography sx={{ ...FONT_FAMILY.Inter(400, 15) }}>
+                {selectedGroup.name}
+              </Typography>
+            </Box>
+          );
+        }}
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: "300px",
+              width: "250px",
+            },
+          },
         }}
       >
-        {/* First Box - Group Name */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flex: "1 1 auto",
-            minWidth: 0,
-          }}
-        >
-          <Typography
-            variant="subtitle2"
-            sx={{
-              color: isSelected ? "#FFF" : group?.color,
-              ...FONT_FAMILY.Inter(400, 14),
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              maxWidth: "100%",
-            }}
-          >
-            {group?.name}
-          </Typography>
-        </Box>
-
-        {!isDoneJobs && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              flexShrink: 0,
-            }}
-          >
-            {/* <Typography
-              variant="caption"
+        {filterGroups.map((group) => (
+          <GroupMenuItem key={group.id} value={group.id}>
+            <Box
               sx={{
-                color: isSelected ? "#FFF" : group?.color,
-                ...FONT_FAMILY.Inter(500, 12),
-                fontFamily: "monospace",
-                minWidth: "fit-content",
-                ...adaptMarginLeft(dir, 1),
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                flex: 1,
               }}
             >
-              |
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: isSelected ? "#FFF" : group?.color,
-                ...FONT_FAMILY.Inter(500, 12),
-                fontFamily: "monospace",
-                minWidth: "fit-content",
-                ...adaptMarginLeft(dir, 1),
-              }}
-            >
-              {formatTime(group?.inProcessTotalProductionTime)}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: isSelected ? "#FFF" : group?.color,
-                ...FONT_FAMILY.Inter(600, 12),
-                backgroundColor: isSelected
-                  ? "rgba(255,255,255,0.2)"
-                  : `${group?.color}15`,
-                borderRadius: "12px",
-                padding: "2px 6px",
-                minWidth: "fit-content",
-                textAlign: "center",
-                border: isSelected
-                  ? "1px solid rgba(255,255,255,0.3)"
-                  : `1px solid ${group?.color}30`,
-              }}
-            >
-              {totalCount}
-            </Typography> */}
+              <ColorIndicator color={group.color || "#7355de"} />
+              <Typography sx={{ ...FONT_FAMILY.Inter(400, 14) }}>
+                {group.name}
+              </Typography>
+            </Box>
             {group.id !== "all" && (
               <IconButton
-                onClick={(e) => {
-                  handleClickMenu(e);
-                  setSelectedGroup(group);
-                }}
+                onClick={(e) => handleMenuClick(e, group)}
                 size="small"
-                style={{
-                  padding: "2px",
-                  cursor: "pointer",
-                  ...adaptMarginRight(dir, 1),
-                }}
+                sx={{ padding: "2px" }}
               >
                 <MoreVertIcon
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: isSelected ? "#FFF" : group?.color,
-                  }}
+                  sx={{ fontSize: "16px", color: group.color || "#7355de" }}
                 />
               </IconButton>
             )}
-          </Box>
-        )}
-      </CardContent>
-    </CustomGroup>
+          </GroupMenuItem>
+        ))}
+      </Select>
+    </GroupDropdown>
   );
 };
 
@@ -278,7 +262,6 @@ const ProductionFloorFilters = ({
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
-  const [containerWidth, setContainerWidth] = useState(0);
   const [filterGroups, setFilterGroups] =
     useRecoilState<IFilterGroupsList[]>(filterGroupsState);
   const { CheckPermission } = useUserPermission();
@@ -291,19 +274,11 @@ const ProductionFloorFilters = ({
     createDateFilter,
     deliveryDateFilter,
     isRTL,
-    handleMoreClick,
-    handleClose,
-    anchorEl,
     anchorElMenu,
     openMenu,
     handleClickMenu,
     handleCloseMenu,
     setMachinesColors,
-    scrollContainerRef,
-    visibleFilterGroups,
-    setVisibleFilterGroups,
-    hiddenFilterGroups,
-    setHiddenFilterGroups,
     handleSelectGroup,
     selectedGroupId,
     missionsList,
@@ -343,6 +318,7 @@ const ProductionFloorFilters = ({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
+
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -354,69 +330,6 @@ const ProductionFloorFilters = ({
     };
     fetchMachinesColors();
   }, []);
-
-  useEffect(() => {
-    const updateContainerWidth = () => {
-      if (scrollContainerRef.current) {
-        // setContainerWidth(scrollContainerRef.current.clientWidth );
-        setContainerWidth(
-          scrollContainerRef.current.clientWidth + (isMobile ? 100 : 300)
-        );
-      }
-    };
-    updateContainerWidth();
-    window.addEventListener("resize", updateContainerWidth);
-
-    return () => {
-      window.removeEventListener("resize", updateContainerWidth);
-    };
-  }, [isMobile]);
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      let totalWidth = 0;
-      const visible: IFilterGroupsList[] = [];
-      const hidden: IFilterGroupsList[] = [];
-
-      filterGroups.forEach((item) => {
-        const {
-          id = "Unknown ID",
-          name = "Unknown Name",
-          inProcessCount = 0,
-          stuckCount = 0,
-          color = "#7355de",
-          inProcessTotalProductionTime = 0,
-        } = item;
-
-        const cardWidth = 300;
-
-        totalWidth += cardWidth;
-
-        if (totalWidth <= containerWidth) {
-          visible.push({
-            id,
-            name,
-            inProcessCount,
-            stuckCount,
-            color,
-            inProcessTotalProductionTime,
-          });
-        } else {
-          hidden.push({
-            id,
-            name,
-            inProcessCount,
-            stuckCount,
-            color,
-            inProcessTotalProductionTime,
-          });
-        }
-      });
-
-      setVisibleFilterGroups(visible);
-      setHiddenFilterGroups(hidden);
-    }
-  }, [filterGroups, containerWidth]);
 
   const getMissionsList = useCallback(() => {
     return missionsList;
@@ -462,6 +375,7 @@ const ProductionFloorFilters = ({
       setMissionsList([]);
     });
   };
+
   const [isListOpen, setIsListOpen] = useState(false);
   const searchInputRef = useRef(null);
 
@@ -594,72 +508,18 @@ const ProductionFloorFilters = ({
           placeholder={t("productionFloor.createTime")}
         />
       )}
-      <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
-        {visibleFilterGroups?.map((group, index) => (
-          <CustomGroupComponent
-            dir={dir}
-            key={"visibleGroup" + index}
-            group={group}
-            onClick={() => handleSelectGroup(group?.id)}
-            onClickDelete={(event) => {
-              event.stopPropagation();
-              handleClearClick(group?.id);
-            }}
-            isSelected={selectedGroupId === group?.id ? true : false}
-            isFromMenu={false}
-            handleClickMenu={handleClickMenu}
-            setSelectedGroup={setSelectedGroup}
-            isDoneJobs={group?.id === "doneJobs"}
-          />
-        ))}
-        {hiddenFilterGroups.length > 0 && (
-          <>
-            <CustomIconButton onClick={handleMoreClick}>
-              {/* <MoreHorizIcon /> */}+{hiddenFilterGroups.length}
-            </CustomIconButton>
-            <Menu
-              transformOrigin={{
-                horizontal: isRTL ? "left" : "right",
-                vertical: "top",
-              }}
-              anchorOrigin={{
-                horizontal: isRTL ? "left" : "right",
-                vertical: "bottom",
-              }}
-              PaperProps={{
-                style: {
-                  marginTop: 8,
-                  padding: "0px 8px",
-                  maxHeight: "438px",
-                },
-              }}
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <Stack spacing={1}>
-                {hiddenFilterGroups?.map((group, index) => (
-                  <CustomGroupComponent
-                    dir={dir}
-                    key={"hiddenGroup" + index}
-                    group={group}
-                    onClick={() => handleSelectGroup(group?.id)}
-                    onClickDelete={(event) => {
-                      event.stopPropagation();
-                      handleClearClick(group?.id);
-                    }}
-                    isSelected={selectedGroupId === group?.id ? true : false}
-                    isFromMenu={true}
-                    handleClickMenu={handleClickMenu}
-                    setSelectedGroup={setSelectedGroup}
-                    isDoneJobs={group?.id === "doneJobs"}
-                  />
-                ))}
-              </Stack>
-            </Menu>
-          </>
-        )}
-      </Box>
+      <Box sx={{ flexGrow: 1 }} />
+
+      <GroupDropdownComponent
+        filterGroups={filterGroups}
+        selectedGroupId={selectedGroupId}
+        handleSelectGroup={handleSelectGroup}
+        handleClickMenu={handleClickMenu}
+        setSelectedGroup={setSelectedGroup}
+        onClickOpenModalEditGroup={onClickOpenModalEditGroup}
+        dir={dir}
+        t={t}
+      />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
         openModal={openModal}
