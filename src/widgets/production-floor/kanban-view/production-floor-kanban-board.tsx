@@ -215,9 +215,10 @@ const ProductionFloorKanbanBoard = () => {
     return updatedCategories;
   }, [organizeMissionsByStation, dynamicCategories]);
 
+  //!here
   useEffect(() => {
     setFilteredMissionsBySearch(filteredMissions);
-    if (filteredMissions?.length === 0) {
+    if (filteredMissions?.length === 0 && search && search.trim() !== "") {
       const delayFetch = setTimeout(() => {
         getAllBoardMissionsFromSearch();
       }, 1000);
@@ -225,13 +226,7 @@ const ProductionFloorKanbanBoard = () => {
     } else {
       setMissionsList([]);
     }
-  }, [
-    search,
-    filteredMissions,
-    setFilteredMissionsBySearch,
-    getAllBoardMissionsFromSearch,
-    setMissionsList,
-  ]);
+  }, [search, filteredMissions, setFilteredMissionsBySearch, setMissionsList]);
 
   const toggleCategory = (categoryId: string) => {
     setCollapsedCategories((prev) => {
