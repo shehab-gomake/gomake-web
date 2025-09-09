@@ -41,6 +41,13 @@ type ActionOption = {
   value: string;
 };
 
+export enum ExceptionType {
+  Additional = 0,
+  NewBase = 1,
+  EditBase = 2,
+  Default = 3,
+}
+
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
