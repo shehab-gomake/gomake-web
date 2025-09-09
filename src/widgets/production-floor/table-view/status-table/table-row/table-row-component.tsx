@@ -356,6 +356,18 @@ const TableRowComponent = ({
             </SecondaryTableCell>
           );
 
+        case "creationDate":
+          return (
+            <SecondaryTableCell align={"center"} style={commonStyle}>
+              <DateTimeProductionFloorComponent
+                dateString={convertUtcToLocalIsoString(
+                  boardMission.boardMissionCreatedDate?.toString()
+                )}
+                style={{ placeSelf: "unset", width: "auto" }}
+              />
+            </SecondaryTableCell>
+          );
+
         case "deliveryDate":
           return (
             <SecondaryTableCell
