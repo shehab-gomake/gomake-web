@@ -1,52 +1,25 @@
-import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import {
+  GoMakeModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 import { useTranslation } from "react-i18next";
-import { useStyle } from "./style";
-import { CollapseOptionComponent } from "./select/actions-select/collapse-option-component";
-import styled from "styled-components";
-import { IActionMachines } from "../state/actions-list";
+import { useStyle } from "../../style";
+import { CollapseOptionComponent } from "../../select/actions-select/collapse-option-component";
+import { EditGroupModalProps } from "./edit-group-modal.types";
 import { useEditGroupModal } from "./use-edit-group-modal";
+import { ScrollableDiv } from "./edit-group-modal.styles";
 
-interface IModalFilters {
-  openModalEditGroup: boolean;
-  onClickCloseModalEditGroup: () => void;
-  handleCloseMenu: () => void;
-  selectedGroupId?: any;
-  actions: IActionMachines[];
-  getStationFilterGroups: () => void;
-  setFilters?: any;
-}
-const ScrollableDiv = styled.div`
-    max-height: 35vh;
-    overflow-y: auto;
-    overflow-x: auto;
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #cccdcf;
-      border-radius: 10px;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: #b0b0b0;
-    }
-    &::-webkit-scrollbar-button {
-      display: none;
-    }
-  `;
-
-const ModalEditGroup = ({
+export const EditGroupModal = ({
   openModalEditGroup,
   onClickCloseModalEditGroup,
   handleCloseMenu,
   selectedGroupId,
   actions,
   getStationFilterGroups,
-  setFilters
-}: IModalFilters) => {
-  const { classes } = useStyle()
+  setFilters,
+}: EditGroupModalProps) => {
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     groupName,
@@ -58,14 +31,19 @@ const ModalEditGroup = ({
     onSelectMachine,
     toggleCollapse,
     getList,
-    updateStationFilterGroup
-  } = useEditGroupModal({ selectedGroupId, actions, getStationFilterGroups, setFilters });
+    updateStationFilterGroup,
+  } = useEditGroupModal({
+    selectedGroupId,
+    actions,
+    getStationFilterGroups,
+    setFilters,
+  });
 
   return (
     <GoMakeModal
       openModal={openModalEditGroup}
       onClose={() => {
-        onClickCloseModalEditGroup()
+        onClickCloseModalEditGroup();
         handleCloseMenu();
       }}
       insideStyle={classes.modalContainer}
@@ -78,7 +56,12 @@ const ModalEditGroup = ({
             <GomakeTextInput
               value={groupName}
               onChange={handleChangeName}
-              style={{ width: "100%", "box-shadow": "none", "border": "1px solid #E0E0E0", "border-radius": "8px", }}
+              style={{
+                width: "100%",
+                "box-shadow": "none",
+                border: "1px solid #E0E0E0",
+                "border-radius": "8px",
+              }}
             />
           </div>
           <div>
@@ -100,22 +83,29 @@ const ModalEditGroup = ({
           </div>
         </div>
         <div style={classes.buttonContainer}>
-          <GomakePrimaryButton style={{ height: "40px" }} onClick={() => {
-            updateStationFilterGroup(stations)
-            onClickCloseModalEditGroup()
-            handleCloseMenu();
-          }} >
+          <GomakePrimaryButton
+            style={{ height: "40px" }}
+            onClick={() => {
+              updateStationFilterGroup(stations);
+              onClickCloseModalEditGroup();
+              handleCloseMenu();
+            }}
+          >
             {t("navigationButtons.edit")}
           </GomakePrimaryButton>
 
-          <GomakePrimaryButton onClick={() => {
-            onClickCloseModalEditGroup()
-            handleCloseMenu();
-          }} style={{ height: "40px" }}> {t("sales.quote.cancel")}</GomakePrimaryButton>
+          <GomakePrimaryButton
+            onClick={() => {
+              onClickCloseModalEditGroup();
+              handleCloseMenu();
+            }}
+            style={{ height: "40px" }}
+          >
+            {" "}
+            {t("sales.quote.cancel")}
+          </GomakePrimaryButton>
         </div>
       </div>
     </GoMakeModal>
-  )
+  );
 };
-
-export { ModalEditGroup }
