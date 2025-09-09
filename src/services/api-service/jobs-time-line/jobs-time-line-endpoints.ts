@@ -47,13 +47,13 @@ const rescheduleActionsApi: ICallAndSetData = async (
 
 const recoverOverdueApi: ICallAndSetData = async (
   callApi,
-  setState,
-  printHouseId: string
+  setState
+  // printHouseId: string
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
-    `${RECOVER_OVERDUE_URL}/${printHouseId}`,
+    RECOVER_OVERDUE_URL,
     setState
   );
 };

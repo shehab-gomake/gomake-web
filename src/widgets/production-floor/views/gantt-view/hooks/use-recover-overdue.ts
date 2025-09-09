@@ -8,7 +8,7 @@ export const useRecoverOverdue = () => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [isRecovering, setIsRecovering] = useState(false);
-  const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
+  // const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
 
   const recoverOverdue = useCallback(
     async (onSuccess?: () => void) => {
@@ -26,7 +26,7 @@ export const useRecoverOverdue = () => {
         }
       };
 
-      await recoverOverdueApi(callApi, callBack, printHouseProfileState?.id);
+      await recoverOverdueApi(callApi, callBack);
     },
     [callApi, alertSuccessUpdate, alertFaultUpdate]
   );
