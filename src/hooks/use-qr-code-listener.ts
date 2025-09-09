@@ -26,6 +26,7 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const isOpenDoneModal = useModal()
   const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
+  const [qrError, setQrError] = useState<{message: string, key: string} | null>(null);
 
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   
@@ -41,7 +42,11 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
           alertSuccessUpdate();
         } 
         else {
-          alertFaultUpdate();
+          if (res?.errorMessage && res?.errorMessage !== "") {
+            setQrError({message: res.errorMessage, key: res.errorMessage});
+          } else {
+            alertFaultUpdate();
+          }
         }
         resolve(true)
       };
@@ -82,6 +87,10 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
                 router.push(url);
               }
             }
+          }
+        } else {
+          if (res?.errorMessage && res?.errorMessage !== "") {
+            setQrError({message: res.errorMessage, key: res.errorMessage});
           }
         }
         resolve(true);
@@ -156,9 +165,15 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
     };
   }, [scanBuffer, stations, router.asPath]); // Added stations and router.asPath to dependencies
 
+  const clearQrError = () => {
+    setQrError(null);
+  };
+
   return {
     barcode,
-    isOpenDoneModal
+    isOpenDoneModal,
+    qrError,
+    clearQrError
   };
 };
 
