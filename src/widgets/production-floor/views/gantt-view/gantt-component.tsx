@@ -1,25 +1,60 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Timeline, {
   TimelineHeaders,
   SidebarHeader,
   DateHeader,
+  TimelineMarkers,
+  TodayMarker,
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
+import { useRescheduling, useRecoverOverdue } from "./hooks";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { JobComponent } from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { IconButton } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { useStyle } from "./style";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import BoltIcon from "@mui/icons-material/Bolt";
+import RestoreIcon from "@mui/icons-material/Restore";
+import EventIcon from "@mui/icons-material/Event";
 import { TimeFrameTabs } from "./state";
+import {
+  adaptLeft,
+  adaptMarginLeft,
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  adaptRight,
+} from "@/utils/adapter";
+import { GoMakeDeleteModal } from "@/components/modal-deleted";
+import { ModalType } from "@/enums";
 
 const TimelineWidget = () => {
+  const { classes } = useStyle();
+
+  // Initialize rescheduling hook at component level
+  const reschedulingHook = useRescheduling();
+
+  // Initialize recover overdue hook
+  const { recoverOverdue, isRecovering } = useRecoverOverdue();
+
   const {
     t,
     groups,
@@ -44,11 +79,94 @@ const TimelineWidget = () => {
     handleTabChange,
     timeFrameTabs,
     scrollTimeline,
-  } = useGantt();
+    dir,
+    isRTL,
+    showRecoverModal,
+    setShowRecoverModal,
+    showRescheduleModal,
+    setShowRescheduleModal,
+  } = useGantt(reschedulingHook);
+
+  const {
+    hasLocalChanges,
+    submitRescheduleActions,
+    isSubmitting,
+    clearAllLocalChanges,
+  } = reschedulingHook;
 
   useEffect(() => {
     getData(currentMonth.clone().month());
   }, [currentMonth.valueOf()]);
+
+  const getGroupColor = (title: string) => {
+    // Generate a consistent color based on the title string hash
+    // This ensures the same title always gets the same color without hardcoding
+    const colors = [
+      "#007BFF", // Blue
+      "#28A745", // Green
+      "#FD7E14", // Orange
+      "#DC3545", // Red
+      "#6F42C1", // Purple
+      "#20C997", // Teal
+      "#FF9800", // Amber
+      "#795548", // Brown
+      "#9C27B0", // Deep Purple
+      "#607D8B", // Blue Grey
+      "#E91E63", // Pink
+      "#00BCD4", // Cyan
+    ];
+
+    // Create a simple hash from the title string
+    let hash = 0;
+    for (let i = 0; i < title.length; i++) {
+      const char = title.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Use the hash to select a color
+    const colorIndex = Math.abs(hash) % colors.length;
+    return colors[colorIndex];
+  };
+
+  const getGroupStats = (groupId: string) => {
+    // Get all items in this group AND its children
+    const groupItems = items.filter((item) => {
+      // Include items directly in this group
+      if (item.group === groupId) return true;
+
+      // Include items in child groups of this group
+      const childGroups = groups.filter((group) => group.parent === groupId);
+      return childGroups.some((childGroup) => item.group === childGroup.id);
+    });
+
+    const totalJobs = groupItems.length;
+    const completedJobs = groupItems.filter(
+      (item) => item.statusColor === "#28A745"
+    ).length;
+    const inProgressJobs = groupItems.filter(
+      (item) => item.statusColor === "#FD7E14"
+    ).length;
+    const pendingJobs = groupItems.filter(
+      (item) => item.statusColor === "#DC3545"
+    ).length;
+
+    return { totalJobs, completedJobs, inProgressJobs, pendingJobs };
+  };
+
+  const getStationStats = (stationId: string) => {
+    // Get all items in this station AND its children
+    const stationItems = items.filter((item) => {
+      // Include items directly in this station
+      if (item.group === stationId) return true;
+
+      // Include items in child groups of this station
+      const childGroups = groups.filter((group) => group.parent === stationId);
+      return childGroups.some((childGroup) => item.group === childGroup.id);
+    });
+
+    return stationItems.length;
+  };
 
   const filteredGroups = useMemo(() => {
     return groups
@@ -61,45 +179,134 @@ const TimelineWidget = () => {
               item.group === group.id && item.isHasSelected && item.selected
           )
       )
-      .map((group) => ({
-        ...group,
-        height: 40,
-        title: group.isRoot ? (
-          <Stack
-            bgcolor={openGroups[group.id] ? "#F6F6F6" : "#FFF"}
-            onClick={() => toggleGroup(group.id)}
-            direction="row"
-            alignItems="center"
-            style={{
-              cursor: "pointer",
-              ...FONT_FAMILY.Inter(500, 14),
-            }}
-          >
-            {openGroups[group.id] ? (
-              <KeyboardArrowUpIcon
-                sx={{ color: "#757575", marginRight: "5px" }}
+      .map((group) => {
+        const stats = getGroupStats(group.id);
+        return {
+          ...group,
+          height: 50,
+          title: group.isRoot ? (
+            <Stack
+              bgcolor={openGroups[group.id] ? "#F8F9FA" : "#FFF"}
+              onClick={() => toggleGroup(group.id)}
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                cursor: "pointer",
+                padding: "8px 12px",
+                // borderRadius: "8px",
+                border: "1px solid #E9ECEF",
+                ...FONT_FAMILY.Inter(600, 14),
+                color: "#495057",
+                "&:hover": {
+                  backgroundColor: "#F8F9FA",
+                  borderColor: getGroupColor(group.title),
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
+            >
+              <Stack direction="row" alignItems="center" gap={1}>
+                {openGroups[group.id] ? (
+                  <KeyboardArrowUpIcon
+                    sx={{ color: "#6C757D", fontSize: 20 }}
+                  />
+                ) : (
+                  <KeyboardArrowDownIcon
+                    sx={{ color: "#6C757D", fontSize: 20 }}
+                  />
+                )}
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: getGroupColor(group.title),
+                  }}
+                />
+                <Typography variant="body2" fontWeight={600}>
+                  {group.title}
+                </Typography>
+                <Chip
+                  label={groups.filter((g) => g.parent === group.id).length}
+                  size="small"
+                  sx={{
+                    backgroundColor: getGroupColor(group.title),
+                    color: "white",
+                    fontSize: "11px",
+                    height: "20px",
+                    fontWeight: 600,
+                  }}
+                />
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1}
+                height={"31px"}
+              >
+                <Typography variant="caption" color="#6C757D" fontSize="11px">
+                  {stats.totalJobs} {t("sales.quote.jobs")}
+                </Typography>
+                {stats.inProgressJobs > 0 && (
+                  <Badge
+                    badgeContent={stats.inProgressJobs}
+                    color="warning"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: "#FD7E14",
+                        color: "white",
+                        fontSize: "10px",
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#FD7E14",
+                      }}
+                    />
+                  </Badge>
+                )}
+              </Stack>
+            </Stack>
+          ) : (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{
+                padding: "8px 12px 8px 32px",
+                height: "50px", //!here new to hide or not
+                backgroundColor: "#FFF",
+                borderBottom: "1px solid #F1F3F4",
+                ...FONT_FAMILY.Inter(500, 13),
+                color: "#495057",
+                "&:hover": {
+                  backgroundColor: "#F8F9FA",
+                },
+                transition: "background-color 0.2s ease",
+              }}
+            >
+              <Typography variant="body2" fontWeight={600}>
+                {group.title}
+              </Typography>
+              <Chip
+                label={getStationStats(group.id)}
+                size="small"
+                sx={{
+                  backgroundColor: "#E9ECEF",
+                  color: "#495057",
+                  fontSize: "11px",
+                  height: "20px",
+                  fontWeight: 600,
+                }}
               />
-            ) : (
-              <KeyboardArrowDownIcon
-                sx={{ color: "#757575", marginRight: "5px" }}
-              />
-            )}
-            {group.title}
-          </Stack>
-        ) : (
-          <div
-            style={{
-              paddingLeft: 10,
-              backgroundColor: "#FFF",
-              ...FONT_FAMILY.Inter(500, 14),
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {group.title}
-          </div>
-        ),
-      }));
+            </Stack>
+          ),
+        };
+      });
   }, [groups, openGroups, items]);
 
   useEffect(() => {
@@ -135,61 +342,169 @@ const TimelineWidget = () => {
   }, [currentDate, activeTab]);
 
   return (
-    <Stack gap={"10px"}>
-      <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
-        bgcolor={"#fff"}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "200px",
-            ...FONT_FAMILY.Inter(500, 14),
-            position: "relative",
-          }}
-        >
-          <IconButton
-            style={{ position: "absolute", left: 0 }}
-            onClick={() => navigateTimeline(-1)} // Go backward
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          {getDateLabel()}
+    <Stack gap={3} sx={classes.mainContainer}>
+      {/* Time Frame Tabs */}
+      <Box sx={classes.headerContainer}>
+        <Stack sx={classes.headerContent}>
+          {/* Date Selector */}
+          <Stack sx={classes.dateSelector}>
+            {/* Previous button */}
+            <IconButton
+              onClick={() => navigateTimeline(isRTL ? 1 : -1)}
+              size="small"
+              sx={classes.dateSelectorButton}
+            >
+              {isRTL ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+            </IconButton>
 
-          <IconButton
-            style={{ position: "absolute", right: 0 }}
-            onClick={() => navigateTimeline(1)} // Go forward
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </div>
-        <PrimaryTabsComponent
-          selectedTabIndex={activeTab}
-          tabs={timeFrameTabs}
-          selectedColor="primary"
-          // variant="ButtonedTabs"
-          onSelectTab={handleTabChange}
-        />
-      </Stack>
+            <Typography variant="body1" sx={classes.dateLabel}>
+              {getDateLabel()}
+            </Typography>
+
+            {/* Next button */}
+            <IconButton
+              onClick={() => navigateTimeline(isRTL ? -1 : 1)}
+              size="small"
+              sx={classes.dateSelectorButton}
+            >
+              {isRTL ? <KeyboardArrowLeftIcon /> : <KeyboardArrowRightIcon />}
+            </IconButton>
+          </Stack>
+
+          {/* Tabs */}
+          <Stack direction="row" sx={classes.tabsContainer}>
+            {timeFrameTabs.map((tab, index) => {
+              // Get the appropriate icon for each tab
+              const getTabIcon = (tabIndex: number) => {
+                switch (tabIndex) {
+                  case 0: // Hour
+                    return <AccessTimeIcon sx={{ fontSize: "18px" }} />;
+                  case 1: // Day
+                    return <CalendarTodayIcon sx={{ fontSize: "18px" }} />;
+                  case 2: // Week
+                    return <ViewWeekIcon sx={{ fontSize: "18px" }} />;
+                  case 3: // Month
+                    return <CalendarMonthIcon sx={{ fontSize: "18px" }} />;
+                  case 4: // Year
+                    return <EventIcon sx={{ fontSize: "18px" }} />;
+                  default:
+                    return <CalendarTodayIcon sx={{ fontSize: "18px" }} />;
+                }
+              };
+
+              return (
+                <Button
+                  key={index}
+                  onClick={() => handleTabChange(index)}
+                  variant="text"
+                  startIcon={getTabIcon(index)}
+                  sx={{
+                    color: activeTab === index ? "#2e3092" : "white",
+                    backgroundColor:
+                      activeTab === index ? "white" : "transparent",
+                    borderRadius: "6px",
+                    padding: "8px 16px",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    minWidth: "auto",
+                    transition: "all 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor:
+                        activeTab === index
+                          ? "white"
+                          : "rgba(255, 255, 255, 0.1)",
+                      transform: "translateY(-1px)",
+                    },
+                    "& .MuiButton-startIcon": {
+                      ...adaptMarginLeft(dir, 1),
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: activeTab === index ? "#2e3092" : "white",
+                    },
+                  }}
+                >
+                  {tab.title}
+                </Button>
+              );
+            })}
+          </Stack>
+
+          <Stack direction="row" gap={1}>
+            <Button
+              variant="contained"
+              startIcon={<BoltIcon />}
+              disabled={!hasLocalChanges() || isSubmitting}
+              onClick={() => setShowRescheduleModal(true)}
+              sx={{
+                backgroundColor: "#FD7E14",
+                "&:hover": { backgroundColor: "#E8690B" },
+                "&:disabled": {
+                  backgroundColor: "#ccc",
+                  color: "#666",
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
+                },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              {isSubmitting ? "Submitting..." : t("productionFloor.reSchedule")}
+            </Button>
+
+            <Button
+              variant="contained"
+              startIcon={<RestoreIcon />}
+              disabled={isRecovering}
+              onClick={() => setShowRecoverModal(true)}
+              sx={{
+                backgroundColor: "#DC3545",
+                "&:hover": { backgroundColor: "#C82333" },
+                "&:disabled": {
+                  backgroundColor: "#ccc",
+                  color: "#666",
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
+                },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              {isRecovering
+                ? "Recovering..."
+                : t("productionFloor.recoverOverdue")}
+            </Button>
+          </Stack>
+        </Stack>
+      </Box>
 
       <div style={{ position: "relative", direction: "ltr" }}>
         <Stack
-          alignItems={"center"}
-          direction={"row"}
-          position={"absolute"}
-          right={"0px"}
-          top={"0px"}
-          zIndex={99999}
-          height={"60px"}
-          style={{ background: "#fff" }}
+          alignItems="center"
+          direction="row"
+          position="absolute"
+          right="0px"
+          top="0px"
+          zIndex={1200}
+          height="60px"
+          sx={{
+            background: "#fff",
+            borderRadius: "8px",
+            padding: "8px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
         >
           <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
           </IconButton>
-          <Stack padding={"0px 8px 0px 0px"} gap={"5px"}>
+          <Stack
+            padding={isRTL ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
+            gap={"5px"}
+          >
             <AddIcon
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
@@ -224,19 +539,18 @@ const TimelineWidget = () => {
                   },
                 ]
           }
-          // items={items.length > 0 ? items : []}
           items={items.filter((item) => {
             const isGroupOpen = openGroups[item.group];
             return isGroupOpen ? item.isEditable : true;
           })}
           defaultTimeStart={timeRange.defaultTimeStart}
           defaultTimeEnd={timeRange.defaultTimeEnd}
-          sidebarWidth={200}
+          sidebarWidth={240}
           onItemMove={handleItemMove}
           onItemResize={handleItemResize}
           onZoom={handleZoom}
           canResize={"right"}
-          canChangeGroup={false}
+          canChangeGroup={true}
           itemRenderer={(props) => {
             return <JobComponent {...props} toggleGroup={toggleGroup} />;
           }}
@@ -247,37 +561,65 @@ const TimelineWidget = () => {
           onItemDeselect={handleItemDeselect}
           selected={items.filter((item) => !!item.selected).map((i) => i.id)}
           dragSnap={1000 * 60}
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+          }}
         >
+          {/* Red Overdue Indicator */}
+          <TimelineMarkers>
+            <TodayMarker>
+              {({ styles }) => (
+                <div
+                  style={{
+                    ...styles,
+                    backgroundColor: "red",
+                    width: "2px",
+                    zIndex: 10,
+                  }}
+                />
+              )}
+            </TodayMarker>
+          </TimelineMarkers>
           <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
             <SidebarHeader>
               {({ getRootProps }) => {
                 return (
-                  <div
+                  <Box
                     {...getRootProps()}
-                    style={{
+                    sx={{
                       display: "flex",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      width: "200px",
-                      ...FONT_FAMILY.Inter(500, 14),
-                      position: "relative",
-                      // background: "#504fa11a",
+                      width: "280px",
+                      paddingLeft: "24px",
+                      backgroundColor: "#F8F9FA",
+                      ...FONT_FAMILY.Inter(600, 14),
+                      color: "#495057",
                     }}
                   >
-                    {t("productionFloor.stations")}
-                    <div
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      {t("productionFloor.stations")}
+                    </Typography>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
                       style={{
-                        position: "absolute",
-                        right: 0,
+                        height: "60px",
+                        ...adaptRight(dir, 0),
                         pointerEvents: "auto",
                         zIndex: 10,
+                        background: "#fff",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                       }}
                     >
                       <IconButton onClick={() => scrollTimeline("left")}>
                         <KeyboardArrowLeftIcon />
                       </IconButton>
-                    </div>
-                  </div>
+                    </Stack>
+                  </Box>
                 );
               }}
             </SidebarHeader>
@@ -296,7 +638,6 @@ const TimelineWidget = () => {
                   case "hour":
                     // return `${momentStart?.format("hh:mm A")}`;
                     return `${momentStart.format("ha")}`; // <-- Simplified format here
-
                   case "minute":
                     return `${momentStart?.format("mm")}`;
                   default:
@@ -307,6 +648,38 @@ const TimelineWidget = () => {
           </TimelineHeaders>
         </Timeline>
       </div>
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showRescheduleModal}
+        onClose={() => setShowRescheduleModal(false)}
+        title="productionFloor.confirmReschedule"
+        subTitle="productionFloor.confirmRescheduleMessage"
+        onClickDelete={async () => {
+          const success = await submitRescheduleActions();
+          if (success) {
+            // Success: refresh the data
+            getData(currentMonth.clone().month());
+          } else {
+            // Failure: revert to original state and clear local changes
+            getData(currentMonth.clone().month()); // Refresh to get original data
+            clearAllLocalChanges(); // Clear the local changes payload
+          }
+        }}
+        yesBtn={t("sales.quote.Confirm")}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showRecoverModal}
+        onClose={() => setShowRecoverModal(false)}
+        title="productionFloor.confirmRecoverOverdue"
+        subTitle="productionFloor.confirmRecoverOverdueMessage"
+        onClickDelete={async () => {
+          await recoverOverdue(() => {
+            getData(currentMonth.clone().month());
+          });
+        }}
+        yesBtn={t("sales.quote.Confirm")}
+      />
     </Stack>
   );
 };
