@@ -13,7 +13,7 @@ import { boardMissionsStationsState } from "@/widgets/production-floor/views/boa
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from 'react-i18next';
-import { GoMakeAlertModal } from "../modal/alert-modal";
+import { GoMakeAlertModal, QRErrorModal } from "../modal";
 import { ThreeOptionsModal } from "@/components";
 import {
     PrintPackingSlipModalWidget
@@ -39,6 +39,9 @@ const QrCodeReader = (props: IProps) => {
     const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
     const [openMoveToReadyModal, setOpenMoveToReadyModal] = useState<boolean>(false);
     const [selectedJobQuantity, setSelectedJobQuantity] = useState<number | null>(null);
+    const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
+    const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
+    const [qrErrorKey, setQrErrorKey] = useState<string>("");
     const handleBoardMissionsBarcodeActionsFunction = async (barcode: string, data: any) => {
 
         return new Promise(async (resolve, reject) => {
@@ -54,7 +57,13 @@ const QrCodeReader = (props: IProps) => {
                     alertSuccessUpdate();
                 }
                 else {
-                    alertFault(t("productionFloor.qrReadError"))
+                    if (res?.errorMessage && res?.errorMessage !== "") {
+                        setQrErrorMessage(res.errorMessage);
+                        setQrErrorKey(res.errorMessage);
+                        setIsQRErrorModalOpen(true);
+                    } else {
+                        alertFault(t("productionFloor.qrReadError"));
+                    }
                 }
                 resolve(true)
             };
@@ -116,7 +125,13 @@ const QrCodeReader = (props: IProps) => {
                         }
                     }
                 } else {
-                    alertFault(t("productionFloor.qrReadError"))
+                    if (res?.errorMessage && res?.errorMessage !== "") {
+                        setQrErrorMessage(res.errorMessage);
+                        setQrErrorKey(res.errorMessage);
+                        setIsQRErrorModalOpen(true);
+                    } else {
+                        alertFault(t("productionFloor.qrReadError"));
+                    }
                 }
                 resolve(true);
             };
@@ -198,6 +213,12 @@ const QrCodeReader = (props: IProps) => {
                 onClose={() => setOpenPackagesModal(false)}
                 boardMissionId={selectedMission?.id || selectedMission?.boardMissionId}
                 quantity={selectedJobQuantity}
+            />
+            <QRErrorModal
+                openModal={isQRErrorModalOpen}
+                onClose={() => setIsQRErrorModalOpen(false)}
+                errorMessage={qrErrorMessage}
+                errorKey={qrErrorKey}
             />
         </div>
     )

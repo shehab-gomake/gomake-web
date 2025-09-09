@@ -4,23 +4,30 @@ import { useSnackBar } from "@/hooks";
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
-import { IActionMachines } from "../state/actions-list";
+import { IActionMachines } from "../../../state/actions-list";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { productionFloorFiltersState } from "../state/production-floor-filters";
-import { productionFloorViewState } from "../state/production-floor-view";
+import { productionFloorFiltersState } from "../../../state/production-floor-filters";
+import { productionFloorViewState } from "../../../state/production-floor-view";
+import { UseEditGroupModalProps } from "./edit-group-modal.types";
 
-const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, setFilters }) => {
+export const useEditGroupModal = ({
+  selectedGroupId,
+  actions,
+  getStationFilterGroups,
+  setFilters,
+}: UseEditGroupModalProps) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate } = useSnackBar();
   const actionsListRef = useRef<IActionMachines[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [groupName, setGroupName] = useState(selectedGroupId?.name)
+  const [groupName, setGroupName] = useState(selectedGroupId?.name);
   const [stations, setStations] = useState([]);
   const [openCollapse, setOpenCollapse] = useState<{ [key: string]: boolean }>(
     {}
   );
   const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
   const view = useRecoilValue(productionFloorViewState);
+
   useEffect(() => {
     if (actionsList?.length > 0) {
       const data = actionsList
@@ -28,25 +35,26 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
         .map((item) => ({
           actionId: item.actionId,
           machineIds: item.machines
-            .filter(machine => machine.checked)
-            .map(machine => machine.machineId),
-          machineStatuses: null
+            .filter((machine) => machine.checked)
+            .map((machine) => machine.machineId),
+          machineStatuses: null,
         }));
-      setStations(data)
+      setStations(data);
     }
-  }, [actionsList])
+  }, [actionsList]);
+
   const onSelectStation = (stationId: string, checked: boolean) => {
     setActionsList((prevState) => {
       const updatedActionsList = prevState?.map((station) =>
         stationId === station.actionId
           ? {
-            ...station,
-            checked: !checked,
-            machines: station.machines?.map((machine) => ({
-              ...machine,
+              ...station,
               checked: !checked,
-            })),
-          }
+              machines: station.machines?.map((machine) => ({
+                ...machine,
+                checked: !checked,
+              })),
+            }
           : station
       );
 
@@ -54,14 +62,16 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
       return updatedActionsList;
     });
   };
+
   const getList = useCallback(() => {
     let list = [...actionsList];
     return list?.length > 0
       ? list?.sort((a, b) =>
-        a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
-      )
+          a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
+        )
       : [];
   }, [actionsList, actions]);
+
   const onSelectMachine = (stationId: string, machineId: string) => {
     const scrollPosition = scrollRef.current?.scrollTop || 0;
 
@@ -69,16 +79,16 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
       prevActionsList?.map((station) =>
         station.actionId === stationId
           ? {
-            ...station,
-            machines: station.machines?.map((machine) =>
-              machine.machineId === machineId
-                ? {
-                  ...machine,
-                  checked: !machine.checked,
-                }
-                : machine
-            ),
-          }
+              ...station,
+              machines: station.machines?.map((machine) =>
+                machine.machineId === machineId
+                  ? {
+                      ...machine,
+                      checked: !machine.checked,
+                    }
+                  : machine
+              ),
+            }
           : station
       )
     );
@@ -109,20 +119,23 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
     },
     [setOpenCollapse]
   );
+
   useEffect(() => {
     if (selectedGroupId) {
-      setGroupName(selectedGroupId?.name)
+      setGroupName(selectedGroupId?.name);
     }
-  }, [selectedGroupId])
+  }, [selectedGroupId]);
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGroupName(e.target.value)
-  }
+    setGroupName(e.target.value);
+  };
 
   useEffect(() => {
     setActionsList(
       actions?.map((action) => {
-        const station = (selectedGroupId?.stations)?.find((s) => s.actionId === action.actionId);
+        const station = selectedGroupId?.stations?.find(
+          (s) => s.actionId === action.actionId
+        );
         return {
           ...action,
           label: action.actionName,
@@ -130,31 +143,36 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
           machines:
             station?.machineIds.length === 0
               ? action?.machines?.map((machine) => ({
-                ...machine,
-                label: machine.machineName,
-                checked: true,
-              }))
+                  ...machine,
+                  label: machine.machineName,
+                  checked: true,
+                }))
               : action?.machines?.map((machine) => ({
-                ...machine,
-                label: machine.label,
-                checked: station?.machineIds?.includes(machine.machineId),
-              })),
+                  ...machine,
+                  label: machine.label,
+                  checked: station?.machineIds?.includes(machine.machineId),
+                })),
         };
       })
     );
   }, [selectedGroupId, actions]);
 
-  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const updateStationFilterGroup = async (stations) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
         getStationFilterGroups();
-        setFilters({
-          ...filtersState,
-          stations,
-          groupId: selectedGroupId?.id,
-        }, view);
+        setFilters(
+          {
+            ...filtersState,
+            stations,
+            groupId: selectedGroupId?.id,
+          },
+          view
+        );
       }
     };
     await updateStationFilterGroupApi(callApi, callBack, {
@@ -163,9 +181,10 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
       inProcessCount: selectedGroupId?.inProcessCount,
       stuckCount: selectedGroupId?.stuckCount,
       color: selectedGroupId?.color,
-      stations
+      stations,
     }).then();
-  }
+  };
+
   return {
     groupName,
     stations,
@@ -176,8 +195,6 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, s
     onSelectMachine,
     toggleCollapse,
     getList,
-    updateStationFilterGroup
+    updateStationFilterGroup,
   };
 };
-
-export { useEditGroupModal };

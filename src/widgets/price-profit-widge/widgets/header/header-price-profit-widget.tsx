@@ -8,6 +8,7 @@ import { useRef } from "react";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { ExcelMenu } from "../excel-menu/excel-menu";
+import { ExceptionType } from "../../use-price-profit";
 
 const PriceProfitHeaderWidget = ({
   actionList,
@@ -116,7 +117,10 @@ const PriceProfitHeaderWidget = ({
             <GoMakeAutoComplate
               options={(profitsPricingTables ?? [])
                 .filter(
-                  (table) => table.pricingBy === 1 && table.name !== "Default"
+                  (table) =>
+                    table.pricingBy === 1 &&
+                    table.exceptionType !== ExceptionType.Default &&
+                    table.exceptionType !== ExceptionType.Additional
                 )
                 .map((table) => ({
                   value: table.id,
