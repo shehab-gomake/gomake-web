@@ -267,6 +267,7 @@ const TableRowComponent = ({
                 Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
               }
             >
+              {/* !here 1 */}
               <SecondaryTableCell
                 align={"center"}
                 style={{
@@ -275,6 +276,10 @@ const TableRowComponent = ({
                     position: "sticky",
                     [isRTL ? "right" : "left"]: 0,
                     zIndex: 11,
+                    backgroundColor: commonStyle.backgroundColor,
+                    minWidth: "48px",
+                    maxWidth: "48px",
+                    width: "48px",
                   }),
                   padding: "0px",
                 }}
@@ -299,6 +304,7 @@ const TableRowComponent = ({
 
         case "job_order":
           return (
+            // !here 2
             <SecondaryTableCell
               align={"center"}
               style={{
@@ -308,6 +314,10 @@ const TableRowComponent = ({
                   position: "sticky",
                   [isRTL ? "right" : "left"]: 48,
                   zIndex: 10,
+                  backgroundColor: commonStyle.backgroundColor,
+                  minWidth: "120px",
+                  maxWidth: "120px",
+                  width: "120px",
                 }),
               }}
             >
@@ -319,7 +329,7 @@ const TableRowComponent = ({
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  gap: 10,
+                  gap: isMobileScreen ? 5 : 10,
                 }}
                 onClick={() => {
                   push(
@@ -340,6 +350,10 @@ const TableRowComponent = ({
                     color: "#000000",
                     fontWeight: "bolder",
                     fontSize: GetProductionFontSizeFromPreferences(),
+                    ...(isMobileScreen && {
+                      fontSize: "12px",
+                      lineHeight: "1.2",
+                    }),
                   }}
                 >
                   {boardMission?.productType
@@ -441,14 +455,17 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "20px",
+                width: isMobileScreen ? "100px" : "20px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
               }}
               onClick={() => onClickClient(boardMission?.clientId)}
             >
-              {getTruncatedLabel(boardMission?.clientName, 15)}
+              {getTruncatedLabel(
+                boardMission?.clientName,
+                isMobileScreen ? 12 : 15
+              )}
             </SecondaryTableCell>
           );
 
@@ -457,13 +474,16 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "15px",
+                width: isMobileScreen ? "100px" : "15px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
               }}
             >
-              {getTruncatedLabel(boardMission?.agentName, 15)}
+              {getTruncatedLabel(
+                boardMission?.agentName,
+                isMobileScreen ? 12 : 15
+              )}
             </SecondaryTableCell>
           );
 
@@ -500,7 +520,11 @@ const TableRowComponent = ({
           return (
             <SecondaryTableCell
               align="center"
-              style={{ ...commonStyle, maxWidth: "180px", padding: "8px" }}
+              style={{
+                ...commonStyle,
+                maxWidth: isMobileScreen ? "150px" : "180px",
+                padding: isMobileScreen ? "4px" : "8px",
+              }}
             >
               <ProductionFloorNote
                 key={boardMission.id}
