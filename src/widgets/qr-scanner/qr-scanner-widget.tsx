@@ -35,7 +35,9 @@ const QRScannerPage = () => {
             if (res?.success && res.data?.boardMissionId) {
               setScanResult(data.text);
               navigate(
-                `/production-floor?boardMissionsId=${res.data.boardMissionId}&step=stations&isScanning=${true}`
+                `/production-floor?boardMissionsId=${
+                  res.data.boardMissionId
+                }&step=stations&isScanning=${true}`
               );
             } else {
               setScanResult("Invalid QR Code or No Board Mission Found");
@@ -116,7 +118,7 @@ const QRScannerPage = () => {
                 delay={300}
                 facingMode="environment"
                 constraints={{
-                  video: { facingMode: { exact: "user" } },
+                  video: { facingMode: { exact: "environment" } },
                 }}
                 style={{
                   width: "100%",
