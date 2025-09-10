@@ -103,22 +103,21 @@ const usePrintHouseMachines = () => {
             ...prevState,
             attributes: {
                 ...prevState.attributes,
-                materials: !!prevState?.attributes?.materials ?  [...prevState?.attributes?.materials, materialId] : [materialId]
-
+                materials: prevState?.attributes?.materials ? 
+                    [...prevState.attributes.materials, materialId] : 
+                    [materialId]
             }
         }))
-
     }
+    
     const removeMaterial = (materialId: string) => {
         setMachineState((prevState) => ({
             ...prevState,
             attributes: {
                 ...prevState.attributes,
-                materials: prevState?.attributes?.materials?.filter(action => action !== materialId)
-
+                // materials: [...(prevState?.attributes?.materials?.filter(material => material !== materialId) || [])]
             }
         }))
-
     }
 
 
