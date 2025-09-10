@@ -177,7 +177,7 @@ const FilesGroupComponent = ({
         alignItems={"center"}
       >
         <h3 style={{ color: primaryColor(400), ...FONT_FAMILY.Inter(700, 14) }}>
-          {title} {selectedMission && selectedMission?.number && `| ${selectedMission?.number}`}
+          {title}
         </h3>
         {pathname !== "/production-floor" && (
           <Stack direction={"row"} alignItems={"center"}>
