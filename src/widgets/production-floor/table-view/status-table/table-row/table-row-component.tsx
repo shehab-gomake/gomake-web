@@ -271,11 +271,16 @@ const TableRowComponent = ({
                 align={"center"}
                 style={{
                   ...commonStyle,
-                  ...(isMobileScreen && {
-                    position: "sticky",
-                    [isRTL ? "right" : "left"]: 0,
-                    zIndex: 11,
-                  }),
+
+                  ...(isMobileScreen &&
+                    key === "checkbox" && {
+                      position: "sticky",
+                      top: "auto",
+                      [isRTL ? "right" : "left"]: 0,
+                      zIndex: 1,
+                      backgroundColor: commonStyle.backgroundColor,
+                    }),
+
                   padding: "0px",
                 }}
               >
@@ -304,11 +309,15 @@ const TableRowComponent = ({
               style={{
                 ...commonStyle,
                 cursor: "pointer",
-                ...(isMobileScreen && {
-                  position: "sticky",
-                  [isRTL ? "right" : "left"]: 48,
-                  zIndex: 10,
-                }),
+
+                ...(isMobileScreen &&
+                  key === "job_order" && {
+                    position: "sticky",
+                    top: "auto",
+                    [isRTL ? "right" : "left"]: 48,
+                    zIndex: 1,
+                    backgroundColor: commonStyle.backgroundColor,
+                  }),
               }}
             >
               <div
@@ -319,7 +328,7 @@ const TableRowComponent = ({
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  gap: 10,
+                  gap: isMobileScreen ? 5 : 10,
                 }}
                 onClick={() => {
                   push(
@@ -332,7 +341,6 @@ const TableRowComponent = ({
                 }}
               >
                 <div />
-
                 <div
                   style={{
                     cursor: "pointer",
@@ -453,14 +461,17 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "20px",
+                width: isMobileScreen ? "100px" : "20px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
               }}
               onClick={() => onClickClient(boardMission?.clientId)}
             >
-              {getTruncatedLabel(boardMission?.clientName, 15)}
+              {getTruncatedLabel(
+                boardMission?.clientName,
+                isMobileScreen ? 12 : 15
+              )}
             </SecondaryTableCell>
           );
 
@@ -469,13 +480,16 @@ const TableRowComponent = ({
             <SecondaryTableCell
               align={"center"}
               style={{
-                width: "15px",
+                width: isMobileScreen ? "100px" : "15px",
                 cursor: "pointer",
                 fontSize: GetProductionFontSizeFromPreferences(),
                 ...commonStyle,
               }}
             >
-              {getTruncatedLabel(boardMission?.agentName, 15)}
+              {getTruncatedLabel(
+                boardMission?.agentName,
+                isMobileScreen ? 12 : 15
+              )}
             </SecondaryTableCell>
           );
 
@@ -512,7 +526,11 @@ const TableRowComponent = ({
           return (
             <SecondaryTableCell
               align="center"
-              style={{ ...commonStyle, maxWidth: "180px", padding: "8px" }}
+              style={{
+                ...commonStyle,
+                maxWidth: isMobileScreen ? "150px" : "180px",
+                padding: isMobileScreen ? "4px" : "8px",
+              }}
             >
               <ProductionFloorNote
                 key={boardMission.id}

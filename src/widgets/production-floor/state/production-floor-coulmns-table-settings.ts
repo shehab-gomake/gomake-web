@@ -70,6 +70,31 @@ export const columnWidthsMap: Record<string, string> = {
   more: "2%",
 };
 
-export const getCustomWidth = (key: string): string => {
+// Mobile-specific column widths in pixels
+export const mobileColumnWidthsMap: Record<string, string> = {
+  checkbox: "48px",
+  job_order: "120px",
+  creationDate: "100px",
+  deliveryDate: "100px",
+  totalTime: "80px",
+  customer: "100px",
+  agent: "100px",
+  productName: "120px",
+  description: "200px",
+  notes: "150px",
+  status: "100px",
+  currentStation: "150px",
+  nextStation: "120px",
+  changeMachineEmployee: "120px",
+  more: "40px",
+};
+
+export const getCustomWidth = (
+  key: string,
+  isMobile: boolean = false
+): string => {
+  if (isMobile) {
+    return mobileColumnWidthsMap[key] ?? "auto";
+  }
   return columnWidthsMap[key] ?? "auto";
 };
