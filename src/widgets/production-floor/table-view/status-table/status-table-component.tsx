@@ -326,16 +326,17 @@ const StatusTableComponent = ({
                 minWidth: width,
                 maxWidth: width,
                 width,
-                ...(isMobileScreen && {
-                  position: index <= 1 ? "sticky" : "relative",
-                  [RTL ? "right" : "left"]:
-                    index === 0 ? 0 : index === 1 ? 48 : "auto",
-                  zIndex: index <= 1 ? 2 : 1,
-                  background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                }),
+                ...(isMobileScreen &&
+                  index <= 1 && {
+                    position: "sticky",
+                    top: 0,
+                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                    zIndex: 3, //  raise above body cells
+                    background: "#f2f2f5",
+                  }),
               }}
               key={"statusTable" + status.id + index}
-              align={"center"}
+              align="center"
               sx={
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE

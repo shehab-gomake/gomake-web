@@ -271,15 +271,16 @@ const TableRowComponent = ({
                 align={"center"}
                 style={{
                   ...commonStyle,
-                  ...(isMobileScreen && {
-                    position: "sticky",
-                    [isRTL ? "right" : "left"]: 0,
-                    zIndex: 11,
-                    backgroundColor: commonStyle.backgroundColor,
-                    minWidth: "48px",
-                    maxWidth: "48px",
-                    width: "48px",
-                  }),
+
+                  ...(isMobileScreen &&
+                    key === "checkbox" && {
+                      position: "sticky",
+                      top: "auto",
+                      [isRTL ? "right" : "left"]: 0,
+                      zIndex: 1,
+                      backgroundColor: commonStyle.backgroundColor,
+                    }),
+
                   padding: "0px",
                 }}
               >
@@ -308,15 +309,15 @@ const TableRowComponent = ({
               style={{
                 ...commonStyle,
                 cursor: "pointer",
-                ...(isMobileScreen && {
-                  position: "sticky",
-                  [isRTL ? "right" : "left"]: 48,
-                  zIndex: 10,
-                  backgroundColor: commonStyle.backgroundColor,
-                  minWidth: "120px",
-                  maxWidth: "120px",
-                  width: "120px",
-                }),
+
+                ...(isMobileScreen &&
+                  key === "job_order" && {
+                    position: "sticky",
+                    top: "auto",
+                    [isRTL ? "right" : "left"]: 48,
+                    zIndex: 1,
+                    backgroundColor: commonStyle.backgroundColor,
+                  }),
               }}
             >
               <div
