@@ -1,12 +1,4 @@
-import {
-  Box,
-  IconButton,
-  Stack,
-  Typography,
-  Button,
-  CardContent,
-  Card,
-} from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -39,22 +31,16 @@ import {
 } from "./views/board-missions-view/stations/state";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-import {
-  handleBoardMissionsBarcodeActions,
-  updateBoardMissionCurrentStationApi,
-} from "@/services/api-service/production-floor/production-floor-endpoints";
+import { updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
-import QrReader from "react-qr-scanner";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
-import { ZoomProvider } from "@/widgets/production-floor/context/zoom-context";
-import { boardsMissionsState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -155,8 +141,6 @@ const ProductionFloorWidget = () => {
   const { t } = useTranslation();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isOpenFirstTime, setIsOpenFirstTime] = useState(false);
-  const [scanResult, setScanResult] = useState<string | null>(null);
-  const [isScanningFlag, setIsScanningFlag] = useState(true);
 
   useEffect(() => {
     if (!isOpenFirstTime && isScanning) {
@@ -190,37 +174,6 @@ const ProductionFloorWidget = () => {
     );
   };
 
-  const handleScan = (data: { text: string } | null) => {
-    if (!data) return;
-    setIsScanningFlag(false);
-    setScanResult(data.text || String(data));
-    handleBoardMissionsBarcodeActionsApi(data.text);
-  };
-
-  const handleError = (err: any) => {
-    setIsScanningFlag(true);
-  };
-
-  const handleScanAgain = () => {
-    setScanResult(null);
-    setIsScanningFlag(true);
-  };
-
-  const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
-    barcode = barcode.replace(/½/g, "-");
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        setIsScanningFlag(true);
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await handleBoardMissionsBarcodeActions(callApi, callBack, {
-      barcode,
-    });
-  };
-
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
@@ -238,14 +191,7 @@ const ProductionFloorWidget = () => {
   const isOpenDoneModal = useModal();
 
   return (
-    // <ZoomProvider>
-    <Stack
-      // padding={"0 20px"}
-      gap={"10px"}
-      height={"100%"}
-      maxHeight={"100%"}
-      overflow={"hidden"}
-    >
+    <Stack gap={"10px"} height={"100%"} maxHeight={"100%"} overflow={"hidden"}>
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
@@ -283,7 +229,6 @@ const ProductionFloorWidget = () => {
         )}
         <QrListenerWidget listening={!boardMissionsId} />
       </Stack>
-
       <Drawer
         sx={{ zIndex: 999999 }}
         open={!!selectedBoardMissionId}
@@ -295,7 +240,6 @@ const ProductionFloorWidget = () => {
         <Stack
           paddingBottom={"10px"}
           width={"100vw"}
-          // height={"calc(100vh - 50px)"}
           height={`calc(${mobileHeight} - 50px)`}
         >
           <IconButton
@@ -320,94 +264,7 @@ const ProductionFloorWidget = () => {
           )}
         </Stack>
         <FilesUploaderWidget />
-        <QrListenerWidget listening={!!boardMissionsId} />
-        {isScanning && isScanningFlag && !!boardMissionsId && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            height="100vh"
-            bgcolor="#f7f7f7"
-            p={3}
-          >
-            <Card
-              sx={{
-                width: "100%",
-                maxWidth: 400,
-                borderRadius: "15px",
-                boxShadow: 3,
-              }}
-            >
-              <CardContent>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  align="center"
-                  sx={{ mb: 2, fontWeight: "bold", color: "#2e3092" }}
-                >
-                  {t("productionFloor.QRScanner")}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  color="textSecondary"
-                  sx={{ mb: 3, fontWeight: "500" }}
-                >
-                  {t("productionFloor.scanQRCodeToProceed")}
-                </Typography>
-                {/* Conditionally render the QR scanner */}
-                {isScanning && (
-                  <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
-                    <QrReader
-                      delay={300}
-                      facingMode="environment"
-                      constraints={{
-                        video: {
-                          facingMode: "environment",
-                          width: { ideal: 1280 },
-                          height: { ideal: 720 },
-                        },
-                      }}
-                      style={{
-                        width: "100%",
-                        maxWidth: "400px",
-                        borderRadius: "20px",
-                        border: "4px solid #2e3092",
-                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-                        padding: "10px",
-                        height: "auto",
-                        objectFit: "contain",
-                      }}
-                      onScan={handleScan}
-                      onError={handleError}
-                    />
-                  </Box>
-                )}
-                {scanResult && (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    mt={2}
-                  >
-                    <Typography variant="body1" color="primary">
-                      Scanned QR Code: {scanResult}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleScanAgain}
-                      sx={{ mt: 2 }}
-                    >
-                      Scan Again
-                    </Button>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          </Box>
-        )}
+        {/* <QrListenerWidget listening={!!boardMissionsId} /> */}
       </Drawer>
       <GoMakeDeleteModal
         hideIcon={true}
@@ -457,7 +314,6 @@ const ProductionFloorWidget = () => {
         onIsLastStationDetect={() => isOpenDoneModal.open()}
       />
     </Stack>
-    // </ZoomProvider>
   );
 };
 
