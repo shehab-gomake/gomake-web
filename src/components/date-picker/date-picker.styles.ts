@@ -36,6 +36,13 @@ export const DateInput = styled("input")(({ theme }) => ({
     fontFamily: "Heebo",
     ...FONT_FAMILY.Heebo(500, 12),
   },
+  // Mobile-specific styles
+  "@media (max-width: 768px)": {
+    height: "44px",
+    fontSize: "16px", // Prevents zoom on iOS
+    padding: "12px 16px",
+    minWidth: "150px",
+  },
 }));
 
 export const ClearButton = styled("button")(({ theme }) => ({
@@ -48,12 +55,23 @@ export const ClearButton = styled("button")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   transition: "background-color 0.2s ease",
+  minWidth: "32px",
+  minHeight: "32px",
   "&:hover": {
     backgroundColor: "#F3F4F6",
   },
   "& svg": {
     fontSize: "20px",
     color: "#6B7280",
+  },
+  // Mobile-specific styles
+  "@media (max-width: 768px)": {
+    minWidth: "44px",
+    minHeight: "44px",
+    padding: "8px",
+    "& svg": {
+      fontSize: "24px",
+    },
   },
 }));
 
@@ -68,15 +86,43 @@ export const DateRangePickerWrapper = styled("div")(({ theme }) => ({
   "&.custom-date-range-picker": {
     "& .rdrDateRangePickerWrapper": {
       fontSize: "12px",
+      width: "100%",
     },
     "& .rdrCalendarWrapper": {
       fontSize: "12px",
+      width: "100%",
     },
     "& .rdrDateDisplayWrapper": {
       fontSize: "12px",
     },
     "& .rdrStaticRangeLabel": {
       fontSize: "12px",
+      padding: "8px 12px",
+    },
+    "& .rdrStaticRange": {
+      padding: "4px 8px",
+    },
+    "& .rdrDay": {
+      width: "32px",
+      height: "32px",
+      fontSize: "14px",
+    },
+    "& .rdrDayNumber": {
+      fontSize: "14px",
+    },
+    "& .rdrWeekDay": {
+      fontSize: "12px",
+      padding: "8px 4px",
+    },
+    "& .rdrMonthAndYearWrapper": {
+      padding: "8px 12px",
+    },
+    "& .rdrMonthAndYearPickers": {
+      fontSize: "14px",
+    },
+    "& .rdrNextPrevButton": {
+      width: "32px",
+      height: "32px",
     },
   },
 }));
@@ -92,11 +138,19 @@ export const ChooseButton = styled("button")(({ theme }) => ({
   fontWeight: 500,
   cursor: "pointer",
   transition: "background-color 0.2s ease, transform 0.1s ease",
+  minHeight: "44px", // Better touch target for mobile
+  width: "100%", // Full width on mobile
   "&:hover": {
     backgroundColor: "#1E1F7A",
     transform: "translateY(-1px)",
   },
   "&:active": {
     transform: "translateY(0)",
+  },
+  // Mobile-specific styles
+  "@media (max-width: 768px)": {
+    padding: "16px 24px",
+    fontSize: "16px",
+    minHeight: "48px",
   },
 }));
