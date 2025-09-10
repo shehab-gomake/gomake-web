@@ -74,6 +74,7 @@ export const columnWidthsMap: Record<string, string> = {
 export const mobileColumnWidthsMap: Record<string, string> = {
   checkbox: "48px",
   job_order: "120px",
+  creationDate: "100px",
   deliveryDate: "100px",
   totalTime: "80px",
   customer: "100px",
