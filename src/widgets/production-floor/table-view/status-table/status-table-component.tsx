@@ -411,14 +411,13 @@ const StatusTableComponent = ({
 
   const TABLE_CONFIG = {
     ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
-    MOBILE_ITEM_HEIGHT: columnVisibility.description ? 95 : 75, //!here new
+    MOBILE_ITEM_HEIGHT: columnVisibility.description ? 95 : 75,
     HEADER_HEIGHT: 50,
-    MOBILE_HEADER_HEIGHT: 45, //!here new
+    MOBILE_HEADER_HEIGHT: 45,
     MAX_VISIBLE_ITEMS: 10,
     MOBILE_MAX_VISIBLE_ITEMS: 8,
   };
 
-  //!here update new
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
     const isMobile = isMobileScreen;
@@ -524,7 +523,6 @@ const StatusTableComponent = ({
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
           <Paper
-            //!here sx new
             sx={{
               overflow: "auto",
               ...(isMobileScreen && {
@@ -553,7 +551,7 @@ const StatusTableComponent = ({
                   }),
                 }}
                 data={sortedBoards}
-                overscan={isMobileScreen ? 3 : 5} //!here new update
+                overscan={isMobileScreen ? 3 : 5}
                 components={TableComponents}
                 fixedHeaderContent={fixedHeaderContent}
                 itemContent={(index: number, boardMission: IBoardMissions) => (

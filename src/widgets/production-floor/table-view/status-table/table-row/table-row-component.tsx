@@ -267,7 +267,6 @@ const TableRowComponent = ({
                 Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
               }
             >
-              {/* !here 1 */}
               <SecondaryTableCell
                 align={"center"}
                 style={{
@@ -304,7 +303,6 @@ const TableRowComponent = ({
 
         case "job_order":
           return (
-            // !here 2
             <SecondaryTableCell
               align={"center"}
               style={{
@@ -342,7 +340,6 @@ const TableRowComponent = ({
                 }}
               >
                 <div />
-
                 <div
                   style={{
                     cursor: "pointer",
@@ -350,10 +347,6 @@ const TableRowComponent = ({
                     color: "#000000",
                     fontWeight: "bolder",
                     fontSize: GetProductionFontSizeFromPreferences(),
-                    ...(isMobileScreen && {
-                      fontSize: "12px",
-                      lineHeight: "1.2",
-                    }),
                   }}
                 >
                   {boardMission?.productType
