@@ -3,6 +3,7 @@ import { atom } from "recoil";
 export const allColumnKeys = [
   "checkbox",
   "job_order",
+  "creationDate",
   "deliveryDate",
   "totalTime",
   "customer",
@@ -54,6 +55,7 @@ export const parseSavedColumnSettings = (
 export const columnWidthsMap: Record<string, string> = {
   checkbox: "3%",
   job_order: "12%",
+  creationDate: "7%",
   deliveryDate: "7%",
   totalTime: "7%",
   customer: "9%",

@@ -1,10 +1,12 @@
 import { FONT_FAMILY } from "@/utils/font-family";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const DateTimeProductionFloorComponent = ({
   dateString,
+  style,
 }: {
   dateString: string;
+  style?: React.CSSProperties;
 }) => {
   const date = new Date(dateString);
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
@@ -30,8 +32,9 @@ const DateTimeProductionFloorComponent = ({
         textAlign: "center",
         paddingLeft: 10,
         paddingRight: 10,
-        fontWeight:"bolder",
-        fontSize:GetProductionFontSizeFromPreferences(),
+        fontWeight: "bolder",
+        fontSize: GetProductionFontSizeFromPreferences(),
+        ...style,
       }}
     >
       {formattedDate} <br /> {time}
