@@ -133,7 +133,15 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
   const displayTitle = title || defaultTitle;
 
   return (
-    <div data-tour="quote-widget" style={classes.mainContainer}>
+    <div
+      data-tour="quote-widget"
+      style={{
+        ...classes.mainContainer,
+        ...(isMobileScreen
+          ? { marginTop: 10, margin: "10px 0px 0px 0px" }
+          : {}),
+      }}
+    >
       <div style={classes.titleStyle}>{title}</div>
       <PermissionCheck
         userPermission={Permissions.CAN_SELECT_CLIENT_IN_HOME_PAGE}
