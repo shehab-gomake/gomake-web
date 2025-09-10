@@ -597,6 +597,7 @@ const TableRowComponent = ({
                 textColor={boardMission?.productionFloorJobColor}
                 onClickDone={() => onClickDone(boardMission)}
                 employeesCategories={employeesCategories}
+                isMobileScreen={isMobileScreen}
               />
             </SecondaryTableCell>
           );
