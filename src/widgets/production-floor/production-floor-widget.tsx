@@ -29,7 +29,7 @@ import {
   abortControllerStationState,
   getBoardMissionsByIdState,
 } from "./views/board-missions-view/stations/state";
-import { GoMakeDeleteModal, QRErrorModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -174,50 +174,6 @@ const ProductionFloorWidget = () => {
     );
   };
 
-  const handleScan = (data: { text: string } | null) => {
-    if (!data) return;
-    setIsScanningFlag(false);
-    setScanResult(data.text || String(data));
-    handleBoardMissionsBarcodeActionsApi(data.text);
-  };
-
-  const handleError = (err: any) => {
-    setIsScanningFlag(true);
-  };
-
-  const handleScanAgain = () => {
-    setScanResult(null);
-    setIsScanningFlag(true);
-  };
-
-  const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
-  const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
-  const [qrErrorKey, setQrErrorKey] = useState<string>("");
-
-  const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
-    barcode = barcode.replace(/½/g, "-");
-    const callBack = (res) => {
-      if (res?.data?.success) {
-        if (res?.data?.isLastStation) {
-          isOpenDoneModal.open()
-        }
-        alertSuccessUpdate();
-      }
-      else {
-        if (res?.data?.errorMessage && res?.data?.errorMessage !== "") {
-          setQrErrorMessage(res.data.errorMessage);
-          setQrErrorKey(res.data.errorMessage);
-          setIsQRErrorModalOpen(true);
-        } else {
-          alertFault(t("productionFloor.qrReadError"));
-        }
-      }
-    };
-    await handleBoardMissionsBarcodeActions(callApi, callBack, {
-      barcode,
-    });
-  };
-
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
@@ -357,12 +313,6 @@ const ProductionFloorWidget = () => {
       <QrCodeReader
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
-      />
-      <QRErrorModal
-        openModal={isQRErrorModalOpen}
-        onClose={() => setIsQRErrorModalOpen(false)}
-        errorMessage={qrErrorMessage}
-        errorKey={qrErrorKey}
       />
     </Stack>
   );
