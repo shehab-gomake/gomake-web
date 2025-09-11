@@ -23,7 +23,6 @@ import { useIsMobile } from "@/hooks/use-responsive";
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
     onIsLastStationDetect?: () => void;
-    onClickTestQRCode?: () => void;
 }
 const QrCodeReader = (props: IProps) => {
     const { t } = useTranslation();

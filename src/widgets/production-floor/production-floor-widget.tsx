@@ -250,10 +250,6 @@ const ProductionFloorWidget = () => {
 
   const isOpenDoneModal = useModal();
 
-  const onClickTestQRCode = () => {
-    handleBoardMissionsBarcodeActionsApi("291427-216186-0-2");
-  };
-
   return (
     // <ZoomProvider>
     <Stack
@@ -315,7 +311,7 @@ const ProductionFloorWidget = () => {
           // height={"calc(100vh - 50px)"}
           height={`calc(${mobileHeight} - 50px)`}
         >
-          <div onClick={onClickTestQRCode}>Test btn</div>
+
           <IconButton
             onClick={onClose}
             sx={{
@@ -473,7 +469,6 @@ const ProductionFloorWidget = () => {
       <QrCodeReader
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
-        onClickTestQRCode={onClickTestQRCode}
       />
       <QRErrorModal
         openModal={isQRErrorModalOpen}
