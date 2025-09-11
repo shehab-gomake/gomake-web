@@ -41,6 +41,7 @@ const QRErrorModal = ({
             onClose={onClose}
             style={{
                 outline: "none",
+                zIndex: 999999,
             }}
         >
             <div style={classes.modalContainer}>
