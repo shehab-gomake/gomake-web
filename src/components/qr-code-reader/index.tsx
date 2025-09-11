@@ -23,6 +23,7 @@ import { useIsMobile } from "@/hooks/use-responsive";
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
     onIsLastStationDetect?: () => void;
+    onClickTestQRCode?: () => void;
 }
 const QrCodeReader = (props: IProps) => {
     const { t } = useTranslation();
@@ -47,7 +48,7 @@ const QrCodeReader = (props: IProps) => {
         return new Promise(async (resolve, reject) => {
             barcode = barcode.replace(/½/g, '-');
             const callBack = (res) => {
-                if (res?.success) {
+                if (res?.data?.success) {
                     if (res?.data?.isLastStation) {
                         //isOpenDoneModal.open()
                         if (props?.onIsLastStationDetect) {
@@ -57,9 +58,9 @@ const QrCodeReader = (props: IProps) => {
                     alertSuccessUpdate();
                 }
                 else {
-                    if (res?.errorMessage && res?.errorMessage !== "") {
-                        setQrErrorMessage(res.errorMessage);
-                        setQrErrorKey(res.errorMessage);
+                    if (res?.data?.errorMessage && res?.data?.errorMessage !== "") {
+                        setQrErrorMessage(res.data.errorMessage);
+                        setQrErrorKey(res.data.errorMessage);
                         setIsQRErrorModalOpen(true);
                     } else {
                         alertFault(t("productionFloor.qrReadError"));

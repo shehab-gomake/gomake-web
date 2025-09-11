@@ -37,7 +37,7 @@ import {
   abortControllerStationState,
   getBoardMissionsByIdState,
 } from "./views/board-missions-view/stations/state";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, QRErrorModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import {
   handleBoardMissionsBarcodeActions,
@@ -170,7 +170,7 @@ const ProductionFloorWidget = () => {
   };
 
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
 
   const onUpdateToNextStation = async (
     boardMissionId: string,
@@ -206,14 +206,27 @@ const ProductionFloorWidget = () => {
     setIsScanningFlag(true);
   };
 
+  const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
+  const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
+  const [qrErrorKey, setQrErrorKey] = useState<string>("");
+
   const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
     barcode = barcode.replace(/½/g, "-");
     const callBack = (res) => {
-      if (res?.success) {
+      if (res?.data?.success) {
+        if (res?.data?.isLastStation) {
+          isOpenDoneModal.open()
+        }
         alertSuccessUpdate();
-        setIsScanningFlag(true);
-      } else {
-        alertFaultUpdate();
+      }
+      else {
+        if (res?.data?.errorMessage && res?.data?.errorMessage !== "") {
+          setQrErrorMessage(res.data.errorMessage);
+          setQrErrorKey(res.data.errorMessage);
+          setIsQRErrorModalOpen(true);
+        } else {
+          alertFault(t("productionFloor.qrReadError"));
+        }
       }
     };
     await handleBoardMissionsBarcodeActions(callApi, callBack, {
@@ -236,6 +249,10 @@ const ProductionFloorWidget = () => {
   }, []);
 
   const isOpenDoneModal = useModal();
+
+  const onClickTestQRCode = () => {
+    handleBoardMissionsBarcodeActionsApi("291427-216186-0-2");
+  };
 
   return (
     // <ZoomProvider>
@@ -298,6 +315,7 @@ const ProductionFloorWidget = () => {
           // height={"calc(100vh - 50px)"}
           height={`calc(${mobileHeight} - 50px)`}
         >
+          <div onClick={onClickTestQRCode}>Test btn</div>
           <IconButton
             onClick={onClose}
             sx={{
@@ -439,10 +457,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -455,6 +473,13 @@ const ProductionFloorWidget = () => {
       <QrCodeReader
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
+        onClickTestQRCode={onClickTestQRCode}
+      />
+      <QRErrorModal
+        openModal={isQRErrorModalOpen}
+        onClose={() => setIsQRErrorModalOpen(false)}
+        errorMessage={qrErrorMessage}
+        errorKey={qrErrorKey}
       />
     </Stack>
     // </ZoomProvider>
