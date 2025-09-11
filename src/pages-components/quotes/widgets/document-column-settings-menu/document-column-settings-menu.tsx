@@ -177,8 +177,14 @@ export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
   return (
     <>
       <Tooltip title={t("general.columnVisibility")} placement="left">
-        <IconButton onClick={handleOpen}>
-          <VisibilityOutlinedIcon sx={{ color: "#000" }} />
+        <IconButton onClick={handleOpen} sx={classes.iconButton}>
+          <VisibilityOutlinedIcon
+            sx={{
+              color: "#2e3092",
+              fontSize: "22px",
+              transition: "color 0.2s ease-in-out",
+            }}
+          />
         </IconButton>
       </Tooltip>
       <GoMakeMenu anchorEl={anchorEl} open={open} handleClose={handleCancel}>

@@ -97,7 +97,6 @@ const CustomerEditMachines = () => {
     }
 
     const onSelectMachine = (value: string, machinesList?: any[]) => {
-        debugger
         setCurrentMachineId(value);
         let finalMachineList = machinesList;
         if (!(finalMachineList && finalMachineList.length > 0)) {

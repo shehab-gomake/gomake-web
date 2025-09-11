@@ -121,7 +121,8 @@ export const GoMakeDatepicker = ({
       <GoMakeModal
         modalTitle={t("datepicker.datepicker")}
         insideStyle={{
-          width: "fit-content",
+          width: isMobile ? "95vw" : "fit-content",
+          maxWidth: isMobile ? "95vw" : "none",
           height: "auto",
           padding: isMobile ? "10px" : "10px 20px",
         }}

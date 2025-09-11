@@ -164,7 +164,11 @@ const CustomerAuthLayout = ({
             />
           )}
 
-          {profile?.isShowOnBoardingMenu ? <SetupSection /> : <></>}
+          {profile?.isShowOnBoardingMenu && !isMobileScreen ? (
+            <SetupSection />
+          ) : (
+            <></>
+          )}
         </div>
       }
     </>
