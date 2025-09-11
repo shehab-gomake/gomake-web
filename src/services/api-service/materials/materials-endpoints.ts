@@ -33,6 +33,7 @@ const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-do
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
 
 const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
+const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types";
 
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
@@ -366,6 +367,15 @@ const toggleMaterialTypeActiveApi: ICallAndSetData = async (
   );
 };
 
+const getGroupedMaterialTypesApi: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_GROUPED_MATERIAL_TYPES_URL,
+    setState
+  );
+};
+
 const uploadDocumentAttachmentApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -451,6 +461,7 @@ export {
   updateMaterialCategoryNumberingApi,
   updateSupplierPriorityApi,
   toggleMaterialTypeActiveApi,
+  getGroupedMaterialTypesApi,
   uploadDocumentAttachmentApi,
   uploadQuoteItemFileApi,
   uploadQuoteItemFileForDocumentApi,
