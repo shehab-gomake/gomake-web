@@ -39,7 +39,7 @@ interface GmailInboxListProps {
 }
 
 const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, selectedId }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
+  const { primaryColor, neutralColor, secondColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
 
   const mockMails: MailItem[] = useMemo(
@@ -132,6 +132,10 @@ const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, sel
                   gap: 1,
                   bgcolor: mail.unread ? primaryColor(50) : "transparent",
                   "&:hover": { bgcolor: primaryColor(100) },
+                  "&.Mui-selected": {
+                    bgcolor: primaryColor(100),
+                    boxShadow: `inset 3px 0 0 ${secondColor(500)}`,
+                  },
                 }}
                 selected={selectedId === mail.id}
                 onClick={() => onSelect?.(mail)}
