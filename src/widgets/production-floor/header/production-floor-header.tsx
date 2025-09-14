@@ -113,8 +113,8 @@ const ProductionFloorHeader = ({
       justifyContent={"space-between"}
       alignItems={"center"}
       padding={"0 20px"}
-      style={{
-        ...(isMobileScreen && { display: "contents" }),
+      sx={{
+        ...(isMobileScreen && { flexDirection: "column", gap: "8px" }),
       }}
     >
       <Stack direction={"row"} alignItems={"center"} gap={"10px"}>
@@ -171,15 +171,24 @@ const ProductionFloorHeader = ({
           ))}
         </Breadcrumbs>
       </Stack>
-
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
+      <Stack
+        direction={isMobileScreen ? "column" : "row"}
+        gap={"5px"}
+        alignItems={"center"}
+        sx={{
+          ...(isMobileScreen && { flexDirection: "column", gap: "8px" }),
+        }}
+      >
         {view !== EProductionFloorView.DASHBOARD && (
           <Box
             sx={{
               display: "flex",
               gap: 2,
               alignItems: "center",
-              padding: "8px 12px",
+              ...(isMobileScreen
+                ? { padding: "8px 4px" }
+                : { padding: "8px 12px" }),
+
               backgroundColor: "#f8f9fa",
               borderRadius: "6px",
               border: "1px solid #e9ecef",
