@@ -5,6 +5,8 @@ import { IListItem } from "@/components/containers/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
 import { ITab } from "@/components/tabs/interface";
+import { FrontdeskInternalInboxTable } from "@/widgets/frontdesk/components/internal-inbox-table";
+import { GmailInboxList } from "@/widgets/frontdesk/components/gmail-inbox-list";
 
 const FrontdeskWidget: React.FC = () => {
   const [selected, setSelected] = useState<string>("overview");
@@ -58,8 +60,10 @@ const FrontdeskOverviewTabs: React.FC = () => {
   const subTabs = (channel: "internal" | "gmail"): ITab[] => [
     {
       title: "Inbox",
-      component: (
-        <div style={{ padding: 16 }}>{channel === "internal" ? "Internal" : "Gmail"} Inbox</div>
+      component: channel === "gmail" ? (
+        <GmailInboxList />
+      ) : (
+        <div style={{ padding: 16 }}>Internal Inbox</div>
       ),
     },
     {
