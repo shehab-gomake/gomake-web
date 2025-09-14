@@ -17,9 +17,7 @@ export default function FrontdeskPage() {
     // Ensure canonical route points to inbox
     replace("/frontdesk/inbox").then();
   }, [replace]);
-  return (
-    <CustomerAuthLayout staticPageTitle={"frontdesk"}>
-      <FrontdeskWidget />
-    </CustomerAuthLayout>
-  );
+
+  // Don't render layout during redirect to prevent duplicate profile fetch
+  return null;
 }

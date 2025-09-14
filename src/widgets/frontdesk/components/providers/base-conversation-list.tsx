@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Avatar,
   Divider,
@@ -16,6 +16,8 @@ import {
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FrontdeskLoading } from "@/widgets/frontdesk/components/loading-spinner";
 import { ConversationItem } from "./provider-types";
+import { VirtualizedConversationList, VirtualizedListHandle } from "./virtualized-conversation-list";
+import { ConversationListRow } from "./conversation-list-row";
 
 const getInitials = (name: string) =>
   name
@@ -34,6 +36,8 @@ interface BaseConversationListProps {
   onRefresh?: () => void;
   onSelect?: (item: ConversationItem) => void;
   selectedId?: string;
+  density?: 'comfortable' | 'compact';
+  enableVirtualization?: boolean;
 }
 
 export const BaseConversationList: React.FC<BaseConversationListProps> = ({
@@ -45,8 +49,66 @@ export const BaseConversationList: React.FC<BaseConversationListProps> = ({
   onRefresh,
   onSelect,
   selectedId,
+  density = 'comfortable',
+  enableVirtualization = true,
 }) => {
   const { primaryColor, neutralColor, secondColor } = useGomakeTheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const virtualListRef = useRef<VirtualizedListHandle>(null);
+  const [containerHeight, setContainerHeight] = useState(600);
+
+  // Measure container height for virtualization
+  useEffect(() => {
+    const measureHeight = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerHeight(rect.height);
+      }
+    };
+
+    measureHeight();
+    const resizeObserver = new ResizeObserver(measureHeight);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!items.length || !onSelect) return;
+
+      const currentIndex = items.findIndex(item => item.id === selectedId);
+      let nextIndex = -1;
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : currentIndex;
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+          break;
+        default:
+          return;
+      }
+
+      if (nextIndex >= 0 && nextIndex < items.length) {
+        onSelect(items[nextIndex]);
+        if (enableVirtualization && virtualListRef.current) {
+          virtualListRef.current.scrollToItem(nextIndex, 'smart');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [items, selectedId, onSelect, enableVirtualization]);
 
   if (loading && items.length === 0) {
     return (
@@ -78,70 +140,50 @@ export const BaseConversationList: React.FC<BaseConversationListProps> = ({
           </Typography>
         </Stack>
       ) : (
-        <List disablePadding className="custom-scrollbar" sx={{ height: "100%", overflowY: "auto" }}>
-          {items.map((item, idx) => (
-            <React.Fragment key={item.id}>
-              <ListItem disableGutters sx={{ px: 0 }}>
-                <ListItemButton
-                  sx={{
-                    borderRadius: 1,
-                    px: 1.5,
-                    py: 1,
-                    gap: 1,
-                    bgcolor: item.unread ? primaryColor(50) : "transparent",
-                    "&:hover": { bgcolor: primaryColor(100) },
-                    "&.Mui-selected": {
-                      bgcolor: primaryColor(100),
-                      boxShadow: `inset 3px 0 0 ${secondColor(500)}`,
-                    },
-                  }}
-                  selected={selectedId === item.id}
-                  onClick={() => onSelect?.(item)}
-                >
-                  <ListItemAvatar>
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: neutralColor(200), color: neutralColor(700) }}>
-                      {getInitials(item.from)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    width="100%"
-                    gap={1}
-                    sx={{ minWidth: 0 }}
-                  >
-                    <Stack spacing={0.25} sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: item.unread ? 700 : 500 }} noWrap>
-                        {item.from}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: "#475467", fontWeight: item.unread ? 600 : 400 }} noWrap>
-                        {item.subject}
-                      </Typography>
-                      {!!item.snippet && (
-                        <Typography variant="caption" sx={{ color: "#667085" }} noWrap>
-                          {item.snippet}
-                        </Typography>
-                      )}
-                    </Stack>
-                    <Typography variant="caption" sx={{ color: "#667085", whiteSpace: "nowrap" }}>
-                      {item.receivedAt}
-                    </Typography>
-                  </Stack>
-                </ListItemButton>
-              </ListItem>
-              {idx < items.length - 1 && <Divider component="li" sx={{ ml: 7 }} />}
-            </React.Fragment>
-          ))}
+        <Box ref={containerRef} sx={{ height: "100%", overflow: "hidden" }}>
+          {enableVirtualization && items.length > 50 ? (
+            <>
+              <VirtualizedConversationList
+                ref={virtualListRef}
+                items={items}
+                selectedId={selectedId}
+                density={density}
+                onSelect={onSelect}
+                height={containerHeight - (hasMore && onLoadMore ? 50 : 0)}
+                overscanCount={5}
+              />
+              {hasMore && onLoadMore && (
+                <Box sx={{ p: 2, textAlign: "center", borderTop: 1, borderColor: "divider" }}>
+                  <Button size="small" onClick={onLoadMore} disabled={loading} variant="outlined">
+                    {loading ? "Loading..." : "Load More"}
+                  </Button>
+                </Box>
+              )}
+            </>
+          ) : (
+            <List disablePadding className="custom-scrollbar" sx={{ height: "100%", overflowY: "auto" }}>
+              {items.map((item, idx) => (
+                <React.Fragment key={item.id}>
+                  <ConversationListRow
+                    item={item}
+                    isSelected={selectedId === item.id}
+                    density={density}
+                    onSelect={onSelect || (() => {})}
+                  />
+                  {idx < items.length - 1 && <Divider component="li" sx={{ ml: 7 }} />}
+                </React.Fragment>
+              ))}
 
-          {hasMore && onLoadMore && (
-            <Box sx={{ p: 2, textAlign: "center" }}>
-              <Button size="small" onClick={onLoadMore} disabled={loading} variant="outlined">
-                {loading ? "Loading..." : "Load More"}
-              </Button>
-            </Box>
+              {hasMore && onLoadMore && (
+                <Box sx={{ p: 2, textAlign: "center" }}>
+                  <Button size="small" onClick={onLoadMore} disabled={loading} variant="outlined">
+                    {loading ? "Loading..." : "Load More"}
+                  </Button>
+                </Box>
+              )}
+            </List>
           )}
-        </List>
+        </Box>
       )}
     </Paper>
   );

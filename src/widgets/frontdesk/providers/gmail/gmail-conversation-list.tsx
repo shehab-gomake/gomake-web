@@ -1,21 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Avatar,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  Stack,
-  Typography,
-  Paper,
-  Button,
-  Box,
-} from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import React, { useEffect, useMemo } from "react";
+import { useRecoilValue } from "recoil";
+import { gmailUIState } from "@/store/frontdesk/providers/gmail";
 import { useGmailConversations, GmailConversation } from "@/hooks/frontdesk/providers/gmail";
-import { FrontdeskLoading } from "@/widgets/frontdesk/components/loading-spinner";
+import { BaseConversationList } from "@/widgets/frontdesk/components/providers/base-conversation-list";
+import { ConversationItem } from "@/widgets/frontdesk/components/providers/provider-types";
 
 export type MailItem = {
   id: string;
@@ -75,6 +63,16 @@ const mapConversationToMailItem = (conversation: GmailConversation): MailItem =>
   body: decodeHtmlEntities(conversation.snippet), // Use snippet as body for now
 });
 
+const mapMailItemToConversationItem = (mail: MailItem): ConversationItem => ({
+  id: mail.id,
+  from: mail.from,
+  subject: mail.subject,
+  snippet: mail.snippet,
+  receivedAt: mail.receivedAt,
+  unread: mail.unread,
+  body: mail.body,
+});
+
 interface GmailConversationListProps {
   onSelect?: (mail: MailItem) => void;
   onLoaded?: (mails: MailItem[]) => void;
@@ -84,8 +82,8 @@ interface GmailConversationListProps {
 const GmailConversationList: React.FC<GmailConversationListProps> = ({ onSelect, onLoaded, selectedId }) => {
   console.log('📧 GmailConversationList component rendered'); // Debug log
 
-  const { primaryColor, neutralColor, secondColor } = useGomakeTheme();
   const { conversations, loading, error, hasMore, loadMore, refresh } = useGmailConversations();
+  const uiState = useRecoilValue(gmailUIState);
 
   const mails: MailItem[] = useMemo(() => {
     console.log('Gmail conversations state:', { conversations, error, loading }); // Debug log
@@ -107,98 +105,31 @@ const GmailConversationList: React.FC<GmailConversationListProps> = ({ onSelect,
     }
   }, [mails, selectedId, onLoaded, onSelect]);
 
-  if (loading) {
-    return (
-      <Paper elevation={0} sx={{ border: "1px solid #EAECF0", borderRadius: 2, overflow: "hidden" }}>
-        <FrontdeskLoading label="Loading conversations..." />
-      </Paper>
-    );
-  }
+  // Convert MailItem[] to ConversationItem[] for BaseConversationList
+  const conversationItems: ConversationItem[] = useMemo(() => {
+    return mails.map(mapMailItemToConversationItem);
+  }, [mails]);
+
+  const handleSelectConversation = (item: ConversationItem) => {
+    const mail = mails.find(m => m.id === item.id);
+    if (mail && onSelect) {
+      onSelect(mail);
+    }
+  };
 
   return (
-    <Paper elevation={0} sx={{ border: "1px solid #EAECF0", borderRadius: 2, overflow: "hidden" }}>
-      {error && (
-        <Box sx={{ p: 2 }}>
-          <Typography variant="body2" color="error" sx={{ mb: 1 }}>
-            {error}
-          </Typography>
-          <Button size="small" onClick={refresh} disabled={loading}>
-            Retry
-          </Button>
-        </Box>
-      )}
-
-      {mails.length === 0 && !loading && !error ? (
-        <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
-          <Typography variant="body2" color="text.secondary">No conversations found</Typography>
-        </Stack>
-      ) : (
-        <List disablePadding className="custom-scrollbar">
-          {mails.map((mail, idx) => (
-            <React.Fragment key={mail.id}>
-              <ListItem disableGutters sx={{ px: 0 }}>
-                <ListItemButton
-                  sx={{
-                    borderRadius: 1,
-                    px: 1.5,
-                    py: 1,
-                    gap: 1,
-                    bgcolor: mail.unread ? primaryColor(50) : "transparent",
-                    "&:hover": { bgcolor: primaryColor(100) },
-                    "&.Mui-selected": {
-                      bgcolor: primaryColor(100),
-                      boxShadow: `inset 3px 0 0 ${secondColor(500)}`,
-                    },
-                  }}
-                  selected={selectedId === mail.id}
-                  onClick={() => onSelect?.(mail)}
-                >
-                  <ListItemAvatar>
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: neutralColor(200), color: neutralColor(700) }}>
-                      {getInitials(mail.from)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%" gap={1}
-                         sx={{ minWidth: 0 }}>
-                    <Stack spacing={0.25} sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: mail.unread ? 700 : 500 }} noWrap>
-                        {mail.from}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: "#475467", fontWeight: mail.unread ? 600 : 400 }} noWrap>
-                        {mail.subject}
-                      </Typography>
-                      {!!mail.snippet && (
-                        <Typography variant="caption" sx={{ color: "#667085" }} noWrap>
-                          {mail.snippet}
-                        </Typography>
-                      )}
-                    </Stack>
-                    <Typography variant="caption" sx={{ color: "#667085", whiteSpace: "nowrap" }}>
-                      {mail.receivedAt}
-                    </Typography>
-                  </Stack>
-                </ListItemButton>
-              </ListItem>
-              {idx < mails.length - 1 && <Divider component="li" sx={{ ml: 7 }} />}
-            </React.Fragment>
-          ))}
-
-          {/* Load More Button */}
-          {hasMore && (
-            <Box sx={{ p: 2, textAlign: "center" }}>
-              <Button
-                size="small"
-                onClick={loadMore}
-                disabled={loading}
-                variant="outlined"
-              >
-                {loading ? "Loading..." : "Load More"}
-              </Button>
-            </Box>
-          )}
-        </List>
-      )}
-    </Paper>
+    <BaseConversationList
+      items={conversationItems}
+      loading={loading && conversations.length === 0}
+      error={error || undefined}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
+      onRefresh={refresh}
+      onSelect={handleSelectConversation}
+      selectedId={selectedId}
+      density={uiState.listDensity}
+      enableVirtualization={true}
+    />
   );
 };
 

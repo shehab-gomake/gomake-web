@@ -12,6 +12,7 @@ import { GmailAuthModal } from "@/widgets/frontdesk/providers/gmail/gmail-auth-m
 import { useGmailAuth, useGmailConversationDetail, useGmailSend } from "@/hooks/frontdesk/providers/gmail";
 import { useRecoilState } from "recoil";
 import { gmailUIState } from "@/store/frontdesk/providers/gmail";
+import { DensityToggleIcon } from "@/widgets/frontdesk/components/providers/density-toggle";
 
 const GmailProviderView: React.FC = () => {
   console.log('📬 GmailProviderView component rendered'); // Debug log
@@ -164,15 +165,21 @@ const GmailProviderView: React.FC = () => {
       {/* Two-pane area */}
       <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
         {/* Left: mail list */}
-        <div style={{ width: 360, minWidth: 320, height: "100%" }}>
-          <GmailConversationList
-            onSelect={setSelected}
-            selectedId={selected?.id}
-            onLoaded={(items) => {
-              if (!selected && items?.length) setSelected(items[0]);
-            }}
-          />
-        </div>
+        <Stack sx={{ width: 360, minWidth: 320, height: "100%" }} spacing={1}>
+          {/* Density toggle above the list */}
+          <Stack direction="row" justifyContent="flex-end" sx={{ px: 1 }}>
+            <DensityToggleIcon />
+          </Stack>
+          <Box sx={{ flex: 1, minHeight: 0 }}>
+            <GmailConversationList
+              onSelect={setSelected}
+              selectedId={selected?.id}
+              onLoaded={(items) => {
+                if (!selected && items?.length) setSelected(items[0]);
+              }}
+            />
+          </Box>
+        </Stack>
 
         {/* Right: preview */}
         <Paper

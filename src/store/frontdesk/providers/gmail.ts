@@ -86,6 +86,7 @@ export interface GmailUIState {
   showAuthModal: boolean;
   showComposeModal: boolean;
   refreshing: boolean;
+  listDensity: 'comfortable' | 'compact';
 }
 
 export const gmailUIState = atom<GmailUIState>({
@@ -94,5 +95,6 @@ export const gmailUIState = atom<GmailUIState>({
     showAuthModal: false,
     showComposeModal: false,
     refreshing: false,
+    listDensity: 'comfortable',
   },
 });

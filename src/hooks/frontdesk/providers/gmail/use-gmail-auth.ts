@@ -244,10 +244,17 @@ export const useGmailAuth = () => {
     }
   }, [setConnectionState, alertSuccess, alertFault]);
 
-  // Check connection on component mount
+  // Check connection on component mount with debounce to prevent duplicate calls
   useEffect(() => {
-    checkConnection();
-  }, [checkConnection]);
+    // Only check connection if we haven't checked recently
+    if (!connectionState.loading) {
+      const timeoutId = setTimeout(() => {
+        checkConnection();
+      }, 100); // Small delay to let other auth calls complete first
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [checkConnection, connectionState.loading]);
 
   return {
     connectionState,
