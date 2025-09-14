@@ -102,9 +102,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -210,7 +209,8 @@ const useMoreCircle = () => {
     const isOrdersTracking = pathname === "/ordersTracking";
     const isCanceledPurchaseOrder =
       quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
-
+    const isClosedPurchaseOrder =
+      quote?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
       Permissions.SEND_PAYMENT_TO_CLIENT
@@ -223,6 +223,9 @@ const useMoreCircle = () => {
 
     const isCanReOpenManuallyClosedDocument = quote?.isCanCancelManualClose;
     const isCanReopenCanceledOrder = isOrder && isCanceledOrder;
+
+    const isCanReOpenCancledPurchaseOrder = isPurchaseOrder && isClosedPurchaseOrder;
+    const isCanReOpenCanceledPurchaseInvoice = isPurchaseInvoice && isClosedPurchaseOrder;
     const isCanReOpenClosedDocument =
       CheckPermission(Permissions.CAN_OPEN_CLOSED_DOCUMENTS) &&
       ((isOrder && isClosedOrder) ||
@@ -535,8 +538,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-                onClickOpenCloseOrderModal(quote)
-              )
+              onClickOpenCloseOrderModal(quote)
+            )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),
@@ -558,7 +561,9 @@ const useMoreCircle = () => {
         condition:
           isCanReopenCanceledOrder ||
           isCanReOpenManuallyClosedDocument ||
-          isCanReOpenClosedDocument,
+          isCanReOpenClosedDocument ||
+          isCanReOpenCancledPurchaseOrder ||
+          isCanReOpenCanceledPurchaseInvoice,
         onClick: () => onClickReopenDocument(quote),
         icon: <UnLockIcon />,
         name: t("sales.quote.open"),
@@ -587,8 +592,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -630,8 +635,7 @@ const useMoreCircle = () => {
           onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
         icon: <MailIcon />,
         name: t(
-          `sales.quote.${
-            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
           }`
         ),
       },
