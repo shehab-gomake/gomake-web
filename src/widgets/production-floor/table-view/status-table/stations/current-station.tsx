@@ -15,6 +15,7 @@ interface IProps extends ICurrentStation {
   textColor?: string;
   onClickDone?: () => void;
   employeesCategories?: any;
+  isMobileScreen?: boolean;
 }
 
 const CurrentStationComponent = ({
@@ -26,6 +27,7 @@ const CurrentStationComponent = ({
   id,
   employeesCategories,
   onClickDone,
+  isMobileScreen = false,
 }: IProps) => {
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const { classes } = useStyle({ textColor });
@@ -40,7 +42,6 @@ const CurrentStationComponent = ({
     canMoveStation,
   } = useStations();
 
-
   return (
     <Stack
       justifyContent={"flex-start"}
@@ -54,12 +55,18 @@ const CurrentStationComponent = ({
         disabled={!canMoveStation}
         onClick={(e) => handleClick(e, boardMissionId, productType)}
       >
-        <span style={{
-          ...FONT_FAMILY.Lexend(500, 15),
-          color: "#000000",
-          lineHeight: "15px",
-          fontSize: GetProductionFontSizeFromPreferences(),
-        }}>{machineName ? getTruncatedLabel(machineName, 25) : getTruncatedLabel(actionName, 25)}</span>
+        <span
+          style={{
+            ...FONT_FAMILY.Lexend(500, 15),
+            color: "#000000",
+            lineHeight: "15px",
+            fontSize: GetProductionFontSizeFromPreferences(),
+          }}
+        >
+          {machineName
+            ? getTruncatedLabel(machineName, 25)
+            : getTruncatedLabel(actionName, 25)}
+        </span>
         {anchorEl ? (
           <UpArrowIcon color={"#475467"} width={14} height={14} />
         ) : (
@@ -77,7 +84,8 @@ const CurrentStationComponent = ({
               "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
             color: "black",
             ...FONT_FAMILY.Inter(500, 14),
-            width: "13%",
+            width: isMobileScreen ? "200px" : "13%",
+            minWidth: isMobileScreen ? "180px" : "auto",
           },
         }}
         anchorEl={anchorEl}
@@ -87,21 +95,31 @@ const CurrentStationComponent = ({
         {boardMissionsStations
           ?.filter((s) => s.id !== id)
           ?.map((station) => {
-            const employee = employeesCategories?.find((e) => e.id === station.employeeId);
+            const employee = employeesCategories?.find(
+              (e) => e.id === station.employeeId
+            );
             return (
               <>
                 <MenuItem
                   style={{ fontSize: GetProductionFontSizeFromPreferences() }}
                   onClick={() =>
-                    onUpdateCurrentStation(boardMissionId, station.id, productType)
+                    onUpdateCurrentStation(
+                      boardMissionId,
+                      station.id,
+                      productType
+                    )
                   }
                 >
-                  {station.employeeId ? employee?.label : station?.machineId ? station?.machineName : ""} ({station.actionName})
+                  {station.employeeId
+                    ? employee?.label
+                    : station?.machineId
+                    ? station?.machineName
+                    : ""}{" "}
+                  ({station.actionName})
                 </MenuItem>
                 <Divider />
               </>
-
-            )
+            );
           })}
         <MenuItem
           style={{ fontSize: GetProductionFontSizeFromPreferences() }}
@@ -109,7 +127,7 @@ const CurrentStationComponent = ({
         >
           {t("boardMissions.done")}
         </MenuItem>
-      </Menu>{" "}
+      </Menu>
     </Stack>
   );
 };
