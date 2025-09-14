@@ -6,34 +6,19 @@ import { ConversationHeader } from "@/widgets/frontdesk/components/conversation/
 import { ConversationThread } from "@/widgets/frontdesk/components/conversation/conversation-thread";
 import { ConversationReplyBox } from "@/widgets/frontdesk/components/conversation/conversation-reply-box";
 import { ConversationMessage } from "@/widgets/frontdesk/components/conversation/conversation-types";
+import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
 
 const GmailInboxView: React.FC = () => {
+  console.log('📬 GmailInboxView component rendered'); // Debug log
+
   const [selected, setSelected] = useState<MailItem | null>(null);
 
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [draft, setDraft] = useState("");
 
-  // Reset mock conversation whenever a new email is selected
+  // Clear thread when selection changes; real data should populate from API
   useEffect(() => {
-    if (!selected) {
-      setMessages([]);
-      return;
-    }
-    const initial: ConversationMessage[] = [
-      {
-        id: "m1",
-        from: "them",
-        text: selected.body?.slice(0, 160) || selected.snippet || "Hi there! I had a quick question about my booking.",
-        at: selected.receivedAt || "10:05 AM",
-      },
-      {
-        id: "m2",
-        from: "me",
-        text: "Hello! Sure—happy to help. What do you need?",
-        at: "10:07 AM",
-      },
-    ];
-    setMessages(initial);
+    setMessages([]);
     setDraft("");
   }, [selected]);
 
@@ -100,11 +85,10 @@ const GmailInboxView: React.FC = () => {
               <ConversationReplyBox value={draft} onChange={setDraft} onSend={sendReply} />
             </>
           ) : (
-            <div style={{ padding: 16 }}>
-              <Typography variant="body2" color="#667085">
-                Select an email to preview
-              </Typography>
-            </div>
+            <FrontdeskEmptyState
+              title="No conversation selected"
+              subtitle="Choose a conversation from the left to preview"
+            />
           )}
         </Paper>
       </Stack>

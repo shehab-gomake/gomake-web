@@ -4,6 +4,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 
 // Placeholder endpoints to match the project's API pattern. Adjust URLs once backend is ready.
 const GET_GMAIL_INBOX_URL = "/v1/frontdesk-service/gmail/inbox"; // supports ?limit=
+const GET_GMAIL_CONVERSATIONS_URL = "/api/gmail/conversations"; // proxy to messaging service
 
 const getGmailInboxApi: ICallAndSetData = async (
   callApi,
@@ -19,5 +20,18 @@ const getGmailInboxApi: ICallAndSetData = async (
   );
 };
 
-export { getGmailInboxApi };
+const getGmailConversationsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_GMAIL_CONVERSATIONS_URL}${nextPageToken}`,
+    setState
+  );
+};
+
+export { getGmailInboxApi, getGmailConversationsApi };
 
