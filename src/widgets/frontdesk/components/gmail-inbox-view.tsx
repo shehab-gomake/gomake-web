@@ -51,11 +51,11 @@ const GmailInboxView: React.FC = () => {
   };
 
   return (
-    <Stack sx={{ width: "100%", gap: 2, minHeight: 520 }}>
+    <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
       {/* Two-pane area */}
-      <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, minHeight: 420 }}>
+      <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
         {/* Left: mail list */}
-        <div style={{ width: 360, minWidth: 320 }}>
+        <div style={{ width: 360, minWidth: 320, height: "100%" }}>
           <GmailInboxList
             onSelect={setSelected}
             selectedId={selected?.id}
@@ -76,6 +76,7 @@ const GmailInboxView: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             minWidth: 0,
+            height: "100%",
           }}
         >
           {selected ? (

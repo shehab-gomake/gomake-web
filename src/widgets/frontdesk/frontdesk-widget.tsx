@@ -11,6 +11,8 @@ import { DocumentIcon } from "@/components/icons/document-icon";
 import { SettingsIcon } from "@/icons/settings-icon";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import { WhatsAppInboxView } from "./components/whatsapp-inbox-view";
+import { InternalInboxView } from "./components/internal-inbox-view";
 
 const FrontdeskWidget: React.FC = () => {
   const { t } = useTranslation();
@@ -26,8 +28,8 @@ const FrontdeskWidget: React.FC = () => {
     () => [
       { title: "Unified", component: <GmailInboxView /> },
       { title: "Gmail", component: <GmailInboxView /> },
-      { title: "WhatsApp", component: <div>WhatsApp Inbox (placeholder)</div> },
-      { title: "Internal", component: <div>Internal Inbox (placeholder)</div> },
+      { title: "WhatsApp", component: <WhatsAppInboxView /> },
+      { title: "Internal", component: <InternalInboxView /> },
     ],
     []
   );
