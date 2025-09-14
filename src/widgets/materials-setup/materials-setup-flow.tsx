@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -19,37 +19,99 @@ import { Step1SheetPrintingSelection } from "./components/Step1SheetPrintingSele
 import { Step2RollPrintingSelection } from "./components/Step2RollPrintingSelection";
 import { Step3WideFormatMaterialSelection } from "./components/Step3WideFormatMaterialSelection";
 import { Step4FlatbedsSelection } from "./components/Step4FlatbedsSelection";
+import { useMachines } from "../employees-working-hours-widgets/use-machines";
+import { ECategoryId } from "../machines/enums/category-id";
+
+interface MaterialValue {
+  valueKey: string;
+  value: string | number;
+}
 
 interface SelectedMaterial {
-  id: string;
-  name: string;
-  category: string;
-  width?: number;
-  length?: number;
-  type?: string;
+  materialTypeKey: string;
+  categoryKey: string;
+  values: MaterialValue[];
 }
 
 const MaterialsSetupFlow: React.FC = () => {
   const { t } = useTranslation();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const { navigate } = useGomakeRouter();
-
+  const { machines, machinesLoading, machinesFetched, getMachines } =
+    useMachines();
   const [currentStep, setCurrentStep] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<
     SelectedMaterial[]
   >([]);
+  const [availableSteps, setAvailableSteps] = useState<any[]>([]);
 
-  // Define the steps
-  const steps = [
-    { id: "sheet-printing", title: "Sheet printing department" },
-    { id: "roll-printing", title: "Roll printing department" },
-    { id: "wide-format-material", title: "Wide Format" },
-    { id: "flatbeds", title: "Flatbeds" },
-  ];
+  // Get machines on component mount
+  useEffect(() => {
+    getMachines();
+  }, []);
+
+  // Determine which steps to show based on machine categories
+  useEffect(() => {
+    if (machines !== null) {
+      // machines is loaded (could be empty array or with data)
+      if (machines.length > 0) {
+        const machineCategories = machines.map((machine) => machine.category);
+
+        const stepsToShow = [];
+        let stepIndex = 0;
+
+        // Check for Step 1: Sheet printing (DIGITAL_PRINTING or OFSSET_PRINTING)
+        if (
+          machineCategories.includes(ECategoryId.DIGITAL_PRINTING) ||
+          machineCategories.includes(ECategoryId.OFSSET_PRINTING)
+        ) {
+          stepsToShow.push({
+            id: "sheet-printing",
+            title: "Sheet printing department",
+            index: stepIndex++,
+          });
+        }
+
+        // Check for Step 2: Roll printing (ROLL_DIGITAL_PRINTING or FLEXO_PRINTING or ROLL_OFF_SET_PRINTING)
+        if (
+          machineCategories.includes(ECategoryId.ROLL_DIGITAL_PRINTING) ||
+          machineCategories.includes(ECategoryId.FLEXO_PRINTING) ||
+          machineCategories.includes(ECategoryId.ROLL_OFF_SET_PRINTING)
+        ) {
+          stepsToShow.push({
+            id: "roll-printing",
+            title: "Roll printing department",
+            index: stepIndex++,
+          });
+        }
+
+        // Check for Step 3 & 4: Wide format and Flatbeds (FLATBED_WIDE_PRINTING)
+        if (machineCategories.includes(ECategoryId.FLATBED_WIDE_PRINTING)) {
+          stepsToShow.push({
+            id: "wide-format-material",
+            title: "Wide Format",
+            index: stepIndex++,
+          });
+          stepsToShow.push({
+            id: "flatbeds",
+            title: "Flatbeds",
+            index: stepIndex++,
+          });
+        }
+
+        setAvailableSteps(stepsToShow);
+        setCurrentStep(0);
+      } else {
+        // No machines found
+        setAvailableSteps([]);
+        setCurrentStep(0);
+      }
+    }
+  }, [machines]);
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < availableSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -65,9 +127,6 @@ const MaterialsSetupFlow: React.FC = () => {
     try {
       console.log("Selected materials:", selectedMaterials);
 
-      // // Simulate API call
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // alertSuccessAdded();
       // navigate("/");
     } catch (error) {
@@ -76,29 +135,40 @@ const MaterialsSetupFlow: React.FC = () => {
   };
 
   const renderCurrentStep = () => {
-    switch (currentStep) {
-      case 0:
+    if (availableSteps.length === 0) {
+      return (
+        <Box sx={{ textAlign: "center", py: 4 }}>
+          <Typography>{t("Loading available steps...")}</Typography>
+        </Box>
+      );
+    }
+
+    const currentStepData = availableSteps[currentStep];
+    if (!currentStepData) return null;
+
+    switch (currentStepData.id) {
+      case "sheet-printing":
         return (
           <Step1SheetPrintingSelection
             selectedMaterials={selectedMaterials}
             onMaterialsChange={setSelectedMaterials}
           />
         );
-      case 1:
+      case "roll-printing":
         return (
           <Step2RollPrintingSelection
             selectedMaterials={selectedMaterials}
             onMaterialsChange={setSelectedMaterials}
           />
         );
-      case 2:
+      case "wide-format-material":
         return (
           <Step3WideFormatMaterialSelection
             selectedMaterials={selectedMaterials}
             onMaterialsChange={setSelectedMaterials}
           />
         );
-      case 3:
+      case "flatbeds":
         return (
           <Step4FlatbedsSelection
             selectedMaterials={selectedMaterials}
@@ -109,6 +179,38 @@ const MaterialsSetupFlow: React.FC = () => {
         return null;
     }
   };
+
+  // Show loading state while machines are being fetched
+  if (machinesLoading) {
+    return (
+      <Box sx={{ p: "0px 24px 24px 24px", textAlign: "center", py: 4 }}>
+        <Typography>{t("Loading machines...")}</Typography>
+      </Box>
+    );
+  }
+
+  // Show message when no relevant machines are found (only after machines are fetched and not loading)
+  if (machinesFetched && !machinesLoading && availableSteps.length === 0) {
+    return (
+      <Box sx={{ p: "0px 24px 24px 24px" }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
+            {t("Materials Setup")}
+          </Typography>
+        </Box>
+        <Paper sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {t("No Relevant Machines Found")}
+          </Typography>
+          <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+            {t(
+              "No machines found that require material setup. Please ensure you have machines with the following categories:"
+            )}
+          </Typography>
+        </Paper>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: "0px 24px 24px 24px" }}>
@@ -197,7 +299,7 @@ const MaterialsSetupFlow: React.FC = () => {
       {/* Stepper */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Stepper activeStep={currentStep} alternativeLabel>
-          {steps.map((step, index) => (
+          {availableSteps.map((step, index) => (
             <Step key={step.id}>
               <StepLabel>{t(step.title)}</StepLabel>
             </Step>
@@ -217,7 +319,7 @@ const MaterialsSetupFlow: React.FC = () => {
         >
           {t("Back")}
         </Button>
-        {currentStep === steps.length - 1 ? (
+        {currentStep === availableSteps.length - 1 ? (
           // Show Complete Setup button on last step
           <Button
             variant="contained"
@@ -242,25 +344,37 @@ const MaterialsSetupFlow: React.FC = () => {
             {t("Selected Materials")} ({selectedMaterials.length})
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-            {selectedMaterials.map((material) => (
-              <Box
-                key={material.id}
-                sx={{
-                  p: 1,
-                  border: "1px solid",
-                  borderColor: "primary.main",
-                  borderRadius: 1,
-                  backgroundColor: "primary.light",
-                }}
-              >
-                <Typography variant="body2">
-                  {material.name} ({material.category})
-                  {material.width && ` - Width: ${material.width}`}
-                  {material.length && ` - Length: ${material.length}`}
-                  {material.type && ` - Type: ${material.type}`}
-                </Typography>
-              </Box>
-            ))}
+            {selectedMaterials.map((material) => {
+              const widthValue = material.values.find(
+                (v) => v.valueKey === "width"
+              )?.value;
+              const lengthValue = material.values.find(
+                (v) => v.valueKey === "length"
+              )?.value;
+              const typeValue = material.values.find(
+                (v) => v.valueKey === "type"
+              )?.value;
+
+              return (
+                <Box
+                  key={material.categoryKey}
+                  sx={{
+                    p: 1,
+                    border: "1px solid",
+                    borderColor: "primary.main",
+                    borderRadius: 1,
+                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                  }}
+                >
+                  <Typography variant="body2">
+                    {material.categoryKey} ({material.materialTypeKey})
+                    {widthValue && ` - Width: ${widthValue}`}
+                    {lengthValue && ` - Length: ${lengthValue}`}
+                    {typeValue && ` - Type: ${typeValue}`}
+                  </Typography>
+                </Box>
+              );
+            })}
           </Box>
         </Paper>
       )}
