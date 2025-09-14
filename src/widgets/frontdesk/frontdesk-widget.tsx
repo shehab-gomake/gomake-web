@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
-import { GmailInboxView } from "@/widgets/frontdesk/components/gmail-inbox-view";
+import { GmailProviderView } from "@/widgets/frontdesk/providers/gmail/gmail-provider-view";
+import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
+import { InternalProviderView } from "@/widgets/frontdesk/providers/internal/internal-provider-view";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
@@ -11,8 +13,6 @@ import { DocumentIcon } from "@/components/icons/document-icon";
 import { SettingsIcon } from "@/icons/settings-icon";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { WhatsAppInboxView } from "./components/whatsapp-inbox-view";
-import { InternalInboxView } from "./components/internal-inbox-view";
 
 const FrontdeskWidget: React.FC = () => {
   const { t } = useTranslation();
@@ -26,10 +26,10 @@ const FrontdeskWidget: React.FC = () => {
   // Provider tabs inside Inbox
   const providerTabs: ITab[] = useMemo(
     () => [
-      { title: "Unified", component: <GmailInboxView /> },
-      { title: "Gmail", component: <GmailInboxView /> },
-      { title: "WhatsApp", component: <WhatsAppInboxView /> },
-      { title: "Internal", component: <InternalInboxView /> },
+      { title: "Unified", component: <GmailProviderView /> },
+      { title: "Gmail", component: <GmailProviderView /> },
+      { title: "WhatsApp", component: <WhatsAppProviderView /> },
+      { title: "Internal", component: <InternalProviderView /> },
     ],
     []
   );

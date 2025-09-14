@@ -14,8 +14,8 @@ import {
   Box,
 } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useGmailConversations, GmailConversation } from "@/hooks/use-gmail-conversations";
-import { FrontdeskLoading } from "./loading-spinner";
+import { useGmailConversations, GmailConversation } from "@/hooks/frontdesk/providers/gmail";
+import { FrontdeskLoading } from "@/widgets/frontdesk/components/loading-spinner";
 
 export type MailItem = {
   id: string;
@@ -75,14 +75,14 @@ const mapConversationToMailItem = (conversation: GmailConversation): MailItem =>
   body: decodeHtmlEntities(conversation.snippet), // Use snippet as body for now
 });
 
-interface GmailInboxListProps {
+interface GmailConversationListProps {
   onSelect?: (mail: MailItem) => void;
   onLoaded?: (mails: MailItem[]) => void;
   selectedId?: string;
 }
 
-const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, selectedId }) => {
-  console.log('📧 GmailInboxList component rendered'); // Debug log
+const GmailConversationList: React.FC<GmailConversationListProps> = ({ onSelect, onLoaded, selectedId }) => {
+  console.log('📧 GmailConversationList component rendered'); // Debug log
 
   const { primaryColor, neutralColor, secondColor } = useGomakeTheme();
   const { conversations, loading, error, hasMore, loadMore, refresh } = useGmailConversations();
@@ -202,4 +202,4 @@ const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, sel
   );
 };
 
-export { GmailInboxList };
+export { GmailConversationList };

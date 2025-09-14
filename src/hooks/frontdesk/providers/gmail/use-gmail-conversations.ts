@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { getGmailConversations } from "@/services/api-service/gmail/gmail-endpoints";
+import { getGmailConversations } from "@/services/api-service/frontdesk/providers/gmail/gmail-endpoints";
 
 export interface GmailConversation {
   id: string;

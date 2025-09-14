@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { gmailConnectionState, gmailOAuthState } from "@/store/gmail";
+import { gmailConnectionState, gmailOAuthState } from "@/store/frontdesk/providers/gmail";
 import { getUserToken } from "@/services/storage-data";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 

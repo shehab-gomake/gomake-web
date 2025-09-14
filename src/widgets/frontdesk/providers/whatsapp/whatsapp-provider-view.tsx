@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Paper, Typography } from "@mui/material";
 
-const InternalInboxView: React.FC = () => {
+const WhatsAppProviderView: React.FC = () => {
   return (
     <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
       {/* Two-pane area */}
       <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
-        {/* Left: internal messages list */}
+        {/* Left: chat list */}
         <div style={{ width: 360, minWidth: 320, height: "100%" }}>
           <Paper
             elevation={0}
@@ -21,16 +21,16 @@ const InternalInboxView: React.FC = () => {
           >
             <div style={{ padding: 16 }}>
               <Typography variant="h6" color="#667085">
-                Internal Messages
+                WhatsApp Chats
               </Typography>
               <Typography variant="body2" color="#667085" sx={{ mt: 1 }}>
-                Team communications coming soon...
+                Coming soon...
               </Typography>
             </div>
           </Paper>
         </div>
 
-        {/* Right: message view */}
+        {/* Right: chat view */}
         <Paper
           elevation={0}
           sx={{
@@ -46,7 +46,7 @@ const InternalInboxView: React.FC = () => {
         >
           <div style={{ padding: 16, flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Typography variant="body2" color="#667085">
-              Internal messaging system coming soon
+              WhatsApp integration coming soon
             </Typography>
           </div>
         </Paper>
@@ -55,4 +55,4 @@ const InternalInboxView: React.FC = () => {
   );
 };
 
-export { InternalInboxView };
+export { WhatsAppProviderView };

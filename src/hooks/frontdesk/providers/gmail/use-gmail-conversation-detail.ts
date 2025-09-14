@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { selectedGmailConversationState, GmailConversationDetail } from "@/store/gmail";
-import { getGmailConversationDetail } from "@/services/api-service/gmail/gmail-endpoints";
+import { selectedGmailConversationState, GmailConversationDetail } from "@/store/frontdesk/providers/gmail";
+import { getGmailConversationDetail } from "@/services/api-service/frontdesk/providers/gmail/gmail-endpoints";
 
 export const useGmailConversationDetail = () => {
   const [selectedConversation, setSelectedConversation] = useRecoilState(selectedGmailConversationState);

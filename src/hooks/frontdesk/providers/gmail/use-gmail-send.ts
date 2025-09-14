@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useRecoilState } from "recoil";
-import { gmailSendState } from "@/store/gmail";
-import { sendGmailMessage } from "@/services/api-service/gmail/gmail-endpoints";
+import { gmailSendState } from "@/store/frontdesk/providers/gmail";
+import { sendGmailMessage } from "@/services/api-service/frontdesk/providers/gmail/gmail-endpoints";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 
 export interface SendEmailParams {

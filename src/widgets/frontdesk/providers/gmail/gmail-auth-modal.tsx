@@ -12,7 +12,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Email as EmailIcon } from "@mui/icons-material";
-import { useGmailAuth } from "@/hooks/use-gmail-auth";
+import { useGmailAuth } from "@/hooks/frontdesk/providers/gmail";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface GmailAuthModalProps {

@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Stack, Paper, Typography, Divider, Button, Alert, Box } from "@mui/material";
 import { Email as EmailIcon, Settings as SettingsIcon } from "@mui/icons-material";
-import { GmailInboxList, MailItem } from "@/widgets/frontdesk/components/gmail-inbox-list";
+import { GmailConversationList, MailItem } from "@/widgets/frontdesk/providers/gmail/gmail-conversation-list";
 import { ConversationToolbar } from "@/widgets/frontdesk/components/conversation/conversation-toolbar";
 import { ConversationHeader } from "@/widgets/frontdesk/components/conversation/conversation-header";
 import { ConversationThread } from "@/widgets/frontdesk/components/conversation/conversation-thread";
 import { ConversationReplyBox } from "@/widgets/frontdesk/components/conversation/conversation-reply-box";
 import { ConversationMessage } from "@/widgets/frontdesk/components/conversation/conversation-types";
 import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
-import { GmailAuthModal } from "./gmail-auth-modal";
-import { useGmailAuth } from "@/hooks/use-gmail-auth";
-import { useGmailConversationDetail } from "@/hooks/use-gmail-conversation-detail";
-import { useGmailSend } from "@/hooks/use-gmail-send";
+import { GmailAuthModal } from "@/widgets/frontdesk/providers/gmail/gmail-auth-modal";
+import { useGmailAuth, useGmailConversationDetail, useGmailSend } from "@/hooks/frontdesk/providers/gmail";
 import { useRecoilState } from "recoil";
-import { gmailUIState } from "@/store/gmail";
+import { gmailUIState } from "@/store/frontdesk/providers/gmail";
 
-const GmailInboxView: React.FC = () => {
-  console.log('📬 GmailInboxView component rendered'); // Debug log
+const GmailProviderView: React.FC = () => {
+  console.log('📬 GmailProviderView component rendered'); // Debug log
 
   const { connectionState, isConnected, isLoading } = useGmailAuth();
   const { selectedConversation, fetchConversationDetail, clearSelectedConversation } = useGmailConversationDetail();
@@ -167,7 +165,7 @@ const GmailInboxView: React.FC = () => {
       <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
         {/* Left: mail list */}
         <div style={{ width: 360, minWidth: 320, height: "100%" }}>
-          <GmailInboxList
+          <GmailConversationList
             onSelect={setSelected}
             selectedId={selected?.id}
             onLoaded={(items) => {
@@ -229,4 +227,4 @@ const GmailInboxView: React.FC = () => {
   );
 };
 
-export { GmailInboxView };
+export { GmailProviderView };
