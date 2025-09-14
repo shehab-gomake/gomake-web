@@ -15,7 +15,10 @@ import { useTranslation } from "react-i18next";
 const FrontdeskWidget: React.FC = () => {
   const { t } = useTranslation();
   const { push, query } = useRouter();
-  const { frontdeskRoute } = query as { frontdeskRoute?: string };
+  const { frontdeskRoute, provider } = query as {
+    frontdeskRoute?: string;
+    provider?: string;
+  };
   const [selected, setSelected] = useState<IListItem>();
 
   // Provider tabs inside Inbox
@@ -29,8 +32,28 @@ const FrontdeskWidget: React.FC = () => {
     []
   );
 
+  // route <-> provider tab mapping
+  const providerSlugs = ["unified", "gmail", "whatsapp", "internal"] as const;
+  const selectedProviderIndex = useMemo(() => {
+    if (frontdeskRoute !== "inbox") return 0;
+    const slug = (provider ?? "unified").toString().toLowerCase();
+    const idx = providerSlugs.indexOf(slug as any);
+    return idx >= 0 ? idx : 0;
+  }, [frontdeskRoute, provider]);
+  const onSelectProvider = (index: number) => {
+    const slug = providerSlugs[index] ?? providerSlugs[0];
+    push(`/frontdesk/inbox/${slug}`).then();
+  };
+
   // Components for each section
-  const InboxComponent = () => <PrimaryTabsComponent tabs={providerTabs} selectedColor="secondary" />;
+  const InboxComponent = () => (
+    <PrimaryTabsComponent
+      tabs={providerTabs}
+      selectedColor="secondary"
+      selectedTabIndex={selectedProviderIndex}
+      onSelectTab={onSelectProvider}
+    />
+  );
   const AssignedComponent = () => <div>Work Board (placeholder)</div>;
   const AdminComponent = () => <div>Provider Accounts (placeholder)</div>;
   const SettingsComponent = () => <div>User Settings (placeholder)</div>;
