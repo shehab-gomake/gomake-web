@@ -224,6 +224,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const router = useRouter();
 
+  const getSampleType = (sampleTypeValue?: number) => {
+    const found = exampleTypeValues?.find(
+      (item) => item.key === sampleTypeValue.toString()
+    );
+    return found ? found.value : null;
+  };
+
   const handlePageSizeChange = (event) => {
     const size = Number(event.target.value);
 
@@ -809,6 +816,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               </Stack>
             ),
             purchaseNumber: mission?.purchaseNumber,
+            sampleType: mission?.exampleType
+              ? getSampleType(mission.exampleType)
+              : null,
             outSourceType: t(
               "boardMissions." + EWorkSource[mission?.outSourceType ?? 0]
             ),

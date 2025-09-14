@@ -83,6 +83,26 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
       },
+      iconButton: {
+        backgroundColor: "#f5f5f5",
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
+        padding: "8px",
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          backgroundColor: "#2e3092",
+          borderColor: "#2e3092",
+          transform: "translateY(-1px)",
+          boxShadow: "0 4px 12px rgba(46, 48, 146, 0.15)",
+          "& .MuiSvgIcon-root": {
+            color: "#fff",
+          },
+        },
+        "&:active": {
+          transform: "translateY(0px)",
+          boxShadow: "0 2px 6px rgba(46, 48, 146, 0.2)",
+        },
+      },
     };
   }, [theme]);
   return {

@@ -17,6 +17,7 @@ import {getCategoryConnectionInputs} from "@/widgets/machines/utils/attributes/c
 import {getCategorySpeedInputs} from "@/widgets/machines/utils/attributes/speed-inputs";
 import {getCategoryCuttingOptionsInputs} from "@/widgets/machines/utils/attributes/cutting-options-inputs";
 import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-settings";
+import {useMaterialUtils} from "../utils/material-utils";
 import {getCategoryStapleInputs} from "@/widgets/machines/utils/attributes/staple";
 import {printColorsParameterValuesState} from "@/widgets/machines/state/print-colors-parameter-values-state";
 
@@ -27,6 +28,9 @@ const useMachineAttributes = () => {
     const [errors, setErrors] = useState<Record<string, boolean>>({})
     const printColors = useRecoilValue(printColorsParameterValuesState);
     const [machineHourCostValue, setMachineHourCostValue] = useState<number>();
+    
+    // Get material functions from material utils
+    const { addMaterial, removeMaterial } = useMaterialUtils();
     const machineHourCost = () => {
         if (machineState?.price?.price !==0 && machineState.attributes?.dailyProductivityInHours !==0 && machineState.attributes?.lifeExpectancyYears !==0 && machineState.attributes?.monthlyMaintenanceCost !==0 && machineState.attributes?.monthlyCostOfSpace !==0 && machineState.attributes?.electricityCostPerWorkingHour !==0) {
             return machineState?.price?.price /
@@ -111,7 +115,70 @@ const useMachineAttributes = () => {
                 ...machineState.attributes,
                 [key]: value
             }
-        })
+        });
+
+        // Handle material additions/removals based on attribute changes
+        switch (key) {
+            case 'advertisingProducts':
+                if (value?.isAvailable) {
+                    addMaterial('43');
+                } else {
+                    removeMaterial('43');
+                }
+                break;
+            case 'applicationUnit':
+                if (value?.isAvailable) {
+                    addMaterial('2');
+                } else {
+                    removeMaterial('2');
+                }
+                break;
+            case 'applyingGlue':
+                if (value?.isAvailable) {
+                    addMaterial('9');
+                } else {
+                    removeMaterial('9');
+                }
+                break;
+            case 'dtfRollsCategories':
+                if (value?.isAvailable) {
+                    addMaterial('46');
+                } else {
+                    removeMaterial('46');
+                }
+                break;
+            case 'dtfSheetsCategories':
+                if (value?.isAvailable) {
+                    addMaterial('47');
+                } else {
+                    removeMaterial('47');
+                }
+                break;
+            case 'sheetCategories':
+                if (value?.isAvailable) {
+                    addMaterial('21');
+                } else {
+                    removeMaterial('21');
+                }
+                break;
+            case 'wideFormatCategories':
+                if (value?.isAvailable) {
+                    addMaterial('24');
+                } else {
+                    removeMaterial('24');
+                }
+                break;
+            case 'flatbedsCategories':
+                if (value?.isAvailable) {
+                    addMaterial('10');
+                } else {
+                    removeMaterial('10');
+                }
+                break;
+            default:
+                // No material changes needed for other attributes
+                break;
+        }
     }
 
     const isValidStep = (attributes: {isValid: boolean; parameterKey: string;}[]): boolean => {
