@@ -70,10 +70,7 @@ const RightSideWidget = ({
   isCalculateDisabled,
   shouldPulseCalculateButton,
   onClickCalculate,
-  canCalculation,
-  isLoadingPrice,
-  openCalculationErrorsModal,
-  hasCalculationErrors
+  canCalculation
 
 }: any) => {
 
@@ -101,8 +98,6 @@ const RightSideWidget = ({
     workFlows,
     additionalProductItems,
     logsArray,
-    selectedWorkFlowExceptions,
-    calculationExceptionsLogs,
     permissions,
     router,
     clientTypesCategories,
@@ -120,9 +115,7 @@ const RightSideWidget = ({
     t,
     deliveryPrice,
   } = useRightSideWidget({ includeVAT, widgetType });
-  console.log("logsArray", logsArray);
-  console.log("selectedWorkFlowExceptions", selectedWorkFlowExceptions);
-  console.log("calculationExceptionsLogs", calculationExceptionsLogs);
+
   return (
     <div style={clasess.rightSideMainContainer}>
       {/* Simple pulse animation for the calculate button */}
@@ -554,28 +547,9 @@ const RightSideWidget = ({
             className={!isCalculateDisabled && (!localStateValue || !sliderCurrentProductItemValueTotalPrice) ? "pulse-calc" : ""}
             style={!!isCalculateDisabled ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
           >
-            {isLoadingPrice ? (t("products.offsetPrice.admin.calculating") || "Calculating ...") : (t("products.offsetPrice.admin.calculate") || "Calculate")}
+            {t("products.offsetPrice.admin.calculate") || "Calculate"}
           </GomakePrimaryButton>
         </div>
-
-        {/* Show calculation errors button */}
-        {hasCalculationErrors && hasCalculationErrors() && (
-          <div style={{ display: "flex", justifyContent: "center", margin: "6px 0" }}>
-            <GomakePrimaryButton
-              onClick={openCalculationErrorsModal}
-              style={{
-                backgroundColor: "#f44336",
-                color: "white",
-                border: "none",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                cursor: "pointer"
-              }}
-            >
-              {t("products.offsetPrice.admin.showCalculationErrors") || "Show Calculation Errors"}
-            </GomakePrimaryButton>
-          </div>
-        )}
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>

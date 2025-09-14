@@ -35,8 +35,6 @@ import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
-import { CalculationErrorsModalWidget } from "./calculation-errors-modal-widget";
-import { selectedWorkFlowState } from "@/widgets/product-pricing-widget/state";
 
 const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const { clasess } = useStyle({ isMobileScreen });
@@ -75,7 +73,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     PricingTab,
     expanded,
     errorMsg,
-    calculationExceptionsLogs,
     relatedParameters,
     jobActions,
     workFlows,
@@ -114,9 +111,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
-    isOpenCalculationErrorsModal,
-    openCalculationErrorsModal,
-    hasCalculationErrors,
     isButtonDisabledState,
     // New for calculate button
     isCalculateDisabled,
@@ -124,8 +118,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     onClickCalculate,
     canCalculation,
   } = useDigitalOffsetPrice({ clasess, widgetType });
-  const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  console.log("selectedWorkFlow", selectedWorkFlow);
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
@@ -468,9 +460,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 shouldPulseCalculateButton={shouldPulseCalculateButton}
                 onClickCalculate={onClickCalculate}
                 canCalculation={canCalculation}
-                isLoadingPrice={isLoadingPrice}
-                openCalculationErrorsModal={openCalculationErrorsModal}
-                hasCalculationErrors={hasCalculationErrors}
               />
             )}
           </div>
@@ -713,22 +702,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
           errors={errorMsg}
           onClose={() => isOpenErrorsModal.close()}
           clasess={clasess} // Pass your classes if needed
-        />
-      </GoMakeModal>
-      <GoMakeModal
-        modalTitle={" "}
-        withClose={true}
-        openModal={isOpenCalculationErrorsModal.isOpen}
-        onClose={() => isOpenCalculationErrorsModal.close()}
-        insideStyle={{
-          width: "fit-content",
-          height: "fit-content",
-        }}
-      >
-        <CalculationErrorsModalWidget
-          errors={selectedWorkFlow?.exceptions || []}
-          onClose={() => isOpenCalculationErrorsModal.close()}
-          clasess={clasess}
         />
       </GoMakeModal>
     </div>

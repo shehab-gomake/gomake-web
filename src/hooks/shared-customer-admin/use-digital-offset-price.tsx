@@ -38,7 +38,6 @@ import {
   SampleTypeParm,
   UNIT_TYPE,
 } from "@/enums";
-import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
 import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
@@ -225,7 +224,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setCalculationExceptionsLogs = useSetRecoilState(
     calculationExceptionsLogsState
   );
-  const [localCalculationExceptionsLogs, setLocalCalculationExceptionsLogs] = useState<any[]>([]);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(
     productQuantityTypesValuesState
@@ -520,7 +518,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const validation = validateWorkflows(result?.productItemValue?.workFlows?.[0]);
         if (validation && validation.isValid === false) {
           setErrorMsg(validation.errors.join(", "));
-          isOpenCalculationErrorsModal.open();
+          isOpenErrorsModal.open();
         }
       } catch { }
       if (
@@ -693,7 +691,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
-      setLocalCalculationExceptionsLogs(calculationExceptionsLogs);
     }
   }, [calculationExceptionsLogs]);
 
@@ -7554,7 +7551,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
 
   const isOpenErrorsModal = useModal()
-  const isOpenCalculationErrorsModal = useModal()
 
 
   const navigateForRouter = () => {
@@ -8043,16 +8039,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationProduct(subProducts);
   };
 
-  const openCalculationErrorsModal = () => {
-    isOpenCalculationErrorsModal.open();
-  };
-
-  const hasCalculationErrors = () => {
-    return localCalculationExceptionsLogs.some(item =>
-      item?.exceptionType === ECalculationLogType.ERROR
-    );
-  };
-
 
 
   return {
@@ -8138,10 +8124,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     deliveryDate,
     SelectWorkFlowById,
     isOpenErrorsModal,
-    isOpenCalculationErrorsModal,
-    calculationExceptionsLogs: localCalculationExceptionsLogs,
-    openCalculationErrorsModal,
-    hasCalculationErrors,
     isButtonDisabledState,
     isCalculateDisabled,
     shouldPulseCalculateButton,
