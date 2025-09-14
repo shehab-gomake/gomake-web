@@ -1,98 +1,43 @@
-import React, { useMemo, useState } from "react";
-import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
-import { SideList } from "@/components/containers/side-container/side-list/side-list";
-import { IListItem } from "@/components/containers/interface";
+import React, { useMemo } from "react";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
 import { ITab } from "@/components/tabs/interface";
-import { FrontdeskInternalInboxTable } from "@/widgets/frontdesk/components/internal-inbox-table";
-import { GmailInboxList } from "@/widgets/frontdesk/components/gmail-inbox-list";
+import { convertWidthToVW } from "@/utils/adapter";
 import { GmailInboxView } from "@/widgets/frontdesk/components/gmail-inbox-view";
 
 const FrontdeskWidget: React.FC = () => {
-  const [selected, setSelected] = useState<string>("overview");
-
-  const list: IListItem[] = useMemo(
+  // Provider tabs inside Inbox
+  const providerTabs: ITab[] = useMemo(
     () => [
-      { text: "Overview", value: "overview" },
-      { text: "Queue", value: "queue" },
-      { text: "Messages", value: "messages" },
+      { title: "Unified", component: <GmailInboxView /> }, // Placeholder: reuse Gmail view for now
+      { title: "Gmail", component: <GmailInboxView /> },
+      { title: "WhatsApp", component: <div style={{ padding: 16 }}>WhatsApp Inbox (placeholder)</div> },
+      { title: "Internal", component: <div style={{ padding: 16 }}>Internal Inbox (placeholder)</div> },
     ],
     []
   );
 
-  const onSelect = (value: string) => setSelected(value);
-
-  const Side = () => (
-    <SideList
-      list={list}
-      selectedItem={selected}
-      onSelect={onSelect}
-      title={"Frontdesk"}
-    />
+  // Top-level tabs
+  const tabs: ITab[] = useMemo(
+    () => [
+      { title: "Inbox", component: <SecondaryTabsComponent tabs={providerTabs} /> },
+      { title: "Assigned to Me", component: <div style={{ padding: 16 }}>Work Board (placeholder)</div> },
+      { title: "Admin", component: <div style={{ padding: 16 }}>Provider Accounts (placeholder)</div> },
+      { title: "Settings", component: <div style={{ padding: 16 }}>User Settings (placeholder)</div> },
+    ],
+    [providerTabs]
   );
 
-  const Content = () => {
-    switch (selected) {
-      case "queue":
-        return <div style={{ padding: 16 }}>Frontdesk Queue</div>;
-      case "messages":
-        return <div style={{ padding: 16 }}>Frontdesk Messages</div>;
-      case "overview":
-      default:
-        return (
-          <div style={{ padding: 0 }}>
-            <FrontdeskOverviewTabs />
-          </div>
-        );
-    }
-  };
-
   return (
-    <SideBarContainer side={Side()} header={""} subHeader={""}>
-      <Content />
-    </SideBarContainer>
+    <PrimaryTabsComponent
+      tabs={tabs}
+      withBackGround
+      style={{
+        paddingLeft: convertWidthToVW(20),
+        paddingRight: convertWidthToVW(20),
+      }}
+    />
   );
 };
 
 export default FrontdeskWidget;
-
-const FrontdeskOverviewTabs: React.FC = () => {
-  const subTabs = (channel: "internal" | "gmail"): ITab[] => [
-    {
-      title: "Inbox",
-      component: channel === "gmail" ? (
-        <GmailInboxView />
-      ) : (
-        <div style={{ padding: 16 }}>Internal Inbox</div>
-      ),
-    },
-    {
-      title: "Assigned to me",
-      component: (
-        <div style={{ padding: 16 }}>
-          {channel === "internal" ? "Internal" : "Gmail"} Assigned to me
-        </div>
-      ),
-    },
-  ];
-
-  const topTabs: ITab[] = [
-    {
-      title: "Internal",
-      component: <SecondaryTabsComponent tabs={subTabs("internal")} />,
-    },
-    {
-      title: "Gmail",
-      component: <SecondaryTabsComponent tabs={subTabs("gmail")} />,
-    },
-  ];
-
-  return (
-    <PrimaryTabsComponent
-      tabs={topTabs}
-      withBackGround
-      style={{ padding: "0 20px" }}
-    />
-  );
-};
