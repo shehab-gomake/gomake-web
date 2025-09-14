@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { getUserToken } from "@/services/storage-data";
+import { getGmailConversations } from "@/services/api-service/gmail/gmail-endpoints";
 
 export interface GmailConversation {
   id: string;
@@ -34,69 +34,40 @@ const useGmailConversations = () => {
     setError(null);
 
     try {
-      // Get user token for authentication
-      const userToken = getUserToken();
-
-      console.log("User token:", userToken ? `Token exists (length: ${userToken.length})` : "No token"); // Debug log
-
-      // Build URL - directly call localhost:3000/api messaging service
-      const url = pageToken
-        ? `http://localhost:3000/api/gmail/conversations?nextPageToken=${encodeURIComponent(pageToken)}`
-        : "http://localhost:3000/api/gmail/conversations";
-
-      const headers = {
-        "Content-Type": "application/json",
-        ...(userToken && { Authorization: `Bearer ${userToken}` }), // Try with Bearer prefix
-      };
-
-      console.log("Making request to:", url); // Debug log
-      console.log("Request headers:", headers); // Debug log
-
-      // Make direct fetch call to messaging service at localhost:3000
-      const response = await fetch(url, {
-        method: "GET",
-        headers,
+      const response = await getGmailConversations({
+        limit: 20,
+        ...(pageToken && { pageToken })
       });
 
-      console.log("Response status:", response.status); // Debug log
+      console.log("Gmail conversations API response:", response); // Debug log
 
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error("API error:", errorData);
-        throw new Error(`Failed to fetch conversations: ${response.status}`);
-      }
+      if (response.success && response.data) {
+        const responseData = response.data;
 
-      const res = await response.json();
-      console.log("Gmail conversations API response:", res); // Debug log
+        if (responseData.conversations) {
+          if (pageToken) {
+            // Append to existing conversations for pagination
+            setConversations((prev) => [...prev, ...responseData.conversations]);
+          } else {
+            // Replace conversations for initial load
+            setConversations(responseData.conversations);
+          }
 
-      // Handle different response structures
-      let responseData: GmailConversationsResponse | null = null;
-
-      if (res.success) {
-        // Check multiple possible response structures
-        if (res.data?.conversations) {
-          responseData = res.data;
-        } else if (res.conversations) {
-          responseData = res;
-        }
-      }
-
-      if (responseData && responseData.conversations) {
-        if (pageToken) {
-          // Append to existing conversations for pagination
-          setConversations((prev) => [...prev, ...responseData.conversations]);
+          setNextPageToken(responseData.nextPageToken);
+          setHasMore(responseData.hasMore || false);
+          setError(null);
         } else {
-          // Replace conversations for initial load
-          setConversations(responseData.conversations);
+          console.error("No conversations in response:", response);
+          setError("No conversations found");
+          if (!pageToken) {
+            setConversations([]);
+          }
+          setHasMore(false);
         }
-
-        setNextPageToken(responseData.nextPageToken);
-        setHasMore(responseData.hasMore || false);
-        setError(null);
       } else {
-        console.error("Invalid response structure:", res); // Debug log
-        setError(res.message || "Failed to fetch conversations");
-        // Don't clear conversations if this is a pagination request
+        console.error("Invalid response structure:", response);
+        const errorMessage = response.error || response.message || "Failed to fetch conversations";
+        setError(errorMessage);
         if (!pageToken) {
           setConversations([]);
         }

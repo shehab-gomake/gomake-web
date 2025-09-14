@@ -9,12 +9,16 @@ export default async function handler(
   }
 
   try {
-    const { nextPageToken } = req.query;
+    const { limit, pageToken } = req.query;
 
     // Use localhost:3000 for messaging service as specified
     const messagingServiceUrl = 'http://localhost:3000/api/gmail/conversations';
-    const url = nextPageToken
-      ? `${messagingServiceUrl}?nextPageToken=${encodeURIComponent(nextPageToken as string)}`
+    const queryParams = new URLSearchParams();
+    if (limit) queryParams.append('limit', limit as string);
+    if (pageToken) queryParams.append('pageToken', pageToken as string);
+
+    const url = queryParams.toString()
+      ? `${messagingServiceUrl}?${queryParams}`
       : messagingServiceUrl;
 
     // Forward authentication and other relevant headers from the original request
@@ -22,26 +26,12 @@ export default async function handler(
       'Content-Type': 'application/json',
     };
 
-    // Forward Authorization header (just the token without "Bearer " prefix)
+    // Forward Authorization header (with Bearer prefix)
     if (req.headers.authorization) {
-      const token = req.headers.authorization.replace(/^Bearer\s+/i, '');
-      forwardHeaders['Authorization'] = token;
+      forwardHeaders['Authorization'] = req.headers.authorization;
     }
 
-    // Forward other common headers that might be needed
-    if (req.headers['project-name']) {
-      forwardHeaders['project-name'] = req.headers['project-name'] as string;
-    }
-
-    if (req.headers['lang']) {
-      forwardHeaders['lang'] = req.headers['lang'] as string;
-    }
-
-    if (req.headers['domain']) {
-      forwardHeaders['domain'] = req.headers['domain'] as string;
-    }
-
-    console.log('Forwarding request to messaging service:', { url, headers: forwardHeaders }); // Debug log
+    console.log('Forwarding Gmail conversations request to messaging service:', { url, headers: forwardHeaders }); // Debug log
 
     const response = await fetch(url, {
       method: 'GET',

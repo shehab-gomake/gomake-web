@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Stack, Paper, Typography, Divider } from "@mui/material";
+import { Stack, Paper, Typography, Divider, Button, Alert, Box } from "@mui/material";
+import { Email as EmailIcon, Settings as SettingsIcon } from "@mui/icons-material";
 import { GmailInboxList, MailItem } from "@/widgets/frontdesk/components/gmail-inbox-list";
 import { ConversationToolbar } from "@/widgets/frontdesk/components/conversation/conversation-toolbar";
 import { ConversationHeader } from "@/widgets/frontdesk/components/conversation/conversation-header";
@@ -7,36 +8,161 @@ import { ConversationThread } from "@/widgets/frontdesk/components/conversation/
 import { ConversationReplyBox } from "@/widgets/frontdesk/components/conversation/conversation-reply-box";
 import { ConversationMessage } from "@/widgets/frontdesk/components/conversation/conversation-types";
 import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
+import { GmailAuthModal } from "./gmail-auth-modal";
+import { useGmailAuth } from "@/hooks/use-gmail-auth";
+import { useGmailConversationDetail } from "@/hooks/use-gmail-conversation-detail";
+import { useGmailSend } from "@/hooks/use-gmail-send";
+import { useRecoilState } from "recoil";
+import { gmailUIState } from "@/store/gmail";
 
 const GmailInboxView: React.FC = () => {
   console.log('📬 GmailInboxView component rendered'); // Debug log
 
-  const [selected, setSelected] = useState<MailItem | null>(null);
+  const { connectionState, isConnected, isLoading } = useGmailAuth();
+  const { selectedConversation, fetchConversationDetail, clearSelectedConversation } = useGmailConversationDetail();
+  const { sendReply, isSending } = useGmailSend();
+  const [uiState, setUIState] = useRecoilState(gmailUIState);
 
+  const [selected, setSelected] = useState<MailItem | null>(null);
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
   const [draft, setDraft] = useState("");
 
-  // Clear thread when selection changes; real data should populate from API
+  // Load conversation details when selection changes
   useEffect(() => {
-    setMessages([]);
+    if (selected?.id) {
+      fetchConversationDetail(selected.id);
+    } else {
+      clearSelectedConversation();
+    }
     setDraft("");
-  }, [selected]);
+  }, [selected, fetchConversationDetail, clearSelectedConversation]);
 
-  const sendReply = () => {
+  // Update messages when conversation details are loaded
+  useEffect(() => {
+    if (selectedConversation?.messages) {
+      const conversationMessages: ConversationMessage[] = selectedConversation.messages.map((msg) => ({
+        id: msg.id,
+        from: msg.from === connectionState.email ? "me" : "them",
+        text: msg.body || msg.snippet,
+        at: new Date(msg.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      }));
+      setMessages(conversationMessages);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedConversation, connectionState.email]);
+
+  const handleSendReply = async () => {
     const text = draft.trim();
-    if (!text) return;
-    const newMsg: ConversationMessage = {
-      id: `m-${Date.now()}`,
-      from: "me",
+    if (!text || !selected || !selectedConversation) return;
+
+    const lastMessage = selectedConversation.messages[selectedConversation.messages.length - 1];
+    const success = await sendReply({
+      to: lastMessage.from,
+      subject: lastMessage.subject,
       text,
-      at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    setMessages((prev) => [...prev, newMsg]);
-    setDraft("");
+      replyToMessageId: lastMessage.messageId,
+    });
+
+    if (success) {
+      // Add the sent message to the thread immediately for better UX
+      const newMsg: ConversationMessage = {
+        id: `m-${Date.now()}`,
+        from: "me",
+        text,
+        at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, newMsg]);
+      setDraft("");
+    }
   };
+
+  const openAuthModal = () => {
+    setUIState(prev => ({ ...prev, showAuthModal: true }));
+  };
+
+  const closeAuthModal = () => {
+    setUIState(prev => ({ ...prev, showAuthModal: false }));
+  };
+
+  // Show connection required state if not connected
+  if (!isConnected) {
+    return (
+      <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
+        {/* Connection status */}
+        <Alert
+          severity="info"
+          action={
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={openAuthModal}
+              startIcon={<SettingsIcon />}
+              disabled={isLoading}
+            >
+              Connect Gmail
+            </Button>
+          }
+        >
+          Connect your Gmail account to manage emails from the front desk
+        </Alert>
+
+        {/* Empty state */}
+        <Paper
+          elevation={0}
+          sx={{
+            flex: 1,
+            border: "1px solid #EAECF0",
+            borderRadius: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: 400,
+          }}
+        >
+          <Stack alignItems="center" spacing={2}>
+            <FrontdeskEmptyState
+              title="Gmail Not Connected"
+              subtitle="Connect your Gmail account to start managing emails"
+            />
+            <Button
+              variant="contained"
+              startIcon={<EmailIcon />}
+              onClick={openAuthModal}
+              disabled={isLoading}
+            >
+              Connect Gmail Account
+            </Button>
+          </Stack>
+        </Paper>
+
+        {/* Auth Modal */}
+        <GmailAuthModal open={uiState.showAuthModal} onClose={closeAuthModal} />
+      </Stack>
+    );
+  }
 
   return (
     <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
+      {/* Connection status bar */}
+      {connectionState.email && (
+        <Alert
+          severity="success"
+          action={
+            <Button
+              size="small"
+              variant="text"
+              onClick={openAuthModal}
+              startIcon={<SettingsIcon />}
+            >
+              Settings
+            </Button>
+          }
+        >
+          Gmail connected: {connectionState.email}
+        </Alert>
+      )}
+
       {/* Two-pane area */}
       <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
         {/* Left: mail list */}
@@ -82,7 +208,11 @@ const GmailInboxView: React.FC = () => {
 
               {/* Reply box */}
               <Divider />
-              <ConversationReplyBox value={draft} onChange={setDraft} onSend={sendReply} />
+              <ConversationReplyBox
+                value={draft}
+                onChange={setDraft}
+                onSend={isSending ? () => {} : handleSendReply}
+              />
             </>
           ) : (
             <FrontdeskEmptyState
@@ -92,6 +222,9 @@ const GmailInboxView: React.FC = () => {
           )}
         </Paper>
       </Stack>
+
+      {/* Auth Modal */}
+      <GmailAuthModal open={uiState.showAuthModal} onClose={closeAuthModal} />
     </Stack>
   );
 };

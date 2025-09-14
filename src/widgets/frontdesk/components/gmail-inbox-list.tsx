@@ -10,6 +10,8 @@ import {
   Stack,
   Typography,
   Paper,
+  Button,
+  Box,
 } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useGmailConversations, GmailConversation } from "@/hooks/use-gmail-conversations";
@@ -83,7 +85,7 @@ const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, sel
   console.log('📧 GmailInboxList component rendered'); // Debug log
 
   const { primaryColor, neutralColor, secondColor } = useGomakeTheme();
-  const { conversations, loading, error } = useGmailConversations();
+  const { conversations, loading, error, hasMore, loadMore, refresh } = useGmailConversations();
 
   const mails: MailItem[] = useMemo(() => {
     console.log('Gmail conversations state:', { conversations, error, loading }); // Debug log
@@ -115,7 +117,18 @@ const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, sel
 
   return (
     <Paper elevation={0} sx={{ border: "1px solid #EAECF0", borderRadius: 2, overflow: "hidden" }}>
-      {mails.length === 0 ? (
+      {error && (
+        <Box sx={{ p: 2 }}>
+          <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+            {error}
+          </Typography>
+          <Button size="small" onClick={refresh} disabled={loading}>
+            Retry
+          </Button>
+        </Box>
+      )}
+
+      {mails.length === 0 && !loading && !error ? (
         <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
           <Typography variant="body2" color="text.secondary">No conversations found</Typography>
         </Stack>
@@ -169,6 +182,20 @@ const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, sel
               {idx < mails.length - 1 && <Divider component="li" sx={{ ml: 7 }} />}
             </React.Fragment>
           ))}
+
+          {/* Load More Button */}
+          {hasMore && (
+            <Box sx={{ p: 2, textAlign: "center" }}>
+              <Button
+                size="small"
+                onClick={loadMore}
+                disabled={loading}
+                variant="outlined"
+              >
+                {loading ? "Loading..." : "Load More"}
+              </Button>
+            </Box>
+          )}
         </List>
       )}
     </Paper>

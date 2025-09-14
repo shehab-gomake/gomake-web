@@ -25,6 +25,7 @@ const getGmailConversationsApi: ICallAndSetData = async (
   setState,
   data
 ) => {
+  const nextPageToken = data?.nextPageToken ? `?nextPageToken=${encodeURIComponent(data.nextPageToken)}` : "";
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -34,4 +35,3 @@ const getGmailConversationsApi: ICallAndSetData = async (
 };
 
 export { getGmailInboxApi, getGmailConversationsApi };
-
