@@ -2,6 +2,9 @@ import React, { useMemo, useState } from "react";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { IListItem } from "@/components/containers/interface";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
+import { ITab } from "@/components/tabs/interface";
 
 const FrontdeskWidget: React.FC = () => {
   const [selected, setSelected] = useState<string>("overview");
@@ -34,7 +37,11 @@ const FrontdeskWidget: React.FC = () => {
         return <div style={{ padding: 16 }}>Frontdesk Messages</div>;
       case "overview":
       default:
-        return <div style={{ padding: 16 }}>Frontdesk Overview</div>;
+        return (
+          <div style={{ padding: 0 }}>
+            <FrontdeskOverviewTabs />
+          </div>
+        );
     }
   };
 
@@ -46,3 +53,35 @@ const FrontdeskWidget: React.FC = () => {
 };
 
 export default FrontdeskWidget;
+
+const FrontdeskOverviewTabs: React.FC = () => {
+  const subTabs = (channel: "internal" | "gmail"): ITab[] => [
+    {
+      title: "Inbox",
+      component: (
+        <div style={{ padding: 16 }}>{channel === "internal" ? "Internal" : "Gmail"} Inbox</div>
+      ),
+    },
+    {
+      title: "Assigned to me",
+      component: (
+        <div style={{ padding: 16 }}>
+          {channel === "internal" ? "Internal" : "Gmail"} Assigned to me
+        </div>
+      ),
+    },
+  ];
+
+  const topTabs: ITab[] = [
+    {
+      title: "Internal",
+      component: <SecondaryTabsComponent tabs={subTabs("internal")} />,
+    },
+    {
+      title: "Gmail",
+      component: <SecondaryTabsComponent tabs={subTabs("gmail")} />,
+    },
+  ];
+
+  return <PrimaryTabsComponent tabs={topTabs} withBackGround />;
+};
