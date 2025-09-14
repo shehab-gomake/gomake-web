@@ -36,7 +36,7 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
   onMaterialsChange,
 }) => {
   const { t } = useTranslation();
-  const { materials, loading } = useMaterialCategories("roll");
+  const { materials, loading } = useMaterialCategories("roll printing");
   const [materialDimensions, setMaterialDimensions] = useState<{
     [key: string]: { width?: number };
   }>({});
