@@ -175,26 +175,26 @@ const ProductionFloorWidget = () => {
   };
 
   const handleScan = (data: { text: string } | null) => {
-    if (!data) return;
-    setIsScanningFlag(false);
-    setScanResult(data.text || String(data));
-    handleBoardMissionsBarcodeActionsApi(data.text);
+    //if (!data) return;
+    //setIsScanningFlag(false);
+    //setScanResult(data.text || String(data));
+    // handleBoardMissionsBarcodeActionsApi(data.text);
   };
 
-  const handleError = (err: any) => {
-    setIsScanningFlag(true);
-  };
+  /*const handleError = (err: any) => {
+    //setIsScanningFlag(true);
+  };*/
 
-  const handleScanAgain = () => {
-    setScanResult(null);
-    setIsScanningFlag(true);
-  };
+  /*const handleScanAgain = () => {
+    //setScanResult(null);
+    //setIsScanningFlag(true);
+  };*/
 
   const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
   const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
   const [qrErrorKey, setQrErrorKey] = useState<string>("");
 
-  const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
+  /*const handleBoardMissionsBarcodeActionsApi = async (barcode: string) => {
     barcode = barcode.replace(/½/g, "-");
     const callBack = (res) => {
       if (res?.data?.success) {
@@ -216,7 +216,7 @@ const ProductionFloorWidget = () => {
     await handleBoardMissionsBarcodeActions(callApi, callBack, {
       barcode,
     });
-  };
+  };*/
 
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
