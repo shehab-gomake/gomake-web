@@ -44,6 +44,8 @@ import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boar
 import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 import { Step7PackagingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step7PackagingSelection";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GoMakeDeleteModal } from "@/components/modal-deleted";
+import { ModalType } from "@/enums";
 
 const QuickSetupFlow: React.FC = () => {
   const { t } = useTranslation();
@@ -67,6 +69,7 @@ const QuickSetupFlow: React.FC = () => {
   } = useMachinesData();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   // State management - MUST be called before any conditional returns
   const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
@@ -1136,7 +1139,7 @@ const QuickSetupFlow: React.FC = () => {
           <Button
             variant="contained"
             color="success"
-            onClick={handleCompleteSetup}
+            onClick={() => setShowConfirmModal(true)}
             disabled={selectedMachines.length === 0}
           >
             {t("Complete Setup")}
@@ -1183,6 +1186,18 @@ const QuickSetupFlow: React.FC = () => {
           </Box>
         </Paper>
       )}
+      {/* Confirmation Modal */}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onClickDelete={handleCompleteSetup}
+        title={t("Confirm Setup")}
+        subTitle={t(
+          "Once you click Finish, your current setup will be replaced. You can always make changes or add more machines later in the Machines section."
+        )}
+        yesBtn={t("Finish")}
+      />
     </Box>
   );
 };
