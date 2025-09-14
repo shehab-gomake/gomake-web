@@ -219,7 +219,7 @@ const AdvertisingProductNameParameterWidget = ({
                   <img
                     src={option?.imageUrl}
                     alt={option.updateName}
-                    style={{ width: '40px', height: '40px', margin: '10px', objectFit: "cover" }}
+                    style={{ width: '60px', height: '70px', margin: '10px', objectFit: "fill" }}
                   />
                 }
                 {
