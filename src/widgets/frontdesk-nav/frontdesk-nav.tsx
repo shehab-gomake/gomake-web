@@ -7,7 +7,7 @@ const FrontdeskNav = () => {
   const { push } = useRouter();
 
   const handleClick = async () => {
-    await push("/frontdesk");
+    await push("/frontdesk/inbox");
   };
 
   return (
@@ -25,4 +25,3 @@ const FrontdeskNav = () => {
 };
 
 export { FrontdeskNav };
-

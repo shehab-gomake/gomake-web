@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
 import { GmailInboxView } from "@/widgets/frontdesk/components/gmail-inbox-view";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 const FrontdeskWidget: React.FC = () => {
   const { t } = useTranslation();
   const { push, query } = useRouter();
-  const { frontdeskRoute } = query;
+  const { frontdeskRoute } = query as { frontdeskRoute?: string };
   const [selected, setSelected] = useState<IListItem>();
 
   // Provider tabs inside Inbox
@@ -30,7 +30,7 @@ const FrontdeskWidget: React.FC = () => {
   );
 
   // Components for each section
-  const InboxComponent = () => <SecondaryTabsComponent tabs={providerTabs} />;
+  const InboxComponent = () => <PrimaryTabsComponent tabs={providerTabs} selectedColor="secondary" />;
   const AssignedComponent = () => <div>Work Board (placeholder)</div>;
   const AdminComponent = () => <div>Provider Accounts (placeholder)</div>;
   const SettingsComponent = () => <div>User Settings (placeholder)</div>;
@@ -70,14 +70,20 @@ const FrontdeskWidget: React.FC = () => {
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
     setSelected(selectedItem);
+    if (selectedItem?.path) {
+      push(`/frontdesk/${selectedItem.path}`).then();
+    }
   };
 
   useEffect(() => {
-    // Set default selection to Inbox
-    if (!selected) {
-      setSelected(list[0]);
+    // Sync selected item with route, default to inbox
+    const itemByRoute = frontdeskRoute
+      ? list.find((x) => x.path === frontdeskRoute)
+      : list[0];
+    if (itemByRoute && itemByRoute.value !== selected?.value) {
+      setSelected(itemByRoute);
     }
-  }, [selected]);
+  }, [frontdeskRoute, selected?.value]);
 
   const Side = () => (
     <SideList
