@@ -5,6 +5,7 @@ export interface SetupStepItem {
   status: StepStatus;
 }
 
+//!here should add new step for setup your materials materials and replace PRODUCTS_SETUPS with setup your machines
 export enum SetupStep {
   WELCOME_MESSAGE = 0,
   RESET_PASSWORD,

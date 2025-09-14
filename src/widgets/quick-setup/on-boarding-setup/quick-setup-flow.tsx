@@ -803,14 +803,12 @@ const QuickSetupFlow: React.FC = () => {
 
       const callBack = async (res: any) => {
         if (res.success) {
-          // Update the products setup step to completed
           await updatePrintHouseSetupSteps(
             SetupStep.PRODUCTS_SETUPS,
             StepStatus.DONE
           );
-
           alertSuccessAdded();
-          navigate("/");
+          navigate("/materials-setup");
         } else {
           alertFaultAdded();
         }

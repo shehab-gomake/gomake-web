@@ -120,6 +120,7 @@ const useSetupGuideMenu = ({
       onClick: handleOpenResetPassword,
       status: resetPasswordStatus,
     },
+    // !here
     {
       key: SetupStep.PRODUCTS_SETUPS,
       label: t("quickSetup.steps.setUpYourMachines"),
