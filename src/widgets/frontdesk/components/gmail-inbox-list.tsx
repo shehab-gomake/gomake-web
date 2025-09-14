@@ -15,13 +15,14 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useGomakeAxios } from "@/hooks";
 import { getGmailInboxApi } from "@/services/api-service/frontdesk/frontdesk-endpoints";
 
-type MailItem = {
+export type MailItem = {
   id: string;
   from: string;
   subject: string;
   snippet?: string;
   receivedAt: string; // mock string timestamp
   unread?: boolean;
+  body?: string;
 };
 
 const getInitials = (name: string) =>
@@ -31,7 +32,13 @@ const getInitials = (name: string) =>
     .join("")
     .toUpperCase();
 
-const GmailInboxList: React.FC = () => {
+interface GmailInboxListProps {
+  onSelect?: (mail: MailItem) => void;
+  onLoaded?: (mails: MailItem[]) => void;
+  selectedId?: string;
+}
+
+const GmailInboxList: React.FC<GmailInboxListProps> = ({ onSelect, onLoaded, selectedId }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
 
@@ -44,6 +51,7 @@ const GmailInboxList: React.FC = () => {
         snippet: "Hi, could you update me on order #123...",
         receivedAt: "09:42",
         unread: true,
+        body: "Hi, could you update me on order #123? We'd like to confirm delivery time and packaging details. Thanks!",
       },
       {
         id: "2",
@@ -51,6 +59,7 @@ const GmailInboxList: React.FC = () => {
         subject: "Invoice #4532",
         snippet: "Please find attached invoice #4532...",
         receivedAt: "09:21",
+        body: "Attached is invoice #4532 for your records. Please let us know if you need any changes.",
       },
       {
         id: "3",
@@ -59,14 +68,15 @@ const GmailInboxList: React.FC = () => {
         snippet: "Circling back on the quote we discussed...",
         receivedAt: "08:55",
         unread: true,
+        body: "Just following up to see if you had any questions about the quote I sent last week.",
       },
-      { id: "4", from: "Support Bot", subject: "Daily summary", snippet: "Today you have 5 tasks due...", receivedAt: "08:01" },
-      { id: "5", from: "Widgets Inc.", subject: "PO Confirmation", snippet: "Your PO has been approved...", receivedAt: "07:45" },
-      { id: "6", from: "Mary Johnson", subject: "Artwork approval", snippet: "Attached is the final artwork...", receivedAt: "07:12" },
-      { id: "7", from: "No-Reply", subject: "Password reset", snippet: "Click here to reset your password...", receivedAt: "06:38" },
-      { id: "8", from: "Sales Team", subject: "New lead assigned", snippet: "A new lead has been assigned...", receivedAt: "06:10", unread: true },
-      { id: "9", from: "Printing House", subject: "Material update", snippet: "We have updated material pricing...", receivedAt: "05:55" },
-      { id: "10", from: "Billing", subject: "Payment received", snippet: "Payment for invoice #4532 received...", receivedAt: "05:30" },
+      { id: "4", from: "Support Bot", subject: "Daily summary", snippet: "Today you have 5 tasks due...", receivedAt: "08:01", body: "Here is your daily summary. You have 5 tasks due today and 3 pending approvals." },
+      { id: "5", from: "Widgets Inc.", subject: "PO Confirmation", snippet: "Your PO has been approved...", receivedAt: "07:45", body: "Your PO has been approved and is now being processed." },
+      { id: "6", from: "Mary Johnson", subject: "Artwork approval", snippet: "Attached is the final artwork...", receivedAt: "07:12", body: "Please review the attached final artwork and confirm." },
+      { id: "7", from: "No-Reply", subject: "Password reset", snippet: "Click here to reset your password...", receivedAt: "06:38", body: "To reset your password, click the link below." },
+      { id: "8", from: "Sales Team", subject: "New lead assigned", snippet: "A new lead has been assigned...", receivedAt: "06:10", unread: true, body: "A new lead has been assigned to you. Please review and follow up." },
+      { id: "9", from: "Printing House", subject: "Material update", snippet: "We have updated material pricing...", receivedAt: "05:55", body: "We have updated our material pricing effective next month." },
+      { id: "10", from: "Billing", subject: "Payment received", snippet: "Payment for invoice #4532 received...", receivedAt: "05:30", body: "Payment for invoice #4532 has been received. Thank you!" },
     ],
     []
   );
@@ -85,17 +95,24 @@ const GmailInboxList: React.FC = () => {
             snippet: String(it.snippet ?? it.preview ?? ""),
             receivedAt: String(it.receivedAt ?? it.date ?? ""),
             unread: Boolean(it.unread ?? false),
+            body: String(it.body ?? it.text ?? ""),
           }));
           setMails(normalized);
+          onLoaded?.(normalized);
+          if (normalized.length && !selectedId) onSelect?.(normalized[0]);
         } else {
           // Keep mock data if API fails or shape unexpected
           setMails(mockMails);
+          onLoaded?.(mockMails);
+          if (mockMails.length && !selectedId) onSelect?.(mockMails[0]);
         }
       };
       try {
         await getGmailInboxApi(callApi, callback, { limit: 10 });
       } catch {
         setMails(mockMails);
+        onLoaded?.(mockMails);
+        if (mockMails.length && !selectedId) onSelect?.(mockMails[0]);
       }
     };
     fetchMails();
@@ -106,16 +123,18 @@ const GmailInboxList: React.FC = () => {
       <List disablePadding className="custom-scrollbar">
         {mails.map((mail, idx) => (
           <React.Fragment key={mail.id}>
-            <ListItem disableGutters sx={{ px: 1 }}>
+            <ListItem disableGutters sx={{ px: 0 }}>
               <ListItemButton
                 sx={{
                   borderRadius: 1,
-                  px: 1,
+                  px: 1.5,
                   py: 1,
                   gap: 1,
                   bgcolor: mail.unread ? primaryColor(50) : "transparent",
                   "&:hover": { bgcolor: primaryColor(100) },
                 }}
+                selected={selectedId === mail.id}
+                onClick={() => onSelect?.(mail)}
               >
                 <ListItemAvatar>
                   <Avatar sx={{ width: 32, height: 32, bgcolor: neutralColor(200), color: neutralColor(700) }}>

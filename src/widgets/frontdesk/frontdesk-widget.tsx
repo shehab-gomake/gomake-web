@@ -7,6 +7,7 @@ import { SecondaryTabsComponent } from "@/components/tabs/secondary-tabs";
 import { ITab } from "@/components/tabs/interface";
 import { FrontdeskInternalInboxTable } from "@/widgets/frontdesk/components/internal-inbox-table";
 import { GmailInboxList } from "@/widgets/frontdesk/components/gmail-inbox-list";
+import { GmailInboxView } from "@/widgets/frontdesk/components/gmail-inbox-view";
 
 const FrontdeskWidget: React.FC = () => {
   const [selected, setSelected] = useState<string>("overview");
@@ -61,7 +62,7 @@ const FrontdeskOverviewTabs: React.FC = () => {
     {
       title: "Inbox",
       component: channel === "gmail" ? (
-        <GmailInboxList />
+        <GmailInboxView />
       ) : (
         <div style={{ padding: 16 }}>Internal Inbox</div>
       ),
@@ -87,5 +88,11 @@ const FrontdeskOverviewTabs: React.FC = () => {
     },
   ];
 
-  return <PrimaryTabsComponent tabs={topTabs} withBackGround />;
+  return (
+    <PrimaryTabsComponent
+      tabs={topTabs}
+      withBackGround
+      style={{ padding: "0 20px" }}
+    />
+  );
 };
