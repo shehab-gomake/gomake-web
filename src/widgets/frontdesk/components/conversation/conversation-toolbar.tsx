@@ -24,7 +24,7 @@ export const ConversationToolbar: React.FC<Props> = ({
 }) => {
   return (
     <div style={{ padding: dense ? 8 : 12, borderBottom: '1px solid #EAECF0' }}>
-      <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={0.5}>
+      <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.5}>
         <IconButton aria-label="refresh" size={size} onClick={onRefresh}>
           <RefreshIcon fontSize={size === 'small' ? 'small' : 'medium'} />
         </IconButton>

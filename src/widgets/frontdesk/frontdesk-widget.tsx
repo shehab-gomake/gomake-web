@@ -100,22 +100,13 @@ const FrontdeskWidget: React.FC = () => {
 
   useEffect(() => {
     // Sync selected item with route, default to inbox
-    const itemByRoute = frontdeskRoute
-      ? list.find((x) => x.path === frontdeskRoute)
-      : list[0];
+    const itemByRoute = frontdeskRoute ? list.find((x) => x.path === frontdeskRoute) : list[0];
     if (itemByRoute && itemByRoute.value !== selected?.value) {
       setSelected(itemByRoute);
     }
   }, [frontdeskRoute, selected?.value]);
 
-  const Side = () => (
-    <SideList
-      list={list}
-      selectedItem={selected?.value}
-      onSelect={onSelectItem}
-      title="Frontdesk"
-    />
-  );
+  const Side = () => <SideList list={list} selectedItem={selected?.value} onSelect={onSelectItem} title="Frontdesk" />;
 
   return (
     <SideBarContainer side={Side()} header={""} subHeader={""}>
