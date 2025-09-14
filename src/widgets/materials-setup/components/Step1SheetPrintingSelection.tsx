@@ -111,9 +111,9 @@ const Step1SheetPrintingSelection: React.FC<
         )}
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={1.5}>
         {materials?.map((material) => (
-          <Grid item xs={12} sm={6} md={4} key={material.categoryKey}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={material.categoryKey}>
             <Card
               sx={{
                 border: isMaterialSelected(material.categoryKey)
@@ -123,29 +123,47 @@ const Step1SheetPrintingSelection: React.FC<
                   ? "primary.main"
                   : "divider",
                 backgroundColor: isMaterialSelected(material.categoryKey)
-                  ? "primary.light"
+                  ? "rgba(25, 118, 210, 0.08)"
                   : "background.paper",
+                cursor: "pointer",
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  borderColor: "primary.main",
+                  boxShadow: 2,
+                },
               }}
+              onClick={() =>
+                handleMaterialToggle(
+                  material,
+                  !isMaterialSelected(material.categoryKey)
+                )
+              }
             >
-              <CardContent>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isMaterialSelected(material.categoryKey)}
-                      onChange={(e) =>
-                        handleMaterialToggle(material, e.target.checked)
-                      }
-                    />
-                  }
-                  label={
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      {material.categoryName}
-                    </Typography>
-                  }
-                />
+              <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Checkbox
+                    checked={isMaterialSelected(material.categoryKey)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleMaterialToggle(material, e.target.checked);
+                    }}
+                    size="small"
+                    sx={{ p: 0.5, mr: 1 }}
+                  />
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: "0.9rem",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {material.categoryName}
+                  </Typography>
+                </Box>
 
                 {isMaterialSelected(material.categoryKey) && (
-                  <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+                  <Box sx={{ mt: 1.5, display: "flex", gap: 1 }}>
                     <TextField
                       label={t("Width (mm)")}
                       type="number"
@@ -161,6 +179,7 @@ const Step1SheetPrintingSelection: React.FC<
                         )
                       }
                       fullWidth
+                      onClick={(e) => e.stopPropagation()}
                     />
                     <TextField
                       label={t("Length (mm)")}
@@ -177,6 +196,7 @@ const Step1SheetPrintingSelection: React.FC<
                         )
                       }
                       fullWidth
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </Box>
                 )}
