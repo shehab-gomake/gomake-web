@@ -9,10 +9,11 @@ import { BoardMissionsStationActionItem } from "./station-action-item";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { t } from "i18next";
-import { isPrintNodeModalOpenState } from "./state";
+import { isPackagingModalOpenState, isPrintNodeModalOpenState } from "./state";
 import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
 import { useRouter } from "next/router";
+import { PrintPackingSlipModalWidget } from "../navigation-buttons/print-packing-slip-modal-widget";
 
 const BoardMissionsStationsComponent = ({
   stations,
@@ -24,6 +25,12 @@ const BoardMissionsStationsComponent = ({
   const { callApi } = useGomakeAxios();
   const [isPrintNodeModalOpen, setIsPrintNodeModalOpen] = useRecoilState(isPrintNodeModalOpenState);
   const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
+  const [openPackagingModal, setOpenPackagingModal] = useRecoilState(isPackagingModalOpenState);
+
+  const handleClosePackagingModal = () => {
+    setOpenPackagingModal(false);
+  };
+
   const sortedStations = useMemo(
     () =>
       [...stations]
@@ -33,14 +40,14 @@ const BoardMissionsStationsComponent = ({
   );
   const isLoading =
     !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
-  const printJobUsingPrintNode = async (jobId: string,productType?:string) => {
+  const printJobUsingPrintNode = async (jobId: string, productType?: string) => {
     const callBack = (res) => {
       if (res.success) {
       }
     };
     let data = jobId;
-    if(productType){
-      data = data + "?productType="+productType;
+    if (productType) {
+      data = data + "?productType=" + productType;
     }
     await printJobUsingPrintNodeApi(callApi, callBack, data);
   };
@@ -89,6 +96,13 @@ const BoardMissionsStationsComponent = ({
             />
           ))}
 
+          <PrintPackingSlipModalWidget
+            boardMissionId={boardMissions.boardMissionId}
+            quantity={boardMissions.quantity}
+            openModal={openPackagingModal}
+            onClose={handleClosePackagingModal}
+          />
+
           <GoMakeDeleteModal
             modalType={ModalType.WARNING}
             title={t("boardMissions.printOrderJobsModalTitle")}
@@ -101,7 +115,7 @@ const BoardMissionsStationsComponent = ({
             }}
             onClickDelete={() => {
               setIsPrintNodeModalOpen(false);
-              printJobUsingPrintNode(router.query.boardMissionsId as string,boardMissionsDetails.productType).then();
+              printJobUsingPrintNode(router.query.boardMissionsId as string, boardMissionsDetails.productType).then();
             }}
             // onClickCancel={() => {
             //   setIsPrintNodeModalOpen(false)

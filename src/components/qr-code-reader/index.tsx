@@ -12,7 +12,6 @@ import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
-import { useModal } from "@/hooks/use-modal";
 import { useTranslation } from 'react-i18next';
 import { GoMakeAlertModal, QRErrorModal } from "../modal";
 import { ThreeOptionsModal } from "@/components";
@@ -48,7 +47,7 @@ const QrCodeReader = (props: IProps) => {
         return new Promise(async (resolve, reject) => {
             barcode = barcode.replace(/½/g, '-');
             const callBack = (res) => {
-                if (res?.success) {
+                if (res?.data?.success) {
                     if (res?.data?.isLastStation) {
                         //isOpenDoneModal.open()
                         if (props?.onIsLastStationDetect) {
@@ -58,9 +57,9 @@ const QrCodeReader = (props: IProps) => {
                     alertSuccessUpdate();
                 }
                 else {
-                    if (res?.errorMessage && res?.errorMessage !== "") {
-                        setQrErrorMessage(res.errorMessage);
-                        setQrErrorKey(res.errorMessage);
+                    if (res?.data?.errorMessage && res?.data?.errorMessage !== "") {
+                        setQrErrorMessage(res.data.errorMessage);
+                        setQrErrorKey(res.data.errorMessage);
                         setIsQRErrorModalOpen(true);
                     } else {
                         alertFault(t("productionFloor.qrReadError"));
@@ -92,18 +91,25 @@ const QrCodeReader = (props: IProps) => {
             const callBack = async (res) => {
                 setSelectedMission(res?.data);
                 if (res?.success) {
-                    if (props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId") && router?.query?.boardMissionsId === res?.data?.boardMissionId) {
-                        if (res?.data?.qrCodeAction === QrCodeAction.START || res?.data?.qrCodeAction === QrCodeAction.FINISH) {
+                    if (props.qrCodeListenerFrom === QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR && router.asPath.includes("boardMissionsId")) {
+                        const currentBoardMissionId = (router.query as any)?.boardMissionsId;
+                        if (res?.data?.qrCodeAction === QrCodeAction.START) {
+                            // If a different job START is scanned while a job modal is open, navigate to the new job
+                            if (currentBoardMissionId && String(currentBoardMissionId) !== String(res?.data?.boardMissionId)) {
+                                const url = `/production-floor?boardMissionsId=${res?.data?.boardMissionId}${res?.data?.productType ? `&productType=${res?.data?.productType}` : ""}&step=stations`;
+                                router.push(url);
+                            } else {
+                                if (stations?.length > 0) {
+                                    await handleBoardMissionsBarcodeActionsFunction(barcode, res?.data);
+                                }
+                            }
+                        } else if (res?.data?.qrCodeAction === QrCodeAction.FINISH) {
                             if (stations?.length > 0) {
                                 await handleBoardMissionsBarcodeActionsFunction(barcode, res?.data);
                             }
-                        }
-                        else {
-                            if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
-                                setSelectedJobQuantity(res?.data?.quantity);
-                                setOpenMoveToReadyModal(true)
-                            }
-
+                        } else if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
+                            setSelectedJobQuantity(res?.data?.quantity);
+                            setOpenMoveToReadyModal(true)
                         }
                     }
                     else {

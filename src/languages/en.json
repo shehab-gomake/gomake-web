@@ -21,6 +21,8 @@
     "forgotPassword": "Forgot password",
     "enterYourEmail": "Enter your Email",
     "send": "Send",
+    "goToLogin": "Go to login",
+    "forgotPasswordEmailSent": "A temporary password has been sent to your email.",
     "resetPassword": "Reset Password",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
@@ -2614,5 +2616,9 @@
       "excelExportSuccess": "Data exported to Excel successfully",
       "excelExportError": "Failed to export data to Excel"
     }
+  },
+  "logs": {
+    "CLOSE": "document closed",
+    "CLOSE2": "Closed as {{documentType}}"
   }
 }

@@ -512,9 +512,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   return "table.xlsx";
                 }
               };
-              
+
               const fileName = getFileName();
-              
+
               // For text files, handle encoding properly to preserve Hebrew characters
               if (exportType === INVOICES_EXPORT_TYPES.ExtendedTxt) {
                 return response.arrayBuffer().then(arrayBuffer => {
@@ -524,7 +524,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     // Try UTF-8 first
                     const decoder = new TextDecoder('utf-8');
                     text = decoder.decode(arrayBuffer);
-                    
+
                     // If we see replacement characters, try other encodings
                     if (text.includes('�')) {
                       // Try Windows-1255 (Hebrew encoding)
@@ -547,7 +547,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     const decoder = new TextDecoder('utf-8');
                     text = decoder.decode(arrayBuffer);
                   }
-                  
+
                   // Create blob with UTF-8 BOM for better Hebrew support
                   const BOM = '\uFEFF';
                   const textWithBOM = BOM + text;
@@ -2583,7 +2583,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[21]:
         return `${t("logs.ADD")}`;
       case LogActionType[22]:
-        return `${t("logs.CLOSE")}`;
+        if (values[0] === "DeliveryNote" || values[0] === "Invoice") {
+          return `${t("logs.CLOSE2", {
+            documentType: values[0] === "DeliveryNote" ? t("sales.quote.deliveryNote") : t("sales.quote.invoice"),
+          })}`;
+        } else {
+          return `${t("logs.CLOSE")}`;
+        }
       case LogActionType[23]:
         return `${t("logs.SEND_READY_BOARDMISSION_MAIL")}`;
       case LogActionType[24]:
@@ -2631,6 +2637,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         return `${t("logs.DOCUMENT_APPROVAL_BY_MANAGER")}`;
       case LogActionType[43]:
         return `${t("logs.DOCUMENT_OPENED_BY_EMPLOYEE")}`;
+      case LogActionType[44]:
+        return `${t("logs.DELIVERY_ITEM_ADD")}`;
+      case LogActionType[45]:
+        return `${t("logs.FULLY_DELIVERED")}`;
+      case LogActionType[46]:
+        return `${t("logs.PARTIAL_DELIVERED")}`;
+      case LogActionType[47]:
+        return `${t("logs.REMOVE_DELIVERED")}`;
 
       default:
         return "";

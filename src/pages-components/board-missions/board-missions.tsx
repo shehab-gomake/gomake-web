@@ -24,12 +24,10 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import { useRecoilState, } from "recoil";
+import { useRecoilState } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
-import {
-  printHouseProfile,
-} from "@/store/print-house-profile";
+import { printHouseProfile } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
@@ -222,7 +220,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -239,7 +237,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -267,7 +265,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => { }, {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -342,12 +340,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (k) => k !== "pageNumber" && k !== "pageSize"
                       ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                        <div
+                          style={{ position: "absolute", top: -5, right: -1 }}
+                        >
+                          <DotIcon />
+                        </div>
+                      )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -423,7 +421,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             />
                           </div>
 
-
                           <div style={classes.statusFilterContainer}>
                             <h3 style={classes.filterLabelStyle}>
                               {t("products.offsetPrice.admin.proof")}
@@ -459,18 +456,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               <GoMakeAutoComplate
                                 options={[
                                   { value: true, text: t("modal.yes") },
-                                  { value: false, text: t("modal.no") }
+                                  { value: false, text: t("modal.no") },
                                 ]}
                                 getOptionLabel={(option: any) => option.text}
                                 placeholder={t("boardMissions.isPrinted")}
                                 style={classes.textInputStyle}
-                                onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
+                                onChange={(e, value) =>
+                                  setIsPrintedState(value?.value ?? null)
+                                }
                                 value={
                                   isPrintedState === null
                                     ? null
                                     : isPrintedState === true
-                                      ? { value: true, text: t("modal.yes") }
-                                      : { value: false, text: t("modal.no") }
+                                    ? { value: true, text: t("modal.yes") }
+                                    : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
@@ -675,12 +674,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -721,12 +720,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -785,7 +784,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -847,12 +846,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -884,13 +883,18 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType: pendingPrintParams?.productTypeName || pendingPrintParams?.productName || pendingPrintParams?.productType
-            })
+                productType:
+                  pendingPrintParams?.productTypeName ||
+                  pendingPrintParams?.productName ||
+                  pendingPrintParams?.productType,
+              })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
         noBtn={t("boardMissions.printProductTypeOnly", {
-          productType: pendingPrintParams?.productTypeName || pendingPrintParams?.productType
+          productType:
+            pendingPrintParams?.productTypeName ||
+            pendingPrintParams?.productType,
         })}
         openModal={openPrintTypeModal}
         onClose={onClosePrintTypeModal}
@@ -903,13 +907,17 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-              productType: pendingMarkReadyParams.productTypeName || pendingMarkReadyParams.productType
-            })
+                productType:
+                  pendingMarkReadyParams.productTypeName ||
+                  pendingMarkReadyParams.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
         noBtn={t("boardMissions.markProductTypeOnlyReady", {
-          productType: pendingMarkReadyParams?.productTypeName || pendingMarkReadyParams?.productType
+          productType:
+            pendingMarkReadyParams?.productTypeName ||
+            pendingMarkReadyParams?.productType,
         })}
         openModal={openMarkReadyTypeModal}
         onClose={onCloseMarkReadyTypeModal}

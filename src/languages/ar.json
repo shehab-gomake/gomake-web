@@ -21,6 +21,8 @@
     "forgotPassword": "نسيت كلمة المرور",
     "enterYourEmail": "أدخل بريدك الإلكتروني",
     "send": "إرسال",
+    "goToLogin": "الانتقال لتسجيل الدخول",
+    "forgotPasswordEmailSent": "تم إرسال كلمة مرور مؤقتة إلى بريدك الإلكتروني.",
     "resetPassword": "إعادة تعيين كلمة المرور",
     "newPassword": "كلمة المرور الجديدة",
     "confirmPassword": "تأكيد كلمة المرور",
@@ -2390,6 +2392,10 @@
       "excelExportSuccess": "تم تصدير البيانات إلى Excel بنجاح",
       "excelExportError": "فشل في تصدير البيانات إلى Excel"
     }
+  },
+  "logs": {
+    "CLOSE": "تم إغلاق المستند",
+    "CLOSE2": "تم إغلاقه كـ {{documentType}}"
   }
 
 }

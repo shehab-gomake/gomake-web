@@ -37,6 +37,8 @@ const ChangeMachineEmployeeComponent = ({
   machineId,
   employeeId,
   actionId,
+  supplierId,
+  supplierName,
 }: IProps) => {
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const { classes } = useStyle({ textColor });
@@ -53,6 +55,9 @@ const ChangeMachineEmployeeComponent = ({
   const canMoveStation = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
+
+  // Check if job is outsourced
+  const isOutsourced = Boolean(supplierId);
 
   // Use the correct hook to get available machines and employees
   const {
@@ -87,6 +92,11 @@ const ChangeMachineEmployeeComponent = ({
   };
 
   const handleClick = async (event: React.MouseEvent<HTMLElement>) => {
+    // Don't allow changes for outsourced jobs
+    if (isOutsourced) {
+      return;
+    }
+
     if (canMoveStation) {
       setAnchorEl(event.currentTarget);
       await loadAvailableOptions();
@@ -137,6 +147,11 @@ const ChangeMachineEmployeeComponent = ({
   };
 
   const currentDisplayText = () => {
+    // Check if job is outsourced (has supplierId)
+    if (supplierId) {
+      return supplierName || "Outsource Job";
+    }
+
     if (employeeId) {
       const employee = employeesCategories?.find(
         (e: any) => e.id === employeeId
@@ -149,16 +164,6 @@ const ChangeMachineEmployeeComponent = ({
     }
   };
 
-  // Debug logging
-  console.log("ChangeMachineEmployee Debug:", {
-    actionId,
-    currentStationId: id,
-    availableMachines: machinesList.length,
-    availableEmployees: employeesList.length,
-    machinesList,
-    employeesList,
-  });
-
   return (
     <Stack
       justifyContent={"flex-start"}
@@ -167,25 +172,39 @@ const ChangeMachineEmployeeComponent = ({
       overflow={"hidden"}
     >
       <Button
-        sx={classes.currentStationBtn}
+        sx={{
+          ...classes.currentStationBtn,
+          ...(isOutsourced && {
+            backgroundColor: "#F5F5F5",
+            color: "#666666",
+            cursor: "default",
+            "&:hover": {
+              backgroundColor: "#F5F5F5",
+            },
+          }),
+        }}
         variant={"contained"}
-        disabled={!canMoveStation}
+        disabled={!canMoveStation || isOutsourced}
         onClick={handleClick}
       >
         <span
           style={{
             ...FONT_FAMILY.Lexend(500, 15),
-            color: "#000000",
+            color: isOutsourced ? "#666666" : "#000000",
             lineHeight: "15px",
             fontSize: GetProductionFontSizeFromPreferences(),
           }}
         >
           {getTruncatedLabel(currentDisplayText(), 25)}
         </span>
-        {open ? (
-          <UpArrowIcon color={"#475467"} width={14} height={14} />
-        ) : (
-          <DownArrowIcon color={"#475467"} width={14} height={14} />
+        {!isOutsourced && (
+          <>
+            {open ? (
+              <UpArrowIcon color={"#475467"} width={14} height={14} />
+            ) : (
+              <DownArrowIcon color={"#475467"} width={14} height={14} />
+            )}
+          </>
         )}
       </Button>
       <Menu

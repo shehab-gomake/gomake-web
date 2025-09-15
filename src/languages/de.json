@@ -21,6 +21,8 @@
     "forgotPassword": "Passwort vergessen",
     "enterYourEmail": "Geben Sie Ihre E-Mail ein",
     "send": "Senden",
+    "goToLogin": "Zum Login",
+    "forgotPasswordEmailSent": "Ein temporäres Passwort wurde an Ihre E-Mail gesendet.",
     "resetPassword": "Passwort zurücksetzen",
     "newPassword": "Neues Passwort",
     "confirmPassword": "Passwort bestätigen",
@@ -2245,5 +2247,9 @@
     "displayall": "Alle Typen mit gleichen Mengen in der PDF der PACA anzeigen",
     "ShowStarted": "Gestartete und beendete QRs in der Produktions-PDF anzeigen",
     "deliveryWarning": "Dieser QR-Code wird für die Lieferung verwendet. Um den Job abzuschließen, müssen Sie den Fertigstellungs-QR-Code scannen, nicht den Lieferungs-QR-Code."
+  },
+  "logs": {
+    "CLOSE": "Dokument geschlossen",
+    "CLOSE2": "Geschlossen als {{documentType}}"
   }
 }

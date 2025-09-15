@@ -399,76 +399,34 @@ const BoardMissionsStationActionItem = ({
   };
 
   const onClickDoneWithMaterials = async (
-      updatedState: {
-        currentStationId: string;
-        boardMissionActionId: string;
-        productionTime: string;
-        materials: {
-          ProductType: string;
-          WorkFlowActionId: string;
-          materialKey: string;
-          currentValue: string;
-        }[];
-      },
-      sendMSg?: boolean
+    updatedState: {
+      currentStationId: string;
+      boardMissionActionId: string;
+      productionTime: string;
+      materials: {
+        ProductType: string;
+        WorkFlowActionId: string;
+        materialKey: string;
+        currentValue: string;
+      }[];
+    },
+    sendMSg?: boolean
   ) => {
-    setLoading(true);
-    const callBack = (res) => {
-      setLoading(false);
-      if (res.success) {
-        setIsPrintNodeModalOpen(res.data.showPrintNodeModal);
-        alertSuccessUpdate();
-        const currentActionId = res?.data?.currentStationId;
-        setStations(
-            stations.map((station) => {
-              if (station?.boardMissionActionId === boardMissionActionId) {
-                return {
-                  ...station,
-                  isDone: true,
-                  boardMissionActionTimer: {
-                    isTimerRunning: false,
-                    totalRunningTime: Number(updatedState.productionTime),
-                  },
-                };
-              }
-              return {
-                ...station,
-              };
-            })
-        );
-        setBoardMissions({
-          ...boardMissions,
-          currentStation: {
-            ...boardMissions.currentStation,
-            boardMissionActionTimer: {
-              ...boardMissions.currentStation?.boardMissionActionTimer,
-              isTimerRunning: false,
-              totalRunningTime: 0,
-            },
-          },
-          currentBoardMissionActionId: currentActionId,
-        });
-        if (isLastStation) {
-          setOpenPackagingModal(true);
-        }
-      } else {
-        alertFaultUpdate();
-        setLoading(false);
-      }
-    };
-    await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
-      updatedState,
-      productType: productType,
-      isSendMessage: !!sendMSg,
-    });
+    // If there is a product type, ask scope: all jobs vs product type only
+    if (productType && isLastStation) {
+      setPendingDoneData({ updatedState, sendMSg });
+      setOpenDoneScopeModal(true);
+      return;
+    }
+
+    // No product type → mark whole job
+    await performDoneWithMaterials(updatedState, productType, sendMSg);
   };
 
   const [isHovered, setIsHovered] = useState(false);
 
   // Modify the modal close handler
-  const handleClosePackagingModal = () => {
-    setOpenPackagingModal(false);
-  };
+
 
   return (
     <>
@@ -1123,12 +1081,7 @@ const BoardMissionsStationActionItem = ({
           }
         }}
       />
-      <PrintPackingSlipModalWidget
-        boardMissionId={boardMissions.boardMissionId}
-        quantity={boardMissions.quantity}
-        openModal={openPackagingModal}
-        onClose={handleClosePackagingModal}
-      />
+
     </>
   );
 };

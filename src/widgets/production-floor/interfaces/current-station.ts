@@ -9,4 +9,6 @@ export interface ICurrentStation {
   productType: string;
   totalProductionTime?: number;
   totalProductionTimeForAllStations?: number;
+  supplierId?: string;
+  supplierName?: string;
 }

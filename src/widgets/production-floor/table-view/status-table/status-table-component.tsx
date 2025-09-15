@@ -47,7 +47,7 @@ import {
   getCustomWidth,
 } from "../../state/production-floor-coulmns-table-settings";
 import React from "react";
-import { TableVirtuoso } from 'react-virtuoso';
+import { TableVirtuoso } from "react-virtuoso";
 
 interface IProps {
   status: IProductionStatus;
@@ -249,62 +249,66 @@ const StatusTableComponent = ({
   );
 
   // Create a stable reference for the TableRow renderer
-  const renderTableRow = useCallback((props: any) => {
-    const { item: boardMission, ...restProps } = props;
+  const renderTableRow = useCallback(
+    (props: any) => {
+      const { item: boardMission, ...restProps } = props;
 
-    // If this is a data row (has item), render TableRowComponent
-    if (boardMission) {
-      return (
-        <TableRowComponent
-          {...restProps}
-          boardMission={boardMission}
-          status={status}
-          onClickDone={tryMoveBoardMissionsToDone}
-          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-          index={sortedBoards.indexOf(boardMission)}
-          onClickClient={onClickClient}
-          isMobileScreen={isMobileScreen}
-          isRTL={RTL}
-          isUrgentWork={hasUrgentOrApproval}
-          onUpdateJobDueDate={updateJobDueDate}
-          employeesCategories={employeesCategories}
-          visibleColumns={visibleColumns}
-        />
-      );
-    }
+      // If this is a data row (has item), render TableRowComponent
+      if (boardMission) {
+        return (
+          <TableRowComponent
+            {...restProps}
+            boardMission={boardMission}
+            status={status}
+            onClickDone={tryMoveBoardMissionsToDone}
+            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+            index={sortedBoards.indexOf(boardMission)}
+            onClickClient={onClickClient}
+            isMobileScreen={isMobileScreen}
+            isRTL={RTL}
+            isUrgentWork={hasUrgentOrApproval}
+            onUpdateJobDueDate={updateJobDueDate}
+            employeesCategories={employeesCategories}
+            visibleColumns={visibleColumns}
+          />
+        );
+      }
 
-    // For header rows, use SecondaryTableRow
-    return <SecondaryTableRow {...restProps} />;
-  }, [
-    status,
-    sortedBoards,
-    tryMoveBoardMissionsToDone,
-    onOpenPrintDeliverTicketModal,
-    onClickClient,
-    isMobileScreen,
-    RTL,
-    hasUrgentOrApproval,
-    updateJobDueDate,
-    employeesCategories,
-    visibleColumns,
-  ]);
+      // For header rows, use SecondaryTableRow
+      return <SecondaryTableRow {...restProps} />;
+    },
+    [
+      status,
+      sortedBoards,
+      tryMoveBoardMissionsToDone,
+      onOpenPrintDeliverTicketModal,
+      onClickClient,
+      isMobileScreen,
+      RTL,
+      hasUrgentOrApproval,
+      updateJobDueDate,
+      employeesCategories,
+      visibleColumns,
+    ]
+  );
 
   // Custom Table components for TableVirtuoso - with minimal dependencies
-  const TableComponents = useMemo(() => ({
-    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-      <TableContainer {...props} ref={ref} sx={{ height: '100%' }} />
-    )),
-    Table: (props: any) => (
-      <Table {...props} stickyHeader sx={{ tableLayout: 'fixed' }} />
-    ),
-    TableHead: TableHead,
-    // IMPORTANT: do not override TableRow here; let Virtuoso manage rows
-    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-      <TableBody {...props} ref={ref} />
-    )),
-  }), []);
-
-
+  const TableComponents = useMemo(
+    () => ({
+      Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+        <TableContainer {...props} ref={ref} sx={{ height: "100%" }} />
+      )),
+      Table: (props: any) => (
+        <Table {...props} stickyHeader sx={{ tableLayout: "fixed" }} />
+      ),
+      TableHead: TableHead,
+      // IMPORTANT: do not override TableRow here; let Virtuoso manage rows
+      TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+        <TableBody {...props} ref={ref} />
+      )),
+    }),
+    []
+  );
 
   // Fixed header content function
   const fixedHeaderContent = useCallback(() => {
@@ -312,7 +316,7 @@ const StatusTableComponent = ({
       <SecondaryTableRow>
         {memoizedTableHeaders?.map((header, index) => {
           const key = columnOrder.filter((k) => columnVisibility[k])[index];
-          const width = getCustomWidth(key);
+          const width = getCustomWidth(key, isMobileScreen);
 
           return (
             <SecondaryTableCell
@@ -322,26 +326,27 @@ const StatusTableComponent = ({
                 minWidth: width,
                 maxWidth: width,
                 width,
-                ...(isMobileScreen && {
-                  position: index <= 1 ? "sticky" : "relative",
-                  [RTL ? "right" : "left"]:
-                    index === 0 ? 0 : index === 1 ? 48 : "auto",
-                  zIndex: index <= 1 ? 2 : 1,
-                  background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                }),
+                ...(isMobileScreen &&
+                  index <= 1 && {
+                    position: "sticky",
+                    top: 0,
+                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                    zIndex: 3, //  raise above body cells
+                    background: "#f2f2f5",
+                  }),
               }}
               key={"statusTable" + status.id + index}
-              align={"center"}
+              align="center"
               sx={
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE
                     ? {
-                      "& .sort-icon": { opacity: 0 },
-                      "&:hover .sort-icon": { opacity: 1 },
-                    }
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
                     : {
-                      "& .sort-icon": { opacity: 1 },
-                    }
+                        "& .sort-icon": { opacity: 1 },
+                      }
                   : undefined
               }
             >
@@ -363,17 +368,20 @@ const StatusTableComponent = ({
                       setSortConfig({
                         key: t("productionFloor.currentStation"),
                         direction:
-                          currentStationOrdering === CurrentStationOrderingEnum.NONE
+                          currentStationOrdering ===
+                          CurrentStationOrderingEnum.NONE
                             ? CurrentStationOrderingEnum.ASC
                             : CurrentStationOrderingEnum.NONE,
                       });
                       setCurrentStationOrdering(
-                        currentStationOrdering === CurrentStationOrderingEnum.NONE
+                        currentStationOrdering ===
+                          CurrentStationOrderingEnum.NONE
                           ? CurrentStationOrderingEnum.ASC
                           : CurrentStationOrderingEnum.NONE
                       );
                       reSortingCurrentStation(
-                        currentStationOrdering === CurrentStationOrderingEnum.NONE
+                        currentStationOrdering ===
+                          CurrentStationOrderingEnum.NONE
                           ? CurrentStationOrderingEnum.ASC
                           : CurrentStationOrderingEnum.NONE
                       );
@@ -404,21 +412,37 @@ const StatusTableComponent = ({
 
   const TABLE_CONFIG = {
     ITEM_HEIGHT: columnVisibility.description ? 85 : 68,
+    MOBILE_ITEM_HEIGHT: columnVisibility.description ? 95 : 75,
     HEADER_HEIGHT: 50,
-    MAX_VISIBLE_ITEMS: 10
+    MOBILE_HEADER_HEIGHT: 45,
+    MAX_VISIBLE_ITEMS: 10,
+    MOBILE_MAX_VISIBLE_ITEMS: 8,
   };
 
   const calculateConfigurableHeight = () => {
     const boardsCount = getBoards().length;
-    const visibleLimit = heightMultiplier === 1 ? TABLE_CONFIG.MAX_VISIBLE_ITEMS : 30;
+    const isMobile = isMobileScreen;
+    const itemHeight = isMobile
+      ? TABLE_CONFIG.MOBILE_ITEM_HEIGHT
+      : TABLE_CONFIG.ITEM_HEIGHT;
+    const headerHeight = isMobile
+      ? TABLE_CONFIG.MOBILE_HEADER_HEIGHT
+      : TABLE_CONFIG.HEADER_HEIGHT;
+    const maxVisibleItems = isMobile
+      ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS
+      : TABLE_CONFIG.MAX_VISIBLE_ITEMS;
+
+    const visibleLimit =
+      heightMultiplier === 1 ? maxVisibleItems : isMobile ? 30 : 50;
     const baseHeight =
-      boardsCount < 10
-        ? 500
-        : (Math.min(boardsCount, visibleLimit) * TABLE_CONFIG.ITEM_HEIGHT) + TABLE_CONFIG.HEADER_HEIGHT;
+      boardsCount < maxVisibleItems
+        ? isMobile
+          ? 400
+          : 500
+        : Math.min(boardsCount, visibleLimit) * itemHeight + headerHeight;
 
     return `${baseHeight}px`;
-  };;
-
+  };
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -446,17 +470,24 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${!status.isGroup
-            ? t("productionStatuses." + status.name)
-            : status.name
-            } (${getBoards().length})`}
+          {`${
+            !status.isGroup
+              ? t("productionStatuses." + status.name)
+              : status.name
+          } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
           <Tooltip
             title={
               heightMultiplier === 1
-                ? t("productionFloor.increaseItemsTo30", { count: 30 })
-                : t("productionFloor.decreaseItemsTo10", { count: 10 })
+                ? t("productionFloor.increaseItemsTo50", {
+                    count: 50,
+                    defaultValue: `Increase items to ${50}`,
+                  })
+                : t("productionFloor.decreaseItemsTo10", {
+                    count: 10,
+                    defaultValue: `Decrease items to ${10}`,
+                  })
             }
             arrow
           >
@@ -482,7 +513,9 @@ const StatusTableComponent = ({
                 "&:hover": { backgroundColor: "#E0E7FF" },
               }}
             >
-              {heightMultiplier === 1 ? t("productionFloor.expand") : t("productionFloor.reset")}
+              {heightMultiplier === 1
+                ? t("productionFloor.expand")
+                : t("productionFloor.collapse")}
             </Button>
           </Tooltip>
         )}
@@ -490,64 +523,111 @@ const StatusTableComponent = ({
 
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
-          <Paper sx={{ overflow: 'auto' }}>
-            {getBoards().length > 10 ? <TableVirtuoso
-              key={`virtuoso-${status.id}-${sortedBoards.length}`}
-              ref={virtuosoRef}
-              style={{ height: calculateConfigurableHeight() }}
-              data={sortedBoards}
-              overscan={5}
-              components={TableComponents}
-
-              fixedHeaderContent={fixedHeaderContent}
-              itemContent={(index: number, boardMission: IBoardMissions) => (
-                <TableRowComponent
-                  boardMission={boardMission}
-                  status={status}
-                  onClickDone={tryMoveBoardMissionsToDone}
-                  onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                  index={index}
-                  onClickClient={onClickClient}
-                  isMobileScreen={isMobileScreen}
-                  isRTL={RTL}
-                  isUrgentWork={hasUrgentOrApproval}
-                  onUpdateJobDueDate={updateJobDueDate}
-                  employeesCategories={employeesCategories}
-                  visibleColumns={visibleColumns}
-                  cellsOnly
-                  handleOpenStuckModal={handleOpenStuckModal}
-                />
-              )}
-            /> : <div>
-              <TableContainer >
-                <Table stickyHeader={false}>
-                  <TableHead style={{ backgroundColor: status.backgroundColor }}>
-                    {fixedHeaderContent()}
-                  </TableHead>
-                  <TableBody>
-                    {sortedBoards.map((boardMission, index) => (
-                      <TableRowComponent
-                        key={boardMission.id}
-                        boardMission={boardMission}
-                        status={status}
-                        onClickDone={tryMoveBoardMissionsToDone}
-                        onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                        index={index}
-                        onClickClient={onClickClient}
-                        isMobileScreen={isMobileScreen}
-                        isRTL={RTL}
-                        isUrgentWork={hasUrgentOrApproval}
-                        onUpdateJobDueDate={updateJobDueDate}
-                        employeesCategories={employeesCategories}
-                        visibleColumns={visibleColumns}
-                        handleOpenStuckModal={handleOpenStuckModal}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-            </div>}
+          <Paper
+            sx={{
+              overflow: "auto",
+              ...(isMobileScreen && {
+                overflowX: "auto",
+                overflowY: "hidden",
+                "&::-webkit-scrollbar": {
+                  height: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#CCCDCF",
+                  borderRadius: "2px",
+                },
+              }),
+            }}
+          >
+            {getBoards().length >
+            (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
+              <TableVirtuoso
+                key={`virtuoso-${status.id}-${sortedBoards.length}`}
+                ref={virtuosoRef}
+                style={{
+                  height: calculateConfigurableHeight(),
+                  ...(isMobileScreen && {
+                    minWidth: "100%",
+                    width: "max-content",
+                  }),
+                }}
+                data={sortedBoards}
+                overscan={isMobileScreen ? 3 : 5}
+                components={TableComponents}
+                fixedHeaderContent={fixedHeaderContent}
+                itemContent={(index: number, boardMission: IBoardMissions) => (
+                  <TableRowComponent
+                    boardMission={boardMission}
+                    status={status}
+                    onClickDone={tryMoveBoardMissionsToDone}
+                    onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                    index={index}
+                    onClickClient={onClickClient}
+                    isMobileScreen={isMobileScreen}
+                    isRTL={RTL}
+                    isUrgentWork={hasUrgentOrApproval}
+                    onUpdateJobDueDate={updateJobDueDate}
+                    employeesCategories={employeesCategories}
+                    visibleColumns={visibleColumns}
+                    cellsOnly
+                    handleOpenStuckModal={handleOpenStuckModal}
+                  />
+                )}
+              />
+            ) : (
+              <div>
+                <TableContainer
+                  sx={{
+                    ...(isMobileScreen && {
+                      overflowX: "auto",
+                      "&::-webkit-scrollbar": {
+                        height: "4px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#CCCDCF",
+                        borderRadius: "2px",
+                      },
+                    }),
+                  }}
+                >
+                  <Table
+                    stickyHeader={false}
+                    sx={{
+                      ...(isMobileScreen && {
+                        minWidth: "100%",
+                        width: "max-content",
+                      }),
+                    }}
+                  >
+                    <TableHead
+                      style={{ backgroundColor: status.backgroundColor }}
+                    >
+                      {fixedHeaderContent()}
+                    </TableHead>
+                    <TableBody>
+                      {sortedBoards.map((boardMission, index) => (
+                        <TableRowComponent
+                          key={boardMission.id}
+                          boardMission={boardMission}
+                          status={status}
+                          onClickDone={tryMoveBoardMissionsToDone}
+                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                          index={index}
+                          onClickClient={onClickClient}
+                          isMobileScreen={isMobileScreen}
+                          isRTL={RTL}
+                          isUrgentWork={hasUrgentOrApproval}
+                          onUpdateJobDueDate={updateJobDueDate}
+                          employeesCategories={employeesCategories}
+                          visibleColumns={visibleColumns}
+                          handleOpenStuckModal={handleOpenStuckModal}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            )}
           </Paper>
         </Collapse>
       )}
@@ -572,12 +652,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -611,19 +691,25 @@ const StatusTableComponent = ({
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-              productType:
-                selectedMission?.productTypeName || selectedMission?.productType,
-            })
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+              })
             : ""
         }
-        yesBtn={t("boardMissions.markAllJobsReady", { defaultValue: "Mark All Jobs Ready" })}
+        yesBtn={t("boardMissions.markAllJobsReady", {
+          defaultValue: "Mark All Jobs Ready",
+        })}
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-              productType:
-                selectedMission?.productTypeName || selectedMission?.productType,
-              defaultValue: `Mark ${selectedMission?.productType || "Product Type"} Only`,
-            })
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+                defaultValue: `Mark ${
+                  selectedMission?.productType || "Product Type"
+                } Only`,
+              })
             : undefined
         }
         openModal={openDoneScopeModal}
@@ -668,12 +754,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

@@ -1,12 +1,15 @@
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store/user";
+import { currencyUnitState } from "@/store/currency-units";
 import { useStyle } from "./style";
 
 interface SummaryData {
   diffAfterOptimization: number;
   diffBeforeOptimization: number;
-  overAllImprovement: number;
-  overAllImprovementPercentage: number;
+  accuracyBeforeOptimization: number;
+  accuracyAfterOptimization: number;
 }
 
 interface SummaryWidgetProps {
@@ -14,19 +17,39 @@ interface SummaryWidgetProps {
   isFixed: boolean;
 }
 
+//!here fix
 const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const currenciesUnits = useRecoilValue<any>(currencyUnitState);
 
   if (!isFixed || !summaryData) {
     return null;
   }
+
+  const getCurrencyUnitText = (currency) => {
+    const foundCurrency = currenciesUnits.find((c) => c.value === currency);
+    if (foundCurrency) {
+      return foundCurrency.text;
+    } else {
+      return "";
+    }
+  };
 
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
+  };
+
+  const formatNumberWithCurrency = (value: number) => {
+    const formattedNumber = formatNumber(value);
+    const currencyText = getCurrencyUnitText(systemCurrency);
+    return currencyText
+      ? `${formattedNumber} ${currencyText}`
+      : formattedNumber;
   };
 
   const formatPercentage = (value: number) => {
@@ -52,7 +75,7 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
                   {t("priceProfit.diffBeforeOptimization")}
                 </Typography>
                 <Typography variant="h6" style={classes.metricValue}>
-                  {formatNumber(summaryData.diffBeforeOptimization)}
+                  {formatNumberWithCurrency(summaryData.diffBeforeOptimization)}
                 </Typography>
               </Box>
             </Grid>
@@ -62,45 +85,47 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
                   {t("priceProfit.diffAfterOptimization")}
                 </Typography>
                 <Typography variant="h6" style={classes.metricValue}>
-                  {formatNumber(summaryData.diffAfterOptimization)}
+                  {formatNumberWithCurrency(summaryData.diffAfterOptimization)}
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={6} md={3}>
               <Box style={classes.metricContainer}>
                 <Typography variant="body2" style={classes.metricLabel}>
-                  {t("priceProfit.overAllImprovement")}
+                  {t("priceProfit.accuracyBeforeOptimization")}
                 </Typography>
                 <Typography
                   variant="h6"
                   style={{
                     ...classes.metricValue,
                     color:
-                      summaryData.overAllImprovement >= 0
+                      summaryData.accuracyAfterOptimization <
+                      summaryData.accuracyBeforeOptimization
                         ? "#4caf50"
                         : "#f44336",
                   }}
                 >
-                  {formatNumber(summaryData.overAllImprovement)}
+                  {formatPercentage(summaryData.accuracyBeforeOptimization)}
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={6} md={3}>
               <Box style={classes.metricContainer}>
                 <Typography variant="body2" style={classes.metricLabel}>
-                  {t("priceProfit.improvementPercentage")}
+                  {t("priceProfit.accuracyAfterOptimization")}
                 </Typography>
                 <Typography
                   variant="h6"
                   style={{
                     ...classes.metricValue,
                     color:
-                      summaryData.overAllImprovementPercentage >= 0
+                      summaryData.accuracyAfterOptimization >
+                      summaryData.accuracyBeforeOptimization
                         ? "#4caf50"
                         : "#f44336",
                   }}
                 >
-                  {formatPercentage(summaryData.overAllImprovementPercentage)}
+                  {formatPercentage(summaryData.accuracyAfterOptimization)}
                 </Typography>
               </Box>
             </Grid>

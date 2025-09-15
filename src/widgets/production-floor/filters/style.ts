@@ -27,7 +27,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: isMobileScreen ? "2px" : "20px",
         padding: "12px 0",
-        paddingRight: "6px",
+        ...adaptPaddingLeft(dir, 6),
         ...(isMobileScreen && { ...adaptPaddingRight(dir, 5) }),
         ...(isMobileScreen && { rowGap: "10px" }),
       },
@@ -89,14 +89,42 @@ const useStyle = () => {
         textOverflow: "ellipsis",
         verticalAlign: "middle",
       },
-      modalContainer: { height: 'fit-content' },
-      modalMainContainer: { display: 'flex', flexDirection: 'column' as 'column', gap: '10px' },
-      checkboxContainer: { display: 'flex', alignItems: 'center' as 'center', gap: '8px' },
-      usersContainer: { display: 'flex', flexDirection: 'column' as "column", gap: '10px', minHeight: "200px", maxHeight: "300px", overflowY: "auto" as "auto" },
-      userContainer: { display: 'flex', alignItems: 'center' as 'center', gap: '8px' },
-      buttonContainer: { display: "flex", justifyContent: "center", gap: "15px", marginTop: "10px" },
-      inputContainer: { display: "flex", flexDirection: "column" as "column", gap: "10px", marginBottom: "15px" }
-
+      modalContainer: { height: "fit-content" },
+      modalMainContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "10px",
+      },
+      checkboxContainer: {
+        display: "flex",
+        alignItems: "center" as "center",
+        gap: "8px",
+      },
+      usersContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "10px",
+        minHeight: "200px",
+        maxHeight: "300px",
+        overflowY: "auto" as "auto",
+      },
+      userContainer: {
+        display: "flex",
+        alignItems: "center" as "center",
+        gap: "8px",
+      },
+      buttonContainer: {
+        display: "flex",
+        justifyContent: "center",
+        gap: "15px",
+        marginTop: "10px",
+      },
+      inputContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "10px",
+        marginBottom: "15px",
+      },
     };
   }, [theme, t, isMobileScreen]);
   return {

@@ -240,6 +240,7 @@ const ActionContainerComponent = ({
   productType,
   actionIndex,
   categoryId,
+  mongoDBMachineId,
   actionException,
   materials,
   employeeName,
@@ -362,7 +363,8 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true) &&
+      !(source === EWorkSource.INTERNAL && (parameter?.name === "Purchase Order Details" || parameter?.orginalName === "PurchaseOrderDetails"))
   );
 
   const tableOutputs = outputs?.filter(
@@ -1402,9 +1404,9 @@ const ActionContainerComponent = ({
                 anchorEl={anchorEl}
                 actionId={actionId}
                 actionName={actionName}
-                currentProductItemValue={currentProductItemValue}
                 machineName={machineName}
                 categoryId={categoryId}
+                mongoDBMachineId={mongoDBMachineId}
                 id={id}
                 productType={productType}
                 sectionName={sectionName}

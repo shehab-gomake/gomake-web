@@ -27,16 +27,18 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
-  number, // totalJobs
-  number, // finalPrice
-  number, // totalCalculatedPrice
-  number, // totalCost
-  number, // totalProfit
-  number, // avgProfit
-  number, // avgPerOrder
-  string, // os
-  number, // successRate
-  string // growth (formatted percentage)
+  string, // totalJobs (formatted)
+  string, // quantity (formatted)
+  string, // finalPrice (formatted)
+  string, // totalCalculatedPrice (formatted)
+  string, // totalCost (formatted)
+  string, // totalProfit (formatted)
+  string, // avgProfit (formatted)
+  string, // profitMargin (formatted)
+  string, // avgPerOrder (formatted)
+  string, // os (formatted)
+  string, // successRate (formatted)
+  any // growth (JSX element or string)
 ];
 
 const useMonitoringDashboard = () => {
@@ -217,21 +219,21 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.productName,
-          row?.totalJobs,
-          row?.qunatites,
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
+          row?.totalJobs?.toLocaleString('en-US') || "0",
+          row?.qunatites?.toLocaleString('en-US') || "0",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice}`
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
-            : "0%",
-          row?.avgPerOrder,
-          row?.os != null ? `${row.os} %` : "-",
-          row?.successRate != null ? `${row.successRate} %` : "-",
+            : "0.00%",
+          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.os != null ? `${row.os.toFixed(2)}%` : "-",
+          row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
           typeof row?.growth === "number" ? (
             // Render badge via JSX in table cell
             require("react").createElement(
@@ -286,21 +288,21 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.agentName,
-          row?.totalJobs,
-          row?.qunatites,
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
+          row?.totalJobs?.toLocaleString('en-US') || "0",
+          row?.qunatites?.toLocaleString('en-US') || "0",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice}`
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
-            : "0%",
-          row?.avgPerOrder,
-          row?.os != null ? `${row.os} %` : "-",
-          row?.successRate != null ? `${row.successRate} %` : "-",
+            : "0.00%",
+          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.os != null ? `${row.os.toFixed(2)}%` : "-",
+          row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
           typeof row?.growth === "number" ? (
             require("react").createElement(
               require("./growth-badge").GrowthBadge,
@@ -354,21 +356,21 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.clientName,
-          row?.totalJobs,
-          row?.qunatites,
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
+          row?.totalJobs?.toLocaleString('en-US') || "0",
+          row?.qunatites?.toLocaleString('en-US') || "0",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice}`
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
-            : "0%",
-          row?.avgPerOrder,
-          row?.os != null ? `${row.os} %` : "-",
-          row?.successRate != null ? `${row.successRate} %` : "-",
+            : "0.00%",
+          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.os != null ? `${row.os.toFixed(2)}%` : "-",
+          row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
           typeof row?.growth === "number" ? (
             require("react").createElement(
               require("./growth-badge").GrowthBadge,
