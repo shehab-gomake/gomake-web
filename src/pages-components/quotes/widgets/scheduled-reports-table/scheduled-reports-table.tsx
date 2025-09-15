@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -46,45 +46,6 @@ const ScheduledReportsTable = ({
         t("sales.list.status"),
         t("sales.list.actions"),
     ];
-
-    // Use pagesCount from props instead of recalculating
-    console.log('ScheduledReportsTable pagination values:', {
-        totalCount,
-        pageNumber,
-        pageSize,
-        pagesCount,
-        scheduledReportsLength: scheduledReports.length,
-        shouldShowPagination: scheduledReports.length > 0,
-        onPageChange: !!onPageChange,
-        onPageSizeChange: !!onPageSizeChange
-    });
-
-    // Log when modal opens
-    useEffect(() => {
-        if (openModal) {
-            console.log('Modal opened with data:', {
-                scheduledReports: scheduledReports.length,
-                totalCount,
-                pagesCount,
-                pageSize,
-                shouldShowPagination: scheduledReports.length > 0 && pagesCount > 0
-            });
-        }
-    }, [openModal, scheduledReports.length, totalCount, pagesCount, pageSize]);
-
-    // Log when data changes
-    useEffect(() => {
-        console.log('Data changed:', {
-            scheduledReports: scheduledReports.length,
-            totalCount,
-            pagesCount,
-            pageSize,
-            shouldShowPagination: scheduledReports.length > 0 && pagesCount > 0,
-            firstReportName: scheduledReports[0]?.reportName,
-            lastReportName: scheduledReports[scheduledReports.length - 1]?.reportName
-        });
-    }, [scheduledReports.length, totalCount, pagesCount, pageSize, scheduledReports]);
-
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         onPageChange?.(page);
     };

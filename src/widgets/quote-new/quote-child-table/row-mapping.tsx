@@ -35,7 +35,6 @@ const RowMappingChildWidget = ({
   _renderIconcalculationStatus,
   updateItemStatus,
 }: any) => {
-  console.log("quoteItems", quoteItems)
   const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,

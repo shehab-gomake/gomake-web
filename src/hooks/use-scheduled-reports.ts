@@ -69,7 +69,6 @@ const useScheduledReports = () => {
   } = useSnackBar();
 
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([]);
-  console.log('scheduledReportssssssssssssssssssssssss', scheduledReports);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { pageSize: defaultPageSize, setPageSize, pagesCount, setPagesCount, pageNumber, setPageNumber, initialPageSize } = useListPagination();
@@ -78,14 +77,12 @@ const useScheduledReports = () => {
   const pageSize = 10;
 
   const getAllScheduledReports = async (page: number = pageNumber, size: number = pageSize) => {
-    console.log('getAllScheduledReports called with:', { page, size, pageNumber, pageSize });
     setIsLoading(true);
     const callBack = (res) => {
       if (res.success) {
         const totalCount = res.data?.totalCount || 0;
         const calculatedPagesCount = Math.ceil(totalCount / size);
         const newScheduledReports = res.data?.scheduledReports || [];
-      console.log('getAllScheduledReports callBack received:', {res,calculatedPagesCount,totalCount,newScheduledReports});
 
         setScheduledReports(newScheduledReports);
         setTotalCount(totalCount);
@@ -199,7 +196,6 @@ const useScheduledReports = () => {
   };
 
   const handlePageChange = (page: number) => {
-    console.log('handlePageChange called with page:', page, 'current pageSize:', pageSize);
     setPageNumber(page);
     getAllScheduledReports(page, pageSize);
   };
