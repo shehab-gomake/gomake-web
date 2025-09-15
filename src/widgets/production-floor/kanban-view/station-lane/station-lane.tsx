@@ -88,15 +88,10 @@ const StationLane: React.FC<IProps> = ({
     const matchingStatusGroup = missions.find((statusGroup) => {
       const statusGroupName =
         statusGroup.boardMissionStatus.boardMissionStatus.name;
-      console.log(`Status group: ${statusGroupName}`);
       return possibleNames.includes(statusGroupName);
     });
 
     if (matchingStatusGroup) {
-      console.log(
-        `Found ${matchingStatusGroup.boardMissions.length} missions for status ${statusName}:`,
-        matchingStatusGroup.boardMissions
-      );
       return matchingStatusGroup.boardMissions || [];
     }
 
@@ -189,7 +184,7 @@ const StationLane: React.FC<IProps> = ({
     targetStationInfo: any,
     targetStatusId?: string
   ) => {
-    const callBack = (res: any) => {};
+    const callBack = (res: any) => { };
 
     if (targetStationInfo.machineId && targetStationInfo.machineName) {
       // Update machine
@@ -237,8 +232,8 @@ const StationLane: React.FC<IProps> = ({
             isHeaderOver && canHeaderDrop
               ? "#f0f8ff"
               : isHeaderOver && !canHeaderDrop
-              ? "#fff5f5"
-              : "#f8f9fa",
+                ? "#fff5f5"
+                : "#f8f9fa",
           borderRight: "1px solid #e0e0e0",
           padding: "12px 16px",
           display: "flex",
@@ -248,8 +243,8 @@ const StationLane: React.FC<IProps> = ({
             isHeaderOver && canHeaderDrop
               ? "2px dashed #1976d2"
               : isHeaderOver && !canHeaderDrop
-              ? "2px dashed #f44336"
-              : "none",
+                ? "2px dashed #f44336"
+                : "none",
         }}
       >
         <Typography
@@ -386,12 +381,12 @@ const StationLane: React.FC<IProps> = ({
               backgroundColor:
                 status.name === "Upcoming Works"
                   ? // ? "#f8f9fa"
-                    "white"
+                  "white"
                   : isOver && canDrop
-                  ? "#f0f8ff"
-                  : isOver && !canDrop
-                  ? "#fff5f5"
-                  : "white",
+                    ? "#f0f8ff"
+                    : isOver && !canDrop
+                      ? "#fff5f5"
+                      : "white",
               padding: "8px",
               display: "flex",
               flexDirection: "column",
@@ -405,8 +400,8 @@ const StationLane: React.FC<IProps> = ({
                 isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
-                  ? "2px dashed #f44336"
-                  : "none",
+                    ? "2px dashed #f44336"
+                    : "none",
               outlineOffset: "-2px", // Adjust outline position
               "::-webkit-scrollbar": {
                 width: "8px",

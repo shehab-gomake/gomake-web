@@ -47,7 +47,7 @@ const useCustomerMachinesGrouped = () => {
     const mapMachineToCategory = useCallback((machine: any, categories: any[]) => {
         const machineName = (machine.nickName || machine.name || machine.model || '').toLowerCase();
         const manufacturer = (machine.manufacturer || '').toLowerCase();
-        
+
         // Try to match by exact category field first
         if (machine.category) return machine.category;
         if (machine.categoryId) return machine.categoryId;
@@ -55,16 +55,16 @@ const useCustomerMachinesGrouped = () => {
         if (machine.machineCategoryId) return machine.machineCategoryId;
         if (machine.type) return machine.type;
         if (machine.typeId) return machine.typeId;
-        
+
         // Manual mapping based on machine names and patterns
         for (const category of categories) {
             const categoryName = t(category.name).toLowerCase();
-            
+
             // Check if machine name contains category name
             if (machineName.includes(categoryName) || categoryName.includes(machineName)) {
                 return category.id;
             }
-            
+
             // Check for specific patterns
             if (categoryName.includes('digital') && (machineName.includes('digital') || machineName.includes('printer'))) {
                 return category.id;
@@ -187,7 +187,7 @@ const useCustomerMachinesGrouped = () => {
                 return category.id;
             }
         }
-        
+
         // If no match found, return empty string
         return '';
     }, [t]);
@@ -196,13 +196,8 @@ const useCustomerMachinesGrouped = () => {
     const fetchAllMachines = useCallback(async () => {
         setLoading(true);
         try {
-            console.log("Starting to fetch all machines...");
-            console.log("Available categories:", categoriesList);
-            
             const callBack = (res: any) => {
                 if (res.success) {
-                    console.log("API response:", res);
-                    
                     // Handle different response structures
                     let machines = [];
                     if (res?.data?.data?.data) {
@@ -218,46 +213,43 @@ const useCustomerMachinesGrouped = () => {
                         // Structure: res (direct array)
                         machines = res;
                     }
-                    
-                    console.log("Parsed machines:", machines);
-                    
+
                     if (machines && Array.isArray(machines) && machines.length > 0) {
                         // First, let's see what fields are actually available in the machine data
-                        console.log("Sample machine structure:", machines[0]);
-                        console.log("All available fields in first machine:", Object.keys(machines[0]));
-                        
+
+
                         const machinesWithCategory = machines.map((machine: any) => {
                             const categoryId = mapMachineToCategory(machine, categoriesList);
-                            
+
                             // Try to get the best machine name from available fields
                             let machineName = '';
                             let manufacturer = '';
                             let model = '';
-                            
+
                             // Try different field names for machine name
                             if (machine.nickName) machineName = machine.nickName;
                             else if (machine.name) machineName = machine.name;
                             else if (machine.machineName) machineName = machine.machineName;
                             else if (machine.title) machineName = machine.title;
                             else if (machine.label) machineName = machine.label;
-                            
+
                             // Try different field names for manufacturer
                             if (machine.manufacturer) manufacturer = machine.manufacturer;
                             else if (machine.manufacturerName) manufacturer = machine.manufacturerName;
                             else if (machine.brand) manufacturer = machine.brand;
                             else if (machine.company) manufacturer = machine.company;
-                            
+
                             // Try different field names for model
                             if (machine.model) model = machine.model;
                             else if (machine.modelName) model = machine.modelName;
                             else if (machine.type) model = machine.type;
                             else if (machine.series) model = machine.series;
-                            
+
                             // If still no machine name, combine manufacturer and model
                             if (!machineName && (manufacturer || model)) {
                                 machineName = [manufacturer, model].filter(Boolean).join(' - ');
                             }
-                            
+
                             // Fallback: use any available text field
                             if (!machineName) {
                                 const textFields = ['description', 'notes', 'comment', 'info'];
@@ -268,12 +260,12 @@ const useCustomerMachinesGrouped = () => {
                                     }
                                 }
                             }
-                            
+
                             // Last resort: use ID if nothing else works
                             if (!machineName) {
                                 machineName = `Machine ${machine.id || 'Unknown'}`;
                             }
-                            
+
                             return {
                                 id: machine.id || machine.machineId || '',
                                 manufacturer: manufacturer,
@@ -282,18 +274,18 @@ const useCustomerMachinesGrouped = () => {
                                 category: categoryId
                             };
                         });
-                        
-                        console.log("Machines with category mapping:", machinesWithCategory);
+
+
                         setAllMachines(machinesWithCategory);
-                        
+
                         // Group machines by category
                         const groupedByCategory = categoriesList.map(category => {
                             const categoryMachines = machinesWithCategory.filter(
                                 machine => machine.category === category.id
                             );
-                            
-                            console.log(`Category ${category.id} (${category.name}) has ${categoryMachines.length} machines:`, categoryMachines);
-                            
+
+
+
                             return {
                                 id: category.id,
                                 name: category.name,
@@ -301,25 +293,25 @@ const useCustomerMachinesGrouped = () => {
                                 machines: categoryMachines
                             };
                         }).filter(category => category.machines.length > 0); // Only categories with machines
-                        
-                        console.log("Final grouped categories:", groupedByCategory);
+
+
                         setCategoriesWithMachines(groupedByCategory);
                         setHasLoadedMachines(true); // Mark that we've successfully loaded machines
                     } else {
-                        console.log("No machines found in response");
+
                         setCategoriesWithMachines([]);
                     }
                 } else {
-                    console.log("API call failed:", res);
+
                     setCategoriesWithMachines([]);
                 }
                 setLoading(false);
             };
-            
+
             await getAllPrintHouseMachines(callApi, callBack, false);
-            
+
         } catch (error) {
-            console.error("Error fetching machines:", error);
+
             setLoading(false);
             setCategoriesWithMachines([]);
         }
@@ -328,32 +320,32 @@ const useCustomerMachinesGrouped = () => {
     // Load admin machines in the background for the Add Machine modal
     const loadAdminMachines = useCallback(async () => {
         if (hasLoadedAdminMachines) {
-            console.log('Admin machines already loaded, skipping...');
+
             return;
         }
 
-        console.log('Starting to load admin machines in background...');
+
         setHasLoadedAdminMachines(true); // Mark as loading to prevent duplicate calls
-        
+
         try {
             const allMachines: IAdminMachine[] = [];
-            
+
             // Load machines from each category individually
             for (const category of categoriesList) {
                 try {
-                    console.log(`Loading admin machines for category: ${category.id} (${category.name})`);
-                    
+
+
                     // Import the function dynamically to avoid circular dependencies
                     const { adminGetAllMachineByCategory } = await import("@/services/api-service/machines/admin-machines");
-                    
+
                     await new Promise((resolve) => {
                         adminGetAllMachineByCategory(callApi, (res) => {
-                            console.log(`Admin response for category ${category.id}:`, res);
-                            
+
+
                             if (res.success && res.data) {
                                 // Handle different possible response structures
                                 let machinesData = [];
-                                
+
                                 if (res.data.data?.data) {
                                     machinesData = res.data.data.data;
                                 } else if (res.data.data) {
@@ -361,19 +353,16 @@ const useCustomerMachinesGrouped = () => {
                                 } else if (Array.isArray(res.data)) {
                                     machinesData = res.data;
                                 }
-                                
-                                console.log(`Found ${machinesData.length} admin machines in category ${category.id}`);
-                                
+
                                 if (machinesData.length > 0) {
                                     const categoryMachines = machinesData.map((machine: any) => {
-                                        console.log('Processing admin machine:', machine);
-                                        
+
                                         // Build display name from manufacturer and model
                                         const manufacturer = machine.manufacturer || machine.manufacturerName || machine.manufacturerName || '';
                                         const model = machine.model || machine.modelName || machine.modelName || '';
-                                        const displayName = manufacturer && model ? `${manufacturer} ${model}` : 
-                                                         manufacturer || model || machine.name || machine.nickName || 'Unknown Machine';
-                                        
+                                        const displayName = manufacturer && model ? `${manufacturer} ${model}` :
+                                            manufacturer || model || machine.name || machine.nickName || 'Unknown Machine';
+
                                         return {
                                             id: machine.id,
                                             name: machine.name || machine.nickName || displayName,
@@ -384,28 +373,24 @@ const useCustomerMachinesGrouped = () => {
                                             categoryId: category.id
                                         };
                                     });
-                                    
+
                                     allMachines.push(...categoryMachines);
-                                    console.log(`Added ${categoryMachines.length} admin machines from category ${category.id}`);
                                 }
                             } else {
-                                console.log(`No success response for admin category ${category.id}:`, res);
                             }
                             resolve(true);
                         }, category.id);
                     });
-                    
+
                 } catch (error) {
-                    console.error(`Error loading admin machines for category ${category.id}:`, error);
                 }
             }
-            
-            console.log('Final admin machines array:', allMachines);
+
             setAllAdminMachines(allMachines);
-            
+
             // If no machines found, add some test data for debugging
             if (allMachines.length === 0) {
-                console.log('No admin machines found from API, adding test data for debugging');
+
                 const testMachines: IAdminMachine[] = [
                     {
                         id: 'test1',
@@ -427,10 +412,8 @@ const useCustomerMachinesGrouped = () => {
                     }
                 ];
                 setAllAdminMachines(testMachines);
-                console.log('Added test admin machines:', testMachines);
             }
         } catch (error) {
-            console.error('Error loading admin machines:', error);
         }
     }, [categoriesList, callApi, hasLoadedAdminMachines]);
 
@@ -438,20 +421,16 @@ const useCustomerMachinesGrouped = () => {
     const fetchMachinesByCategory = useCallback(async () => {
         // Only run fallback if we haven't successfully loaded machines yet
         if (hasLoadedMachines) {
-            console.log("Machines already loaded, skipping fallback");
             return;
         }
-        
-        console.log("Trying fallback approach: fetching machines by category...");
+
         setLoading(true);
-        
+
         try {
             const machinesPromises = categoriesList.map(async (category) => {
                 try {
-                    console.log(`Fetching machines for category: ${category.id}`);
                     const result = await callApi("Get", `/v1/machines-list/category/${category.id}`);
-                    console.log(`API result for category ${category.id}:`, result);
-                    
+
                     // Handle different response structures
                     let machines = [];
                     if (result?.data?.data?.data) {
@@ -463,9 +442,8 @@ const useCustomerMachinesGrouped = () => {
                     } else if (Array.isArray(result)) {
                         machines = result;
                     }
-                    
-                    console.log(`Parsed machines for category ${category.id}:`, machines);
-                    
+
+
                     if (machines && Array.isArray(machines) && machines.length > 0) {
                         return {
                             categoryId: category.id,
@@ -480,17 +458,14 @@ const useCustomerMachinesGrouped = () => {
                     }
                     return { categoryId: category.id, machines: [] };
                 } catch (error) {
-                    console.error(`Error fetching machines for category ${category.id}:`, error);
                     return { categoryId: category.id, machines: [] };
                 }
             });
 
             const results = await Promise.all(machinesPromises);
-            console.log("All API results from fallback:", results);
-            
+
             const allMachinesData = results.flatMap(result => result.machines);
             setAllMachines(allMachinesData);
-            console.log("All machines data from fallback:", allMachinesData);
 
             // Group machines by category and only include categories with machines
             const groupedCategories = results
@@ -498,7 +473,7 @@ const useCustomerMachinesGrouped = () => {
                 .map(result => {
                     const category = categoriesList.find(cat => cat.id === result.categoryId);
                     if (!category) return null;
-                    
+
                     return {
                         id: category.id,
                         name: category.name,
@@ -508,10 +483,8 @@ const useCustomerMachinesGrouped = () => {
                 })
                 .filter(Boolean) as ICategoryWithMachines[];
 
-            console.log("Grouped categories from fallback:", groupedCategories);
             setCategoriesWithMachines(groupedCategories);
         } catch (error) {
-            console.error("Error in fallback approach:", error);
         } finally {
             setLoading(false);
         }
@@ -524,18 +497,6 @@ const useCustomerMachinesGrouped = () => {
         }
     }, [fetchAllMachines, hasLoadedMachines]);
 
-    // Remove the problematic useEffect that was causing the loop
-    // useEffect(() => {
-    //     // Try the main approach first, then fallback if needed
-    //     fetchAllMachines().then(() => {
-    //         // If no machines found, try the fallback approach
-    //         if (categoriesWithMachines.length === 0) {
-    //             console.log("No machines found with main approach, trying fallback...");
-    //             fetchMachinesByCategory();
-    //         }
-    //     });
-    // }, [fetchAllMachines, fetchMachinesByCategory, categoriesWithMachines.length]);
-
     const onFilterChange = (e: string) => setFilter(e);
 
     // Filter categories based on search only (no status filtering)
@@ -543,16 +504,16 @@ const useCustomerMachinesGrouped = () => {
         if (!filter) {
             return categoriesWithMachines;
         }
-        
+
         return categoriesWithMachines.filter(category => {
             const categoryName = t(category.name).toLowerCase();
             const hasMatchingCategory = categoryName.includes(filter.toLowerCase());
-            const hasMatchingMachines = category.machines.some(machine => 
+            const hasMatchingMachines = category.machines.some(machine =>
                 machine.manufacturer.toLowerCase().includes(filter.toLowerCase()) ||
                 machine.model.toLowerCase().includes(filter.toLowerCase()) ||
                 (machine.nickName && machine.nickName.toLowerCase().includes(filter.toLowerCase()))
             );
-            
+
             return hasMatchingCategory || hasMatchingMachines;
         });
     }, [categoriesWithMachines, filter, t]);
@@ -560,7 +521,7 @@ const useCustomerMachinesGrouped = () => {
     // Menu handling (simplified - no status filtering)
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    
+
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };

@@ -216,6 +216,7 @@ const useAddRuleModal = ({
     statement2: "",
   };
   const [rules, setRules] = useState<any>([initialRule]);
+  
 
   const addRule = () => {
     setRules([...rules, initialRule]);

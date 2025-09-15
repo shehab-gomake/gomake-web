@@ -6,23 +6,44 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       insideStyle:{
-        width: "550px",
-        height: "320px",
+        width: "700px",
+        height: "500px",
         position: "relative",
       },
       mainContainer:{
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "center",
-        alignItems: "center",
         width: "100%",
-        gap:20
+        gap: 20,
+        padding: "20px",
+      },
+      inputRow: {
+        display: "flex",
+        gap: "15px",
+        alignItems: "flex-end",
+      },
+      inputContainer: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "5px",
+      },
+      labelStyle: {
+        fontSize: "14px",
+        fontWeight: "500",
+        color: "#333",
+        marginBottom: "5px",
+      },
+      buttonContainer: {
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "20px",
       },
       sendBtn: {
-        width: "100%",
         backgroundColor: secondColor(500),
-        height: 20,
-        padding: 20,
+        height: 40,
+        padding: "10px 20px",
+        minWidth: "120px",
       },
     };
   }, [theme]);
