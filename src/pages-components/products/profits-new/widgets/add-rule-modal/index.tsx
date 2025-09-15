@@ -39,12 +39,15 @@ const AddRuleModal = ({
   getProductHotFolderRules,
   documentType,
   onShowScheduledReports,
+  createScheduledReport,
+  filterDTO
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
   const {
     rules,
+    propertieValue,
     machincesList,
     allMachincesList,
     productsStateValue,
@@ -99,6 +102,7 @@ const AddRuleModal = ({
     openModal,
     getProductHotFolderRules,
   });
+  console.log("propertieValue1", { propertieValue, rules })
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -1139,6 +1143,10 @@ const AddRuleModal = ({
           onCloseModal={onCloseScheduleModal}
           documentType={documentType}
           availableDateFilters={getAvailableDateFilters()}
+          createScheduledReport={createScheduledReport}
+          filterData={filterDTO}
+          rules={rules}
+          propertieValue={propertieValue}
         />
       </GoMakeModal>
     </>

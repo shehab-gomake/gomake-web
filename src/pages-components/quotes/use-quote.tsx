@@ -99,6 +99,7 @@ import { downloadPdf } from "@/utils/helpers";
 import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
 import { useListPagination } from "@/hooks/use-list-pagination";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
@@ -238,7 +239,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openFilterConfirmationModal, setOpenFilterConfirmationModal] = useState<boolean>(false);
   const [openScheduledReportsModal, setOpenScheduledReportsModal] = useState<boolean>(false);
-  const [scheduledReports, setScheduledReports] = useState<any[]>([]);
+
+  // Use the scheduled reports hook
+  const {
+    getAllScheduledReports,
+    deleteScheduledReport,
+    toggleScheduledReport,
+  } = useScheduledReports();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -405,9 +412,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onShowScheduledReports = () => {
     setOpenScheduledReportsModal(true);
-    // TODO: Load scheduled reports from API
-    // For now, using mock data
-    setScheduledReports([]);
+    getAllScheduledReports();
   };
 
   const onCloseScheduledReportsModal = () => {
@@ -415,17 +420,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onToggleScheduledReportActive = (id: string, isActive: boolean) => {
-    setScheduledReports(prev =>
-      prev.map(report =>
-        report.id === id ? { ...report, isActive } : report
-      )
-    );
-    // TODO: Call API to update report status
+    toggleScheduledReport(id, isActive);
   };
 
   const onDeleteScheduledReport = (id: string) => {
-    setScheduledReports(prev => prev.filter(report => report.id !== id));
-    // TODO: Call API to delete report
+    deleteScheduledReport(id);
   };
 
   const handlePageSizeChange = (event) => {
@@ -2896,6 +2895,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [filterData, setFilterData] = useState({});
+  const [filterDTO, setFilterDTO] = useState({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -2945,7 +2945,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       JSON.stringify(filteredDataWithoutEmptyValues) !==
       JSON.stringify(filterData)
     ) {
+      const sortOrder = currentSortOrder;
+
       setFilterData(filteredDataWithoutEmptyValues);
+      setFilterDTO({
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+          order: sortOrder,
+        },
+        ...filteredDataWithoutEmptyValues,
+      })
     }
   }, [
     quoteStatusId,
@@ -2965,6 +2975,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     toDate,
     paymentType,
     currencyFilter,
+    currentSortOrder,
+    page,
+    pageSize,
   ]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
@@ -4062,7 +4075,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseScheduledReportsModal,
     onToggleScheduledReportActive,
     onDeleteScheduledReport,
-    scheduledReports,
     navigate,
     documentPath,
     resetDatePicker,
@@ -4093,6 +4105,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     open,
     anchorEl,
     filterData,
+    filterDTO,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
     selectedQuoteItemValue,

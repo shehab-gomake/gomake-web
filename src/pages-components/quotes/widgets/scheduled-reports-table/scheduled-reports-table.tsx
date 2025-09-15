@@ -4,16 +4,7 @@ import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
-
-interface ScheduledReport {
-    id: string;
-    reportName: string;
-    email: string;
-    scheduleType: string;
-    dateFilter: string;
-    isActive: boolean;
-    createdAt: string;
-}
+import { ScheduledReport } from "@/hooks/use-scheduled-reports";
 
 interface ScheduledReportsTableProps {
     openModal: boolean;
