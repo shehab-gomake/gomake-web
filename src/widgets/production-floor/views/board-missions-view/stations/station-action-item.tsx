@@ -420,7 +420,7 @@ const BoardMissionsStationActionItem = ({
     }
 
     // No product type → mark whole job
-    await performDoneWithMaterials(updatedState, "", sendMSg);
+    await performDoneWithMaterials(updatedState, productType, sendMSg);
   };
 
   const [isHovered, setIsHovered] = useState(false);
