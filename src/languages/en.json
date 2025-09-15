@@ -2616,5 +2616,9 @@
       "excelExportSuccess": "Data exported to Excel successfully",
       "excelExportError": "Failed to export data to Excel"
     }
+  },
+  "logs": {
+    "CLOSE": "document closed",
+    "CLOSE2": "Closed as {{documentType}}"
   }
 }

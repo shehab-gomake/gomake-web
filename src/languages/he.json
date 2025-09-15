@@ -2432,4 +2432,9 @@
   "editDefinition": "עריכת הגדרה",
   "update": "עדכון",
   "nextValueTip": "עליך להתחיל עם ערך גדול מ"
-}}
+},
+"logs": {
+  "CLOSE": "המסמך נסגר",
+  "CLOSE2": "נסגר כ-{{documentType}}"
+}
+}
