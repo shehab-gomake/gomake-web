@@ -34,6 +34,7 @@ import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -302,8 +303,22 @@ const QuotesListPageWidget = ({
     isDocumentTableError,
     isSocketRefreshingDocuments,
     scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pagesCountScheduledReports: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
     createScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
   } = useQuotes(documentType, isFromHomePage);
+
+  // Get the main quotes pagination handler
+  const { handlePageSizeChange: handleQuotesPageSizeChange } = useQuotes(documentType, isFromHomePage);
+
+  // Use page size of 10 for scheduled reports
+  const scheduledReportsPageSize = 10;
+
+
 
   const {
     openDeliveryModal,
@@ -901,7 +916,7 @@ const QuotesListPageWidget = ({
                 query: { ...router.query, pageNumber: value },
               });
             }}
-            onChangePageSize={handlePageSizeChange}
+            onChangePageSize={handleQuotesPageSizeChange}
             page={page}
             setPage={setPage}
             pagesCount={pagesCount}
@@ -976,8 +991,15 @@ const QuotesListPageWidget = ({
         openModal={openScheduledReportsModal}
         onCloseModal={onCloseScheduledReportsModal}
         scheduledReports={scheduledReports || []}
+        totalCount={scheduledReportsTotalCount}
+        pageNumber={scheduledReportsPageNumber}
+        pageSize={scheduledReportsPageSize}
+        pagesCount={scheduledReportsPagesCount}
+        isLoading={scheduledReportsIsLoading}
         onToggleActive={onToggleScheduledReportActive}
         onDelete={onDeleteScheduledReport}
+        onPageChange={handleScheduledReportsPageChange}
+        onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}

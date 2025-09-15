@@ -12,6 +12,7 @@ import {
   getActiveDueScheduledReportsApi,
 } from "@/services/api-service/scheduled-reports/scheduled-reports-api";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
+import { useListPagination } from "./use-list-pagination";
 
 export interface ScheduledReport {
   id: string;
@@ -68,20 +69,33 @@ const useScheduledReports = () => {
   } = useSnackBar();
 
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([]);
-  console.log("schedulsssssedResssssssssssssssports", scheduledReports)
+  console.log('scheduledReportssssssssssssssssssssssss', scheduledReports);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const { pageSize: defaultPageSize, setPageSize, pagesCount, setPagesCount, pageNumber, setPageNumber, initialPageSize } = useListPagination();
+  
+  // Use page size of 10 for scheduled reports
+  const pageSize = 10;
 
-  const getAllScheduledReports = async () => {
+  const getAllScheduledReports = async (page: number = pageNumber, size: number = pageSize) => {
+    console.log('getAllScheduledReports called with:', { page, size, pageNumber, pageSize });
     setIsLoading(true);
     const callBack = (res) => {
       if (res.success) {
-        setScheduledReports(res.data?.scheduledReports);
+        const totalCount = res.data?.totalCount || 0;
+        const calculatedPagesCount = Math.ceil(totalCount / size);
+        const newScheduledReports = res.data?.scheduledReports || [];
+      console.log('getAllScheduledReports callBack received:', {res,calculatedPagesCount,totalCount,newScheduledReports});
+
+        setScheduledReports(newScheduledReports);
+        setTotalCount(totalCount);
+        setPagesCount(calculatedPagesCount);
         alertSuccessGetData();
       } else {
         alertFaultGetData();
       }
     };
-    await getAllScheduledReportsApi(callApi, callBack, {});
+    await getAllScheduledReportsApi(callApi, callBack, { pageNumber: page, pageSize: size });
     setIsLoading(false);
   };
 
@@ -90,7 +104,7 @@ const useScheduledReports = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        getAllScheduledReports(); // Refresh the list
+        getAllScheduledReports( pageNumber, pageSize); // Refresh the list
       } else {
         alertFaultUpdate();
       }
@@ -104,7 +118,7 @@ const useScheduledReports = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        getAllScheduledReports(); // Refresh the list
+        getAllScheduledReports( pageNumber, pageSize); // Refresh the list
       } else {
         alertFaultUpdate();
       }
@@ -118,7 +132,7 @@ const useScheduledReports = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
-        getAllScheduledReports(); // Refresh the list
+        getAllScheduledReports( pageNumber, pageSize); // Refresh the list
       } else {
         alertFaultDelete();
       }
@@ -132,7 +146,7 @@ const useScheduledReports = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        getAllScheduledReports(); // Refresh the list
+        getAllScheduledReports( pageNumber, pageSize); // Refresh the list
       } else {
         alertFaultUpdate();
       }
@@ -184,8 +198,24 @@ const useScheduledReports = () => {
     return result;
   };
 
+  const handlePageChange = (page: number) => {
+    console.log('handlePageChange called with page:', page, 'current pageSize:', pageSize);
+    setPageNumber(page);
+    getAllScheduledReports(page, pageSize);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setPageNumber(1);
+    getAllScheduledReports(1, size);
+  };
+
   return {
     scheduledReports,
+    totalCount,
+    pageNumber,
+    pageSize,
+    pagesCount,
     isLoading,
     getAllScheduledReports,
     createScheduledReport,
@@ -195,6 +225,8 @@ const useScheduledReports = () => {
     runScheduledReport,
     getScheduledReportById,
     getActiveDueScheduledReports,
+    handlePageChange,
+    handlePageSizeChange,
   };
 };
 

@@ -243,10 +243,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   // Use the scheduled reports hook
   const {
     scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pageSize: scheduledReportsPageSize,
+    pagesCount: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
     createScheduledReport,
     getAllScheduledReports,
     deleteScheduledReport,
     toggleScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChange: handleScheduledReportsPageSizeChange,
   } = useScheduledReports();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
@@ -414,7 +421,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onShowScheduledReports = () => {
     setOpenScheduledReportsModal(true);
-    getAllScheduledReports();
+    getAllScheduledReports(1, 10); // Start with page 1 and page size 10
   };
 
   const onCloseScheduledReportsModal = () => {
@@ -4230,7 +4237,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isDocumentTableError,
     isSocketRefreshingDocuments,
     scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pagesCountScheduledReports: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
     createScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    scheduledReportsPageSize,
   };
 };
 
