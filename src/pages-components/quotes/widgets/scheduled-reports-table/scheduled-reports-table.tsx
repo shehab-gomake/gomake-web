@@ -30,7 +30,7 @@ const ScheduledReportsTable = ({
         t("sales.list.actions"),
     ];
 
-    const rows = scheduledReports.map((report) => [
+    const rows = (scheduledReports || []).map((report) => [
         report.reportName,
         <SecondSwitch
             key={`switch-${report.id}`}
@@ -59,6 +59,7 @@ const ScheduledReportsTable = ({
                         maxHeight={"400px"}
                         rows={rows}
                         headers={headers}
+
                         variant="OddEvenTable"
                     />
                 </div>

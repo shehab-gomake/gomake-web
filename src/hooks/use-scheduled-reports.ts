@@ -68,13 +68,14 @@ const useScheduledReports = () => {
   } = useSnackBar();
 
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([]);
+  console.log("schedulsssssedResssssssssssssssports", scheduledReports)
   const [isLoading, setIsLoading] = useState(false);
 
   const getAllScheduledReports = async () => {
     setIsLoading(true);
     const callBack = (res) => {
       if (res.success) {
-        setScheduledReports(res.data || []);
+        setScheduledReports(res.data?.scheduledReports);
         alertSuccessGetData();
       } else {
         alertFaultGetData();

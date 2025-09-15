@@ -242,6 +242,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   // Use the scheduled reports hook
   const {
+    scheduledReports,
+    createScheduledReport,
     getAllScheduledReports,
     deleteScheduledReport,
     toggleScheduledReport,
@@ -4227,6 +4229,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
+    scheduledReports,
+    createScheduledReport,
   };
 };
 

@@ -60,7 +60,6 @@ import { useDeliveryStatusButton } from "./widgets/delivery-status-button/use-de
 import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import CloseOrderNote from "./widgets/general/close-order-note";
 import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
 import { predefinedRanges } from "@/utils/dateRanges";
@@ -302,10 +301,10 @@ const QuotesListPageWidget = ({
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
+    scheduledReports,
+    createScheduledReport,
   } = useQuotes(documentType, isFromHomePage);
 
-  // Get scheduled reports from the hook
-  const { scheduledReports, createScheduledReport } = useScheduledReports();
   const {
     openDeliveryModal,
     onCloseDeliveryModal,
