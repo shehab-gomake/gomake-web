@@ -75,9 +75,9 @@ const toggleScheduledReportApi: ICallAndSetData = async (
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
-    `${TOGGLE_SCHEDULED_REPORT_URL}/${data.id}/toggle`,
+    `${TOGGLE_SCHEDULED_REPORT_URL}/${data.id}/toggle?isActive=${data.isActive}`,
     setState,
-    data
+    {} // Empty body
   );
 };
 
