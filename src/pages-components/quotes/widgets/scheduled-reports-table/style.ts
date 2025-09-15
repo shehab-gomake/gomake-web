@@ -19,6 +19,7 @@ const useStyle = () => {
         display: "flex",
         gap: "10px",
         alignItems: "center",
+        justifyContent: "center",
       },
       buttonContainer: {
         display: "flex",

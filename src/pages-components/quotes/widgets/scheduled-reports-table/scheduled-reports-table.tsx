@@ -120,7 +120,7 @@ const ScheduledReportsTable = ({
                     <PrimaryTable
                         key={`scheduled-reports-table-${pageNumber}-${scheduledReports.length}`}
                         stickyHeader={true}
-                        maxHeight={"300px"}
+                        maxHeight={"370px"}
                         rows={rows}
                         headers={headers}
                         variant="OddEvenTable"
