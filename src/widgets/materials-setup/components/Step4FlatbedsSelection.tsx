@@ -15,7 +15,10 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
-import { Add as AddIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  ClearOutlined as ClearOutlinedIcon,
+} from "@mui/icons-material";
 import { useMaterialCategories } from "../hooks/use-material-categories";
 import { useMaterialTableHeaders } from "../hooks/use-material-table-headers";
 
@@ -369,19 +372,12 @@ const Step4FlatbedsSelection: React.FC<Step4FlatbedsSelectionProps> = ({
                 backgroundColor: isMaterialSelected(material.categoryKey)
                   ? "rgba(25, 118, 210, 0.08)"
                   : "background.paper",
-                cursor: "pointer",
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
                   borderColor: "primary.main",
                   boxShadow: 2,
                 },
               }}
-              onClick={() =>
-                handleMaterialToggle(
-                  material,
-                  !isMaterialSelected(material.categoryKey)
-                )
-              }
             >
               <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                 <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -472,7 +468,9 @@ const Step4FlatbedsSelection: React.FC<Step4FlatbedsSelectionProps> = ({
                                     },
                                   }}
                                 >
-                                  ✕
+                                  <ClearOutlinedIcon
+                                    sx={{ fontSize: "14px" }}
+                                  />
                                 </IconButton>
                               )}
                             </Box>
