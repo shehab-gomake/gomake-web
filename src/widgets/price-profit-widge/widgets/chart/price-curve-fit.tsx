@@ -137,7 +137,7 @@ const PriceCurveFit = ({
       y: {
         title: {
           display: true,
-          text: t("priceProfit.pricingListWidget.profit"),
+          text: t("products.profits.pricingListWidget.profit"),
         },
         ticks: {
           callback: (value) => Number(value).toLocaleString(),
