@@ -22,26 +22,28 @@ import { useTranslation } from "react-i18next";
 const PriceCurveFit = ({
   calculatedProfitsCosts = [],
   userProfitsCosts = [],
-  fixedPricesCosts = [],
+  fixedProfitsCosts = [],
   calculatedProfits = [],
   userProfits = [],
-  fixedPrices = [],
+  fixedProfits = [],
   costLineX = [],
   costLineY = [],
   pointsX = [],
   pointsY = [],
+  abnormalPointsX = [],
+  abnormalPointsY = [],
 }) => {
   const { t } = useTranslation();
 
   // Check if at least one fixed price is not zero
-  const hasNonZeroFixedPrices = fixedPrices.some(
+  const hasNonZerofixedProfits = fixedProfits.some(
     (price) => Number(price) !== 0
   );
 
   const datasets = [
     // 1) Cost vs Calculated Price
     {
-      label: t("products.profits.calculatedPrice"),
+      label: t("priceProfit.calculatedProfit"),
       data: calculatedProfitsCosts.map((x, i) => ({
         x,
         y: calculatedProfits[i],
@@ -56,7 +58,7 @@ const PriceCurveFit = ({
     },
     // 2) Cost vs User Price
     {
-      label: t("products.profits.userPrice"),
+      label: t("priceProfit.userProfit"),
       data: userProfitsCosts.map((x, i) => ({ x, y: userProfits[i] })),
       borderColor: "rgba(255,99,132,1)",
       backgroundColor: "rgba(255,99,132,0.2)",
@@ -67,11 +69,11 @@ const PriceCurveFit = ({
       pointRadius: 0,
     },
     // 3) Cost vs Fixed Price (only show if at least one value is not zero)
-    ...(hasNonZeroFixedPrices
+    ...(hasNonZerofixedProfits
       ? [
           {
-            label: t("products.profits.fixedPrice"),
-            data: fixedPricesCosts.map((x, i) => ({ x, y: fixedPrices[i] })),
+            label: t("priceProfit.fixedProfit"),
+            data: fixedProfitsCosts.map((x, i) => ({ x, y: fixedProfits[i] })),
             borderColor: "rgba(54,162,235,1)",
             backgroundColor: "rgba(54,162,235,0.2)",
             fill: false,
@@ -108,6 +110,20 @@ const PriceCurveFit = ({
           },
         ]
       : []),
+    // abnormal action chart data as scatter points
+    ...(abnormalPointsX.length
+      ? [
+          {
+            label: t("priceProfit.abnormalPoints"),
+            data: abnormalPointsX.map((x, i) => ({ x, y: abnormalPointsY[i] })),
+            borderColor: "rgba(255,0,0,1)",
+            backgroundColor: "rgba(255,0,0,0.6)",
+            fill: false,
+            pointRadius: 6,
+            showLine: false,
+          },
+        ]
+      : []),
   ];
 
   const data = { datasets };
@@ -121,7 +137,7 @@ const PriceCurveFit = ({
       y: {
         title: {
           display: true,
-          text: t("products.profits.pricingListWidget.profit"),
+          text: t("priceProfit.pricingListWidget.profit"),
         },
         ticks: {
           callback: (value) => Number(value).toLocaleString(),

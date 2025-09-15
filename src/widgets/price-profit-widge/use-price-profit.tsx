@@ -70,6 +70,8 @@ const usePriceProfit = () => {
     calculatedProfits: [],
     userProfitsCosts: [],
     calculatedProfitsCosts: [],
+    abnormalPointsX: [],
+    abnormalPointsY: [],
   });
 
   const getActions = useCallback(async () => {
@@ -118,16 +120,20 @@ const usePriceProfit = () => {
           userProfitsCosts: rows.map((r) => Number(r.cost ?? 0)),
           userProfits: rows.map((r) => Number(r.userInputProfit ?? 0)),
 
-          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
-          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+          fixedProfitsCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedProfits: rows.map((r) => Number(r.fixedProfit ?? 0)),
 
-          // 4th line example: cost vs cost (diagonal) — remove if you don’t want it
+          // 4th line example: cost vs cost (diagonal) — remove if you don't want it
           costLineX: rows.map((r) => Number(r.cost ?? 0)),
           costLineY: rows.map((r) => Number(r.cost ?? 0)),
 
           // no regression points yet
           pointsX: [],
           pointsY: [],
+
+          // no abnormal points in initial data load
+          abnormalPointsX: [],
+          abnormalPointsY: [],
         };
 
         setChartData(next);
@@ -161,6 +167,13 @@ const usePriceProfit = () => {
         // (optional) sort by cost so lines draw left→right
         rows.sort((a, b) => Number(a.cost ?? 0) - Number(b.cost ?? 0));
 
+        // Extract abnormal action chart data for scatter points
+        const abnormalRows =
+          res?.data?.[0]?.abnormalActionChartData &&
+          Array.isArray(res.data[0].abnormalActionChartData)
+            ? res.data[0].abnormalActionChartData
+            : [];
+
         const next = {
           calculatedProfitsCosts: rows.map((r) => Number(r.cost ?? 0)),
           calculatedProfits: rows.map((r) => Number(r.calculatedProfit ?? 0)),
@@ -168,8 +181,8 @@ const usePriceProfit = () => {
           userProfitsCosts: rows.map((r) => Number(r.cost ?? 0)),
           userProfits: rows.map((r) => Number(r.userInputProfit ?? 0)),
 
-          fixedPricesCosts: rows.map((r) => Number(r.cost ?? 0)),
-          fixedPrices: rows.map((r) => Number(r.fixedPrice ?? 0)),
+          fixedProfitsCosts: rows.map((r) => Number(r.cost ?? 0)),
+          fixedProfits: rows.map((r) => Number(r.fixedProfit ?? 0)),
 
           // 4th line example: cost vs cost (diagonal) — remove if you don't want it
           costLineX: rows.map((r) => Number(r.cost ?? 0)),
@@ -178,6 +191,12 @@ const usePriceProfit = () => {
           // no regression points yet
           pointsX: [],
           pointsY: [],
+
+          // abnormal action chart data as scatter points
+          abnormalPointsX: abnormalRows.map((r) => Number(r.cost ?? 0)),
+          abnormalPointsY: abnormalRows.map((r) =>
+            Number(r.userInputProfit ?? 0)
+          ),
         };
 
         setChartData(next);
