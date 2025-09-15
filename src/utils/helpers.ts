@@ -165,7 +165,19 @@ export const downloadPdf = (url) => {
 
 export const isAtLeastOneSelected = (items) => {
   if (items && items?.length > 0) {
-    return items.some((item) => item.isSelected === true);
+    return items.some((item) => {
+      // Check if the item itself is selected
+      if (item.isSelected === true) {
+        return true;
+      }
+      
+      // Check if any child items are selected
+      if (item.childsDocumentItems && item.childsDocumentItems.length > 0) {
+        return item.childsDocumentItems.some((child) => child.isSelected === true);
+      }
+      
+      return false;
+    });
   }
 };
 
