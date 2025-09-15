@@ -13,9 +13,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
 } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useMaterialCategories } from "../hooks/use-material-categories";
+import { useMaterialTableHeaders } from "../hooks/use-material-table-headers";
 
 interface Material {
   categoryKey: string;
@@ -27,10 +29,20 @@ interface MaterialValue {
   value: string | number;
 }
 
+interface MaterialSize {
+  index: number;
+  values: MaterialValue[];
+}
+
+interface DimensionSet {
+  id: string;
+  width?: number;
+}
+
 interface SelectedMaterial {
   materialTypeKey: string;
   categoryKey: string;
-  values: MaterialValue[];
+  sizes: MaterialSize[];
 }
 
 interface Step2RollPrintingSelectionProps {
@@ -44,6 +56,7 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { materials, loading } = useMaterialCategories("roll printing");
+  const { getDisplayUnit } = useMaterialTableHeaders("roll printing");
 
   // Combine API materials with custom materials from selectedMaterials
   const allMaterials = React.useMemo(() => {
@@ -64,43 +77,110 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
     return [...apiMaterials, ...uniqueCustomMaterials];
   }, [materials, selectedMaterials]);
   const [materialDimensions, setMaterialDimensions] = useState<{
-    [key: string]: { width?: number };
+    [key: string]: DimensionSet[];
   }>({});
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newMaterialName, setNewMaterialName] = useState("");
-  const [newMaterialWidth, setNewMaterialWidth] = useState<number | "">("");
+  const [newMaterialDimensions, setNewMaterialDimensions] = useState<
+    DimensionSet[]
+  >([
+    {
+      id: `new-dimension-${Date.now()}-0`,
+      width: undefined,
+    },
+  ]);
 
-  // Initialize local state from selectedMaterials when component mounts or selectedMaterials changes
+  // Initialize local state from selectedMaterials only on component mount
   useEffect(() => {
     const rollMaterials = selectedMaterials.filter(
       (m) => m.materialTypeKey === "roll printing"
     );
-    const dimensions: { [key: string]: { width?: number } } = {};
+    const dimensions: { [key: string]: DimensionSet[] } = {};
 
     rollMaterials.forEach((material) => {
-      const widthValue = material.values.find(
-        (v) => v.valueKey === "width"
-      )?.value;
+      // Only initialize if we don't already have dimensions for this material
+      if (!materialDimensions[material.categoryKey]) {
+        // Convert sizes array to dimension sets
+        const dimensionSets: DimensionSet[] = [];
 
-      dimensions[material.categoryKey] = {
-        width: widthValue ? Number(widthValue) : undefined,
-      };
+        material.sizes.forEach((size, index) => {
+          const widthValue = size.values.find(
+            (v) => v.valueKey === "width"
+          )?.value;
+
+          dimensionSets.push({
+            id: `dimension-${Date.now()}-${index}`,
+            width: widthValue ? Number(widthValue) : undefined,
+          });
+        });
+
+        dimensions[material.categoryKey] = dimensionSets;
+      }
     });
 
-    setMaterialDimensions(dimensions);
-  }, [selectedMaterials]);
+    // Only update if we have new dimensions to add
+    if (Object.keys(dimensions).length > 0) {
+      setMaterialDimensions((prev) => ({ ...prev, ...dimensions }));
+    }
+  }, []); // Only run on mount
+
+  // Sync selectedMaterials when materialDimensions change (but not the other way around)
+  useEffect(() => {
+    // Update selectedMaterials based on current materialDimensions
+    const updatedMaterials = selectedMaterials.map((material) => {
+      if (
+        material.materialTypeKey === "roll printing" &&
+        materialDimensions[material.categoryKey]
+      ) {
+        const dimensionSets = materialDimensions[material.categoryKey];
+        const sizes: MaterialSize[] = [];
+
+        dimensionSets.forEach((dimSet, index) => {
+          const values: MaterialValue[] = [];
+          if (dimSet.width !== undefined) {
+            values.push({ valueKey: "width", value: dimSet.width });
+          }
+
+          if (values.length > 0) {
+            sizes.push({ index, values });
+          }
+        });
+
+        return {
+          ...material,
+          sizes,
+        };
+      }
+      return material;
+    });
+
+    // Only update if there are actual changes
+    const hasChanges =
+      JSON.stringify(updatedMaterials) !== JSON.stringify(selectedMaterials);
+    if (hasChanges) {
+      onMaterialsChange(updatedMaterials);
+    }
+  }, [materialDimensions]); // Run when materialDimensions change
 
   const handleMaterialToggle = (material: Material, checked: boolean) => {
     if (checked) {
+      // Initialize with one empty dimension set
+      const initialDimensions = [
+        {
+          id: `dimension-${Date.now()}-0`,
+          width: undefined,
+        },
+      ];
+
+      setMaterialDimensions((prev) => ({
+        ...prev,
+        [material.categoryKey]: initialDimensions,
+      }));
+
       const newMaterial: SelectedMaterial = {
         materialTypeKey: "roll printing",
         categoryKey: material.categoryKey,
-        values: [
-          {
-            valueKey: "width",
-            value: materialDimensions[material.categoryKey]?.width || "",
-          },
-        ],
+        sizes: [],
       };
       onMaterialsChange([...selectedMaterials, newMaterial]);
     } else {
@@ -114,47 +194,95 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
     }
   };
 
-  const handleWidthChange = (materialId: string, value: number) => {
+  const handleDimensionChange = (
+    materialId: string,
+    dimensionId: string,
+    field: "width",
+    value: number
+  ) => {
     const newDimensions = {
       ...materialDimensions,
-      [materialId]: {
-        ...materialDimensions[materialId],
-        width: value,
-      },
+      [materialId]: materialDimensions[materialId].map((dim) =>
+        dim.id === dimensionId ? { ...dim, [field]: value } : dim
+      ),
     };
     setMaterialDimensions(newDimensions);
+  };
 
-    // Update the selected material with new width
-    const updatedMaterials = selectedMaterials.map((material) => {
-      if (material.categoryKey === materialId) {
-        return {
-          ...material,
-          values: material.values.map((val) =>
-            val.valueKey === "width" ? { ...val, value } : val
-          ),
-        };
-      }
-      return material;
-    });
-    onMaterialsChange(updatedMaterials);
+  const addDimensionSet = (materialId: string) => {
+    const currentDimensions = materialDimensions[materialId] || [];
+    const newDimensionSet: DimensionSet = {
+      id: `dimension-${Date.now()}`,
+      width: undefined,
+    };
+
+    const newDimensions = {
+      ...materialDimensions,
+      [materialId]: [...currentDimensions, newDimensionSet],
+    };
+    setMaterialDimensions(newDimensions);
+  };
+
+  const removeDimensionSet = (materialId: string, dimensionId: string) => {
+    const newDimensions = {
+      ...materialDimensions,
+      [materialId]: materialDimensions[materialId].filter(
+        (dim) => dim.id !== dimensionId
+      ),
+    };
+    setMaterialDimensions(newDimensions);
   };
 
   const isMaterialSelected = (materialId: string) => {
     return selectedMaterials.some((m) => m.categoryKey === materialId);
   };
 
+  const addNewMaterialDimensionSet = () => {
+    const newDimensionSet: DimensionSet = {
+      id: `new-dimension-${Date.now()}`,
+      width: undefined,
+    };
+    setNewMaterialDimensions((prev) => [...prev, newDimensionSet]);
+  };
+
+  const removeNewMaterialDimensionSet = (dimensionId: string) => {
+    setNewMaterialDimensions((prev) =>
+      prev.filter((dim) => dim.id !== dimensionId)
+    );
+  };
+
+  const handleNewMaterialDimensionChange = (
+    dimensionId: string,
+    field: "width",
+    value: number
+  ) => {
+    setNewMaterialDimensions((prev) =>
+      prev.map((dim) =>
+        dim.id === dimensionId ? { ...dim, [field]: value } : dim
+      )
+    );
+  };
+
   const handleAddNewMaterial = () => {
     if (!newMaterialName.trim()) return;
+
+    // Convert dimension sets to sizes
+    const sizes: MaterialSize[] = [];
+    newMaterialDimensions.forEach((dimSet, index) => {
+      const values: MaterialValue[] = [];
+      if (dimSet.width !== undefined) {
+        values.push({ valueKey: "width", value: dimSet.width });
+      }
+
+      if (values.length > 0) {
+        sizes.push({ index, values });
+      }
+    });
 
     const newMaterial: SelectedMaterial = {
       materialTypeKey: "roll printing",
       categoryKey: newMaterialName.trim(),
-      values: [
-        {
-          valueKey: "width",
-          value: newMaterialWidth || "",
-        },
-      ],
+      sizes,
     };
 
     onMaterialsChange([...selectedMaterials, newMaterial]);
@@ -162,14 +290,17 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
     // Update local dimensions
     setMaterialDimensions((prev) => ({
       ...prev,
-      [newMaterialName.trim()]: {
-        width: newMaterialWidth ? Number(newMaterialWidth) : undefined,
-      },
+      [newMaterialName.trim()]: newMaterialDimensions,
     }));
 
     // Reset form and close dialog
     setNewMaterialName("");
-    setNewMaterialWidth("");
+    setNewMaterialDimensions([
+      {
+        id: `new-dimension-${Date.now()}-0`,
+        width: undefined,
+      },
+    ]);
     setShowAddDialog(false);
   };
 
@@ -245,22 +376,114 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
 
                 {isMaterialSelected(material.categoryKey) && (
                   <Box sx={{ mt: 1.5 }}>
-                    <TextField
-                      label={t("Width (mm)")}
-                      type="number"
-                      size="small"
-                      value={
-                        materialDimensions[material.categoryKey]?.width || ""
-                      }
-                      onChange={(e) =>
-                        handleWidthChange(
-                          material.categoryKey,
-                          Number(e.target.value)
+                    <Box
+                      sx={{
+                        maxHeight: "165px",
+                        overflowY: "auto",
+                        "&::-webkit-scrollbar": {
+                          width: "6px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          backgroundColor: "#f1f1f1",
+                          borderRadius: "3px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "#c1c1c1",
+                          borderRadius: "3px",
+                          "&:hover": {
+                            backgroundColor: "#a8a8a8",
+                          },
+                        },
+                      }}
+                    >
+                      {(materialDimensions[material.categoryKey] || []).map(
+                        (dimensionSet, index) => (
+                          <Box key={dimensionSet.id} sx={{ mb: 1.5 }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                mb: 1,
+                              }}
+                            >
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "text.secondary",
+                                  minWidth: "60px",
+                                }}
+                              >
+                                {t("Set")} {index + 1}:
+                              </Typography>
+                              {(materialDimensions[material.categoryKey] || [])
+                                .length > 1 && (
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeDimensionSet(
+                                      material.categoryKey,
+                                      dimensionSet.id
+                                    );
+                                  }}
+                                  sx={{
+                                    p: 0.5,
+                                    color: "error.main",
+                                    backgroundColor: "rgba(244, 67, 54, 0.1)",
+                                    borderRadius: "50%",
+                                    width: "20px",
+                                    height: "20px",
+                                    "&:hover": {
+                                      backgroundColor: "rgba(244, 67, 54, 0.2)",
+                                      color: "error.dark",
+                                    },
+                                  }}
+                                >
+                                  ✕
+                                </IconButton>
+                              )}
+                            </Box>
+                            <TextField
+                              label={t(`Width${getDisplayUnit("width")}`)}
+                              type="number"
+                              size="small"
+                              value={dimensionSet.width || ""}
+                              onChange={(e) =>
+                                handleDimensionChange(
+                                  material.categoryKey,
+                                  dimensionSet.id,
+                                  "width",
+                                  Number(e.target.value)
+                                )
+                              }
+                              fullWidth
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </Box>
                         )
-                      }
-                      fullWidth
-                      onClick={(e) => e.stopPropagation()}
-                    />
+                      )}
+                    </Box>
+                    <Button
+                      size="small"
+                      startIcon={<AddIcon />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addDimensionSet(material.categoryKey);
+                      }}
+                      sx={{
+                        mt: 1,
+                        fontSize: "0.75rem",
+                        textTransform: "none",
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "primary.light",
+                          color: "white",
+                        },
+                      }}
+                    >
+                      {t("Add Dimensions")}
+                    </Button>
                   </Box>
                 )}
               </CardContent>
@@ -298,17 +521,102 @@ const Step2RollPrintingSelection: React.FC<Step2RollPrintingSelectionProps> = ({
               fullWidth
               required
             />
-            <TextField
-              label={t("Width (mm)")}
-              type="number"
-              value={newMaterialWidth}
-              onChange={(e) =>
-                setNewMaterialWidth(
-                  e.target.value ? Number(e.target.value) : ""
-                )
-              }
-              fullWidth
-            />
+
+            <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
+              {t("Dimensions")}
+            </Typography>
+
+            <Box
+              sx={{
+                maxHeight: "200px",
+                overflowY: "auto",
+                "&::-webkit-scrollbar": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "3px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#c1c1c1",
+                  borderRadius: "3px",
+                  "&:hover": {
+                    backgroundColor: "#a8a8a8",
+                  },
+                },
+              }}
+            >
+              {newMaterialDimensions.map((dimensionSet, index) => (
+                <Box key={dimensionSet.id} sx={{ mb: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.secondary", minWidth: "60px" }}
+                    >
+                      {t("Set")} {index + 1}:
+                    </Typography>
+                    {newMaterialDimensions.length > 1 && (
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          removeNewMaterialDimensionSet(dimensionSet.id)
+                        }
+                        sx={{
+                          p: 0.5,
+                          color: "error.main",
+                          backgroundColor: "rgba(244, 67, 54, 0.1)",
+                          borderRadius: "50%",
+                          width: "20px",
+                          height: "20px",
+                          "&:hover": {
+                            backgroundColor: "rgba(244, 67, 54, 0.2)",
+                            color: "error.dark",
+                          },
+                        }}
+                      >
+                        ✕
+                      </IconButton>
+                    )}
+                  </Box>
+                  <TextField
+                    label={t(`Width${getDisplayUnit("width")}`)}
+                    type="number"
+                    size="small"
+                    value={dimensionSet.width || ""}
+                    onChange={(e) =>
+                      handleNewMaterialDimensionChange(
+                        dimensionSet.id,
+                        "width",
+                        Number(e.target.value)
+                      )
+                    }
+                    fullWidth
+                  />
+                </Box>
+              ))}
+            </Box>
+
+            <Button
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={addNewMaterialDimensionSet}
+              sx={{
+                mt: 1,
+                fontSize: "0.75rem",
+                textTransform: "none",
+                color: "primary.main",
+                "&:hover": { backgroundColor: "primary.light", color: "white" },
+              }}
+            >
+              {t("Add Dimensions")}
+            </Button>
           </Box>
         </DialogContent>
         <DialogActions>

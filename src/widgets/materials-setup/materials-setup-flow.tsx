@@ -27,10 +27,15 @@ interface MaterialValue {
   value: string | number;
 }
 
+interface MaterialSize {
+  index: number;
+  values: MaterialValue[];
+}
+
 interface SelectedMaterial {
   materialTypeKey: string;
   categoryKey: string;
-  values: MaterialValue[];
+  sizes: MaterialSize[];
 }
 
 const MaterialsSetupFlow: React.FC = () => {
@@ -87,7 +92,10 @@ const MaterialsSetupFlow: React.FC = () => {
         }
 
         // Check for Step 3 & 4: Wide format and Flatbeds (FLATBED_WIDE_PRINTING)
-        if (machineCategories.includes(ECategoryId.FLATBED_WIDE_PRINTING)) {
+        if (
+          machineCategories.includes(ECategoryId.FLATBED_WIDE_PRINTING) ||
+          machineCategories.includes(ECategoryId.ROLL_WIDE_PRINTING)
+        ) {
           stepsToShow.push({
             id: "wide-format-material",
             title: "Wide Format",
@@ -345,16 +353,6 @@ const MaterialsSetupFlow: React.FC = () => {
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {selectedMaterials.map((material) => {
-              const widthValue = material.values.find(
-                (v) => v.valueKey === "width"
-              )?.value;
-              const lengthValue = material.values.find(
-                (v) => v.valueKey === "length"
-              )?.value;
-              const typeValue = material.values.find(
-                (v) => v.valueKey === "type"
-              )?.value;
-
               return (
                 <Box
                   key={material.categoryKey}
@@ -368,9 +366,6 @@ const MaterialsSetupFlow: React.FC = () => {
                 >
                   <Typography variant="body2">
                     {material.categoryKey} ({material.materialTypeKey})
-                    {widthValue && ` - Width: ${widthValue}`}
-                    {lengthValue && ` - Length: ${lengthValue}`}
-                    {typeValue && ` - Type: ${typeValue}`}
                   </Typography>
                 </Box>
               );
