@@ -153,10 +153,10 @@ const QuickSetupFlow: React.FC = () => {
     }
   };
 
-  // Mark products setup as in progress when component mounts
+  // Mark machines setup as in progress when component mounts
   useEffect(() => {
     updatePrintHouseSetupSteps(
-      SetupStep.PRODUCTS_SETUPS,
+      SetupStep.SETUP_YOUR_MACHINES,
       StepStatus.IN_PROGRESS
     );
   }, []);
@@ -804,7 +804,7 @@ const QuickSetupFlow: React.FC = () => {
       const callBack = async (res: any) => {
         if (res.success) {
           await updatePrintHouseSetupSteps(
-            SetupStep.PRODUCTS_SETUPS,
+            SetupStep.SETUP_YOUR_MACHINES,
             StepStatus.DONE
           );
           alertSuccessAdded();

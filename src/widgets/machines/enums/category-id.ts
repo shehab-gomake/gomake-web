@@ -3,7 +3,7 @@ export enum ECategoryId {
   OFSSET_PRINTING = "2",
   ROLL_DIGITAL_PRINTING = "3",
   FLEXO_PRINTING = "4",
-  ROLL_WIDE_PRINTING = "5", //!here wide printing
+  ROLL_WIDE_PRINTING = "5",
   FLATBED_WIDE_PRINTING = "6",
   LAMINATION_MACHINE = "7",
   PUNCHING_MACHINE = "8",

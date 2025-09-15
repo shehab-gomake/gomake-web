@@ -17,6 +17,7 @@ const GET_PRINT_HOUSE_MACHINE_CATEGORIES_URL =
 const TOGGLE_PRINT_HOUSE_MACHINE_CATEGORY_URL =
   "/v1/machines/toggle-print-house-machine-category";
 
+const QUICK_SETUP_ADD_MATERIALS_URL = "/v1/materials/quick-setup/add-materials"; //!here need to change
 const printHouseAddNewMachine: ICallAndSetData = async (
   callApi,
   setState,
@@ -152,6 +153,20 @@ const getPrintHouseMachineCategories: ICallAndSetData = async (
   );
 };
 
+const quickSetupAddMaterials: ICallAndSetData = async (
+  callApi,
+  setState,
+  materials
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    QUICK_SETUP_ADD_MATERIALS_URL,
+    setState,
+    materials
+  );
+};
+
 export {
   printHouseAddNewMachine,
   printHouseDeleteMachine,
@@ -164,4 +179,5 @@ export {
   getCategoryMachinesList,
   togglePrintHouseMachineCategory,
   getPrintHouseMachineCategories,
+  quickSetupAddMaterials,
 };

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import {
   Box,
   Paper,
@@ -11,136 +10,32 @@ import {
 } from "@mui/material";
 import { GoMakeDeleteModal } from "@/components/modal-deleted";
 import { ModalType } from "@/enums";
-import { useGomakeRouter } from "@/hooks/use-gomake-router";
-import { useSnackBar } from "@/hooks/use-snack-bar";
-
-// Import step components
 import { Step1SheetPrintingSelection } from "./components/Step1SheetPrintingSelection";
 import { Step2RollPrintingSelection } from "./components/Step2RollPrintingSelection";
 import { Step3WideFormatMaterialSelection } from "./components/Step3WideFormatMaterialSelection";
 import { Step4FlatbedsSelection } from "./components/Step4FlatbedsSelection";
-import { useMachines } from "../employees-working-hours-widgets/use-machines";
-import { ECategoryId } from "../machines/enums/category-id";
-
-interface MaterialValue {
-  valueKey: string;
-  value: string | number;
-}
-
-interface MaterialSize {
-  index: number;
-  values: MaterialValue[];
-}
-
-interface SelectedMaterial {
-  materialTypeKey: string;
-  categoryKey: string;
-  sizes: MaterialSize[];
-}
+import { useMaterialsSetupFlow } from "./hooks/use-materials-setup-flow";
 
 const MaterialsSetupFlow: React.FC = () => {
-  const { t } = useTranslation();
-  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
-  const { navigate } = useGomakeRouter();
-  const { machines, machinesLoading, machinesFetched, getMachines } =
-    useMachines();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [selectedMaterials, setSelectedMaterials] = useState<
-    SelectedMaterial[]
-  >([]);
-  const [availableSteps, setAvailableSteps] = useState<any[]>([]);
-
-  // Get machines on component mount
-  useEffect(() => {
-    getMachines();
-  }, []);
-
-  // Determine which steps to show based on machine categories
-  useEffect(() => {
-    if (machines !== null) {
-      // machines is loaded (could be empty array or with data)
-      if (machines.length > 0) {
-        const machineCategories = machines.map((machine) => machine.category);
-
-        const stepsToShow = [];
-        let stepIndex = 0;
-
-        // Check for Step 1: Sheet printing (DIGITAL_PRINTING or OFSSET_PRINTING)
-        if (
-          machineCategories.includes(ECategoryId.DIGITAL_PRINTING) ||
-          machineCategories.includes(ECategoryId.OFSSET_PRINTING)
-        ) {
-          stepsToShow.push({
-            id: "sheet-printing",
-            title: "Sheet printing department",
-            index: stepIndex++,
-          });
-        }
-
-        // Check for Step 2: Roll printing (ROLL_DIGITAL_PRINTING or FLEXO_PRINTING or ROLL_OFF_SET_PRINTING)
-        if (
-          machineCategories.includes(ECategoryId.ROLL_DIGITAL_PRINTING) ||
-          machineCategories.includes(ECategoryId.FLEXO_PRINTING) ||
-          machineCategories.includes(ECategoryId.ROLL_OFF_SET_PRINTING)
-        ) {
-          stepsToShow.push({
-            id: "roll-printing",
-            title: "Roll printing department",
-            index: stepIndex++,
-          });
-        }
-
-        // Check for Step 3 & 4: Wide format and Flatbeds (FLATBED_WIDE_PRINTING)
-        if (
-          machineCategories.includes(ECategoryId.FLATBED_WIDE_PRINTING) ||
-          machineCategories.includes(ECategoryId.ROLL_WIDE_PRINTING)
-        ) {
-          stepsToShow.push({
-            id: "wide-format-material",
-            title: "Wide Format",
-            index: stepIndex++,
-          });
-          stepsToShow.push({
-            id: "flatbeds",
-            title: "Flatbeds",
-            index: stepIndex++,
-          });
-        }
-
-        setAvailableSteps(stepsToShow);
-        setCurrentStep(0);
-      } else {
-        // No machines found
-        setAvailableSteps([]);
-        setCurrentStep(0);
-      }
-    }
-  }, [machines]);
-
-  const handleNext = () => {
-    if (currentStep < availableSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  //!here new api should be called
-  const handleCompleteSetup = async () => {
-    try {
-      console.log("Selected materials:", selectedMaterials);
-
-      // alertSuccessAdded();
-      // navigate("/");
-    } catch (error) {
-      alertFaultAdded();
-    }
-  };
+  const {
+    currentStep,
+    showConfirmModal,
+    selectedMaterials,
+    availableSteps,
+    machinesLoading,
+    hasNoRelevantMachines,
+    // Computed values
+    isFirstStep,
+    isLastStep,
+    // Functions
+    handleNext,
+    handleBack,
+    handleCompleteSetupMaterials,
+    openConfirmModal,
+    closeConfirmModal,
+    setSelectedMaterials,
+    t,
+  } = useMaterialsSetupFlow();
 
   const renderCurrentStep = () => {
     if (availableSteps.length === 0) {
@@ -198,7 +93,7 @@ const MaterialsSetupFlow: React.FC = () => {
   }
 
   // Show message when no relevant machines are found (only after machines are fetched and not loading)
-  if (machinesFetched && !machinesLoading && availableSteps.length === 0) {
+  if (hasNoRelevantMachines) {
     return (
       <Box sx={{ p: "0px 24px 24px 24px" }}>
         <Box sx={{ mb: 4 }}>
@@ -320,19 +215,15 @@ const MaterialsSetupFlow: React.FC = () => {
 
       {/* Navigation Buttons */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={handleBack}
-          disabled={currentStep === 0}
-        >
+        <Button variant="outlined" onClick={handleBack} disabled={isFirstStep}>
           {t("Back")}
         </Button>
-        {currentStep === availableSteps.length - 1 ? (
+        {isLastStep ? (
           // Show Complete Setup button on last step
           <Button
             variant="contained"
             color="success"
-            onClick={() => setShowConfirmModal(true)}
+            onClick={openConfirmModal}
             disabled={selectedMaterials.length === 0}
           >
             {t("Complete Setup")}
@@ -378,8 +269,8 @@ const MaterialsSetupFlow: React.FC = () => {
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         openModal={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onClickDelete={handleCompleteSetup}
+        onClose={closeConfirmModal}
+        onClickDelete={handleCompleteSetupMaterials}
         title={t("Confirm Materials Setup")}
         subTitle={t(
           "Once you click Finish, your current materials setup will be replaced. You can always make changes or add more materials later in the Materials section."
