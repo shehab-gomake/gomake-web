@@ -76,8 +76,12 @@ const useSetupGuideMenu = ({
   const progressValue =
     totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
-  const productsSetupStatus = printHouseSetupSteps?.find(
-    (step) => step?.step === SetupStep.PRODUCTS_SETUPS
+  const machinesSetupStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.SETUP_YOUR_MACHINES
+  )?.status;
+
+  const materialsSetupStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.SETUP_YOUR_MATERIALS
   )?.status;
 
   const resetPasswordStatus = printHouseSetupSteps?.find(
@@ -121,13 +125,22 @@ const useSetupGuideMenu = ({
       status: resetPasswordStatus,
     },
     {
-      key: SetupStep.PRODUCTS_SETUPS,
+      key: SetupStep.SETUP_YOUR_MACHINES,
       label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-        productsSetupStatus !== StepStatus.DONE
+        machinesSetupStatus !== StepStatus.DONE
           ? () => navigate("/onboarding-setup")
           : undefined,
-      status: productsSetupStatus,
+      status: machinesSetupStatus,
+    },
+    {
+      key: SetupStep.SETUP_YOUR_MATERIALS,
+      label: t("quickSetup.steps.setUpYourMaterials"),
+      onClick:
+        materialsSetupStatus !== StepStatus.DONE
+          ? () => navigate("/materials-setup")
+          : undefined,
+      status: materialsSetupStatus,
     },
     {
       key: "company_profile",
@@ -364,7 +377,8 @@ const useSetupGuideMenu = ({
     handleToggleVerifyBusiness,
     isRtl,
     printHouseSetupSteps,
-    productsSetupStatus,
+    machinesSetupStatus,
+    materialsSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,
