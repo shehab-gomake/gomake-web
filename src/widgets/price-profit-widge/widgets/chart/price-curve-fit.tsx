@@ -20,11 +20,11 @@ ChartJS.register(
 import { useTranslation } from "react-i18next";
 
 const PriceCurveFit = ({
-  calculatedPricesCosts = [],
-  userPricesCosts = [],
+  calculatedProfitsCosts = [],
+  userProfitsCosts = [],
   fixedPricesCosts = [],
-  calculatedPrices = [],
-  userPrices = [],
+  calculatedProfits = [],
+  userProfits = [],
   fixedPrices = [],
   costLineX = [],
   costLineY = [],
@@ -42,9 +42,9 @@ const PriceCurveFit = ({
     // 1) Cost vs Calculated Price
     {
       label: t("products.profits.calculatedPrice"),
-      data: calculatedPricesCosts.map((x, i) => ({
+      data: calculatedProfitsCosts.map((x, i) => ({
         x,
-        y: calculatedPrices[i],
+        y: calculatedProfits[i],
       })),
       borderColor: "rgba(75,192,192,1)",
       backgroundColor: "rgba(75,192,192,0.2)",
@@ -57,7 +57,7 @@ const PriceCurveFit = ({
     // 2) Cost vs User Price
     {
       label: t("products.profits.userPrice"),
-      data: userPricesCosts.map((x, i) => ({ x, y: userPrices[i] })),
+      data: userProfitsCosts.map((x, i) => ({ x, y: userProfits[i] })),
       borderColor: "rgba(255,99,132,1)",
       backgroundColor: "rgba(255,99,132,0.2)",
       fill: false,
@@ -119,7 +119,10 @@ const PriceCurveFit = ({
         title: { display: true, text: t("pricingWidget.cost") },
       },
       y: {
-        title: { display: true, text: t("sales.quote.price") },
+        title: {
+          display: true,
+          text: t("products.profits.pricingListWidget.profit"),
+        },
         ticks: {
           callback: (value) => Number(value).toLocaleString(),
         },
