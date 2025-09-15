@@ -99,7 +99,8 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
                   style={{
                     ...classes.metricValue,
                     color:
-                      summaryData.accuracyBeforeOptimization >= 0
+                      summaryData.accuracyAfterOptimization <
+                      summaryData.accuracyBeforeOptimization
                         ? "#4caf50"
                         : "#f44336",
                   }}
@@ -118,7 +119,8 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
                   style={{
                     ...classes.metricValue,
                     color:
-                      summaryData.accuracyAfterOptimization >= 0
+                      summaryData.accuracyAfterOptimization >
+                      summaryData.accuracyBeforeOptimization
                         ? "#4caf50"
                         : "#f44336",
                   }}
