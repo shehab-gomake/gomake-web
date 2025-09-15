@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, IconButton, Tooltip } from "@mui/material";
 import { ExcelSheetIcon } from "@/icons";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { DOCUMENT_TYPE, INVOICES_EXPORT_TYPES } from "@/pages-components/quotes/enums";
+import {
+  DOCUMENT_TYPE,
+  INVOICES_EXPORT_TYPES,
+} from "@/pages-components/quotes/enums";
 
 interface ExcelMenuProps {
   onGenerateReportClick?: () => void;
@@ -18,14 +22,14 @@ const ExcelMenu = ({
   onGenerateReportClick,
   onExportTableClick,
   onExportTablePdfClick,
-  documentType
+  documentType,
 }: ExcelMenuProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
   const [anchorExcelEl, setAnchorExcelEl] = useState<null | HTMLElement>(null);
 
-  const handleExcelIconClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleExcelIconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorExcelEl(event.currentTarget);
   };
 
@@ -35,10 +39,15 @@ const ExcelMenu = ({
 
   return (
     <div>
-      <div style={{ cursor: "pointer" }} onClick={handleExcelIconClick}>
-        <ExcelSheetIcon />
-      </div>
-
+      <IconButton onClick={handleExcelIconClick} sx={classes.iconButton}>
+        <FileDownloadOutlinedIcon
+          sx={{
+            color: "#2e3092",
+            fontSize: "22px",
+            transition: "color 0.2s ease-in-out",
+          }}
+        />
+      </IconButton>
       <Menu
         anchorEl={anchorExcelEl}
         open={Boolean(anchorExcelEl)}
@@ -78,8 +87,9 @@ const ExcelMenu = ({
             {t("sales.list.exportTableExcel")}
           </div>
         </MenuItem>
-        {
-          (documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund) && <MenuItem
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
             onClick={() => {
               handleMenuClose();
               onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedExcel);
@@ -89,9 +99,10 @@ const ExcelMenu = ({
               {t("sales.list.exportExtendedTableExcel")}
             </div>
           </MenuItem>
-        }
-        {
-          (documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund) && <MenuItem
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
             onClick={() => {
               handleMenuClose();
               onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedTxt);
@@ -101,9 +112,10 @@ const ExcelMenu = ({
               {t("sales.list.exportExtendedTableTxt")}
             </div>
           </MenuItem>
-        }
-        {
-          (documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund) && <MenuItem
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
             onClick={() => {
               handleMenuClose();
               onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithVat);
@@ -113,9 +125,10 @@ const ExcelMenu = ({
               {t("sales.list.exportSummeryExcelWithVat")}
             </div>
           </MenuItem>
-        }
-        {
-          (documentType == DOCUMENT_TYPE.invoice || documentType == DOCUMENT_TYPE.invoiceRefund) && <MenuItem
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
             onClick={() => {
               handleMenuClose();
               onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat);
@@ -125,7 +138,7 @@ const ExcelMenu = ({
               {t("sales.list.exportSummeryExcelWithoutVat")}
             </div>
           </MenuItem>
-        }
+        )}
         <MenuItem
           onClick={() => {
             handleMenuClose();

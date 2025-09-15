@@ -92,7 +92,7 @@ const RowMappingChildWidget = ({
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        {item?.isShowDuplicateWithSameJob && (
+        {(
           <>
             <div
               style={{
@@ -136,7 +136,7 @@ const RowMappingChildWidget = ({
             </div>
           </>
         )}
-        {!item?.isShowDuplicateWithSameJob && index}
+        {/* {!item?.isShowDuplicateWithSameJob && index} */}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

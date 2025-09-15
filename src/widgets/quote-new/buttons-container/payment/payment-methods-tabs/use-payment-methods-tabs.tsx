@@ -205,13 +205,13 @@ const usePaymentMethodsTabs = () => {
     setTotalCash(value);
     setTotalPayment(
       Number(value) +
-        Number(totalBit) +
-        Number(totalTransfer) +
-        Number(totalChecks) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalBit) +
+      Number(totalTransfer) +
+      Number(totalChecks) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   };
 
@@ -223,10 +223,10 @@ const usePaymentMethodsTabs = () => {
     resetTransferTabState();
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        Number(totalCreditCard) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      Number(totalCreditCard) +
+      Number(taxDeduction)
     );
   };
 
@@ -239,12 +239,12 @@ const usePaymentMethodsTabs = () => {
     resetTotalBit();
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   };
 
@@ -255,10 +255,10 @@ const usePaymentMethodsTabs = () => {
     setTotalSupplierCreditCard(value);
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        Number(totalTransfer) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      Number(totalTransfer) +
+      Number(taxDeduction)
     );
   };
 
@@ -269,11 +269,11 @@ const usePaymentMethodsTabs = () => {
     setTotalTotalCreditCard(Number(value));
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalBit) +
-        Number(totalChecks) +
-        Number(totalTransfer) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalBit) +
+      Number(totalChecks) +
+      Number(totalTransfer) +
+      Number(taxDeduction)
     );
   };
 
@@ -285,13 +285,13 @@ const usePaymentMethodsTabs = () => {
     setTotalChecks(newTotalChecks);
     setTotalPayment(
       Number(newTotalChecks) +
-        Number(totalCash) +
-        Number(totalBit) +
-        Number(totalTransfer) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalBit) +
+      Number(totalTransfer) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   }, [
     data,
@@ -365,7 +365,7 @@ const usePaymentMethodsTabs = () => {
 
   const handleCVVChange = (e) => {
     const formattedInput = e.target.value.replace(/\D/g, "");
-    if (formattedInput.length <= 3) {
+    if (formattedInput.length <= 4) {
       setCreditCard({
         ...creditCard,
         cvv: formattedInput,
@@ -466,7 +466,7 @@ const usePaymentMethodsTabs = () => {
       messages.push("alerts.invalidExpirationDate");
     }
 
-    if (!creditCard.cvv || creditCard.cvv.length < 3) {
+    if (!creditCard.cvv || creditCard.cvv.length < 4) {
       newErrors.cvv = "alerts.invalidCVV";
       messages.push("alerts.invalidCVV");
     }

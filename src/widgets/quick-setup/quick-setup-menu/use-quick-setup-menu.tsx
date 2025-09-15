@@ -122,9 +122,8 @@ const useSetupGuideMenu = ({
     },
     {
       key: SetupStep.PRODUCTS_SETUPS,
-      label: t("quickSetup.steps.setUpProductsAndProduction"),
+      label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-        // productsSetupStatus !== StepStatus.DONE ? handleOpenModal : undefined,
         productsSetupStatus !== StepStatus.DONE
           ? () => navigate("/onboarding-setup")
           : undefined,

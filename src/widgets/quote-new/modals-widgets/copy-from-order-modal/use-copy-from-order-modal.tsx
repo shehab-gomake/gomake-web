@@ -64,6 +64,7 @@ const useCopyFromOrderModal = ({
     null
   );
 
+  console.log("selectedItems", { selectedItems, quoteItemValue, documentItems });
   useEffect(() => {
     if (orderId) {
       setCurrentDocumentId(orderId as string);
@@ -148,7 +149,9 @@ const useCopyFromOrderModal = ({
     }
   }, [router.query.isNewCreation]);
   const handleItemSelect = (item) => {
-    if (selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
+    const isAlreadySelected = selectedItems.some((selectedItem) => selectedItem.id === item.id);
+
+    if (isAlreadySelected) {
       // If the item is already selected, remove it
       setSelectedItems(
         selectedItems.filter((selectedItem) => selectedItem.id !== item.id)
@@ -160,10 +163,8 @@ const useCopyFromOrderModal = ({
   };
 
   const handleSelectAll = (documentItem) => {
-    debugger
     const selectedIds = new Set(selectedItems.map((item) => item.id));
-    const sectionItemIds =
-      documentItem?.orderItems?.map((item) => item.id) || [];
+    const sectionItemIds = documentItem?.orderItems?.map((item) => item.id) || [];
 
     const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
 
@@ -177,21 +178,6 @@ const useCopyFromOrderModal = ({
       const newItems = documentItem?.orderItems.filter(
         (item) => !selectedIds.has(item.id)
       );
-
-      // Check if adding these items would exceed 100 items
-      const currentCount = selectedItems.length;
-      const newItemsCount = newItems.length;
-
-      /*if (currentCount + newItemsCount > 100) {
-        // Only add items up to the 100 limit
-        const itemsToAdd = newItems.slice(0, 100 - currentCount);
-        setSelectedItems([...selectedItems, ...itemsToAdd]);
-
-        // Show alert that only first 100 items were selected
-        alertWarning("sales.quote.maxItemsReached");
-      } else {
-        setSelectedItems([...selectedItems, ...newItems]);
-      }*/
       setSelectedItems([...selectedItems, ...newItems]);
     }
   };
@@ -199,67 +185,55 @@ const useCopyFromOrderModal = ({
     if (!filteredDocumentItems || !filteredDocumentItems.length) {
       return;
     }
-    let newSelectedItems = [];
-    let totalItemsToAdd = 0;
-    let hasReachedLimit = false;
 
-    for (let i = 0; i < filteredDocumentItems.length; i++) {
-      let documentItem = filteredDocumentItems[i];
-      const selectedIds = new Set(selectedItems.map((item) => item.id));
-      const sectionItemIds =
-        documentItem?.orderItems?.map((item) => item.id) || [];
+    // Get all items from all documents
+    const allDocumentItems = filteredDocumentItems.flatMap(doc => doc.orderItems || []);
+    const selectedIds = new Set(selectedItems.map((item) => item.id));
 
-      const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
+    // Check if all items are selected
+    const allSelected = allDocumentItems.every((item) => selectedIds.has(item.id));
 
-      if (allSelected) {
-        // If all items in the section are selected, remove them
-        newSelectedItems = newSelectedItems.filter((item) => !sectionItemIds.includes(item.id));
-      } else {
-        // If any item is not selected, add only missing items
-        const newItems = documentItem?.orderItems.filter(
-          (item) => !selectedIds.has(item.id)
-        );
-
-        // Check if adding these items would exceed 100 items
-        const currentTotal = selectedItems.length + newSelectedItems.length;
-        const remainingSlots = 100 - currentTotal;
-
-        if (remainingSlots <= 0) {
-          hasReachedLimit = true;
-          //break;
-        }
-
-        // if (newItems.length > remainingSlots) {
-        //   // Only add items up to the 100 limit
-        //   const itemsToAdd = newItems.slice(0, remainingSlots);
-        //   newSelectedItems = [...newSelectedItems, ...itemsToAdd];
-        //   hasReachedLimit = true;
-        // } else {
-        //   newSelectedItems = [...newSelectedItems, ...newItems];
-        // }
-        newSelectedItems = [...newSelectedItems, ...newItems];
-      }
+    if (allSelected) {
+      // If all items are selected, remove all document items
+      const documentItemIds = allDocumentItems.map(item => item.id);
+      setSelectedItems(
+        selectedItems.filter((item) => !documentItemIds.includes(item.id))
+      );
+    } else {
+      // If not all items are selected, add all missing items
+      const newItems = allDocumentItems.filter(
+        (item) => !selectedIds.has(item.id)
+      );
+      setSelectedItems([...selectedItems, ...newItems]);
     }
-
-    setSelectedItems([...selectedItems, ...newSelectedItems]);
-
-    // Show alert if we reached the limit
-    //if (hasReachedLimit) {
-      //alertWarning("sales.quote.maxItemsReached");
-    //}
   };
 
   const areAllItemsSelected = (documentItemId) => {
-    const selectedIds =
-      documentItems
-        .find((item) => item.id === documentItemId)
-        ?.orderItems?.map((item) => item.id) || [];
-    return (
-      documentItems
-        .find((item) => item.id === documentItemId)
-        ?.orderItems?.every((item) =>
-          selectedItems.some((selectedItem) => selectedItem.id === item.id)
-        ) || false
+    const documentItem = documentItems.find((item) => item.id === documentItemId);
+    if (!documentItem?.orderItems?.length) {
+      return false;
+    }
+
+    const documentItemIds = documentItem.orderItems.map((item) => item.id);
+    return documentItemIds.every((id) =>
+      selectedItems.some((selectedItem) => selectedItem.id === id)
+    );
+  };
+
+  // Helper function to check if an item is already in quote's documentItems
+  const isItemInQuote = (itemId) => {
+    return quoteItemValue.documentItems.some((docItem) => docItem.sourceDocumentItemId === itemId);
+  };
+
+  // Helper function to check if all documents are selected
+  const areAllDocumentsSelected = () => {
+    if (!documentItems.length) return false;
+
+    const allDocumentItems = documentItems.flatMap(doc => doc.orderItems || []);
+    if (!allDocumentItems.length) return false;
+
+    return allDocumentItems.every((item) =>
+      selectedItems.some((selectedItem) => selectedItem.id === item.id)
     );
   };
 
@@ -297,8 +271,21 @@ const useCopyFromOrderModal = ({
             };
           });
         setDocumentItems(updatedData);
+
+        // Select only items that are already in quoteItemValue.documentItems
+        const allItems = updatedData.flatMap(doc => doc.orderItems || []);
+        const existingQuoteSourceItemIds = new Set(
+          quoteItemValue.documentItems.map(item => item.sourceDocumentItemId)
+        );
+
+        const itemsToSelect = allItems.filter(item =>
+          existingQuoteSourceItemIds.has(item.id)
+        );
+
+        setSelectedItems(itemsToSelect);
       } else {
         setDocumentItems([]);
+        setSelectedItems([]);
         alertFaultGetData();
       }
     };
@@ -313,32 +300,28 @@ const useCopyFromOrderModal = ({
   };
 
   const calculateDocument = useCallback(async () => {
-    const sharedDeletedArry = quoteItemValue.documentItems.filter((item) => {
-      const isIncludedInOrderItems = documentItems.some((docItem) => {
-        return docItem.orderItems.some((orderItem) => orderItem.id === item.id);
+    // Get all orderItem IDs from documentItems.orderItems
+    const orderItemIds = new Set();
+    documentItems.forEach((docItem) => {
+      docItem.orderItems?.forEach((orderItem) => {
+        orderItemIds.add(orderItem.id);
       });
-      const isNotIncludedInSelectedItems = !selectedItems.some(
-        (selectedItem) => selectedItem.id === item.id
-      );
-      return isIncludedInOrderItems && isNotIncludedInSelectedItems;
     });
-    const documentItemsFilters = quoteItemValue.documentItems.filter((item) => {
-      return !sharedDeletedArry.some((sharedItem) => sharedItem.id === item.id);
+
+    // Filter out existing documentItems that have sourceDocumentItemId matching current orderItems
+    const existingDocumentItems = quoteItemValue.documentItems.filter((item) => {
+      // Keep items that are not from the current source documents
+      return !orderItemIds.has(item.sourceDocumentItemId);
     });
-    const mergedItems = [...documentItemsFilters, ...selectedItems];
-    const idMap = new Map();
-    const uniqueItems = mergedItems
-      .filter((item) => {
-        if (!idMap.has(item.id)) {
-          idMap.set(item.id, true);
-          return true;
-        }
-        return false;
-      })
-      .map((item) => ({
-        ...item,
-        finalPrice: item.finalPrice,
-      }));
+
+    // Get selectedItems that are not already in existing documentItems
+    const newSelectedItems = selectedItems.filter((selectedItem) => {
+      return !existingDocumentItems.some((existingItem) => existingItem.sourceDocumentItemId === selectedItem.id);
+    });
+
+    // Merge existing items with new selected items (no duplicates)
+    const mergedItems = [...existingDocumentItems, ...newSelectedItems];
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/calculate-document-new`,
@@ -358,11 +341,12 @@ const useCopyFromOrderModal = ({
           totalPayment: quoteItemValue?.totalPayment,
           vat: documentItems[0]?.vat || 0.17,
           totalVAT: quoteItemValue?.totalVAT || 0.17,
-          documentItems: uniqueItems,
+          documentItems: mergedItems,
           roundPrices: quoteItemValue?.client?.roundPrices,
         },
       }
     );
+
     if (res?.success) {
       const _data = res?.data?.data?.data;
       const updatedQuoteItemValue = { ...quoteItemValue };
@@ -370,21 +354,13 @@ const useCopyFromOrderModal = ({
       updatedQuoteItemValue.discountAmount = _data.discountAmount;
       updatedQuoteItemValue.totalPayment = _data.totalPayment;
       updatedQuoteItemValue.totalPrice = _data.totalPrice;
-      updatedQuoteItemValue.totalPriceAfterDiscount =
-        _data.totalPriceAfterDiscount;
+      updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
       updatedQuoteItemValue.totalVAT = _data.totalVAT;
       updatedQuoteItemValue.vat = _data.vat;
       updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
-      const filteredSelectedItems = selectedItems.filter((selectedItem) => {
-        return !updatedQuoteItemValue.documentItems.some(
-          (documentItem) => documentItem.id === selectedItem.id
-        );
-      });
 
-      updatedQuoteItemValue.documentItems = [
-        ...documentItemsFilters,
-        ...filteredSelectedItems,
-      ];
+      // Update documentItems with the merged items
+      updatedQuoteItemValue.documentItems = mergedItems;
       setQuoteItemValue(updatedQuoteItemValue);
     }
   }, [quoteItemValue, selectedItems, documentType, documentItems]);
@@ -463,7 +439,9 @@ const useCopyFromOrderModal = ({
     isLoadingPayments,
     hasFetchedOnce,
     noDocumentData,
-    handleSelectAllDocuments
+    handleSelectAllDocuments,
+    isItemInQuote,
+    areAllDocumentsSelected
   };
 };
 

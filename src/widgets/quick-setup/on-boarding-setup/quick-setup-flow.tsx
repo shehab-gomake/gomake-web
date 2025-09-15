@@ -43,6 +43,9 @@ import { Step4RollFlexoFinishingSelection } from "@/widgets/quick-setup/on-board
 import { Step5WideFormatFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step5WideFormatFinishingSelection";
 import { Step6DtfSublimationFinishingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step6DtfSublimationFinishingSelection";
 import { Step7PackagingSelection } from "@/widgets/quick-setup/on-boarding-setup/components/Step7PackagingSelection";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GoMakeDeleteModal } from "@/components/modal-deleted";
+import { ModalType } from "@/enums";
 
 const QuickSetupFlow: React.FC = () => {
   const { t } = useTranslation();
@@ -50,6 +53,7 @@ const QuickSetupFlow: React.FC = () => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const { navigate } = useGomakeRouter();
+  const { primaryColor } = useGomakeTheme();
 
   // Use custom hooks for data and navigation
   const {
@@ -65,6 +69,7 @@ const QuickSetupFlow: React.FC = () => {
   } = useMachinesData();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   // State management - MUST be called before any conditional returns
   const [selectedMachines, setSelectedMachines] = useState<SelectedMachine[]>(
@@ -150,7 +155,10 @@ const QuickSetupFlow: React.FC = () => {
 
   // Mark products setup as in progress when component mounts
   useEffect(() => {
-    updatePrintHouseSetupSteps(SetupStep.PRODUCTS_SETUPS, StepStatus.IN_PROGRESS);
+    updatePrintHouseSetupSteps(
+      SetupStep.PRODUCTS_SETUPS,
+      StepStatus.IN_PROGRESS
+    );
   }, []);
 
   // if (machinesLoading) {
@@ -796,8 +804,11 @@ const QuickSetupFlow: React.FC = () => {
       const callBack = async (res: any) => {
         if (res.success) {
           // Update the products setup step to completed
-          await updatePrintHouseSetupSteps(SetupStep.PRODUCTS_SETUPS, StepStatus.DONE);
-          
+          await updatePrintHouseSetupSteps(
+            SetupStep.PRODUCTS_SETUPS,
+            StepStatus.DONE
+          );
+
           alertSuccessAdded();
           navigate("/");
         } else {
@@ -814,9 +825,87 @@ const QuickSetupFlow: React.FC = () => {
 
   return (
     <Box sx={{ p: "0px 24px 24px 24px" }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        {t("Quick Machines Setup")}
-      </Typography>
+      {/* Welcome Section */}
+      <Box sx={{ mb: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-start",
+            mb: 2,
+            p: 2,
+            backgroundColor: "primary.light",
+            borderRadius: 2,
+            background:
+              "linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, rgba(25, 118, 210, 0.05) 100%)",
+          }}
+        >
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              backgroundColor: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mr: 2,
+              flexShrink: 0,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ color: "white", fontWeight: "bold" }}
+            >
+              🚀
+            </Typography>
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 600, color: "primary.dark", mb: 1 }}
+            >
+              {t("Welcome to Quick Machines Setup")}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ color: "text.secondary", lineHeight: 1.6, mb: 1 }}
+            >
+              {t(
+                "This is a great way to enter all the machines you use at your print service provider (PSP). Just follow the steps and cover all the categories to quickly and easily set up your factory."
+              )}
+            </Typography>
+
+            {/* Important Notice inside the box */}
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                px: 1.5,
+                py: 0.5,
+                backgroundColor: "error.light",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "error.main",
+                  fontSize: "0.8rem",
+                  mr: 1,
+                }}
+              >
+                ⚠️
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "#ffffff", fontWeight: 500 }}
+              >
+                {t(
+                  "Important: This setup will replace your current machine configuration."
+                )}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Stepper */}
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -1050,7 +1139,7 @@ const QuickSetupFlow: React.FC = () => {
           <Button
             variant="contained"
             color="success"
-            onClick={handleCompleteSetup}
+            onClick={() => setShowConfirmModal(true)}
             disabled={selectedMachines.length === 0}
           >
             {t("Complete Setup")}
@@ -1097,6 +1186,18 @@ const QuickSetupFlow: React.FC = () => {
           </Box>
         </Paper>
       )}
+      {/* Confirmation Modal */}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onClickDelete={handleCompleteSetup}
+        title={t("Confirm Setup")}
+        subTitle={t(
+          "Once you click Finish, your current setup will be replaced. You can always make changes or add more machines later in the Machines section."
+        )}
+        yesBtn={t("Finish")}
+      />
     </Box>
   );
 };

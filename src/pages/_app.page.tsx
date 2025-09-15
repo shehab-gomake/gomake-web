@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
-import {  ThemeProvider } from "@/providers";
+import { ThemeProvider } from "@/providers";
 import { GomakeLoading } from "@/widgets";
 import { GoMakeSnackBar } from "@/components";
 import { DndProvider } from "react-dnd";

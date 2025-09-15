@@ -12,7 +12,7 @@ import {
   qrDataState,
 } from "@/widgets/qr-listener/state";
 import { useRouter } from "next/router";
-import { GomakeTextInput, ThreeOptionsModal } from "@/components";
+import { GomakeTextInput, ThreeOptionsModal, QRErrorModal } from "@/components";
 import { PrintPackingSlipModal } from "@/pages-components/board-missions/widgets/print-packing-slip-modal";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/board-missions/style";
@@ -44,6 +44,9 @@ const QrListenerWidget = ({ listening }: IProps) => {
     useState<boolean>(false);
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
   const [quantityPerPackage, setQuantityPerPackage] = useState<number>(0);
+  const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
+  const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
+  const [qrErrorKey, setQrErrorKey] = useState<string>("");
   const remainingQuantity =
     qrData?.quantity - quantityPerPackage * (quantityOfPackages - 1);
   const { t } = useTranslation();
@@ -193,7 +196,13 @@ const QrListenerWidget = ({ listening }: IProps) => {
           );
         }
       } else {
-        alertFaultUpdate();
+        if (res?.errorMessage && res?.errorMessage !== "") {
+          setQrErrorMessage(res.errorMessage);
+          setQrErrorKey(res.errorMessage);
+          setIsQRErrorModalOpen(true);
+        } else {
+          alertFaultUpdate();
+        }
       }
     };
     await handleBoardMissionsQrCodeApi(callApi, callBack, qrCode);
@@ -260,6 +269,12 @@ const QrListenerWidget = ({ listening }: IProps) => {
         handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
+      />
+      <QRErrorModal
+        openModal={isQRErrorModalOpen}
+        onClose={() => setIsQRErrorModalOpen(false)}
+        errorMessage={qrErrorMessage}
+        errorKey={qrErrorKey}
       />
     </>
   );

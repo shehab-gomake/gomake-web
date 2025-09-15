@@ -28,6 +28,7 @@ import {
 } from "../../state/production-floor-coulmns-table-settings";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { useStyle } from "./style";
 
 interface DragItem {
   id: string;
@@ -44,6 +45,7 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
   );
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const { classes } = useStyle();
 
   const [columnVisibility, setColumnVisibility] = useRecoilState(
     columnVisibilityState
@@ -184,44 +186,50 @@ export const ColumnSettingsMenuContent = ({ anchorEl, open, onClose }) => {
       <Stack direction="row" justifyContent="space-between" px={1} py={1}>
         <PrimaryButton
           variant="text"
-          style={{ fontSize: 12, padding: "4px 8px" }}
+          style={classes.topBtns}
           onClick={handleHideAll}
         >
           {t("productionFloor.hideAll")}
         </PrimaryButton>
         <PrimaryButton
           variant="text"
-          style={{ fontSize: 12, padding: "4px 8px" }}
+          style={classes.topBtns}
           onClick={handleResetOrder}
         >
           {t("productionFloor.resetOrder")}
         </PrimaryButton>
         <PrimaryButton
           variant="text"
-          style={{ fontSize: 12, padding: "4px 8px" }}
+          style={classes.topBtns}
           onClick={handleShowAll}
         >
           {t("productionFloor.showAll")}
         </PrimaryButton>
       </Stack>
-
-      <DndProvider backend={HTML5Backend}>
-        {tempColumnOrder
-          ?.filter((key) => filteredKeys.includes(key))
-          ?.map((key, index) => (
-            <DraggableMenuItem
-              key={key}
-              id={key}
-              index={index}
-              label={getLabel(t, key)}
-              checked={tempColumnVisibility[key]}
-              onToggle={() => handleToggleColumn(key)}
-              moveItem={moveItem}
-            />
-          ))}
-      </DndProvider>
+      <div className="custom-scrollbar" style={classes.headerContainer}>
+        <DndProvider backend={HTML5Backend}>
+          {tempColumnOrder
+            ?.filter((key) => filteredKeys.includes(key))
+            ?.map((key, index) => (
+              <DraggableMenuItem
+                key={key}
+                id={key}
+                index={index}
+                label={getLabel(t, key)}
+                checked={tempColumnVisibility[key]}
+                onToggle={() => handleToggleColumn(key)}
+                moveItem={moveItem}
+              />
+            ))}
+        </DndProvider>
+      </div>
       <Divider />
-      <Stack direction="row" justifyContent="space-between" p={"0px 8px"}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        p={"0px 8px"}
+        mt={1}
+      >
         <PrimaryButton style={{ width: "fit-content" }} onClick={handleCancel}>
           {t("modal.cancel")}
         </PrimaryButton>
@@ -325,6 +333,7 @@ const getLabel = (t, key: string): string => {
     checkbox: t("productionFloor.checkBox"),
     job_order: `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
     deliveryDate: t("sales.quote.deliveryDate"),
+    creationDate: t("sales.quote.creationDate"),
     customer: t("productionFloor.customer"),
     agent: t("productionFloor.agent"),
     productName: t("sales.quote.productName"),

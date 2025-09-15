@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { Skeleton, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import { IGanttJob } from "@/widgets/production-floor/views/gantt-view/interface";
+import { IGanttJob } from "@/widgets/production-floor/views/gantt-view/interfaces";
 import { Instance } from "@popperjs/core";
 import { useRef } from "react";
 import { toRgba } from "@/utils/helpers";
@@ -45,16 +45,22 @@ const JobComponent = ({
     ...restProps
   } = getItemProps({
     style: {
-      background: isEditable ? item.bgColor : "#2E3091",
+      background: isEditable ? toRgba(item.bgColor, 0.6) : "#6C757D",
       color: "white",
-      borderRadius: "14px",
-      border: "1px solid #F6F6F6",
+      borderRadius: "8px",
+      border: `2px solid ${isEditable ? item.bgColor : "#6C757D"}`,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      gap: "10px",
-      opacity: isEditable && item.isHasSelected && !item.selected ? 0.3 : 1,
-      minHeight: "22px",
+      gap: "8px",
+      opacity: isEditable && item.isHasSelected && !item.selected ? 0.4 : 1,
+      minHeight: "28px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+      fontWeight: 600,
+      fontSize: "12px",
+      textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+      position: "relative",
+      overflow: "hidden",
     },
   });
 
@@ -161,7 +167,6 @@ const JobTooltipComponent = ({
   productName,
   title,
   bgColor,
-  // boardMissionNumber,
   jobNumber,
   orderNumber,
   numberOfJobsInOrder,
@@ -187,17 +192,41 @@ const JobTooltipComponent = ({
   const formattedEndTime = moment(end_time).format("HH:mm");
   const formattedEndDate = moment(end_time).format("MMM DD");
 
+  const getStatusInfo = (statusColor: string) => {
+    const statusMap: {
+      [key: string]: { label: string; color: string; bgColor: string };
+    } = {
+      "#28A745": { label: "Completed", color: "#28A745", bgColor: "#D4EDDA" },
+      "#FD7E14": { label: "In Progress", color: "#FD7E14", bgColor: "#FFF3CD" },
+      "#DC3545": { label: "Pending", color: "#DC3545", bgColor: "#F8D7DA" },
+      "#007BFF": { label: "Scheduled", color: "#007BFF", bgColor: "#D1ECF1" },
+      "#6F42C1": { label: "Design", color: "#6F42C1", bgColor: "#E2D9F3" },
+    };
+    return (
+      statusMap[statusColor] || {
+        label: "Unknown",
+        color: statusColor,
+        bgColor: "#F8F9FA",
+      }
+    );
+  };
+
+  const statusInfo = getStatusInfo(bgColor);
+
   return (
     <Stack
       direction={"column"}
       gap={"15px"}
-      padding={"10px"}
+      padding={"16px"}
       width={"100%"}
       onClick={handleOpenMission}
       style={{
-        borderRadius: "4px",
-        // border: `1px solid var(--Colors-Yellow-600,${bgColor})`,
-        boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
+        borderRadius: "12px",
+        border: `2px solid ${bgColor}`,
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+        backgroundColor: "#FFFFFF",
+        cursor: "pointer",
+        minWidth: "380px",
       }}
     >
       <Stack
@@ -205,30 +234,49 @@ const JobTooltipComponent = ({
         justifyContent={"space-between"}
         display={"flex"}
         flexWrap={"wrap"}
+        alignItems="center"
       >
-        <Stack direction="row" alignItems="center" gap="10px">
+        <Stack direction="row" alignItems="center" gap="12px">
           <div
             style={{
-              width: "12px",
-              height: "12px",
+              width: "16px",
+              height: "16px",
               borderRadius: "50%",
               backgroundColor: bgColor,
+              boxShadow: `0 2px 8px ${toRgba(bgColor, 0.3)}`,
             }}
           />
-          <span style={{ ...classes.jobTitle }}>{title}</span>
+          <span
+            style={{ ...classes.jobTitle, fontSize: "16px", fontWeight: 600 }}
+          >
+            {title}
+          </span>
         </Stack>
         <OrderJObNumbersComponent
           boardMission={{ boardMissionNumber: jobNumber, orderNumber }}
           textColor={bgColor}
-          bgColor={toRgba(bgColor, 0.2)}
+          bgColor={toRgba(bgColor, 0.15)}
         />
       </Stack>
-      <Stack>
-        <Stack direction={"row"} justifyContent={"space-between"} gap={"5px"}>
-          <span style={classes.productTitle}>
+
+      <Stack gap="8px">
+        <Stack direction={"row"} justifyContent={"space-between"} gap={"8px"}>
+          <span
+            style={{
+              ...classes.productTitle,
+              fontSize: "14px",
+              fontWeight: 500,
+            }}
+          >
             {productName || "Product name"}
           </span>
-          <span style={classes.productTitle}>
+          <span
+            style={{
+              ...classes.productTitle,
+              fontSize: "14px",
+              fontWeight: 500,
+            }}
+          >
             {clientName || "Client name"}
           </span>
         </Stack>
@@ -238,36 +286,63 @@ const JobTooltipComponent = ({
           display={"flex"}
           flexWrap={"wrap"}
         >
-          <span style={classes.secondLabel}>
+          <span
+            style={{
+              ...classes.secondLabel,
+              fontSize: "12px",
+              color: "#6C757D",
+            }}
+          >
             {`${numberOfJobsInOrder || 0} ${t(
               "boardMissions.numberOfBoardMissionsInOrder"
             )}`}
           </span>
         </Stack>
       </Stack>
+
       {/* Time Row */}
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="center"
-        gap="5px"
+        gap="12px"
+        sx={{
+          padding: "12px",
+          backgroundColor: toRgba(bgColor, 0.05),
+          borderRadius: "8px",
+          border: `1px solid ${toRgba(bgColor, 0.2)}`,
+        }}
       >
-        <span style={{ fontSize: "24px", fontWeight: "600", color: bgColor }}>
-          {formattedStartTime}
-        </span>
-        <span style={{ fontSize: "12px", fontWeight: "400", color: "#797C80" }}>
-          {formattedStartDate}
-        </span>
-        <span style={{ fontSize: "12px", fontWeight: "600", color: "#797C80" }}>
-          {" "}
-          -{" "}
-        </span>
-        <span style={{ fontSize: "24px", fontWeight: "600", color: bgColor }}>
-          {formattedEndTime}
-        </span>
-        <span style={{ fontSize: "12px", fontWeight: "400", color: "#797C80" }}>
-          {formattedEndDate}
-        </span>
+        <Stack alignItems="center" gap="4px">
+          <span style={{ fontSize: "28px", fontWeight: "700", color: bgColor }}>
+            {formattedStartTime}
+          </span>
+          <span
+            style={{ fontSize: "12px", fontWeight: "500", color: "#6C757D" }}
+          >
+            {formattedStartDate}
+          </span>
+        </Stack>
+
+        <div
+          style={{
+            width: "40px",
+            height: "2px",
+            backgroundColor: bgColor,
+            borderRadius: "1px",
+          }}
+        />
+
+        <Stack alignItems="center" gap="4px">
+          <span style={{ fontSize: "28px", fontWeight: "700", color: bgColor }}>
+            {formattedEndTime}
+          </span>
+          <span
+            style={{ fontSize: "12px", fontWeight: "500", color: "#6C757D" }}
+          >
+            {formattedEndDate}
+          </span>
+        </Stack>
       </Stack>
     </Stack>
   );

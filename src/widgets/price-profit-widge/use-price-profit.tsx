@@ -41,6 +41,13 @@ type ActionOption = {
   value: string;
 };
 
+export enum ExceptionType {
+  Additional = 0,
+  NewBase = 1,
+  EditBase = 2,
+  Default = 3,
+}
+
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
@@ -666,7 +673,12 @@ const usePriceProfit = () => {
     });
   };
 
-  const handleRollback = async () => {
+  const handleRollback = async (
+    fromDate: string,
+    toDate: string,
+    actionId?: string,
+    pricingTableId?: string
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         const rows =
@@ -704,10 +716,10 @@ const usePriceProfit = () => {
 
         // Call getDataForAutoPricingActionsChart after successful rollback
         getDataForAutoPricingActionsChart(
-          fromDate?.toISOString(),
-          toDate?.toISOString(),
-          action?.actionId,
-          selectedPricingTable?.id
+          fromDate,
+          toDate,
+          actionId,
+          pricingTableId
         );
       }
     };
