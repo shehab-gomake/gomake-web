@@ -2583,9 +2583,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[21]:
         return `${t("logs.ADD")}`;
       case LogActionType[22]:
-        return `${t("logs.CLOSE", {
-          documentType: values[0] === "DeliveryNote" ? t("sales.quote.deliveryNote") : values[0] === "Invoice" ? t("sales.quote.invoice") : values[0],
-        })}`;
+        if (values[0] === "DeliveryNote" || values[0] === "Invoice") {
+          return `${t("logs.CLOSE2", {
+            documentType: values[0] === "DeliveryNote" ? t("sales.quote.deliveryNote") : t("sales.quote.invoice"),
+          })}`;
+        } else {
+          return `${t("logs.CLOSE")}`;
+        }
       case LogActionType[23]:
         return `${t("logs.SEND_READY_BOARDMISSION_MAIL")}`;
       case LogActionType[24]:
