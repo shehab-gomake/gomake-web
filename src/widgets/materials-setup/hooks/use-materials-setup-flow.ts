@@ -6,8 +6,8 @@ import { useGomakeAxios } from "@/hooks";
 import { useMachines } from "../../employees-working-hours-widgets/use-machines";
 import { ECategoryId } from "../../machines/enums/category-id";
 import { updatePrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
-import { quickSetupAddMaterials } from "@/services/api-service/machines/print-house-machines";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
+import { quickSetupAddMaterials } from "@/services/api-service/materials/quick-setup-materials-endpoints";
 
 interface MaterialValue {
   valueKey: string;
