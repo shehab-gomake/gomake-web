@@ -71,13 +71,17 @@ const useScheduledReports = () => {
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentDocumentType, setCurrentDocumentType] = useState<number | undefined>(undefined);
   const { pageSize: defaultPageSize, setPageSize, pagesCount, setPagesCount, pageNumber, setPageNumber, initialPageSize } = useListPagination();
   
   // Use page size of 10 for scheduled reports
   const pageSize = 10;
 
-  const getAllScheduledReports = async (page: number = pageNumber, size: number = pageSize) => {
+  const getAllScheduledReports = async (page: number = pageNumber, size: number = pageSize, documentType?: number) => {
     setIsLoading(true);
+    if (documentType !== undefined) {
+      setCurrentDocumentType(documentType);
+    }
     const callBack = (res) => {
       if (res.success) {
         const totalCount = res.data?.totalCount || 0;
@@ -92,7 +96,7 @@ const useScheduledReports = () => {
         alertFaultGetData();
       }
     };
-    await getAllScheduledReportsApi(callApi, callBack, { pageNumber: page, pageSize: size });
+    await getAllScheduledReportsApi(callApi, callBack, { pageNumber: page, pageSize: size, documentType: documentType || currentDocumentType });
     setIsLoading(false);
   };
 
@@ -101,7 +105,7 @@ const useScheduledReports = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        getAllScheduledReports( pageNumber, pageSize); // Refresh the list
+        getAllScheduledReports(pageNumber, pageSize, data.documentType || currentDocumentType); // Refresh the list with document type
       } else {
         alertFaultUpdate();
       }
@@ -197,13 +201,13 @@ const useScheduledReports = () => {
 
   const handlePageChange = (page: number) => {
     setPageNumber(page);
-    getAllScheduledReports(page, pageSize);
+    getAllScheduledReports(page, pageSize, currentDocumentType);
   };
 
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setPageNumber(1);
-    getAllScheduledReports(1, size);
+    getAllScheduledReports(1, size, currentDocumentType);
   };
 
   return {

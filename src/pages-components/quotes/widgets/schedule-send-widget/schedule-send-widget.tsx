@@ -6,6 +6,7 @@ import { DateRangePicker } from "rsuite";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
 import { EStatementCategory } from "@/pages-components/products/profits-new/enums/profites-enum";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const ScheduleSendWidget = ({
     openModal,
@@ -14,6 +15,7 @@ const ScheduleSendWidget = ({
     availableDateFilters = [],
     createScheduledReport,
     filterData = {},
+    boardMissionTableFilterDTO = {},
     rules,
     propertieValue
 
@@ -24,6 +26,7 @@ const ScheduleSendWidget = ({
     availableDateFilters?: Array<{ label: string; value: string }>;
     createScheduledReport?: (data: any) => void;
     filterData?: any;
+    boardMissionTableFilterDTO?: any;
     rules?: any;
     propertieValue?: any;
 }) => {
@@ -34,8 +37,45 @@ const ScheduleSendWidget = ({
     const [scheduleType, setScheduleType] = useState<any>()
     const [dayOfMonth, setDayOfMonth] = useState<any>()
     const [dayOfWeek, setDayOfWeek] = useState<any>()
-    const [selectedDateFilter, setSelectedDateFilter] = useState<any>()
     const [dateRange, setDateRange] = useState<any>(null)
+
+    // Specific date fields for jobs table
+    const [creationDateRange, setCreationDateRange] = useState<any>(null)
+    const [dueDateRange, setDueDateRange] = useState<any>(null)
+    const [readyDateRange, setReadyDateRange] = useState<any>(null)
+
+    // Function to clear all form values
+    const clearFormValues = () => {
+        setReportName("");
+        setMail("");
+        setScheduleType(undefined);
+        setDayOfMonth(undefined);
+        setDayOfWeek(undefined);
+        setDateRange(null);
+        setCreationDateRange(null);
+        setDueDateRange(null);
+        setReadyDateRange(null);
+    };
+
+    // Handle modal close with form reset
+    const handleCloseModal = () => {
+        clearFormValues();
+        onCloseModal();
+    };
+
+    // Predefined date options for jobs table
+    const getPredefinedDateOptions = () => {
+        return [
+            { label: t("sales.list.today"), value: DateRangeTypeEnum.Today },
+            { label: t("sales.list.yesterday"), value: DateRangeTypeEnum.Yesterday },
+            { label: t("sales.list.last7Days"), value: DateRangeTypeEnum.Last7Days },
+            { label: t("sales.list.last30Days"), value: DateRangeTypeEnum.Last30Days },
+            { label: t("sales.list.thisWeek"), value: DateRangeTypeEnum.ThisWeek },
+            { label: t("sales.list.lastWeek"), value: DateRangeTypeEnum.LastWeek },
+            { label: t("sales.list.thisMonth"), value: DateRangeTypeEnum.ThisMonth },
+            { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
+        ];
+    };
     const daysArray = Array.from({ length: 31 }, (v, k) => ({
         label: k + 1,
         id: k + 1
@@ -80,6 +120,29 @@ const ScheduleSendWidget = ({
 
     // Date filter options based on document type
     const getDateFilterOptions = () => {
+        // For jobs table, show specific date options instead of generic date range
+        if (availableDateFilters && availableDateFilters.length > 0) {
+            const baseOptions = [
+                { label: t("sales.list.today"), value: DateRangeTypeEnum.Today },
+                { label: t("sales.list.yesterday"), value: DateRangeTypeEnum.Yesterday },
+                { label: t("sales.list.last7Days"), value: DateRangeTypeEnum.Last7Days },
+                { label: t("sales.list.last30Days"), value: DateRangeTypeEnum.Last30Days },
+                { label: t("sales.list.thisWeek"), value: DateRangeTypeEnum.ThisWeek },
+                { label: t("sales.list.lastWeek"), value: DateRangeTypeEnum.LastWeek },
+                { label: t("sales.list.thisMonth"), value: DateRangeTypeEnum.ThisMonth },
+                { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
+            ];
+
+            // Add specific date filters for jobs table
+            const specificFilters = availableDateFilters.map(filter => ({
+                label: filter.label,
+                value: filter.value
+            }));
+
+            return [...baseOptions, ...specificFilters];
+        }
+
+        // Default behavior for other document types
         const baseOptions = [
             { label: t("sales.list.today"), value: DateRangeTypeEnum.Today },
             { label: t("sales.list.yesterday"), value: DateRangeTypeEnum.Yesterday },
@@ -91,15 +154,7 @@ const ScheduleSendWidget = ({
             { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
         ];
 
-        // Add specific date filters based on document type (excluding creationDate)
-        const specificFilters = availableDateFilters
-            .filter(filter => filter.value !== "creationDate")
-            .map(filter => ({
-                label: `${t("sales.list.dateFilter")}: ${filter.label}`,
-                value: filter.value
-            }));
-
-        return [...baseOptions, ...specificFilters];
+        return baseOptions;
     };
     const _renderScheduleType = (type) => {
         switch (type) {
@@ -135,7 +190,7 @@ const ScheduleSendWidget = ({
     return (
         <GoMakeModal
             openModal={openModal}
-            onClose={onCloseModal}
+            onClose={handleCloseModal}
             modalTitle={t("sales.list.scheduleReport")}
             insideStyle={classes.insideStyle}
         >
@@ -178,20 +233,70 @@ const ScheduleSendWidget = ({
 
                 {_renderScheduleType(scheduleType?.id)}
 
-                <div style={classes.inputRow}>
-                    <div style={classes.inputContainer}>
-                        <label style={classes.labelStyle}>{t("sales.list.dateRange")}</label>
-                        <GoMakeAutoComplate
-                            options={getDateFilterOptions()}
-                            style={{ height: "40px", width: "100%", border: "none" }}
-                            placeholder={t("sales.list.dateRange")}
-                            onChange={(e: any, item: any) => {
-                                setSelectedDateFilter(item)
-                            }}
-                            value={selectedDateFilter}
-                        />
+                {/* Show specific date fields for jobs table */}
+                {availableDateFilters && availableDateFilters.length > 0 ? (
+                    <>
+                        <div style={classes.inputRow}>
+                            <div style={classes.inputContainer}>
+                                <label style={classes.labelStyle}>{t("boardMissions.creationDate")}</label>
+                                <GoMakeAutoComplate
+                                    options={getPredefinedDateOptions()}
+                                    style={{ height: "40px", width: "100%", border: "none" }}
+                                    placeholder={t("boardMissions.creationDate")}
+                                    onChange={(e: any, item: any) => {
+                                        setCreationDateRange(item)
+                                    }}
+                                    value={creationDateRange}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={classes.inputRow}>
+                            <div style={classes.inputContainer}>
+                                <label style={classes.labelStyle}>{t("boardMissions.dueDate")}</label>
+                                <GoMakeAutoComplate
+                                    options={getPredefinedDateOptions()}
+                                    style={{ height: "40px", width: "100%", border: "none" }}
+                                    placeholder={t("boardMissions.dueDate")}
+                                    onChange={(e: any, item: any) => {
+                                        setDueDateRange(item)
+                                    }}
+                                    value={dueDateRange}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={classes.inputRow}>
+                            <div style={classes.inputContainer}>
+                                <label style={classes.labelStyle}>{t("boardMissions.readyDate")}</label>
+                                <GoMakeAutoComplate
+                                    options={getPredefinedDateOptions()}
+                                    style={{ height: "40px", width: "100%", border: "none" }}
+                                    placeholder={t("boardMissions.readyDate")}
+                                    onChange={(e: any, item: any) => {
+                                        setReadyDateRange(item)
+                                    }}
+                                    value={readyDateRange}
+                                />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div style={classes.inputRow}>
+                        <div style={classes.inputContainer}>
+                            <label style={classes.labelStyle}>{t("sales.list.dateRange")}</label>
+                            <GoMakeAutoComplate
+                                options={getDateFilterOptions()}
+                                style={{ height: "40px", width: "100%", border: "none" }}
+                                placeholder={t("sales.list.dateRange")}
+                                onChange={(e: any, item: any) => {
+                                    setDateRange(item)
+                                }}
+                                value={dateRange}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
 
                 <div style={classes.buttonContainer}>
@@ -199,64 +304,12 @@ const ScheduleSendWidget = ({
                         style={classes.sendBtn}
                         onClick={() => {
                             if (createScheduledReport) {
-                                // Convert dateRangeType to actual fromDate/toDate if needed
-                                const getDateRange = () => {
-                                    if (!selectedDateFilter?.value) return {};
-
-                                    const now = new Date();
-                                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-                                    switch (selectedDateFilter.value) {
-                                        case DateRangeTypeEnum.Today:
-                                            return {
-                                                fromDate: today.toISOString(),
-                                                toDate: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString()
-                                            };
-                                        case DateRangeTypeEnum.Yesterday:
-                                            const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-                                            return {
-                                                fromDate: yesterday.toISOString(),
-                                                toDate: new Date(yesterday.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString()
-                                            };
-                                        case DateRangeTypeEnum.Last7Days:
-                                            const last7Days = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                            return {
-                                                fromDate: last7Days.toISOString(),
-                                                toDate: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString()
-                                            };
-                                        case DateRangeTypeEnum.Last30Days:
-                                            const last30Days = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-                                            return {
-                                                fromDate: last30Days.toISOString(),
-                                                toDate: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString()
-                                            };
-                                        case DateRangeTypeEnum.ThisMonth:
-                                            const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-                                            const thisMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-                                            return {
-                                                fromDate: thisMonthStart.toISOString(),
-                                                toDate: thisMonthEnd.toISOString()
-                                            };
-                                        case DateRangeTypeEnum.LastMonth:
-                                            const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                                            const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
-                                            return {
-                                                fromDate: lastMonthStart.toISOString(),
-                                                toDate: lastMonthEnd.toISOString()
-                                            };
-                                        default:
-                                            return { dateRange: selectedDateFilter.value };
-                                    }
-                                };
-
-                                const dateRangeData = getDateRange();
-
-                                createScheduledReport({
+                                // Prepare the payload based on document type
+                                const basePayload = {
                                     reportName,
                                     email: mail,
                                     documentType: documentType,
                                     frequency: scheduleType?.id,
-                                    dateRangeType: selectedDateFilter?.value,
                                     startDayOfWeek: dayOfWeek?.value,
                                     startDayOfMonth: dayOfMonth?.id,
                                     reportConfiguration: {
@@ -276,13 +329,31 @@ const ScheduleSendWidget = ({
                                                 statementCategory: EStatementCategory[item.category.id],
                                             };
                                         }),
-                                        filterDTO: {
-                                            ...filterData,
-                                        }
+                                        ...(documentType === DocumentTypeEnums.BoardMission
+                                            ? { boardMissionTableFilterDTO: boardMissionTableFilterDTO }
+                                            : { filterDTO: filterData }
+                                        ),
                                     },
-                                });
+                                };
+
+                                // Add date range types based on document type
+                                if (documentType === DocumentTypeEnums.BoardMission && availableDateFilters && availableDateFilters.length > 0) {
+                                    // For jobs: send separate date range types (enum values, not dates)
+                                    createScheduledReport({
+                                        ...basePayload,
+                                        dateRangeType: creationDateRange?.value, // Creation date enum value
+                                        dueDateRangeType: dueDateRange?.value, // Due date enum value
+                                        readyDateRangeType: readyDateRange?.value, // Ready date enum value
+                                    });
+                                } else {
+                                    // For documents: send single date range type (enum value, not date)
+                                    createScheduledReport({
+                                        ...basePayload,
+                                        dateRangeType: dateRange?.value,
+                                    });
+                                }
                             }
-                            onCloseModal();
+                            handleCloseModal();
                         }}
                     >
                         {t("properties.schedule")}
