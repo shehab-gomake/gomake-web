@@ -7,7 +7,8 @@ const useStyle = () => {
     return {
       insideStyle:{
         width: "700px",
-        height: "500px",
+        height: "fit-content",
+        minHeight: "500px",
         position: "relative",
       },
       mainContainer:{

@@ -17,9 +17,7 @@ import { EAdditionType, EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
-import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { predefinedRanges } from "@/utils/dateRanges";
 
 const AddRuleModal = ({
   openModal,
@@ -40,7 +38,9 @@ const AddRuleModal = ({
   documentType,
   onShowScheduledReports,
   createScheduledReport,
-  filterDTO
+  filterDTO,
+  boardMissionTableFilterDTO,
+  availableDateFilters = []
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -109,6 +109,11 @@ const AddRuleModal = ({
 
   // Get available date filters based on document type
   const getAvailableDateFilters = () => {
+    // If availableDateFilters is passed as prop, use it
+    if (availableDateFilters && availableDateFilters.length > 0) {
+      return availableDateFilters;
+    }
+
     const baseFilters = [
       { label: t("sales.list.creationDate"), value: "creationDate" }
     ];
@@ -1141,9 +1146,9 @@ const AddRuleModal = ({
           openModal={openScheduleModal}
           onCloseModal={onCloseScheduleModal}
           documentType={documentType}
-          availableDateFilters={getAvailableDateFilters()}
+          availableDateFilters={availableDateFilters}
           createScheduledReport={createScheduledReport}
-          filterData={filterDTO}
+          filterData={documentType === "job" ? boardMissionTableFilterDTO : filterDTO}
           rules={rules}
           propertieValue={propertieValue}
         />
