@@ -13,7 +13,7 @@ import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
-import { EAdditionType, EParameterTypes } from "@/enums";
+import { DocumentTypeEnums, EAdditionType, EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
@@ -1148,7 +1148,8 @@ const AddRuleModal = ({
           documentType={documentType}
           availableDateFilters={availableDateFilters}
           createScheduledReport={createScheduledReport}
-          filterData={documentType === "job" ? boardMissionTableFilterDTO : filterDTO}
+          filterData={filterDTO}
+          boardMissionTableFilterDTO={boardMissionTableFilterDTO}
           rules={rules}
           propertieValue={propertieValue}
         />

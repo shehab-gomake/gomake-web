@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType } from "@/enums";
+import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -990,7 +990,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             toReadyDate: toReadyDate,
             patternSearch: patternSearch,
           }}
-          documentType="job"
+          documentType={DocumentTypeEnums.BoardMission}
           availableDateFilters={getAvailableDateFilters()}
           onShowScheduledReports={onShowScheduledReports}
           createScheduledReport={createScheduledReport}

@@ -15,6 +15,7 @@ const ScheduleSendWidget = ({
     availableDateFilters = [],
     createScheduledReport,
     filterData = {},
+    boardMissionTableFilterDTO = {},
     rules,
     propertieValue
 
@@ -25,6 +26,7 @@ const ScheduleSendWidget = ({
     availableDateFilters?: Array<{ label: string; value: string }>;
     createScheduledReport?: (data: any) => void;
     filterData?: any;
+    boardMissionTableFilterDTO?: any;
     rules?: any;
     propertieValue?: any;
 }) => {
@@ -327,9 +329,10 @@ const ScheduleSendWidget = ({
                                                 statementCategory: EStatementCategory[item.category.id],
                                             };
                                         }),
-                                        filterDTO: {
-                                            ...filterData,
-                                        }
+                                        ...(documentType === DocumentTypeEnums.BoardMission
+                                            ? { boardMissionTableFilterDTO: boardMissionTableFilterDTO }
+                                            : { filterDTO: filterData }
+                                        ),
                                     },
                                 };
 
