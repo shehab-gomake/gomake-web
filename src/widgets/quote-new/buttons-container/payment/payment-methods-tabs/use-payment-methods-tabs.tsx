@@ -466,7 +466,7 @@ const usePaymentMethodsTabs = () => {
       messages.push("alerts.invalidExpirationDate");
     }
 
-    if (!creditCard.cvv || creditCard.cvv.length < 4) {
+    if (!creditCard.cvv || creditCard.cvv.length < 3) {
       newErrors.cvv = "alerts.invalidCVV";
       messages.push("alerts.invalidCVV");
     }
