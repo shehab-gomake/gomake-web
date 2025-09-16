@@ -1216,6 +1216,20 @@ const moveOrderToReadyApi: ICallAndSetData = async (
   );
 };
 
+const moveOrderToDoneApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    MOVE_ORDER_TO_DONE_URL,
+    setState,
+    data
+  );
+};
+
 const pauseOrdResumeOrderApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1423,6 +1437,7 @@ export {
   sendReceiptToClientApi,
   getWhatsAppMessageForReceiptApi,
   moveOrderToReadyApi,
+  moveOrderToDoneApi,
   getAllBudgetsForClientApi,
   getAllDocumentsByBudgetIdApi,
   getAllDocumentsByBudgetApi,
