@@ -58,6 +58,7 @@ import {
 } from "./states/board-missions-columns-settings-state";
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 type StatusOption = {
   label: string;
@@ -2035,7 +2036,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onShowScheduledReports = () => {
     setOpenScheduledReportsModal(true);
-    getAllScheduledReports(1, 10); // Start with page 1 and page size 10
+    getAllScheduledReports(1, 10, DocumentTypeEnums.BoardMission); // Start with page 1 and page size 10, filter by BoardMission
   };
 
   const onCloseScheduledReportsModal = () => {
@@ -2051,11 +2052,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const handleScheduledReportsPageChange = (page: number) => {
-    getAllScheduledReports(page, scheduledReportsPageSize);
+    getAllScheduledReports(page, scheduledReportsPageSize, DocumentTypeEnums.BoardMission);
   };
 
   const handleScheduledReportsPageSizeChange = (pageSize: number) => {
-    getAllScheduledReports(1, pageSize);
+    getAllScheduledReports(1, pageSize, DocumentTypeEnums.BoardMission);
   };
 
   // Get available date filters for jobs table

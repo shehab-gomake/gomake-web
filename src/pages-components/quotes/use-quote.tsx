@@ -421,7 +421,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onShowScheduledReports = () => {
     setOpenScheduledReportsModal(true);
-    getAllScheduledReports(1, 10); // Start with page 1 and page size 10
+    getAllScheduledReports(1, 10, docType); // Start with page 1 and page size 10, filter by document type
   };
 
   const onCloseScheduledReportsModal = () => {
