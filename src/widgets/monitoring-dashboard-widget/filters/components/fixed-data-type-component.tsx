@@ -18,7 +18,6 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export enum CalculationDataTypeEnum {
   DataWithPriceAndCostCalculatedByGoMake = 0,
-  DataWithPriceAndCostEnteredByUser,
   DataWithPriceAndEstimatedCostByGoMake,
 }
 
@@ -40,10 +39,10 @@ const FixedDataType = () => {
         label: "dashboard.datawithPriceAndCostCalculatedByGoMake",
         value: CalculationDataTypeEnum.DataWithPriceAndCostCalculatedByGoMake,
       },
-      {
+      /*{
         label: "dashboard.dataWithPriceAndCostEnteredByUser",
         value: CalculationDataTypeEnum.DataWithPriceAndCostEnteredByUser,
-      },
+      },*/
       {
         label: "dashboard.dataWithPriceAndEstimatedCostByGoMake",
         value: CalculationDataTypeEnum.DataWithPriceAndEstimatedCostByGoMake,
