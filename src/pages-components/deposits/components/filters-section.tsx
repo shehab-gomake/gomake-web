@@ -11,6 +11,8 @@ import { predefinedRanges } from "@/utils/dateRanges";
 const DepositsFiltersWidget = ({ onClickSearch }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const {
     onSelectDateRange,
     resetDatePicker,
@@ -49,6 +51,8 @@ const DepositsFiltersWidget = ({ onClickSearch }) => {
             onChange={handleDateChange}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
         <div style={classes.filterButtonContainerStyle}>

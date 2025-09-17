@@ -29,6 +29,8 @@ const PriceProfitHeaderWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const pickerRef = useRef(null);
 
   const handleSelect = (date) => {
@@ -95,6 +97,8 @@ const PriceProfitHeaderWidget = ({
             onSelect={handleSelect}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
         <GoMakeAutoComplate

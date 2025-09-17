@@ -150,6 +150,8 @@ const JobsFiltersSection = ({
   classes,
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   const filters: IFilterItem[] = [
     {
@@ -325,6 +327,8 @@ const JobsFiltersSection = ({
             onChange={onSelectDeliveryTimeDates}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
       ),
@@ -338,6 +342,8 @@ const JobsFiltersSection = ({
             onChange={onSelectDueTimeDates}
             value={fromDueDate && toDueDate ? [fromDueDate, toDueDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
       ),
@@ -353,6 +359,8 @@ const JobsFiltersSection = ({
               fromReadyDate && toReadyDate ? [fromReadyDate, toReadyDate] : null
             }
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
       ),

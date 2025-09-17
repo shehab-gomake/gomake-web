@@ -194,6 +194,8 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   classes,
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   // Check if there are active filters
   const hasActiveFilters =
@@ -532,6 +534,8 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
             onSelect={handleSelect}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
       ),
