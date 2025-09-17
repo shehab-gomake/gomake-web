@@ -25,13 +25,8 @@ import {
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useRef, useState } from "react";
-import { IconButton } from "@mui/material";
-import { GoMakeMenu } from "@/components";
-import { InputAdornment } from "@mui/material";
+import { useEffect, useRef } from "react";
 import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
-import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -303,12 +298,13 @@ const QuotesListPageWidget = ({
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
-  const { handlePageSizeChange: handleQuotesPageSizeChange } = useQuotes(documentType, isFromHomePage);
+  const { handlePageSizeChange: handleQuotesPageSizeChange } = useQuotes(
+    documentType,
+    isFromHomePage
+  );
 
   // Use page size of 10 for scheduled reports
   const scheduledReportsPageSize = 10;
-
-
 
   const {
     openDeliveryModal,
