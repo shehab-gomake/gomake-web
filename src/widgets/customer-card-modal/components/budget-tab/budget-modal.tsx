@@ -19,6 +19,8 @@ import { predefinedRanges } from "@/utils/dateRanges";
 3;
 const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const [formData, setFormData] = useState({
     name: "",
     isAmountWithVat: false,
@@ -142,6 +144,8 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
               : null
           }
           ranges={predefinedRanges}
+          placement={isRTL ? "bottomEnd" : "bottomStart"}
+          style={{ direction: dir }}
         />
 
         <GomakeTextInput

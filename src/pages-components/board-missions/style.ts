@@ -2,24 +2,33 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useIsMobile } from "@/hooks/use-responsive";
-import { convertWidthToVW } from "@/utils/adapter";
+import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
+  const { t } = useTranslation();
   const { theme, secondColor, errorColor, primaryColor } = useGomakeTheme();
   const isMobile = useIsMobile();
 
   const classes = useMemo(() => {
     return {
       mainContainer: {
+        // display: "flex",
+        // flexDirection: "column" as "column",
+        // alignItems: "flex-start",
+        // justifyContent: "flex-start",
+        // gap: 20,
+        // paddingLeft: 20,
+        // paddingRight: 20,
+        // height: "100%",
+        // overflowY: "auto" as "auto",
         display: "flex",
         flexDirection: "column" as "column",
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        gap: 20,
         paddingLeft: 20,
         paddingRight: 20,
         height: "100%",
-        overflowY: "auto" as "auto",
+        overflowY: "hidden" as "hidden",
+        gap: 10,
       },
       filtersContainer: {
         display: "flex",
@@ -95,11 +104,19 @@ const useStyle = () => {
       textInputStyle: {
         width: "100%",
         border: "none",
-        height: 45,
+        height: 40,
       },
       textInputForProductsStyle: {
         width: 350,
-        // border: "none",
+        border: "none",
+      },
+      searchInputStyle: {
+        borderRadius: "4px",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08);",
+        width: "100%",
+        border: "none",
+        height: "40px",
+        marginRight: "0px",
       },
       clearBtnStyle: {
         height: 40,
@@ -118,6 +135,10 @@ const useStyle = () => {
         width: 120,
         height: 120,
         color: errorColor(300),
+      },
+      iconStyle: {
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 10),
       },
       modalStyle: {
         width: isMobile ? "90vw" : "40%",
