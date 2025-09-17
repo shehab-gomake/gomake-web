@@ -293,6 +293,7 @@ const JobsFiltersSection = ({
                     ? { value: true, text: t("modal.yes") }
                     : { value: false, text: t("modal.no") }
                 }
+                withArrow={true}
               />
             ),
           },
