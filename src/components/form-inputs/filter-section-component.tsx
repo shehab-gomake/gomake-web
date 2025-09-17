@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IFilterItem {
   id: string;
@@ -23,11 +24,15 @@ const FilterSectionComponent = ({
   tableActionButtons,
 }: IEnhancedFilterSectionProps) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [showAll, setShowAll] = useState(false);
 
   const renderFilterGrid = () => {
-    const visibleFilters = showAll ? filters : filters.slice(0, 5);
-    const hasMoreFilters = filters.length > 5;
+    const maxVisibleFilters = isMobile ? 1 : 5;
+    const visibleFilters = showAll
+      ? filters
+      : filters.slice(0, maxVisibleFilters);
+    const hasMoreFilters = filters.length > maxVisibleFilters;
 
     return (
       <Grid container spacing={0.5} style={{ marginTop: 2 }}>
@@ -114,7 +119,7 @@ const FilterSectionComponent = ({
                                 fontWeight: 500,
                               }}
                             >
-                              +{filters.length - 5}
+                              +{filters.length - maxVisibleFilters}
                             </span>
                             <span style={{ fontSize: 10 }}>▼</span>
                           </>
