@@ -254,7 +254,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(
     isChangePriceForEditState
   );
-  console.log("subProducts", subProducts);
   const [isJobNameValue, setIsJobNameValue] = useState(false);
   const [saveCurrentStation, setSaveCurrentStation] = useState(false);
   const onClickCloseCurrentStationModal = () => {
@@ -3898,10 +3897,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ? await computeAverageInkLoadFromPdf(file)
                           : await computeAverageInkLoadFromImage(file);
 
-                        // Log for debugging
-                        console.log(`Calculated ink load for ${file.name}: ${inkLoad}%`);
-
-                        // Update the corresponding ColorsLoadAverage parameter
                         const code = parameter?.code === "ColorsLoadAverageSide2"
                           ? "ColorsLoadAverageSide2"
                           : "ColorsLoadAverage";
@@ -6867,7 +6862,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getProductCalculationExceptionById = async (materials, productItemCalculationExceptionId: string) => {
     const callBack = (res) => {
-      console.log("res", res);
       const updatedTemplate = updateIsHidden(res, subProducts);
       setDefaultProductTemplate(updatedTemplate);
       initQuoteItemProduct(updatedTemplate, materials);
@@ -7387,11 +7381,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const internalPagesNumberParam = getParameterByParameterCode(subProducts, "InternalPagesNumber");
   const printingSidesParam = getParameterByParameterCode(subProducts, "PrintingSides");
 
-  // Debug: Log all available parameter codes
-  console.log("Debug - All available parameter codes:",
-    subProducts?.flatMap(item => item.parameters?.map(p => p.parameterCode)).filter(Boolean)
-  );
-
   // Alternative search methods in case the exact codes don't match
   const internalPagesNumberParamAlt = subProducts?.flatMap(item => item.parameters)
     .find(p => p.parameterCode?.toLowerCase().includes("internalpages") ||
@@ -7401,9 +7390,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const printingSidesParamAlt = subProducts?.flatMap(item => item.parameters)
     .find(p => p.parameterCode?.toLowerCase().includes("printingsides") ||
       p.parameterCode?.toLowerCase().includes("printingside"));
-
-  console.log("Debug - Alternative internalPagesNumberParam:", internalPagesNumberParamAlt);
-  console.log("Debug - Alternative printingSidesParam:", printingSidesParamAlt);
 
   const addItemForQuotes = async () => {
     setLoadingWithLockScreen(true);

@@ -98,6 +98,7 @@ import { downloadPdf } from "@/utils/helpers";
 import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
 import { useListPagination } from "@/hooks/use-list-pagination";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
@@ -240,6 +241,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, []);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
+  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] = useState<boolean>(false);
+  const [openScheduledReportsModal, setOpenScheduledReportsModal] = useState<boolean>(false);
+
+  // Use the scheduled reports hook
+  const {
+    scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pageSize: scheduledReportsPageSize,
+    pagesCount: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
+    createScheduledReport,
+    getAllScheduledReports,
+    deleteScheduledReport,
+    toggleScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChange: handleScheduledReportsPageSizeChange,
+  } = useScheduledReports();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -355,8 +374,72 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenAddRule(false);
   };
   const onOpenAddRuleModal = () => {
+    // Check if there are active filters
+    const activeFilters = Object.keys(router.query).filter(
+      (key) => key !== "pageNumber"
+    );
+
+    if (activeFilters.length > 0) {
+      setOpenFilterConfirmationModal(true);
+    } else {
+      setOpenAddRule(true);
+    }
+  };
+
+  const onCloseFilterConfirmationModal = () => {
+    setOpenFilterConfirmationModal(false);
+  };
+
+  const onContinueWithFilters = () => {
     setOpenAddRule(true);
   };
+
+  const onResetFiltersAndGenerate = () => {
+    // Reset all filters
+    setPatternSearch("");
+    setStatusId(null);
+    setApprovalStatusId(null);
+    setCustomerId(null);
+    setAgentId(null);
+    setProductionStatus(null);
+    setAccountingStatus(null);
+    setDeliveryStatus(null);
+    setProductIds([]);
+    setCurrencyFilter(null);
+    setIsCanceledState(false);
+    setIsPausedOrders(false);
+    setMinPrice("");
+    setMaxPrice("");
+    setFromDate(null);
+    setToDate(null);
+    setPaymentType(null);
+
+    // Clear URL query parameters
+    router.push({
+      pathname: router.pathname,
+      query: {},
+    });
+
+    setOpenAddRule(true);
+  };
+
+  const onShowScheduledReports = () => {
+    setOpenScheduledReportsModal(true);
+    getAllScheduledReports(1, 10, docType); // Start with page 1 and page size 10, filter by document type
+  };
+
+  const onCloseScheduledReportsModal = () => {
+    setOpenScheduledReportsModal(false);
+  };
+
+  const onToggleScheduledReportActive = (id: string, isActive: boolean) => {
+    toggleScheduledReport(id, isActive);
+  };
+
+  const onDeleteScheduledReport = (id: string) => {
+    deleteScheduledReport(id);
+  };
+
   const handlePageSizeChange = (event) => {
     setPage(1);
     setPageSize(event.target.value);
@@ -2869,6 +2952,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [filterData, setFilterData] = useState({});
+  const [filterDTO, setFilterDTO] = useState({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -2918,7 +3002,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       JSON.stringify(filteredDataWithoutEmptyValues) !==
       JSON.stringify(filterData)
     ) {
+      const sortOrder = currentSortOrder;
+
       setFilterData(filteredDataWithoutEmptyValues);
+      setFilterDTO({
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+          order: sortOrder,
+        },
+        ...filteredDataWithoutEmptyValues,
+      })
     }
   }, [
     quoteStatusId,
@@ -2938,6 +3032,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     toDate,
     paymentType,
     currencyFilter,
+    currentSortOrder,
+    page,
+    pageSize,
   ]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
@@ -3963,6 +4060,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseAddRuleModal,
     onOpenAddRuleModal,
     openAddRule,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openScheduledReportsModal,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
     navigate,
     documentPath,
     resetDatePicker,
@@ -3993,6 +4099,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     open,
     anchorEl,
     filterData,
+    filterDTO,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
     selectedQuoteItemValue,
@@ -4114,6 +4221,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
+    scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pagesCountScheduledReports: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
+    createScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    scheduledReportsPageSize,
   };
 };
 

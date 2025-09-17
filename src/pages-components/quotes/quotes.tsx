@@ -25,7 +25,13 @@ import {
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import { useEffect, useRef } from "react";
+import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
+import { useEffect, useRef, useState } from "react";
+import { IconButton } from "@mui/material";
+import { GoMakeMenu } from "@/components";
+import { InputAdornment } from "@mui/material";
+import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -98,6 +104,15 @@ const QuotesListPageWidget = ({
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openScheduledReportsModal,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
     navigate,
     onClickQuotePdf,
     allQuotes,
@@ -147,6 +162,7 @@ const QuotesListPageWidget = ({
     open,
     anchorEl,
     filterData,
+    filterDTO,
     updateCancelQuote,
     openIrrelevantCancelModal,
     onClickCloseIrrelevantModal,
@@ -276,7 +292,24 @@ const QuotesListPageWidget = ({
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
+    scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    pageNumber: scheduledReportsPageNumber,
+    pagesCountScheduledReports: scheduledReportsPagesCount,
+    isLoading: scheduledReportsIsLoading,
+    createScheduledReport,
+    handlePageChange: handleScheduledReportsPageChange,
+    handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
   } = useQuotes(documentType, isFromHomePage);
+
+  // Get the main quotes pagination handler
+  const { handlePageSizeChange: handleQuotesPageSizeChange } = useQuotes(documentType, isFromHomePage);
+
+  // Use page size of 10 for scheduled reports
+  const scheduledReportsPageSize = 10;
+
+
+
   const {
     openDeliveryModal,
     onCloseDeliveryModal,
@@ -583,7 +616,7 @@ const QuotesListPageWidget = ({
                 query: { ...router.query, pageNumber: value },
               });
             }}
-            onChangePageSize={handlePageSizeChange}
+            onChangePageSize={handleQuotesPageSizeChange}
             page={page}
             setPage={setPage}
             pagesCount={pagesCount}
@@ -636,8 +669,38 @@ const QuotesListPageWidget = ({
           onCloseModal={onCloseAddRuleModal}
           isQuoteWidge={true}
           filterData={filterData}
+          filterDTO={filterDTO}
+          documentType={documentType}
+          onShowScheduledReports={onShowScheduledReports}
+          createScheduledReport={createScheduledReport}
         />
       )}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.list.filterConfirmationTitle")}
+        subTitle={t(" ")}
+        yesBtn={t("sales.list.continueWithCurrentFilters")}
+        cancelBtn={t("sales.list.resetFiltersAndGenerate")}
+        openModal={openFilterConfirmationModal}
+        onClose={onCloseFilterConfirmationModal}
+        onClickDelete={onContinueWithFilters}
+        onClickCancel={onResetFiltersAndGenerate}
+        style={{ width: "35%" }}
+      />
+      <ScheduledReportsTable
+        openModal={openScheduledReportsModal}
+        onCloseModal={onCloseScheduledReportsModal}
+        scheduledReports={scheduledReports || []}
+        totalCount={scheduledReportsTotalCount}
+        pageNumber={scheduledReportsPageNumber}
+        pageSize={scheduledReportsPageSize}
+        pagesCount={scheduledReportsPagesCount}
+        isLoading={scheduledReportsIsLoading}
+        onToggleActive={onToggleScheduledReportActive}
+        onDelete={onDeleteScheduledReport}
+        onPageChange={handleScheduledReportsPageChange}
+        onPageSizeChange={handleScheduledReportsPageSizeChange}
+      />
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}

@@ -13,13 +13,11 @@ import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
-import { EAdditionType, EParameterTypes } from "@/enums";
+import { DocumentTypeEnums, EAdditionType, EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
-import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { predefinedRanges } from "@/utils/dateRanges";
 
 const AddRuleModal = ({
   openModal,
@@ -37,12 +35,19 @@ const AddRuleModal = ({
   onCreate,
   isHotFolderWidget,
   getProductHotFolderRules,
+  documentType,
+  onShowScheduledReports,
+  createScheduledReport,
+  filterDTO,
+  boardMissionTableFilterDTO,
+  availableDateFilters = []
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
   const {
     rules,
+    propertieValue,
     machincesList,
     allMachincesList,
     productsStateValue,
@@ -101,6 +106,35 @@ const AddRuleModal = ({
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
+
+  // Get available date filters based on document type
+  const getAvailableDateFilters = () => {
+    // If availableDateFilters is passed as prop, use it
+    if (availableDateFilters && availableDateFilters.length > 0) {
+      return availableDateFilters;
+    }
+
+    const baseFilters = [
+      { label: t("sales.list.creationDate"), value: "creationDate" }
+    ];
+
+    switch (documentType) {
+      case "order":
+        return [
+          ...baseFilters,
+          { label: t("sales.list.dueDate"), value: "dueDate" },
+          { label: t("sales.list.readyDate"), value: "readyDate" }
+        ];
+      case "job":
+        return [
+          ...baseFilters,
+          { label: t("sales.list.dueDate"), value: "dueDate" },
+          { label: t("sales.list.readyDate"), value: "readyDate" }
+        ];
+      default:
+        return baseFilters;
+    }
+  };
 
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -402,17 +436,6 @@ const AddRuleModal = ({
             onChange={(e, value) => {
               setPropertieValue(value?.id);
             }}
-          />
-        </div>
-        <div style={clasess.statusFilterContainer}>
-          <h3 style={clasess.filterLabelStyle}>
-            {t("boardMissions.dateRange")}
-          </h3>
-          {/* <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} /> */}
-          <DateRangePicker
-            onChange={onSelectDeliveryTimeDates}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
           />
         </div>
       </div>
@@ -1059,12 +1082,20 @@ const AddRuleModal = ({
 
           <div style={clasess.btnContainer}>
             {isQuoteWidge && (
-              <GomakePrimaryButton
-                style={clasess.sendBtn}
-                onClick={onOpenScheduleModal}
-              >
-                {t("properties.scheduleSend")}
-              </GomakePrimaryButton>
+              <>
+                <GomakePrimaryButton
+                  style={clasess.sendBtn}
+                  onClick={onOpenScheduleModal}
+                >
+                  {t("properties.scheduleSend")}
+                </GomakePrimaryButton>
+                <GomakePrimaryButton
+                  style={clasess.sendBtn}
+                  onClick={onShowScheduledReports}
+                >
+                  {t("sales.list.scheduledReports")}
+                </GomakePrimaryButton>
+              </>
             )}
             <GomakePrimaryButton
               style={clasess.sendBtn}
@@ -1114,6 +1145,13 @@ const AddRuleModal = ({
         <ScheduleSendWidget
           openModal={openScheduleModal}
           onCloseModal={onCloseScheduleModal}
+          documentType={documentType}
+          availableDateFilters={availableDateFilters}
+          createScheduledReport={createScheduledReport}
+          filterData={filterDTO}
+          boardMissionTableFilterDTO={boardMissionTableFilterDTO}
+          rules={rules}
+          propertieValue={propertieValue}
         />
       </GoMakeModal>
     </>
