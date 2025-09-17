@@ -140,7 +140,15 @@ const useQuoteNew = ({
   const { primaryColor } = useGomakeTheme();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
-  const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
+
+  // Alert VAT Mismatch Modal state
+  const [openVatMismatchModal, setOpenVatMismatchModal] = useState(false);
+
+  const { getQuote, getAllClientContacts } = useQuoteGetData(
+    docType,
+    systemVAT,
+    setOpenVatMismatchModal
+  );
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
@@ -859,9 +867,6 @@ const useQuoteNew = ({
 
   const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
     useState(false);
-
-  // Alert VAT Mismatch Modal state
-  const [openVatMismatchModal, setOpenVatMismatchModal] = useState(false);
 
   const onCloseVatMismatchModal = () => {
     setOpenVatMismatchModal(false);

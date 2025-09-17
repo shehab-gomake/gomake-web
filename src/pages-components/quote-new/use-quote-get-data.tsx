@@ -39,10 +39,14 @@ import { validateUsAddressFields } from "@/utils/helpers";
 import { useTranslation } from "react-i18next";
 import { shouldReopenOrderModalState } from "@/store/order-modal-states";
 import { useButtonsContainer } from "@/widgets/quote-new/buttons-container/use-buttons-container";
-import {navStatusState, pageTitleState} from "@/store/nav-status";
-import {useDocumentTitle} from "@/pages-components/quote-new/use-document-title";
+import { navStatusState, pageTitleState } from "@/store/nav-status";
+import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 
-const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
+const useQuoteGetData = (
+  docType?: DOCUMENT_TYPE,
+  systemVAT?: number,
+  setOpenVatMismatchModal?: (open: boolean) => void
+) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
@@ -56,7 +60,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   } = useSnackBar();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const setPageTitle = useSetRecoilState(pageTitleState);
-  const {documentTitle} = useDocumentTitle(docType, router?.query?.isOutgoingPayments === "true")
+  const { documentTitle } = useDocumentTitle(
+    docType,
+    router?.query?.isOutgoingPayments === "true"
+  );
   const isUsAddress = !!CheckPreferenceValue(
     EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
   );
@@ -187,6 +194,18 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         if (res?.success) {
           const _data = res?.data?.data?.result || {};
           setQuoteItemValue(_data);
+          // Check if the client vat Exempt and show modal if needed
+          if (systemVAT && setOpenVatMismatchModal) {
+            const isNewCreation = router?.query?.isNewCreation === "true";
+            const isCorrectPage =
+              router.pathname === "/invoice" ||
+              router.pathname === "/deliveryNote";
+            const isVATMismatch = Math.abs(systemVAT - _data?.vat) > 0.001;
+
+            if (isNewCreation && isCorrectPage && isVATMismatch) {
+              setOpenVatMismatchModal(true);
+            }
+          }
         } else {
           alertFaultGetData();
         }
@@ -197,7 +216,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const callBack = (res) => {
           if (res?.success) {
             const _data = res?.data || {};
-            setPageTitle(documentTitle + " " +_data.number)
+            setPageTitle(documentTitle + " " + _data.number);
             setQuoteItemValue(_data);
           } else {
             alertFaultGetData();
@@ -212,10 +231,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
         const callBack = (res) => {
           if (res?.success) {
-            
             let indexs = 0;
             const _data = res?.data || {};
-            setPageTitle(documentTitle + " " +_data.number)
+            setPageTitle(documentTitle + " " + _data.number);
             const mapData = _data?.documentItems?.map((item, index) => {
               indexs++;
               const parentIndex = indexs;
