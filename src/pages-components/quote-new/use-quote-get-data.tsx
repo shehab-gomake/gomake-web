@@ -195,7 +195,7 @@ const useQuoteGetData = (
           const _data = res?.data?.data?.result || {};
           setQuoteItemValue(_data);
           // Check if the client vat Exempt and show modal if needed
-          if (systemVAT && setOpenVatMismatchModal) {
+          if (systemVAT && setOpenVatMismatchModal && _data?.client) {
             const isNewCreation = router?.query?.isNewCreation === "true";
             const isCorrectPage =
               router.pathname === "/invoice" ||
