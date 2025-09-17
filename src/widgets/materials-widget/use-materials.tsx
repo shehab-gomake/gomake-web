@@ -54,6 +54,7 @@ import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { EMaterialActiveFilter } from "./enums";
+import { ChildTableRow } from "./components/child-table-row/child-table-row";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -66,6 +67,8 @@ const useMaterials = (isAdmin: boolean) => {
     useRecoilState<
       { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
     >(materialHeadersState);
+
+  console.log("materialHeaders", materialHeaders);
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
@@ -229,6 +232,121 @@ const useMaterials = (isAdmin: boolean) => {
         const updatedArray = tableHeaders.filter(
           (item) => item.key !== "Active"
         );
+
+        // Add new headers for the new feature
+        const newHeaders = [
+          {
+            "key": "storageLocation",
+            "value": "Storage Location",
+            "unit": null,
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 6,
+            "filterType": null,
+            "values": [
+              { "key": "storage1", "value": "Storage 1" },
+              { "key": "storage2", "value": "Storage 2" },
+              { "key": "storage3", "value": "Storage 3" },
+              { "key": "storage4", "value": "Storage 4" },
+              { "key": "storage5", "value": "Storage 5" }
+            ]
+          },
+          {
+            "key": "minimalStock",
+            "value": "Minimal Stock (Meter)",
+            "unit": "m",
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 1,
+            "filterType": null,
+            "values": []
+          },
+          {
+            "key": "optimalStock",
+            "value": "Optimal Stock (Meter)",
+            "unit": "m",
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 1,
+            "filterType": null,
+            "values": []
+          }
+        ];
+
+        // Find the index of isOutSource to insert new headers before it
+        const isOutSourceIndex = updatedArray.findIndex(item => item.key === "isOutSource");
+
+        if (isOutSourceIndex !== -1) {
+          // Insert new headers before isOutSource
+          updatedArray.splice(isOutSourceIndex, 0, ...newHeaders);
+        } else {
+          // If isOutSource not found, add at the end
+          updatedArray.push(...newHeaders);
+        }
+
+        // Add headers after isOutSource
+        const afterOutSourceHeaders = [
+          {
+            "key": "suppliers",
+            "value": "Suppliers",
+            "unit": null,
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 7,
+            "filterType": null,
+            "values": []
+          },
+          {
+            "key": "inventory",
+            "value": "Inventory",
+            "unit": null,
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 8,
+            "filterType": null,
+            "values": []
+          },
+          {
+            "key": "purchasePricing",
+            "value": "Purchase Pricing",
+            "unit": null,
+            "isFilter": false,
+            "isForAdmin": null,
+            "isHideInDuplicate": null,
+            "isRequired": false,
+            "parameterId": null,
+            "inputType": 9,
+            "filterType": null,
+            "values": []
+          }
+        ];
+
+        // Find the index of isOutSource to insert headers after it
+        const isOutSourceIndexAfter = updatedArray.findIndex(item => item.key === "isOutSource");
+
+        if (isOutSourceIndexAfter !== -1) {
+          // Insert new headers after isOutSource
+          updatedArray.splice(isOutSourceIndexAfter + 1, 0, ...afterOutSourceHeaders);
+        } else {
+          // If isOutSource not found, add at the end
+          updatedArray.push(...afterOutSourceHeaders);
+        }
+
         setMaterialHeaders(updatedArray);
         setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
@@ -354,40 +472,49 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
   const tableRowsNew = useMemo(() => {
-    return materialCategoryData.map((dataRow) => {
+    const rows = [];
+
+    materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
-      return [
-        <Checkbox
-          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
-          checked={dataRow.checked}
-        />,
-        ...filteredHeaders.map((header) => (
-          <TableCellData
-            {...dataRow.rowData[header.key]}
-            id={dataRow.id}
+
+      // Main row
+      rows.push({
+        id: dataRow.id,
+        cells: [
+          <Checkbox
+            onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+            checked={dataRow.checked}
+          />,
+          ...filteredHeaders.map((header) => (
+            <TableCellData
+              {...dataRow.rowData[header.key]}
+              id={dataRow.id}
+              isAdmin={isAdmin}
+              unit={header.unit}
+              parameterKey={header.key}
+              onChangeRowCheckBox={onChangeRowCheckBox}
+            />
+          )),
+          dataRow?.isActive
+            ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+            : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+          <MaterialMenuWidget
+            dataRow={dataRow}
             isAdmin={isAdmin}
-            unit={header.unit}
-            parameterKey={header.key}
+            onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
             onChangeRowCheckBox={onChangeRowCheckBox}
-          />
-        )),
-        dataRow?.isActive
-          ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
-          : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
-        <MaterialMenuWidget
-          dataRow={dataRow}
-          isAdmin={isAdmin}
-          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onChangeRowCheckBox={onChangeRowCheckBox}
-          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
-            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
-          }
-          toggleIsActive={toggleIsActive}
-        />,
-      ];
+            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
+              onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
+            }
+            toggleIsActive={toggleIsActive}
+          />,
+        ]
+      });
     });
+
+    return rows;
   }, [
     materialHeaders,
     materialCategoryData,
@@ -545,6 +672,9 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    onChangeRowCheckBox,
+    onClickOpenDeleteTableRowModal,
+    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   };
 };
 

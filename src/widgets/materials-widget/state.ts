@@ -180,3 +180,8 @@ export const materialTypeTableState = atom<any>({
   key: "materialTypeTableState",
   default: {},
 });
+
+export const openChildTableState = atom<{ rowId: string; tableType: 'inventory' | 'purchasePricing' | null }>({
+  key: "openChildTableState",
+  default: { rowId: '', tableType: null },
+});

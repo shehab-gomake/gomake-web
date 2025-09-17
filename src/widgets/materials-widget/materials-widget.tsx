@@ -27,7 +27,7 @@ import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton, Stack, Box } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
@@ -35,6 +35,7 @@ import { useTableCellData } from "./components/table-cell-data/use-table-cell-da
 import { ModalType } from "@/enums";
 import { isLoadgingState, isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
+import { CombinedTable } from "./components/combined-table/combined-table";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -94,6 +95,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    onChangeRowCheckBox,
+    onClickOpenDeleteTableRowModal,
+    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   } = useMaterials(props.isAdmin);
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
@@ -127,6 +131,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   ];
 
   const { } = useGoMakeTour(materialsSteps, []);
+
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
@@ -270,22 +275,28 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                 >
                   <div>
                     {materialCategoryData.length > 0 ? (
-                      <Stack display={"grid"}>
-                        <PrimaryTable
-                          rows={tableRowsNew}
-                          headers={tableHeadersNew()}
-                        />
-                      </Stack>
+                      <CombinedTable
+                        headers={tableHeadersNew()}
+                        rows={tableRowsNew}
+                        isAdmin={props.isAdmin}
+                        onChangeRowCheckBox={onChangeRowCheckBox}
+                        onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+                        onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+                        toggleIsActive={toggleIsActive}
+                      />
                     ) : flag &&
                       materialCategories.find(
                         (category) => category.categoryKey === materialCategory
                       ).isDeletable ? (
-                      <Stack display={"grid"}>
-                        <PrimaryTable
-                          rows={tableRowsNew}
-                          headers={tableHeadersNew()}
-                        />
-                      </Stack>
+                      <CombinedTable
+                        headers={tableHeadersNew()}
+                        rows={tableRowsNew}
+                        isAdmin={props.isAdmin}
+                        onChangeRowCheckBox={onChangeRowCheckBox}
+                        onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+                        onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+                        toggleIsActive={toggleIsActive}
+                      />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>
                         {

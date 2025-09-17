@@ -106,7 +106,70 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       setIsLoadingMaterials(false);
       if (res.success) {
         setMaterialCategoryData(
-          res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
+          res.data?.result?.data?.map((row) => {
+            // Add mock data for new columns
+            const newRow = { ...row, checked: false };
+
+            // Add mock data for new columns if they don't exist
+            if (!newRow.rowData.storageLocation) {
+              newRow.rowData.storageLocation = {
+                value: "Storage 1",
+                isEditable: true,
+                type: 6, // LIST
+                values: [
+                  { key: "storage1", value: "Storage 1" },
+                  { key: "storage2", value: "Storage 2" },
+                  { key: "storage3", value: "Storage 3" },
+                  { key: "storage4", value: "Storage 4" },
+                  { key: "storage5", value: "Storage 5" }
+                ]
+              };
+            }
+
+            if (!newRow.rowData.minimalStock) {
+              newRow.rowData.minimalStock = {
+                value: "20",
+                isEditable: true,
+                type: 1, // NUMBER
+                unit: "m"
+              };
+            }
+
+            if (!newRow.rowData.optimalStock) {
+              newRow.rowData.optimalStock = {
+                value: "50",
+                isEditable: true,
+                type: 1, // NUMBER
+                unit: "m"
+              };
+            }
+
+            if (!newRow.rowData.suppliers) {
+              newRow.rowData.suppliers = {
+                value: "Fares, mohand, Aous",
+                isEditable: false,
+                type: 15, // SUPPLIERS
+              };
+            }
+
+            if (!newRow.rowData.inventory) {
+              newRow.rowData.inventory = {
+                value: "Open",
+                isEditable: false,
+                type: 16, // INVENTORY
+              };
+            }
+
+            if (!newRow.rowData.purchasePricing) {
+              newRow.rowData.purchasePricing = {
+                value: "Open",
+                isEditable: false,
+                type: 17, // PURCHASE_PRICING
+              };
+            }
+
+            return newRow;
+          })
         );
         setPagesCount(Math.ceil(res.data?.result?.totalItems / pageSize));
         const filters = res.data?.filters;

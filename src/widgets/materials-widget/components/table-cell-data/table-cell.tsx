@@ -14,6 +14,9 @@ import { MultiSelectList } from "./multi-select-list";
 import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
+import { SuppliersInput } from "./suppliers-input";
+import { InventoryInput } from "./inventory-input";
+import { PurchasePricingInput } from "./purchase-pricing-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
 
@@ -51,6 +54,7 @@ const TableCellData = ({
 
     }
   };
+  console.log("type", { type, value, parameterKey, id });
 
   switch (type) {
 
@@ -180,6 +184,29 @@ const TableCellData = ({
             label: item.name,
           }))}
           placeHolder={t("materials.inputs.selectNotebookType")}
+        />
+      );
+    case EDataTypeEnum.SUPPLIERS:
+      return (
+        <SuppliersInput
+          value={value as string}
+          isAdmin={isAdmin}
+        />
+      );
+    case EDataTypeEnum.INVENTORY:
+      return (
+        <InventoryInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.PURCHASE_PRICING:
+      return (
+        <PurchasePricingInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
         />
       );
     default:
