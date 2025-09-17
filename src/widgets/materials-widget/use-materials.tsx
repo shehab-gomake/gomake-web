@@ -256,7 +256,7 @@ const useMaterials = (isAdmin: boolean) => {
           },
           {
             "key": "minimalStock",
-            "value": "Minimal Stock (Meter)",
+            "value": "Minimal Stock",
             "unit": "m",
             "isFilter": false,
             "isForAdmin": null,
@@ -269,7 +269,7 @@ const useMaterials = (isAdmin: boolean) => {
           },
           {
             "key": "optimalStock",
-            "value": "Optimal Stock (Meter)",
+            "value": "Optimal Stock",
             "unit": "m",
             "isFilter": false,
             "isForAdmin": null,

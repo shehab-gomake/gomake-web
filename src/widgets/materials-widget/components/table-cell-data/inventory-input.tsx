@@ -80,7 +80,12 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
     };
 
     return (
-        <Box>
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%'
+        }}>
             <Button
                 variant="contained"
                 color="primary"

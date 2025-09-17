@@ -52,7 +52,12 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     };
 
     return (
-        <Box>
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%'
+        }}>
             <Button
                 variant="contained"
                 color="primary"

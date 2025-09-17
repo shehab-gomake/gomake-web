@@ -2,8 +2,6 @@ import React from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Checkbox } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { openChildTableState } from "../../state";
-import { TableCellData } from "../table-cell-data/table-cell";
-import { MaterialMenuWidget } from "../more-circle";
 import { useTranslation } from "react-i18next";
 
 // Mock data for inventory child table
@@ -114,30 +112,30 @@ const CombinedTable = ({
 
     const renderInventoryTable = () => (
         <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
-            <Table size="small" stickyHeader>
+            <Table size="small" stickyHeader sx={{ tableLayout: 'auto' }}>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>Supplier Name</TableCell>
-                        <TableCell>Code</TableCell>
-                        <TableCell>Purchase m² Price</TableCell>
-                        <TableCell>Purchase Roll Price</TableCell>
-                        <TableCell>Purchase Currency</TableCell>
-                        <TableCell>Sale m² Price (Base)</TableCell>
-                        <TableCell>Sale Roll Price (Base)</TableCell>
-                        <TableCell>Sale Currency</TableCell>
-                        <TableCell>Length Stock (m)</TableCell>
-                        <TableCell>Client</TableCell>
-                        <TableCell>Jobs</TableCell>
+                    <TableRow sx={{ backgroundColor: '#EBECFF' }}>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Supplier Name</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Code</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase m² Price</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase Roll Price</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase Currency</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Sale m² Price (Base)</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Sale Roll Price (Base)</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Sale Currency</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Length Stock (m)</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Client</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Jobs</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {mockInventoryData.map((row, index) => (
                         <TableRow key={index}>
-                            <TableCell>{row.supplierName}</TableCell>
-                            <TableCell>{row.code}</TableCell>
-                            <TableCell>{row.purchaseM2Price}</TableCell>
-                            <TableCell>{row.purchaseRollPrice}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.supplierName}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.code}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseM2Price}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseRollPrice}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
                                     sx={{
                                         backgroundColor: '#f5f5f5',
@@ -150,9 +148,9 @@ const CombinedTable = ({
                                     {row.purchaseCurrency}
                                 </Box>
                             </TableCell>
-                            <TableCell>{row.saleM2Price}</TableCell>
-                            <TableCell>{row.saleRollPrice}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.saleM2Price}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.saleRollPrice}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
                                     sx={{
                                         backgroundColor: '#f5f5f5',
@@ -165,9 +163,9 @@ const CombinedTable = ({
                                     {row.saleCurrency}
                                 </Box>
                             </TableCell>
-                            <TableCell>{row.lengthStock}</TableCell>
-                            <TableCell>{row.client}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.lengthStock}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.client}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
                                     sx={{
                                         border: '1px solid #ccc',
@@ -193,21 +191,21 @@ const CombinedTable = ({
 
     const renderPurchasePricingTable = () => (
         <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
-            <Table size="small" stickyHeader>
+            <Table size="small" stickyHeader sx={{ tableLayout: 'auto' }}>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>Purchase Order m² Cost</TableCell>
-                        <TableCell>Purchase Order Roll Cost</TableCell>
-                        <TableCell>Currency</TableCell>
-                        <TableCell>Supplying time (working Day)</TableCell>
+                    <TableRow sx={{ backgroundColor: '#EBECFF' }}>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase Order m² Cost</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase Order Roll Cost</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Currency</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Supplying time (working Day)</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {mockPurchasePricingData.map((row, index) => (
                         <TableRow key={index}>
-                            <TableCell>{row.purchaseOrderM2Cost}</TableCell>
-                            <TableCell>{row.purchaseOrderRollCost}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseOrderM2Cost}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseOrderRollCost}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
                                     sx={{
                                         backgroundColor: '#f5f5f5',
@@ -220,7 +218,7 @@ const CombinedTable = ({
                                     {row.currency}
                                 </Box>
                             </TableCell>
-                            <TableCell>{row.supplyingTime}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.supplyingTime}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -229,12 +227,23 @@ const CombinedTable = ({
     );
 
     return (
-        <TableContainer component={Paper}>
-            <Table>
+        <TableContainer component={Paper} sx={{ maxHeight: 750, width: '100%' }}>
+            <Table sx={{ tableLayout: 'auto' }}>
                 <TableHead>
-                    <TableRow>
+                    <TableRow sx={{ backgroundColor: '#EBECFF' }}>
                         {headers.map((header, index) => (
-                            <TableCell key={index}>{header}</TableCell>
+                            <TableCell
+                                key={index}
+                                sx={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold',
+                                    whiteSpace: 'nowrap',
+                                    padding: '12px 8px',
+                                    backgroundColor: '#EBECFF'
+                                }}
+                            >
+                                {header}
+                            </TableCell>
                         ))}
                     </TableRow>
                 </TableHead>
@@ -243,7 +252,16 @@ const CombinedTable = ({
                         <React.Fragment key={rowIndex}>
                             <TableRow>
                                 {row.cells.map((cell, cellIndex) => (
-                                    <TableCell key={cellIndex}>{cell}</TableCell>
+                                    <TableCell
+                                        key={cellIndex}
+                                        sx={{
+                                            textAlign: 'center',
+                                            padding: '12px 8px',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        {cell}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                             {/* Check if this row has an open child table */}

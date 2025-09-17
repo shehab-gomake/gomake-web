@@ -262,10 +262,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       >
         {
           isLoadingMaterials ?
-            <>
-              <Skeleton variant="rectangular" height={700} />
+            <div style={{ height: 795, width: "1500px" }}>
+              <Skeleton variant="rectangular" height={795} width="1500px" />
 
-            </> : <>
+            </div> : <>
               {materialCategory && (
                 <Stack
                   justifyContent={"space-between"}

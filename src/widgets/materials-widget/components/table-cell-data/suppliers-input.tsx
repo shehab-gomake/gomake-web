@@ -8,7 +8,13 @@ interface ISuppliersInputProps {
 
 const SuppliersInput = ({ value, isAdmin }: ISuppliersInputProps) => {
     return (
-        <Box sx={{ minWidth: '120px' }}>
+        <Box sx={{
+            minWidth: '120px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%'
+        }}>
             <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
                 {value || "—"}
             </Typography>
