@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Checkbox } from "@mui/material";
-import { useRecoilValue } from "recoil";
-import { openChildTableState } from "../../state";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { openChildTableState, openJobsModalState } from "../../state";
 import { useTranslation } from "react-i18next";
+import { JobsModal } from "../jobs-modal/jobs-modal";
 
 // Mock data for inventory child table
 const mockInventoryData = [
@@ -109,6 +110,21 @@ const CombinedTable = ({
 }: ICombinedTableProps) => {
     const { t } = useTranslation();
     const openChildTable = useRecoilValue(openChildTableState);
+    const jobsModal = useRecoilValue(openJobsModalState);
+    const setJobsModal = useSetRecoilState(openJobsModalState);
+
+    const handleOpenJobsModal = (supplierName: string, materialCode: string, materialName: string = "m1") => {
+        setJobsModal({
+            open: true,
+            supplierName,
+            materialCode,
+            materialName
+        });
+    };
+
+    const handleCloseJobsModal = () => {
+        setJobsModal({ open: false });
+    };
 
     const renderInventoryTable = () => (
         <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
@@ -167,6 +183,7 @@ const CombinedTable = ({
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.client}</TableCell>
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
+                                    onClick={() => handleOpenJobsModal(row.supplierName, row.code, "m1")}
                                     sx={{
                                         border: '1px solid #ccc',
                                         borderRadius: '4px',
@@ -227,59 +244,70 @@ const CombinedTable = ({
     );
 
     return (
-        <TableContainer component={Paper} sx={{ maxHeight: 750, width: '100%' }}>
-            <Table sx={{ tableLayout: 'auto' }}>
-                <TableHead>
-                    <TableRow sx={{ backgroundColor: '#EBECFF' }}>
-                        {headers.map((header, index) => (
-                            <TableCell
-                                key={index}
-                                sx={{
-                                    textAlign: 'center',
-                                    fontWeight: 'bold',
-                                    whiteSpace: 'nowrap',
-                                    padding: '12px 8px',
-                                    backgroundColor: '#EBECFF'
-                                }}
-                            >
-                                {header}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row, rowIndex) => (
-                        <React.Fragment key={rowIndex}>
-                            <TableRow>
-                                {row.cells.map((cell, cellIndex) => (
-                                    <TableCell
-                                        key={cellIndex}
-                                        sx={{
-                                            textAlign: 'center',
-                                            padding: '12px 8px',
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                    >
-                                        {cell}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                            {/* Check if this row has an open child table */}
-                            {openChildTable.rowId === row.id && (
+        <>
+            <TableContainer component={Paper} sx={{ maxHeight: 750, width: '100%' }}>
+                <Table sx={{ tableLayout: 'auto' }}>
+                    <TableHead>
+                        <TableRow sx={{ backgroundColor: '#EBECFF' }}>
+                            {headers.map((header, index) => (
+                                <TableCell
+                                    key={index}
+                                    sx={{
+                                        textAlign: 'center',
+                                        fontWeight: 'bold',
+                                        whiteSpace: 'nowrap',
+                                        padding: '12px 8px',
+                                        backgroundColor: '#EBECFF'
+                                    }}
+                                >
+                                    {header}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.map((row, rowIndex) => (
+                            <React.Fragment key={rowIndex}>
                                 <TableRow>
-                                    <TableCell colSpan={headers.length} sx={{ padding: 0, border: 'none' }}>
-                                        <Box sx={{ padding: '16px', backgroundColor: '#f8f9fa' }}>
-                                            {openChildTable.tableType === 'inventory' && renderInventoryTable()}
-                                            {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
-                                        </Box>
-                                    </TableCell>
+                                    {row.cells.map((cell, cellIndex) => (
+                                        <TableCell
+                                            key={cellIndex}
+                                            sx={{
+                                                textAlign: 'center',
+                                                padding: '12px 8px',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            {cell}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            )}
-                        </React.Fragment>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                                {/* Check if this row has an open child table */}
+                                {openChildTable.rowId === row.id && (
+                                    <TableRow>
+                                        <TableCell colSpan={headers.length} sx={{ padding: 0, border: 'none' }}>
+                                            <Box sx={{ padding: '16px', backgroundColor: '#f8f9fa' }}>
+                                                {openChildTable.tableType === 'inventory' && renderInventoryTable()}
+                                                {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {/* Jobs Modal */}
+            <JobsModal
+                open={jobsModal.open}
+                onClose={handleCloseJobsModal}
+                supplierName={jobsModal.supplierName}
+                materialCode={jobsModal.materialCode}
+                materialName={jobsModal.materialName}
+            />
+        </>
     );
 };
 

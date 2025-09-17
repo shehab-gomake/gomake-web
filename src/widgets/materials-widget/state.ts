@@ -185,3 +185,13 @@ export const openChildTableState = atom<{ rowId: string; tableType: 'inventory' 
   key: "openChildTableState",
   default: { rowId: '', tableType: null },
 });
+
+export const openJobsModalState = atom<{ 
+  open: boolean; 
+  supplierName?: string; 
+  materialCode?: string; 
+  materialName?: string; 
+}>({
+  key: "openJobsModalState",
+  default: { open: false },
+});
