@@ -111,7 +111,6 @@ export const useStepNavigation = (
         return true;
       } else if (currentStep === 6) {
         // Step 7 - Save or complete
-        console.log("Selected machines:", selectedMachines);
         return true;
       }
     },

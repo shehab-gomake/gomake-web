@@ -23,7 +23,6 @@ const useAddCategoryRow = (isAdmin: boolean) => {
 
 
     const onAddCategoryRow = async (dataRow) => {
-        console.log("dataRow", dataRow)
         const stringifiedDataRow = Object.fromEntries(
             Object.entries(dataRow).map(([key, value]) => {
                 // Check if the value is an array

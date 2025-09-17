@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType } from "@/enums";
+import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -58,6 +58,8 @@ import {
 import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
+import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
+import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -184,6 +186,30 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isJobsTableLoading,
     isJobsTableError,
     isSocketRefreshingJobs,
+    // Generate Report functions
+    onOpenAddRuleModal,
+    onCloseAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openAddRule,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    openScheduledReportsModal,
+    getAvailableDateFilters,
+    createScheduledReport,
+    // Scheduled Reports data
+    scheduledReports,
+    scheduledReportsTotalCount,
+    scheduledReportsIsLoading,
+    scheduledReportsPageNumber,
+    scheduledReportsPageSize,
+    scheduledReportsPagesCount,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    handleScheduledReportsPageChange,
+    handleScheduledReportsPageSizeChange,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -220,7 +246,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => {};
+        const callBack = (res) => { };
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -237,7 +263,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => {}, {
+        printNodeModalShowLog(callApi, () => { }, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -265,7 +291,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+        const res = await getJobsTableSettingsApi(callApi, () => { }, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -340,12 +366,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (k) => k !== "pageNumber" && k !== "pageSize"
                       ).length > 0 && (
-                        <div
-                          style={{ position: "absolute", top: -5, right: -1 }}
-                        >
-                          <DotIcon />
-                        </div>
-                      )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
@@ -468,8 +494,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                                   isPrintedState === null
                                     ? null
                                     : isPrintedState === true
-                                    ? { value: true, text: t("modal.yes") }
-                                    : { value: false, text: t("modal.no") }
+                                      ? { value: true, text: t("modal.yes") }
+                                      : { value: false, text: t("modal.no") }
                                 }
                               />
                             </div>
@@ -582,6 +608,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               )}
               {!isPurchaseJobs && (
                 <ExcelMenu
+                  onGenerateReportClick={onOpenAddRuleModal}
                   onExportTableClick={ExportJobsTableToExcel}
                   documentType={null}
                 />
@@ -674,12 +701,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -720,12 +747,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -784,7 +811,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {}}
+        onClose={() => { }}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -846,12 +873,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -883,11 +910,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -907,10 +934,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-                productType:
-                  pendingMarkReadyParams.productTypeName ||
-                  pendingMarkReadyParams.productType,
-              })
+              productType:
+                pendingMarkReadyParams.productTypeName ||
+                pendingMarkReadyParams.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
@@ -923,6 +950,79 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onCloseMarkReadyTypeModal}
         onClickYes={() => handleMarkReadyTypeChoice(true)}
         onClickNo={() => handleMarkReadyTypeChoice(false)}
+      />
+
+      {/* Generate Report Modals */}
+      {!isPurchaseJobs && (
+        <AddRuleModal
+          openModal={openAddRule}
+          onCloseModal={onCloseAddRuleModal}
+          isQuoteWidge={true}
+          filterData={{
+            customerId: customer?.id,
+            agentId: agent?.id,
+            statusId: status?.value,
+            orderStatus: orderStatus?.value,
+            productIds: productIds,
+            proofTypes: proofTypes,
+            isPrinted: isPrintedState,
+            fromDate: fromDate,
+            toDate: toDate,
+            fromDueDate: fromDueDate,
+            toDueDate: toDueDate,
+            fromReadyDate: fromReadyDate,
+            toReadyDate: toReadyDate,
+            patternSearch: patternSearch,
+          }}
+          boardMissionTableFilterDTO={{
+            customerId: customer?.id,
+            agentId: agent?.id,
+            statusId: status?.value,
+            orderStatus: orderStatus?.value,
+            productIds: productIds,
+            proofTypes: proofTypes,
+            isPrinted: isPrintedState,
+            fromDate: fromDate,
+            toDate: toDate,
+            fromDueDate: fromDueDate,
+            toDueDate: toDueDate,
+            fromReadyDate: fromReadyDate,
+            toReadyDate: toReadyDate,
+            patternSearch: patternSearch,
+          }}
+          documentType={DocumentTypeEnums.BoardMission}
+          availableDateFilters={getAvailableDateFilters()}
+          onShowScheduledReports={onShowScheduledReports}
+          createScheduledReport={createScheduledReport}
+        />
+      )}
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.list.filterConfirmationTitle")}
+        subTitle={t(" ")}
+        yesBtn={t("sales.list.continueWithCurrentFilters")}
+        cancelBtn={t("sales.list.resetFiltersAndGenerate")}
+        openModal={openFilterConfirmationModal}
+        onClose={onCloseFilterConfirmationModal}
+        onClickDelete={onContinueWithFilters}
+        onClickCancel={onResetFiltersAndGenerate}
+        style={{ width: "35%" }}
+      />
+
+      <ScheduledReportsTable
+        openModal={openScheduledReportsModal}
+        onCloseModal={onCloseScheduledReportsModal}
+        scheduledReports={scheduledReports}
+        totalCount={scheduledReportsTotalCount}
+        pageNumber={scheduledReportsPageNumber}
+        pageSize={scheduledReportsPageSize}
+        pagesCount={scheduledReportsPagesCount}
+        isLoading={scheduledReportsIsLoading}
+        onToggleActive={onToggleScheduledReportActive}
+        onDelete={onDeleteScheduledReport}
+        onPageChange={handleScheduledReportsPageChange}
+        onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
     </>
   );
