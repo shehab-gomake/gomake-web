@@ -133,9 +133,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const handleProofTypesChange = (selectedValues) => {
     setProofTypes(selectedValues);
   };
-  // const [patternSearch, setPatternSearch] = useState<string>("");
   const [patternSearch, setPatternSearch] = useState<any>(null);
-
+  const [finalPatternSearch, setFinalPatternSearch] = useState("");
   //DATE
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -153,7 +152,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const { GetDateFormat, formatISODateTime } = useDateFormat();
-  const [finalPatternSearch, setFinalPatternSearch] = useState("");
+
   const {
     pageSize,
     setPageSize,
@@ -381,9 +380,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const handleClickSearch = () => {
     const newQuery: Query = { ...router.query };
 
-    // Add search functionality
-    if (patternSearch && patternSearch.trim()) {
-      newQuery.finalPatternSearch = patternSearch.trim();
+    const trimmedSearch = patternSearch?.trim() || "";
+    setFinalPatternSearch(trimmedSearch);
+
+    if (trimmedSearch) {
+      newQuery.finalPatternSearch = trimmedSearch;
     } else {
       delete newQuery.finalPatternSearch;
     }

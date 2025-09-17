@@ -278,6 +278,9 @@ const JobsFiltersSection = ({
             label: t("boardMissions.isPrinted"),
             component: (
               <GoMakeAutoComplate
+                key={
+                  isPrintedState === null ? "null" : isPrintedState.toString()
+                }
                 options={[
                   { value: true, text: t("modal.yes") },
                   { value: false, text: t("modal.no") },
