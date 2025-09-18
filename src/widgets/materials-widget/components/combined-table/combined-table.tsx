@@ -6,59 +6,113 @@ import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { TableCellData } from "../table-cell-data/table-cell";
+import { EDataTypeEnum } from "../table-cell-data/data-type-enum";
 
 // Mock data for inventory child table
 const mockInventoryData = [
     {
-        supplierName: "Fares",
-        code: "1234",
-        purchaseM2Price: "0.070",
-        purchaseRollPrice: "5800",
-        purchaseCurrency: "Dollar",
-        saleM2Price: "0.080",
-        saleRollPrice: "5800",
-        saleCurrency: "Dollar",
-        lengthStock: "20",
-        client: "Tirapress",
+        id: "inv-1",
+        supplierName: { value: "Fares", type: EDataTypeEnum.STRING, isEditable: true },
+        code: { value: "1234", type: EDataTypeEnum.STRING, isEditable: true },
+        purchaseM2Price: { value: "0.070", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseRollPrice: { value: "5800", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        saleM2Price: { value: "0.080", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleRollPrice: { value: "5800", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        lengthStock: { value: "20", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "m" },
+        client: { value: "Tirapress", type: EDataTypeEnum.STRING, isEditable: true },
         jobs: "Show"
     },
     {
-        supplierName: "Fares",
-        code: "1234-B",
-        purchaseM2Price: "0.071",
-        purchaseRollPrice: "5750",
-        purchaseCurrency: "Dollar",
-        saleM2Price: "0.082",
-        saleRollPrice: "5750",
-        saleCurrency: "Dollar",
-        lengthStock: "12",
-        client: "BluePrint",
+        id: "inv-2",
+        supplierName: { value: "Fares", type: EDataTypeEnum.STRING, isEditable: true },
+        code: { value: "1234-B", type: EDataTypeEnum.STRING, isEditable: true },
+        purchaseM2Price: { value: "0.071", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseRollPrice: { value: "5750", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        saleM2Price: { value: "0.082", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleRollPrice: { value: "5750", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        lengthStock: { value: "12", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "m" },
+        client: { value: "BluePrint", type: EDataTypeEnum.STRING, isEditable: true },
         jobs: "Show"
     },
     {
-        supplierName: "mohand",
-        code: "7852",
-        purchaseM2Price: "0.073",
-        purchaseRollPrice: "5850",
-        purchaseCurrency: "Dollar",
-        saleM2Price: "0.080",
-        saleRollPrice: "5850",
-        saleCurrency: "Dollar",
-        lengthStock: "50",
-        client: "Tirapress",
+        id: "inv-3",
+        supplierName: { value: "mohand", type: EDataTypeEnum.STRING, isEditable: true },
+        code: { value: "7852", type: EDataTypeEnum.STRING, isEditable: true },
+        purchaseM2Price: { value: "0.073", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseRollPrice: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        saleM2Price: { value: "0.080", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleRollPrice: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        lengthStock: { value: "50", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "m" },
+        client: { value: "Tirapress", type: EDataTypeEnum.STRING, isEditable: true },
         jobs: "Show"
     },
     {
-        supplierName: "Aous",
-        code: "7852",
-        purchaseM2Price: "0.073",
-        purchaseRollPrice: "5850",
-        purchaseCurrency: "Dollar",
-        saleM2Price: "0.080",
-        saleRollPrice: "5850",
-        saleCurrency: "Dollar",
-        lengthStock: "50",
-        client: "—",
+        id: "inv-4",
+        supplierName: { value: "Aous", type: EDataTypeEnum.STRING, isEditable: true },
+        code: { value: "7852", type: EDataTypeEnum.STRING, isEditable: true },
+        purchaseM2Price: { value: "0.073", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseRollPrice: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        saleM2Price: { value: "0.080", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleRollPrice: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        saleCurrency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        lengthStock: { value: "50", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "m" },
+        client: { value: "—", type: EDataTypeEnum.STRING, isEditable: true },
         jobs: "Show"
     }
 ];
@@ -66,28 +120,56 @@ const mockInventoryData = [
 // Mock data for purchase pricing child table
 const mockPurchasePricingData = [
     {
-        purchaseOrderM2Cost: "0.070",
-        purchaseOrderRollCost: "5800",
-        currency: "Dollar",
-        supplyingTime: "5"
+        id: "pp-1",
+        purchaseOrderM2Cost: { value: "0.070", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseOrderRollCost: { value: "5800", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        currency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        supplyingTime: { value: "5", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "days" }
     },
     {
-        purchaseOrderM2Cost: "0.071",
-        purchaseOrderRollCost: "5750",
-        currency: "Dollar",
-        supplyingTime: "3"
+        id: "pp-2",
+        purchaseOrderM2Cost: { value: "0.071", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseOrderRollCost: { value: "5750", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        currency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        supplyingTime: { value: "3", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "days" }
     },
     {
-        purchaseOrderM2Cost: "0.073",
-        purchaseOrderRollCost: "5850",
-        currency: "Dollar",
-        supplyingTime: "7"
+        id: "pp-3",
+        purchaseOrderM2Cost: { value: "0.073", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseOrderRollCost: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        currency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        supplyingTime: { value: "7", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "days" }
     },
     {
-        purchaseOrderM2Cost: "0.073",
-        purchaseOrderRollCost: "5850",
-        currency: "Dollar",
-        supplyingTime: "4"
+        id: "pp-4",
+        purchaseOrderM2Cost: { value: "0.073", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        purchaseOrderRollCost: { value: "5850", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "$" },
+        currency: {
+            value: "Dollar", type: EDataTypeEnum.LIST, isEditable: true, values: [
+                { key: "dollar", value: "Dollar" },
+                { key: "euro", value: "Euro" },
+                { key: "pound", value: "Pound" }
+            ]
+        },
+        supplyingTime: { value: "4", type: EDataTypeEnum.NUMBER, isEditable: true, unit: "days" }
     }
 ];
 
@@ -172,43 +254,116 @@ const CombinedTable = ({
                 <TableBody>
                     {mockInventoryData.map((row, index) => (
                         <TableRow key={index}>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.supplierName}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.code}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseM2Price}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseRollPrice}</TableCell>
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                                <Box
-                                    sx={{
-                                        backgroundColor: '#f5f5f5',
-                                        borderRadius: '16px',
-                                        padding: '4px 8px',
-                                        display: 'inline-block',
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    {row.purchaseCurrency}
-                                </Box>
+                                <TableCellData
+                                    value={row.supplierName.value}
+                                    type={row.supplierName.type}
+                                    isEditable={row.supplierName.isEditable}
+                                    id={row.id}
+                                    parameterKey="supplierName"
+                                    isAdmin={isAdmin}
+                                />
                             </TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.saleM2Price}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.saleRollPrice}</TableCell>
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                                <Box
-                                    sx={{
-                                        backgroundColor: '#f5f5f5',
-                                        borderRadius: '16px',
-                                        padding: '4px 8px',
-                                        display: 'inline-block',
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    {row.saleCurrency}
-                                </Box>
+                                <TableCellData
+                                    value={row.code.value}
+                                    type={row.code.type}
+                                    isEditable={row.code.isEditable}
+                                    id={row.id}
+                                    parameterKey="code"
+                                    isAdmin={isAdmin}
+                                />
                             </TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.lengthStock}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.client}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.purchaseM2Price.value}
+                                    type={row.purchaseM2Price.type}
+                                    isEditable={row.purchaseM2Price.isEditable}
+                                    unit={row.purchaseM2Price.unit}
+                                    id={row.id}
+                                    parameterKey="purchaseM2Price"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.purchaseRollPrice.value}
+                                    type={row.purchaseRollPrice.type}
+                                    isEditable={row.purchaseRollPrice.isEditable}
+                                    unit={row.purchaseRollPrice.unit}
+                                    id={row.id}
+                                    parameterKey="purchaseRollPrice"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.purchaseCurrency.value}
+                                    type={row.purchaseCurrency.type}
+                                    isEditable={row.purchaseCurrency.isEditable}
+                                    values={row.purchaseCurrency.values}
+                                    id={row.id}
+                                    parameterKey="purchaseCurrency"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.saleM2Price.value}
+                                    type={row.saleM2Price.type}
+                                    isEditable={row.saleM2Price.isEditable}
+                                    unit={row.saleM2Price.unit}
+                                    id={row.id}
+                                    parameterKey="saleM2Price"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.saleRollPrice.value}
+                                    type={row.saleRollPrice.type}
+                                    isEditable={row.saleRollPrice.isEditable}
+                                    unit={row.saleRollPrice.unit}
+                                    id={row.id}
+                                    parameterKey="saleRollPrice"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.saleCurrency.value}
+                                    type={row.saleCurrency.type}
+                                    isEditable={row.saleCurrency.isEditable}
+                                    values={row.saleCurrency.values}
+                                    id={row.id}
+                                    parameterKey="saleCurrency"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.lengthStock.value}
+                                    type={row.lengthStock.type}
+                                    isEditable={row.lengthStock.isEditable}
+                                    unit={row.lengthStock.unit}
+                                    id={row.id}
+                                    parameterKey="lengthStock"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.client.value}
+                                    type={row.client.type}
+                                    isEditable={row.client.isEditable}
+                                    id={row.id}
+                                    parameterKey="client"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                                 <Box
-                                    onClick={() => handleOpenJobsModal(row.supplierName, row.code, "m1")}
+                                    onClick={() => handleOpenJobsModal(row.supplierName.value, row.code.value, "m1")}
                                     sx={{
                                         border: '1px solid #ccc',
                                         borderRadius: '4px',
@@ -245,22 +400,50 @@ const CombinedTable = ({
                 <TableBody>
                     {mockPurchasePricingData.map((row, index) => (
                         <TableRow key={index}>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseOrderM2Cost}</TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.purchaseOrderRollCost}</TableCell>
                             <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                                <Box
-                                    sx={{
-                                        backgroundColor: '#f5f5f5',
-                                        borderRadius: '16px',
-                                        padding: '4px 8px',
-                                        display: 'inline-block',
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    {row.currency}
-                                </Box>
+                                <TableCellData
+                                    value={row.purchaseOrderM2Cost.value}
+                                    type={row.purchaseOrderM2Cost.type}
+                                    isEditable={row.purchaseOrderM2Cost.isEditable}
+                                    unit={row.purchaseOrderM2Cost.unit}
+                                    id={row.id}
+                                    parameterKey="purchaseOrderM2Cost"
+                                    isAdmin={isAdmin}
+                                />
                             </TableCell>
-                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>{row.supplyingTime}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.purchaseOrderRollCost.value}
+                                    type={row.purchaseOrderRollCost.type}
+                                    isEditable={row.purchaseOrderRollCost.isEditable}
+                                    unit={row.purchaseOrderRollCost.unit}
+                                    id={row.id}
+                                    parameterKey="purchaseOrderRollCost"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.currency.value}
+                                    type={row.currency.type}
+                                    isEditable={row.currency.isEditable}
+                                    values={row.currency.values}
+                                    id={row.id}
+                                    parameterKey="currency"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
+                            <TableCell sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                                <TableCellData
+                                    value={row.supplyingTime.value}
+                                    type={row.supplyingTime.type}
+                                    isEditable={row.supplyingTime.isEditable}
+                                    unit={row.supplyingTime.unit}
+                                    id={row.id}
+                                    parameterKey="supplyingTime"
+                                    isAdmin={isAdmin}
+                                />
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
