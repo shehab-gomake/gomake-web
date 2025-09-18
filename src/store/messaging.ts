@@ -8,7 +8,7 @@ import {
 } from '@/widgets/frontdesk/providers/internal/types';
 
 // Connection state
-export const messagingConnectionState = atom<'connecting' | 'connected' | 'disconnected' | 'error'>({
+export const messagingConnectionState = atom<any>({
   key: 'messagingConnectionState',
   default: 'disconnected'
 });
