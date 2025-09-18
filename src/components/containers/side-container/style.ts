@@ -27,6 +27,7 @@ const useStyle = () => {
         display: "flex",
         gap: 26,
         padding: 20,
+        paddingBottom: 0,
         minHeight: "100%",
         // maxHeight: 715,
         position: "relative" as "relative",

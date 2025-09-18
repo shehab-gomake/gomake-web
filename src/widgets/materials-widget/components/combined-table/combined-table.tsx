@@ -8,6 +8,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { EDataTypeEnum } from "../table-cell-data/data-type-enum";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 // Mock data for inventory child table
 const mockInventoryData = [
@@ -193,6 +194,7 @@ const CombinedTable = ({
     toggleIsActive
 }: ICombinedTableProps) => {
     const { t } = useTranslation();
+    const { secondColor } = useGomakeTheme();
     const openChildTable = useRecoilValue(openChildTableState);
     const jobsModal = useRecoilValue(openJobsModalState);
     const setJobsModal = useSetRecoilState(openJobsModalState);
@@ -228,9 +230,9 @@ const CombinedTable = ({
                                         size="small"
                                         onClick={handleOpenAddSupplierModal}
                                         sx={{
-                                            color: '#9c27b0',
+                                            color: secondColor(500),
                                             '&:hover': {
-                                                backgroundColor: '#f3e5f5',
+                                                backgroundColor: secondColor(10),
                                             }
                                         }}
                                     >
