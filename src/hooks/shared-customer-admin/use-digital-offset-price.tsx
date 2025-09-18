@@ -3988,7 +3988,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         : { ...clasess.parameterContainer, position: "relative" }
                     }
                   >
-                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, left: 0, height: 30 }}>
+                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, insetInlineStart: 0, height: 30 }}>
                       {t("products.offsetPrice.admin.numberOfPapers")}
                     </div>
                     <div
