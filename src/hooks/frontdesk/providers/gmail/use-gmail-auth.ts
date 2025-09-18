@@ -30,6 +30,17 @@ export const useGmailAuth = () => {
       console.log("Gmail profile response status:", response.status);
 
       if (!response.ok) {
+        // Don't throw error for 404s to reduce noise, just set disconnected state
+        if (response.status === 404) {
+          console.warn('Gmail profile endpoint not found - messaging service may not be running');
+          setConnectionState({
+            connected: false,
+            email: undefined,
+            loading: false,
+            error: 'Gmail service not available',
+          });
+          return;
+        }
         throw new Error(`Failed to check connection: ${response.status}`);
       }
 
@@ -52,13 +63,24 @@ export const useGmailAuth = () => {
         }));
       }
     } catch (err: any) {
-      console.error("Error checking Gmail connection:", err);
-      setConnectionState({
-        connected: false,
-        email: undefined,
-        loading: false,
-        error: err.message || "Failed to check connection status",
-      });
+      // Handle network errors more gracefully
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        console.warn("Gmail messaging service appears to be unavailable:", err.message);
+        setConnectionState({
+          connected: false,
+          email: undefined,
+          loading: false,
+          error: "Gmail service unavailable",
+        });
+      } else {
+        console.error("Error checking Gmail connection:", err);
+        setConnectionState({
+          connected: false,
+          email: undefined,
+          loading: false,
+          error: err.message || "Failed to check connection status",
+        });
+      }
     }
   }, [setConnectionState]);
 
@@ -246,6 +268,13 @@ export const useGmailAuth = () => {
 
   // Check connection on component mount with debounce to prevent duplicate calls
   useEffect(() => {
+    // Only check connection if messaging service URL is configured
+    const messagingServiceUrl = process.env.NEXT_PUBLIC_MESSAGING_SERVICE_URL;
+    if (!messagingServiceUrl) {
+      console.warn('NEXT_PUBLIC_MESSAGING_SERVICE_URL not configured, skipping Gmail connection check');
+      return;
+    }
+
     const timeoutId = setTimeout(() => {
       checkConnection();
     }, 100); // Small delay to let other auth calls complete first

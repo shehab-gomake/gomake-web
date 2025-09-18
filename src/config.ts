@@ -9,6 +9,8 @@ if (getConfig()) {
       publicRuntimeConfig.API_SERVER || serverRuntimeConfig.API_SERVER,
     erp_server:
       publicRuntimeConfig.ERP_SERVER || serverRuntimeConfig.ERP_SERVER,
+    messaging_server:
+      publicRuntimeConfig.MESSAGING_SERVER || serverRuntimeConfig.MESSAGING_SERVER || publicRuntimeConfig.API_SERVER || serverRuntimeConfig.API_SERVER,
     calculation_server:
       publicRuntimeConfig.CALCAULATION_SERVER ||
       serverRuntimeConfig.CALCAULATION_SERVER,
