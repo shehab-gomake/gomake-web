@@ -1,9 +1,11 @@
 import React from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Checkbox } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, openJobsModalState } from "../../state";
+import { openChildTableState, openJobsModalState, openAddSupplierModalState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
+import { IconButton, Tooltip } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 // Mock data for inventory child table
 const mockInventoryData = [
@@ -112,6 +114,7 @@ const CombinedTable = ({
     const openChildTable = useRecoilValue(openChildTableState);
     const jobsModal = useRecoilValue(openJobsModalState);
     const setJobsModal = useSetRecoilState(openJobsModalState);
+    const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
 
     const handleOpenJobsModal = (supplierName: string, materialCode: string, materialName: string = "m1") => {
         setJobsModal({
@@ -126,12 +129,34 @@ const CombinedTable = ({
         setJobsModal({ open: false });
     };
 
+    const handleOpenAddSupplierModal = () => {
+        setOpenAddSupplierModal(true);
+    };
+
     const renderInventoryTable = () => (
         <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
             <Table size="small" stickyHeader sx={{ tableLayout: 'auto' }}>
                 <TableHead>
                     <TableRow sx={{ backgroundColor: '#EBECFF' }}>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Supplier Name</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                                Supplier Name
+                                <Tooltip title="Add Supplier">
+                                    <IconButton
+                                        size="small"
+                                        onClick={handleOpenAddSupplierModal}
+                                        sx={{
+                                            color: '#9c27b0',
+                                            '&:hover': {
+                                                backgroundColor: '#f3e5f5',
+                                            }
+                                        }}
+                                    >
+                                        <AddIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </TableCell>
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Code</TableCell>
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase m² Price</TableCell>
                         <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', backgroundColor: '#EBECFF' }}>Purchase Roll Price</TableCell>
