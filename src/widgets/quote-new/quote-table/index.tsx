@@ -16,13 +16,12 @@ import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 import { NotCalculatingIcon } from "@/icons";
-import {
-  ECalculationStatus,
-  ShowPricesEnum,
-} from "@/enums";
+import { ECalculationStatus, ShowPricesEnum } from "@/enums";
 import { CalculatingIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { DebtRowMappingWidget } from "./debt-row-mapping";
+import { InlineAddItemRow } from "./inline-add-item-row";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -50,6 +49,18 @@ const QuoteForPriceTable = ({
   const { t } = useTranslation();
   let indexs = 0;
   const { classes } = useStyle({ headerHeight });
+  const isQuote = documentType === DOCUMENT_TYPE.quote;
+  const isOrder = documentType === DOCUMENT_TYPE.order;
+  const [isInlineRowCollapsed, setIsInlineRowCollapsed] = useState(false);
+
+  useEffect(() => {
+    if ((isQuote || isOrder) && !isQuoteConfirmation) {
+      // If there are items, start collapsed (show button to expand)
+      // If there are no items, start expanded (show inline row)
+      setIsInlineRowCollapsed(documentItems && documentItems.length > 0);
+    }
+  }, [documentItems, documentType, isQuote, isOrder, isQuoteConfirmation]);
+
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -65,7 +76,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-    {}
+      {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -74,19 +85,21 @@ const QuoteForPriceTable = ({
       [parentIndex]: !prev[parentIndex], // Toggle the visibility
     }));
   };
-  const [itemPriceList, setItemPriceList] = useState(documentItems)
+
+  const [itemPriceList, setItemPriceList] = useState(documentItems);
+
   useEffect(() => {
-    setItemPriceList(documentItems)
-  }, [documentItems])
+    setItemPriceList(documentItems);
+  }, [documentItems]);
+
   const updateItemStatus = (itemId, newStatus) => {
-    setItemPriceList(prevItems =>
-      prevItems.map(item =>
-        item.id === itemId
-          ? { ...item, calculationStatus: newStatus }
-          : item
+    setItemPriceList((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, calculationStatus: newStatus } : item
       )
     );
   };
+
   const _renderIconcalculationStatus = (item, setItemStatus) => {
     if (item?.calculationStatus === ECalculationStatus.Calculating) {
       return (
@@ -106,16 +119,18 @@ const QuoteForPriceTable = ({
             color: "#344054",
           }}
         >
-          <Tooltip title={
-            <>
-              {item?.exceptionsKey?.map((key, index) => (
-                <React.Fragment key={index}>
-                  {t(`CalculationExceptions.${key}`)}
-                  {index < item.exceptionsKey.length - 1 && <br />}
-                </React.Fragment>
-              ))}
-            </>
-          }>
+          <Tooltip
+            title={
+              <>
+                {item?.exceptionsKey?.map((key, index) => (
+                  <React.Fragment key={index}>
+                    {t(`CalculationExceptions.${key}`)}
+                    {index < item.exceptionsKey.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </>
+            }
+          >
             <IconButton style={{ padding: 0 }}>
               <NotCalculatingIcon />
             </IconButton>
@@ -141,7 +156,6 @@ const QuoteForPriceTable = ({
     }
   };
 
-
   const tableContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -150,6 +164,14 @@ const QuoteForPriceTable = ({
         tableContainerRef.current.scrollHeight;
     }
   }, [documentItems?.length]);
+
+  const handleInlineCancelAdd = () => {
+    setIsInlineRowCollapsed(true);
+  };
+
+  const handleShowInlineAddRow = () => {
+    setIsInlineRowCollapsed(false);
+  };
 
   return (
     <div>
@@ -268,6 +290,24 @@ const QuoteForPriceTable = ({
                 </>
               );
             })}
+
+            {/* Inline Add Item Row */}
+            {(isQuote || isOrder) && !isQuoteConfirmation && (
+              <InlineAddItemRow
+                columnWidths={columnWidths}
+                headerHeight={headerHeight}
+                onCancel={handleInlineCancelAdd}
+                documentType={documentType}
+                getCalculateQuoteItem={getCalculateQuoteItem}
+                quoteItemValue={quoteItems}
+                setQuoteItemValue={changeQuoteItems}
+                rowNumber={indexs + 1}
+                isInlineRowCollapsed={isInlineRowCollapsed}
+                documentItems={documentItems}
+                handleShowInlineAddRow={handleShowInlineAddRow}
+                getQuote={getQuote}
+              />
+            )}
           </TableBody>
         </Table>
       </TableContainer>
