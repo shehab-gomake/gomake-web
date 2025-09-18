@@ -5,7 +5,8 @@ import {
   Stack,
   Avatar,
   Paper,
-  Chip
+  Chip,
+  CircularProgress
 } from '@mui/material';
 import { Message } from '../types';
 
@@ -14,6 +15,7 @@ interface MessageListProps {
   currentUserId?: string;
   typingUsers: string[];
   userPresence: Record<string, any>;
+  isLoadingHistory?: boolean;
 }
 
 interface MessageBubbleProps {
@@ -31,13 +33,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isOwn, showAvata
 
   const getDisplayName = () => {
     if (isOwn) return 'You';
-    return message.userName || `${userPresence[message.userId]?.firstName || ''} ${userPresence[message.userId]?.lastName || ''}`.trim() || message.userEmail;
+    return message.userName ||
+           `${userPresence[message.userId]?.firstName || ''} ${userPresence[message.userId]?.lastName || ''}`.trim() ||
+           message.userEmail ||
+           'Unknown User';
   };
 
   const getInitials = () => {
-    if (isOwn) return 'You';
+    if (isOwn) return 'Y';
     const name = getDisplayName();
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    if (!name || name === 'Unknown User') return 'U';
+    return name.split(' ').map(n => n[0]).filter(Boolean).join('').toUpperCase().slice(0, 2) || 'U';
   };
 
   return (
@@ -159,7 +165,8 @@ export const MessageList: React.FC<MessageListProps> = ({
   messages,
   currentUserId,
   typingUsers,
-  userPresence
+  userPresence,
+  isLoadingHistory = false
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -181,6 +188,27 @@ export const MessageList: React.FC<MessageListProps> = ({
     groups.push({ message, showAvatar });
     return groups;
   }, []);
+
+  if (isLoadingHistory) {
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 4
+        }}
+      >
+        <Stack alignItems="center" spacing={2}>
+          <CircularProgress size={32} />
+          <Typography variant="body2" sx={{ color: '#6B7280' }}>
+            Loading message history...
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
 
   if (messages.length === 0 && typingUsers.length === 0) {
     return (

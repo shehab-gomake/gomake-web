@@ -16,7 +16,8 @@ import {
   messagingDraftState,
   messagingErrorState,
   messagingIsLoadingState,
-  messagingIsSendingState
+  messagingIsSendingState,
+  messagingIsLoadingHistoryState
 } from '@/store/messaging';
 import {
   Message,
@@ -45,6 +46,7 @@ export const useMessaging = () => {
   const setError = useSetRecoilState(messagingErrorState);
   const [isLoading, setIsLoading] = useRecoilState(messagingIsLoadingState);
   const [isSending, setIsSending] = useRecoilState(messagingIsSendingState);
+  const [isLoadingHistory, setIsLoadingHistory] = useRecoilState(messagingIsLoadingHistoryState);
 
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -146,6 +148,30 @@ export const useMessaging = () => {
     }
   }, [activeChannelId, currentUser, setIsSending, setError, setDraft, setMessages]);
 
+  // Load message history for a channel
+  const loadMessageHistory = useCallback(async (channelId: string) => {
+    try {
+      setIsLoadingHistory(true);
+      setError(null);
+
+      const historyResponse = await messagingService.fetchChannelMessages(channelId, { limit: 50, offset: 0 });
+
+      if (historyResponse.messages) {
+        setMessages(prev => ({
+          ...prev,
+          [channelId]: historyResponse.messages
+        }));
+      }
+
+      console.log(`Loaded ${historyResponse.messages.length} historical messages for channel ${channelId}`);
+    } catch (error: any) {
+      console.error('Failed to load message history:', error);
+      setError(error.message || 'Failed to load message history');
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, [setIsLoadingHistory, setError, setMessages]);
+
   // Join channel
   const joinChannel = useCallback(async (channelId: string) => {
     try {
@@ -155,11 +181,17 @@ export const useMessaging = () => {
 
       // Clear unread count for this channel
       setUnreadCounts(prev => ({ ...prev, [channelId]: 0 }));
+
+      // Load message history for this channel if we don't have messages yet
+      const currentMessages = messages[channelId] || [];
+      if (currentMessages.length === 0) {
+        await loadMessageHistory(channelId);
+      }
     } catch (error: any) {
       console.error('Failed to join channel:', error);
       setError(error.message || 'Failed to join channel');
     }
-  }, [setError, setActiveChannelId, setUnreadCounts]);
+  }, [setError, setActiveChannelId, setUnreadCounts, messages, loadMessageHistory]);
 
   // Leave channel
   const leaveChannel = useCallback(async (channelId: string) => {
@@ -435,6 +467,7 @@ export const useMessaging = () => {
     connected,
     connectionStatus,
     isLoading,
+    isLoadingHistory,
     error: useRecoilValue(messagingErrorState),
 
     // Data
@@ -459,6 +492,7 @@ export const useMessaging = () => {
     sendMessage,
     joinChannel,
     leaveChannel,
+    loadMessageHistory,
     startTyping,
     stopTyping,
     updateDraft,

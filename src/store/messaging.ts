@@ -103,3 +103,8 @@ export const messagingIsSendingState = atom<boolean>({
   key: 'messagingIsSendingState',
   default: false
 });
+
+export const messagingIsLoadingHistoryState = atom<boolean>({
+  key: 'messagingIsLoadingHistoryState',
+  default: false
+});

@@ -244,6 +244,68 @@ export class MessagingService {
     });
   }
 
+  // HTTP REST endpoint to fetch channel message history
+  async fetchChannelMessages(channelId: string, options: { limit?: number; offset?: number } = {}): Promise<{ messages: Message[]; hasMore?: boolean; total?: number }> {
+    const { limit = 50, offset = 0 } = options;
+    const token = getUserToken();
+
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+
+    const params = new URLSearchParams();
+    if (limit) params.append('limit', limit.toString());
+    if (offset) params.append('offset', offset.toString());
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const url = `${this.serverUrl}/messages/channel/${encodeURIComponent(channelId)}${queryString}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Handle the direct response from backend
+      if (data && Array.isArray(data)) {
+        // If direct array response
+        return {
+          messages: data,
+          hasMore: false,
+          total: data.length
+        };
+      } else if (data.success !== false && data.messages && Array.isArray(data.messages)) {
+        // If wrapped in success response
+        return {
+          messages: data.messages,
+          hasMore: data.hasMore || false,
+          total: data.total || data.messages.length
+        };
+      } else if (data.success && data.data && Array.isArray(data.data)) {
+        // If wrapped in data property
+        return {
+          messages: data.data,
+          hasMore: data.hasMore || false,
+          total: data.total || data.data.length
+        };
+      } else {
+        throw new Error(data.message || data.error || 'Failed to fetch channel messages');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch channel messages:', error);
+      throw error;
+    }
+  }
+
   // Event listeners
   onNewMessage(handler: MessageEventHandler): void {
     if (this.socket) {

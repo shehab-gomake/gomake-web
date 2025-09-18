@@ -13,6 +13,7 @@ const InternalProviderView: React.FC = () => {
     connected,
     connectionStatus,
     isLoading,
+    isLoadingHistory,
     error,
     currentUser,
     activeChannelId,
@@ -35,6 +36,7 @@ const InternalProviderView: React.FC = () => {
       connected,
       connectionStatus,
       isLoading,
+      isLoadingHistory,
       error,
       currentUser,
       activeChannelId,
@@ -42,11 +44,31 @@ const InternalProviderView: React.FC = () => {
       onlineUsersCount: onlineUsers.length,
       userPresenceCount: Object.keys(userPresence).length
     });
-  }, [connected, connectionStatus, isLoading, error, currentUser, activeChannelId, messages, onlineUsers, userPresence]);
+  }, [connected, connectionStatus, isLoading, isLoadingHistory, error, currentUser, activeChannelId, messages, onlineUsers, userPresence]);
 
   const handleChannelSelect = useCallback((channelId: string) => {
     joinChannel(channelId);
   }, [joinChannel]);
+
+  const getSeverity = useCallback((status: typeof connectionStatus) => {
+    switch (status) {
+      case 'connected': return 'success';
+      case 'connecting': return 'info';
+      case 'error': return 'error';
+      default: return 'warning';
+    }
+  }, []);
+
+  const getStatusMessage = useCallback((status: typeof connectionStatus) => {
+    switch (status) {
+      case 'connected':
+        return `Connected to internal messaging service${currentUser ? ` as ${currentUser.name || currentUser.email}` : ''}`;
+      case 'connecting':
+        return 'Connecting to messaging service...';
+      default:
+        return `Disconnected from messaging service${error ? `: ${error}` : ''}`;
+    }
+  }, [currentUser, error]);
 
   const handleSendMessage = useCallback(async (content: string) => {
     await sendMessage(content);
@@ -180,9 +202,9 @@ const InternalProviderView: React.FC = () => {
     <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
       {/* Connection status */}
       <Alert
-        severity={connected ? "success" : connectionStatus === 'connecting' ? "info" : "warning"}
+        severity={getSeverity(connectionStatus)}
         action={
-          !connected && (
+          connectionStatus !== 'connected' && (
             <Button
               size="small"
               variant="outlined"
@@ -195,12 +217,7 @@ const InternalProviderView: React.FC = () => {
           )
         }
       >
-        {connected
-          ? `Connected to internal messaging service${currentUser ? ` as ${currentUser.name || currentUser.email}` : ''}`
-          : connectionStatus === 'connecting'
-            ? 'Connecting to messaging service...'
-            : `Disconnected from messaging service${error ? `: ${error}` : ''}`
-        }
+        {getStatusMessage(connectionStatus)}
       </Alert>
 
       {/* Three-pane layout */}
@@ -238,7 +255,7 @@ const InternalProviderView: React.FC = () => {
                       #{activeChannelId}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      {connected
+                      {connectionStatus === 'connected'
                         ? `${onlineUsers.length} member${onlineUsers.length !== 1 ? 's' : ''} online`
                         : 'Disconnected - messages may not send'
                       }
@@ -257,6 +274,7 @@ const InternalProviderView: React.FC = () => {
                 currentUserId={currentUser?.id}
                 typingUsers={typingUsers}
                 userPresence={userPresence}
+                isLoadingHistory={isLoadingHistory}
               />
 
               {/* Message input */}
@@ -264,7 +282,7 @@ const InternalProviderView: React.FC = () => {
                 value={draft}
                 onChange={handleInputChange}
                 onSend={handleSendMessage}
-                placeholder={connected ? `Message #${activeChannelId}` : `Message #${activeChannelId} (offline mode)`}
+                placeholder={connectionStatus === 'connected' ? `Message #${activeChannelId}` : `Message #${activeChannelId} (offline mode)`}
                 disabled={false} // Allow typing even when disconnected for testing
                 isSending={isSending}
               />
