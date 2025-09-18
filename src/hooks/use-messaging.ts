@@ -24,7 +24,8 @@ import {
   User,
   PresenceData,
   TypingIndicator,
-  SendMessageData
+  SendMessageData,
+  MessageConfirmedData
 } from '@/widgets/frontdesk/providers/internal/types';
 import { useUserProfile } from '@/hooks/use-user-profile';
 
@@ -55,8 +56,8 @@ export const useMessaging = () => {
       setIsLoading(true);
       setError(null);
 
-      const authToken = userProfile?.token;
-      await messagingService.connect(authToken);
+      // Token is handled internally by messagingService.connect()
+      await messagingService.connect();
 
       setConnectionStatus('connected');
       setConnected(true);
@@ -82,7 +83,7 @@ export const useMessaging = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [userProfile?.token, activeChannelId, setConnectionStatus, setConnected, setError, setIsLoading, setUserPresence, setOnlineUsers]);
+  }, [activeChannelId, setConnectionStatus, setConnected, setError, setIsLoading, setUserPresence, setOnlineUsers]);
 
   // Disconnect
   const disconnect = useCallback(() => {
@@ -91,40 +92,59 @@ export const useMessaging = () => {
     setConnected(false);
   }, [setConnectionStatus, setConnected]);
 
-  // Send message
+  // Send message - Simplified one-step sending with optimistic UI
   const sendMessage = useCallback(async (content: string, recipientId?: string): Promise<boolean> => {
-    if (!activeChannelId || !content.trim()) return false;
+    if (!activeChannelId || !content.trim() || !currentUser) return false;
 
     try {
       setIsSending(true);
       setError(null);
 
+      const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Create optimistic message for immediate UI update
+      const optimisticMessage: Message = {
+        channelId: activeChannelId,
+        content: content.trim(),
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        userName: currentUser.name,
+        organizationId: '',
+        timestamp: new Date().toISOString(),
+        tempId,
+        metadata: { type: 'text' }
+      };
+
+      // Add optimistic message to UI immediately
+      setMessages(prev => ({
+        ...prev,
+        [activeChannelId]: [...(prev[activeChannelId] || []), optimisticMessage]
+      }));
+
+      // Prepare message data for WebSocket
       const messageData: SendMessageData = {
         channelId: activeChannelId,
         content: content.trim(),
         recipientId,
-        messageId: Date.now().toString(),
+        tempId,
         metadata: { type: 'text' }
       };
 
-      const response = await messagingService.sendMessage(messageData);
+      // Send message through WebSocket (one-step, no waiting)
+      messagingService.sendMessage(messageData);
 
-      if (response.success) {
-        // Clear draft for this channel
-        setDraft(prev => ({ ...prev, [activeChannelId]: '' }));
-        return true;
-      } else {
-        setError(response.error || 'Failed to send message');
-        return false;
-      }
+      // Clear draft for this channel
+      setDraft(prev => ({ ...prev, [activeChannelId]: '' }));
+
+      setIsSending(false);
+      return true;
     } catch (error: any) {
       console.error('Failed to send message:', error);
       setError(error.message || 'Failed to send message');
-      return false;
-    } finally {
       setIsSending(false);
+      return false;
     }
-  }, [activeChannelId, setIsSending, setError, setDraft]);
+  }, [activeChannelId, currentUser, setIsSending, setError, setDraft, setMessages]);
 
   // Join channel
   const joinChannel = useCallback(async (channelId: string) => {
@@ -218,10 +238,30 @@ export const useMessaging = () => {
 
     // Message handlers
     const handleNewMessage = (message: Message) => {
-      setMessages(prev => ({
-        ...prev,
-        [message.channelId]: [...(prev[message.channelId] || []), message]
-      }));
+      // Don't add if it's a duplicate of an optimistic message we already have
+      setMessages(prev => {
+        const channelMessages = prev[message.channelId] || [];
+        // Check if this is our own message that was already added optimistically
+        const existingOptimisticMessage = channelMessages.find(
+          msg => msg.tempId && msg.content === message.content && msg.userId === message.userId
+        );
+
+        if (existingOptimisticMessage) {
+          // Replace the optimistic message with the confirmed one
+          return {
+            ...prev,
+            [message.channelId]: channelMessages.map(msg =>
+              msg.tempId === existingOptimisticMessage.tempId ? { ...message, tempId: undefined } : msg
+            )
+          };
+        }
+
+        // Otherwise, add the new message
+        return {
+          ...prev,
+          [message.channelId]: [...channelMessages, message]
+        };
+      });
 
       // Update unread count if not in active channel
       if (message.channelId !== activeChannelId && message.userId !== currentUser?.id) {
@@ -230,6 +270,23 @@ export const useMessaging = () => {
           [message.channelId]: (prev[message.channelId] || 0) + 1
         }));
       }
+    };
+
+    const handleMessageConfirmed = (data: MessageConfirmedData) => {
+      // Replace temp message with confirmed message
+      setMessages(prev => {
+        const channelMessages = prev[data.channelId] || [];
+        return {
+          ...prev,
+          [data.channelId]: channelMessages.map(msg =>
+            msg.tempId === data.tempId
+              ? { ...msg, messageId: data.messageId, tempId: undefined, timestamp: data.timestamp || msg.timestamp }
+              : msg
+          )
+        };
+      });
+
+      console.log('Message confirmed:', data);
     };
 
     const handleDirectMessage = (message: Message) => {
@@ -320,6 +377,7 @@ export const useMessaging = () => {
 
     // Register event listeners
     messagingService.onNewMessage(handleNewMessage);
+    messagingService.onMessageConfirmed(handleMessageConfirmed);
     messagingService.onDirectMessage(handleDirectMessage);
     messagingService.onUserOnline(handleUserOnline);
     messagingService.onUserOffline(handleUserOffline);

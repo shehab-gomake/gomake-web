@@ -11,7 +11,8 @@ import {
   GetPresenceData,
   SocketResponse,
   PresenceData,
-  TypingIndicator
+  TypingIndicator,
+  MessageConfirmedData
 } from '@/widgets/frontdesk/providers/internal/types';
 
 export type MessageEventHandler = (message: Message) => void;
@@ -19,6 +20,7 @@ export type PresenceEventHandler = (data: any) => void;
 export type TypingEventHandler = (data: TypingIndicator) => void;
 export type ConnectionEventHandler = (connected: boolean) => void;
 export type ErrorEventHandler = (error: string) => void;
+export type MessageConfirmedHandler = (data: MessageConfirmedData) => void;
 
 export class MessagingService {
   private socket: Socket | null = null;
@@ -111,7 +113,20 @@ export class MessagingService {
   }
 
   // Message operations
-  sendMessage(data: SendMessageData): Promise<SocketResponse> {
+  // Simplified one-step message sending
+  sendMessage(data: SendMessageData): void {
+    if (!this.socket?.connected) {
+      console.error('Socket not connected - message will not be sent');
+      return;
+    }
+
+    // Simply emit the message without waiting for confirmation
+    // The backend will handle persistence and broadcasting
+    this.socket.emit('sendMessage', data);
+  }
+
+  // Legacy promise-based method (kept for backwards compatibility if needed)
+  sendMessageWithConfirmation(data: SendMessageData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
         reject(new Error('Socket not connected'));
@@ -269,6 +284,12 @@ export class MessagingService {
   onMessageRead(handler: (data: { messageId: string; readBy: string; readAt: string }) => void): void {
     if (this.socket) {
       this.socket.on('messageRead', handler);
+    }
+  }
+
+  onMessageConfirmed(handler: MessageConfirmedHandler): void {
+    if (this.socket) {
+      this.socket.on('messageConfirmed', handler);
     }
   }
 

@@ -8,6 +8,7 @@ export interface Message {
   timestamp: string;
   recipientId?: string;
   messageId?: string;
+  tempId?: string;
   metadata?: {
     type: 'text' | 'file' | 'image';
     timestamp?: string;
@@ -62,10 +63,18 @@ export interface SendMessageData {
   channelId: string;
   content: string;
   recipientId?: string;
-  messageId: string;
+  tempId?: string;
+  messageId?: string;
   metadata?: {
     type: 'text' | 'file' | 'image';
   };
+}
+
+export interface MessageConfirmedData {
+  tempId: string;
+  messageId: string;
+  channelId: string;
+  timestamp?: string;
 }
 
 export interface JoinChannelData {
