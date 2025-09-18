@@ -54,8 +54,6 @@ const TableCellData = ({
 
     }
   };
-  console.log("type", { type, value, parameterKey, id });
-
   switch (type) {
 
     case EDataTypeEnum.BOOLEAN:
