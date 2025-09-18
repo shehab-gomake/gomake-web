@@ -250,13 +250,30 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.basicWalkthrough"),
           status: getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH),
           onClick: () => {
-            handleOpenDemoVideo();
+            handleOpenDemoVideo(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH);
             if (
               getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH) !==
               StepStatus.DONE
             ) {
               updatePrintHouseSetupSteps(
                 SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
+                StepStatus.DONE
+              );
+            }
+          },
+        },
+        {
+          key: SetupStep.HELP_CENTER_CREATE_A_QUOTE,
+          label: t("quickSetup.steps.createAQuote"),
+          status: getStepStatus(SetupStep.HELP_CENTER_CREATE_A_QUOTE),
+          onClick: () => {
+            handleOpenDemoVideo(SetupStep.HELP_CENTER_CREATE_A_QUOTE);
+            if (
+              getStepStatus(SetupStep.HELP_CENTER_CREATE_A_QUOTE) !==
+              StepStatus.DONE
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.HELP_CENTER_CREATE_A_QUOTE,
                 StepStatus.DONE
               );
             }

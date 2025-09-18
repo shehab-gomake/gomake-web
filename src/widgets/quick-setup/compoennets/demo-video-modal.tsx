@@ -1,7 +1,16 @@
 import { ModalControls } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
-import { Modal, Box, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  Modal,
+  Box,
+  IconButton,
+  Typography,
+  useTheme,
+  Button,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import {
   printHouseSetupStepsState,
@@ -11,12 +20,17 @@ import {
 } from "@/store/print-house-setup-state-state";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
+import { PrimaryButton } from "@/components/button/primary-button";
 // import { GomakeIcon } from "./icons";
 
 interface DemoVideoModalProps {
   modalControl: ModalControls;
   videoUrl: string;
   setVideoUrl: any;
+  currentVideoStep: SetupStep;
+  videoSteps: any;
+  handleNextVideo: () => void;
+  handlePreviousVideo: () => void;
   updatePrintHouseSetupSteps: (
     step: SetupStep,
     status?: StepStatus
@@ -27,16 +41,22 @@ export const DemoVideoModal = ({
   modalControl,
   videoUrl,
   setVideoUrl,
+  currentVideoStep,
+  videoSteps,
+  handleNextVideo,
+  handlePreviousVideo,
   updatePrintHouseSetupSteps,
 }: DemoVideoModalProps) => {
   const { t } = useTranslation();
   const { primaryColor, secondColor } = useGomakeTheme();
   const theme = useTheme();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRtl = dir === "rtl";
   const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
     printHouseSetupStepsState
   );
-  const basicWalkthroughStep = printHouseSetupSteps.find(
-    (step) => step.step === SetupStep.HELP_CENTER_BASIC_WALKTHROUGH
+  const currentStepData = printHouseSetupSteps.find(
+    (step) => step.step === currentVideoStep
   );
 
   const closeModal = () => {
@@ -45,16 +65,25 @@ export const DemoVideoModal = ({
   };
 
   useEffect(() => {
-    if (
-      modalControl.isOpen &&
-      basicWalkthroughStep?.status !== StepStatus.DONE
-    ) {
-      updatePrintHouseSetupSteps(
-        SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
-        StepStatus.DONE
-      );
+    if (modalControl.isOpen && currentStepData?.status !== StepStatus.DONE) {
+      updatePrintHouseSetupSteps(currentVideoStep, StepStatus.DONE);
     }
-  }, [modalControl.isOpen]);
+  }, [modalControl.isOpen, currentVideoStep]);
+
+  const getVideoTitle = () => {
+    switch (currentVideoStep) {
+      case SetupStep.HELP_CENTER_BASIC_WALKTHROUGH:
+        return t("quickSetup.steps.howToStartWithGoMake");
+      case SetupStep.HELP_CENTER_CREATE_A_QUOTE:
+        return t("quickSetup.steps.createAQuote");
+      default:
+        return t("quickSetup.gettingStartedGuide");
+    }
+  };
+
+  const canGoNext = videoSteps[currentVideoStep]?.nextStep !== null;
+  const canGoPrevious =
+    Object.keys(videoSteps).indexOf(currentVideoStep.toString()) > 0;
 
   return (
     <Modal
@@ -70,14 +99,16 @@ export const DemoVideoModal = ({
     >
       <Box
         sx={{
-          backgroundColor: "#f6f6f6",
-          borderRadius: 3,
-          width: "80vw",
+          backgroundColor: "#ffffff",
+          borderRadius: 4,
+          width: "85vw",
           maxWidth: "1000px",
           outline: "none",
           overflow: "hidden",
-          boxShadow: theme.shadows[6],
+          boxShadow:
+            "0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)",
           p: 0,
+          border: "1px solid rgba(0, 0, 0, 0.05)",
         }}
       >
         <Box
@@ -85,17 +116,65 @@ export const DemoVideoModal = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: primaryColor(500),
+            background: `linear-gradient(135deg, ${primaryColor(
+              500
+            )} 0%, ${primaryColor(600)} 100%)`,
             color: theme.palette.primary.contrastText,
-            p: 1,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
+            p: 2,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            position: "relative",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)",
+            },
           }}
         >
-          <Typography variant="h6" id="video-modal-title">
-            {t("quickSetup.gettingStartedGuide")}
-          </Typography>
-          <IconButton onClick={closeModal} sx={{ color: "white" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box
+              sx={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                backgroundColor: "rgba(255,255,255,0.8)",
+                animation: "pulse 2s infinite",
+                "@keyframes pulse": {
+                  "0%": { opacity: 1 },
+                  "50%": { opacity: 0.5 },
+                  "100%": { opacity: 1 },
+                },
+              }}
+            />
+            <Typography
+              variant="h6"
+              id="video-modal-title"
+              sx={{
+                fontWeight: 600,
+                fontSize: "18px",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {getVideoTitle()}
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={closeModal}
+            sx={{
+              color: "white",
+              backgroundColor: "rgba(255,255,255,0.1)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.2)",
+                transform: "scale(1.05)",
+              },
+              transition: "all 0.2s ease-in-out",
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -105,10 +184,23 @@ export const DemoVideoModal = ({
             paddingBottom: "56.25%",
             height: 0,
             overflow: "hidden",
+            backgroundColor: "#26277914",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background:
+                "linear-gradient(45deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.05) 100%)",
+              zIndex: 1,
+              pointerEvents: "none",
+            },
           }}
         >
           <iframe
-            src={`${videoUrl}?rel=0&vq=hd720`}
+            src={`${videoUrl}?rel=0&vq=hd1080&modestbranding=1&showinfo=0&controls=1&fs=1&cc_load_policy=0&iv_load_policy=3&autohide=0`}
             title="YouTube Video"
             style={{
               position: "absolute",
@@ -117,7 +209,8 @@ export const DemoVideoModal = ({
               width: "100%",
               height: "100%",
               border: "none",
-              padding: "16px",
+              padding: "20px",
+              borderRadius: "0",
             }}
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
@@ -125,22 +218,119 @@ export const DemoVideoModal = ({
         </Box>
         <Box
           sx={{
-            padding: "12px 16px",
-            backgroundColor: secondColor(50),
-            textAlign: "center",
+            padding: "20px 24px",
+            background: `linear-gradient(135deg, ${secondColor(
+              50
+            )} 0%, ${secondColor(100)} 100%)`,
             display: "flex",
             alignItems: "center",
-            gap: "10px",
-            justifyContent: "center",
+            justifyContent: "space-between",
+            borderTop: "1px solid rgba(0, 0, 0, 0.05)",
+            position: "relative",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "60px",
+              height: "3px",
+              background: `linear-gradient(90deg, ${primaryColor(
+                300
+              )} 0%, ${primaryColor(500)} 50%, ${primaryColor(300)} 100%)`,
+              borderRadius: "0 0 3px 3px",
+            },
           }}
         >
-          <Typography
-            variant="body2"
-            sx={{ color: theme.palette.text.secondary }}
+          <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                backgroundColor: primaryColor(400),
+                animation: "pulse 2s infinite",
+                "@keyframes pulse": {
+                  "0%": { opacity: 1, transform: "scale(1)" },
+                  "50%": { opacity: 0.7, transform: "scale(1.2)" },
+                  "100%": { opacity: 1, transform: "scale(1)" },
+                },
+              }}
+            />
+            <Typography
+              variant="body2"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontWeight: 500,
+                fontSize: "14px",
+              }}
+            >
+              {t("Enjoy watching the video!")}
+            </Typography>
+            {/* <GomakeIcon /> */}
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              gap: "12px",
+              flexDirection: isRtl ? "row-reverse" : "row",
+            }}
           >
-            {t("Enjoy watching the video!")}
-          </Typography>
-          {/* <GomakeIcon /> */}
+            {canGoPrevious && (
+              <PrimaryButton
+                variant="outlined"
+                size="small"
+                startIcon={isRtl ? <ArrowForwardIcon /> : <ArrowBackIcon />}
+                onClick={handlePreviousVideo}
+                sx={{
+                  minWidth: "130px",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  fontWeight: 500,
+                  borderColor: primaryColor(300),
+                  color: primaryColor(600),
+                  "&:hover": {
+                    borderColor: primaryColor(400),
+                    backgroundColor: primaryColor(50),
+                    transform: "translateY(-1px)",
+                    boxShadow: `0 4px 12px ${primaryColor(200)}`,
+                  },
+                  transition: "all 0.2s ease-in-out",
+                }}
+              >
+                {t("Previous")}
+              </PrimaryButton>
+            )}
+            {canGoNext && (
+              <PrimaryButton
+                variant="contained"
+                size="small"
+                endIcon={isRtl ? <ArrowBackIcon /> : <ArrowForwardIcon />}
+                onClick={handleNextVideo}
+                sx={{
+                  minWidth: "130px",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  fontWeight: 500,
+                  background: `linear-gradient(135deg, ${primaryColor(
+                    500
+                  )} 0%, ${primaryColor(600)} 100%)`,
+                  boxShadow: `0 4px 12px ${primaryColor(300)}`,
+                  "&:hover": {
+                    background: `linear-gradient(135deg, ${primaryColor(
+                      600
+                    )} 0%, ${primaryColor(700)} 100%)`,
+                    transform: "translateY(-1px)",
+                    boxShadow: `0 6px 16px ${primaryColor(400)}`,
+                  },
+                  transition: "all 0.2s ease-in-out",
+                }}
+              >
+                {t("Next")}
+              </PrimaryButton>
+            )}
+          </Box>
         </Box>
       </Box>
     </Modal>
