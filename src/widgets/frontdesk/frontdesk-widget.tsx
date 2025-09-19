@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { ITab } from "@/components/tabs/interface";
-import { GmailProviderView } from "@/widgets/frontdesk/providers/gmail/gmail-provider-view";
+import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
 import { InternalProviderView } from "@/widgets/frontdesk/providers/internal/internal-provider-view";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
@@ -26,8 +26,8 @@ const FrontdeskWidget: React.FC = () => {
   // Provider tabs inside Inbox
   const providerTabs: ITab[] = useMemo(
     () => [
-      { title: "Unified", component: <GmailProviderView /> },
-      { title: "Gmail", component: <GmailProviderView /> },
+      { title: "Unified", component: <EmailProviderView /> },
+      { title: "Email", component: <EmailProviderView /> },
       { title: "WhatsApp", component: <WhatsAppProviderView /> },
       { title: "Internal", component: <InternalProviderView /> },
     ],
@@ -35,7 +35,7 @@ const FrontdeskWidget: React.FC = () => {
   );
 
   // route <-> provider tab mapping
-  const providerSlugs = ["unified", "gmail", "whatsapp", "internal"] as const;
+  const providerSlugs = ["unified", "email", "whatsapp", "internal"] as const;
   const selectedProviderIndex = useMemo(() => {
     if (frontdeskRoute !== "inbox") return 0;
     const slug = (provider ?? "unified").toString().toLowerCase();
