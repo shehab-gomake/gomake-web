@@ -50,15 +50,18 @@ class EmailApiClient {
     return data;
   }
 
-  async disconnectAccount(accountId: string): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/disconnect`, {
-      method: "POST",
+  async disconnectAccount(accountId: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}`, {
+      method: "DELETE",
       headers: getHeaders(),
     });
 
     if (!response.ok) {
       throw new Error(`Failed to disconnect account: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data;
   }
 
   // Messages
@@ -94,11 +97,7 @@ class EmailApiClient {
     return data;
   }
 
-  async updateMessage(
-    accountId: string,
-    messageId: string,
-    update: { starred?: boolean; read?: boolean }
-  ): Promise<void> {
+  async updateMessage(accountId: string, messageId: string, update: { starred?: boolean; read?: boolean }): Promise<void> {
     const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}`, {
       method: "PATCH",
       headers: getHeaders(),
@@ -163,11 +162,7 @@ class EmailApiClient {
   }
 
   // Utility methods for retry logic
-  async retryableRequest<T>(
-    fn: () => Promise<T>,
-    maxRetries: number = 3,
-    delay: number = 1000
-  ): Promise<T> {
+  async retryableRequest<T>(fn: () => Promise<T>, maxRetries: number = 3, delay: number = 1000): Promise<T> {
     let lastError: Error | undefined;
 
     for (let i = 0; i < maxRetries; i++) {
@@ -182,7 +177,7 @@ class EmailApiClient {
         }
 
         if (i < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+          await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, i)));
         }
       }
     }

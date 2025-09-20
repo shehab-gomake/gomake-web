@@ -12,10 +12,8 @@ import {
   ListItemText,
   Collapse,
   Paper,
-  Button,
   Badge,
   Avatar,
-  Divider,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -24,12 +22,15 @@ import {
   Email as EmailIcon,
 } from "@mui/icons-material";
 import { EmailAccount } from "../types/email.types";
+import { EmailAccountMenu } from "./email-account-menu";
+import { DisconnectAccountDialog } from "./disconnect-account-dialog";
 
 interface EmailAccountSidebarProps {
   accounts: EmailAccount[];
   selectedAccountId: string | null;
   onAccountSelect: (accountId: string) => void;
   onAddAccount: () => void;
+  onDisconnectAccount: (accountId: string) => void;
   unreadCounts: Record<string, number>;
 }
 
@@ -38,12 +39,36 @@ export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
   selectedAccountId,
   onAccountSelect,
   onAddAccount,
+  onDisconnectAccount,
   unreadCounts,
 }) => {
   const [accountsExpanded, setAccountsExpanded] = useState(true);
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [accountToDisconnect, setAccountToDisconnect] = useState<EmailAccount | null>(null);
 
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
   const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0);
+
+  const handleDisconnectRequest = (accountId: string) => {
+    const account = accounts.find((acc) => acc.id === accountId);
+    if (account) {
+      setAccountToDisconnect(account);
+      setDisconnectDialogOpen(true);
+    }
+  };
+
+  const handleDisconnectConfirm = () => {
+    if (accountToDisconnect) {
+      onDisconnectAccount(accountToDisconnect.id);
+    }
+    setDisconnectDialogOpen(false);
+    setAccountToDisconnect(null);
+  };
+
+  const handleDisconnectCancel = () => {
+    setDisconnectDialogOpen(false);
+    setAccountToDisconnect(null);
+  };
 
   return (
     <Paper
@@ -157,24 +182,39 @@ export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
                       sx={{ mr: 1 }}
                     />
                   )}
-                  {account.isPrimary && (
-                    <Chip
-                      label="Primary"
-                      size="small"
-                      sx={{
-                        height: 16,
-                        fontSize: "0.65rem",
-                        backgroundColor: account.id === selectedAccountId ? "white" : "primary.light",
-                        color: account.id === selectedAccountId ? "primary.main" : "white",
-                      }}
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    {account.isPrimary && (
+                      <Chip
+                        label="Primary"
+                        size="small"
+                        sx={{
+                          height: 16,
+                          fontSize: "0.65rem",
+                          backgroundColor: account.id === selectedAccountId ? "white" : "primary.light",
+                          color: account.id === selectedAccountId ? "primary.main" : "white",
+                        }}
+                      />
+                    )}
+                    <EmailAccountMenu
+                      accountId={account.id}
+                      isSelected={account.id === selectedAccountId}
+                      onDisconnect={handleDisconnectRequest}
                     />
-                  )}
+                  </Stack>
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Collapse>
       </Box>
+
+      {/* Disconnect Confirmation Dialog */}
+      <DisconnectAccountDialog
+        open={disconnectDialogOpen}
+        accountEmail={accountToDisconnect?.email}
+        onConfirm={handleDisconnectConfirm}
+        onCancel={handleDisconnectCancel}
+      />
     </Paper>
   );
 };

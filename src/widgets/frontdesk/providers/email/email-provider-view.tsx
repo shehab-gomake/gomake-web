@@ -22,6 +22,7 @@ export const EmailProviderView: React.FC = () => {
     error: accountsError,
     selectAccount,
     fetchAccounts,
+    disconnectAccount,
   } = useEmailAccounts();
 
   const {
@@ -133,6 +134,7 @@ export const EmailProviderView: React.FC = () => {
           selectedAccountId={selectedAccountId}
           onAccountSelect={selectAccount}
           onAddAccount={() => setShowAuthModal(true)}
+          onDisconnectAccount={disconnectAccount}
           unreadCounts={unreadCounts}
         />
 
