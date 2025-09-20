@@ -12,6 +12,7 @@ import {
   Box,
 } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
+import { OutlookIcon } from "@/icons/outlook-icon";
 
 interface EmailAuthModalProps {
   open: boolean;
@@ -20,12 +21,7 @@ interface EmailAuthModalProps {
   error?: string | null;
 }
 
-export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
-  open,
-  onClose,
-  onAuthenticate,
-  error,
-}) => {
+export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({ open, onClose, onAuthenticate, error }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const handleConnect = async (provider: string) => {
@@ -55,7 +51,7 @@ export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
             </Alert>
           )}
 
-          <Box>
+          <Stack spacing={2}>
             <Button
               fullWidth
               variant="contained"
@@ -70,7 +66,22 @@ export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({
             >
               {isAuthenticating ? "Connecting..." : "Connect Gmail Account"}
             </Button>
-          </Box>
+
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              startIcon={isAuthenticating ? <CircularProgress size={20} /> : <OutlookIcon size={20} />}
+              onClick={() => handleConnect("outlook")}
+              disabled={isAuthenticating}
+              sx={{
+                backgroundColor: "#0078d4",
+                "&:hover": { backgroundColor: "#106ebe" },
+              }}
+            >
+              {isAuthenticating ? "Connecting..." : "Connect Outlook Account"}
+            </Button>
+          </Stack>
 
           <Typography variant="caption" color="text.secondary" align="center">
             Your credentials are securely stored and only used to access your emails.

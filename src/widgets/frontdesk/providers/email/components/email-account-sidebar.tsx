@@ -22,47 +22,25 @@ import {
   ExpandLess as ExpandLessIcon,
   Add as AddIcon,
   Email as EmailIcon,
-  Inbox as InboxIcon,
-  Send as SendIcon,
-  Drafts as DraftsIcon,
-  Star as StarIcon,
-  Delete as DeleteIcon,
-  Archive as ArchiveIcon,
-  Label as LabelIcon,
-  Settings as SettingsIcon,
 } from "@mui/icons-material";
 import { EmailAccount } from "../types/email.types";
 
 interface EmailAccountSidebarProps {
   accounts: EmailAccount[];
   selectedAccountId: string | null;
-  activeFolder: string;
   onAccountSelect: (accountId: string) => void;
-  onFolderSelect: (folder: string) => void;
   onAddAccount: () => void;
   unreadCounts: Record<string, number>;
 }
 
-const folderItems = [
-  { id: "inbox", label: "Inbox", icon: <InboxIcon /> },
-  { id: "sent", label: "Sent", icon: <SendIcon /> },
-  { id: "drafts", label: "Drafts", icon: <DraftsIcon /> },
-  { id: "starred", label: "Starred", icon: <StarIcon /> },
-  { id: "archive", label: "Archive", icon: <ArchiveIcon /> },
-  { id: "trash", label: "Trash", icon: <DeleteIcon /> },
-];
-
 export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
   accounts,
   selectedAccountId,
-  activeFolder,
   onAccountSelect,
-  onFolderSelect,
   onAddAccount,
   unreadCounts,
 }) => {
   const [accountsExpanded, setAccountsExpanded] = useState(true);
-  const [foldersExpanded, setFoldersExpanded] = useState(true);
 
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
   const totalUnread = Object.values(unreadCounts).reduce((sum, count) => sum + count, 0);
@@ -89,12 +67,7 @@ export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
               Email
             </Typography>
             {totalUnread > 0 && (
-              <Chip
-                label={totalUnread}
-                size="small"
-                color="primary"
-                sx={{ height: 20, fontSize: "0.75rem" }}
-              />
+              <Chip label={totalUnread} size="small" color="primary" sx={{ height: 20, fontSize: "0.75rem" }} />
             )}
           </Stack>
           <IconButton size="small" onClick={onAddAccount}>
@@ -111,7 +84,7 @@ export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
             py: 0.5,
             px: 1,
             borderRadius: 1,
-            "&:hover": { backgroundColor: "action.hover" }
+            "&:hover": { backgroundColor: "action.hover" },
           }}
         >
           <ListItemText
@@ -201,94 +174,6 @@ export const EmailAccountSidebar: React.FC<EmailAccountSidebarProps> = ({
             ))}
           </List>
         </Collapse>
-      </Box>
-
-      <Divider />
-
-      {/* Folders Section */}
-      <Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
-        <ListItemButton
-          onClick={() => setFoldersExpanded(!foldersExpanded)}
-          sx={{
-            py: 0.5,
-            px: 1,
-            borderRadius: 1,
-            "&:hover": { backgroundColor: "action.hover" }
-          }}
-        >
-          <ListItemText
-            primary={
-              <Typography variant="subtitle2" color="text.secondary">
-                FOLDERS
-              </Typography>
-            }
-          />
-          {foldersExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </ListItemButton>
-
-        <Collapse in={foldersExpanded}>
-          <List dense sx={{ py: 0 }}>
-            {folderItems.map((folder) => {
-              const unread = selectedAccount && unreadCounts[`${selectedAccountId}_${folder.id}`] || 0;
-
-              return (
-                <ListItem key={folder.id} disablePadding>
-                  <ListItemButton
-                    selected={folder.id === activeFolder}
-                    onClick={() => onFolderSelect(folder.id)}
-                    disabled={!selectedAccountId}
-                    sx={{
-                      py: 0.75,
-                      px: 2,
-                      borderRadius: 1,
-                      my: 0.25,
-                      "&.Mui-selected": {
-                        backgroundColor: "action.selected",
-                      },
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32, color: "text.secondary" }}>
-                      {folder.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={folder.label}
-                      primaryTypographyProps={{ variant: "body2" }}
-                    />
-                    {unread > 0 && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          px: 1,
-                          py: 0.25,
-                          borderRadius: 1,
-                          backgroundColor: "primary.main",
-                          color: "white",
-                        }}
-                      >
-                        {unread}
-                      </Typography>
-                    )}
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Collapse>
-      </Box>
-
-      {/* Settings Button */}
-      <Box sx={{ p: 2, borderTop: "1px solid", borderColor: "divider" }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<SettingsIcon />}
-          size="small"
-        >
-          Email Settings
-        </Button>
       </Box>
     </Paper>
   );

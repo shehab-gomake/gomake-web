@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Stack, Paper, Typography, Alert, Button, Box } from "@mui/material";
-import {
-  Email as EmailIcon,
-  Refresh as RefreshIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
+import { Email as EmailIcon, Refresh as RefreshIcon, Add as AddIcon } from "@mui/icons-material";
 import { EmailAccountSidebar } from "./components/email-account-sidebar";
 import { EmailMessageList } from "./components/email-message-list";
 import { EmailMessageViewer } from "./components/email-message-viewer";
@@ -49,9 +45,8 @@ export const EmailProviderView: React.FC = () => {
   const [composerDraft, setComposerDraft] = useState<EmailDraft | null>(null);
 
   // Connection states
-  const connectionStatus = accounts.length === 0 ? "disconnected" :
-                          accountsLoading ? "connecting" :
-                          accountsError ? "error" : "connected";
+  const connectionStatus =
+    accounts.length === 0 ? "disconnected" : accountsLoading ? "connecting" : accountsError ? "error" : "connected";
 
   useEffect(() => {
     fetchAccounts();
@@ -65,24 +60,30 @@ export const EmailProviderView: React.FC = () => {
     setSelectedMessage(null);
   }, []);
 
-  const handleAuthenticate = useCallback(async (provider: string) => {
-    try {
-      await authenticate(provider);
-      await fetchAccounts();
-      setShowAuthModal(false);
-    } catch (error) {
-      console.error("Auth failed:", error);
-    }
-  }, [authenticate, fetchAccounts]);
+  const handleAuthenticate = useCallback(
+    async (provider: string) => {
+      try {
+        await authenticate(provider);
+        await fetchAccounts();
+        setShowAuthModal(false);
+      } catch (error) {
+        console.error("Auth failed:", error);
+      }
+    },
+    [authenticate, fetchAccounts]
+  );
 
-  const handleSendEmail = useCallback(async (draft: EmailDraft) => {
-    const success = await sendEmail(draft);
-    if (success) {
-      setShowComposer(false);
-      setComposerDraft(null);
-      refresh();
-    }
-  }, [sendEmail, refresh]);
+  const handleSendEmail = useCallback(
+    async (draft: EmailDraft) => {
+      const success = await sendEmail(draft);
+      if (success) {
+        setShowComposer(false);
+        setComposerDraft(null);
+        refresh();
+      }
+    },
+    [sendEmail, refresh]
+  );
 
   const handleReply = useCallback((message: EmailMessage) => {
     setComposerDraft({
@@ -130,9 +131,7 @@ export const EmailProviderView: React.FC = () => {
         <EmailAccountSidebar
           accounts={accounts}
           selectedAccountId={selectedAccountId}
-          activeFolder="inbox"
           onAccountSelect={selectAccount}
-          onFolderSelect={() => {}} // Simplified - no folders
           onAddAccount={() => setShowAuthModal(true)}
           unreadCounts={unreadCounts}
         />
@@ -159,23 +158,12 @@ export const EmailProviderView: React.FC = () => {
               {/* Header */}
               <Paper elevation={0} sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography variant="h6">
-                    {selectedAccountId ? "Messages" : "Select an account"}
-                  </Typography>
+                  <Typography variant="h6">{selectedAccountId ? "Messages" : "Select an account"}</Typography>
                   <Stack direction="row" spacing={1}>
-                    <Button
-                      variant="contained"
-                      startIcon={<AddIcon />}
-                      onClick={handleCompose}
-                      disabled={!selectedAccountId}
-                    >
+                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleCompose} disabled={!selectedAccountId}>
                       Compose
                     </Button>
-                    <Button
-                      startIcon={<RefreshIcon />}
-                      onClick={refresh}
-                      disabled={!selectedAccountId}
-                    >
+                    <Button startIcon={<RefreshIcon />} onClick={refresh} disabled={!selectedAccountId}>
                       Refresh
                     </Button>
                   </Stack>
@@ -197,9 +185,7 @@ export const EmailProviderView: React.FC = () => {
               ) : (
                 <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Typography variant="body2" color="text.secondary">
-                    {accounts.length === 0
-                      ? "Connect an email account to get started"
-                      : "Select an account from the sidebar"}
+                    {accounts.length === 0 ? "Connect an email account to get started" : "Select an account from the sidebar"}
                   </Typography>
                 </Box>
               )}
