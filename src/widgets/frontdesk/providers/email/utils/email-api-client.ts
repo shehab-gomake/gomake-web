@@ -37,7 +37,8 @@ class EmailApiClient {
   }
 
   async getAuthUrl(provider: string = "gmail"): Promise<{ url: string; state: string; provider: string }> {
-    const response = await fetch(`${this.baseUrl}/email/auth/${provider === "gmail" ? "google" : provider}`, {
+    // Updated to new OAuth endpoint path
+    const response = await fetch(`${this.baseUrl}/auth/oauth/${provider === "gmail" ? "google" : provider}`, {
       method: "GET",
       headers: getHeaders(),
     });

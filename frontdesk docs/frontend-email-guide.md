@@ -21,12 +21,12 @@ This is a three-step process initiated by the user.
 
 To begin, the frontend must request a unique authentication URL from the backend. This URL is specific to the user and includes a secure state token.
 
-*   **Endpoint:** `GET /email/auth/google`
+*   **Endpoint:** `GET /auth/oauth/google`
 *   **Method:** `GET`
 
 **Request:**
 ```bash
-curl --location 'http://localhost:3000/email/auth/google' \
+curl --location 'http://localhost:3000/auth/oauth/google' \
 --header 'Authorization: Bearer YOUR_JWT_TOKEN_HERE'
 ```
 
