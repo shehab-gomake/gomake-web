@@ -22,26 +22,16 @@ type UseMentionSearchReturn = {
   setCategory: (c: MentionCategory) => void;
 };
 
-export const useMentionSearch = (
-  initial: UseMentionSearchArgs
-): UseMentionSearchReturn => {
+export const useMentionSearch = (initial: UseMentionSearchArgs): UseMentionSearchReturn => {
   const { callApi } = useGomakeAxios();
   const [query, setQuery] = useState<string>(initial.query ?? "");
-  const [category, setCategory] = useState<MentionCategory>(
-    initial.category ?? "all"
-  );
+  const [category, setCategory] = useState<MentionCategory>(initial.category ?? "all");
   const [results, setResults] = useState<MentionGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const debouncedSearch = useDebouncedCallback(async () => {
     const trimmed = (query || "").trim();
-    if (!trimmed) {
-      setResults([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -49,33 +39,47 @@ export const useMentionSearch = (
     try {
       const groups: MentionGroup[] = [];
 
-      const runClients = async (clientType: CLIENT_TYPE) => {
-        const res = await callApi(
-          "POST",
-          "/v1/crm-service/customer/get-all-customers",
-          {
-            clientType,
-            searchTerm: trimmed,
-            model: { pageNumber: 1, pageSize: 10 },
-          },
-          false
-        );
-        const list = res?.data?.data?.data || res?.data?.data || [];
-        const items: MentionItem[] = (list as any[]).map((c: any) => ({
+      const runClients = async (clientType: CLIENT_TYPE, search?: string) => {
+        // Use GET endpoint with query parameters
+        const params = new URLSearchParams({
+          clientType: clientType === CLIENT_TYPE.CUSTOMER ? "C" : "S",
+          pageNumber: "1",
+          pageSize: "10",
+          name: search || "",
+          isActive: "true"
+        });
+
+        console.log(`Fetching ${clientType === CLIENT_TYPE.CUSTOMER ? 'clients' : 'suppliers'} with params:`, params.toString());
+
+        const res = await callApi("GET", `/v1/customers/get-customers-pagination?${params.toString()}`, {}, false);
+
+        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} full response:`, res);
+
+        // The response structure has data.data.data.data for the array
+        // or data.data.data which contains {data: Array, totalItems: number}
+        const dataContainer = res?.data?.data?.data || {};
+        const list = dataContainer.data || dataContainer || [];
+
+        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} extracted list:`, list);
+
+        const items: MentionItem[] = (Array.isArray(list) ? list : []).map((c: any) => ({
           id: c.id || c._id || c.customerId || c.code || String(c.name),
-          label: c.name,
+          label: c.name || c.customerName || c.supplierName || c.title || "Unknown",
           category: clientType === CLIENT_TYPE.CUSTOMER ? "clients" : "suppliers",
           raw: c,
         }));
+
+        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} final items:`, items);
+
         return items;
       };
 
-      const runInvoices = async () => {
+      const runInvoices = async (search?: string) => {
         const callBack = (_res: any) => {};
         const res = await getAllDocumentsApi(callApi, callBack, {
           documentType: DOCUMENT_TYPE.invoice,
           data: {
-            patternSearch: trimmed,
+            ...(search ? { patternSearch: search } : {}),
             model: { pageNumber: 1, pageSize: 10 },
           },
         });
@@ -90,10 +94,10 @@ export const useMentionSearch = (
         return items;
       };
 
-      const runReceipts = async () => {
+      const runReceipts = async (search?: string) => {
         const callBack = (_res: any) => {};
         const res = await getAllReceiptsApi(callApi, callBack, {
-          patternSearch: trimmed,
+          ...(search ? { patternSearch: search } : {}),
           model: { pageNumber: 1, pageSize: 10 },
         });
         const recs = res?.data?.data || [];
@@ -107,32 +111,61 @@ export const useMentionSearch = (
         return items;
       };
 
-      if (category === "clients") {
-        const items = await runClients(CLIENT_TYPE.CUSTOMER);
-        groups.push({ title: "Clients", items });
-      } else if (category === "suppliers") {
-        const items = await runClients(CLIENT_TYPE.SUPPLIER);
-        groups.push({ title: "Suppliers", items });
-      } else if (category === "invoices") {
-        const items = await runInvoices();
-        groups.push({ title: "Invoices", items });
-      } else if (category === "receipts") {
-        const items = await runReceipts();
-        groups.push({ title: "Receipts", items });
+      // Handle search based on category selection
+      if (category === "all") {
+        // When in "all" mode, show results from all categories
+        if (!trimmed) {
+          // Empty query: show first 3 items from each category
+          const [clients, suppliers, invoices, receipts] = await Promise.all([
+            runClients(CLIENT_TYPE.CUSTOMER, undefined),
+            runClients(CLIENT_TYPE.SUPPLIER, undefined),
+            runInvoices(undefined),
+            runReceipts(undefined),
+          ]);
+
+          groups.push(
+            { title: "Clients", items: clients.slice(0, 3) },
+            { title: "Suppliers", items: suppliers.slice(0, 3) },
+            { title: "Invoices", items: invoices.slice(0, 3) },
+            { title: "Receipts", items: receipts.slice(0, 3) }
+          );
+        } else {
+          // With query: search all categories and show results
+          const [clients, suppliers, invoices, receipts] = await Promise.all([
+            runClients(CLIENT_TYPE.CUSTOMER, trimmed),
+            runClients(CLIENT_TYPE.SUPPLIER, trimmed),
+            runInvoices(trimmed),
+            runReceipts(trimmed),
+          ]);
+
+          // Only show categories that have results
+          if (clients.length > 0) groups.push({ title: "Clients", items: clients });
+          if (suppliers.length > 0) groups.push({ title: "Suppliers", items: suppliers });
+          if (invoices.length > 0) groups.push({ title: "Invoices", items: invoices });
+          if (receipts.length > 0) groups.push({ title: "Receipts", items: receipts });
+        }
       } else {
-        // all
-        const [clients, suppliers, invoices, receipts] = await Promise.all([
-          runClients(CLIENT_TYPE.CUSTOMER),
-          runClients(CLIENT_TYPE.SUPPLIER),
-          runInvoices(),
-          runReceipts(),
-        ]);
-        groups.push(
-          { title: "Clients", items: clients },
-          { title: "Suppliers", items: suppliers },
-          { title: "Invoices", items: invoices },
-          { title: "Receipts", items: receipts }
-        );
+        // Specific category selected: search only that category
+        const categoryTitles = {
+          clients: "Clients",
+          suppliers: "Suppliers",
+          invoices: "Invoices",
+          receipts: "Receipts",
+        };
+
+        if (category === "clients") {
+          const items = await runClients(CLIENT_TYPE.CUSTOMER, trimmed || undefined);
+          groups.push({ title: categoryTitles[category], items });
+        } else if (category === "suppliers") {
+          const items = await runClients(CLIENT_TYPE.SUPPLIER, trimmed || undefined);
+          groups.push({ title: categoryTitles[category], items });
+        } else if (category === "invoices") {
+          const items = await runInvoices(trimmed || undefined);
+          groups.push({ title: categoryTitles[category], items });
+        } else if (category === "receipts") {
+          const items = await runReceipts(trimmed || undefined);
+          groups.push({ title: categoryTitles[category], items });
+        }
       }
 
       setResults(groups);
@@ -141,7 +174,7 @@ export const useMentionSearch = (
     } finally {
       setLoading(false);
     }
-  }, 400);
+  }, 250);
 
   useEffect(() => {
     setLoading(true);

@@ -49,7 +49,14 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
     category: mentionCategory,
   });
 
-  const flatResults: MentionItem[] = useMemo(() => results.flatMap(g => g.items), [results]);
+  const flatResults: MentionItem[] = useMemo(() => results.flatMap((g) => g.items), [results]);
+
+  // Calculate total items
+  const totalItems = useMemo(() => {
+    return results.reduce((total, group) => {
+      return total + group.items.length;
+    }, 0);
+  }, [results]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +86,7 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
       // Mentions detection (when not composing)
       if (!isComposing) {
         try {
-          const caret = (event.target as HTMLTextAreaElement).selectionStart ?? newValue.length;
+          const caret = event.target.selectionStart ?? newValue.length;
           const beforeCaret = newValue.slice(0, caret);
           const match = beforeCaret.match(/(^|\s)@(\w*)$/);
           if (match) {
@@ -90,6 +97,9 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
             setQuery(q);
             setMentionOpen(true);
             setHighlightedIndex(0);
+            // Reset to "all" category when opening mentions
+            setMentionCategory("all");
+            setCategory("all");
           } else {
             // Close if no active token
             if (mentionOpen) {
@@ -111,7 +121,7 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
       if (mentionOpen) {
         if (event.key === "ArrowDown") {
           event.preventDefault();
-          setHighlightedIndex((i) => Math.min(i + 1, flatResults.length - 1));
+          setHighlightedIndex((i) => Math.min(i + 1, totalItems - 1));
           return;
         }
         if (event.key === "ArrowUp") {
@@ -126,18 +136,21 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
         }
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
-          const item = flatResults[highlightedIndex];
-          if (item) {
-            // Insert selection
+
+          // Regular item selection
+          const selectedItem = flatResults[highlightedIndex];
+
+          if (selectedItem) {
+            // Insert item selection
             const input = inputRef.current as HTMLTextAreaElement | null;
             const caret = input?.selectionStart ?? value.length;
             const start = mentionTriggerIndex ?? 0;
-            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            const updated = value.slice(0, start) + "@" + selectedItem.label + value.slice(caret);
             onChange(updated);
             // restore caret after inserted text
             requestAnimationFrame(() => {
               if (input) {
-                const pos = start + item.label.length;
+                const pos = start + "@".length + selectedItem.label.length;
                 input.setSelectionRange(pos, pos);
                 input.focus();
               }
@@ -151,16 +164,20 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
         }
         if (event.key === "Tab") {
           event.preventDefault();
-          const item = flatResults[highlightedIndex];
-          if (item) {
+
+          // Regular item selection
+          const selectedItem = flatResults[highlightedIndex];
+
+          if (selectedItem) {
+            // Insert item selection
             const input = inputRef.current as HTMLTextAreaElement | null;
             const caret = input?.selectionStart ?? value.length;
             const start = mentionTriggerIndex ?? 0;
-            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            const updated = value.slice(0, start) + "@" + selectedItem.label + value.slice(caret);
             onChange(updated);
             requestAnimationFrame(() => {
               if (input) {
-                const pos = start + item.label.length;
+                const pos = start + "@".length + selectedItem.label.length;
                 input.setSelectionRange(pos, pos);
                 input.focus();
               }
@@ -201,7 +218,20 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
         inputRef.current?.blur();
       }
     },
-    [value, onSend, onChange, onTypingStop, disabled, isSending, isComposing, mentionOpen, highlightedIndex, flatResults, mentionTriggerIndex, setQuery]
+    [
+      value,
+      onSend,
+      onChange,
+      onTypingStop,
+      disabled,
+      isSending,
+      isComposing,
+      mentionOpen,
+      highlightedIndex,
+      flatResults,
+      mentionTriggerIndex,
+      setQuery,
+    ]
   );
 
   const handleSendClick = useCallback(async () => {
@@ -313,14 +343,14 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
           highlightedIndex={highlightedIndex}
           onHighlightChange={setHighlightedIndex}
           onPick={(item) => {
-            const input = inputRef.current as HTMLInputElement | null;
+            const input = inputRef.current;
             const caret = input?.selectionStart ?? value.length;
             const start = mentionTriggerIndex ?? 0;
-            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            const updated = value.slice(0, start) + "@" + item.label + value.slice(caret);
             onChange(updated);
             requestAnimationFrame(() => {
               if (input) {
-                const pos = start + item.label.length;
+                const pos = start + "@".length + item.label.length;
                 input.setSelectionRange(pos, pos);
                 input.focus();
               }
