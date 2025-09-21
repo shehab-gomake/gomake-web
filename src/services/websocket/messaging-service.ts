@@ -1,6 +1,6 @@
-import { io, Socket } from 'socket.io-client';
-import config from '@/config';
-import { getUserToken } from '@/services/storage-data';
+import { io, Socket } from "socket.io-client";
+import config from "@/config";
+import { getUserToken } from "@/services/storage-data";
 import {
   Message,
   SendMessageData,
@@ -12,8 +12,8 @@ import {
   SocketResponse,
   PresenceData,
   TypingIndicator,
-  MessageConfirmedData
-} from '@/widgets/frontdesk/providers/internal/types';
+  MessageConfirmedData,
+} from "@/widgets/frontdesk/providers/internal/types";
 
 export type MessageEventHandler = (message: Message) => void;
 export type PresenceEventHandler = (data: any) => void;
@@ -39,59 +39,59 @@ export class MessagingService {
       }
 
       if (this.isConnecting) {
-        reject(new Error('Connection already in progress'));
+        reject(new Error("Connection already in progress"));
         return;
       }
 
       this.isConnecting = true;
 
       const token = authToken || getUserToken();
-      console.log('Messaging Service - Auth Token:', token ? 'Present' : 'Missing');
+      console.log("Messaging Service - Auth Token:", token ? "Present" : "Missing");
       if (!token) {
         this.isConnecting = false;
-        console.error('Messaging Service - No authentication token available');
-        reject(new Error('No authentication token available'));
+        console.error("Messaging Service - No authentication token available");
+        reject(new Error("No authentication token available"));
         return;
       }
 
-      console.log('Messaging Service - Connecting to:', `${this.serverUrl}/messaging`);
+      console.log("Messaging Service - Connecting to:", `${this.serverUrl}/messaging`);
       this.socket = io(`${this.serverUrl}/messaging`, {
         auth: {
-          token: token
+          token: token,
         },
-        transports: ['websocket', 'polling'],
+        transports: ["websocket", "polling"],
         timeout: 20000,
         forceNew: false,
         reconnection: true,
         reconnectionDelay: 1000,
-        reconnectionAttempts: 10
+        reconnectionAttempts: 10,
       });
 
-      this.socket.on('connect', () => {
-        console.log('Connected to messaging service');
+      this.socket.on("connect", () => {
+        console.log("Connected to messaging service");
         this.isConnecting = false;
         resolve(this.socket!);
       });
 
-      this.socket.on('disconnect', (reason) => {
-        console.log('Disconnected from messaging service. Reason:', reason);
-        console.log('Disconnect details:', { reason, connected: this.socket?.connected });
+      this.socket.on("disconnect", (reason) => {
+        console.log("Disconnected from messaging service. Reason:", reason);
+        console.log("Disconnect details:", { reason, connected: this.socket?.connected });
         this.isConnecting = false;
       });
 
-      this.socket.on('connect_error', (error) => {
-        console.error('Connection error:', error.message);
-        console.error('Error details:', error);
+      this.socket.on("connect_error", (error) => {
+        console.error("Connection error:", error.message);
+        console.error("Error details:", error);
         this.isConnecting = false;
         reject(error);
       });
 
-      this.socket.on('error', (error) => {
-        console.error('Socket error:', error);
+      this.socket.on("error", (error) => {
+        console.error("Socket error:", error);
       });
 
-      this.socket.on('exception', (error) => {
-        console.error('Socket exception:', error);
+      this.socket.on("exception", (error) => {
+        console.error("Socket exception:", error);
       });
     });
   }
@@ -116,28 +116,28 @@ export class MessagingService {
   // Simplified one-step message sending
   sendMessage(data: SendMessageData): void {
     if (!this.socket?.connected) {
-      console.error('Socket not connected - message will not be sent');
+      console.error("Socket not connected - message will not be sent");
       return;
     }
 
     // Simply emit the message without waiting for confirmation
     // The backend will handle persistence and broadcasting
-    this.socket.emit('sendMessage', data);
+    this.socket.emit("sendMessage", data);
   }
 
   // Legacy promise-based method (kept for backwards compatibility if needed)
   sendMessageWithConfirmation(data: SendMessageData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('sendMessage', data, (response: SocketResponse) => {
+      this.socket.emit("sendMessage", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to send message'));
+          reject(new Error(response.error || "Failed to send message"));
         }
       });
     });
@@ -147,15 +147,15 @@ export class MessagingService {
   joinChannel(data: JoinChannelData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('joinChannel', data, (response: SocketResponse) => {
+      this.socket.emit("joinChannel", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to join channel'));
+          reject(new Error(response.error || "Failed to join channel"));
         }
       });
     });
@@ -164,15 +164,15 @@ export class MessagingService {
   leaveChannel(data: JoinChannelData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('leaveChannel', data, (response: SocketResponse) => {
+      this.socket.emit("leaveChannel", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to leave channel'));
+          reject(new Error(response.error || "Failed to leave channel"));
         }
       });
     });
@@ -181,13 +181,13 @@ export class MessagingService {
   // Typing indicators
   startTyping(data: TypingData): void {
     if (this.socket?.connected) {
-      this.socket.emit('typingStart', data);
+      this.socket.emit("typingStart", data);
     }
   }
 
   stopTyping(data: TypingData): void {
     if (this.socket?.connected) {
-      this.socket.emit('typingStop', data);
+      this.socket.emit("typingStop", data);
     }
   }
 
@@ -195,15 +195,15 @@ export class MessagingService {
   markAsRead(data: MarkAsReadData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('markAsRead', data, (response: SocketResponse) => {
+      this.socket.emit("markAsRead", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to mark as read'));
+          reject(new Error(response.error || "Failed to mark as read"));
         }
       });
     });
@@ -213,15 +213,15 @@ export class MessagingService {
   updateStatus(data: UpdateStatusData): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('updateStatus', data, (response: SocketResponse) => {
+      this.socket.emit("updateStatus", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to update status'));
+          reject(new Error(response.error || "Failed to update status"));
         }
       });
     });
@@ -230,42 +230,45 @@ export class MessagingService {
   getPresence(data: GetPresenceData = {}): Promise<SocketResponse> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
-      this.socket.emit('getPresence', data, (response: SocketResponse) => {
+      this.socket.emit("getPresence", data, (response: SocketResponse) => {
         if (response.success) {
           resolve(response);
         } else {
-          reject(new Error(response.error || 'Failed to get presence'));
+          reject(new Error(response.error || "Failed to get presence"));
         }
       });
     });
   }
 
   // HTTP REST endpoint to fetch channel message history
-  async fetchChannelMessages(channelId: string, options: { limit?: number; offset?: number } = {}): Promise<{ messages: Message[]; hasMore?: boolean; total?: number }> {
+  async fetchChannelMessages(
+    channelId: string,
+    options: { limit?: number; offset?: number } = {}
+  ): Promise<{ messages: Message[]; hasMore?: boolean; total?: number }> {
     const { limit = 50, offset = 0 } = options;
     const token = getUserToken();
 
     if (!token) {
-      throw new Error('No authentication token available');
+      throw new Error("No authentication token available");
     }
 
     const params = new URLSearchParams();
-    if (limit) params.append('limit', limit.toString());
-    if (offset) params.append('offset', offset.toString());
+    if (limit) params.append("limit", limit.toString());
+    if (offset) params.append("offset", offset.toString());
 
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
     const url = `${this.serverUrl}/messages/channel/${encodeURIComponent(channelId)}${queryString}`;
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -281,27 +284,27 @@ export class MessagingService {
         return {
           messages: data,
           hasMore: false,
-          total: data.length
+          total: data.length,
         };
       } else if (data.success !== false && data.messages && Array.isArray(data.messages)) {
         // If wrapped in success response
         return {
           messages: data.messages,
           hasMore: data.hasMore || false,
-          total: data.total || data.messages.length
+          total: data.total || data.messages.length,
         };
       } else if (data.success && data.data && Array.isArray(data.data)) {
         // If wrapped in data property
         return {
           messages: data.data,
           hasMore: data.hasMore || false,
-          total: data.total || data.data.length
+          total: data.total || data.data.length,
         };
       } else {
-        throw new Error(data.message || data.error || 'Failed to fetch channel messages');
+        throw new Error(data.message || data.error || "Failed to fetch channel messages");
       }
     } catch (error: any) {
-      console.error('Failed to fetch channel messages:', error);
+      console.error("Failed to fetch channel messages:", error);
       throw error;
     }
   }
@@ -309,69 +312,155 @@ export class MessagingService {
   // Event listeners
   onNewMessage(handler: MessageEventHandler): void {
     if (this.socket) {
-      this.socket.on('newMessage', handler);
+      this.socket.on("newMessage", handler);
     }
   }
 
   onDirectMessage(handler: MessageEventHandler): void {
     if (this.socket) {
-      this.socket.on('directMessage', handler);
+      this.socket.on("directMessage", handler);
     }
   }
 
   onUserOnline(handler: PresenceEventHandler): void {
     if (this.socket) {
-      this.socket.on('userOnline', handler);
+      this.socket.on("userOnline", handler);
     }
   }
 
   onUserOffline(handler: PresenceEventHandler): void {
     if (this.socket) {
-      this.socket.on('userOffline', handler);
+      this.socket.on("userOffline", handler);
     }
   }
 
   onUserTyping(handler: TypingEventHandler): void {
     if (this.socket) {
-      this.socket.on('userTyping', handler);
+      this.socket.on("userTyping", handler);
     }
   }
 
   onStatusChanged(handler: PresenceEventHandler): void {
     if (this.socket) {
-      this.socket.on('statusChanged', handler);
+      this.socket.on("statusChanged", handler);
     }
   }
 
   onMessageRead(handler: (data: { messageId: string; readBy: string; readAt: string }) => void): void {
     if (this.socket) {
-      this.socket.on('messageRead', handler);
+      this.socket.on("messageRead", handler);
     }
   }
 
   onMessageConfirmed(handler: MessageConfirmedHandler): void {
     if (this.socket) {
-      this.socket.on('messageConfirmed', handler);
+      this.socket.on("messageConfirmed", handler);
     }
   }
 
   onConnect(handler: ConnectionEventHandler): void {
     if (this.socket) {
-      this.socket.on('connect', () => handler(true));
+      this.socket.on("connect", () => handler(true));
     }
   }
 
   onDisconnect(handler: ConnectionEventHandler): void {
     if (this.socket) {
-      this.socket.on('disconnect', () => handler(false));
+      this.socket.on("disconnect", () => handler(false));
     }
   }
 
   onError(handler: ErrorEventHandler): void {
     if (this.socket) {
-      this.socket.on('connect_error', (error: Error) => handler(error.message));
-      this.socket.on('exception', (error: any) => handler(error.message || 'Socket exception'));
+      this.socket.on("connect_error", (error: Error) => handler(error.message));
+      this.socket.on("exception", (error: any) => handler(error.message || "Socket exception"));
     }
+  }
+
+  // Channel management methods
+  createChannel(data: { name: string; description?: string; isPrivate?: boolean }): Promise<SocketResponse> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Not connected to messaging service"));
+        return;
+      }
+
+      this.socket.emit("createChannel", data, (response: SocketResponse) => {
+        if (response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response.error || "Failed to create channel"));
+        }
+      });
+    });
+  }
+
+  getChannels(): Promise<SocketResponse> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Not connected to messaging service"));
+        return;
+      }
+
+      this.socket.emit("getChannels", {}, (response: SocketResponse) => {
+        if (response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response.error || "Failed to get channels"));
+        }
+      });
+    });
+  }
+
+  archiveConversation(channelId: string): Promise<SocketResponse> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Not connected to messaging service"));
+        return;
+      }
+
+      this.socket.emit("archiveConversation", { channelId }, (response: SocketResponse) => {
+        if (response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response.error || "Failed to archive conversation"));
+        }
+      });
+    });
+  }
+
+  unarchiveConversation(channelId: string): Promise<SocketResponse> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Not connected to messaging service"));
+        return;
+      }
+
+      this.socket.emit("unarchiveConversation", { channelId }, (response: SocketResponse) => {
+        if (response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response.error || "Failed to unarchive conversation"));
+        }
+      });
+    });
+  }
+
+  deleteConversation(channelId: string): Promise<SocketResponse> {
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Not connected to messaging service"));
+        return;
+      }
+
+      this.socket.emit("deleteConversation", { channelId }, (response: SocketResponse) => {
+        if (response.success) {
+          resolve(response);
+        } else {
+          reject(new Error(response.error || "Failed to delete conversation"));
+        }
+      });
+    });
   }
 
   // Remove event listeners

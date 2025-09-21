@@ -12,16 +12,20 @@ import { getDisplayName, getLastSeenText, getStatusColor } from "../utils/intern
 
 interface ChannelSidebarProps {
   activeChannelId: string | null;
+  currentUser?: { id: string; email: string; name?: string };
   onChannelSelect: (channelId: string) => void;
   onStartDirectMessage?: (userId: string) => void;
   onAddChannel?: () => void;
+  onCreateChannel?: (name: string, description?: string) => void;
 }
 
 export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
   activeChannelId,
+  currentUser,
   onChannelSelect,
   onStartDirectMessage,
   onAddChannel,
+  onCreateChannel,
 }) => {
   const channels = useRecoilValue(messagingChannelsState);
   const unreadCounts = useRecoilValue(messagingUnreadCountsState);
@@ -50,38 +54,63 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
       isSelected: activeChannelId === channel.id,
     }));
 
-  // Convert online users to sidebar items
-  const onlineUserItems: BaseSidebarItem[] = Object.values(userPresence)
-    .filter((presence) => onlineUsers.includes(presence.userId))
+  // Get all unique users from presence data
+  const allUsers = Object.values(userPresence);
+
+  // Deduplicate users by userId and get the most complete data
+  const uniqueUsers = allUsers.reduce((acc, presence) => {
+    const existing = acc.get(presence.userId);
+    if (!existing) {
+      acc.set(presence.userId, presence);
+    } else {
+      // Keep the user with more complete data (prefer firstName/lastName over email)
+      const existingHasName = existing.firstName || existing.lastName;
+      const currentHasName = presence.firstName || presence.lastName;
+
+      if (currentHasName && !existingHasName) {
+        acc.set(presence.userId, presence);
+      } else if (currentHasName && existingHasName) {
+        // If both have names, prefer the one with more complete data
+        const existingNameCompleteness = (existing.firstName ? 1 : 0) + (existing.lastName ? 1 : 0);
+        const currentNameCompleteness = (presence.firstName ? 1 : 0) + (presence.lastName ? 1 : 0);
+
+        if (currentNameCompleteness > existingNameCompleteness) {
+          acc.set(presence.userId, presence);
+        }
+      }
+    }
+    return acc;
+  }, new Map());
+
+  // Convert unique users to sidebar items (excluding current user)
+  const userItems: BaseSidebarItem[] = Array.from(uniqueUsers.values())
+    .filter((presence) => presence.userId !== currentUser?.id) // Exclude current user
     .map((presence) => ({
       id: presence.userId,
       name: getDisplayName(presence),
       type: "direct" as const,
-      status: presence.status,
+      status: onlineUsers.includes(presence.userId) ? "online" : presence.status,
       lastSeen: presence.lastSeen,
       email: presence.email,
-    }));
+    }))
+    .sort((a, b) => {
+      // Sort online users first, then by name
+      if (a.status === "online" && b.status !== "online") return -1;
+      if (a.status !== "online" && b.status === "online") return 1;
+      return a.name.localeCompare(b.name);
+    });
 
-  // Convert offline users to sidebar items
-  const offlineUserItems: BaseSidebarItem[] = Object.values(userPresence)
-    .filter((presence) => !onlineUsers.includes(presence.userId))
-    .slice(0, 5) // Show only first 5 offline users
-    .map((presence) => ({
-      id: presence.userId,
-      name: getDisplayName(presence),
-      type: "direct" as const,
-      status: presence.status,
-      lastSeen: presence.lastSeen,
-      email: presence.email,
-    }));
-
-  const allItems = [...channelItems, ...directChannelItems, ...onlineUserItems, ...offlineUserItems];
+  const allItems = [...channelItems, ...directChannelItems, ...userItems];
 
   const handleItemSelect = (item: BaseSidebarItem) => {
-    if (item.type === "channel" || item.type === "direct") {
+    if (item.type === "channel") {
       onChannelSelect(item.id);
-    } else if (item.type === "direct" && onStartDirectMessage) {
-      onStartDirectMessage(item.id);
+    } else if (item.type === "direct") {
+      if (onStartDirectMessage) {
+        onStartDirectMessage(item.id);
+      } else {
+        onChannelSelect(item.id);
+      }
     }
   };
 

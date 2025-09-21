@@ -1,7 +1,15 @@
 import { Message, PresenceData } from "../types/internal.types";
 
 export const formatMessageTime = (timestamp: string): string => {
+  if (!timestamp) return "Just now";
+
   const date = new Date(timestamp);
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return "Just now";
+  }
+
   const now = new Date();
   const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
@@ -18,7 +26,10 @@ export const formatMessageTime = (timestamp: string): string => {
 };
 
 export const getDisplayName = (presence: PresenceData): string => {
-  return `${presence.firstName} ${presence.lastName}`.trim() || presence.email;
+  const firstName = presence.firstName || "";
+  const lastName = presence.lastName || "";
+  const fullName = `${firstName} ${lastName}`.trim();
+  return fullName || presence.email || "Unknown User";
 };
 
 export const getLastSeenText = (presence: PresenceData): string | null => {
@@ -77,4 +88,32 @@ export const getStatusColor = (status: "online" | "away" | "busy" | "offline"): 
     default:
       return "#6B7280";
   }
+};
+
+export const getChannelTitle = (
+  channelId: string,
+  userPresence: Record<string, PresenceData>,
+  currentUser?: { id: string; email: string; name?: string }
+): string => {
+  if (!channelId) return "Select a channel";
+
+  // Direct message channel
+  if (channelId.startsWith("dm-")) {
+    const userIds = channelId.replace("dm-", "").split("-");
+    const otherUserId = userIds.find((id) => id !== currentUser?.id);
+
+    if (otherUserId && userPresence[otherUserId]) {
+      return getDisplayName(userPresence[otherUserId]);
+    }
+
+    return "Direct Message";
+  }
+
+  // Regular channel
+  if (channelId.includes("@")) {
+    return channelId; // Email address
+  }
+
+  // Default channel name
+  return `#${channelId}`;
 };

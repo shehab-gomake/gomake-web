@@ -67,10 +67,67 @@ export const useInternalProvider = () => {
     connect();
   }, [connect, setError]);
 
-  const handleStartDirectMessage = useCallback((userId: string) => {
-    // TODO: Create or find direct message channel with user
-    console.log("Start DM with user:", userId);
-  }, []);
+  const handleStartDirectMessage = useCallback(
+    (userId: string) => {
+      // Create a direct message channel ID
+      const currentUserId = currentUser?.id;
+      if (!currentUserId || currentUserId === userId) return;
+
+      // Create a consistent channel ID for direct messages between two users
+      const channelId = `dm-${[currentUserId, userId].sort().join("-")}`;
+
+      // Select the channel (this will trigger joinChannel if needed)
+      handleChannelSelect(channelId);
+    },
+    [currentUser?.id, handleChannelSelect]
+  );
+
+  const handleCreateChannel = useCallback(
+    async (name: string, description?: string) => {
+      try {
+        // For now, just create a simple channel ID
+        // In a real implementation, this would call the backend
+        const channelId = `channel-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`;
+
+        // Select the new channel
+        handleChannelSelect(channelId);
+
+        console.log(`Created channel: ${name} with ID: ${channelId}`);
+      } catch (error) {
+        console.error("Failed to create channel:", error);
+        setError("Failed to create channel");
+      }
+    },
+    [handleChannelSelect, setError]
+  );
+
+  const handleArchiveConversation = useCallback(
+    async (channelId: string) => {
+      try {
+        // For now, just log the action
+        // In a real implementation, this would call the backend
+        console.log(`Archived conversation: ${channelId}`);
+      } catch (error) {
+        console.error("Failed to archive conversation:", error);
+        setError("Failed to archive conversation");
+      }
+    },
+    [setError]
+  );
+
+  const handleDeleteConversation = useCallback(
+    async (channelId: string) => {
+      try {
+        // For now, just log the action
+        // In a real implementation, this would call the backend
+        console.log(`Deleted conversation: ${channelId}`);
+      } catch (error) {
+        console.error("Failed to delete conversation:", error);
+        setError("Failed to delete conversation");
+      }
+    },
+    [setError]
+  );
 
   return {
     // Connection state
@@ -102,6 +159,9 @@ export const useInternalProvider = () => {
     handleInputChange,
     handleRetryConnection,
     handleStartDirectMessage,
+    handleCreateChannel,
+    handleArchiveConversation,
+    handleDeleteConversation,
     connect,
     setError,
   };

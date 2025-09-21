@@ -4,6 +4,7 @@ import { Chat as ChatIcon, Refresh as RefreshIcon } from "@mui/icons-material";
 import config from "@/config";
 import { ChannelSidebar, MessageList, MessageInput, UserPresence } from "./components";
 import { useInternalProvider } from "./hooks/use-internal-provider";
+import { getChannelTitle } from "./utils/internal-utils";
 
 const InternalProviderView: React.FC = () => {
   const {
@@ -25,6 +26,7 @@ const InternalProviderView: React.FC = () => {
     handleInputChange,
     handleRetryConnection,
     handleStartDirectMessage,
+    handleCreateChannel,
   } = useInternalProvider();
 
   // Debug logging
@@ -207,8 +209,10 @@ const InternalProviderView: React.FC = () => {
         <div style={{ width: 280, minWidth: 280, height: "100%" }}>
           <ChannelSidebar
             activeChannelId={activeChannelId}
+            currentUser={currentUser}
             onChannelSelect={handleChannelSelect}
             onStartDirectMessage={handleStartDirectMessage}
+            onCreateChannel={handleCreateChannel}
           />
         </div>
 
@@ -233,7 +237,7 @@ const InternalProviderView: React.FC = () => {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                   <div>
                     <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
-                      #{activeChannelId}
+                      {getChannelTitle(activeChannelId || "", userPresence, currentUser)}
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#6B7280" }}>
                       {connectionStatus === "connected"
@@ -263,7 +267,9 @@ const InternalProviderView: React.FC = () => {
                 onChange={handleInputChange}
                 onSend={handleSendMessage}
                 placeholder={
-                  connectionStatus === "connected" ? `Message #${activeChannelId}` : `Message #${activeChannelId} (offline mode)`
+                  connectionStatus === "connected"
+                    ? `Message ${getChannelTitle(activeChannelId || "", userPresence, currentUser)}`
+                    : `Message ${getChannelTitle(activeChannelId || "", userPresence, currentUser)} (offline mode)`
                 }
                 disabled={false} // Allow typing even when disconnected for testing
                 isSending={isSending}
@@ -289,7 +295,12 @@ const InternalProviderView: React.FC = () => {
 
         {/* Right: User presence */}
         <div style={{ width: 240, minWidth: 240, height: "100%" }}>
-          <UserPresence onlineUsers={onlineUsers} userPresence={userPresence} onUserClick={handleStartDirectMessage} />
+          <UserPresence
+            onlineUsers={onlineUsers}
+            userPresence={userPresence}
+            currentUserId={currentUser?.id}
+            onUserClick={handleStartDirectMessage}
+          />
         </div>
       </Stack>
     </Stack>

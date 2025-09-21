@@ -1,15 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  Box,
-  Typography,
-  Stack,
-  Avatar,
-  Paper,
-  Chip,
-  CircularProgress,
-  useTheme,
-  alpha
-} from '@mui/material';
+import React, { useEffect, useRef } from "react";
+import { Box, Typography, Stack, Avatar, Paper, Chip, CircularProgress, useTheme, alpha } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export interface BaseMessage {
@@ -42,45 +32,67 @@ interface MessageBubbleProps {
   themLabel?: string;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({
-  message,
-  isOwn,
-  showAvatar,
-  userPresence,
-  themLabel = "Them"
-}) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isOwn, showAvatar, userPresence, themLabel = "Them" }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
 
   const formatTime = (timestamp: string) => {
+    if (!timestamp) return "Just now";
+
     const date = new Date(timestamp);
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "Just now";
+    }
+
     const now = new Date();
     const diffHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
     if (diffHours < 1) {
-      return 'Just now';
+      return "Just now";
     } else if (diffHours < 24) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else if (diffHours < 168) { // 7 days
-      return date.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } else if (diffHours < 168) {
+      // 7 days
+      return date.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+      return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
     }
   };
 
   const getDisplayName = () => {
-    if (isOwn) return 'You';
-    return message.userName ||
-           `${userPresence[message.userId]?.firstName || ''} ${userPresence[message.userId]?.lastName || ''}`.trim() ||
-           message.userEmail ||
-           themLabel;
+    if (isOwn) return "You";
+
+    // Try message.userName first
+    if (message.userName) return message.userName;
+
+    // Try to construct name from userPresence
+    const user = userPresence[message.userId];
+    if (user) {
+      const firstName = user.firstName || "";
+      const lastName = user.lastName || "";
+      const fullName = `${firstName} ${lastName}`.trim();
+      if (fullName) return fullName;
+    }
+
+    // Fallback to email or label
+    return message.userEmail || themLabel;
   };
 
   const getInitials = () => {
-    if (isOwn) return 'Y';
+    if (isOwn) return "Y";
     const name = getDisplayName();
-    if (!name || name === 'Unknown User') return 'T';
-    return name.split(' ').map(n => n[0]).filter(Boolean).join('').toUpperCase().slice(0, 2) || 'T';
+    if (!name || name === "Unknown User") return "T";
+    return (
+      name
+        .split(" ")
+        .map((n) => n[0])
+        .filter(Boolean)
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "T"
+    );
   };
 
   const getMessageBubbleStyles = () => ({
@@ -117,20 +129,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       alignItems="flex-end"
       sx={{
         mb: showAvatar ? 2 : 0.5,
-        px: 2
+        px: 2,
       }}
     >
-      {!isOwn && (
-        <Avatar sx={getAvatarStyles()}>
-          {showAvatar ? getInitials() : ""}
-        </Avatar>
-      )}
+      {!isOwn && <Avatar sx={getAvatarStyles()}>{showAvatar ? getInitials() : ""}</Avatar>}
 
-      <Stack
-        maxWidth="70%"
-        alignItems={isOwn ? "flex-end" : "flex-start"}
-        spacing={0.5}
-      >
+      <Stack maxWidth="70%" alignItems={isOwn ? "flex-end" : "flex-start"} spacing={0.5}>
         {showAvatar && (
           <Chip
             label={getDisplayName()}
@@ -146,10 +150,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           />
         )}
 
-        <Paper
-          elevation={0}
-          sx={getMessageBubbleStyles()}
-        >
+        <Paper elevation={0} sx={getMessageBubbleStyles()}>
           <Typography
             variant="body2"
             sx={{
@@ -174,18 +175,14 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         </Typography>
       </Stack>
 
-      {isOwn && (
-        <Avatar sx={getAvatarStyles()}>
-          {showAvatar ? "Y" : ""}
-        </Avatar>
-      )}
+      {isOwn && <Avatar sx={getAvatarStyles()}>{showAvatar ? "Y" : ""}</Avatar>}
     </Stack>
   );
 };
 
 const TypingIndicator: React.FC<{
   typingUsers: string[];
-  userPresence: Record<string, any>
+  userPresence: Record<string, any>;
 }> = ({ typingUsers, userPresence }) => {
   const { neutralColor } = useGomakeTheme();
 
@@ -194,12 +191,12 @@ const TypingIndicator: React.FC<{
   const getTypingText = () => {
     if (typingUsers.length === 1) {
       const user = userPresence[typingUsers[0]];
-      const name = user ? `${user.firstName} ${user.lastName}`.trim() : 'Someone';
+      const name = user ? `${user.firstName} ${user.lastName}`.trim() : "Someone";
       return `${name} is typing...`;
     } else if (typingUsers.length === 2) {
-      const names = typingUsers.map(id => {
+      const names = typingUsers.map((id) => {
         const user = userPresence[id];
-        return user ? user.firstName || 'Someone' : 'Someone';
+        return user ? user.firstName || "Someone" : "Someone";
       });
       return `${names[0]} and ${names[1]} are typing...`;
     } else {
@@ -209,10 +206,8 @@ const TypingIndicator: React.FC<{
 
   return (
     <Stack direction="row" spacing={1} alignItems="center" sx={{ px: 2, py: 1 }}>
-      <Avatar sx={{ width: 24, height: 24, fontSize: '0.65rem', bgcolor: neutralColor(400) }}>
-        •••
-      </Avatar>
-      <Typography variant="caption" sx={{ color: neutralColor(600), fontStyle: 'italic' }}>
+      <Avatar sx={{ width: 24, height: 24, fontSize: "0.65rem", bgcolor: neutralColor(400) }}>•••</Avatar>
+      <Typography variant="caption" sx={{ color: neutralColor(600), fontStyle: "italic" }}>
         {getTypingText()}
       </Typography>
     </Stack>
@@ -226,7 +221,7 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
   userPresence = {},
   isLoadingHistory = false,
   emptyMessage = "No messages yet",
-  themLabel = "Them"
+  themLabel = "Them",
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -235,14 +230,15 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, typingUsers]);
 
   // Group messages by same user within 5 minutes
   const groupedMessages = messages.reduce((groups: { message: BaseMessage; showAvatar: boolean }[], message, index) => {
     const prevMessage = messages[index - 1];
-    const showAvatar = !prevMessage ||
+    const showAvatar =
+      !prevMessage ||
       prevMessage.userId !== message.userId ||
       new Date(message.timestamp).getTime() - new Date(prevMessage.timestamp).getTime() > 5 * 60 * 1000; // 5 minutes
 
@@ -255,10 +251,10 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
       <Box
         sx={{
           flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 4
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 4,
         }}
       >
         <Stack alignItems="center" spacing={2}>
@@ -276,17 +272,17 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
       <Box
         sx={{
           flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 4
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 4,
         }}
       >
         <Stack alignItems="center" spacing={2}>
           <Typography variant="h6" sx={{ color: neutralColor(600) }}>
             {emptyMessage}
           </Typography>
-          <Typography variant="body2" sx={{ color: neutralColor(500), textAlign: 'center' }}>
+          <Typography variant="body2" sx={{ color: neutralColor(500), textAlign: "center" }}>
             Start the conversation by sending your first message
           </Typography>
         </Stack>
@@ -299,9 +295,9 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
       ref={containerRef}
       sx={{
         flex: 1,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
+        overflow: "auto",
+        display: "flex",
+        flexDirection: "column",
         py: 1,
         background: `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
       }}
@@ -312,7 +308,7 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
           key={`${message.id}-${index}`}
           message={{
             ...message,
-            isOwn: message.userId === currentUserId || message.isOwn
+            isOwn: message.userId === currentUserId || message.isOwn,
           }}
           isOwn={message.userId === currentUserId || message.isOwn}
           showAvatar={showAvatar}
