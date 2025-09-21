@@ -35,6 +35,8 @@ export const useFileApiSettings = () => {
   const [isConfigured, setIsConfigured] = useState(false);
   const [fileServiceStatus, setFileServiceStatus] = useState(0); // 0: Inactive, 1: Active, 2: Error
   const [loading, setLoading] = useState(false);
+  const [authorizationKey, setAuthorizationKey] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
 
   // Update local state when socket status changes
   useEffect(() => {
@@ -71,6 +73,7 @@ export const useFileApiSettings = () => {
         const newStatus = res.data.fileServiceStatus || 0;
         setFileServiceStatus(newStatus);
         setSocketFileServiceStatus(newStatus); // Sync with socket state
+        setAuthorizationKey(res.data.authorizationKey || "");
       }
     };
     await getFileServiceConfigs(callApi, callBack);
@@ -78,12 +81,14 @@ export const useFileApiSettings = () => {
 
   const handleSubmitAndDownload = async () => {
     setLoading(true);
-    const callBack = (res) => {
+    const callBack = async (res) => {
       if (res.success) {
         // Only download if not already configured
         if (!isConfigured) {
           handleDownloadInstaller();
         }
+        // Fetch updated configs to get the AuthorizationKey
+        await fetchFileServiceConfigs();
       } else {
         alertFaultUpdate();
       }
@@ -107,6 +112,31 @@ export const useFileApiSettings = () => {
       "https://gomakefileserviceinstaller.s3.eu-central-1.amazonaws.com/GoMakeServiceInstaller.exe",
       "_blank"
     );
+  };
+
+  const handleCopyAuthorizationKey = async () => {
+    try {
+      await navigator.clipboard.writeText(authorizationKey);
+      setIsCopied(true);
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy authorization key:", error);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = authorizationKey;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setIsCopied(true);
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
   };
 
   const formInputs: IInput[] = [
@@ -263,10 +293,13 @@ export const useFileApiSettings = () => {
     loading,
     isConfigured,
     fileServiceStatus,
+    authorizationKey,
+    isCopied,
     formInputs,
     handleInputChange,
     handleSubmitAndDownload,
     handleDownloadInstaller,
+    handleCopyAuthorizationKey,
     fetchFileServiceConfigs,
     t,
   };
