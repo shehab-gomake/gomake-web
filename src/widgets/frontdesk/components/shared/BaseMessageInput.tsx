@@ -1,7 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { Box, TextField, IconButton, Stack, Tooltip, CircularProgress } from "@mui/material";
 import { Send as SendIcon, AttachFile as AttachIcon, EmojiEmotions as EmojiIcon } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { MentionsMenu } from "./mentions/MentionsMenu";
+import { useMentionSearch } from "./mentions/useMentionSearch";
+import type { MentionCategory, MentionItem, MentionGroup } from "./mentions/types";
 
 interface BaseMessageInputProps {
   value: string;
@@ -30,8 +33,23 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [isComposing, setIsComposing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const lastTypingTimeRef = useRef<number>(0);
+
+  // Mentions state
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [mentionCategory, setMentionCategory] = useState<MentionCategory>("all");
+  const [mentionTriggerIndex, setMentionTriggerIndex] = useState<number | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  const { results, loading, error, setQuery, setCategory } = useMentionSearch({
+    query: mentionQuery,
+    category: mentionCategory,
+  });
+
+  const flatResults: MentionItem[] = useMemo(() => results.flatMap(g => g.items), [results]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,12 +75,104 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
       } else if (!newValue.trim() && onTypingStop) {
         onTypingStop();
       }
+
+      // Mentions detection (when not composing)
+      if (!isComposing) {
+        try {
+          const caret = (event.target as HTMLTextAreaElement).selectionStart ?? newValue.length;
+          const beforeCaret = newValue.slice(0, caret);
+          const match = beforeCaret.match(/(^|\s)@(\w*)$/);
+          if (match) {
+            const atIndex = beforeCaret.lastIndexOf("@");
+            setMentionTriggerIndex(atIndex);
+            const q = match[2] || "";
+            setMentionQuery(q);
+            setQuery(q);
+            setMentionOpen(true);
+            setHighlightedIndex(0);
+          } else {
+            // Close if no active token
+            if (mentionOpen) {
+              setMentionOpen(false);
+              setMentionTriggerIndex(null);
+              setMentionQuery("");
+              setQuery("");
+            }
+          }
+        } catch {}
+      }
     },
-    [onChange, onTypingStart, onTypingStop, disabled]
+    [onChange, onTypingStart, onTypingStop, disabled, isComposing, mentionOpen, setQuery]
   );
 
   const handleKeyDown = useCallback(
     async (event: React.KeyboardEvent) => {
+      // Mentions keyboard navigation
+      if (mentionOpen) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          setHighlightedIndex((i) => Math.min(i + 1, flatResults.length - 1));
+          return;
+        }
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          setHighlightedIndex((i) => Math.max(i - 1, 0));
+          return;
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          setMentionOpen(false);
+          return;
+        }
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          const item = flatResults[highlightedIndex];
+          if (item) {
+            // Insert selection
+            const input = inputRef.current as HTMLTextAreaElement | null;
+            const caret = input?.selectionStart ?? value.length;
+            const start = mentionTriggerIndex ?? 0;
+            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            onChange(updated);
+            // restore caret after inserted text
+            requestAnimationFrame(() => {
+              if (input) {
+                const pos = start + item.label.length;
+                input.setSelectionRange(pos, pos);
+                input.focus();
+              }
+            });
+            setMentionOpen(false);
+            setMentionTriggerIndex(null);
+            setMentionQuery("");
+            setQuery("");
+          }
+          return;
+        }
+        if (event.key === "Tab") {
+          event.preventDefault();
+          const item = flatResults[highlightedIndex];
+          if (item) {
+            const input = inputRef.current as HTMLTextAreaElement | null;
+            const caret = input?.selectionStart ?? value.length;
+            const start = mentionTriggerIndex ?? 0;
+            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            onChange(updated);
+            requestAnimationFrame(() => {
+              if (input) {
+                const pos = start + item.label.length;
+                input.setSelectionRange(pos, pos);
+                input.focus();
+              }
+            });
+            setMentionOpen(false);
+            setMentionTriggerIndex(null);
+            setMentionQuery("");
+            setQuery("");
+          }
+          return;
+        }
+      }
       // Handle Enter key (send message)
       if (event.key === "Enter" && !event.shiftKey && !isComposing) {
         event.preventDefault();
@@ -91,7 +201,7 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
         inputRef.current?.blur();
       }
     },
-    [value, onSend, onChange, onTypingStop, disabled, isSending, isComposing]
+    [value, onSend, onChange, onTypingStop, disabled, isSending, isComposing, mentionOpen, highlightedIndex, flatResults, mentionTriggerIndex, setQuery]
   );
 
   const handleSendClick = useCallback(async () => {
@@ -149,7 +259,8 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
 
         {/* Message input */}
         <TextField
-          ref={inputRef}
+          ref={anchorRef}
+          inputRef={inputRef}
           fullWidth
           multiline
           maxRows={4}
@@ -186,6 +297,40 @@ export const BaseMessageInput: React.FC<BaseMessageInputProps> = ({
               },
             },
           }}
+        />
+        {/* Mentions menu (Popper) anchored to inputRef */}
+        <MentionsMenu
+          open={mentionOpen}
+          anchorEl={anchorRef.current}
+          query={mentionQuery}
+          category={mentionCategory}
+          onCategoryChange={(c) => {
+            setMentionCategory(c);
+            setCategory(c);
+          }}
+          results={results as MentionGroup[]}
+          loading={loading}
+          highlightedIndex={highlightedIndex}
+          onHighlightChange={setHighlightedIndex}
+          onPick={(item) => {
+            const input = inputRef.current as HTMLInputElement | null;
+            const caret = input?.selectionStart ?? value.length;
+            const start = mentionTriggerIndex ?? 0;
+            const updated = value.slice(0, start) + item.label + value.slice(caret);
+            onChange(updated);
+            requestAnimationFrame(() => {
+              if (input) {
+                const pos = start + item.label.length;
+                input.setSelectionRange(pos, pos);
+                input.focus();
+              }
+            });
+            setMentionOpen(false);
+            setMentionTriggerIndex(null);
+            setMentionQuery("");
+            setQuery("");
+          }}
+          onClose={() => setMentionOpen(false)}
         />
 
         {/* Emoji button */}
