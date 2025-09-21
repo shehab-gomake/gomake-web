@@ -110,10 +110,41 @@ const useMaterialsCategories = (isAdmin: boolean) => {
             // Add mock data for new columns
             const newRow = { ...row, checked: false };
 
-            // Add mock data for new columns if they don't exist
-            if (!newRow.rowData.storageLocation) {
+            // Handle SKU from API response (top level)
+            if (row.sku !== null && row.sku !== undefined && row.sku !== "") {
+              newRow.rowData.sku = {
+                value: row.sku,
+                isEditable: true,
+                type: 1 // NUMBER
+              };
+            }
+
+            // Handle isActive from API response (top level)
+            if (row.isActive !== null && row.isActive !== undefined) {
+              newRow.rowData.Active = {
+                value: row.isActive,
+                isEditable: true,
+                type: 2 // BOOLEAN
+              };
+            }
+
+            // Handle storageLocation from API response (top level)
+            if (row.storageLocation !== null && row.storageLocation !== undefined) {
               newRow.rowData.storageLocation = {
-                value: "Storage 1",
+                value: row.storageLocation,
+                isEditable: true,
+                type: 6, // LIST
+                values: [
+                  { key: "storage1", value: "Storage 1" },
+                  { key: "storage2", value: "Storage 2" },
+                  { key: "storage3", value: "Storage 3" },
+                  { key: "storage4", value: "Storage 4" },
+                  { key: "storage5", value: "Storage 5" }
+                ]
+              };
+            } else if (!newRow.rowData.storageLocation) {
+              newRow.rowData.storageLocation = {
+                value: "",
                 isEditable: true,
                 type: 6, // LIST
                 values: [
@@ -126,24 +157,40 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               };
             }
 
-            if (!newRow.rowData.minimalStock) {
+            // Handle minStock and optimalStock from API response
+            if (row.minStock !== null && row.minStock !== undefined) {
               newRow.rowData.minimalStock = {
-                value: "20",
+                value: row.minStock.toString(),
+                isEditable: true,
+                type: 1, // NUMBER
+                unit: "m"
+              };
+            } else if (!newRow.rowData.minimalStock) {
+              newRow.rowData.minimalStock = {
+                value: "",
                 isEditable: true,
                 type: 1, // NUMBER
                 unit: "m"
               };
             }
 
-            if (!newRow.rowData.optimalStock) {
+            if (row.optimalStock !== null && row.optimalStock !== undefined) {
               newRow.rowData.optimalStock = {
-                value: "50",
+                value: row.optimalStock.toString(),
+                isEditable: true,
+                type: 1, // NUMBER
+                unit: "m"
+              };
+            } else if (!newRow.rowData.optimalStock) {
+              newRow.rowData.optimalStock = {
+                value: "",
                 isEditable: true,
                 type: 1, // NUMBER
                 unit: "m"
               };
             }
 
+            // Handle suppliers field - keep existing logic or add from API if available
             if (!newRow.rowData.suppliers) {
               newRow.rowData.suppliers = {
                 value: "Fares, mohand, Aous",
@@ -152,6 +199,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               };
             }
 
+            // Handle inventory field - use real data from API
             if (!newRow.rowData.inventory) {
               newRow.rowData.inventory = {
                 value: "Open",
@@ -160,6 +208,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               };
             }
 
+            // Handle purchasePricing field - use real data from API
             if (!newRow.rowData.purchasePricing) {
               newRow.rowData.purchasePricing = {
                 value: "Open",
