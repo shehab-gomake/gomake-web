@@ -1,34 +1,10 @@
-import React from 'react';
-import {
-  Box,
-  Stack,
-  Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
-  Badge,
-  CircularProgress,
-  Divider,
-  Collapse,
-  IconButton,
-  alpha
-} from '@mui/material';
-import {
-  Inbox as InboxIcon,
-  Send as SentIcon,
-  Drafts as DraftsIcon,
-  Delete as TrashIcon,
-  Report as SpamIcon,
-  Label as LabelIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  Archive as ArchiveIcon,
-  Star as StarIcon
-} from '@mui/icons-material';
+import React from "react";
+import { Box, Stack, Typography, List, CircularProgress, Divider, Collapse, IconButton } from "@mui/material";
+import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailLabel } from "../types/email.types";
+import { getLabelIcon } from "../utils/icon-utils";
+import { EmailListItem } from "./ui/email-list-item";
 
 interface EmailLabelsProps {
   accountId?: string;
@@ -54,95 +30,24 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [showUserLabels, setShowUserLabels] = React.useState(true);
 
-  // Icon mapping for system labels
-  const getSystemLabelIcon = (labelId: string, labelName: string) => {
-    const lowerId = labelId.toLowerCase();
-    const lowerName = labelName.toLowerCase();
-
-    if (lowerId.includes('inbox') || lowerName.includes('inbox')) return InboxIcon;
-    if (lowerId.includes('sent') || lowerName.includes('sent')) return SentIcon;
-    if (lowerId.includes('draft') || lowerName.includes('draft')) return DraftsIcon;
-    if (lowerId.includes('trash') || lowerName.includes('trash') || lowerName.includes('bin')) return TrashIcon;
-    if (lowerId.includes('spam') || lowerName.includes('spam') || lowerName.includes('junk')) return SpamIcon;
-    if (lowerId.includes('starred') || lowerName.includes('starred')) return StarIcon;
-    if (lowerId.includes('archive') || lowerName.includes('archive')) return ArchiveIcon;
-
-    return InboxIcon; // Default icon
-  };
-
   const LabelListItem: React.FC<{ label: EmailLabel; isSystem?: boolean }> = ({ label, isSystem = false }) => {
     const isSelected = label.id === selectedLabelId;
-    const IconComponent = isSystem ? getSystemLabelIcon(label.id, label.name) : LabelIcon;
+    const IconComponent = getLabelIcon(label.id, label.name, isSystem);
 
     return (
-      <ListItem disablePadding>
-        <ListItemButton
-          selected={isSelected}
-          onClick={() => onLabelSelect(isSelected ? null : label.id)}
-          sx={{
-            borderRadius: 1,
-            mx: 0.5,
-            py: 0.75,
-            '&.Mui-selected': {
-              backgroundColor: alpha(primaryColor(100), 0.8),
-              borderLeft: `3px solid ${primaryColor(500)}`,
-              '&:hover': {
-                backgroundColor: alpha(primaryColor(100), 0.9),
-              }
-            },
-            '&:hover': {
-              backgroundColor: alpha(neutralColor(100), 0.5),
-            }
-          }}
-        >
-          <ListItemIcon sx={{ minWidth: 32 }}>
-            <IconComponent
-              sx={{
-                fontSize: 16,
-                color: isSelected ? primaryColor(600) : neutralColor(500)
-              }}
-            />
-          </ListItemIcon>
-
-          <ListItemText
-            primary={
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: '0.875rem',
-                    fontWeight: isSelected ? 600 : 400,
-                    color: isSelected ? primaryColor(700) : neutralColor(700),
-                  }}
-                  noWrap
-                >
-                  {label.name}
-                </Typography>
-
-                {label.unreadCount && label.unreadCount > 0 && (
-                  <Badge
-                    badgeContent={label.unreadCount > 99 ? '99+' : label.unreadCount}
-                    color="primary"
-                    sx={{
-                      '& .MuiBadge-badge': {
-                        fontSize: '0.65rem',
-                        height: 16,
-                        minWidth: 16,
-                      }
-                    }}
-                  />
-                )}
-              </Stack>
-            }
-          />
-        </ListItemButton>
-      </ListItem>
+      <EmailListItem
+        icon={<IconComponent sx={{ fontSize: 16, color: isSelected ? primaryColor(600) : neutralColor(500) }} />}
+        primary={label.name}
+        badgeCount={label.unreadCount}
+        isSelected={isSelected}
+        onClick={() => onLabelSelect(isSelected ? null : label.id)}
+      />
     );
   };
 
   if (!accountId) {
     return (
-      <Box sx={{ p: 2, textAlign: 'center' }}>
+      <Box sx={{ p: 2, textAlign: "center" }}>
         <Typography variant="body2" sx={{ color: neutralColor(500) }}>
           Select an account to view labels
         </Typography>
@@ -152,7 +57,7 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
 
   if (loading) {
     return (
-      <Box sx={{ p: 2, textAlign: 'center' }}>
+      <Box sx={{ p: 2, textAlign: "center" }}>
         <CircularProgress size={20} />
         <Typography variant="body2" sx={{ color: neutralColor(600), mt: 1 }}>
           Loading labels...
@@ -163,8 +68,8 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
 
   if (error) {
     return (
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="body2" sx={{ color: 'error.main' }}>
+      <Box sx={{ p: 2, textAlign: "center" }}>
+        <Typography variant="body2" sx={{ color: "error.main" }}>
           Failed to load labels
         </Typography>
       </Box>
@@ -181,10 +86,10 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
             sx={{
               color: neutralColor(600),
               fontWeight: 600,
-              fontSize: '0.75rem',
+              fontSize: "0.75rem",
               px: 1,
               py: 0.5,
-              display: 'block'
+              display: "block",
             }}
           >
             FOLDERS
@@ -208,7 +113,7 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
               sx={{
                 color: neutralColor(600),
                 fontWeight: 600,
-                fontSize: '0.75rem',
+                fontSize: "0.75rem",
                 py: 0.5,
               }}
             >
@@ -219,7 +124,7 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
               onClick={() => setShowUserLabels(!showUserLabels)}
               sx={{
                 color: neutralColor(500),
-                '&:hover': { color: neutralColor(700) }
+                "&:hover": { color: neutralColor(700) },
               }}
             >
               {showUserLabels ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />}
@@ -237,7 +142,7 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
       )}
 
       {labels.length === 0 && (
-        <Box sx={{ p: 2, textAlign: 'center' }}>
+        <Box sx={{ p: 2, textAlign: "center" }}>
           <Typography variant="body2" sx={{ color: neutralColor(500) }}>
             No labels found
           </Typography>
