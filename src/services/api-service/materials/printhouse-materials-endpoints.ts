@@ -10,6 +10,8 @@ const GET_MATERIAL_CATEGORIES_URL =
   "/v1/printhouse-materials/GetPrintHouseMaterialCategories";
 const GET_MATERIAL_CATEGORY_DATA_URL =
   "/v1/printhouse-materials/GetPrintHouseMaterialCategoryData";
+const GET_MATERIAL_CATEGORY_DATA_NEW_URL =
+  "/v1/printhouse-materials/get-print-house-material-category-data-new";
 const UPDATE_MATERIAL_PROPS_URL =
   "/v1/printhouse-materials/updatePrintHouseMaterial";
 const UPDATE_MATERIALS_PROPS_URL =
@@ -37,6 +39,8 @@ const UPLOAD_MATERIAL_EXCEL_FILE =
   "/v1/printhouse-materials/upload-material-excel-file";
 
 const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
+const GET_SUPPLIER_INVENTORIES_URL = "/v1/printhouse-materials/get-supplier-inventories";
+const GET_PURCHASE_PRICING_URL = "/v1/printhouse-materials/get-purchase-pricing";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -75,6 +79,32 @@ const getPrintHouseMaterialCategoryDataApi: ICallAndSetData = async (
     abortController
   );
 };
+
+const getPrintHouseMaterialCategoryDataNewApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  material: {
+    materialKey: string;
+    categoryKey: string;
+    supplierId: string;
+    pageNumber: number;
+    pageSize: number;
+    isActive: boolean;
+    customFiltersKeyValueList: IMaterialTableFilteringValue[];
+  },
+  lock: boolean,
+  abortController: AbortController
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_MATERIAL_CATEGORY_DATA_NEW_URL,
+    setState,
+    material,
+    lock,
+    abortController
+  );
+};  
 const updatePrintHouseMaterialPropApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -269,9 +299,36 @@ const uploadPrintHouseMaterialExcelFileApi: ICallAndSetData = async (
     data
   );
 };
+
+const getSupplierInventoriesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  printHouseMaterialId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_SUPPLIER_INVENTORIES_URL}/${printHouseMaterialId}`,
+    setState
+  );
+};
+
+const getPurchasePricingApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  printHouseMaterialId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_PURCHASE_PRICING_URL}/${printHouseMaterialId}`,
+    setState
+  );
+};
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
+  getPrintHouseMaterialCategoryDataNewApi,
   updatePrintHouseMaterialPropApi,
   updatePrintHouseMaterialsPropApi,
   addPrintHouseMaterialCategoryApi,
@@ -285,4 +342,6 @@ export {
   duplicatePrintHouseMaterialDisplayNameApi,
   updatePrintHouseCategoriesOrderApi,
   updateCategoriesOrderApi,
+  getSupplierInventoriesApi,
+  getPurchasePricingApi,
 };

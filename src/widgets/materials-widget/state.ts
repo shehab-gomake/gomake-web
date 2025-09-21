@@ -186,6 +186,26 @@ export const openChildTableState = atom<{ rowId: string; tableType: 'inventory' 
   default: { rowId: '', tableType: null },
 });
 
+export const inventoryDataState = atom<any[]>({
+  key: "inventoryDataState",
+  default: [],
+});
+
+export const purchasePricingDataState = atom<any[]>({
+  key: "purchasePricingDataState",
+  default: [],
+});
+
+export const isLoadingInventoryState = atom<boolean>({
+  key: "isLoadingInventoryState",
+  default: false,
+});
+
+export const isLoadingPurchasePricingState = atom<boolean>({
+  key: "isLoadingPurchasePricingState",
+  default: false,
+});
+
 export const openJobsModalState = atom<{ 
   open: boolean; 
   supplierName?: string; 

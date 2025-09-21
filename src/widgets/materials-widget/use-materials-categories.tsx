@@ -17,7 +17,7 @@ import {
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { getPrintHouseMaterialCategoryDataApi, getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { isLoadingMaterialsState, userState } from "@/store";
@@ -221,7 +221,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       }).catch((e) => { });
     } else {
-      await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+      await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
         supplierId: supplierId === "" ? null : supplierId,
