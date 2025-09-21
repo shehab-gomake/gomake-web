@@ -1,14 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { Permissions } from "@/components/CheckPermission/enum";
 import Head from "next/head";
 import { useFileApiSettings } from "./use-file-api-settings";
 
 const SettingsFileApiWidget = () => {
   const {
-    formData,
     loading,
     isConfigured,
     fileServiceStatus,
@@ -63,7 +60,7 @@ const SettingsFileApiWidget = () => {
   }, []);
 
   return (
-    <PermissionCheck userPermission={Permissions.SHOW_PREFERENCES}>
+    <>
       <Head>
         <title>{t("settings.fileApiSettings")}</title>
       </Head>
@@ -309,7 +306,7 @@ const SettingsFileApiWidget = () => {
           )}
         </div>
       </div>
-    </PermissionCheck>
+    </>
   );
 };
 
