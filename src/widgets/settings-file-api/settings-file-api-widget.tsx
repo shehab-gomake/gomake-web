@@ -12,10 +12,13 @@ const SettingsFileApiWidget = () => {
     loading,
     isConfigured,
     fileServiceStatus,
+    authorizationKey,
+    isCopied,
     formInputs,
     handleInputChange,
     handleSubmitAndDownload,
     handleDownloadInstaller,
+    handleCopyAuthorizationKey,
     fetchFileServiceConfigs,
     t,
   } = useFileApiSettings();
@@ -238,6 +241,72 @@ const SettingsFileApiWidget = () => {
               </PrimaryButton>
             )}
           </div>
+
+          {/* Authorization Key Display */}
+          {authorizationKey && (
+            <div
+              style={{
+                padding: "12px",
+                backgroundColor: "#F8F9FA",
+                borderRadius: "6px",
+                border: "1px solid #E9ECEF",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    margin: 0,
+                    color: "#495057",
+                  }}
+                >
+                  {t("fileApiSettings.authorizationKey")}:
+                </h3>
+                <PrimaryButton
+                  variant="outlined"
+                  onClick={handleCopyAuthorizationKey}
+                  style={{
+                    width: "fit-content",
+                    fontSize: "13px",
+                    padding: "3px 8px",
+                    minWidth: "auto",
+                    height: "24px",
+                    backgroundColor: isCopied ? "#D1FAE5" : "transparent",
+                    borderColor: isCopied ? "#059669" : undefined,
+                    color: isCopied ? "#059669" : undefined,
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  {isCopied
+                    ? `✓ ${t("fileApiSettings.copied")} !`
+                    : t("fileApiSettings.copy")}
+                </PrimaryButton>
+              </div>
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border: "1px solid #DEE2E6",
+                  fontFamily: "monospace",
+                  fontSize: "13px",
+                  color: "#495057",
+                  wordBreak: "break-all",
+                  userSelect: "all",
+                }}
+              >
+                {authorizationKey}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </PermissionCheck>
