@@ -43,6 +43,8 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [showUserLabels, setShowUserLabels] = React.useState(true);
+  const [showAllSystemLabels, setShowAllSystemLabels] = React.useState(false);
+  const [showAllUserLabels, setShowAllUserLabels] = React.useState(false);
 
   const LabelListItem: React.FC<{ label: EmailLabel; isSystem?: boolean }> = ({ label, isSystem = false }) => {
     const isSelected = label.id === selectedLabelId;
@@ -142,10 +144,34 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
                     FOLDERS
                   </Typography>
                   <List dense sx={{ py: 0 }}>
-                    {systemLabels.map((label) => (
+                    {(showAllSystemLabels ? systemLabels : systemLabels.slice(0, 5)).map((label) => (
                       <LabelListItem key={label.id} label={label} isSystem />
                     ))}
                   </List>
+                  {systemLabels.length > 5 && (
+                    <Box sx={{ px: 1, py: 0.5 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => setShowAllSystemLabels(!showAllSystemLabels)}
+                        sx={{
+                          color: neutralColor(500),
+                          "&:hover": { color: neutralColor(700) },
+                          width: "100%",
+                          justifyContent: "flex-start",
+                          py: 0.5,
+                        }}
+                      >
+                        {showAllSystemLabels ? (
+                          <ExpandLessIcon sx={{ fontSize: 16, mr: 1 }} />
+                        ) : (
+                          <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+                        )}
+                        <Typography variant="caption" sx={{ color: neutralColor(600) }}>
+                          {showAllSystemLabels ? "Show less" : `Show ${systemLabels.length - 5} more`}
+                        </Typography>
+                      </IconButton>
+                    </Box>
+                  )}
                 </Box>
               )}
 
@@ -180,10 +206,34 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
 
                   <Collapse in={showUserLabels}>
                     <List dense sx={{ py: 0 }}>
-                      {userLabels.map((label) => (
+                      {(showAllUserLabels ? userLabels : userLabels.slice(0, 5)).map((label) => (
                         <LabelListItem key={label.id} label={label} />
                       ))}
                     </List>
+                    {userLabels.length > 5 && (
+                      <Box sx={{ px: 1, py: 0.5 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => setShowAllUserLabels(!showAllUserLabels)}
+                          sx={{
+                            color: neutralColor(500),
+                            "&:hover": { color: neutralColor(700) },
+                            width: "100%",
+                            justifyContent: "flex-start",
+                            py: 0.5,
+                          }}
+                        >
+                          {showAllUserLabels ? (
+                            <ExpandLessIcon sx={{ fontSize: 16, mr: 1 }} />
+                          ) : (
+                            <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+                          )}
+                          <Typography variant="caption" sx={{ color: neutralColor(600) }}>
+                            {showAllUserLabels ? "Show less" : `Show ${userLabels.length - 5} more`}
+                          </Typography>
+                        </IconButton>
+                      </Box>
+                    )}
                   </Collapse>
                 </Box>
               )}
