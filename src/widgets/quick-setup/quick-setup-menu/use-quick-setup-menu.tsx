@@ -280,6 +280,22 @@ const useSetupGuideMenu = ({
           },
         },
         {
+          key: SetupStep.FILE_SERVICE_CONFIGS,
+          label: t("quickSetup.steps.fileServiceConfigs"),
+          status: getStepStatus(SetupStep.FILE_SERVICE_CONFIGS),
+          onClick: () => {
+            handleOpenDemoVideo(SetupStep.FILE_SERVICE_CONFIGS);
+            if (
+              getStepStatus(SetupStep.FILE_SERVICE_CONFIGS) !== StepStatus.DONE
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.FILE_SERVICE_CONFIGS,
+                StepStatus.DONE
+              );
+            }
+          },
+        },
+        {
           key: SetupStep.HELP_CENTER_KNOWLEDGE_BASE,
           label: t("quickSetup.steps.helpCenter"),
           status: getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE),
