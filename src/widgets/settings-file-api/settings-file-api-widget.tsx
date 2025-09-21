@@ -64,13 +64,21 @@ const SettingsFileApiWidget = () => {
       <Head>
         <title>{t("settings.fileApiSettings")}</title>
       </Head>
-      <div style={{ padding: "20px" }}>
+      <div
+        style={{
+          padding: "20px",
+          height: "80vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "30px",
+            flexShrink: 0,
           }}
         >
           <h2 style={{ fontSize: "24px", fontWeight: "bold", margin: 0 }}>
@@ -112,198 +120,207 @@ const SettingsFileApiWidget = () => {
         </div>
 
         <div
+          className="custom-scrollbar"
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            maxWidth: "1200px",
+            flex: 1,
+            overflowY: "auto",
+            paddingRight: "10px",
           }}
         >
-          {/* First row - Remote Name and Computer Name */}
-          <div style={{ display: "flex", gap: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[0]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[1]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-          </div>
-
-          {/* Second row - Username and Password */}
-          <div style={{ display: "flex", gap: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[2]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[3]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-          </div>
-
-          {/* Third row - Base Directory and Workflow Directory */}
-          <div style={{ display: "flex", gap: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[4]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[5]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-          </div>
-
-          {/* Fourth row - Workflow Remote Name and Workflow Username */}
-          <div style={{ display: "flex", gap: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[6]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[7]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-          </div>
-
-          {/* Fifth row - Workflow Password and Folders Creation Type */}
-          <div style={{ display: "flex", gap: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[8]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <FormInput
-                input={formInputs[9]}
-                changeState={handleInputChange}
-                error={false}
-              />
-            </div>
-          </div>
           <div
             style={{
-              marginTop: "30px",
               display: "flex",
+              flexDirection: "column",
               gap: "20px",
-              //   justifyContent: "center",
+              maxWidth: "1200px",
             }}
           >
-            <PrimaryButton
-              variant="contained"
-              onClick={handleSubmitAndDownload}
-              disabled={loading}
-              style={{ width: "fit-content" }}
-            >
-              {loading
-                ? "Loading..."
-                : isConfigured
-                ? t("modal.update")
-                : t("fileApiSettings.submitAndDownload")}
-            </PrimaryButton>
-            {isConfigured && (
-              <PrimaryButton
-                variant="outlined"
-                onClick={handleDownloadInstaller}
-                style={{ width: "fit-content" }}
-              >
-                {t("translations.download")}
-              </PrimaryButton>
-            )}
-          </div>
-
-          {/* Authorization Key Display */}
-          {authorizationKey && (
-            <div
-              style={{
-                padding: "12px",
-                backgroundColor: "#F8F9FA",
-                borderRadius: "6px",
-                border: "1px solid #E9ECEF",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "8px",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    margin: 0,
-                    color: "#495057",
-                  }}
-                >
-                  {t("fileApiSettings.authorizationKey")}:
-                </h3>
-                <PrimaryButton
-                  variant="outlined"
-                  onClick={handleCopyAuthorizationKey}
-                  style={{
-                    width: "fit-content",
-                    fontSize: "13px",
-                    padding: "3px 8px",
-                    minWidth: "auto",
-                    height: "24px",
-                    backgroundColor: isCopied ? "#D1FAE5" : "transparent",
-                    borderColor: isCopied ? "#059669" : undefined,
-                    color: isCopied ? "#059669" : undefined,
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  {isCopied
-                    ? `✓ ${t("fileApiSettings.copied")} !`
-                    : t("fileApiSettings.copy")}
-                </PrimaryButton>
+            {/* First row - Remote Name and Computer Name */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[0]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
               </div>
-              <div
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #DEE2E6",
-                  fontFamily: "monospace",
-                  fontSize: "13px",
-                  color: "#495057",
-                  wordBreak: "break-all",
-                  userSelect: "all",
-                }}
-              >
-                {authorizationKey}
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[1]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
               </div>
             </div>
-          )}
+
+            {/* Second row - Username and Password */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[2]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[3]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+            </div>
+
+            {/* Third row - Base Directory and Workflow Directory */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[4]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[5]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+            </div>
+
+            {/* Fourth row - Workflow Remote Name and Workflow Username */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[6]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[7]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+            </div>
+
+            {/* Fifth row - Workflow Password and Folders Creation Type */}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[8]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <FormInput
+                  input={formInputs[9]}
+                  changeState={handleInputChange}
+                  error={false}
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                marginTop: "30px",
+                display: "flex",
+                gap: "20px",
+                //   justifyContent: "center",
+              }}
+            >
+              <PrimaryButton
+                variant="contained"
+                onClick={handleSubmitAndDownload}
+                disabled={loading}
+                style={{ width: "fit-content" }}
+              >
+                {loading
+                  ? "Loading..."
+                  : isConfigured
+                  ? t("modal.update")
+                  : t("fileApiSettings.submitAndDownload")}
+              </PrimaryButton>
+              {isConfigured && (
+                <PrimaryButton
+                  variant="outlined"
+                  onClick={handleDownloadInstaller}
+                  style={{ width: "fit-content" }}
+                >
+                  {t("translations.download")}
+                </PrimaryButton>
+              )}
+            </div>
+
+            {/* Authorization Key Display */}
+            {authorizationKey && (
+              <div
+                style={{
+                  padding: "12px",
+                  backgroundColor: "#F8F9FA",
+                  borderRadius: "6px",
+                  border: "1px solid #E9ECEF",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      margin: 0,
+                      color: "#495057",
+                    }}
+                  >
+                    {t("fileApiSettings.authorizationKey")}:
+                  </h3>
+                  <PrimaryButton
+                    variant="outlined"
+                    onClick={handleCopyAuthorizationKey}
+                    style={{
+                      width: "fit-content",
+                      fontSize: "13px",
+                      padding: "3px 8px",
+                      minWidth: "auto",
+                      height: "24px",
+                      backgroundColor: isCopied ? "#D1FAE5" : "transparent",
+                      borderColor: isCopied ? "#059669" : undefined,
+                      color: isCopied ? "#059669" : undefined,
+                      transition: "all 0.2s ease-in-out",
+                    }}
+                  >
+                    {isCopied
+                      ? `✓ ${t("fileApiSettings.copied")} !`
+                      : t("fileApiSettings.copy")}
+                  </PrimaryButton>
+                </div>
+                <div
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    padding: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #DEE2E6",
+                    fontFamily: "monospace",
+                    fontSize: "13px",
+                    color: "#495057",
+                    wordBreak: "break-all",
+                    userSelect: "all",
+                  }}
+                >
+                  {authorizationKey}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
