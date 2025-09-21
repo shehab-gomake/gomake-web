@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Stack, Paper, Box, Typography } from "@mui/material";
+import { Stack, Paper, Box, Typography, Fab, Tooltip } from "@mui/material";
+import { Edit as ComposeIcon } from "@mui/icons-material";
 import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
 import { EmailSidebar } from "./components/email-sidebar";
@@ -10,6 +12,7 @@ import { useEmailProvider } from "./hooks/use-email-provider";
 
 export const EmailProviderView: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const { primaryColor } = useGomakeTheme();
 
   const {
     isConnected,
@@ -62,13 +65,35 @@ export const EmailProviderView: React.FC = () => {
     }
   };
 
+  // Handle inline reply - send directly without opening modal
+  const handleInlineReply = async (text: string, replyAll?: boolean) => {
+    if (!selectedConversation) return false;
+
+    // Create a simple reply draft
+    const replyDraft = {
+      to: [{ email: selectedConversation.lastMessage?.from || '', name: '' }],
+      cc: replyAll && selectedConversation.lastMessage?.to
+        ? selectedConversation.lastMessage.to.map(email => ({ email, name: '' }))
+        : [],
+      bcc: [],
+      subject: `Re: ${selectedConversation.subject.replace(/^Re:\s*/i, '')}`,
+      text: text,
+      html: text,
+      replyToMessageId: selectedConversation.lastMessage?.id,
+      threadId: selectedConversation.lastMessage?.threadId || selectedConversation.id,
+    };
+
+    return await handleSendEmail(replyDraft);
+  };
+
+  // Handle reply with modal composer (for complex replies)
   const handleReply = (conversation: any) => {
     handleReplyWithComposer(conversation);
   };
 
   const handleReplyAll = (conversation: any) => {
-    // TODO: Implement reply all functionality
-    console.log("Reply all to:", conversation);
+    // TODO: Implement reply all functionality with modal
+    handleReplyWithComposer(conversation);
   };
 
   const handleForward = (conversation: any) => {
@@ -254,6 +279,8 @@ export const EmailProviderView: React.FC = () => {
               onStar={starConversation}
               onPrint={handlePrint}
               onAddLabel={handleAddLabel}
+              onSendReply={handleInlineReply}
+              isSending={isSending}
             />
           ) : (
             <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -266,7 +293,28 @@ export const EmailProviderView: React.FC = () => {
         </Paper>
       </Stack>
 
-      {/* Composer */}
+      {/* Compose Button - Floating Action Button */}
+      {isConnected && selectedAccountId && (
+        <Tooltip title="Compose new email" placement="left">
+          <Fab
+            color="primary"
+            onClick={handleCompose}
+            sx={{
+              position: "fixed",
+              bottom: 24,
+              right: 24,
+              backgroundColor: primaryColor(600),
+              '&:hover': {
+                backgroundColor: primaryColor(700),
+              },
+            }}
+          >
+            <ComposeIcon />
+          </Fab>
+        </Tooltip>
+      )}
+
+      {/* Composer Modal - Only for new messages */}
       <EmailComposer
         open={showComposer}
         onClose={handleCloseComposer}

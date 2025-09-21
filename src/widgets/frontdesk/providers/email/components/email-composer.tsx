@@ -1,23 +1,32 @@
 import React, { useState, useCallback } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Box,
+  Paper,
   TextField,
   Button,
-  Stack,
-  Box,
-  Typography,
   IconButton,
-  Chip,
+  Typography,
+  Stack,
+  Collapse,
+  Fade,
+  InputBase,
   Divider,
-  useTheme,
-  alpha,
+  Tooltip,
 } from "@mui/material";
-import { Send as SendIcon, Close as CloseIcon, AttachFile as AttachIcon, Add as AddIcon } from "@mui/icons-material";
+import {
+  Send as SendIcon,
+  Close as CloseIcon,
+  Remove as RemoveIcon,
+  OpenInFull as MaximizeIcon,
+  FormatBold as BoldIcon,
+  FormatItalic as ItalicIcon,
+  FormatUnderlined as UnderlineIcon,
+  AttachFile as AttachIcon,
+  InsertEmoticon as EmojiIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { EmailDraft, EmailRecipient } from "../types/email.types";
+import { EmailDraft, EmailRecipient, EmailMessage } from "../types/email.types";
 
 interface EmailComposerProps {
   open: boolean;
@@ -25,304 +34,509 @@ interface EmailComposerProps {
   onSend: (draft: EmailDraft) => Promise<boolean>;
   draft?: EmailDraft;
   isSending?: boolean;
+  replyToMessage?: EmailMessage;
 }
 
-export const EmailComposer: React.FC<EmailComposerProps> = ({ open, onClose, onSend, draft, isSending = false }) => {
+export const EmailComposer: React.FC<EmailComposerProps> = ({
+  open,
+  onClose,
+  onSend,
+  draft,
+  isSending = false,
+  replyToMessage,
+}) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const theme = useTheme();
 
-  const [to, setTo] = useState<EmailRecipient[]>(draft?.to || []);
-  const [cc, setCc] = useState<EmailRecipient[]>(draft?.cc || []);
-  const [bcc, setBcc] = useState<EmailRecipient[]>(draft?.bcc || []);
-  const [subject, setSubject] = useState(draft?.subject || "");
-  const [text, setText] = useState(draft?.text || "");
-  const [html, setHtml] = useState(draft?.html || "");
+  const [to, setTo] = useState(
+    replyToMessage
+      ? `${replyToMessage.from.name ? replyToMessage.from.name + " <" + replyToMessage.from.email + ">" : replyToMessage.from.email}`
+      : draft?.to?.map(r => r.email).join(", ") || ""
+  );
+  const [cc, setCc] = useState(draft?.cc?.map(r => r.email).join(", ") || "");
+  const [bcc, setBcc] = useState(draft?.bcc?.map(r => r.email).join(", ") || "");
+  const [subject, setSubject] = useState(
+    replyToMessage
+      ? `Re: ${replyToMessage.subject.replace(/^Re:\s*/i, "")}`
+      : draft?.subject || ""
+  );
+  const [message, setMessage] = useState(draft?.text || "");
 
-  const [showCc, setShowCc] = useState(cc.length > 0);
-  const [showBcc, setShowBcc] = useState(bcc.length > 0);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [showCc, setShowCc] = useState(false);
+  const [showBcc, setShowBcc] = useState(false);
+
+  const parseEmails = (emailString: string): EmailRecipient[] => {
+    if (!emailString.trim()) return [];
+    return emailString
+      .split(",")
+      .map(email => ({ email: email.trim(), name: "" }))
+      .filter(recipient => recipient.email);
+  };
 
   const handleSend = useCallback(async () => {
-    if (!to.length || !subject.trim() || !text.trim()) return;
+    if (!to.trim() || !message.trim()) return;
 
     const emailDraft: EmailDraft = {
-      to,
-      cc,
-      bcc,
-      subject: subject.trim(),
-      text: text.trim(),
-      html,
-      replyToMessageId: draft?.replyToMessageId,
-      threadId: draft?.threadId,
+      to: parseEmails(to),
+      cc: parseEmails(cc),
+      bcc: parseEmails(bcc),
+      subject: subject.trim() || "(no subject)",
+      text: message.trim(),
+      html: message.trim(),
+      replyToMessageId: replyToMessage?.id || draft?.replyToMessageId,
+      threadId: replyToMessage?.threadId || draft?.threadId,
     };
 
     const success = await onSend(emailDraft);
     if (success) {
       onClose();
     }
-  }, [to, cc, bcc, subject, text, html, draft, onSend, onClose]);
+  }, [to, cc, bcc, subject, message, replyToMessage, draft, onSend, onClose]);
 
-  const addRecipient = useCallback((field: "to" | "cc" | "bcc", email: string) => {
-    if (!email.trim()) return;
+  const handleMinimize = useCallback(() => {
+    setIsMinimized(!isMinimized);
+  }, [isMinimized]);
 
-    const recipient: EmailRecipient = {
-      email: email.trim(),
-      name: "",
-    };
-
-    switch (field) {
-      case "to":
-        setTo((prev) => [...prev, recipient]);
-        break;
-      case "cc":
-        setCc((prev) => [...prev, recipient]);
-        break;
-      case "bcc":
-        setBcc((prev) => [...prev, recipient]);
-        break;
-    }
-  }, []);
-
-  const removeRecipient = useCallback((field: "to" | "cc" | "bcc", index: number) => {
-    switch (field) {
-      case "to":
-        setTo((prev) => prev.filter((_, i) => i !== index));
-        break;
-      case "cc":
-        setCc((prev) => prev.filter((_, i) => i !== index));
-        break;
-      case "bcc":
-        setBcc((prev) => prev.filter((_, i) => i !== index));
-        break;
-    }
-  }, []);
-
-  const RecipientField: React.FC<{
-    label: string;
-    recipients: EmailRecipient[];
-    onAdd: (email: string) => void;
-    onRemove: (index: number) => void;
-    placeholder?: string;
-  }> = ({ label, recipients, onAdd, onRemove, placeholder = "Enter email address" }) => {
-    const [inputValue, setInputValue] = useState("");
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === ",") {
-        e.preventDefault();
-        if (inputValue.trim()) {
-          onAdd(inputValue);
-          setInputValue("");
-        }
-      }
-    };
-
-    return (
-      <Box>
-        <Typography variant="body2" sx={{ color: neutralColor(700), mb: 1, fontWeight: 500 }}>
-          {label}
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 1 }}>
-          {recipients.map((recipient, index) => (
-            <Chip
-              key={index}
-              label={recipient.email}
-              onDelete={() => onRemove(index)}
-              size="small"
-              sx={{
-                backgroundColor: alpha(primaryColor(100), 0.7),
-                color: primaryColor(700),
-                "& .MuiChip-deleteIcon": {
-                  color: primaryColor(600),
-                },
-              }}
-            />
-          ))}
-        </Box>
-        <TextField
-          fullWidth
-          size="small"
-          placeholder={placeholder}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          onBlur={() => {
-            if (inputValue.trim()) {
-              onAdd(inputValue);
-              setInputValue("");
-            }
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "&:hover fieldset": {
-                borderColor: primaryColor(300),
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: primaryColor(500),
-              },
-            },
-          }}
-        />
-      </Box>
-    );
+  const formatText = (command: string) => {
+    document.execCommand(command, false);
   };
 
+  if (!open) return null;
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          height: "80vh",
-          maxHeight: "80vh",
-        },
-      }}
-    >
-      <DialogTitle
+    <Fade in={open} timeout={200}>
+      <Box
         sx={{
-          borderBottom: `1px solid ${neutralColor(200)}`,
-          backgroundColor: neutralColor(25),
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          position: "fixed",
+          bottom: 0,
+          right: 16,
+          zIndex: 1400,
+          width: isMinimized ? 260 : 450,
+          transition: "all 0.2s ease",
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 600, color: neutralColor(900) }}>
-          {draft?.replyToMessageId ? "Reply" : "Compose Email"}
-        </Typography>
-        <IconButton onClick={onClose} size="small">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-
-      <DialogContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-        {/* Recipients */}
-        <RecipientField
-          label="To"
-          recipients={to}
-          onAdd={(email) => addRecipient("to", email)}
-          onRemove={(index) => removeRecipient("to", index)}
-        />
-
-        {/* CC */}
-        {showCc && (
-          <RecipientField
-            label="Cc"
-            recipients={cc}
-            onAdd={(email) => addRecipient("cc", email)}
-            onRemove={(index) => removeRecipient("cc", index)}
-          />
-        )}
-
-        {/* BCC */}
-        {showBcc && (
-          <RecipientField
-            label="Bcc"
-            recipients={bcc}
-            onAdd={(email) => addRecipient("bcc", email)}
-            onRemove={(index) => removeRecipient("bcc", index)}
-          />
-        )}
-
-        {/* Show/Hide CC/BCC buttons */}
-        <Stack direction="row" spacing={1}>
-          {!showCc && (
-            <Button size="small" onClick={() => setShowCc(true)} sx={{ color: primaryColor(600), textTransform: "none" }}>
-              + Cc
-            </Button>
-          )}
-          {!showBcc && (
-            <Button size="small" onClick={() => setShowBcc(true)} sx={{ color: primaryColor(600), textTransform: "none" }}>
-              + Bcc
-            </Button>
-          )}
-        </Stack>
-
-        <Divider />
-
-        {/* Subject */}
-        <TextField
-          fullWidth
-          label="Subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+        <Paper
+          elevation={20}
           sx={{
-            "& .MuiOutlinedInput-root": {
-              "&:hover fieldset": {
-                borderColor: primaryColor(300),
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: primaryColor(500),
-              },
-            },
-          }}
-        />
-
-        {/* Message Body */}
-        <TextField
-          fullWidth
-          multiline
-          rows={12}
-          label="Message"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Type your message here..."
-          sx={{
-            flex: 1,
-            "& .MuiOutlinedInput-root": {
-              "&:hover fieldset": {
-                borderColor: primaryColor(300),
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: primaryColor(500),
-              },
-            },
-          }}
-        />
-      </DialogContent>
-
-      <DialogActions
-        sx={{
-          borderTop: `1px solid ${neutralColor(200)}`,
-          backgroundColor: neutralColor(25),
-          p: 2,
-          gap: 1,
-        }}
-      >
-        <Button
-          variant="outlined"
-          onClick={onClose}
-          disabled={isSending}
-          sx={{
-            borderColor: neutralColor(300),
-            color: neutralColor(700),
-            "&:hover": {
-              borderColor: primaryColor(300),
-              backgroundColor: alpha(primaryColor(100), 0.5),
-            },
+            borderRadius: isMinimized ? "8px 8px 0 0" : "8px 8px 0 0",
+            overflow: "hidden",
+            backgroundColor: "#fff",
+            boxShadow: "0 -2px 10px 0 rgba(0,0,0,0.2)",
           }}
         >
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<SendIcon />}
-          onClick={handleSend}
-          disabled={!to.length || !subject.trim() || !text.trim() || isSending}
-          sx={{
-            backgroundColor: primaryColor(500),
-            "&:hover": {
-              backgroundColor: primaryColor(600),
-            },
-            "&:disabled": {
-              backgroundColor: neutralColor(300),
-              color: neutralColor(500),
-            },
-          }}
-        >
-          {isSending ? "Sending..." : "Send"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          {/* Header */}
+          <Box
+            sx={{
+              height: 40,
+              backgroundColor: "#404040",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 2,
+              cursor: isMinimized ? "pointer" : "default",
+            }}
+            onClick={isMinimized ? handleMinimize : undefined}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 500,
+                fontSize: "14px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                flex: 1,
+              }}
+            >
+              {subject || "New Message"}
+            </Typography>
+
+            <Stack direction="row" spacing={0.5}>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMinimize();
+                }}
+                sx={{
+                  p: 0.5,
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+              >
+                {isMinimized ? <MaximizeIcon sx={{ fontSize: 18 }} /> : <RemoveIcon sx={{ fontSize: 18 }} />}
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                sx={{
+                  p: 0.5,
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+              >
+                <CloseIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Stack>
+          </Box>
+
+          {/* Content */}
+          <Collapse in={!isMinimized}>
+            <Box sx={{ backgroundColor: "#fff" }}>
+              {/* Recipients Section */}
+              <Box sx={{ px: 2, pt: 1 }}>
+                {/* To Field */}
+                <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#777",
+                      minWidth: 50,
+                      fontSize: "14px",
+                    }}
+                  >
+                    To
+                  </Typography>
+                  <InputBase
+                    fullWidth
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                    placeholder="Recipients"
+                    sx={{
+                      fontSize: "14px",
+                      ml: 1,
+                      "& input": {
+                        p: 0,
+                      },
+                    }}
+                  />
+                  <Stack direction="row" spacing={0.5}>
+                    {!showCc && (
+                      <Button
+                        size="small"
+                        onClick={() => setShowCc(true)}
+                        sx={{
+                          minWidth: "auto",
+                          color: "#777",
+                          fontSize: "13px",
+                          p: "2px 8px",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: "#f1f3f4",
+                          },
+                        }}
+                      >
+                        Cc
+                      </Button>
+                    )}
+                    {!showBcc && (
+                      <Button
+                        size="small"
+                        onClick={() => setShowBcc(true)}
+                        sx={{
+                          minWidth: "auto",
+                          color: "#777",
+                          fontSize: "13px",
+                          p: "2px 8px",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: "#f1f3f4",
+                          },
+                        }}
+                      >
+                        Bcc
+                      </Button>
+                    )}
+                  </Stack>
+                </Box>
+
+                {/* CC Field */}
+                <Collapse in={showCc}>
+                  <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#777",
+                        minWidth: 50,
+                        fontSize: "14px",
+                      }}
+                    >
+                      Cc
+                    </Typography>
+                    <InputBase
+                      fullWidth
+                      value={cc}
+                      onChange={(e) => setCc(e.target.value)}
+                      placeholder="Cc recipients"
+                      sx={{
+                        fontSize: "14px",
+                        ml: 1,
+                        "& input": {
+                          p: 0,
+                        },
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setShowCc(false);
+                        setCc("");
+                      }}
+                      sx={{
+                        p: 0.5,
+                        color: "#5f6368",
+                        "&:hover": {
+                          backgroundColor: "#f1f3f4",
+                        },
+                      }}
+                    >
+                      <CloseIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </Collapse>
+
+                {/* BCC Field */}
+                <Collapse in={showBcc}>
+                  <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#777",
+                        minWidth: 50,
+                        fontSize: "14px",
+                      }}
+                    >
+                      Bcc
+                    </Typography>
+                    <InputBase
+                      fullWidth
+                      value={bcc}
+                      onChange={(e) => setBcc(e.target.value)}
+                      placeholder="Bcc recipients"
+                      sx={{
+                        fontSize: "14px",
+                        ml: 1,
+                        "& input": {
+                          p: 0,
+                        },
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setShowBcc(false);
+                        setBcc("");
+                      }}
+                      sx={{
+                        p: 0.5,
+                        color: "#5f6368",
+                        "&:hover": {
+                          backgroundColor: "#f1f3f4",
+                        },
+                      }}
+                    >
+                      <CloseIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </Collapse>
+
+                <Divider sx={{ my: 1 }} />
+
+                {/* Subject Field */}
+                <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+                  <InputBase
+                    fullWidth
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Subject"
+                    sx={{
+                      fontSize: "14px",
+                      "& input": {
+                        p: 0,
+                      },
+                    }}
+                  />
+                </Box>
+
+                <Divider sx={{ my: 1 }} />
+              </Box>
+
+              {/* Message Body */}
+              <Box sx={{ px: 2 }}>
+                <InputBase
+                  multiline
+                  fullWidth
+                  rows={12}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Compose email"
+                  sx={{
+                    fontSize: "14px",
+                    "& textarea": {
+                      p: 0,
+                      "&::-webkit-scrollbar": {
+                        width: "8px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        backgroundColor: "#f1f1f1",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#888",
+                        borderRadius: "4px",
+                      },
+                    },
+                  }}
+                />
+              </Box>
+
+              {/* Bottom Toolbar */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  px: 2,
+                  py: 1.5,
+                  backgroundColor: "#f8f9fa",
+                  borderTop: "1px solid #e0e0e0",
+                }}
+              >
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleSend}
+                    disabled={!to.trim() || !message.trim() || isSending}
+                    sx={{
+                      backgroundColor: "#1a73e8",
+                      color: "white",
+                      textTransform: "none",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      px: 3,
+                      py: 0.75,
+                      borderRadius: "4px",
+                      boxShadow: "none",
+                      "&:hover": {
+                        backgroundColor: "#1765cc",
+                        boxShadow: "0 1px 2px 0 rgba(26,115,232,0.45)",
+                      },
+                      "&:disabled": {
+                        backgroundColor: "#f8f9fa",
+                        color: "#aaa",
+                      },
+                    }}
+                  >
+                    Send
+                  </Button>
+
+                  <Stack direction="row" spacing={0} divider={<Divider orientation="vertical" flexItem />}>
+                    <Tooltip title="Bold">
+                      <IconButton
+                        size="small"
+                        onClick={() => formatText("bold")}
+                        sx={{
+                          p: 1,
+                          color: "#5f6368",
+                          "&:hover": {
+                            backgroundColor: "#e8eaed",
+                          },
+                        }}
+                      >
+                        <BoldIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Italic">
+                      <IconButton
+                        size="small"
+                        onClick={() => formatText("italic")}
+                        sx={{
+                          p: 1,
+                          color: "#5f6368",
+                          "&:hover": {
+                            backgroundColor: "#e8eaed",
+                          },
+                        }}
+                      >
+                        <ItalicIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Underline">
+                      <IconButton
+                        size="small"
+                        onClick={() => formatText("underline")}
+                        sx={{
+                          p: 1,
+                          color: "#5f6368",
+                          "&:hover": {
+                            backgroundColor: "#e8eaed",
+                          },
+                        }}
+                      >
+                        <UnderlineIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
+
+                  <Tooltip title="Attach files">
+                    <IconButton
+                      size="small"
+                      sx={{
+                        p: 1,
+                        color: "#5f6368",
+                        "&:hover": {
+                          backgroundColor: "#e8eaed",
+                        },
+                      }}
+                    >
+                      <AttachIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Insert emoji">
+                    <IconButton
+                      size="small"
+                      sx={{
+                        p: 1,
+                        color: "#5f6368",
+                        "&:hover": {
+                          backgroundColor: "#e8eaed",
+                        },
+                      }}
+                    >
+                      <EmojiIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+
+                <Tooltip title="Discard draft">
+                  <IconButton
+                    size="small"
+                    onClick={onClose}
+                    sx={{
+                      p: 1,
+                      color: "#5f6368",
+                      "&:hover": {
+                        backgroundColor: "#e8eaed",
+                      },
+                    }}
+                  >
+                    <DeleteIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+          </Collapse>
+        </Paper>
+      </Box>
+    </Fade>
   );
 };

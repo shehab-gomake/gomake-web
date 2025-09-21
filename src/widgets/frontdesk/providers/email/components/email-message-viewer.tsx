@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Stack, Paper, Typography, IconButton, Button, Divider, Chip, Badge, Tooltip, useTheme, alpha } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import { Box, Stack, Paper, Typography, IconButton, Button, Divider, Chip, Badge, Tooltip, useTheme, alpha, TextField, CircularProgress, Collapse } from "@mui/material";
 import {
   ArrowBack as BackIcon,
   Star as StarIcon,
@@ -14,6 +14,8 @@ import {
   People as PeopleIcon,
   AccessTime as TimeIcon,
   MoreVert as MoreIcon,
+  Send as SendIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailConversation, EmailMessage } from "../types/email.types";
@@ -33,6 +35,8 @@ interface EmailMessageViewerProps {
   onStar: (conversationId: string, starred: boolean) => void;
   onPrint: (conversation: EmailConversation) => void;
   onAddLabel: (conversationId: string, label: string) => void;
+  onSendReply?: (text: string, replyAll?: boolean) => Promise<boolean>;
+  isSending?: boolean;
 }
 
 export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
@@ -47,11 +51,16 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
   onStar,
   onPrint,
   onAddLabel,
+  onSendReply,
+  isSending = false,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
   const [messages, setMessages] = useState<EmailMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showInlineReply, setShowInlineReply] = useState(false);
+  const [isReplyAll, setIsReplyAll] = useState(false);
+  const [replyText, setReplyText] = useState('');
 
   // Fetch conversation details when conversation changes
   useEffect(() => {
@@ -197,11 +206,27 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
               </Typography>
             </Stack>
 
-            <Stack direction="row" spacing={0.5}>
-              <ActionButton icon={<ReplyIcon />} tooltip="Reply" onClick={() => onReply(conversation)} />
-              <ActionButton icon={<ReplyAllIcon />} tooltip="Reply All" onClick={() => onReplyAll(conversation)} />
-              <ActionButton icon={<ForwardIcon />} tooltip="Forward" onClick={() => onForward(conversation)} />
-            </Stack>
+            {!showInlineReply && (
+              <Stack direction="row" spacing={0.5}>
+                <ActionButton
+                  icon={<ReplyIcon />}
+                  tooltip="Reply"
+                  onClick={() => {
+                    setShowInlineReply(true);
+                    setIsReplyAll(false);
+                  }}
+                />
+                <ActionButton
+                  icon={<ReplyAllIcon />}
+                  tooltip="Reply All"
+                  onClick={() => {
+                    setShowInlineReply(true);
+                    setIsReplyAll(true);
+                  }}
+                />
+                <ActionButton icon={<ForwardIcon />} tooltip="Forward" onClick={() => onForward(conversation)} />
+              </Stack>
+            )}
           </Stack>
 
           {/* Message Content */}
@@ -322,19 +347,37 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
               </Typography>
             </Stack>
 
-            <Stack direction="row" spacing={1}>
-              <ActionButton icon={<ReplyIcon />} tooltip="Reply" variant="button" onClick={() => onReply(conversation)}>
-                Reply
-              </ActionButton>
+            {!showInlineReply && (
+              <Stack direction="row" spacing={1}>
+                <ActionButton
+                  icon={<ReplyIcon />}
+                  tooltip="Reply"
+                  variant="button"
+                  onClick={() => {
+                    setShowInlineReply(true);
+                    setIsReplyAll(false);
+                  }}
+                >
+                  Reply
+                </ActionButton>
 
-              <ActionButton icon={<ReplyAllIcon />} tooltip="Reply All" variant="button" onClick={() => onReplyAll(conversation)}>
-                Reply All
-              </ActionButton>
+                <ActionButton
+                  icon={<ReplyAllIcon />}
+                  tooltip="Reply All"
+                  variant="button"
+                  onClick={() => {
+                    setShowInlineReply(true);
+                    setIsReplyAll(true);
+                  }}
+                >
+                  Reply All
+                </ActionButton>
 
-              <ActionButton icon={<ForwardIcon />} tooltip="Forward" variant="button" onClick={() => onForward(conversation)}>
-                Forward
-              </ActionButton>
-            </Stack>
+                <ActionButton icon={<ForwardIcon />} tooltip="Forward" variant="button" onClick={() => onForward(conversation)}>
+                  Forward
+                </ActionButton>
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Box>
@@ -359,6 +402,115 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
           ))
         )}
       </Box>
+
+      {/* Inline Reply Section */}
+      <Collapse in={showInlineReply}>
+        <Box
+          sx={{
+            p: 2,
+            borderTop: `1px solid ${neutralColor(200)}`,
+            backgroundColor: neutralColor(25),
+          }}
+        >
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="subtitle2" sx={{ color: neutralColor(700), fontWeight: 600 }}>
+                {isReplyAll ? 'Reply All' : 'Reply'}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setShowInlineReply(false);
+                  setReplyText('');
+                }}
+                sx={{ color: neutralColor(600) }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+
+            <TextField
+              multiline
+              rows={4}
+              fullWidth
+              placeholder={`Type your ${isReplyAll ? 'reply to all' : 'reply'}...`}
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault();
+                  handleInlineReply();
+                }
+              }}
+              disabled={isSending}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'white',
+                  '&:hover fieldset': {
+                    borderColor: primaryColor(300),
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: primaryColor(500),
+                  },
+                },
+              }}
+            />
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="caption" sx={{ color: neutralColor(500) }}>
+                Press Cmd+Enter or Ctrl+Enter to send
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    setShowInlineReply(false);
+                    setReplyText('');
+                  }}
+                  disabled={isSending}
+                  sx={{
+                    borderColor: neutralColor(300),
+                    color: neutralColor(700),
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleInlineReply}
+                  disabled={!replyText.trim() || isSending}
+                  startIcon={isSending ? <CircularProgress size={16} /> : <SendIcon />}
+                  sx={{
+                    backgroundColor: primaryColor(600),
+                    '&:hover': {
+                      backgroundColor: primaryColor(700),
+                    },
+                    '&:disabled': {
+                      backgroundColor: neutralColor(300),
+                    },
+                  }}
+                >
+                  {isSending ? 'Sending...' : 'Send'}
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Box>
+      </Collapse>
     </Paper>
   );
+
+  // Handler for inline reply
+  async function handleInlineReply() {
+    const text = replyText.trim();
+    if (!text || isSending || !onSendReply) return;
+
+    const success = await onSendReply(text, isReplyAll);
+    if (success) {
+      setReplyText('');
+      setShowInlineReply(false);
+    }
+  }
 };
