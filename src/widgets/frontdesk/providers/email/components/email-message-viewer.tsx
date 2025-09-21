@@ -1,18 +1,5 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Stack,
-  Paper,
-  Typography,
-  IconButton,
-  Avatar,
-  Chip,
-  Button,
-  Collapse,
-  Divider,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Stack, Paper, Typography, IconButton, Button, Divider, Chip, Badge, Tooltip, useTheme, alpha } from "@mui/material";
 import {
   ArrowBack as BackIcon,
   Star as StarIcon,
@@ -22,112 +9,35 @@ import {
   Forward as ForwardIcon,
   Delete as DeleteIcon,
   Archive as ArchiveIcon,
+  Print as PrintIcon,
+  Label as LabelIcon,
+  People as PeopleIcon,
+  AccessTime as TimeIcon,
   MoreVert as MoreIcon,
-  AttachFile as AttachIcon,
-  Download as DownloadIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
-import { EmailMessage } from "../types/email.types";
-import { format } from "date-fns";
-import DOMPurify from "dompurify";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { EmailConversation, EmailMessage } from "../types/email.types";
+import { emailApiClient } from "../utils/email-api-client";
+import { safeDecodeHtml } from "../utils/html-decode";
+import { safeFormatDate } from "../utils/date-utils";
 
 interface EmailMessageViewerProps {
-  messages: EmailMessage[];
-  onBack?: () => void;
-  onReply?: (message: EmailMessage) => void;
-  onReplyAll?: (message: EmailMessage) => void;
-  onForward?: (message: EmailMessage) => void;
-  onDelete?: (messageId: string) => void;
-  onArchive?: (messageId: string) => void;
-  onStar?: (messageId: string, starred: boolean) => void;
+  conversation: EmailConversation | null;
+  accountId?: string;
+  onBack: () => void;
+  onReply: (conversation: EmailConversation) => void;
+  onReplyAll: (conversation: EmailConversation) => void;
+  onForward: (conversation: EmailConversation) => void;
+  onDelete: (conversationId: string) => void;
+  onArchive: (conversationId: string) => void;
+  onStar: (conversationId: string, starred: boolean) => void;
+  onPrint: (conversation: EmailConversation) => void;
+  onAddLabel: (conversationId: string, label: string) => void;
 }
 
-const MessageHeader: React.FC<{
-  message: EmailMessage;
-  expanded: boolean;
-  onToggle: () => void;
-  onStar?: () => void;
-  onMoreActions?: (event: React.MouseEvent<HTMLElement>) => void;
-}> = ({ message, expanded, onToggle, onStar, onMoreActions }) => {
-  return (
-    <Box
-      sx={{
-        p: 2,
-        cursor: "pointer",
-        "&:hover": { backgroundColor: "action.hover" },
-      }}
-      onClick={onToggle}
-    >
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Avatar
-          sx={{
-            width: 40,
-            height: 40,
-            backgroundColor: "primary.light",
-          }}
-        >
-          {message.from.name
-            ? message.from.name[0].toUpperCase()
-            : message.from.email[0].toUpperCase()}
-        </Avatar>
-
-        <Stack flex={1} spacing={0.5}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography variant="body1" fontWeight={500}>
-                {message.from.name || message.from.email}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                &lt;{message.from.email}&gt;
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography variant="caption" color="text.secondary">
-                {format(new Date(message.createdAt), "MMM d, yyyy h:mm a")}
-              </Typography>
-              <IconButton size="small" onClick={(e) => {
-                e.stopPropagation();
-                onStar?.();
-              }}>
-                {message.isStarred ? (
-                  <StarIcon sx={{ fontSize: 18, color: "warning.main" }} />
-                ) : (
-                  <StarBorderIcon sx={{ fontSize: 18 }} />
-                )}
-              </IconButton>
-              <IconButton size="small" onClick={(e) => {
-                e.stopPropagation();
-                onMoreActions?.(e);
-              }}>
-                <MoreIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-              <IconButton size="small">
-                {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              </IconButton>
-            </Stack>
-          </Stack>
-
-          {!expanded && (
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {message.snippet}
-            </Typography>
-          )}
-
-          {expanded && message.to.length > 0 && (
-            <Typography variant="caption" color="text.secondary">
-              to {message.to.map(t => t.name || t.email).join(", ")}
-            </Typography>
-          )}
-        </Stack>
-      </Stack>
-    </Box>
-  );
-};
-
 export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
-  messages,
+  conversation,
+  accountId,
   onBack,
   onReply,
   onReplyAll,
@@ -135,36 +45,191 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
   onDelete,
   onArchive,
   onStar,
+  onPrint,
+  onAddLabel,
 }) => {
-  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(
-    new Set([messages[messages.length - 1]?.id])
-  );
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedMessage, setSelectedMessage] = useState<EmailMessage | null>(null);
+  const { primaryColor, neutralColor } = useGomakeTheme();
+  const theme = useTheme();
+  const [messages, setMessages] = useState<EmailMessage[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleToggleExpand = (messageId: string) => {
-    setExpandedMessages((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(messageId)) {
-        newSet.delete(messageId);
+  // Fetch conversation details when conversation changes
+  useEffect(() => {
+    const fetchConversationDetails = async () => {
+      if (conversation && accountId) {
+        setLoading(true);
+        try {
+          const conversationDetail = await emailApiClient.getConversationDetail(accountId, conversation.id);
+          setMessages(conversationDetail.messages);
+        } catch (error) {
+          console.error("Failed to fetch conversation details:", error);
+          // Fallback to single message display
+          setMessages([
+            {
+              id: conversation.lastMessage.id,
+              threadId: conversation.lastMessage.threadId,
+              subject: conversation.subject,
+              from: { email: conversation.lastMessage.from, name: "" },
+              to: [{ email: "", name: "" }],
+              createdAt: conversation.lastMessage.date,
+              text: conversation.lastMessage.snippet,
+              snippet: conversation.lastMessage.snippet,
+              isRead: conversation.lastMessage.isRead,
+              isStarred: false,
+              hasAttachments: false,
+            },
+          ]);
+        } finally {
+          setLoading(false);
+        }
       } else {
-        newSet.add(messageId);
+        setMessages([]);
       }
-      return newSet;
-    });
+    };
+
+    fetchConversationDetails();
+  }, [conversation, accountId]);
+
+  if (!conversation) {
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 4,
+        }}
+      >
+        <Stack alignItems="center" spacing={2}>
+          <Typography variant="h6" sx={{ color: neutralColor(600) }}>
+            No conversation selected
+          </Typography>
+          <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+            Choose a conversation from the list to view messages
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
+
+  const ActionButton: React.FC<{
+    icon: React.ReactNode;
+    tooltip: string;
+    onClick?: () => void;
+    variant?: "icon" | "button";
+    children?: React.ReactNode;
+  }> = ({ icon, tooltip, onClick, variant = "icon", children }) => {
+    if (variant === "button") {
+      return (
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={icon}
+          onClick={onClick}
+          sx={{
+            borderColor: neutralColor(300),
+            color: neutralColor(700),
+            "&:hover": {
+              borderColor: primaryColor(300),
+              backgroundColor: alpha(primaryColor(100), 0.5),
+            },
+          }}
+        >
+          {children}
+        </Button>
+      );
+    }
+
+    return (
+      <Tooltip title={tooltip}>
+        <IconButton
+          size="small"
+          onClick={onClick}
+          sx={{
+            color: neutralColor(600),
+            "&:hover": {
+              backgroundColor: alpha(primaryColor(100), 0.5),
+              color: primaryColor(600),
+            },
+          }}
+        >
+          {icon}
+        </IconButton>
+      </Tooltip>
+    );
   };
 
-  const handleMoreActions = (event: React.MouseEvent<HTMLElement>, message: EmailMessage) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedMessage(message);
-  };
+  const MessageItem: React.FC<{ message: EmailMessage; isLast?: boolean }> = ({ message, isLast = false }) => {
+    const isOwn = false; // TODO: Check if message is from current user
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-    setSelectedMessage(null);
-  };
+    // Safe date formatting with fallback
+    const formatMessageDate = (dateString: string) => safeFormatDate(dateString);
 
-  const latestMessage = messages[messages.length - 1];
+    return (
+      <Box
+        sx={{
+          p: 2,
+          borderBottom: isLast ? "none" : `1px solid ${neutralColor(200)}`,
+          backgroundColor: isOwn ? alpha(primaryColor(50), 0.3) : "transparent",
+        }}
+      >
+        <Stack spacing={1}>
+          {/* Message Header */}
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  color: isOwn ? primaryColor(700) : neutralColor(800),
+                }}
+              >
+                {typeof message.from === "string" ? message.from : message.from.name || message.from.email}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: neutralColor(500),
+                }}
+              >
+                {formatMessageDate(message.createdAt)}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={0.5}>
+              <ActionButton icon={<ReplyIcon />} tooltip="Reply" onClick={() => onReply(conversation)} />
+              <ActionButton icon={<ReplyAllIcon />} tooltip="Reply All" onClick={() => onReplyAll(conversation)} />
+              <ActionButton icon={<ForwardIcon />} tooltip="Forward" onClick={() => onForward(conversation)} />
+            </Stack>
+          </Stack>
+
+          {/* Message Content */}
+          <Box
+            sx={{
+              "& p": {
+                margin: 0,
+                marginBottom: 1,
+                "&:last-child": {
+                  marginBottom: 0,
+                },
+              },
+              "& a": {
+                color: primaryColor(600),
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              },
+            }}
+            dangerouslySetInnerHTML={{
+              __html: message.html || safeDecodeHtml(message.text || message.snippet || ""),
+            }}
+          />
+        </Stack>
+      </Box>
+    );
+  };
 
   return (
     <Paper
@@ -174,209 +239,126 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        height: "100%",
+        border: `1px solid ${neutralColor(200)}`,
+        borderRadius: 2,
       }}
     >
-      {/* Thread Header */}
+      {/* Conversation Header */}
       <Box
         sx={{
           p: 2,
-          borderBottom: "1px solid",
-          borderColor: "divider",
-          backgroundColor: "background.paper",
+          borderBottom: `1px solid ${neutralColor(200)}`,
+          backgroundColor: neutralColor(25),
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            {onBack && (
-              <IconButton onClick={onBack}>
-                <BackIcon />
-              </IconButton>
-            )}
-            <Typography variant="h6" noWrap sx={{ maxWidth: 600 }}>
-              {latestMessage?.subject}
-            </Typography>
-            {latestMessage?.labels?.map((label) => (
-              <Chip
-                key={label}
-                label={label}
-                size="small"
-                sx={{ height: 20 }}
+        <Stack spacing={1}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <ActionButton icon={<BackIcon />} tooltip="Back to conversations" onClick={onBack} />
+
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{
+                  maxWidth: 500,
+                  fontWeight: 600,
+                  color: neutralColor(900),
+                }}
+              >
+                {safeDecodeHtml(conversation.subject)}
+              </Typography>
+
+              <Badge badgeContent={conversation.messageCount} color="primary">
+                <PeopleIcon sx={{ fontSize: 20, color: neutralColor(600) }} />
+              </Badge>
+            </Stack>
+
+            <Stack direction="row" spacing={0.5}>
+              <ActionButton
+                icon={conversation.isStarred ? <StarIcon sx={{ color: "warning.main" }} /> : <StarBorderIcon />}
+                tooltip="Star conversation"
+                onClick={() => onStar(conversation.id, !(conversation.isStarred || false))}
               />
-            ))}
+
+              <ActionButton icon={<PrintIcon sx={{ fontSize: 18 }} />} tooltip="Print" onClick={() => onPrint(conversation)} />
+
+              <ActionButton
+                icon={<ArchiveIcon sx={{ fontSize: 18 }} />}
+                tooltip="Archive"
+                onClick={() => onArchive(conversation.id)}
+              />
+
+              <ActionButton
+                icon={<DeleteIcon sx={{ fontSize: 18 }} />}
+                tooltip="Delete"
+                onClick={() => onDelete(conversation.id)}
+              />
+            </Stack>
           </Stack>
 
-          <Stack direction="row" spacing={1}>
-            <Button
-              size="small"
-              startIcon={<ReplyIcon />}
-              onClick={() => onReply?.(latestMessage)}
-            >
-              Reply
-            </Button>
-            <Button
-              size="small"
-              startIcon={<ReplyAllIcon />}
-              onClick={() => onReplyAll?.(latestMessage)}
-            >
-              Reply All
-            </Button>
-            <Button
-              size="small"
-              startIcon={<ForwardIcon />}
-              onClick={() => onForward?.(latestMessage)}
-            >
-              Forward
-            </Button>
-            <IconButton onClick={() => onArchive?.(latestMessage.id)}>
-              <ArchiveIcon />
-            </IconButton>
-            <IconButton onClick={() => onDelete?.(latestMessage.id)}>
-              <DeleteIcon />
-            </IconButton>
+          {/* Labels and Metadata */}
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" spacing={1} alignItems="center">
+              {conversation.labels?.map((label) => (
+                <Chip
+                  key={label}
+                  label={label}
+                  size="small"
+                  icon={<LabelIcon sx={{ fontSize: 14 }} />}
+                  sx={{
+                    height: 22,
+                    fontSize: "0.75rem",
+                    backgroundColor: alpha(primaryColor(100), 0.7),
+                    color: primaryColor(700),
+                    borderColor: primaryColor(300),
+                  }}
+                />
+              ))}
+
+              <Typography variant="caption" sx={{ color: neutralColor(500), ml: 1 }}>
+                <TimeIcon sx={{ fontSize: 14, verticalAlign: "middle", mr: 0.5 }} />
+                {safeFormatDate(conversation.date)}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={1}>
+              <ActionButton icon={<ReplyIcon />} tooltip="Reply" variant="button" onClick={() => onReply(conversation)}>
+                Reply
+              </ActionButton>
+
+              <ActionButton icon={<ReplyAllIcon />} tooltip="Reply All" variant="button" onClick={() => onReplyAll(conversation)}>
+                Reply All
+              </ActionButton>
+
+              <ActionButton icon={<ForwardIcon />} tooltip="Forward" variant="button" onClick={() => onForward(conversation)}>
+                Forward
+              </ActionButton>
+            </Stack>
           </Stack>
         </Stack>
       </Box>
 
       {/* Messages */}
-      <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
-        <Stack spacing={2}>
-          {messages.map((message, index) => {
-            const isExpanded = expandedMessages.has(message.id);
-
-            return (
-              <Paper
-                key={message.id}
-                variant="outlined"
-                sx={{
-                  overflow: "hidden",
-                  backgroundColor: message.isRead ? "background.paper" : "action.hover",
-                }}
-              >
-                <MessageHeader
-                  message={message}
-                  expanded={isExpanded}
-                  onToggle={() => handleToggleExpand(message.id)}
-                  onStar={() => onStar?.(message.id, !message.isStarred)}
-                  onMoreActions={(e) => handleMoreActions(e, message)}
-                />
-
-                <Collapse in={isExpanded}>
-                  <Divider />
-
-                  {/* Message Body */}
-                  <Box sx={{ p: 3 }}>
-                    {message.html ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(message.html),
-                        }}
-                        style={{
-                          fontFamily: "inherit",
-                          fontSize: "14px",
-                          lineHeight: 1.6,
-                        }}
-                      />
-                    ) : (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {message.text}
-                      </Typography>
-                    )}
-
-                    {/* Attachments */}
-                    {message.attachments && message.attachments.length > 0 && (
-                      <Box sx={{ mt: 3 }}>
-                        <Typography variant="subtitle2" gutterBottom>
-                          Attachments ({message.attachments.length})
-                        </Typography>
-                        <Stack direction="row" flexWrap="wrap" gap={1}>
-                          {message.attachments.map((attachment) => (
-                            <Chip
-                              key={attachment.id}
-                              icon={<AttachIcon />}
-                              label={`${attachment.filename} (${(attachment.size / 1024).toFixed(1)} KB)`}
-                              variant="outlined"
-                              deleteIcon={<DownloadIcon />}
-                              onDelete={() => {
-                                // Handle download
-                                window.open(attachment.url, "_blank");
-                              }}
-                            />
-                          ))}
-                        </Stack>
-                      </Box>
-                    )}
-                  </Box>
-
-                  {/* Quick Reply */}
-                  {index === messages.length - 1 && (
-                    <>
-                      <Divider />
-                      <Box sx={{ p: 2 }}>
-                        <Stack direction="row" spacing={1}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            startIcon={<ReplyIcon />}
-                            onClick={() => onReply?.(message)}
-                          >
-                            Reply
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            startIcon={<ForwardIcon />}
-                            onClick={() => onForward?.(message)}
-                          >
-                            Forward
-                          </Button>
-                        </Stack>
-                      </Box>
-                    </>
-                  )}
-                </Collapse>
-              </Paper>
-            );
-          })}
-        </Stack>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
+        {loading ? (
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <Typography variant="body2" sx={{ color: neutralColor(600) }}>
+              Loading messages...
+            </Typography>
+          </Box>
+        ) : messages.length === 0 ? (
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+              No messages in this conversation
+            </Typography>
+          </Box>
+        ) : (
+          messages.map((message, index) => (
+            <MessageItem key={message.id} message={message} isLast={index === messages.length - 1} />
+          ))
+        )}
       </Box>
-
-      {/* More Actions Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-      >
-        <MenuItem onClick={() => {
-          // Mark as unread
-          handleCloseMenu();
-        }}>
-          Mark as unread
-        </MenuItem>
-        <MenuItem onClick={() => {
-          // Add label
-          handleCloseMenu();
-        }}>
-          Add label
-        </MenuItem>
-        <MenuItem onClick={() => {
-          // Move to folder
-          handleCloseMenu();
-        }}>
-          Move to folder
-        </MenuItem>
-        <MenuItem onClick={() => {
-          // Mark as spam
-          handleCloseMenu();
-        }}>
-          Mark as spam
-        </MenuItem>
-      </Menu>
     </Paper>
   );
 };

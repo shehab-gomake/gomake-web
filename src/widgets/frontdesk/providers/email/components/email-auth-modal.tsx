@@ -10,9 +10,11 @@ import {
   CircularProgress,
   Alert,
   Box,
+  alpha
 } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
 import { OutlookIcon } from "@/icons/outlook-icon";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface EmailAuthModalProps {
   open: boolean;
@@ -23,6 +25,7 @@ interface EmailAuthModalProps {
 
 export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({ open, onClose, onAuthenticate, error }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const { primaryColor, neutralColor } = useGomakeTheme();
 
   const handleConnect = async (provider: string) => {
     setIsAuthenticating(true);
@@ -37,11 +40,31 @@ export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({ open, onClose, o
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Connect Email Account</DialogTitle>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      sx={{
+        '& .MuiDialog-paper': {
+          borderRadius: 2,
+          border: `1px solid ${neutralColor(200)}`,
+        }
+      }}
+    >
+      <DialogTitle
+        sx={{
+          backgroundColor: neutralColor(25),
+          borderBottom: `1px solid ${neutralColor(200)}`,
+          color: neutralColor(900),
+          fontWeight: 600
+        }}
+      >
+        Connect Email Account
+      </DialogTitle>
+      <DialogContent sx={{ py: 3 }}>
         <Stack spacing={3}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: neutralColor(600) }}>
             Connect your email account to manage messages directly from this platform.
           </Typography>
 
@@ -56,12 +79,26 @@ export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({ open, onClose, o
               fullWidth
               variant="contained"
               size="large"
-              startIcon={isAuthenticating ? <CircularProgress size={20} /> : <GoogleIcon />}
+              startIcon={isAuthenticating ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <GoogleIcon />}
               onClick={() => handleConnect("gmail")}
               disabled={isAuthenticating}
               sx={{
                 backgroundColor: "#4285f4",
-                "&:hover": { backgroundColor: "#357ae8" },
+                color: 'white',
+                py: 1.5,
+                borderRadius: 2,
+                fontWeight: 500,
+                boxShadow: `0 2px 8px ${alpha('#4285f4', 0.3)}`,
+                transition: 'all 0.2s ease',
+                "&:hover": {
+                  backgroundColor: "#357ae8",
+                  boxShadow: `0 4px 12px ${alpha('#4285f4', 0.4)}`,
+                  transform: 'translateY(-1px)'
+                },
+                "&:disabled": {
+                  backgroundColor: neutralColor(300),
+                  color: neutralColor(500)
+                }
               }}
             >
               {isAuthenticating ? "Connecting..." : "Connect Gmail Account"}
@@ -71,25 +108,48 @@ export const EmailAuthModal: React.FC<EmailAuthModalProps> = ({ open, onClose, o
               fullWidth
               variant="contained"
               size="large"
-              startIcon={isAuthenticating ? <CircularProgress size={20} /> : <OutlookIcon size={20} />}
+              startIcon={isAuthenticating ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <OutlookIcon size={20} />}
               onClick={() => handleConnect("outlook")}
               disabled={isAuthenticating}
               sx={{
                 backgroundColor: "#0078d4",
-                "&:hover": { backgroundColor: "#106ebe" },
+                color: 'white',
+                py: 1.5,
+                borderRadius: 2,
+                fontWeight: 500,
+                boxShadow: `0 2px 8px ${alpha('#0078d4', 0.3)}`,
+                transition: 'all 0.2s ease',
+                "&:hover": {
+                  backgroundColor: "#106ebe",
+                  boxShadow: `0 4px 12px ${alpha('#0078d4', 0.4)}`,
+                  transform: 'translateY(-1px)'
+                },
+                "&:disabled": {
+                  backgroundColor: neutralColor(300),
+                  color: neutralColor(500)
+                }
               }}
             >
               {isAuthenticating ? "Connecting..." : "Connect Outlook Account"}
             </Button>
           </Stack>
 
-          <Typography variant="caption" color="text.secondary" align="center">
+          <Typography variant="caption" sx={{ color: neutralColor(500), textAlign: 'center' }}>
             Your credentials are securely stored and only used to access your emails.
           </Typography>
         </Stack>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={isAuthenticating}>
+      <DialogActions sx={{ p: 3, borderTop: `1px solid ${neutralColor(200)}` }}>
+        <Button
+          onClick={onClose}
+          disabled={isAuthenticating}
+          sx={{
+            color: neutralColor(600),
+            '&:hover': {
+              backgroundColor: alpha(neutralColor(100), 0.5)
+            }
+          }}
+        >
           Cancel
         </Button>
       </DialogActions>

@@ -27,7 +27,7 @@ export const useEmailAccounts = () => {
 
       // Auto-select first account if none selected
       if (fetchedAccounts.length > 0 && !selectedAccountId) {
-        const primaryAccount = fetchedAccounts.find(a => a.isPrimary) || fetchedAccounts[0];
+        const primaryAccount = fetchedAccounts.find((a) => a.isPrimary) || fetchedAccounts[0];
         setSelectedAccountId(primaryAccount.id);
       }
 
@@ -41,48 +41,54 @@ export const useEmailAccounts = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [setAccounts, setSelectedAccountId, selectedAccountId, setIsLoading, setError, alertFault]);
+  }, [setAccounts, setSelectedAccountId, setIsLoading, setError, alertFault]);
 
   // Select an account
-  const selectAccount = useCallback((accountId: string) => {
-    const account = accounts.find(a => a.id === accountId);
-    if (account) {
-      setSelectedAccountId(accountId);
-    }
-  }, [accounts, setSelectedAccountId]);
+  const selectAccount = useCallback(
+    (accountId: string) => {
+      const account = accounts.find((a) => a.id === accountId);
+      if (account) {
+        setSelectedAccountId(accountId);
+      }
+    },
+    [accounts, setSelectedAccountId]
+  );
 
   // Disconnect an account
-  const disconnectAccount = useCallback(async (accountId: string) => {
-    try {
-      await emailApiClient.disconnectAccount(accountId);
+  const disconnectAccount = useCallback(
+    async (accountId: string) => {
+      try {
+        await emailApiClient.disconnectAccount(accountId);
 
-      // Remove from state
-      setAccounts(prev => prev.filter(a => a.id !== accountId));
+        // Remove from state
+        setAccounts((prev) => prev.filter((a) => a.id !== accountId));
 
-      // If disconnected account was selected, select another
-      if (selectedAccountId === accountId) {
-        const remainingAccounts = accounts.filter(a => a.id !== accountId);
-        if (remainingAccounts.length > 0) {
-          const primaryAccount = remainingAccounts.find(a => a.isPrimary) || remainingAccounts[0];
-          setSelectedAccountId(primaryAccount.id);
-        } else {
-          setSelectedAccountId(null);
+        // If disconnected account was selected, select another
+        if (selectedAccountId === accountId) {
+          const remainingAccounts = accounts.filter((a) => a.id !== accountId);
+          if (remainingAccounts.length > 0) {
+            const primaryAccount = remainingAccounts.find((a) => a.isPrimary) || remainingAccounts[0];
+            setSelectedAccountId(primaryAccount.id);
+          } else {
+            setSelectedAccountId(null);
+          }
         }
-      }
 
-      alertSuccess("Email account disconnected successfully");
-      return true;
-    } catch (err: any) {
-      console.error("Error disconnecting account:", err);
-      const errorMessage = err.message || "Failed to disconnect account";
-      alertFault(errorMessage);
-      return false;
-    }
-  }, [accounts, selectedAccountId, setAccounts, setSelectedAccountId, alertSuccess, alertFault]);
+        alertSuccess("Email account disconnected successfully");
+        return true;
+      } catch (err: any) {
+        console.error("Error disconnecting account:", err);
+        const errorMessage = err.message || "Failed to disconnect account";
+        alertFault(errorMessage);
+        return false;
+      }
+    },
+    [accounts, selectedAccountId, setAccounts, setSelectedAccountId, alertSuccess, alertFault]
+  );
 
   // Get selected account
   const getSelectedAccount = useCallback(() => {
-    return accounts.find(a => a.id === selectedAccountId);
+    return accounts.find((a) => a.id === selectedAccountId);
   }, [accounts, selectedAccountId]);
 
   // Refresh accounts

@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { EmailAccount, EmailThread, EmailMessage, EmailConnectionState, EmailAuthState, EmailDraft } from "../types/email.types";
+import { EmailAccount, EmailThread, EmailMessage, EmailConnectionState, EmailAuthState, EmailDraft, EmailConversation } from "../types/email.types";
 
 // Email Accounts State
 export const emailAccountsState = atom<EmailAccount[]>({
@@ -148,4 +148,20 @@ export interface UnreadCounts {
 export const emailUnreadCountsState = atom<UnreadCounts>({
   key: "email_unread_counts_state",
   default: {},
+});
+
+// Conversations State
+export const emailConversationsState = atom<EmailConversation[]>({
+  key: "email_conversations_state",
+  default: [],
+});
+
+export const emailConversationsLoadingState = atom<boolean>({
+  key: "email_conversations_loading_state",
+  default: false,
+});
+
+export const emailConversationsErrorState = atom<string | null>({
+  key: "email_conversations_error_state",
+  default: null,
 });

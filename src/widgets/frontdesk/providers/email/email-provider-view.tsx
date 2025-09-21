@@ -1,228 +1,280 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Stack, Paper, Typography, Alert, Button, Box } from "@mui/material";
-import { Email as EmailIcon, Refresh as RefreshIcon, Add as AddIcon } from "@mui/icons-material";
-import { EmailAccountSidebar } from "./components/email-account-sidebar";
-import { EmailMessageList } from "./components/email-message-list";
-import { EmailMessageViewer } from "./components/email-message-viewer";
+import React, { useState } from "react";
+import { Stack, Paper, Box, Typography } from "@mui/material";
+import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
 import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
-import { EmailConnectionStatus } from "./components/email-connection-status";
-import { EmailInfoPanel } from "./components/email-info-panel";
-import { useEmailAccounts } from "./hooks/use-email-accounts";
-import { useEmailMessages } from "./hooks/use-email-messages";
-import { useEmailSend } from "./hooks/use-email-send";
-import { useEmailAuth } from "./hooks/use-email-auth";
-import { EmailMessage, EmailDraft } from "./types/email.types";
+import { EmailSidebar } from "./components/email-sidebar";
+import { EmailConversationList } from "./components/email-conversation-list";
+import { EmailMessageViewer } from "./components/email-message-viewer";
+import { useEmailProvider } from "./hooks/use-email-provider";
 
 export const EmailProviderView: React.FC = () => {
-  const {
-    accounts,
-    selectedAccountId,
-    loading: accountsLoading,
-    error: accountsError,
-    selectAccount,
-    fetchAccounts,
-    disconnectAccount,
-  } = useEmailAccounts();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const {
-    messages,
-    loading: messagesLoading,
-    error: messagesError,
+    isConnected,
+    accounts,
+    selectedAccountId,
+    accountsLoading,
+    accountsError,
+    selectAccount,
+    disconnectAccount,
+    refreshAccounts,
+    authenticate,
+    isAuthenticating,
+    authError,
+    labels,
+    systemLabels,
+    userLabels,
+    selectedLabel,
+    selectedLabelId,
+    labelsLoading,
+    labelsError,
+    selectLabel,
+    conversations,
+    conversationsLoading,
+    conversationsError,
     hasMore,
     loadMore,
     refresh,
-    starMessage,
-    deleteMessage,
-    archiveMessage,
-  } = useEmailMessages();
+    starConversation,
+    deleteConversation,
+    archiveConversation,
+    selectedConversation,
+    handleConversationSelect,
+    handleBack,
+    handleSendReply,
+    showComposer,
+    composerDraft,
+    isSending,
+    handleCompose,
+    handleCloseComposer,
+    handleSendEmail,
+    handleReplyWithComposer,
+  } = useEmailProvider();
 
-  const { authenticate, isAuthenticating, error: authError } = useEmailAuth();
-  const { sendEmail, isSending } = useEmailSend();
+  const handleAuthenticate = async (provider: string) => {
+    try {
+      await authenticate(provider);
+      setShowAuthModal(false);
+    } catch (error) {
+      console.error("Auth failed:", error);
+    }
+  };
 
-  const [selectedMessage, setSelectedMessage] = useState<EmailMessage | null>(null);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showComposer, setShowComposer] = useState(false);
-  const [composerDraft, setComposerDraft] = useState<EmailDraft | null>(null);
+  const handleReply = (conversation: any) => {
+    handleReplyWithComposer(conversation);
+  };
 
-  // Connection states
-  const connectionStatus =
-    accounts.length === 0 ? "disconnected" : accountsLoading ? "connecting" : accountsError ? "error" : "connected";
+  const handleReplyAll = (conversation: any) => {
+    // TODO: Implement reply all functionality
+    console.log("Reply all to:", conversation);
+  };
 
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
+  const handleForward = (conversation: any) => {
+    // TODO: Implement forward functionality
+    console.log("Forward:", conversation);
+  };
 
-  const handleMessageSelect = useCallback((message: EmailMessage) => {
-    setSelectedMessage(message);
-  }, []);
+  const handlePrint = (conversation: any) => {
+    // TODO: Implement print functionality
+    console.log("Print:", conversation);
+  };
 
-  const handleBack = useCallback(() => {
-    setSelectedMessage(null);
-  }, []);
+  const handleAddLabel = (conversationId: string, label: string) => {
+    // TODO: Implement add label functionality
+    console.log("Add label:", conversationId, label);
+  };
 
-  const handleAuthenticate = useCallback(
-    async (provider: string) => {
-      try {
-        await authenticate(provider);
-        await fetchAccounts();
-        setShowAuthModal(false);
-      } catch (error) {
-        console.error("Auth failed:", error);
-      }
-    },
-    [authenticate, fetchAccounts]
-  );
-
-  const handleSendEmail = useCallback(
-    async (draft: EmailDraft) => {
-      const success = await sendEmail(draft);
-      if (success) {
-        setShowComposer(false);
-        setComposerDraft(null);
-        refresh();
-      }
-    },
-    [sendEmail, refresh]
-  );
-
-  const handleReply = useCallback((message: EmailMessage) => {
-    setComposerDraft({
-      to: [message.from],
-      cc: [],
-      bcc: [],
-      subject: `Re: ${message.subject}`,
-      text: `\n\n---\nOn ${message.createdAt}, ${message.from.email} wrote:\n${message.text}`,
-      html: "",
-      replyToMessageId: message.id,
-      threadId: message.threadId,
-    });
-    setShowComposer(true);
-  }, []);
-
-  const handleCompose = useCallback(() => {
-    setComposerDraft(null);
-    setShowComposer(true);
-  }, []);
-
-  // Simple unread counts for demo
-  const unreadCounts = accounts.reduce((acc, account) => {
-    acc[account.id] = 0; // Would come from backend
-    return acc;
-  }, {} as Record<string, number>);
-
-  return (
-    <Stack sx={{ width: "100%", height: "100%", overflow: "hidden" }}>
-      {/* Connection Status Bar */}
-      {connectionStatus !== "connected" && (
-        <Box sx={{ p: 2 }}>
-          <EmailConnectionStatus
-            status={connectionStatus}
-            error={accountsError}
-            accountCount={accounts.length}
-            onRetry={fetchAccounts}
-            onConnect={() => setShowAuthModal(true)}
-          />
-        </Box>
-      )}
-
-      {/* Main Layout */}
-      <Stack direction="row" sx={{ flex: 1, overflow: "hidden" }}>
-        {/* Sidebar */}
-        <EmailAccountSidebar
-          accounts={accounts}
-          selectedAccountId={selectedAccountId}
-          onAccountSelect={selectAccount}
-          onAddAccount={() => setShowAuthModal(true)}
-          onDisconnectAccount={disconnectAccount}
-          unreadCounts={unreadCounts}
-        />
-
-        {/* Message Area */}
-        <Stack sx={{ flex: 1, overflow: "hidden" }}>
-          {selectedMessage ? (
-            <EmailMessageViewer
-              messages={[selectedMessage]}
-              onBack={handleBack}
-              onReply={handleReply}
-              onDelete={(id) => {
-                deleteMessage(id);
-                handleBack();
-              }}
-              onArchive={(id) => {
-                archiveMessage(id);
-                handleBack();
-              }}
-              onStar={(id, starred) => starMessage(id, starred)}
+  // Render empty state when not connected
+  if (!isConnected) {
+    return (
+      <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
+        <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
+          {/* Email Sidebar */}
+          <div style={{ width: 260, minWidth: 260, height: "100%" }}>
+            <EmailSidebar
+              accounts={accounts}
+              selectedAccountId={selectedAccountId}
+              onAccountSelect={selectAccount}
+              onAddAccount={() => setShowAuthModal(true)}
+              onDisconnectAccount={disconnectAccount}
+              onRefresh={refreshAccounts}
+              labels={labels}
+              systemLabels={systemLabels}
+              userLabels={userLabels}
+              selectedLabelId={selectedLabelId}
+              labelsLoading={labelsLoading}
+              labelsError={labelsError}
+              onLabelSelect={selectLabel}
             />
-          ) : (
-            <>
-              {/* Header */}
-              <Paper elevation={0} sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography variant="h6">{selectedAccountId ? "Messages" : "Select an account"}</Typography>
-                  <Stack direction="row" spacing={1}>
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleCompose} disabled={!selectedAccountId}>
-                      Compose
-                    </Button>
-                    <Button startIcon={<RefreshIcon />} onClick={refresh} disabled={!selectedAccountId}>
-                      Refresh
-                    </Button>
-                  </Stack>
-                </Stack>
-              </Paper>
+          </div>
 
-              {/* Message List */}
-              {selectedAccountId ? (
-                <EmailMessageList
-                  messages={messages}
-                  loading={messagesLoading}
-                  hasMore={hasMore}
-                  onSelect={handleMessageSelect}
-                  onLoadMore={loadMore}
-                  onStar={starMessage}
-                  onDelete={deleteMessage}
-                  onArchive={archiveMessage}
-                />
-              ) : (
-                <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {accounts.length === 0 ? "Connect an email account to get started" : "Select an account from the sidebar"}
-                  </Typography>
-                </Box>
-              )}
-            </>
-          )}
+          {/* Empty state for conversations */}
+          <div style={{ width: 320, minWidth: 320, height: "100%" }}>
+            <Paper
+              elevation={0}
+              sx={{
+                height: "100%",
+                border: "1px solid #EAECF0",
+                borderRadius: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Stack alignItems="center" spacing={2}>
+                <Typography variant="h6" sx={{ color: "#6B7280" }}>
+                  Connect an account
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
+                  Add an email account to view conversations
+                </Typography>
+              </Stack>
+            </Paper>
+          </div>
+
+          {/* Empty state for message viewer */}
+          <Paper
+            elevation={0}
+            sx={{
+              flex: 1,
+              border: "1px solid #EAECF0",
+              borderRadius: 2,
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              minWidth: 0,
+              height: "100%",
+            }}
+          >
+            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <FrontdeskEmptyState
+                title="No email account connected"
+                subtitle="Connect your email account to start managing messages"
+              />
+            </Box>
+          </Paper>
         </Stack>
 
-        {/* Info Panel (optional - can be hidden) */}
-        {selectedMessage && (
-          <EmailInfoPanel
-            email={selectedMessage}
-            onStar={(starred) => starMessage(selectedMessage.id, starred)}
-            onArchive={() => archiveMessage(selectedMessage.id)}
-            onDelete={() => {
-              deleteMessage(selectedMessage.id);
-              handleBack();
-            }}
+        <EmailAuthModal
+          open={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onAuthenticate={handleAuthenticate}
+          error={authError}
+        />
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
+      <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
+        {/* Email Sidebar */}
+        <div style={{ width: 260, minWidth: 260, height: "100%" }}>
+          <EmailSidebar
+            accounts={accounts}
+            selectedAccountId={selectedAccountId}
+            onAccountSelect={selectAccount}
+            onAddAccount={() => setShowAuthModal(true)}
+            onDisconnectAccount={disconnectAccount}
+            onRefresh={refreshAccounts}
+            labels={labels}
+            systemLabels={systemLabels}
+            userLabels={userLabels}
+            selectedLabelId={selectedLabelId}
+            labelsLoading={labelsLoading}
+            labelsError={labelsError}
+            onLabelSelect={selectLabel}
           />
-        )}
+        </div>
+
+        {/* Conversations List */}
+        <div style={{ width: 320, minWidth: 320, height: "100%" }}>
+          {selectedAccountId ? (
+            <EmailConversationList
+              conversations={conversations}
+              selectedConversationId={selectedConversation?.id}
+              onConversationSelect={handleConversationSelect}
+              loading={conversationsLoading}
+              error={conversationsError}
+              hasMore={hasMore}
+              onLoadMore={loadMore}
+              onRefresh={refresh}
+              selectedLabel={selectedLabel}
+            />
+          ) : (
+            <Paper
+              elevation={0}
+              sx={{
+                height: "100%",
+                border: "1px solid #EAECF0",
+                borderRadius: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Stack alignItems="center" spacing={2}>
+                <Typography variant="h6" sx={{ color: "#6B7280" }}>
+                  Select an account
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
+                  Choose an email account to view conversations
+                </Typography>
+              </Stack>
+            </Paper>
+          )}
+        </div>
+
+        {/* Message Viewer */}
+        <Paper
+          elevation={0}
+          sx={{
+            flex: 1,
+            border: "1px solid #EAECF0",
+            borderRadius: 2,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            minWidth: 0,
+            height: "100%",
+          }}
+        >
+          {selectedConversation ? (
+            <EmailMessageViewer
+              conversation={selectedConversation}
+              accountId={selectedAccountId}
+              onBack={handleBack}
+              onReply={handleReply}
+              onReplyAll={handleReplyAll}
+              onForward={handleForward}
+              onDelete={deleteConversation}
+              onArchive={archiveConversation}
+              onStar={starConversation}
+              onPrint={handlePrint}
+              onAddLabel={handleAddLabel}
+            />
+          ) : (
+            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <FrontdeskEmptyState
+                title="No conversation selected"
+                subtitle="Choose a conversation from the list to start viewing messages"
+              />
+            </Box>
+          )}
+        </Paper>
       </Stack>
 
       {/* Composer */}
-      {showComposer && (
-        <EmailComposer
-          draft={composerDraft || undefined}
-          onSend={handleSendEmail}
-          onClose={() => {
-            setShowComposer(false);
-            setComposerDraft(null);
-          }}
-          isSending={isSending}
-        />
-      )}
+      <EmailComposer
+        open={showComposer}
+        onClose={handleCloseComposer}
+        onSend={handleSendEmail}
+        draft={composerDraft || undefined}
+        isSending={isSending}
+      />
 
-      {/* Auth Modal */}
       <EmailAuthModal
         open={showAuthModal}
         onClose={() => setShowAuthModal(false)}

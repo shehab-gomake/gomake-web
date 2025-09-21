@@ -5,7 +5,7 @@ export interface EmailRecipient {
 
 export interface EmailAccount {
   id: string;
-  provider: 'gmail' | 'outlook' | 'yahoo';
+  provider: "gmail" | "outlook" | "yahoo";
   email: string;
   displayName: string;
   isActive: boolean;
@@ -55,7 +55,7 @@ export interface EmailAttachment {
 export interface EmailFolder {
   id: string;
   name: string;
-  type: 'inbox' | 'sent' | 'draft' | 'trash' | 'spam' | 'custom';
+  type: "inbox" | "sent" | "draft" | "trash" | "spam" | "custom";
   unreadCount: number;
   totalCount: number;
   icon?: string;
@@ -103,6 +103,50 @@ export interface EmailListResponse {
   hasMore: boolean;
 }
 
+export interface EmailConversation {
+  id: string;
+  subject: string;
+  participants: string[];
+  messageCount: number;
+  lastMessage: {
+    id: string;
+    threadId: string;
+    from: string;
+    to: string[];
+    subject: string;
+    date: string;
+    isRead: boolean;
+    labels: string[];
+    snippet: string;
+  };
+  isRead: boolean;
+  isStarred?: boolean;
+  hasAttachments?: boolean;
+  unreadCount?: number;
+  labels: string[];
+  date: string;
+  snippet: string;
+  accountId: string;
+  accountEmail: string;
+  provider: string;
+}
+
+export interface ConversationListResponse {
+  conversations: EmailConversation[];
+  nextPageToken?: string;
+  totalCount?: number;
+}
+
+export interface ConversationDetailResponse {
+  id: string;
+  subject: string;
+  participants: string[];
+  messages: EmailMessage[];
+  accountId: string;
+  accountEmail: string;
+  provider: string;
+}
+
 export interface EmailSearchQuery {
   query?: string;
   limit?: number;
@@ -110,7 +154,22 @@ export interface EmailSearchQuery {
   folder?: string;
 }
 
-export type EmailProvider = 'gmail' | 'outlook' | 'yahoo';
+export interface EmailLabel {
+  id: string;
+  name: string;
+  type: "system" | "user";
+  unreadCount?: number;
+  totalCount?: number;
+}
+
+export interface EmailLabelsResponse {
+  labels: EmailLabel[];
+  accountId: string;
+  accountEmail: string;
+  provider: string;
+}
+
+export type EmailProvider = "gmail" | "outlook" | "yahoo";
 
 export interface EmailOAuthConfig {
   provider: EmailProvider;
