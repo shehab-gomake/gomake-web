@@ -54,6 +54,8 @@ export const EmailProviderView: React.FC = () => {
     handleCloseComposer,
     handleSendEmail,
     handleReplyWithComposer,
+    searchQuery,
+    onSearch,
   } = useEmailProvider();
 
   const handleAuthenticate = async (provider: string) => {
@@ -71,12 +73,13 @@ export const EmailProviderView: React.FC = () => {
 
     // Create a simple reply draft
     const replyDraft = {
-      to: [{ email: selectedConversation.lastMessage?.from || '', name: '' }],
-      cc: replyAll && selectedConversation.lastMessage?.to
-        ? selectedConversation.lastMessage.to.map(email => ({ email, name: '' }))
-        : [],
+      to: [{ email: selectedConversation.lastMessage?.from || "", name: "" }],
+      cc:
+        replyAll && selectedConversation.lastMessage?.to
+          ? selectedConversation.lastMessage.to.map((email) => ({ email, name: "" }))
+          : [],
       bcc: [],
-      subject: `Re: ${selectedConversation.subject.replace(/^Re:\s*/i, '')}`,
+      subject: `Re: ${selectedConversation.subject.replace(/^Re:\s*/i, "")}`,
       text: text,
       html: text,
       replyToMessageId: selectedConversation.lastMessage?.id,
@@ -132,6 +135,8 @@ export const EmailProviderView: React.FC = () => {
               labelsLoading={labelsLoading}
               labelsError={labelsError}
               onLabelSelect={selectLabel}
+              onSearch={onSearch}
+              searchQuery={searchQuery}
             />
           </div>
 
@@ -211,6 +216,8 @@ export const EmailProviderView: React.FC = () => {
             labelsLoading={labelsLoading}
             labelsError={labelsError}
             onLabelSelect={selectLabel}
+            onSearch={onSearch}
+            searchQuery={searchQuery}
           />
         </div>
 
@@ -304,7 +311,7 @@ export const EmailProviderView: React.FC = () => {
               bottom: 24,
               right: 24,
               backgroundColor: primaryColor(600),
-              '&:hover': {
+              "&:hover": {
                 backgroundColor: primaryColor(700),
               },
             }}

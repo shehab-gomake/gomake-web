@@ -151,7 +151,6 @@ export interface EmailSearchQuery {
   query?: string;
   limit?: number;
   pageToken?: string;
-  folder?: string;
 }
 
 export interface EmailLabel {

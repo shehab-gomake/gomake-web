@@ -1,5 +1,13 @@
 import { getUserToken } from "@/services/storage-data";
-import { EmailAccount, EmailListResponse, EmailSendRequest, EmailThread, ConversationListResponse, ConversationDetailResponse, EmailLabelsResponse } from "../types/email.types";
+import {
+  EmailAccount,
+  EmailListResponse,
+  EmailSendRequest,
+  EmailThread,
+  ConversationListResponse,
+  ConversationDetailResponse,
+  EmailLabelsResponse,
+} from "../types/email.types";
 
 const getBaseUrl = () => {
   const url = process.env.NEXT_PUBLIC_MESSAGING_SERVICE_URL || "http://localhost:3000";
@@ -69,9 +77,7 @@ class EmailApiClient {
     const queryParams = new URLSearchParams();
     if (params?.limit) queryParams.append("limit", params.limit.toString());
 
-    const url = `${this.baseUrl}/email/accounts/${accountId}/labels${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`;
+    const url = `${this.baseUrl}/email/accounts/${accountId}/labels${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -93,14 +99,12 @@ class EmailApiClient {
       limit?: number;
       pageToken?: string;
       query?: string;
-      folder?: string;
     }
   ): Promise<ConversationListResponse> {
     const queryParams = new URLSearchParams();
     if (params?.limit) queryParams.append("limit", params.limit.toString());
     if (params?.pageToken) queryParams.append("pageToken", params.pageToken);
     if (params?.query) queryParams.append("query", params.query);
-    if (params?.folder) queryParams.append("folder", params.folder);
 
     const url = `${this.baseUrl}/email/accounts/${accountId}/messages${
       queryParams.toString() ? `?${queryParams.toString()}` : ""
@@ -126,14 +130,12 @@ class EmailApiClient {
       limit?: number;
       pageToken?: string;
       query?: string;
-      folder?: string;
     }
   ): Promise<EmailListResponse> {
     const queryParams = new URLSearchParams();
     if (params?.limit) queryParams.append("limit", params.limit.toString());
     if (params?.pageToken) queryParams.append("pageToken", params.pageToken);
     if (params?.query) queryParams.append("query", params.query);
-    if (params?.folder) queryParams.append("folder", params.folder);
 
     const url = `${this.baseUrl}/email/accounts/${accountId}/messages${
       queryParams.toString() ? `?${queryParams.toString()}` : ""

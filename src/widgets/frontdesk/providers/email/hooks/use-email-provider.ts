@@ -1,18 +1,29 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useEmailAccounts } from "./use-email-accounts";
 import { useEmailAuth } from "./use-email-auth";
 import { useEmailLabels } from "./use-email-labels";
 import { useEmailConversations } from "./use-email-conversations";
 import { useEmailConversationManager } from "./use-email-conversation-manager";
 import { useEmailComposer } from "./use-email-composer";
+import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
 
 export const useEmailProvider = () => {
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   // Core email functionality
   const emailAccounts = useEmailAccounts();
   const emailAuth = useEmailAuth();
   const emailLabels = useEmailLabels(emailAccounts.selectedAccountId || undefined);
+
+  // Combine label query with search query
+  const labelQuery = emailLabels.selectedLabelId
+    ? getGmailQueryFromLabel(emailLabels.selectedLabelId, emailLabels.selectedLabel?.name || "")
+    : null;
+  const combinedQuery = combineGmailQueries(labelQuery, searchQuery || null);
+
   const emailConversations = useEmailConversations({
-    folder: emailLabels.selectedLabelId || undefined,
+    query: combinedQuery || undefined,
   });
 
   // Component management
@@ -60,6 +71,19 @@ export const useEmailProvider = () => {
     [conversationManager.handleReply, composer.openComposerWithDraft]
   );
 
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
+
+  // Clear search when account changes
+  const handleAccountSelect = useCallback(
+    (accountId: string) => {
+      setSearchQuery("");
+      emailAccounts.selectAccount(accountId);
+    },
+    [emailAccounts.selectAccount]
+  );
+
   return {
     // Connection state
     isConnected,
@@ -70,7 +94,7 @@ export const useEmailProvider = () => {
     selectedAccountId: emailAccounts.selectedAccountId,
     accountsLoading: emailAccounts.loading,
     accountsError: emailAccounts.error,
-    selectAccount: emailAccounts.selectAccount,
+    selectAccount: handleAccountSelect,
     disconnectAccount: emailAccounts.disconnectAccount,
     refreshAccounts: emailAccounts.fetchAccounts,
 
@@ -114,5 +138,9 @@ export const useEmailProvider = () => {
     handleCloseComposer: composer.handleCloseComposer,
     handleSendEmail: composer.handleSendEmail,
     handleReplyWithComposer,
+
+    // Search
+    searchQuery,
+    onSearch: handleSearch,
   };
 };
