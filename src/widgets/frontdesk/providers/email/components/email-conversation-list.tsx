@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Stack,
@@ -29,6 +29,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailConversation, EmailLabel } from "../types/email.types";
 import { safeDecodeHtml } from "../utils/html-decode";
 import { formatConversationDate } from "../utils/date-utils";
+import { EmailHoverProfile } from "./email-hover-profile";
 
 interface EmailConversationListProps {
   conversations: EmailConversation[];
@@ -55,8 +56,54 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
+  const [hoveredEmail, setHoveredEmail] = useState<string | null>(null);
+  const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const profileRef = useRef<HTMLDivElement | null>(null);
 
   const formatDate = formatConversationDate;
+
+  // Handle hover with delay
+  const handleMouseEnter = (email: string, element: HTMLElement) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setHoveredEmail(email);
+    setHoveredElement(element);
+    setShowProfile(true);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowProfile(false);
+      setHoveredEmail(null);
+      setHoveredElement(null);
+    }, 300); // 300ms delay before hiding
+  };
+
+  const handleProfileMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
+
+  const handleProfileMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowProfile(false);
+      setHoveredEmail(null);
+      setHoveredElement(null);
+    }, 300);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getAvatarColor = (email: string) => {
     const colors = [primaryColor(500), "#388e3c", "#f57c00", "#7b1fa2", "#c62828", "#1976d2"];
@@ -113,18 +160,18 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
             </Avatar>
 
             <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-              {/* Header row */}
+              {/* Header row - Subject */}
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography
                   variant="body2"
                   sx={{
-                    fontWeight: conversation.isRead ? 500 : 700,
-                    color: isSelected ? primaryColor(700) : neutralColor(800),
+                    fontWeight: conversation.isRead ? 400 : 600,
+                    color: isSelected ? primaryColor(700) : neutralColor(700),
                     fontSize: "0.875rem",
                   }}
                   noWrap
                 >
-                  {conversation.participants.join(", ")}
+                  {safeDecodeHtml(conversation.subject)}
                 </Typography>
 
                 <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -142,17 +189,27 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
                 </Stack>
               </Stack>
 
-              {/* Subject */}
+              {/* Participants */}
               <Typography
                 variant="body2"
                 sx={{
-                  fontWeight: conversation.isRead ? 400 : 600,
-                  color: isSelected ? primaryColor(700) : neutralColor(700),
+                  fontWeight: conversation.isRead ? 500 : 700,
+                  color: isSelected ? primaryColor(700) : neutralColor(800),
                   fontSize: "0.875rem",
+                  cursor: "pointer",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
                 }}
                 noWrap
+                onMouseEnter={(e) => {
+                  handleMouseEnter(conversation.participants[0], e.currentTarget);
+                }}
+                onMouseLeave={handleMouseLeave}
               >
-                {safeDecodeHtml(conversation.subject)}
+                {conversation.participants.length <= 1
+                  ? conversation.participants.join(", ")
+                  : `${conversation.participants.slice(0, 1).join(", ")} +${conversation.participants.length - 1} more`}
               </Typography>
 
               {/* Snippet */}
@@ -170,31 +227,6 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
               >
                 {safeDecodeHtml(conversation.snippet)}
               </Typography>
-
-              {/* Labels */}
-              {conversation.labels && conversation.labels.length > 0 && (
-                <Stack direction="row" spacing={0.5} sx={{ mt: 0.5 }}>
-                  {conversation.labels.slice(0, 2).map((label) => (
-                    <Chip
-                      key={label}
-                      label={label}
-                      size="small"
-                      sx={{
-                        height: 16,
-                        fontSize: "0.65rem",
-                        backgroundColor: alpha(primaryColor(100), 0.7),
-                        color: primaryColor(700),
-                        "& .MuiChip-label": { px: 0.5 },
-                      }}
-                    />
-                  ))}
-                  {conversation.labels.length > 2 && (
-                    <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-                      +{conversation.labels.length - 2}
-                    </Typography>
-                  )}
-                </Stack>
-              )}
             </Stack>
 
             {conversation.unreadCount && conversation.unreadCount > 0 && (
@@ -318,6 +350,15 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
           </List>
         )}
       </Box>
+
+      {/* Hover Profile */}
+      <EmailHoverProfile
+        email={hoveredEmail || ""}
+        visible={showProfile && !!hoveredEmail}
+        anchorEl={hoveredElement}
+        onMouseEnter={handleProfileMouseEnter}
+        onMouseLeave={handleProfileMouseLeave}
+      />
     </Paper>
   );
 };
