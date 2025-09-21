@@ -109,7 +109,7 @@ export const useFileApiSettings = () => {
 
   const handleDownloadInstaller = () => {
     window.open(
-      "https://gomakefileserviceinstaller.s3.eu-central-1.amazonaws.com/GoMakeServiceInstaller.exe",
+      "https://gomakefileserviceinstaller.s3.eu-central-1.amazonaws.com/GoMakeServiceInstaller.zip",
       "_blank"
     );
   };
