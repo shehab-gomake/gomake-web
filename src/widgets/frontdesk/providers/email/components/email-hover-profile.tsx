@@ -30,6 +30,35 @@ export const EmailHoverProfile: React.FC<EmailHoverProfileProps> = ({ email, vis
   };
 
   const rect = anchorEl.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const profileWidth = 300; // maxWidth from sx
+  const profileHeight = 120; // estimated height
+
+  // Calculate smart positioning
+  let top = rect.top - 10;
+  let left = rect.right + 10;
+
+  // Adjust horizontal position if it would go off-screen
+  if (left + profileWidth > viewportWidth) {
+    // Position to the left of the anchor element instead
+    left = rect.left - profileWidth - 10;
+  }
+
+  // Adjust vertical position if it would go off-screen
+  if (top < 10) {
+    // Position below the anchor element if there's not enough space above
+    top = rect.bottom + 10;
+  }
+
+  // If still off-screen vertically, position at the bottom of the anchor
+  if (top + profileHeight > viewportHeight) {
+    top = rect.bottom - profileHeight - 10;
+  }
+
+  // Ensure minimum margins from viewport edges
+  top = Math.max(10, Math.min(top, viewportHeight - profileHeight - 10));
+  left = Math.max(10, Math.min(left, viewportWidth - profileWidth - 10));
 
   return (
     <Paper
@@ -38,8 +67,8 @@ export const EmailHoverProfile: React.FC<EmailHoverProfileProps> = ({ email, vis
       onMouseLeave={onMouseLeave}
       sx={{
         position: "fixed",
-        top: rect.top - 10,
-        left: rect.right + 10,
+        top: top,
+        left: left,
         zIndex: 9999,
         p: 2,
         minWidth: 200,
