@@ -381,7 +381,17 @@ const FormInput = ({
                     : undefined
                 }
                 PaperComponent={(props: any) => (
-                  <Paper style={{ width: "180px" }} {...props}>
+                  <Paper
+                    style={{
+                      width:
+                        input.dropdownStyle?.width ||
+                        props?.style?.width ||
+                        "180px",
+                      ...input.dropdownStyle,
+                      ...props?.style,
+                    }}
+                    {...props}
+                  >
                     {props?.children}
                   </Paper>
                 )}

@@ -251,6 +251,10 @@ export const useFileApiSettings = () => {
       ],
       value: formData.foldersCreationType,
       isValid: true,
+      dropdownStyle: {
+        width: "100%",
+        minWidth: "fit-content",
+      },
     },
   ];
 
