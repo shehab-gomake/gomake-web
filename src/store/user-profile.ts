@@ -20,5 +20,4 @@ export interface IUserProfile {
   avatarInitials: string;
   quickBloxUserId: string;
   quickBloxToken: string;
-  stripeCustomerId?: string;
 }
