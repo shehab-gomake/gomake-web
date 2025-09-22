@@ -9,6 +9,7 @@ import { EmailSidebar } from "./components/email-sidebar";
 import { EmailConversationList } from "./components/email-conversation-list";
 import { EmailMessageViewer } from "./components/email-message-viewer";
 import { useEmailProvider } from "./hooks/use-email-provider";
+import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning";
 
 export const EmailProviderView: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -57,6 +58,11 @@ export const EmailProviderView: React.FC = () => {
     searchQuery,
     onSearch,
   } = useEmailProvider();
+
+  const fabPositioning = useFabPositioning({
+    isConversationSelected: !!selectedConversation,
+    hasMessageInput: !!selectedConversation, // Message input (reply box) is present when conversation is selected
+  });
 
   const handleAuthenticate = async (provider: string) => {
     try {
@@ -306,9 +312,7 @@ export const EmailProviderView: React.FC = () => {
             color="primary"
             onClick={handleCompose}
             sx={{
-              position: "fixed",
-              bottom: 24,
-              right: 24,
+              ...fabPositioning.sx,
               backgroundColor: primaryColor(600),
               "&:hover": {
                 backgroundColor: primaryColor(700),

@@ -21,6 +21,7 @@ import { ConversationList, MessageList, MessageInput, UserSelector, Participants
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
 import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
+import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning";
 
 const DirectMessagesProviderView: React.FC = () => {
   const {
@@ -47,12 +48,20 @@ const DirectMessagesProviderView: React.FC = () => {
     sendMessage,
     updateDraft,
     loadUserSuggestions,
+    loadConversations,
+    loadMoreMessages,
+    messageCursors,
     setError,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
+
+  const fabPositioning = useFabPositioning({
+    isConversationSelected: !!activeConversationId,
+    hasMessageInput: !!activeConversationId, // Message input is present when conversation is selected
+  });
 
   // Debug logging
   React.useEffect(() => {
@@ -408,6 +417,11 @@ const DirectMessagesProviderView: React.FC = () => {
                   typingUsers={typingUsers}
                   userPresence={userPresence}
                   isLoadingHistory={isLoadingHistory}
+                  onLoadMore={() => {
+                    if (activeConversationId && messageCursors[activeConversationId]?.hasMoreOlder) {
+                      loadMoreMessages(activeConversationId);
+                    }
+                  }}
                 />
               </Box>
 
@@ -445,11 +459,7 @@ const DirectMessagesProviderView: React.FC = () => {
         color="primary"
         aria-label="start new conversation"
         onClick={handleStartNewConversation}
-        sx={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-        }}
+        sx={fabPositioning.sx}
       >
         <AddIcon />
       </Fab>
