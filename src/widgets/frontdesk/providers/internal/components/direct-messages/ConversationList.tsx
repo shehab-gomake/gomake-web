@@ -173,7 +173,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                       fontWeight: conversation.unreadCount && conversation.unreadCount > 0 ? 500 : 400,
                     }}
                   >
-                    {conversation.lastMessage || 'No messages yet'}
+                    {conversation.lastMessageAt ? new Date(conversation.lastMessageAt).toLocaleString() : 'No messages yet'}
                   </Typography>
                 }
               />

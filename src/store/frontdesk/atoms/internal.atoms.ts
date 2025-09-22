@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
 import { Channel, Message } from '@/widgets/frontdesk/providers/internal/types/internal.types';
+import { Conversation } from '@/widgets/frontdesk/providers/internal/types/direct-messages.types';
 
 /**
  * Internal chat channels
@@ -12,7 +13,7 @@ export const internalChannelsAtom = atom<Channel[]>({
 /**
  * Internal direct messages
  */
-export const internalDirectMessagesAtom = atom<Channel[]>({
+export const internalDirectMessagesAtom = atom<Conversation[]>({
   key: 'frontdesk.internal.directMessages',
   default: []
 });
@@ -22,6 +23,14 @@ export const internalDirectMessagesAtom = atom<Channel[]>({
  */
 export const internalSelectedConversationAtom = atom<Channel | null>({
   key: 'frontdesk.internal.selectedConversation',
+  default: null
+});
+
+/**
+ * Selected Direct Messages conversation
+ */
+export const internalSelectedDMConversationAtom = atom<Conversation | null>({
+  key: 'frontdesk.internal.selectedDMConversation',
   default: null
 });
 

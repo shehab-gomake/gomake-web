@@ -184,6 +184,8 @@ export interface MessageListProps {
   userPresence: Record<string, DMPresenceData>;
   isLoadingHistory?: boolean;
   onLoadMore?: () => void;
+  lastReadMessageId?: string;
+  onScrollToUnread?: () => void;
 }
 
 export interface MessageInputProps {

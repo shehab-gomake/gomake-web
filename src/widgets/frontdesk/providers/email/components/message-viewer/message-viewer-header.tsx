@@ -140,7 +140,7 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
               <EmailActionButton
                 icon={<MoreIcon sx={{ fontSize: 20 }} />}
                 tooltip="More actions"
-                onClick={handleMoreActionsClick}
+                onClick={() => handleMoreActionsClick({} as React.MouseEvent<HTMLElement>)}
               />
             </Stack>
           </Stack>

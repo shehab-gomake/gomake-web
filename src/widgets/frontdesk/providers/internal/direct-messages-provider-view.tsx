@@ -8,7 +8,6 @@ import {
   Box,
   IconButton,
   Tooltip,
-  Fab,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -16,14 +15,15 @@ import {
   Add as AddIcon,
   Search as SearchIcon,
   FilterList as FilterIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
 import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
-import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning";
 
 const DirectMessagesProviderView: React.FC = () => {
+  
   const {
     connected,
     connectionStatus,
@@ -51,6 +51,7 @@ const DirectMessagesProviderView: React.FC = () => {
     loadConversations,
     loadMoreMessages,
     messageCursors,
+    setActiveConversationId,
     setError,
   } = useDirectMessages();
 
@@ -58,10 +59,6 @@ const DirectMessagesProviderView: React.FC = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
 
-  const fabPositioning = useFabPositioning({
-    isConversationSelected: !!activeConversationId,
-    hasMessageInput: !!activeConversationId, // Message input is present when conversation is selected
-  });
 
   // Debug logging
   React.useEffect(() => {
@@ -125,6 +122,12 @@ const DirectMessagesProviderView: React.FC = () => {
     setShowUserSelector(true);
     setUserSelectorMode('new');
     loadUserSuggestions();
+  };
+
+  const handleCloseConversation = () => {
+    console.log('Closing conversation, current activeConversationId:', activeConversationId);
+    setActiveConversationId(null);
+    console.log('Conversation closed');
   };
 
   const handleUserSelect = async (user: ConversationMember) => {
@@ -399,11 +402,35 @@ const DirectMessagesProviderView: React.FC = () => {
                       <Typography variant="body2" sx={{ color: "#6B7280" }}>
                         {getConversationSubtitle()}
                       </Typography>
+                      {/* Debug info */}
+                      <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.7rem" }}>
+                        Debug: activeConversationId = {activeConversationId}
+                      </Typography>
                     </div>
-                    {/* Debug info */}
-                    <Typography variant="caption" sx={{ color: "#9CA3AF", fontFamily: "monospace" }}>
-                      Status: {connectionStatus}
-                    </Typography>
+                    {/* Close button */}
+                    <Tooltip title="Close conversation">
+                      <IconButton 
+                        size="medium" 
+                        onClick={(e) => {
+                          console.log('Close button clicked!', e);
+                          console.log('Current activeConversationId before close:', activeConversationId);
+                          alert('Close button clicked!');
+                          handleCloseConversation();
+                        }}
+                        sx={{ 
+                          color: "#374151",
+                          backgroundColor: "#F3F4F6",
+                          border: "1px solid #D1D5DB",
+                          '&:hover': {
+                            color: "#111827",
+                            backgroundColor: "#E5E7EB",
+                            border: "1px solid #9CA3AF",
+                          }
+                        }}
+                      >
+                        <CloseIcon fontSize="medium" />
+                      </IconButton>
+                    </Tooltip>
                   </Stack>
                   
                   {/* Participants */}
@@ -440,6 +467,14 @@ const DirectMessagesProviderView: React.FC = () => {
                       loadMoreMessages(activeConversationId);
                     }
                   }}
+                  lastReadMessageId={activeConversation?.members?.find(member => member.userId === currentUser?.userId)?.lastReadMessageId}
+                  onScrollToUnread={() => {
+                    // Mark messages as read when user scrolls to unread section
+                    if (activeConversationId && currentUser?.userId) {
+                      // This would typically call an API to mark messages as read
+                      console.log('Scrolled to unread messages, marking as read');
+                    }
+                  }}
                 />
               </Box>
 
@@ -457,14 +492,27 @@ const DirectMessagesProviderView: React.FC = () => {
             </>
           ) : (
             <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Stack alignItems="center" spacing={2}>
+              <Stack alignItems="center" spacing={3}>
                 <ChatIcon sx={{ fontSize: 64, color: "#D1D5DB" }} />
                 <Typography variant="h6" sx={{ color: "#6B7280" }}>
                   Select a conversation
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Choose a conversation from the sidebar to start messaging, or start a new conversation
+                  Choose a conversation from the sidebar to start messaging
                 </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={handleStartNewConversation}
+                  sx={{
+                    backgroundColor: 'primary.main',
+                    '&:hover': {
+                      backgroundColor: 'primary.dark',
+                    }
+                  }}
+                >
+                  Start New Conversation
+                </Button>
                 <Typography variant="caption" sx={{ color: "#9CA3AF", textAlign: "center" }}>
                   Current user: {currentUser?.email || "Loading..."}
                 </Typography>
@@ -473,16 +521,6 @@ const DirectMessagesProviderView: React.FC = () => {
           )}
         </Paper>
       </Stack>
-
-      {/* Floating Action Button for new conversation */}
-      <Fab
-        color="primary"
-        aria-label="start new conversation"
-        onClick={handleStartNewConversation}
-        sx={fabPositioning.sx}
-      >
-        <AddIcon />
-      </Fab>
 
       {/* User Selector Dialog */}
       <UserSelector

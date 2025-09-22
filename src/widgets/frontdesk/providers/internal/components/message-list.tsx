@@ -8,6 +8,8 @@ interface MessageListProps {
   typingUsers: string[];
   userPresence: Record<string, any>;
   isLoadingHistory?: boolean;
+  lastReadMessageId?: string;
+  onScrollToUnread?: () => void;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -16,6 +18,8 @@ export const MessageList: React.FC<MessageListProps> = ({
   typingUsers,
   userPresence,
   isLoadingHistory = false,
+  lastReadMessageId,
+  onScrollToUnread,
 }) => {
   // Convert internal messages to base message format
   const baseMessages: BaseMessage[] = messages.map((message) => ({
@@ -37,6 +41,8 @@ export const MessageList: React.FC<MessageListProps> = ({
       isLoadingHistory={isLoadingHistory}
       emptyMessage="No messages yet"
       themLabel="Team Member"
+      lastReadMessageId={lastReadMessageId}
+      onScrollToUnread={onScrollToUnread}
     />
   );
 };

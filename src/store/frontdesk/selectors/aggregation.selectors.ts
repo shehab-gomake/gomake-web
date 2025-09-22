@@ -11,12 +11,28 @@ import {
   internalChannelsAtom,
   internalDirectMessagesAtom 
 } from '../atoms/internal.atoms';
+import { Channel } from '@/widgets/frontdesk/providers/internal/types/internal.types';
+import { Conversation } from '@/widgets/frontdesk/providers/internal/types/direct-messages.types';
 import { 
   unifiedFiltersAtom,
   unifiedSortOptionsAtom,
   unifiedSearchQueryAtom 
 } from '../atoms/unified.atoms';
 import { aggregateConversations } from '@/widgets/frontdesk/providers/unified/utils/conversation-aggregator';
+
+/**
+ * Convert Conversation to Channel format for aggregation
+ */
+const convertConversationToChannel = (conversation: Conversation): Channel => {
+  return {
+    id: conversation.id,
+    name: conversation.name || (conversation.type === 'DM' ? 'Direct Message' : 'Group Chat'),
+    type: conversation.type === 'DM' ? 'direct' : 'channel',
+    unreadCount: conversation.unreadCount,
+    lastMessageAt: conversation.lastMessageAt,
+    members: conversation.members?.map(member => member.userId)
+  };
+};
 
 /**
  * Get email conversations for selected account
@@ -54,7 +70,8 @@ export const allInternalConversationsSelector = selector({
   get: ({ get }) => {
     const channels = get(internalChannelsAtom);
     const dms = get(internalDirectMessagesAtom);
-    return [...channels, ...dms];
+    const convertedDms = dms.map(convertConversationToChannel);
+    return [...channels, ...convertedDms];
   }
 });
 

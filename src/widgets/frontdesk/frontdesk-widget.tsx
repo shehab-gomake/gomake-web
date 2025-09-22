@@ -22,6 +22,7 @@ const FrontdeskWidget: React.FC = () => {
     provider?: string;
   };
 
+
   // Initialize state from route only on mount
   const getInitialSection = (): Section => {
     if (!frontdeskRoute || frontdeskRoute === 'inbox') return 'inbox';
@@ -124,16 +125,42 @@ const FrontdeskWidget: React.FC = () => {
     }
 
     // For inbox, show conversation lists
-    return (
-      <Box sx={{ p: 1 }}>
-        <Typography variant="body2" color="text.secondary">
-          {currentChannel === 'all' && 'All conversations'}
-          {currentChannel === 'email' && 'Email conversations'}
-          {currentChannel === 'whatsapp' && 'WhatsApp conversations'}
-          {currentChannel === 'internal' && 'Direct Messages'}
-        </Typography>
-      </Box>
-    );
+    switch (currentChannel) {
+      case 'all':
+        return (
+          <Box sx={{ p: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              All conversations
+            </Typography>
+          </Box>
+        );
+      case 'email':
+        return (
+          <Box sx={{ p: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Email conversations
+            </Typography>
+          </Box>
+        );
+      case 'whatsapp':
+        return (
+          <Box sx={{ p: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              WhatsApp conversations
+            </Typography>
+          </Box>
+        );
+      case 'internal':
+        return (
+          <Box sx={{ p: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Direct Messages
+            </Typography>
+          </Box>
+        );
+      default:
+        return null;
+    }
   };
 
   // Render main content based on selection
