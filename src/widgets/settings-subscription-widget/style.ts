@@ -6,7 +6,8 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       container: {
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#fff",
+        //backgroundColor: "#f8f9fa"
         height: "85vh",
         display: "flex",
         flexDirection: "column" as const,
@@ -17,7 +18,8 @@ const useStyle = () => {
         margin: "0 auto",
         padding: "20px 0",
         flexShrink: 0,
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#fff",
+        //backgroundColor: "#f8f9fa"
         zIndex: 10,
       },
       title: {
@@ -45,8 +47,9 @@ const useStyle = () => {
         //width: "75%",
         width: "100%",
         backgroundColor: "white",
+        //backgroundColor: "#f8f9fa"
         borderRadius: "12px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        // boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         padding: "20px",
         maxHeight: "calc(85vh - 100px)",
         overflow: "auto",
