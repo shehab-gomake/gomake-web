@@ -27,7 +27,7 @@ import {
   SetupStepItem,
   StepStatus,
 } from "@/store/print-house-setup-state-state";
-import {isLoggedInState} from "@/store/token-expired-modal";
+import { isLoggedInState } from "@/store/token-expired-modal";
 
 const useCustomer = (
   permissionEnumValue?: Permissions,
@@ -87,14 +87,12 @@ const useCustomer = (
       }
       setUser({ ...user, type: "user" });
       setUserType({ type: "user" });
-      setUserProfile(validate?.data?.data?.customer);
+      setUserProfile(user);
       setIsLoggedIn(true);
       setPrintHouseProfile(user.printHouseProfile);
       setPrintHouseCountry(user?.printHouseProfile?.country);
-
       setIsUsPrintHouse(user.printHouseProfile?.country === "US");
       setPrintHousePreferences(user?.printHouseProfile?.preferences);
-      //setSystemCurrency(user.systemCurrency)
       setSystemCurrency(user.printHouseProfile.systemCurrency);
       setSystemVAT(user.systemVat);
       //setVersionState(user.appVersion);
