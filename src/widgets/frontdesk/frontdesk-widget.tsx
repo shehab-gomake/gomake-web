@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Box, Typography } from '@mui/material';
 import { useRouter } from "next/router";
-// Three-column layout components
+// Three-column layout components (now actually two-column)
 import { ThreeColumnLayout } from './layouts/three-column';
 import { NavigationSidebar, Channel, Section } from './layouts/components/NavigationSidebar';
 import { DynamicListPanel } from './layouts/components/DynamicListPanel';
 import { ContentArea } from './layouts/components/ContentArea';
 
-// Provider components  
+// Provider components
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
 import { DirectMessagesProviderView } from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
@@ -61,12 +61,12 @@ const FrontdeskWidget: React.FC = () => {
   const handleSectionChange = (section: Section) => {
     // Update state immediately for instant UI response
     setCurrentSection(section);
-    
+
     // Update URL without causing a re-render
-    const url = section === 'inbox' 
-      ? '/frontdesk/inbox' 
+    const url = section === 'inbox'
+      ? '/frontdesk/inbox'
       : `/frontdesk/${section}`;
-    
+
     // Use window.history API for smoother navigation
     window.history.pushState({}, '', url);
   };
@@ -74,11 +74,11 @@ const FrontdeskWidget: React.FC = () => {
   const handleChannelChange = (channel: Channel) => {
     // Update state immediately for instant UI response
     setCurrentChannel(channel);
-    
+
     // Update URL without causing a re-render
     const channelMap = { 'all': 'unified', 'email': 'email', 'whatsapp': 'whatsapp', 'internal': 'internal' };
     const url = `/frontdesk/inbox/${channelMap[channel]}`;
-    
+
     // Use window.history API for smoother navigation
     window.history.pushState({}, '', url);
   };
@@ -91,7 +91,7 @@ const FrontdeskWidget: React.FC = () => {
     internal: 2
   }), []);
 
-  // Render list content based on selection
+  // Render list content based on selection (kept for compatibility but not displayed)
   const renderListContent = () => {
     if (currentSection !== 'inbox') {
       switch (currentSection) {
@@ -225,8 +225,8 @@ const FrontdeskWidget: React.FC = () => {
           content={renderListContent()}
           searchValue={searchValue}
           onSearchChange={currentSection === 'inbox' ? setSearchValue : undefined}
-          title={currentSection !== 'inbox' ? 
-            currentSection.charAt(0).toUpperCase() + currentSection.slice(1) : 
+          title={currentSection !== 'inbox' ?
+            currentSection.charAt(0).toUpperCase() + currentSection.slice(1) :
             undefined
           }
         />

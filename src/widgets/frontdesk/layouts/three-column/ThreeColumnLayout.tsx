@@ -5,31 +5,32 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 export interface ThreeColumnLayoutProps {
   navigationContent: React.ReactNode;  // Column 1 - Navigation
-  listContent: React.ReactNode;        // Column 2 - Dynamic List
-  mainContent: React.ReactNode;        // Column 3 - Main Content
+  listContent: React.ReactNode;        // Column 2 - Dynamic List (kept for compatibility but not used)
+  mainContent: React.ReactNode;        // Column 3 - Main Content (now Column 2)
   navigationWidth?: number;            // Default: 100px
-  listWidth?: number;                   // Default: 380px
+  listWidth?: number;                   // Default: 380px (kept for compatibility but not used)
+  hideMiddleColumn?: boolean;          // Kept for compatibility but not used
   className?: string;
 }
 
+// Now actually a two-column layout, but keeping the name for compatibility
 export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   navigationContent,
-  listContent,
+  listContent, // Accepting but not using
   mainContent,
   navigationWidth = 100,
-  listWidth = 380,
+  listWidth = 380, // Accepting but not using
+  hideMiddleColumn = false, // Accepting but not using
   className
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg'));
 
   // Responsive width adjustments
   const finalNavWidth = isMobile ? 60 : navigationWidth;
-  const finalListWidth = isMobile ? 280 : (isTablet ? 320 : listWidth);
 
   return (
-    <Box 
+    <Box
       className={className}
       sx={{
         display: 'flex',
@@ -60,24 +61,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         {navigationContent}
       </Box>
 
-      {/* Column 2: Dynamic List Panel */}
-      <Box
-        sx={{
-          width: finalListWidth,
-          minWidth: finalListWidth,
-          height: '100%',
-          borderRight: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.default,
-          overflow: 'hidden',
-          display: isMobile && mainContent ? 'none' : 'flex',
-          flexDirection: 'column',
-          transition: 'width 0.2s ease'
-        }}
-      >
-        {listContent}
-      </Box>
-
-      {/* Column 3: Main Content Area */}
+      {/* Column 2: Main Content Area (previously Column 3) */}
       <Box
         sx={{
           flex: 1,
