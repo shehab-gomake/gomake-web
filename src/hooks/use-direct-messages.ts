@@ -351,20 +351,24 @@ export const useDirectMessages = () => {
   const createConversation = useCallback(
     async (data: CreateConversationRequest): Promise<Conversation | null> => {
       try {
+        console.log('[DM] Creating conversation with data:', data);
         setError(null);
         const response = await directMessagesService.createConversation(data);
+        console.log('[DM] Create conversation response:', response);
         
         // Add to conversations list (ensure the conversation is valid)
         if (response.conversation && response.conversation.id) {
+          console.log('[DM] Adding conversation to list:', response.conversation.id);
           setConversations((prev) => [response.conversation, ...prev]);
         }
         
         // Select the new conversation
+        console.log('[DM] Selecting new conversation:', response.conversation.id);
         await selectConversation(response.conversation);
         
         return response.conversation;
       } catch (error: any) {
-        console.error("Failed to create conversation:", error);
+        console.error("[DM] Failed to create conversation:", error);
         setError(error.message || "Failed to create conversation");
         return null;
       }
@@ -375,7 +379,13 @@ export const useDirectMessages = () => {
   // Start direct message with a user
   const startDirectMessage = useCallback(
     async (userId: string): Promise<Conversation | null> => {
-      if (!currentUser || currentUser.userId === userId) return null;
+      console.log('[DM] Starting direct message with user:', userId);
+      console.log('[DM] Current user:', currentUser);
+      
+      if (!currentUser || currentUser.userId === userId) {
+        console.warn('[DM] Cannot start DM - invalid current user or same user');
+        return null;
+      }
 
       // Check if conversation already exists
       const existingConversation = conversations.find(
@@ -385,11 +395,13 @@ export const useDirectMessages = () => {
       );
 
       if (existingConversation) {
+        console.log('[DM] Found existing conversation:', existingConversation.id);
         await selectConversation(existingConversation);
         return existingConversation;
       }
 
       // Create new conversation
+      console.log('[DM] Creating new conversation with participant:', userId);
       return await createConversation({
         participantIds: [userId],
       });
@@ -400,13 +412,19 @@ export const useDirectMessages = () => {
   // Send message
   const sendMessage = useCallback(
     async (content: string): Promise<boolean> => {
-      if (!activeConversationId || !content.trim() || !currentUser) return false;
+      console.log('[DM] Sending message:', { activeConversationId, content, currentUser });
+      
+      if (!activeConversationId || !content.trim() || !currentUser) {
+        console.warn('[DM] Cannot send message - missing required data');
+        return false;
+      }
 
       try {
         setIsSending(true);
         setError(null);
 
         const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('[DM] Generated tempId:', tempId);
 
         // Create optimistic message for immediate UI update
         const optimisticMessage: DMMessage = {
@@ -434,7 +452,8 @@ export const useDirectMessages = () => {
           tempId,
           metadata: { type: "text" },
         };
-
+        
+        console.log('[DM] Emitting dm:sendMessage with data:', messageData);
         directMessagesWebSocketService.sendMessage(messageData);
 
         // Clear draft for this conversation
@@ -521,6 +540,8 @@ export const useDirectMessages = () => {
 
     // Message handlers
     const handleNewMessage = (message: DMNewMessageEvent) => {
+      console.log('[DM] Received new message event:', message);
+      
       setMessages((prev) => {
         const conversationMessages = prev[message.conversationId] || [];
         
@@ -585,6 +606,8 @@ export const useDirectMessages = () => {
     };
 
     const handleMessageConfirmed = (data: DMMessageConfirmedEvent) => {
+      console.log('[DM] Message confirmed:', data);
+      
       // Replace temp message with confirmed message
       setMessages((prev) => {
         const conversationMessages = prev[data.conversationId] || [];

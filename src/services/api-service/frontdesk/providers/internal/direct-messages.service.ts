@@ -53,10 +53,17 @@ export class DirectMessagesService {
 
   // Create or reopen conversation
   async createConversation(data: CreateConversationRequest): Promise<CreateConversationResponse> {
-    return this.makeRequest<CreateConversationResponse>('/dms', {
+    const conversation = await this.makeRequest<Conversation>('/dms', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    
+    // The backend returns the conversation directly, 
+    // but our interface expects it wrapped with members
+    return {
+      conversation,
+      members: conversation.members || []
+    };
   }
 
   // List conversations

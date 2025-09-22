@@ -154,11 +154,14 @@ export class DirectMessagesWebSocketService {
   joinConversation(data: JoinConversationEvent): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.socket?.connected) {
+        console.error("[DM WebSocket] Cannot join conversation - socket not connected");
         reject(new Error("Socket not connected"));
         return;
       }
 
+      console.log("[DM WebSocket] Joining conversation:", data.conversationId);
       this.socket.emit("joinConversation", data, (response: any) => {
+        console.log("[DM WebSocket] Join conversation response:", response);
         if (response?.success !== false) {
           resolve();
         } else {
@@ -193,6 +196,7 @@ export class DirectMessagesWebSocketService {
       return;
     }
 
+    console.log("[DM WebSocket] Emitting dm:sendMessage event with data:", data);
     this.socket.emit("dm:sendMessage", data);
   }
 
