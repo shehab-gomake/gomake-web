@@ -273,6 +273,12 @@ export class DirectMessagesWebSocketService {
       this.socket.on("dm:messageRead", handler);
     }
   }
+  
+  onConversationUpdated(handler: (data: any) => void): void {
+    if (this.socket) {
+      this.socket.on("dm:conversationUpdated", handler);
+    }
+  }
 
   onUserOnline(handler: DMPresenceEventHandler): void {
     if (this.socket) {

@@ -598,11 +598,26 @@ export const useDirectMessages = () => {
 
       // Update unread count if not in active conversation
       if (message.conversationId !== activeConversationId && message.userId !== currentUser?.userId) {
+        console.log('[DM] Updating unread count for conversation:', message.conversationId);
         setUnreadCounts((prev) => ({
           ...prev,
           [message.conversationId]: (prev[message.conversationId] || 0) + 1,
         }));
       }
+      
+      // Update conversation's lastMessageAt to trigger re-sort
+      setConversations((prev) => {
+        return prev.map(conv => {
+          if (conv.id === message.conversationId) {
+            console.log('[DM] Updating conversation lastMessageAt:', message.conversationId);
+            return {
+              ...conv,
+              lastMessageAt: message.timestamp,
+            };
+          }
+          return conv;
+        });
+      });
     };
 
     const handleMessageConfirmed = (data: DMMessageConfirmedEvent) => {
@@ -619,6 +634,20 @@ export const useDirectMessages = () => {
               : msg
           ),
         };
+      });
+      
+      // Update conversation's lastMessageAt when our message is confirmed
+      setConversations((prev) => {
+        return prev.map(conv => {
+          if (conv.id === data.conversationId) {
+            console.log('[DM] Updating conversation lastMessageAt on message confirm:', data.conversationId);
+            return {
+              ...conv,
+              lastMessageAt: data.timestamp,
+            };
+          }
+          return conv;
+        });
       });
 
       console.log("Message confirmed:", data);
@@ -698,6 +727,24 @@ export const useDirectMessages = () => {
       setError(error);
     };
 
+    // Conversation update handler
+    const handleConversationUpdated = (data: any) => {
+      console.log('[DM] Conversation updated:', data);
+      // Update conversation's lastMessageAt and lastMessage
+      setConversations((prev) => {
+        return prev.map(conv => {
+          if (conv.id === data.conversationId) {
+            return {
+              ...conv,
+              lastMessageAt: data.lastMessageAt,
+              lastMessage: data.lastMessage,
+            };
+          }
+          return conv;
+        });
+      });
+    };
+
     // Register event listeners
     directMessagesWebSocketService.onNewMessage(handleNewMessage);
     directMessagesWebSocketService.onMessageConfirmed(handleMessageConfirmed);
@@ -707,6 +754,7 @@ export const useDirectMessages = () => {
     directMessagesWebSocketService.onConnect(handleConnect);
     directMessagesWebSocketService.onDisconnect(handleDisconnect);
     directMessagesWebSocketService.onError(handleError);
+    directMessagesWebSocketService.onConversationUpdated(handleConversationUpdated);
 
     // Cleanup
     return () => {

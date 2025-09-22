@@ -410,7 +410,13 @@ const DirectMessagesProviderView: React.FC = () => {
               </Box>
 
               {/* Messages */}
-              <Box sx={{ flex: 1, overflow: "hidden" }}>
+              <Box sx={{ 
+                flex: 1, 
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0
+              }}>
                 <MessageList
                   messages={messages}
                   currentUserId={currentUser?.userId}
@@ -425,15 +431,17 @@ const DirectMessagesProviderView: React.FC = () => {
                 />
               </Box>
 
-              {/* Message input */}
-              <MessageInput
-                value={draft}
-                onChange={handleDraftChange}
-                onSend={handleSendMessage}
-                placeholder={`Message ${getConversationTitle()}`}
-                disabled={false}
-                isSending={isSending}
-              />
+              {/* Message input - fixed at bottom */}
+              <Box sx={{ borderTop: "1px solid #EAECF0" }}>
+                <MessageInput
+                  value={draft}
+                  onChange={handleDraftChange}
+                  onSend={handleSendMessage}
+                  placeholder={`Message ${getConversationTitle()}`}
+                  disabled={false}
+                  isSending={isSending}
+                />
+              </Box>
             </>
           ) : (
             <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>

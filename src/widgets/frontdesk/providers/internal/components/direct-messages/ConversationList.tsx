@@ -124,20 +124,17 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                 <Badge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={
-                    conversation.unreadCount && conversation.unreadCount > 0 ? (
-                      <Chip
-                        label={conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
-                        size="small"
-                        color="primary"
-                        sx={{
-                          height: 18,
-                          fontSize: '0.75rem',
-                          minWidth: 18,
-                        }}
-                      />
-                    ) : null
-                  }
+                  badgeContent={conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
+                  color="primary"
+                  invisible={!conversation.unreadCount || conversation.unreadCount === 0}
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      fontSize: '0.75rem',
+                      height: 20,
+                      minWidth: 20,
+                      padding: '0 6px',
+                    }
+                  }}
                 >
                   {getConversationAvatar(conversation)}
                 </Badge>
@@ -166,37 +163,32 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                   </Stack>
                 }
                 secondary={
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: 'text.secondary',
-                        flex: 1,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        fontWeight: conversation.unreadCount && conversation.unreadCount > 0 ? 500 : 400,
-                      }}
-                    >
-                      {conversation.lastMessageAt ? formatLastMessageTime(conversation.lastMessageAt) : ''}
-                    </Typography>
-                  </Stack>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      fontWeight: conversation.unreadCount && conversation.unreadCount > 0 ? 500 : 400,
+                    }}
+                  >
+                    {conversation.lastMessage || 'No messages yet'}
+                  </Typography>
                 }
               />
               
               <Stack direction="row" alignItems="center" spacing={0.5}>
-                {conversation.unreadCount && conversation.unreadCount > 0 && (
-                  <Chip
-                    label={conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
-                    size="small"
-                    color="primary"
-                    sx={{
-                      height: 20,
-                      fontSize: '0.75rem',
-                      minWidth: 20,
-                    }}
-                  />
-                )}
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'text.secondary',
+                    minWidth: 45,
+                    textAlign: 'right'
+                  }}
+                >
+                  {conversation.lastMessageAt ? formatLastMessageTime(conversation.lastMessageAt) : ''}
+                </Typography>
                 <IconButton size="small" sx={{ opacity: 0.7 }}>
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
