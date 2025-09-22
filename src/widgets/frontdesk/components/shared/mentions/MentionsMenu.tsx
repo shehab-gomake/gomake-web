@@ -65,39 +65,37 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
     if (item.category === "clients") {
       const letter = (item.label || "?").charAt(0).toUpperCase();
       return (
-        <ListItemAvatar>
-          <Avatar sx={{ width: 28, height: 28, bgcolor: "primary.light" }}>
-            <Typography variant="body2" sx={{ color: "primary.dark" }}>
-              {letter}
-            </Typography>
+        <ListItemAvatar sx={{ minWidth: 36 }}>
+          <Avatar sx={{ width: 24, height: 24, bgcolor: "primary.light", fontSize: "0.75rem" }}>
+            {letter}
           </Avatar>
         </ListItemAvatar>
       );
     }
     if (item.category === "suppliers") {
       return (
-        <ListItemIcon>
-          <BusinessIcon fontSize="small" color="action" />
+        <ListItemIcon sx={{ minWidth: 36 }}>
+          <BusinessIcon sx={{ fontSize: 18 }} color="action" />
         </ListItemIcon>
       );
     }
     if (item.category === "invoices") {
       return (
-        <ListItemIcon>
-          <RequestQuoteIcon fontSize="small" color="success" />
+        <ListItemIcon sx={{ minWidth: 36 }}>
+          <RequestQuoteIcon sx={{ fontSize: 18 }} color="success" />
         </ListItemIcon>
       );
     }
     if (item.category === "receipts") {
       return (
-        <ListItemIcon>
-          <ReceiptLongIcon fontSize="small" color="info" />
+        <ListItemIcon sx={{ minWidth: 36 }}>
+          <ReceiptLongIcon sx={{ fontSize: 18 }} color="info" />
         </ListItemIcon>
       );
     }
     return (
-      <ListItemIcon>
-        <PersonIcon fontSize="small" color="action" />
+      <ListItemIcon sx={{ minWidth: 36 }}>
+        <PersonIcon sx={{ fontSize: 18 }} color="action" />
       </ListItemIcon>
     );
   };
@@ -141,13 +139,15 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
       style={{ zIndex: 1300 }}
     >
       <Paper
-        elevation={6}
+        elevation={3}
         sx={{
-          width: 420,
-          maxHeight: 440,
+          width: 360,
+          maxHeight: 320,
           overflow: "auto",
-          borderRadius: 2,
-          boxShadow: (theme) => theme.shadows[8],
+          borderRadius: 1,
+          boxShadow: (theme) => theme.shadows[4],
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         {loading ? (
@@ -165,9 +165,18 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
             {results.map((group, gi) => (
                 <Box key={`${group.title}-${gi}`}>
                   {/* Category header */}
-                  <Stack direction="row" alignItems="center" sx={{ px: 2, pt: gi === 0 ? 1.5 : 1, pb: 0.5 }}>
-                    <Typography variant="overline" sx={{ color: "text.secondary", letterSpacing: 0.6 }}>
-                      {group.title.toUpperCase()}
+                  <Stack direction="row" alignItems="center" sx={{ px: 1.5, pt: gi === 0 ? 1 : 0.5, pb: 0.25 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        fontWeight: 600,
+                        fontSize: "0.7rem",
+                        letterSpacing: 0.5,
+                        textTransform: "uppercase"
+                      }}
+                    >
+                      {group.title}
                     </Typography>
                     <Box flex={1} />
                     {(() => {
@@ -176,7 +185,13 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
                       return (
                         <ChevronRightIcon
                           fontSize="small"
-                          sx={{ color: "text.disabled", cursor: "pointer" }}
+                          sx={{
+                            color: "text.disabled",
+                            cursor: "pointer",
+                            width: 16,
+                            height: 16,
+                            "&:hover": { color: "text.secondary" }
+                          }}
                           onClick={() => onCategoryChange(cat)}
                         />
                       );
@@ -200,14 +215,15 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
                             onMouseEnter={() => onHighlightChange(globalIndex)}
                             onClick={() => onPick(item)}
                             sx={{
-                              py: 1,
-                              px: 2,
+                              py: 0.5,
+                              px: 1.5,
+                              minHeight: 36,
                               borderRadius: 0,
                               "&.Mui-selected": {
-                                backgroundColor: (theme) => (theme.palette.action.selected as any) || "rgba(0,0,0,0.04)",
+                                backgroundColor: (theme) => theme.palette.action.selected,
                               },
                               "&:hover": {
-                                backgroundColor: (theme) => (theme.palette.action.hover as any) || "rgba(0,0,0,0.03)",
+                                backgroundColor: (theme) => theme.palette.action.hover,
                               },
                             }}
                           >
@@ -215,15 +231,22 @@ export const MentionsMenu: React.FC<MentionsMenuProps> = ({
                             <ListItemText
                               primary={item.label}
                               secondary={item.sublabel}
-                              primaryTypographyProps={{ noWrap: true }}
-                              secondaryTypographyProps={{ noWrap: true, color: "text.secondary" }}
+                              primaryTypographyProps={{
+                                noWrap: true,
+                                fontSize: "0.875rem",
+                              }}
+                              secondaryTypographyProps={{
+                                noWrap: true,
+                                color: "text.secondary",
+                                fontSize: "0.75rem",
+                              }}
                             />
                           </ListItemButton>
                         </ListItem>
                       );
                     })}
                   </List>
-                  {gi < results.length - 1 && <Divider sx={{ my: 0.5 }} />}
+                  {gi < results.length - 1 && <Divider sx={{ my: 0.25 }} />}
                 </Box>
               ))}
           </Box>

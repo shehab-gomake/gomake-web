@@ -49,18 +49,12 @@ export const useMentionSearch = (initial: UseMentionSearchArgs): UseMentionSearc
           isActive: "true"
         });
 
-        console.log(`Fetching ${clientType === CLIENT_TYPE.CUSTOMER ? 'clients' : 'suppliers'} with params:`, params.toString());
-
         const res = await callApi("GET", `/v1/customers/get-customers-pagination?${params.toString()}`, {}, false);
-
-        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} full response:`, res);
 
         // The response structure has data.data.data.data for the array
         // or data.data.data which contains {data: Array, totalItems: number}
         const dataContainer = res?.data?.data?.data || {};
         const list = dataContainer.data || dataContainer || [];
-
-        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} extracted list:`, list);
 
         const items: MentionItem[] = (Array.isArray(list) ? list : []).map((c: any) => ({
           id: c.id || c._id || c.customerId || c.code || String(c.name),
@@ -68,8 +62,6 @@ export const useMentionSearch = (initial: UseMentionSearchArgs): UseMentionSearc
           category: clientType === CLIENT_TYPE.CUSTOMER ? "clients" : "suppliers",
           raw: c,
         }));
-
-        console.log(`${clientType === CLIENT_TYPE.CUSTOMER ? 'Clients' : 'Suppliers'} final items:`, items);
 
         return items;
       };
