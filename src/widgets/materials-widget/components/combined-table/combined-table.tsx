@@ -56,7 +56,7 @@ const CombinedTable = ({
     };
 
 
-    const fixedColumnsCount = 4; // Last 4 columns: Inventory, Purchase Pricing, Active, More
+    const fixedColumnsCount = 3;
 
     return (
         <>
@@ -84,7 +84,7 @@ const CombinedTable = ({
                     },
                 }}
             >
-                <Table sx={{ minWidth: '1200px' }}>
+                <Table >
                     <TableHead>
                         <TableRow sx={{ backgroundColor: '#EBECFF' }}>
                             {headers.map((header, index) => {

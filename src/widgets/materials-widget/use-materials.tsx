@@ -363,32 +363,6 @@ const useMaterials = (isAdmin: boolean) => {
             "filterType": null,
             "values": []
           },
-          {
-            "key": "inventory",
-            "value": "Inventory",
-            "unit": null,
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 8,
-            "filterType": null,
-            "values": []
-          },
-          {
-            "key": "purchasePricing",
-            "value": "Purchase Pricing",
-            "unit": null,
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 9,
-            "filterType": null,
-            "values": []
-          }
         ];
 
         // Find the index of isOutSource to insert headers after it
@@ -492,6 +466,8 @@ const useMaterials = (isAdmin: boolean) => {
         );
       }),
       t("usersSettings.isActive"),
+      t("inventory"),
+      t("Purchase Pricing"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -555,6 +531,22 @@ const useMaterials = (isAdmin: boolean) => {
           dataRow?.isActive
             ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
             : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+          // Add inventory column manually since it's now static
+          <TableCellData
+            {...dataRow.rowData.inventory}
+            id={dataRow.id}
+            isAdmin={isAdmin}
+            parameterKey="inventory"
+            onChangeRowCheckBox={onChangeRowCheckBox}
+          />,
+          // Add purchasePricing column manually since it's now static
+          <TableCellData
+            {...dataRow.rowData.purchasePricing}
+            id={dataRow.id}
+            isAdmin={isAdmin}
+            parameterKey="purchasePricing"
+            onChangeRowCheckBox={onChangeRowCheckBox}
+          />,
           <MaterialMenuWidget
             dataRow={dataRow}
             isAdmin={isAdmin}
