@@ -23,11 +23,56 @@ export const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const previousScrollHeightRef = useRef<number>(0);
+  const isLoadingMoreRef = useRef<boolean>(false);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Handle scroll for loading more messages
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      // Load more when scrolled near the top (within 100px)
+      if (container.scrollTop <= 100 && onLoadMore && !isLoadingMoreRef.current) {
+        isLoadingMoreRef.current = true;
+        previousScrollHeightRef.current = container.scrollHeight;
+        onLoadMore();
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [onLoadMore]);
+
+  // Reset loading flag when loading completes
+  useEffect(() => {
+    if (!isLoadingHistory) {
+      isLoadingMoreRef.current = false;
+    }
+  }, [isLoadingHistory]);
+
+  // Maintain scroll position when older messages are loaded
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    
+    if (previousScrollHeightRef.current > 0 && !isLoadingHistory) {
+      const newScrollHeight = container.scrollHeight;
+      const scrollDiff = newScrollHeight - previousScrollHeightRef.current;
+      if (scrollDiff > 0) {
+        container.scrollTop += scrollDiff;
+      }
+      previousScrollHeightRef.current = 0;
+    }
+  }, [messages, isLoadingHistory]);
+
+  // Auto-scroll to bottom only for new messages (not when loading history)
+  useEffect(() => {
+    if (messagesEndRef.current && previousScrollHeightRef.current === 0) {
+      const container = messagesContainerRef.current;
+      if (container && container.scrollHeight - container.scrollTop - container.clientHeight < 100) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }, [messages]);
 
@@ -105,6 +150,17 @@ export const MessageList: React.FC<MessageListProps> = ({
   const renderTypingIndicator = () => {
     if (typingUsers.length === 0) return null;
     
+    // Get names for typing users
+    const typingUserNames = typingUsers.map(userId => {
+      const presence = userPresence[userId];
+      if (presence) {
+        return presence.name || `${presence.firstName} ${presence.lastName}`.trim() || presence.email || userId;
+      }
+      return userId; // Fallback to ID if no presence data
+    }).filter(name => name); // Filter out any empty values
+    
+    if (typingUserNames.length === 0) return null;
+    
     return (
       <ListItem sx={{ py: 1 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
@@ -113,9 +169,9 @@ export const MessageList: React.FC<MessageListProps> = ({
           </Avatar>
           <Box>
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              {typingUsers.length === 1 
-                ? `${typingUsers[0]} is typing...`
-                : `${typingUsers.length} people are typing...`
+              {typingUserNames.length === 1 
+                ? `${typingUserNames[0]} is typing...`
+                : `${typingUserNames.length} people are typing...`
               }
             </Typography>
           </Box>
@@ -247,13 +303,16 @@ export const MessageList: React.FC<MessageListProps> = ({
         flexDirection: 'column',
       }}
     >
-      {isLoadingHistory && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-          <CircularProgress size={20} />
-        </Box>
-      )}
-      
-      <List sx={{ flex: 1, overflow: 'auto' }}>
+      <List sx={{ flex: 1 }}>
+        {isLoadingHistory && previousScrollHeightRef.current > 0 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 2 }}>
+            <CircularProgress size={20} />
+            <Typography variant="caption" sx={{ ml: 1 }}>
+              Loading older messages...
+            </Typography>
+          </Box>
+        )}
+        
         {messages.map((message, index) => renderMessage(message, index))}
         {renderTypingIndicator()}
         <div ref={messagesEndRef} />

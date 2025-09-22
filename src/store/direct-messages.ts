@@ -263,3 +263,14 @@ export const dmIsLoadingSuggestionsState = atom<boolean>({
   key: 'dmIsLoadingSuggestionsState',
   default: false
 });
+
+// Pagination state for message cursors
+export const dmMessageCursorsState = atom<Record<string, {
+  oldestMessageId?: string;
+  newestMessageId?: string;
+  hasMoreOlder: boolean;
+  hasMoreNewer: boolean;
+}>>({
+  key: 'dmMessageCursors',
+  default: {},
+});

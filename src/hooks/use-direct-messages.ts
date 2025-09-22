@@ -22,6 +22,7 @@ import {
   dmIsLoadingConversationsState,
   dmUserSuggestionsState,
   dmIsLoadingSuggestionsState,
+  dmMessageCursorsState,
   dmActiveConversationSelector,
   dmActiveMessagesSelector,
   dmActiveDraftSelector,
@@ -66,6 +67,7 @@ export const useDirectMessages = () => {
   const [isLoadingConversations, setIsLoadingConversations] = useRecoilState(dmIsLoadingConversationsState);
   const [userSuggestions, setUserSuggestions] = useRecoilState(dmUserSuggestionsState);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useRecoilState(dmIsLoadingSuggestionsState);
+  const [messageCursors, setMessageCursors] = useRecoilState(dmMessageCursorsState);
 
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -149,29 +151,142 @@ export const useDirectMessages = () => {
 
   // Load message history for a conversation
   const loadMessageHistory = useCallback(
-    async (conversationId: string) => {
+    async (conversationId: string, options?: { before?: string; after?: string; limit?: number }) => {
       try {
         setIsLoadingHistory(true);
         setError(null);
 
         const response = await directMessagesService.listMessages(conversationId, {
-          limit: 50,
+          limit: options?.limit || 50,
+          before: options?.before,
+          after: options?.after,
         });
 
-        setMessages((prev) => ({
-          ...prev,
-          [conversationId]: response.messages,
-        }));
+        // Enrich messages with user data from presence
+        const enrichedMessages = response.messages.map((msg) => {
+          // Check if this is the current user's message
+          if (currentUser && msg.userId === currentUser.userId) {
+            return {
+              ...msg,
+              userEmail: currentUser.email || msg.userEmail || '',
+              userName: currentUser.name || msg.userName || 'You',
+            };
+          }
+          
+          // Check presence data for other users
+          const presence = userPresence[msg.userId];
+          if (presence) {
+            return {
+              ...msg,
+              userEmail: presence.email || msg.userEmail || '',
+              userName: presence.name || msg.userName || presence.email || 'User',
+            };
+          }
+          
+          // If no presence data, use what we have from the message
+          return {
+            ...msg,
+            userEmail: msg.userEmail || '',
+            userName: msg.userName || msg.userEmail || 'User',
+          };
+        });
+
+        setMessages((prev) => {
+          const existingMessages = prev[conversationId] || [];
+          
+          if (options?.before) {
+            // Prepending older messages (scrolling up)
+            // Deduplicate by message ID
+            const existingIds = new Set(existingMessages.map(m => m.id));
+            const newMessages = enrichedMessages.filter(m => !existingIds.has(m.id));
+            return {
+              ...prev,
+              [conversationId]: [...newMessages, ...existingMessages],
+            };
+          } else if (options?.after) {
+            // Appending newer messages (catching up)
+            const existingIds = new Set(existingMessages.map(m => m.id));
+            const newMessages = enrichedMessages.filter(m => !existingIds.has(m.id));
+            return {
+              ...prev,
+              [conversationId]: [...existingMessages, ...newMessages],
+            };
+          } else {
+            // Initial load - replace all
+            return {
+              ...prev,
+              [conversationId]: enrichedMessages,
+            };
+          }
+        });
+
+        // Update pagination cursors
+        if (enrichedMessages.length > 0) {
+          setMessageCursors((prev) => {
+            const currentCursor = prev[conversationId] || { hasMoreOlder: true, hasMoreNewer: false };
+            
+            if (options?.before) {
+              // Loading older messages
+              return {
+                ...prev,
+                [conversationId]: {
+                  ...currentCursor,
+                  oldestMessageId: enrichedMessages[0].id,
+                  hasMoreOlder: response.hasMore,
+                },
+              };
+            } else if (options?.after) {
+              // Loading newer messages
+              return {
+                ...prev,
+                [conversationId]: {
+                  ...currentCursor,
+                  newestMessageId: enrichedMessages[enrichedMessages.length - 1].id,
+                  hasMoreNewer: response.hasMore,
+                },
+              };
+            } else {
+              // Initial load
+              return {
+                ...prev,
+                [conversationId]: {
+                  oldestMessageId: enrichedMessages[0].id,
+                  newestMessageId: enrichedMessages[enrichedMessages.length - 1].id,
+                  hasMoreOlder: response.hasMore,
+                  hasMoreNewer: false,
+                },
+              };
+            }
+          });
+        }
 
         console.log(`Loaded ${response.messages.length} messages for conversation ${conversationId}`);
+        return response.hasMore;
       } catch (error: any) {
         console.error("Failed to load message history:", error);
         setError(error.message || "Failed to load message history");
+        return false;
       } finally {
         setIsLoadingHistory(false);
       }
     },
-    [setIsLoadingHistory, setError, setMessages]
+    [setIsLoadingHistory, setError, setMessages, setMessageCursors, userPresence, currentUser]
+  );
+
+  // Load more messages (for infinite scroll)
+  const loadMoreMessages = useCallback(
+    async (conversationId: string): Promise<boolean> => {
+      const cursor = messageCursors[conversationId];
+      if (!cursor?.oldestMessageId || !cursor.hasMoreOlder) {
+        return false;
+      }
+      
+      return await loadMessageHistory(conversationId, {
+        before: cursor.oldestMessageId,
+        limit: 50,
+      });
+    },
+    [messageCursors, loadMessageHistory]
   );
 
   // Select conversation
@@ -180,6 +295,29 @@ export const useDirectMessages = () => {
       try {
         setError(null);
         setActiveConversationId(conversation.id);
+
+        // Populate user presence from conversation members
+        if (conversation.members && conversation.members.length > 0) {
+          const presenceUpdate: Record<string, DMPresenceData> = {};
+          conversation.members.forEach(member => {
+            if (!userPresence[member.userId]) {
+              presenceUpdate[member.userId] = {
+                userId: member.userId,
+                email: member.email,
+                firstName: member.firstName,
+                lastName: member.lastName,
+                name: member.name || `${member.firstName} ${member.lastName}`.trim() || member.email,
+                status: 'offline', // Default status, will be updated by WebSocket
+                lastSeen: new Date().toISOString(),
+                timestamp: new Date().toISOString(),
+              };
+            }
+          });
+          
+          if (Object.keys(presenceUpdate).length > 0) {
+            setUserPresence(prev => ({ ...prev, ...presenceUpdate }));
+          }
+        }
 
         // Join conversation room for real-time updates
         if (connected) {
@@ -206,7 +344,7 @@ export const useDirectMessages = () => {
         setError(error.message || "Failed to select conversation");
       }
     },
-    [setError, setActiveConversationId, setUnreadCounts, messages, loadMessageHistory, connected]
+    [setError, setActiveConversationId, setUnreadCounts, setUserPresence, userPresence, messages, loadMessageHistory, connected]
   );
 
   // Create new conversation
@@ -404,12 +542,27 @@ export const useDirectMessages = () => {
         }
 
         // Otherwise, add the new message
+        // Enrich with user data
+        let userEmail = '';
+        let userName = '';
+        
+        if (currentUser && message.userId === currentUser.userId) {
+          userEmail = currentUser.email || '';
+          userName = currentUser.name || '';
+        } else {
+          const presence = userPresence[message.userId];
+          if (presence) {
+            userEmail = presence.email || '';
+            userName = presence.name || '';
+          }
+        }
+        
         const newMessage: DMMessage = {
           id: message.messageId,
           conversationId: message.conversationId,
           userId: message.userId,
-          userEmail: '', // Will be filled from presence data
-          userName: '', // Will be filled from presence data
+          userEmail,
+          userName,
           content: message.content,
           createdAt: message.timestamp,
           tempId: message.tempId,
@@ -542,7 +695,8 @@ export const useDirectMessages = () => {
   }, [
     connected,
     activeConversationId,
-    currentUser?.userId,
+    currentUser,
+    userPresence,
     setMessages,
     setUnreadCounts,
     setOnlineUsers,
@@ -626,11 +780,15 @@ export const useDirectMessages = () => {
     startDirectMessage,
     sendMessage,
     loadMessageHistory,
+    loadMoreMessages,
     startTyping,
     stopTyping,
     updateDraft,
     loadUserSuggestions,
     setActiveConversationId,
     setError,
+    
+    // Pagination state
+    messageCursors,
   };
 };

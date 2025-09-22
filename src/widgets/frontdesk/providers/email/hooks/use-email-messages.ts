@@ -37,7 +37,6 @@ export const useEmailMessages = (options: UseEmailMessagesOptions = {}) => {
 
     try {
       const response = await emailApiClient.getMessages(selectedAccountId, {
-        folder: options.folder,
         query: options.query,
         limit: options.limit || 20,
         pageToken: reset ? undefined : pageToken || undefined,

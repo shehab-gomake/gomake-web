@@ -128,7 +128,32 @@ export class DirectMessagesService {
     if (options.limit) params.append('limit', options.limit.toString());
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    return this.makeRequest<ListMessagesResponse>(`/dms/${conversationId}/messages${queryString}`);
+    const rawResponse = await this.makeRequest<any[]>(`/dms/${conversationId}/messages${queryString}`);
+    
+    // Transform the raw array response to match our interface
+    const messages: DMMessage[] = rawResponse.map((msg: any) => ({
+      id: msg.id,
+      conversationId: msg.conversationId,
+      userId: msg.userId,
+      userEmail: msg.userEmail || msg.user?.email || '', // Preserve if exists, will be enriched from user presence
+      userName: msg.userName || msg.user?.name || '', // Preserve if exists, will be enriched from user presence
+      content: msg.content,
+      createdAt: msg.createdAt,
+      isSystem: msg.isSystem || false,
+      editedAt: msg.editedAt || null,
+      deletedAt: msg.deletedAt || null,
+      metadata: msg.metadata || { type: 'text' },
+    }));
+    
+    // Determine if there are more messages
+    // If we got the requested limit, there might be more
+    const hasMore = messages.length === (options.limit || 50);
+    
+    return {
+      messages,
+      hasMore,
+      total: messages.length,
+    };
   }
 
   // Send message (REST)

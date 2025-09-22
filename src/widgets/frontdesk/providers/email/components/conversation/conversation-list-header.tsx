@@ -5,9 +5,17 @@ import { EmailLabel } from "../../types/email.types";
 
 interface ConversationListHeaderProps {
   selectedLabel?: EmailLabel | null;
+  onSearch?: (query: string) => void;
+  searchQuery?: string;
+  searchDisabled?: boolean;
 }
 
-export const ConversationListHeader: React.FC<ConversationListHeaderProps> = ({ selectedLabel }) => {
+export const ConversationListHeader: React.FC<ConversationListHeaderProps> = ({ 
+  selectedLabel,
+  onSearch,
+  searchQuery,
+  searchDisabled 
+}) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
   return (
