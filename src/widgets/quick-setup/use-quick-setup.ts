@@ -74,9 +74,8 @@ const useQuickSetup = () => {
       url: "https://www.youtube.com/embed/G1wdiiUY98g",
       nextStep: SetupStep.FILE_SERVICE_CONFIGS,
     },
-    // !here new video
     [SetupStep.FILE_SERVICE_CONFIGS]: {
-      url: "",
+      url: "https://www.youtube.com/embed/paRwBz4UPd4",
       nextStep: null,
     },
   };
