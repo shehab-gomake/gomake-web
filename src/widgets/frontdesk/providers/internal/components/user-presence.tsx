@@ -99,15 +99,32 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
     return null;
   };
 
-  // Separate online and offline users (excluding current user)
+  // Separate online and offline users (excluding current user and ensuring uniqueness)
+  const uniqueUserIds = new Set<string>();
   const onlineUsersData = onlineUsers
     .map((userId) => userPresence[userId])
     .filter(Boolean)
-    .filter((presence) => presence.userId !== currentUserId) // Exclude current user
+    .filter((presence) => {
+      // Exclude current user and duplicates
+      if (presence.userId === currentUserId || uniqueUserIds.has(presence.userId)) {
+        return false;
+      }
+      uniqueUserIds.add(presence.userId);
+      return true;
+    })
     .sort((a, b) => getDisplayName(a).localeCompare(getDisplayName(b)));
 
   const offlineUsersData = Object.values(userPresence)
-    .filter((presence) => !onlineUsers.includes(presence.userId) && presence.userId !== currentUserId) // Exclude current user
+    .filter((presence) => {
+      // Exclude online users, current user, and duplicates
+      if (onlineUsers.includes(presence.userId) ||
+          presence.userId === currentUserId ||
+          uniqueUserIds.has(presence.userId)) {
+        return false;
+      }
+      uniqueUserIds.add(presence.userId);
+      return true;
+    })
     .sort((a, b) => {
       // Sort by last seen (most recent first) then by name
       if (a.lastSeen && b.lastSeen) {
@@ -118,7 +135,7 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
     .slice(0, 10); // Limit offline users shown
 
   const totalOnline = onlineUsersData.length;
-  const totalUsers = Object.keys(userPresence).length;
+  const totalUsers = uniqueUserIds.size; // Count unique users only
 
   return (
     <Paper

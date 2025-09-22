@@ -18,6 +18,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
+import { UserPresence } from "./components";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
 import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
@@ -36,6 +37,7 @@ const DirectMessagesProviderView: React.FC = () => {
     activeConversation,
     activeConversationId,
     messages,
+    onlineUsers,
     userPresence,
     typingUsers,
     draft,
@@ -73,7 +75,10 @@ const DirectMessagesProviderView: React.FC = () => {
       activeConversationId,
       messagesCount: messages.length,
       conversationsCount: conversations.length,
+      onlineUsersCount: onlineUsers.length,
+      onlineUsers,
       userPresenceCount: Object.keys(userPresence).length,
+      userPresence,
     });
   }, [
     connected,
@@ -86,6 +91,7 @@ const DirectMessagesProviderView: React.FC = () => {
     activeConversationId,
     messages,
     conversations,
+    onlineUsers,
     userPresence,
   ]);
 
@@ -324,57 +330,57 @@ const DirectMessagesProviderView: React.FC = () => {
       </Alert>
 
       {/* Three-pane layout */}
-      <Stack direction="row" gap={2} sx={{ 
-        width: "100%", 
-        flex: 1, 
-        minHeight: 0,
-        overflow: "hidden"
+      <Stack direction="row" gap={2} sx={{
+        width: "100%",
+        flex: 1,
+        height: "100%"
       }}>
         {/* Left: Conversations sidebar */}
-        <Paper
-          elevation={0}
-          sx={{
-            width: 320,
-            minWidth: 320,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {/* Conversations header */}
-          <Box sx={{ p: 2, borderBottom: "1px solid #EAECF0" }}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
-                Conversations
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <Tooltip title="Search conversations">
-                  <IconButton size="small" onClick={() => setShowSearch(!showSearch)}>
-                    <SearchIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Filter conversations">
-                  <IconButton size="small">
-                    <FilterIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+        <div style={{ width: 280, minWidth: 280, height: "100%" }}>
+          <Paper
+            elevation={0}
+            sx={{
+              height: "100%",
+              border: "1px solid #EAECF0",
+              borderRadius: 2,
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {/* Conversations header */}
+            <Box sx={{ p: 2, borderBottom: "1px solid #EAECF0" }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
+                  Conversations
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <Tooltip title="Search conversations">
+                    <IconButton size="small" onClick={() => setShowSearch(!showSearch)}>
+                      <SearchIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Start new conversation">
+                    <IconButton size="small" onClick={handleStartNewConversation}>
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </Stack>
-            </Stack>
-          </Box>
+            </Box>
 
-          {/* Conversations list */}
-          <Box sx={{ flex: 1, overflow: "hidden" }}>
-            <ConversationList
-              conversations={conversations}
-              selectedId={activeConversationId}
-              currentUserId={currentUser?.userId}
-              onSelect={selectConversation}
-              loading={isLoadingConversations}
-            />
-          </Box>
-        </Paper>
+            {/* Conversations list */}
+            <Box sx={{ flex: 1, overflow: "hidden" }}>
+              <ConversationList
+                conversations={conversations}
+                selectedId={activeConversationId}
+                currentUserId={currentUser?.userId}
+                onSelect={selectConversation}
+                loading={isLoadingConversations}
+              />
+            </Box>
+          </Paper>
+        </div>
 
         {/* Center: Message area */}
         <Paper
@@ -383,10 +389,11 @@ const DirectMessagesProviderView: React.FC = () => {
             flex: 1,
             border: "1px solid #EAECF0",
             borderRadius: 2,
+            overflow: "hidden",
             display: "flex",
             flexDirection: "column",
             minWidth: 0,
-            overflow: "hidden",
+            height: "100%",
           }}
         >
           {activeConversationId ? (
@@ -520,6 +527,18 @@ const DirectMessagesProviderView: React.FC = () => {
             </Box>
           )}
         </Paper>
+
+        {/* Right: User presence */}
+        <div style={{ width: 240, minWidth: 240, height: "100%" }}>
+          <UserPresence
+            onlineUsers={onlineUsers}
+            userPresence={userPresence}
+            currentUserId={currentUser?.userId}
+            onUserClick={(userId: string) => {
+              startDirectMessage(userId);
+            }}
+          />
+        </div>
       </Stack>
 
       {/* User Selector Dialog */}
