@@ -10,7 +10,6 @@ const useStyle = () => {
         height: "85vh",
         display: "flex",
         flexDirection: "column" as const,
-        // overflow: "hidden",
       },
       header: {
         textAlign: "center" as const,
@@ -43,14 +42,13 @@ const useStyle = () => {
         padding: "0 20px 20px 20px",
       },
       pricingTable: {
+        //width: "75%",
         width: "100%",
-        // width: "60%",
         backgroundColor: "white",
         borderRadius: "12px",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         padding: "20px",
-        margin: "auto 0",
-        maxHeight: "calc(85vh - 200px)",
+        maxHeight: "calc(85vh - 100px)",
         overflow: "auto",
       },
     };
