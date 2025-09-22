@@ -19,6 +19,7 @@ import { MessengerNotifications } from "@/widgets/messenger-notifications-widget
 import { FrontdeskNav } from "@/widgets/frontdesk-nav/frontdesk-nav";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
+import { TrialIndicator } from "@/components";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -60,7 +61,10 @@ const HeaderWidget = () => {
 
   return (
     <div style={classes.container}>
-      <div style={{ width: "100%" }} />
+      <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+        <TrialIndicator />
+        <div style={{ flex: 1 }} />
+      </div>
       <div style={classes.rightSideContainer}>
         <MessengerNotifications />
         <FrontdeskNav />
