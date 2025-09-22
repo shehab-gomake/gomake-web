@@ -1,13 +1,9 @@
 import React from "react";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Checkbox } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { openChildTableState, openJobsModalState, openAddSupplierModalState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
-import { IconButton, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { TableCellData } from "../table-cell-data/table-cell";
-import { EDataTypeEnum } from "../table-cell-data/data-type-enum";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 
