@@ -35,7 +35,6 @@ const StripePricingTable: React.FC<StripePricingTableProps> = ({
     width: 100%;
   }
 
-  /* Correct casing + force override */
   stripe-pricing-table .PricingTable-grid {
     display: grid !important;
     gap: 48px !important;
