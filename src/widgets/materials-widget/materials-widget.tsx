@@ -276,11 +276,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         <Box
           sx={{
             position: 'fixed',
-            top: 0,
-            left: 0,
+            top: 115,
+            left: 140,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
             zIndex: 1300,
             display: 'flex'
           }}
@@ -288,7 +288,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         >
           <Box
             sx={{
-              width: '300px',
+              width: '500px',
               backgroundColor: '#fff',
               height: '100%',
               overflow: 'auto',
