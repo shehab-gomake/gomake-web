@@ -141,6 +141,18 @@ export const useFileApiSettings = () => {
 
   const formInputs: IInput[] = [
     {
+      name: "baseDir",
+      label: "fileApiSettings.baseDir",
+      type: "text",
+      placeholder: "fileApiSettings.baseDirPlaceholder",
+      required: true,
+      parameterKey: "baseDir",
+      options: [],
+      value: formData.baseDir,
+      isValid: true,
+      note: "",
+    },
+    {
       name: "remoteName",
       label: "fileApiSettings.remoteName",
       type: "text",
@@ -186,18 +198,7 @@ export const useFileApiSettings = () => {
       value: formData.password,
       isValid: true,
     },
-    {
-      name: "baseDir",
-      label: "fileApiSettings.baseDir",
-      type: "text",
-      placeholder: "fileApiSettings.baseDirPlaceholder",
-      required: true,
-      parameterKey: "baseDir",
-      options: [],
-      value: formData.baseDir,
-      isValid: true,
-      note: "",
-    },
+
     {
       name: "workFlowDir",
       label: "fileApiSettings.workFlowDir",
