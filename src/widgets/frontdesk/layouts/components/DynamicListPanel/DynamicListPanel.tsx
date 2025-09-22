@@ -42,7 +42,7 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
       case 'whatsapp':
         return 'WhatsApp';
       case 'internal':
-        return 'Internal Chat';
+        return 'Direct Messages';
       default:
         return 'Conversations';
     }

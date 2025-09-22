@@ -17,7 +17,7 @@
 
 ## Overview
 
-FrontDesk is a unified messaging hub that consolidates multiple communication channels (Email, WhatsApp, Internal Chat) into a single, efficient three-column interface. It provides a seamless experience for managing all customer communications from one centralized location.
+FrontDesk is a unified messaging hub that consolidates multiple communication channels (Email, WhatsApp, Direct Messages) into a single, efficient three-column interface. It provides a seamless experience for managing all customer communications from one centralized location.
 
 ### Key Benefits
 - **Unified Inbox**: View all messages from all channels in one place
@@ -43,7 +43,7 @@ FrontDesk is a unified messaging hub that consolidates multiple communication ch
 │   - All    │ • Search Bar     │ • Message Composer         │
 │   - Email  │ • Filters        │ • Attachments              │
 │   - WhatsApp│ • Account Select │ • User Info               │
-│   - Internal│                  │                            │
+│   - Direct Messages │         │                            │
 │            │                  │                            │
 │ • System   │                  │                            │
 │   - Inbox  │                  │                            │
@@ -63,7 +63,7 @@ FrontdeskWidget (Main Container)
 │   │   │   ├── All Channels
 │   │   │   ├── Email
 │   │   │   ├── WhatsApp
-│   │   │   └── Internal
+│   │   │   └── Direct Messages
 │   │   └── SystemSection
 │   │       ├── Inbox
 │   │       ├── Assigned
@@ -155,17 +155,30 @@ src/widgets/frontdesk/
 │   │   ├── whatsapp-provider-view.tsx
 │   │   └── [similar structure...]
 │   │
-│   ├── internal/                       # Internal chat provider
-│   │   ├── internal-provider-view.tsx
+│   ├── internal/                       # Direct Messages provider (legacy folder name retained)
+│   │   ├── direct-messages-provider-view.tsx   # Primary Direct Messages experience
+│   │   ├── internal-provider-view.tsx          # Legacy channel-based view (deprecated)
+│   │   ├── internal-provider.tsx               # Provider orchestration wrapper
 │   │   ├── components/
-│   │   │   ├── ChannelSidebar.tsx
-│   │   │   ├── MessageList.tsx
-│   │   │   ├── MessageInput.tsx
-│   │   │   └── UserPresence.tsx
+│   │   │   ├── channel-sidebar.tsx
+│   │   │   ├── message-list.tsx
+│   │   │   ├── message-input.tsx
+│   │   │   ├── user-presence.tsx
+│   │   │   └── direct-messages/
+│   │   │       ├── ConversationList.tsx
+│   │   │       ├── MessageList.tsx
+│   │   │       ├── MessageInput.tsx
+│   │   │       ├── ParticipantsList.tsx
+│   │   │       └── UserSelector.tsx
 │   │   ├── hooks/
-│   │   │   └── use-internal-provider.ts
-│   │   └── types/
-│   │       └── internal.types.ts
+│   │   │   └── use-internal-provider.ts         # Legacy hook alias until all consumers migrate
+│   │   ├── store/
+│   │   │   └── internal-store.ts                # Channel-based atoms kept for backwards compatibility
+│   │   ├── types/
+│   │   │   ├── direct-messages.types.ts
+│   │   │   └── internal.types.ts                # Legacy channel types (deprecated)
+│   │   └── utils/
+│   │       └── internal-utils.ts
 │   │
 │   └── registry/                       # Provider management
 │       └── ProviderRegistry.tsx        # Dynamic provider loading
@@ -185,6 +198,7 @@ src/widgets/frontdesk/
 │       └── BaseMessageInput.tsx
 │
 └── hooks/                              # Custom hooks
+    ├── use-direct-messages.ts          # Hook exposing Direct Messages state/actions
     └── [shared hooks]
 
 src/store/frontdesk/                    # State management
@@ -193,13 +207,15 @@ src/store/frontdesk/                    # State management
 │   ├── unified.atoms.ts               # Unified view state
 │   ├── email.atoms.ts                 # Email state
 │   ├── whatsapp.atoms.ts              # WhatsApp state
-│   └── internal.atoms.ts              # Internal chat state
+│   └── internal.atoms.ts              # Legacy channel state (kept for migration window)
 │
 ├── selectors/                          # Recoil selectors
 │   ├── navigation.selectors.ts        # Navigation computed values
 │   └── aggregation.selectors.ts       # Cross-provider aggregation
 │
 └── index.ts                           # State exports
+
+src/store/direct-messages.ts           # Direct Messages atoms & selectors
 ```
 
 ---
@@ -247,7 +263,7 @@ src/store/frontdesk/                    # State management
 /frontdesk/inbox/unified    → All conversations
 /frontdesk/inbox/email      → Email conversations
 /frontdesk/inbox/whatsapp   → WhatsApp conversations
-/frontdesk/inbox/internal   → Internal chat
+/frontdesk/inbox/internal   → Direct Messages
 /frontdesk/assigned         → Assigned conversations
 /frontdesk/admin           → Admin panel
 /frontdesk/settings        → User settings
@@ -360,7 +376,7 @@ const providerRegistry = {
 ```typescript
 // Atoms
 selectedSectionAtom      // Current section (inbox/assigned/admin/settings)
-selectedChannelAtom       // Current channel (all/email/whatsapp/internal)
+selectedChannelAtom       // Current channel (all/email/whatsapp/directMessages*)
 selectedConversationIdAtom // Selected conversation
 selectedAccountsAtom      // Selected accounts per provider
 
@@ -378,7 +394,7 @@ emailConversationsAtom       // Conversations by account
 emailMessagesAtom           // Current messages
 emailConnectionStateAtom    // Connection status
 
-// Similar structure for WhatsApp and Internal providers
+// Similar structure for WhatsApp and Direct Messages providers
 ```
 
 #### Unified View State
@@ -495,32 +511,33 @@ GET    /api/frontdesk/whatsapp/conversations
 POST   /api/frontdesk/whatsapp/send
 POST   /api/frontdesk/whatsapp/qr-code
 
-// Internal Chat (WebSocket)
-ws://   /messaging/connect
-emit    'channel:join'
-emit    'message:send'
-on      'message:receive'
+// Direct Messages (WebSocket)
+namespace: '/messaging'
+emit    'joinConversation'
+emit    'dm:sendMessage'
+emit    'dm:typingStart' | 'dm:typingStop' | 'dm:markAsRead'
+on      'dm:newMessage' | 'dm:messageConfirmed' | 'dm:userTyping' | 'dm:messageRead'
 ```
 
 ### WebSocket Integration
 ```typescript
-// Messaging Service
-class MessagingService {
+// Direct Messages WS client example
+class DirectMessagesWebSocketService {
   private socket: Socket;
   
-  connect(token: string) {
-    this.socket = io(SOCKET_URL, {
+  async connect(token: string) {
+    this.socket = io(`${API_BASE}/messaging`, {
       auth: { token },
       transports: ['websocket', 'polling']
     });
   }
   
-  sendMessage(channelId: string, content: string) {
-    this.socket.emit('message:send', {
-      channelId,
-      content,
-      tempId: generateTempId()
-    });
+  joinConversation(conversationId: string) {
+    this.socket.emit('joinConversation', { conversationId });
+  }
+  
+  sendMessage(conversationId: string, content: string, tempId?: string) {
+    this.socket.emit('dm:sendMessage', { conversationId, content, tempId });
   }
 }
 ```

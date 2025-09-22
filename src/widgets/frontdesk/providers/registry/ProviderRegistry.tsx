@@ -44,7 +44,7 @@ const providerRegistry: Record<Channel, ProviderConfig> = {
   },
   internal: {
     component: InternalProvider,
-    name: 'Internal Chat',
+    name: 'Direct Messages',
     requiresAuth: false
   }
 };

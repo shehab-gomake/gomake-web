@@ -126,7 +126,7 @@ export const UnifiedProvider: React.FC = () => {
               onClick={() => toggleProviderFilter('whatsapp')}
             />
             <Chip
-              label={`🏢 Internal (${byProvider.internal})`}
+              label={`💬 Direct Messages (${byProvider.internal})`}
               size="small"
               variant={filters.providers?.includes('internal') ? 'filled' : 'outlined'}
               onClick={() => toggleProviderFilter('internal')}

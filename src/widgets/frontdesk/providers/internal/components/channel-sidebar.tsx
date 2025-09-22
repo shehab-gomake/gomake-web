@@ -116,7 +116,7 @@ export const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
 
   return (
     <BaseProviderSidebar
-      title="Internal Messaging"
+      title="Direct Messages"
       items={allItems}
       selectedItemId={activeChannelId || undefined}
       onItemSelect={handleItemSelect}

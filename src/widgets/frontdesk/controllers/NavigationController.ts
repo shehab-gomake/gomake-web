@@ -136,7 +136,7 @@ export class NavigationUtils {
       case 'whatsapp':
         return 'WhatsApp';
       case 'internal':
-        return 'Internal Chat';
+        return 'Direct Messages';
       default:
         return 'Unknown';
     }

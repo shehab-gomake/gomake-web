@@ -10,7 +10,7 @@ import { ContentArea } from './layouts/components/ContentArea';
 // Provider components  
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
-import { InternalProviderView } from "@/widgets/frontdesk/providers/internal/internal-provider-view";
+import { DirectMessagesProviderView } from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
 
 // For unified view placeholder
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';
@@ -130,7 +130,7 @@ const FrontdeskWidget: React.FC = () => {
           {currentChannel === 'all' && 'All conversations'}
           {currentChannel === 'email' && 'Email conversations'}
           {currentChannel === 'whatsapp' && 'WhatsApp conversations'}
-          {currentChannel === 'internal' && 'Internal conversations'}
+          {currentChannel === 'internal' && 'Direct Messages'}
         </Typography>
       </Box>
     );
@@ -175,7 +175,7 @@ const FrontdeskWidget: React.FC = () => {
       case 'whatsapp':
         return <WhatsAppProviderView />;
       case 'internal':
-        return <InternalProviderView />;
+        return <DirectMessagesProviderView />;
       default:
         return null;
     }

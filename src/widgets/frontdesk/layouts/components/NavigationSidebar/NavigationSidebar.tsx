@@ -111,7 +111,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     { id: 'all' as Channel, icon: <AllInclusiveIcon />, label: 'All Channels' },
     { id: 'email' as Channel, icon: <EmailIcon />, label: 'Email' },
     { id: 'whatsapp' as Channel, icon: <WhatsAppIcon />, label: 'WhatsApp' },
-    { id: 'internal' as Channel, icon: <ChatIcon />, label: 'Internal Chat' }
+    { id: 'internal' as Channel, icon: <ChatIcon />, label: 'Direct Messages' }
   ];
 
   const systemItems = [
