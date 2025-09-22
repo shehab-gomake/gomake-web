@@ -4,12 +4,13 @@ import { useRecoilValue } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useStyle } from "./style";
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
+import {useGomakeRouter} from "@/hooks";
 
 const TrialIndicator: React.FC = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const printHouseProfileState = useRecoilValue(printHouseProfile);
-
+  const { navigate } = useGomakeRouter();
   // Don't show if not a trial account
   if (!printHouseProfileState?.isTrial) {
     return null;
@@ -53,6 +54,7 @@ const TrialIndicator: React.FC = () => {
   return (
     <div style={classes.container}>
       <div
+        onClick={()=>navigate('/settings/subscriptions')}
         style={{
           ...classes.indicator,
           color: status.color,
