@@ -17,7 +17,9 @@ export class DirectMessagesService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = config.api_server;
+    // Route DM REST to the same host as the WebSocket gateway
+    // so it hits the Messaging-Hub service (e.g., http://localhost:3000)
+    this.baseUrl = config.messaging_server || config.api_server;
   }
 
   private async makeRequest<T>(

@@ -1,5 +1,8 @@
 import { Message, Channel } from '../internal/types/internal.types';
 
+// Re-export types for external use
+export type { Message, Channel };
+
 // Account type for multi-account providers
 export interface Account {
   id: string;
