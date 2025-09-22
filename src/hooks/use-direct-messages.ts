@@ -71,6 +71,7 @@ export const useDirectMessages = () => {
 
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
 
   // Selectors
   const activeConversation = useRecoilValue(dmActiveConversationSelector);
@@ -460,7 +461,14 @@ export const useDirectMessages = () => {
         setDraft((prev) => ({ ...prev, [activeConversationId]: "" }));
         
         // Stop typing indicator when message is sent
-        stopTyping();
+        if (isTyping) {
+          setIsTyping(false);
+          directMessagesWebSocketService.stopTyping({ conversationId: activeConversationId });
+          if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = null;
+          }
+        }
 
         setIsSending(false);
         return true;
@@ -471,7 +479,7 @@ export const useDirectMessages = () => {
         return false;
       }
     },
-    [activeConversationId, currentUser, setIsSending, setError, setDraft, setMessages, stopTyping]
+    [activeConversationId, currentUser, setIsSending, setError, setDraft, setMessages, isTyping, setIsTyping]
   );
 
   // Typing indicators
@@ -657,8 +665,6 @@ export const useDirectMessages = () => {
     };
 
     // Typing handlers with auto-cleanup
-    const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
-    
     const handleUserTyping = (data: DMUserTypingEvent) => {
       const timeoutKey = `${data.conversationId}-${data.userId}`;
       
