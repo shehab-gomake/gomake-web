@@ -2248,6 +2248,29 @@
     "ShowStarted": "Gestartete und beendete QRs in der Produktions-PDF anzeigen",
     "deliveryWarning": "Dieser QR-Code wird für die Lieferung verwendet. Um den Job abzuschließen, müssen Sie den Fertigstellungs-QR-Code scannen, nicht den Lieferungs-QR-Code."
   },
+  "list": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "thisWeek": "Diese Woche",
+    "lastWeek": "Letzte Woche",
+    "thisMonth": "Diesen Monat",
+    "lastMonth": "Letzten Monat",
+    "dateRange": "Datumsbereich",
+    "creationDate": "Erstellungsdatum",
+    "dueDate": "Fälligkeitsdatum",
+    "readyDate": "Fertigstellungsdatum",
+    "scheduleReport": "Bericht planen",
+    "reportName": "Berichtsname",
+    "filterConfirmationTitle": "Filter-Bestätigung",
+    "filterConfirmationMessage": "Es gibt einen Filter in der Tabelle und diese Filter werden zur Generierung des Berichts verwendet. Möchten Sie diese Filter beibehalten?",
+    "continueWithFilters": "Mit den aktuellen Filtern fortfahren",
+    "resetFiltersAndGenerate": "Filter zurücksetzen und Bericht generieren",
+    "scheduledReports": "Geplante Berichte",
+    "deleteReportTitle": "Geplanten Bericht löschen",
+    "deleteReportMessage": "Sind Sie sicher, dass Sie diesen geplanten Bericht löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+  },
   "logs": {
     "CLOSE": "Dokument geschlossen",
     "CLOSE2": "Geschlossen als {{documentType}}"

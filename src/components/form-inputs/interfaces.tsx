@@ -25,6 +25,7 @@ export interface IInput {
   isRequired?: boolean;
   iconElement?: React.ReactNode;
   note?: string;
+  dropdownStyle?: React.CSSProperties;
 }
 export interface IFormInput {
   input: IInput;

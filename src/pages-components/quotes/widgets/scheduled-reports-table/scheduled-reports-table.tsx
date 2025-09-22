@@ -1,0 +1,154 @@
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { GoMakeModal, GomakePrimaryButton, SecondSwitch, GoMakeDeleteModal } from "@/components";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { useStyle } from "./style";
+import { PrimaryTable } from "@/components/tables/primary-table";
+import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { ScheduledReport } from "@/hooks/use-scheduled-reports";
+import { useListPagination } from "@/hooks/use-list-pagination";
+import { ModalType } from "@/enums";
+
+interface ScheduledReportsTableProps {
+    openModal: boolean;
+    onCloseModal: () => void;
+    scheduledReports?: ScheduledReport[];
+    totalCount?: number;
+    pageNumber?: number;
+    pageSize?: number;
+    pagesCount?: number;
+    isLoading?: boolean;
+    onToggleActive?: (id: string, isActive: boolean) => void;
+    onDelete?: (id: string) => void;
+    onPageChange?: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
+}
+
+const ScheduledReportsTable = ({
+    openModal,
+    onCloseModal,
+    scheduledReports = [],
+    totalCount = 0,
+    pageNumber = 1,
+    pageSize = 10,
+    pagesCount = 1,
+    isLoading = false,
+    onToggleActive,
+    onDelete,
+    onPageChange,
+    onPageSizeChange,
+}: ScheduledReportsTableProps) => {
+    const { t } = useTranslation();
+    const { classes } = useStyle();
+    const { initialPageSize } = useListPagination();
+
+    // State for delete confirmation modal
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [reportToDelete, setReportToDelete] = useState<string | null>(null);
+
+    const headers = [
+        t("sales.list.reportName"),
+        t("sales.list.status"),
+        t("sales.list.actions"),
+    ];
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        onPageChange?.(page);
+    };
+
+    const handlePageSizeChange = (event: any, child: React.ReactNode) => {
+        onPageSizeChange?.(event.target.value as number);
+    };
+
+    // Handle delete confirmation
+    const handleDeleteClick = (reportId: string) => {
+        setReportToDelete(reportId);
+        setOpenDeleteModal(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (reportToDelete) {
+            onDelete?.(reportToDelete);
+            setOpenDeleteModal(false);
+            setReportToDelete(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setOpenDeleteModal(false);
+        setReportToDelete(null);
+    };
+
+    const rows = (scheduledReports || []).map((report) => [
+        report.reportName,
+        <SecondSwitch
+            key={`switch-${report.id}`}
+            checked={report.isActive}
+            onChange={(e) => onToggleActive?.(report.id, e.target.checked)}
+        />,
+        <div key={`actions-${report.id}`} style={{ ...classes.actionButtons, cursor: "pointer" }} onClick={() => {
+            handleDeleteClick(report.id)
+        }} >
+            <DeleteMenuIcon />
+        </div>,
+    ]);
+
+    return (
+        <>
+            <GoMakeModal
+                openModal={openModal}
+                onCloseModal={onCloseModal}
+                modalTitle={t("sales.list.scheduledReports")}
+                insideStyle={classes.insideStyle}
+                withClose={false}
+            >
+                <div style={classes.mainContainer}>
+                    <div style={{ minHeight: "432px" }}>
+                        <PrimaryTable
+                            key={`scheduled-reports-table-${pageNumber}-${scheduledReports.length}`}
+                            stickyHeader={true}
+                            maxHeight={"370px"}
+                            rows={rows}
+                            headers={headers}
+                            variant="OddEvenTable"
+                        />
+                        {scheduledReports.length > 0 && (
+                            <div>
+                                <GoMakePagination
+                                    onChangePageNumber={handlePageChange}
+                                    onChangePageSize={handlePageSizeChange}
+                                    page={pageNumber}
+                                    setPage={onPageChange || (() => { })}
+                                    pageSize={pageSize}
+                                    pagesCount={Math.max(pagesCount, 2)} // Force at least 2 pages for testing
+                                    initialPageSize={initialPageSize}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div style={classes.buttonContainer}>
+                        <GomakePrimaryButton
+                            style={classes.closeButton}
+                            onClick={onCloseModal}
+                        >
+                            {t("modal.close")}
+                        </GomakePrimaryButton>
+                    </div>
+                </div>
+
+            </GoMakeModal>
+            <GoMakeDeleteModal
+                title={t("sales.list.deleteReport")}
+                yesBtn={t("modal.yes")}
+                modalType={ModalType.WARNING}
+                openModal={openDeleteModal}
+                onClose={handleCancelDelete}
+                onClickDelete={handleConfirmDelete}
+            />
+        </>
+
+
+
+    );
+};
+
+export { ScheduledReportsTable };

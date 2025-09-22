@@ -20,6 +20,7 @@ import {getCategoryInputs} from "@/widgets/machines/utils/attributes/other-setti
 import {useMaterialUtils} from "../utils/material-utils";
 import {getCategoryStapleInputs} from "@/widgets/machines/utils/attributes/staple";
 import {printColorsParameterValuesState} from "@/widgets/machines/state/print-colors-parameter-values-state";
+import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
 
 const useMachineAttributes = () => {
@@ -31,6 +32,34 @@ const useMachineAttributes = () => {
     
     // Get material functions from material utils
     const { addMaterial, removeMaterial } = useMaterialUtils();
+    
+    // Action constants
+    const SCORING_ACTION_ID = '40b9c4a0-6401-40e9-877b-7cbcec415a87';
+    const PERFORATION_ACTION_ID = '1d4603d8-f1ab-4cfd-b5ba-6f9e4374f4c2';
+    const ENGRAVING_ACTION_ID = '08acc2fa-7958-4760-9472-7099868c6d09';
+    const CUTTING_ACTION_ID = 'a6c12b45-7dc3-48b2-9176-8d8749cd79f5';
+    const ENHANCEMENT_ACTION_ID = '5c755d21-a728-40d5-af2e-c31e02bebc1d';
+    
+    // Action helper functions
+    const addAction = (actionId: string) => {
+        setMachine(prevState => ({
+            ...prevState,
+            attributes: {
+                ...prevState.attributes,
+                actions: [...(prevState?.attributes?.actions || []), actionId]
+            }
+        }));
+    };
+    
+    const removeAction = (actionId: string) => {
+        setMachine((prevState) => ({
+            ...prevState,
+            attributes: {
+                ...prevState.attributes,
+                actions: prevState?.attributes?.actions?.filter(action => action !== actionId) || []
+            }
+        }));
+    };
     const machineHourCost = () => {
         if (machineState?.price?.price !==0 && machineState.attributes?.dailyProductivityInHours !==0 && machineState.attributes?.lifeExpectancyYears !==0 && machineState.attributes?.monthlyMaintenanceCost !==0 && machineState.attributes?.monthlyCostOfSpace !==0 && machineState.attributes?.electricityCostPerWorkingHour !==0) {
             return machineState?.price?.price /
@@ -178,6 +207,80 @@ const useMachineAttributes = () => {
             default:
                 // No material changes needed for other attributes
                 break;
+        }
+
+        // Handle action additions/removals based on attribute changes and machine category
+        const actions = machineState.attributes?.actions || [];
+        
+        if (machineState.category === ECategoryId.SCORING_MACHINE) {
+            // Handle scoring action
+            if (key === 'scoring') {
+                const isScoringAvailable = !!value?.isAvailable;
+                const hasScoringAction = actions.includes(SCORING_ACTION_ID);
+                if (isScoringAvailable && !hasScoringAction) {
+                    addAction(SCORING_ACTION_ID);
+                } else if (!isScoringAvailable && hasScoringAction) {
+                    removeAction(SCORING_ACTION_ID);
+                }
+            }
+            
+            // Handle perforation action
+            if (key === 'perforation') {
+                const isPerforationAvailable = !!value?.isAvailable;
+                const hasPerforationAction = actions.includes(PERFORATION_ACTION_ID);
+                if (isPerforationAvailable && !hasPerforationAction) {
+                    addAction(PERFORATION_ACTION_ID);
+                } else if (!isPerforationAvailable && hasPerforationAction) {
+                    removeAction(PERFORATION_ACTION_ID);
+                }
+            }
+        } else if (machineState.category === ECategoryId.FLATBED_CUTTING_MACHINE) {
+            // Handle scoring tool action
+            if (key === 'scoringTool') {
+                const isScoringAvailable = !!value?.isAvailable;
+                const hasScoringAction = actions.includes(SCORING_ACTION_ID);
+                if (isScoringAvailable && !hasScoringAction) {
+                    addAction(SCORING_ACTION_ID);
+                } else if (!isScoringAvailable && hasScoringAction) {
+                    removeAction(SCORING_ACTION_ID);
+                }
+            }
+            
+            // Handle engraving tool action
+            if (key === 'engravingTool') {
+                const isEngravingAvailable = !!value?.isAvailable;
+                const hasEngravingAction = actions.includes(ENGRAVING_ACTION_ID);
+                if (isEngravingAvailable && !hasEngravingAction) {
+                    addAction(ENGRAVING_ACTION_ID);
+                } else if (!isEngravingAvailable && hasEngravingAction) {
+                    removeAction(ENGRAVING_ACTION_ID);
+                }
+            }
+            
+            // Handle cutting actions (cutTool, kissCutTool, vCutTool)
+            if (key === 'cutTool' || key === 'kissCutTool' || key === 'vCutTool') {
+                const isCuttingAvailable = !!machineState.attributes?.cutTool?.isAvailable || 
+                                         !!machineState.attributes?.kissCutTool?.isAvailable || 
+                                         !!machineState.attributes?.vCutTool?.isAvailable;
+                const hasCuttingAction = actions.includes(CUTTING_ACTION_ID);
+                if (isCuttingAvailable && !hasCuttingAction) {
+                    addAction(CUTTING_ACTION_ID);
+                } else if (!isCuttingAvailable && hasCuttingAction) {
+                    removeAction(CUTTING_ACTION_ID);
+                }
+            }
+        } else if (machineState.category === ECategoryId.LAMINATION_MACHINE) {
+            // Handle foil unit action and material
+            if (key === 'isAvailableFoilUnit') {
+                const isFoilAvailable = !!value;
+                if (isFoilAvailable) {
+                    addAction(ENHANCEMENT_ACTION_ID);
+                    addMaterial('7');
+                } else {
+                    removeAction(ENHANCEMENT_ACTION_ID);
+                    removeMaterial('7');
+                }
+            }
         }
     }
 

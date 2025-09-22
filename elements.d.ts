@@ -1,17 +1,29 @@
-import { DetailedHTMLProps, HTMLAttributes} from "react";
+import { DetailedHTMLProps, HTMLAttributes } from "react";
 
 declare global {
-
- namespace JSX {
-    interface IntrinsicElements{
-        'df-messenger': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
-            // Add any specific attributes for your custom element here
-            [prop: string]: any;
-        };
-        'df-messenger-chat': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
-            [prop: string]: any;
-
-        }
+  namespace JSX {
+    interface IntrinsicElements {
+      "df-messenger": DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & {
+        // Add any specific attributes for your custom element here
+        [prop: string]: any;
+      };
+      "df-messenger-chat": DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & {
+        [prop: string]: any;
+      };
+      "stripe-pricing-table": DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & {
+        "pricing-table-id": string;
+        "publishable-key": string;
+        [prop: string]: any;
+      };
     }
-}
+  }
 }

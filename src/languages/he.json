@@ -2431,7 +2431,30 @@
   "edit": "עריכה",
   "editDefinition": "עריכת הגדרה",
   "update": "עדכון",
-  "nextValueTip": "עליך להתחיל עם ערך גדול מ"
+  "nextValueTip": "עליך להתחיל עם ערך גדול מ",
+  "list": {
+    "today": "היום",
+    "yesterday": "אתמול",
+    "last7Days": "7 הימים האחרונים",
+    "last30Days": "30 הימים האחרונים",
+    "thisWeek": "השבוע",
+    "lastWeek": "השבוע שעבר",
+    "thisMonth": "החודש",
+    "lastMonth": "החודש שעבר",
+    "dateRange": "טווח תאריכים",
+    "creationDate": "תאריך יצירה",
+    "dueDate": "תאריך יעד",
+    "readyDate": "תאריך מוכן",
+    "scheduleReport": "תזמון דוח",
+    "reportName": "שם הדוח",
+    "filterConfirmationTitle": "אישור מסנן",
+    "filterConfirmationMessage": "יש מסנן בטבלה והמסננים האלה ישמשו ליצירת הדוח, האם אתה רוצה לשמור על המסננים האלה?",
+    "continueWithFilters": "המשך עם המסננים הנוכחיים",
+    "resetFiltersAndGenerate": "אפס מסננים וצור דוח",
+    "scheduledReports": "דוחות מתוזמנים",
+    "deleteReportTitle": "מחיקת דוח מתוזמן",
+    "deleteReportMessage": "האם אתה בטוח שברצונך למחוק את הדוח המתוזמן הזה? לא ניתן לבטל פעולה זו."
+  }
 },
 "logs": {
   "CLOSE": "המסמך נסגר",

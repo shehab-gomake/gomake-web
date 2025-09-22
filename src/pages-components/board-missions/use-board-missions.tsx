@@ -57,6 +57,8 @@ import {
   columnVisibilityStateFamily,
 } from "./states/board-missions-columns-settings-state";
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 type StatusOption = {
   label: string;
@@ -119,6 +121,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   // Add state for multiple proof types (similar to productIds)
   const [proofTypes, setProofTypes] = useState([]);
   const [isPrintedState, setIsPrintedState] = useState<boolean | null>(null);
+
+  // Generate Report states
+  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] = useState(false);
+  const [openAddRule, setOpenAddRule] = useState(false);
+  const [openScheduledReportsModal, setOpenScheduledReportsModal] = useState(false);
 
   // Handler for proof types multi-select change
   const handleProofTypesChange = (selectedValues) => {
@@ -327,9 +334,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.costFromOrderItem"),
+    t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.priceFromOrderItem"),
+    t("boardMissions.priceFromOrderItem"),
     isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
@@ -630,8 +637,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             {mission?.storage === "undefined"
               ? ""
               : mission?.storage
-              ? ` ${mission.storage}`
-              : " "}
+                ? ` ${mission.storage}`
+                : " "}
           </div>
         </>
       );
@@ -648,8 +655,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         mission.station.machineName && mission.station.machineId
           ? mission.station.machineName
           : mission.station?.supplierId
-          ? mission.station.supplierName
-          : mission.station.employeeName;
+            ? mission.station.supplierName
+            : mission.station.employeeName;
       if (empName)
         return `${t(
           "productionStatuses." + mission.boardMissionStatus.name
@@ -753,7 +760,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-            mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
 
@@ -788,9 +795,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               </div>
             ),
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName ?? mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
+              }`
               : mission?.number,
             relatedDocuments: (
               <Stack
@@ -832,12 +838,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 ? `${mission?.cost} ${getCurrencyUnitText(mission?.currency)}`
                 : `${getCurrencyUnitText(mission?.currency)} ${mission?.cost}`,
               priceFromOrderItem: isRTL
-                ? `${mission?.price}${
-                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                  } ${getCurrencyUnitText(mission?.currency)}`
-                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${
-                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                  }`,
+                ? `${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                } ${getCurrencyUnitText(mission?.currency)}`
+                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                }`,
             }),
             ...(isPrintHouseUsePrintNode && {
               isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
@@ -890,14 +894,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -950,45 +954,45 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const data = isClear
       ? {
-          productsIds: [],
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-        }
+        productsIds: [],
+        pageNumber: currentPageNumber || pageNumber,
+        pageSize: currentPageSize,
+      }
       : {
-          clientId: router?.query?.clientId || customer?.id,
-          agentId: router?.query?.agentId || agent?.id,
-          search:
-            finalPatternSearch !== null &&
+        clientId: router?.query?.clientId || customer?.id,
+        agentId: router?.query?.agentId || agent?.id,
+        search:
+          finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
             finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-          fromDate:
-            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-          fromDueDate:
-            currentFormattedFromDueDate ||
-            (fromDueDate && GetDateFormat(fromDueDate)),
-          toDueDate:
-            currentFormattedToDueDate ||
-            (toDueDate && GetDateFormat(toDueDate)),
+            ? finalPatternSearch
+            : currentFinalPatternSearch,
+        fromDate:
+          currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+        toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+        fromDueDate:
+          currentFormattedFromDueDate ||
+          (fromDueDate && GetDateFormat(fromDueDate)),
+        toDueDate:
+          currentFormattedToDueDate ||
+          (toDueDate && GetDateFormat(toDueDate)),
 
-          fromReadyDate:
-            currentFormattedFromReadyDate ||
-            (fromReadyDate && GetDateFormat(fromReadyDate)),
-          toReadyDate:
-            currentFormattedToReadyDate ||
-            (toReadyDate && GetDateFormat(toReadyDate)),
-          productsIds: currentProductsIds,
-          productionStatus: currentProductionStatus || status?.value,
-          orderStatus: currentOrderStatus || orderStatus?.value,
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-          orderNumber: router?.query?.orderNumber,
-          order: sortOrder,
-          exampleTypes: currentProofTypes,
-          isPrinted: currentIsPrinted || isPrintedState,
-        };
+        fromReadyDate:
+          currentFormattedFromReadyDate ||
+          (fromReadyDate && GetDateFormat(fromReadyDate)),
+        toReadyDate:
+          currentFormattedToReadyDate ||
+          (toReadyDate && GetDateFormat(toReadyDate)),
+        productsIds: currentProductsIds,
+        productionStatus: currentProductionStatus || status?.value,
+        orderStatus: currentOrderStatus || orderStatus?.value,
+        pageNumber: currentPageNumber || pageNumber,
+        pageSize: currentPageSize,
+        orderNumber: router?.query?.orderNumber,
+        order: sortOrder,
+        exampleTypes: currentProofTypes,
+        isPrinted: currentIsPrinted || isPrintedState,
+      };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
     setIsJobsTableLoading(false);
   };
@@ -1016,9 +1020,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ),
             supplierName: mission?.supplierName,
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName ?? mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
+              }`
               : mission?.number,
             orderNumber: mission?.orderNumber,
             purchaseOrderNumber: mission?.purchaseOrderNumber,
@@ -1039,8 +1042,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             currentBoardMissionStatus: mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-              : "",
+                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+                : "",
             more: (
               <MoreMenuWidget
                 mission={mission}
@@ -1088,44 +1091,44 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
       isClear
         ? {
-            productsIds: [],
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: currentPageSize,
-          }
+          productsIds: [],
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+        }
         : {
-            clientId: customer?.id,
-            agentId: agent?.id,
-            search:
-              finalPatternSearch !== null &&
+          clientId: customer?.id,
+          agentId: agent?.id,
+          search:
+            finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+          fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+          toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+          fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+          toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            exampleTypes: currentProofTypes,
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: currentPageSize,
-            supplierId: supplierId?.value,
-            isPurchaseJobs: true,
-          }
+          productsIds: productIds,
+          productionStatus: status?.value,
+          orderStatus: orderStatus?.value,
+          exampleTypes: currentProofTypes,
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+          supplierId: supplierId?.value,
+          isPurchaseJobs: true,
+        }
     );
     setIsJobsTableLoading(false);
   };
@@ -1134,16 +1137,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${
-          missionItem?.clientTypeId
-        }&customerId=${
-          missionItem?.customerID
+        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
+        }&customerId=${missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${
-          missionItem?.orderItemId
-        }&documentType=${
-          DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
+        }&documentType=${DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1801,14 +1800,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1861,8 +1860,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-        finalPatternSearch !== undefined &&
-        finalPatternSearch !== ""
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -1971,6 +1970,112 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [columnsReady, setColumnsReady] = useState(false);
 
   const visibleHeaders = columnOrder.filter((key) => columnVisibility[key]);
+
+  // Scheduled Reports functionality
+  const {
+    scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    isLoading: scheduledReportsIsLoading,
+    getAllScheduledReports,
+    createScheduledReport: createScheduledReportApi,
+    updateScheduledReport,
+    deleteScheduledReport,
+    toggleScheduledReport,
+    pageNumber: scheduledReportsPageNumber,
+    pageSize: scheduledReportsPageSize,
+    pagesCount: scheduledReportsPagesCount,
+  } = useScheduledReports();
+
+  // Generate Report functions
+  const onOpenAddRuleModal = () => {
+    // Check if there are active filters
+    const activeFilters = Object.keys(router.query).filter(
+      (key) => key !== "pageNumber" && key !== "pageSize"
+    );
+
+    if (activeFilters.length > 0) {
+      setOpenFilterConfirmationModal(true);
+    } else {
+      setOpenAddRule(true);
+    }
+  };
+
+  const onCloseAddRuleModal = () => {
+    setOpenAddRule(false);
+  };
+
+  const onCloseFilterConfirmationModal = () => {
+    setOpenFilterConfirmationModal(false);
+  };
+
+  const onContinueWithFilters = () => {
+    setOpenAddRule(true);
+  };
+
+  const onResetFiltersAndGenerate = () => {
+    // Reset all filters
+    setPatternSearch("");
+    setStatus(null);
+    setCustomer(null);
+    setAgent(null);
+    setOrderStatus(null);
+    setProductIds([]);
+    setProofTypes([]);
+    setIsPrintedState(null);
+    setFromDate(null);
+    setToDate(null);
+    setFromDueDate(null);
+    setToDueDate(null);
+    setFromReadyDate(null);
+    setToReadyDate(null);
+
+    // Clear URL query parameters
+    router.push({
+      pathname: router.pathname,
+      query: {},
+    });
+
+    setOpenAddRule(true);
+  };
+
+  const onShowScheduledReports = () => {
+    setOpenScheduledReportsModal(true);
+    getAllScheduledReports(1, 10, DocumentTypeEnums.BoardMission); // Start with page 1 and page size 10, filter by BoardMission
+  };
+
+  const onCloseScheduledReportsModal = () => {
+    setOpenScheduledReportsModal(false);
+  };
+
+  const onToggleScheduledReportActive = (id: string, isActive: boolean) => {
+    toggleScheduledReport(id, isActive);
+  };
+
+  const onDeleteScheduledReport = (id: string) => {
+    deleteScheduledReport(id);
+  };
+
+  const handleScheduledReportsPageChange = (page: number) => {
+    getAllScheduledReports(page, scheduledReportsPageSize, DocumentTypeEnums.BoardMission);
+  };
+
+  const handleScheduledReportsPageSizeChange = (pageSize: number) => {
+    getAllScheduledReports(1, pageSize, DocumentTypeEnums.BoardMission);
+  };
+
+  // Get available date filters for jobs table
+  const getAvailableDateFilters = () => {
+    return [
+      { label: t("boardMissions.creationDate"), value: "creationDate" },
+      { label: t("boardMissions.dueDate"), value: "dueDate" },
+      { label: t("boardMissions.readyDate"), value: "readyDate" },
+    ];
+  };
+
+  // Create scheduled report function
+  const createScheduledReport = (data: any) => {
+    createScheduledReportApi(data);
+  };
 
   return {
     tableHeader,
@@ -2100,6 +2205,30 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     isJobsTableLoading,
     isJobsTableError,
     isSocketRefreshingJobs,
+    // Generate Report functions
+    onOpenAddRuleModal,
+    onCloseAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openAddRule,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    openScheduledReportsModal,
+    getAvailableDateFilters,
+    createScheduledReport,
+    // Scheduled Reports data
+    scheduledReports,
+    scheduledReportsTotalCount,
+    scheduledReportsIsLoading,
+    scheduledReportsPageNumber,
+    scheduledReportsPageSize,
+    scheduledReportsPagesCount,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    handleScheduledReportsPageChange,
+    handleScheduledReportsPageSizeChange,
   };
 };
 
