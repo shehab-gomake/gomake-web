@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-interface ThreeColumnLayoutProps {
+export interface ThreeColumnLayoutProps {
   navigationContent: React.ReactNode;  // Column 1 - Navigation
   listContent: React.ReactNode;        // Column 2 - Dynamic List
   mainContent: React.ReactNode;        // Column 3 - Main Content

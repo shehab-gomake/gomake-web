@@ -12,6 +12,7 @@ export interface Message {
   metadata?: {
     type: 'text' | 'file' | 'image';
     timestamp?: string;
+    [key: string]: any; // Allow additional properties
   };
 }
 

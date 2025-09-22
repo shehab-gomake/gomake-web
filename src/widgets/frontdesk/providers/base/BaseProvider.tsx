@@ -127,7 +127,7 @@ export abstract class BaseProvider implements IProvider {
     if (message) {
       message.content = newContent;
       // Add edited timestamp/flag
-      if (!message.metadata) message.metadata = {};
+      if (!message.metadata) message.metadata = { type: 'text' };
       message.metadata.edited = true;
       message.metadata.editedAt = new Date().toISOString();
       

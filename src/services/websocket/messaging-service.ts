@@ -85,9 +85,6 @@ export class MessagingService {
         reconnectionDelayMax: 5000,
         // Enable connection state recovery (knowledge base best practice)
         autoConnect: true,
-        // Add ping/pong configuration for better connection monitoring
-        pingTimeout: 60000,
-        pingInterval: 25000,
       });
 
       this.socket.on("connect", () => {
