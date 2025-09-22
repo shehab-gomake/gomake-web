@@ -2,10 +2,10 @@ import React from "react";
 import { IconButton, Tooltip, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { ViewList, ViewAgenda } from "@mui/icons-material";
 import { useRecoilState } from "recoil";
-import { gmailUIState } from "@/store/frontdesk/providers/gmail";
+import { emailUIState } from "@/widgets/frontdesk/providers/email/store/email-store";
 
 export const DensityToggle: React.FC = () => {
-  const [uiState, setUiState] = useRecoilState(gmailUIState);
+  const [uiState, setUiState] = useRecoilState(emailUIState);
 
   const handleDensityChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -14,14 +14,14 @@ export const DensityToggle: React.FC = () => {
     if (newDensity !== null) {
       setUiState(prev => ({
         ...prev,
-        listDensity: newDensity
+        density: newDensity
       }));
     }
   };
 
   return (
     <ToggleButtonGroup
-      value={uiState.listDensity}
+      value={uiState.density}
       exclusive
       onChange={handleDensityChange}
       aria-label="list density"
@@ -60,17 +60,17 @@ export const DensityToggle: React.FC = () => {
 };
 
 export const DensityToggleIcon: React.FC = () => {
-  const [uiState, setUiState] = useRecoilState(gmailUIState);
+  const [uiState, setUiState] = useRecoilState(emailUIState);
 
   const toggleDensity = () => {
     setUiState(prev => ({
       ...prev,
-      listDensity: prev.listDensity === 'comfortable' ? 'compact' : 'comfortable'
+      density: prev.density === 'comfortable' ? 'compact' : 'comfortable'
     }));
   };
 
   return (
-    <Tooltip title={`Switch to ${uiState.listDensity === 'comfortable' ? 'compact' : 'comfortable'} view`}>
+    <Tooltip title={`Switch to ${uiState.density === 'comfortable' ? 'compact' : 'comfortable'} view`}>
       <IconButton
         onClick={toggleDensity}
         size="small"
@@ -81,7 +81,7 @@ export const DensityToggleIcon: React.FC = () => {
           p: 0.5,
         }}
       >
-        {uiState.listDensity === 'comfortable' ? (
+        {uiState.density === 'comfortable' ? (
           <ViewAgenda fontSize="small" />
         ) : (
           <ViewList fontSize="small" />

@@ -42,7 +42,7 @@ const useSettings = ({
   const setSelectedTabValue = useSetRecoilState<number>(
     selectedProductsTabState
   );
-  const [RandomId, setRandomId] = useState();
+  const [RandomId, setRandomId] = useState<string>("");
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const [openPricingTypeModal, setOpenPricingTypeModal] =
