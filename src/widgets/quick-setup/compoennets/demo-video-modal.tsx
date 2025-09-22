@@ -76,6 +76,8 @@ export const DemoVideoModal = ({
         return t("quickSetup.steps.howToStartWithGoMake");
       case SetupStep.HELP_CENTER_CREATE_A_QUOTE:
         return t("quickSetup.steps.createAQuote");
+      case SetupStep.FILE_SERVICE_CONFIGS:
+        return t("quickSetup.steps.fileServiceConfigs");
       default:
         return t("quickSetup.gettingStartedGuide");
     }
