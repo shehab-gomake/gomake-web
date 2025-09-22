@@ -135,8 +135,6 @@ export const EmailProviderView: React.FC = () => {
               labelsLoading={labelsLoading}
               labelsError={labelsError}
               onLabelSelect={selectLabel}
-              onSearch={onSearch}
-              searchQuery={searchQuery}
             />
           </div>
 
@@ -216,8 +214,6 @@ export const EmailProviderView: React.FC = () => {
             labelsLoading={labelsLoading}
             labelsError={labelsError}
             onLabelSelect={selectLabel}
-            onSearch={onSearch}
-            searchQuery={searchQuery}
           />
         </div>
 
@@ -234,6 +230,9 @@ export const EmailProviderView: React.FC = () => {
               onLoadMore={loadMore}
               onRefresh={refresh}
               selectedLabel={selectedLabel}
+              onSearch={onSearch}
+              searchQuery={searchQuery}
+              searchDisabled={conversationsLoading}
             />
           ) : (
             <Paper

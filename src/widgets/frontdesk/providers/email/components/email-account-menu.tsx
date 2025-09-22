@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
-import { MoreVert as MoreVertIcon, Logout as LogoutIcon } from "@mui/icons-material";
+import React from "react";
+import { IconButton, alpha } from "@mui/material";
+import { Logout as LogoutIcon } from "@mui/icons-material";
 
 interface EmailAccountMenuProps {
   accountId: string;
@@ -9,57 +9,26 @@ interface EmailAccountMenuProps {
 }
 
 export const EmailAccountMenu: React.FC<EmailAccountMenuProps> = ({ accountId, isSelected, onDisconnect }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleDisconnectClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDisconnectClick = () => {
     onDisconnect(accountId);
-    handleMenuClose();
   };
 
   return (
-    <>
-      <IconButton
-        size="small"
-        onClick={handleMenuOpen}
-        sx={{
-          opacity: 0.7,
-          "&:hover": { opacity: 1 },
-          color: isSelected ? "white" : "text.secondary",
-        }}
-      >
-        <MoreVertIcon sx={{ fontSize: 16 }} />
-      </IconButton>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenuClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <MenuItem onClick={handleDisconnectClick} sx={{ color: "error.main" }}>
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" color="error" />
-          </ListItemIcon>
-          <ListItemText>Disconnect Account</ListItemText>
-        </MenuItem>
-      </Menu>
-    </>
+    <IconButton
+      size="small"
+      onClick={handleDisconnectClick}
+      sx={{
+        opacity: 0.6,
+        color: "error.main",
+        "&:hover": {
+          opacity: 1,
+          backgroundColor: (theme) => alpha(theme.palette.error.main, 0.1),
+        },
+      }}
+      title="Disconnect Account"
+    >
+      <LogoutIcon sx={{ fontSize: 16 }} />
+    </IconButton>
   );
 };

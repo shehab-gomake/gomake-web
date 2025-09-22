@@ -10,7 +10,6 @@ import { AccountListEmpty } from "./sidebar/account-list-empty";
 import { AccountToggle } from "./sidebar/account-toggle";
 import { EmailListItem } from "./ui/email-list-item";
 import { EmailAccountMenu } from "./email-account-menu";
-import { EmailSearch } from "./sidebar/email-search";
 
 interface EmailSidebarProps {
   accounts: EmailAccount[];
@@ -26,8 +25,6 @@ interface EmailSidebarProps {
   labelsLoading?: boolean;
   labelsError?: string;
   onLabelSelect: (labelId: string | null) => void;
-  onSearch?: (query: string) => void;
-  searchQuery?: string;
 }
 
 export const EmailSidebar: React.FC<EmailSidebarProps> = ({
@@ -44,8 +41,6 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
   labelsLoading,
   labelsError,
   onLabelSelect,
-  onSearch,
-  searchQuery,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [showUserLabels, setShowUserLabels] = React.useState(true);
@@ -80,11 +75,6 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
       }}
     >
       <SidebarHeader onAddAccount={onAddAccount} onRefresh={onRefresh} />
-
-      {/* Search */}
-      {selectedAccountId && accounts.length > 0 && onSearch && (
-        <EmailSearch onSearch={onSearch} placeholder="Search emails..." disabled={labelsLoading} />
-      )}
 
       {/* Account Toggle */}
       {accounts.length === 0 ? (

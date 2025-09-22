@@ -1,0 +1,81 @@
+---
+description: WebSocket and real-time messaging patterns
+globs:
+  - "src/services/websocket/**"
+  - "src/widgets/frontdesk/providers/internal/**"
+  - "src/store/messaging.ts"
+---
+
+# WebSocket Real-time Standards
+
+## Connection Lifecycle
+```typescript
+import { messagingService } from '@/services/websocket/messaging-service';
+
+useEffect(() => {
+  messagingService
+    .connect()
+    .then(() => messagingService.onConnect(() => setConnected(true)))
+    .catch(setError);
+
+  messagingService.onDisconnect(() => setConnected(false));
+
+  return () => {
+    messagingService.removeAllListeners();
+    messagingService.disconnect();
+  };
+}, []);
+```
+- Always obtain a socket via `messagingService.connect()`. Never call `io()` directly from components or hooks.
+- Pair every connection with cleanup (`removeAllListeners` + `disconnect`) when the owning hook/component unmounts.
+- Reflect connection state in Recoil (`messagingConnectionState`, `messagingConnectedState`) so the UI updates consistently.
+
+## Event Handling
+```typescript
+useEffect(() => {
+  const handleNewMessage = (message: Message) => appendMessage(message.channelId, message);
+  messagingService.onNewMessage(handleNewMessage);
+  messagingService.onDirectMessage(handleDirectMessage);
+  messagingService.onMessageConfirmed(({ tempId, messageId }) => confirmMessage(tempId, messageId));
+  messagingService.onMessageRead(trackReadReceipt);
+  messagingService.onUserTyping(updateTyping);
+  messagingService.onStatusChanged(updatePresence);
+  messagingService.onUserOnline(markOnline);
+  messagingService.onUserOffline(markOffline);
+
+  return () => {
+    messagingService.removeListener('newMessage', handleNewMessage);
+    messagingService.removeListener('directMessage', handleDirectMessage);
+    messagingService.removeListener('messageConfirmed');
+    messagingService.removeListener('messageRead');
+    messagingService.removeListener('userTyping');
+    messagingService.removeListener('statusChanged');
+    messagingService.removeListener('userOnline');
+    messagingService.removeListener('userOffline');
+  };
+}, [appendMessage, confirmMessage, trackReadReceipt, updateTyping, updatePresence, markOnline, markOffline]);
+```
+- Subscribe via the helper methods (`onNewMessage`, `onDirectMessage`, etc.) instead of directly touching `socket.on`.
+- Keep handler references stable (wrap in `useCallback`) so cleanup can detach them reliably.
+- Mirror presence/typing updates into Recoil atoms (`messagingTypingUsersState`, `messagingUserPresenceState`).
+
+## Sending & Channel Management
+```typescript
+await messagingService.joinChannel({ channelId });
+await messagingService.sendMessage({ channelId, content, tempId });
+await messagingService.markAsRead({ messageId });
+await messagingService.updateStatus({ status: 'online' });
+```
+- Wrap emits in try/catch and surface errors via UI feedback.
+- Generate `tempId` values for optimistic UI, then reconcile with `messageConfirmed` events.
+- Enforce channel naming rules (`dm-{sortedUserIds}` for DMs, canonical ids for shared channels) before joining/sending.
+
+## Reconnection & Resilience
+- Allow `MessagingService` to handle reconnection (configured with exponential backoff). Avoid manual loops; instead listen for `reconnect`/`reconnect_failed` logs when debugging.
+- Clear stored session IDs on authentication failures so the next `connect` starts clean (`localStorage.removeItem('messaging_session_id')`).
+- After reconnect, replay the active channel joins and refresh presence/messages to rehydrate the UI.
+
+## State Synchronisation
+- Persist messages in `messagingMessagesState` keyed by `channelId`; dedupe by `messageId` while keeping insertion order.
+- Update unread counters, typing indicators, and drafts alongside message events to keep UI badges accurate.
+- Reset atoms (`useResetRecoilState`) when leaving channels or logging out so data does not bleed between providers.

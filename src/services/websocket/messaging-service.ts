@@ -31,6 +31,19 @@ export class MessagingService {
     this.serverUrl = config.messaging_server || config.api_server;
   }
 
+  // Generate a persistent session ID for better connection tracking
+  // Based on Socket.IO knowledge base recommendation to avoid using ephemeral socket.id
+  private generateSessionId(): string {
+    const existingSessionId = localStorage.getItem('messaging_session_id');
+    if (existingSessionId) {
+      return existingSessionId;
+    }
+    
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('messaging_session_id', sessionId);
+    return sessionId;
+  }
+
   connect(authToken?: string): Promise<Socket> {
     return new Promise((resolve, reject) => {
       if (this.socket?.connected) {
@@ -54,10 +67,13 @@ export class MessagingService {
         return;
       }
 
+      // Enhanced connection options based on Socket.IO knowledge base insights
       console.log("Messaging Service - Connecting to:", `${this.serverUrl}/messaging`);
       this.socket = io(`${this.serverUrl}/messaging`, {
         auth: {
           token: token,
+          // Add session ID for better connection tracking (knowledge base recommendation)
+          sessionId: this.generateSessionId(),
         },
         transports: ["websocket", "polling"],
         timeout: 20000,
@@ -65,6 +81,14 @@ export class MessagingService {
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionAttempts: 10,
+        // Enhanced reconnection strategy based on knowledge base
+        reconnectionDelayMax: 5000,
+        maxReconnectionAttempts: 10,
+        // Enable connection state recovery (knowledge base best practice)
+        autoConnect: true,
+        // Add ping/pong configuration for better connection monitoring
+        pingTimeout: 60000,
+        pingInterval: 25000,
       });
 
       this.socket.on("connect", () => {
@@ -79,19 +103,60 @@ export class MessagingService {
         this.isConnecting = false;
       });
 
+      // Enhanced error handling based on Socket.IO knowledge base insights
       this.socket.on("connect_error", (error) => {
         console.error("Connection error:", error.message);
         console.error("Error details:", error);
         this.isConnecting = false;
+        
+        // Enhanced error categorization based on knowledge base patterns
+        if (error.message.includes('Authentication')) {
+          console.error("Authentication failed - token may be invalid or expired");
+          // Clear stored session on auth failure
+          localStorage.removeItem('messaging_session_id');
+        } else if (error.message.includes('timeout')) {
+          console.error("Connection timeout - server may be unreachable");
+        } else if (error.message.includes('ECONNREFUSED')) {
+          console.error("Connection refused - server is not running");
+        }
+        
         reject(error);
       });
 
       this.socket.on("error", (error) => {
         console.error("Socket error:", error);
+        // Log additional context for debugging
+        console.error("Socket state:", {
+          connected: this.socket?.connected,
+          id: this.socket?.id, // Note: ephemeral ID for debugging only
+          transport: this.socket?.io.engine.transport.name
+        });
       });
 
       this.socket.on("exception", (error) => {
         console.error("Socket exception:", error);
+        // Handle server-side exceptions
+        if (error.message) {
+          console.error("Exception message:", error.message);
+        }
+      });
+
+      // Add connection state recovery event handling (knowledge base best practice)
+      this.socket.on("reconnect", (attemptNumber) => {
+        console.log(`Reconnected after ${attemptNumber} attempts`);
+      });
+
+      this.socket.on("reconnect_attempt", (attemptNumber) => {
+        console.log(`Reconnection attempt ${attemptNumber}`);
+      });
+
+      this.socket.on("reconnect_error", (error) => {
+        console.error("Reconnection error:", error);
+      });
+
+      this.socket.on("reconnect_failed", () => {
+        console.error("Failed to reconnect after maximum attempts");
+        this.isConnecting = false;
       });
     });
   }

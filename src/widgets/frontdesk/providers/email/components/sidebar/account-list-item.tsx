@@ -1,10 +1,7 @@
 import React from "react";
-import { ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Badge } from "@mui/material";
-import { Circle as CircleIcon } from "@mui/icons-material";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailAccount } from "../../types/email.types";
-import { getAccountInitials } from "../../utils/avatar-utils";
-import { getListItemButtonStyles } from "../../utils/styling-utils";
 import { EmailAvatar } from "../ui/email-avatar";
 
 interface AccountListItemProps {
@@ -16,7 +13,6 @@ interface AccountListItemProps {
 
 export const AccountListItem: React.FC<AccountListItemProps> = ({ account, isSelected, onSelect, children }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const buttonStyles = getListItemButtonStyles(primaryColor, neutralColor);
 
   return (
     <ListItem
@@ -27,15 +23,29 @@ export const AccountListItem: React.FC<AccountListItemProps> = ({ account, isSel
         mx: 1,
       }}
     >
-      <ListItemButton selected={isSelected} onClick={() => onSelect(account.id)} sx={buttonStyles}>
+      <ListItemButton
+        selected={isSelected}
+        onClick={() => onSelect(account.id)}
+        sx={{
+          borderRadius: 1,
+          "&.Mui-selected": {
+            backgroundColor: primaryColor(100),
+            "&:hover": {
+              backgroundColor: primaryColor(200),
+            },
+          },
+          "&:hover": {
+            backgroundColor: neutralColor(50),
+          },
+        }}
+      >
         <ListItemIcon sx={{ minWidth: 40 }}>
-          <Badge
-            overlap="circular"
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            badgeContent={account.isActive ? <CircleIcon sx={{ fontSize: 8, color: "success.main" }} /> : null}
-          >
-            <EmailAvatar email={account.email} displayName={account.displayName} size={32} isSelected={isSelected} />
-          </Badge>
+          <EmailAvatar
+            email={account.email}
+            displayName={account.displayName}
+            size={32}
+            isSelected={isSelected}
+          />
         </ListItemIcon>
 
         <ListItemText

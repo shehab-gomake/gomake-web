@@ -20,6 +20,9 @@ interface EmailConversationListProps {
   onLoadMore?: () => void;
   onRefresh?: () => void;
   selectedLabel?: EmailLabel | null;
+  onSearch?: (query: string) => void;
+  searchQuery?: string;
+  searchDisabled?: boolean;
 }
 
 export const EmailConversationList: React.FC<EmailConversationListProps> = ({
@@ -32,6 +35,9 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
   onLoadMore,
   onRefresh,
   selectedLabel,
+  onSearch,
+  searchQuery,
+  searchDisabled = false,
 }) => {
   const { neutralColor } = useGomakeTheme();
 
@@ -60,7 +66,12 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
         flexDirection: "column",
       }}
     >
-      <ConversationListHeader selectedLabel={selectedLabel} />
+      <ConversationListHeader
+        selectedLabel={selectedLabel}
+        onSearch={onSearch}
+        searchQuery={searchQuery}
+        searchDisabled={searchDisabled}
+      />
 
       {/* Content */}
       <Box sx={{ flex: 1, overflow: "auto" }}>
