@@ -2,7 +2,7 @@ import { SideBarContainer } from "@/components/containers/side-container/side-ba
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
@@ -20,6 +20,7 @@ import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supp
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import EditIcon from "@mui/icons-material/Edit";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
@@ -27,7 +28,7 @@ import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Skeleton, Stack, Box } from "@mui/material";
+import { Skeleton, Stack, Box, IconButton } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
@@ -43,6 +44,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
     useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
@@ -138,7 +140,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         data-tour={"materialsCategories"}
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
-        onSelect={onSelectCategory}
+        onSelect={(categoryId) => {
+          onSelectCategory(categoryId);
+          setIsSidebarOpen(false);
+        }}
         title={t("materials.chooseCategory")}
         isHaveDeleteIcon={true}
       >
@@ -251,20 +256,57 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
           <h4 style={classes.subHeader}>/ {subCategory}</h4>
+          <IconButton
+            size="small"
+            onClick={() => setIsSidebarOpen(true)}
+            sx={{
+              color: '#1976d2',
+              '&:hover': {
+                backgroundColor: '#e3f2fd'
+              }
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
-      <SideBarContainer
-        sideDataTour={"materialsCategories"}
-        bodyDataTour={"materialsTableData"}
-        side={Side()}
-        subHeader={""}
-      >
+      {/* Absolute positioned sidebar overlay */}
+      {isSidebarOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1300,
+            display: 'flex'
+          }}
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <Box
+            sx={{
+              width: '300px',
+              backgroundColor: '#fff',
+              height: '100%',
+              overflow: 'auto',
+              boxShadow: '2px 0 8px rgba(0,0,0,0.1)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {Side()}
+          </Box>
+        </Box>
+      )}
+
+      {/* Full width content */}
+      <div style={{ width: '100%', padding: '0 20px' }}>
         {
           isLoadingMaterials ?
-            <div style={{ height: 795, width: "1500px" }}>
-              <Skeleton variant="rectangular" height={795} width="1500px" />
-
+            <div style={{ height: 795, width: "100%" }}>
+              <Skeleton variant="rectangular" height={795} width="100%" />
             </div> : <>
               {materialCategory && (
                 <Stack
@@ -341,8 +383,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
               )}
             </>
         }
-
-      </SideBarContainer>
+      </div>
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
