@@ -66,7 +66,7 @@ const SettingsFileApiWidget = () => {
       </Head>
       <div
         style={{
-          // height: "80vh",
+          maxHeight: "85vh",
           display: "flex",
           flexDirection: "column",
         }}
@@ -119,6 +119,7 @@ const SettingsFileApiWidget = () => {
         </div>
 
         <div
+          className="custom-scrollbar"
           style={{
             flex: 1,
             overflowY: "auto",
