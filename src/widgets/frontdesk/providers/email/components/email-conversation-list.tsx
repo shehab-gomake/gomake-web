@@ -60,7 +60,7 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
         flexDirection: "column",
       }}
     >
-      <ConversationListHeader selectedLabel={selectedLabel} onRefresh={onRefresh} />
+      <ConversationListHeader selectedLabel={selectedLabel} />
 
       {/* Content */}
       <Box sx={{ flex: 1, overflow: "auto" }}>

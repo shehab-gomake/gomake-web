@@ -1,16 +1,13 @@
 import React from "react";
-import { Box, Stack, Typography, Button } from "@mui/material";
-import { Refresh as RefreshIcon } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { alpha } from "@mui/material";
 import { EmailLabel } from "../../types/email.types";
 
 interface ConversationListHeaderProps {
   selectedLabel?: EmailLabel | null;
-  onRefresh?: () => void;
 }
 
-export const ConversationListHeader: React.FC<ConversationListHeaderProps> = ({ selectedLabel, onRefresh }) => {
+export const ConversationListHeader: React.FC<ConversationListHeaderProps> = ({ selectedLabel }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
   return (
@@ -32,23 +29,6 @@ export const ConversationListHeader: React.FC<ConversationListHeaderProps> = ({ 
         >
           {selectedLabel ? selectedLabel.name : "Conversations"}
         </Typography>
-
-        {onRefresh && (
-          <Button
-            size="small"
-            onClick={onRefresh}
-            startIcon={<RefreshIcon sx={{ fontSize: 16 }} />}
-            sx={{
-              color: neutralColor(600),
-              "&:hover": {
-                color: primaryColor(600),
-                backgroundColor: alpha(primaryColor(100), 0.5),
-              },
-            }}
-          >
-            Refresh
-          </Button>
-        )}
       </Stack>
     </Box>
   );
