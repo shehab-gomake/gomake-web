@@ -7,6 +7,7 @@ import { getLabelIcon } from "../utils/icon-utils";
 import { SidebarHeader } from "./sidebar/sidebar-header";
 import { AccountListItem } from "./sidebar/account-list-item";
 import { AccountListEmpty } from "./sidebar/account-list-empty";
+import { AccountToggle } from "./sidebar/account-toggle";
 import { EmailListItem } from "./ui/email-list-item";
 import { EmailAccountMenu } from "./email-account-menu";
 import { EmailSearch } from "./sidebar/email-search";
@@ -85,31 +86,17 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
         <EmailSearch onSearch={onSearch} placeholder="Search emails..." disabled={labelsLoading} />
       )}
 
-      {/* Accounts List */}
-      <Box sx={{ overflow: "auto" }}>
-        {accounts.length === 0 ? (
-          <AccountListEmpty onAddAccount={onAddAccount} />
-        ) : (
-          <List sx={{ py: 1 }}>
-            {accounts.map((account) => (
-              <AccountListItem
-                key={account.id}
-                account={account}
-                isSelected={account.id === selectedAccountId}
-                onSelect={onAccountSelect}
-              >
-                {onDisconnectAccount && (
-                  <EmailAccountMenu
-                    accountId={account.id}
-                    isSelected={account.id === selectedAccountId}
-                    onDisconnect={onDisconnectAccount}
-                  />
-                )}
-              </AccountListItem>
-            ))}
-          </List>
-        )}
-      </Box>
+      {/* Account Toggle */}
+      {accounts.length === 0 ? (
+        <AccountListEmpty onAddAccount={onAddAccount} />
+      ) : (
+        <AccountToggle
+          accounts={accounts}
+          selectedAccountId={selectedAccountId}
+          onAccountSelect={onAccountSelect}
+          onDisconnectAccount={onDisconnectAccount}
+        />
+      )}
 
       {/* Labels Section */}
       {selectedAccountId && accounts.length > 0 && (
@@ -118,8 +105,7 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
             borderTop: `1px solid ${neutralColor(200)}`,
             backgroundColor: neutralColor(25),
             overflow: "auto",
-            flexShrink: 0,
-            maxHeight: "50%",
+            flex: 1,
           }}
         >
           {labelsLoading ? (
