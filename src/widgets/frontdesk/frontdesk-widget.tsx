@@ -1,119 +1,215 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
-import { ITab } from "@/components/tabs/interface";
+import { Box, Typography } from '@mui/material';
+import { useRouter } from "next/router";
+// Three-column layout components
+import { ThreeColumnLayout } from './layouts/three-column';
+import { NavigationSidebar, Channel, Section } from './layouts/components/NavigationSidebar';
+import { DynamicListPanel } from './layouts/components/DynamicListPanel';
+import { ContentArea } from './layouts/components/ContentArea';
+
+// Provider components  
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
 import { InternalProviderView } from "@/widgets/frontdesk/providers/internal/internal-provider-view";
-import { SideList } from "@/components/containers/side-container/side-list/side-list";
-import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
-import { IListItem } from "@/components/containers/interface";
-import { SmsIcon } from "@/components/icons/sms-icon";
-import { PeopleIcon } from "@/components/icons/people-icon";
-import { DocumentIcon } from "@/components/icons/document-icon";
-import { SettingsIcon } from "@/icons/settings-icon";
-import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+
+// For unified view placeholder
+import { UnifiedProvider } from './providers/unified/UnifiedProvider';
 
 const FrontdeskWidget: React.FC = () => {
-  const { t } = useTranslation();
-  const { push, query } = useRouter();
-  const { frontdeskRoute, provider } = query as {
+  const router = useRouter();
+  const { frontdeskRoute, provider } = router.query as {
     frontdeskRoute?: string;
     provider?: string;
   };
-  const [selected, setSelected] = useState<IListItem>();
 
-  // Provider tabs inside Inbox
-  const providerTabs: ITab[] = useMemo(
-    () => [
-      { title: "Unified", component: <EmailProviderView /> },
-      { title: "Email", component: <EmailProviderView /> },
-      { title: "WhatsApp", component: <WhatsAppProviderView /> },
-      { title: "Internal", component: <InternalProviderView /> },
-    ],
-    []
-  );
-
-  // route <-> provider tab mapping
-  const providerSlugs = ["unified", "email", "whatsapp", "internal"] as const;
-  const selectedProviderIndex = useMemo(() => {
-    if (frontdeskRoute !== "inbox") return 0;
-    const slug = (provider ?? "unified").toString().toLowerCase();
-    const idx = providerSlugs.indexOf(slug as any);
-    return idx >= 0 ? idx : 0;
-  }, [frontdeskRoute, provider]);
-  const onSelectProvider = (index: number) => {
-    const slug = providerSlugs[index] ?? providerSlugs[0];
-    push(`/frontdesk/inbox/${slug}`).then();
+  // Initialize state from route only on mount
+  const getInitialSection = (): Section => {
+    if (!frontdeskRoute || frontdeskRoute === 'inbox') return 'inbox';
+    if (frontdeskRoute === 'assigned') return 'assigned';
+    if (frontdeskRoute === 'admin') return 'admin';
+    if (frontdeskRoute === 'settings') return 'settings';
+    return 'inbox';
   };
 
-  // Components for each section
-  const InboxComponent = () => (
-    <PrimaryTabsComponent
-      tabs={providerTabs}
-      selectedColor="secondary"
-      selectedTabIndex={selectedProviderIndex}
-      onSelectTab={onSelectProvider}
-    />
-  );
-  const AssignedComponent = () => <div>Work Board (placeholder)</div>;
-  const AdminComponent = () => <div>Provider Accounts (placeholder)</div>;
-  const SettingsComponent = () => <div>User Settings (placeholder)</div>;
-
-  // Side list items
-  const list: IListItem[] = [
-    {
-      component: InboxComponent,
-      text: "Inbox",
-      value: "1",
-      icon: SmsIcon,
-      path: "inbox",
-    },
-    {
-      component: AssignedComponent,
-      text: "Assigned to Me",
-      value: "2",
-      icon: PeopleIcon,
-      path: "assigned",
-    },
-    {
-      component: AdminComponent,
-      text: "Admin",
-      value: "3",
-      icon: DocumentIcon,
-      path: "admin",
-    },
-    {
-      component: SettingsComponent,
-      text: "Settings",
-      value: "4",
-      icon: SettingsIcon,
-      path: "settings",
-    },
-  ];
-
-  const onSelectItem = (value: string) => {
-    const selectedItem = list.find((item) => item.value === value);
-    setSelected(selectedItem);
-    if (selectedItem?.path) {
-      push(`/frontdesk/${selectedItem.path}`).then();
-    }
+  const getInitialChannel = (): Channel => {
+    if (frontdeskRoute !== 'inbox' && !provider) return 'all';
+    if (provider === 'email') return 'email';
+    if (provider === 'whatsapp') return 'whatsapp';
+    if (provider === 'internal') return 'internal';
+    if (provider === 'unified') return 'all';
+    return 'all';
   };
 
+  // Use state for navigation - this prevents hard refreshes
+  const [currentSection, setCurrentSection] = useState<Section>(getInitialSection());
+  const [currentChannel, setCurrentChannel] = useState<Channel>(getInitialChannel());
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Only sync with route on initial load
   useEffect(() => {
-    // Sync selected item with route, default to inbox
-    const itemByRoute = frontdeskRoute ? list.find((x) => x.path === frontdeskRoute) : list[0];
-    if (itemByRoute && itemByRoute.value !== selected?.value) {
-      setSelected(itemByRoute);
+    if (!isInitialized) {
+      setCurrentSection(getInitialSection());
+      setCurrentChannel(getInitialChannel());
+      setIsInitialized(true);
     }
-  }, [frontdeskRoute, selected?.value]);
+  }, [frontdeskRoute, provider, isInitialized]);
 
-  const Side = () => <SideList list={list} selectedItem={selected?.value} onSelect={onSelectItem} title="Frontdesk" />;
+  // Navigation handlers - update state immediately, then update URL
+  const handleSectionChange = (section: Section) => {
+    // Update state immediately for instant UI response
+    setCurrentSection(section);
+    
+    // Update URL without causing a re-render
+    const url = section === 'inbox' 
+      ? '/frontdesk/inbox' 
+      : `/frontdesk/${section}`;
+    
+    // Use window.history API for smoother navigation
+    window.history.pushState({}, '', url);
+  };
+
+  const handleChannelChange = (channel: Channel) => {
+    // Update state immediately for instant UI response
+    setCurrentChannel(channel);
+    
+    // Update URL without causing a re-render
+    const channelMap = { 'all': 'unified', 'email': 'email', 'whatsapp': 'whatsapp', 'internal': 'internal' };
+    const url = `/frontdesk/inbox/${channelMap[channel]}`;
+    
+    // Use window.history API for smoother navigation
+    window.history.pushState({}, '', url);
+  };
+
+  // Mock unread counts
+  const channelBadges = useMemo(() => ({
+    all: 12,
+    email: 7,
+    whatsapp: 3,
+    internal: 2
+  }), []);
+
+  // Render list content based on selection
+  const renderListContent = () => {
+    if (currentSection !== 'inbox') {
+      switch (currentSection) {
+        case 'assigned':
+          return (
+            <Box sx={{ p: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Assigned conversations will appear here
+              </Typography>
+            </Box>
+          );
+        case 'admin':
+          return (
+            <Box sx={{ p: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Admin options
+              </Typography>
+            </Box>
+          );
+        case 'settings':
+          return (
+            <Box sx={{ p: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Settings options
+              </Typography>
+            </Box>
+          );
+        default:
+          return null;
+      }
+    }
+
+    // For inbox, show conversation lists
+    return (
+      <Box sx={{ p: 1 }}>
+        <Typography variant="body2" color="text.secondary">
+          {currentChannel === 'all' && 'All conversations'}
+          {currentChannel === 'email' && 'Email conversations'}
+          {currentChannel === 'whatsapp' && 'WhatsApp conversations'}
+          {currentChannel === 'internal' && 'Internal conversations'}
+        </Typography>
+      </Box>
+    );
+  };
+
+  // Render main content based on selection
+  const renderMainContent = () => {
+    if (currentSection !== 'inbox') {
+      switch (currentSection) {
+        case 'assigned':
+          return (
+            <Box sx={{ p: 3 }}>
+              <Typography variant="h4">Assigned to Me</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>Work board coming soon</Typography>
+            </Box>
+          );
+        case 'admin':
+          return (
+            <Box sx={{ p: 3 }}>
+              <Typography variant="h4">Admin</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>Provider accounts management</Typography>
+            </Box>
+          );
+        case 'settings':
+          return (
+            <Box sx={{ p: 3 }}>
+              <Typography variant="h4">Settings</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>User settings</Typography>
+            </Box>
+          );
+        default:
+          return null;
+      }
+    }
+
+    // For inbox, show provider content
+    switch (currentChannel) {
+      case 'all':
+        return <UnifiedProvider />;
+      case 'email':
+        return <EmailProviderView />;
+      case 'whatsapp':
+        return <WhatsAppProviderView />;
+      case 'internal':
+        return <InternalProviderView />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <SideBarContainer side={Side()} header={""} subHeader={""}>
-      {selected && selected.component && <selected.component />}
-    </SideBarContainer>
+    <ThreeColumnLayout
+      navigationContent={
+        <NavigationSidebar
+          selectedChannel={currentChannel}
+          selectedSection={currentSection}
+          onChannelSelect={handleChannelChange}
+          onSectionSelect={handleSectionChange}
+          channelBadges={channelBadges}
+        />
+      }
+      listContent={
+        <DynamicListPanel
+          channel={currentChannel}
+          content={renderListContent()}
+          searchValue={searchValue}
+          onSearchChange={currentSection === 'inbox' ? setSearchValue : undefined}
+          title={currentSection !== 'inbox' ? 
+            currentSection.charAt(0).toUpperCase() + currentSection.slice(1) : 
+            undefined
+          }
+        />
+      }
+      mainContent={
+        <ContentArea>
+          {renderMainContent()}
+        </ContentArea>
+      }
+    />
   );
 };
 

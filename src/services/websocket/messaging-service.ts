@@ -80,10 +80,9 @@ export class MessagingService {
         forceNew: false,
         reconnection: true,
         reconnectionDelay: 1000,
-        reconnectionAttempts: 10,
         // Enhanced reconnection strategy based on knowledge base
+        reconnectionAttempts: 10,
         reconnectionDelayMax: 5000,
-        maxReconnectionAttempts: 10,
         // Enable connection state recovery (knowledge base best practice)
         autoConnect: true,
         // Add ping/pong configuration for better connection monitoring
