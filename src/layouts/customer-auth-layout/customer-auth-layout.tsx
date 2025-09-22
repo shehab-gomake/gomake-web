@@ -10,6 +10,7 @@ import { SetupSection } from "@/widgets/quick-setup";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
+import { useTrialRedirect } from "@/hooks/use-trial-redirect";
 
 const CustomerAuthLayout = ({
   children,
@@ -42,6 +43,9 @@ const CustomerAuthLayout = ({
     getLastVersion,
     isHomePage,
   } = useCustomerAuthLayout(permissionEnumValue, allowAnonymous, customGap);
+
+  // Handle trial redirect in case of trial finished
+  useTrialRedirect();
 
   useEffect(() => {
     getLastVersion();
