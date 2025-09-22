@@ -50,6 +50,7 @@ export const materialCategoriesState = atom<
     categoryKey: string;
     categoryName: string;
     isDeletable: boolean;
+    imageURL?: string | null;
     additionalAttributes?: any;
   }[]
 >({

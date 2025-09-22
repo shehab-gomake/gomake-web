@@ -68,12 +68,12 @@ const useMaterials = (isAdmin: boolean) => {
       { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
     >(materialHeadersState);
 
-  console.log("materialHeaders", materialHeaders);
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
       categoryName: string;
       isDeletable: boolean;
+      imageURL?: string | null;
     }[]
   >(materialCategoriesState);
 
@@ -199,7 +199,12 @@ const useMaterials = (isAdmin: boolean) => {
   const getMaterialCategories = async (material) => {
     const callBack = (res) => {
       if (res?.success) {
-        setMaterialCategories(res?.data);
+        // Map the response to include imageURL
+        const categoriesWithImages = res?.data?.map((category) => ({
+          ...category,
+          imageURL: category.imageURL || null
+        }));
+        setMaterialCategories(categoriesWithImages);
       } else {
         // push("/materials");
       }
@@ -217,10 +222,60 @@ const useMaterials = (isAdmin: boolean) => {
       text: category.categoryName,
       value: category.categoryKey,
       icon: () => (
-        <SideLeftMenuWidget
-          onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-          category={category}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Category Image */}
+          <div style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f5f5f5',
+            border: '1px solid #e0e0e0'
+          }}>
+            {category.imageURL && category.imageURL !== "" ? (
+              <img
+                src={category.imageURL}
+                alt={category.categoryName}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+                onError={(e) => {
+                  // Fallback to default icon if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (nextElement) {
+                    nextElement.style.display = 'flex';
+                  }
+                }}
+              />
+            ) : null}
+            <div
+              style={{
+                display: category.imageURL && category.imageURL !== "" ? 'none' : 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                fontSize: '14px',
+                color: '#666',
+                fontWeight: 'bold'
+              }}
+            >
+              {category.categoryName.charAt(0).toUpperCase()}
+            </div>
+          </div>
+
+          {/* Action Menu */}
+          <SideLeftMenuWidget
+            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+            category={category}
+          />
+        </div>
       ),
     }));
   }, [materialCategories]);

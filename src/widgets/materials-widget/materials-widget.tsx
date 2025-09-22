@@ -277,18 +277,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           sx={{
             position: 'fixed',
             top: 115,
-            left: 140,
-            right: 0,
+            [dir === 'rtl' ? 'right' : 'left']: 140,
+            [dir === 'rtl' ? 'left' : 'right']: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
             zIndex: 1300,
-            display: 'flex'
+            display: 'flex',
           }}
           onClick={() => setIsSidebarOpen(false)}
         >
           <Box
             sx={{
-              width: '500px',
+              width: '330px',
               backgroundColor: '#fff',
               height: '100%',
               overflow: 'auto',
