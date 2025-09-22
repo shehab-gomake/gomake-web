@@ -466,7 +466,7 @@ const useMaterials = (isAdmin: boolean) => {
         );
       }),
       t("usersSettings.isActive"),
-      t("inventory"),
+      t("Total inventory"),
       t("Purchase Pricing"),
       t("properties.more"),
     ];

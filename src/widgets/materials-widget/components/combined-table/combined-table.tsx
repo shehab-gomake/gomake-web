@@ -102,7 +102,7 @@ const CombinedTable = ({
                                             width: isFixedColumn ? '120px' : 'auto',
                                             ...(isFixedColumn && {
                                                 position: 'sticky',
-                                                right: (fixedColumnsCount - (index - (headers.length - fixedColumnsCount)) - 1) * 120,
+                                                right: (headers.length - 1 - index) * 125,
                                                 zIndex: 10,
                                                 boxShadow: index === headers.length - fixedColumnsCount ? '-2px 0 4px rgba(0,0,0,0.1)' : 'none'
                                             })
@@ -132,7 +132,7 @@ const CombinedTable = ({
                                                     borderBottom: '1px solid #e0e0e0',
                                                     ...(isFixedColumn && {
                                                         position: 'sticky',
-                                                        right: (fixedColumnsCount - (cellIndex - (headers.length - fixedColumnsCount)) - 1) * 120,
+                                                        right: (headers.length - 1 - cellIndex) * 125,
                                                         zIndex: 5,
                                                         backgroundColor: '#fff',
                                                         boxShadow: cellIndex === headers.length - fixedColumnsCount ? '-2px 0 4px rgba(0,0,0,0.1)' : 'none'
