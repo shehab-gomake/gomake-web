@@ -84,7 +84,7 @@ const CombinedTable = ({
                     },
                 }}
             >
-                <Table >
+                <Table sx={{ width: '100%', tableLayout: 'auto' }}>
                     <TableHead>
                         <TableRow sx={{ backgroundColor: '#EBECFF' }}>
                             {headers.map((header, index) => {
@@ -98,7 +98,8 @@ const CombinedTable = ({
                                             whiteSpace: 'nowrap',
                                             padding: '12px 8px',
                                             backgroundColor: '#EBECFF',
-                                            minWidth: isFixedColumn ? '120px' : '100px',
+                                            minWidth: isFixedColumn ? '120px' : 'auto',
+                                            width: isFixedColumn ? '120px' : 'auto',
                                             ...(isFixedColumn && {
                                                 position: 'sticky',
                                                 right: (fixedColumnsCount - (index - (headers.length - fixedColumnsCount)) - 1) * 120,
@@ -126,7 +127,8 @@ const CombinedTable = ({
                                                     textAlign: 'center',
                                                     padding: '12px 8px',
                                                     whiteSpace: 'nowrap',
-                                                    minWidth: isFixedColumn ? '120px' : '100px',
+                                                    minWidth: isFixedColumn ? '120px' : 'auto',
+                                                    width: isFixedColumn ? '120px' : 'auto',
                                                     borderBottom: '1px solid #e0e0e0',
                                                     ...(isFixedColumn && {
                                                         position: 'sticky',
