@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useStyle } from "./style";
+import { createGlobalStyle } from "styled-components";
 
 interface StripePricingTableProps {
   pricingTableId: string;
@@ -28,14 +29,23 @@ const StripePricingTable: React.FC<StripePricingTableProps> = ({
     }
   }, []);
 
+  const GlobalStyle = createGlobalStyle`
+  stripe-pricing-table {
+    display: block;
+    width: 100%;
+  }
+
+  /* Correct casing + force override */
+  stripe-pricing-table .PricingTable-grid {
+    display: grid !important;
+    gap: 48px !important;
+    justify-content: space-around !important;
+  }
+`;
+
   return (
     <div style={style || classes.container} className={className}>
-      <style jsx>{`
-        stripe-pricing-table {
-          display: block;
-          width: 100%;
-        }
-      `}</style>
+      <GlobalStyle />
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
         publishable-key={publishableKey}

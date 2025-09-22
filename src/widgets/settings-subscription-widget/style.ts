@@ -44,7 +44,7 @@ const useStyle = () => {
       },
       pricingTable: {
         width: "100%",
-        maxWidth: "900px",
+        // width: "60%",
         backgroundColor: "white",
         borderRadius: "12px",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
