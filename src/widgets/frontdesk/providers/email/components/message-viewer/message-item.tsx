@@ -5,25 +5,14 @@ import { alpha } from "@mui/material";
 import { EmailMessage } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
 import { safeFormatDate } from "../../utils/date-utils";
-import { EmailActionButton } from "../ui/email-action-button";
 
 interface MessageItemProps {
   message: EmailMessage;
   isLast?: boolean;
   showInlineReply: boolean;
-  onReply: () => void;
-  onReplyAll: () => void;
-  onForward: () => void;
 }
 
-export const MessageItem: React.FC<MessageItemProps> = ({
-  message,
-  isLast = false,
-  showInlineReply,
-  onReply,
-  onReplyAll,
-  onForward,
-}) => {
+export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = false, showInlineReply }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const isOwn = false; // TODO: Check if message is from current user
 
@@ -59,14 +48,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
               {formatMessageDate(message.createdAt)}
             </Typography>
           </Stack>
-
-          {!showInlineReply && (
-            <Stack direction="row" spacing={0.5}>
-              <EmailActionButton icon={<div>↩</div>} tooltip="Reply" onClick={onReply} />
-              <EmailActionButton icon={<div>↩↩</div>} tooltip="Reply All" onClick={onReplyAll} />
-              <EmailActionButton icon={<div>↪</div>} tooltip="Forward" onClick={onForward} />
-            </Stack>
-          )}
         </Stack>
 
         {/* Message Content */}

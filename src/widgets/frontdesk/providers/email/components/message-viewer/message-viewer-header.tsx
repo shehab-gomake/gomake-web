@@ -1,9 +1,7 @@
-import React from "react";
-import { Box, Stack, Typography, Badge, Chip, Divider } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import {
-  People as PeopleIcon,
   AccessTime as TimeIcon,
-  Label as LabelIcon,
   ArrowBack as BackIcon,
   Star as StarIcon,
   StarBorder as StarBorderIcon,
@@ -48,6 +46,21 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
   showInlineReply,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMoreActionsClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreActionsClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuAction = (action: () => void) => {
+    action();
+    handleMoreActionsClose();
+  };
 
   return (
     <Box
@@ -59,8 +72,8 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
     >
       <Stack spacing={2}>
         {/* Main Header Row */}
-        <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
-          {/* Left Side: Back Button + Subject */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          {/* Left Side: Back Button + Subject + Date */}
           <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
             <EmailActionButton icon={<BackIcon sx={{ fontSize: 20 }} />} tooltip="Back to conversations" onClick={onBack} />
 
@@ -78,44 +91,35 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
                 {safeDecodeHtml(conversation.subject)}
               </Typography>
 
-              {/* Participants Badge */}
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Badge badgeContent={conversation.messageCount} color="primary">
-                  <PeopleIcon sx={{ fontSize: 18, color: neutralColor(600) }} />
-                </Badge>
-                <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-                  {conversation.participants.length} participant{conversation.participants.length !== 1 ? "s" : ""}
-                </Typography>
-              </Stack>
+              {/* Date */}
+              <Typography
+                variant="caption"
+                sx={{
+                  color: neutralColor(500),
+                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                }}
+              >
+                <TimeIcon sx={{ fontSize: 14 }} />
+                {safeFormatDate(conversation.date)}
+              </Typography>
             </Stack>
           </Stack>
 
           {/* Right Side: Action Buttons */}
           <Stack direction="row" spacing={1} alignItems="center">
-            {/* Primary Actions */}
+            {/* Reply Actions - More compact design */}
             {!showInlineReply && (
               <Stack direction="row" spacing={0.5} sx={{ mr: 2 }}>
-                <EmailActionButton icon={<ReplyIcon sx={{ fontSize: 18 }} />} tooltip="Reply" variant="button" onClick={onReply}>
-                  Reply
-                </EmailActionButton>
-
-                <EmailActionButton
-                  icon={<ReplyAllIcon sx={{ fontSize: 18 }} />}
-                  tooltip="Reply All"
-                  variant="button"
-                  onClick={onReplyAll}
-                >
-                  Reply All
-                </EmailActionButton>
-
+                <EmailActionButton icon={<ReplyIcon sx={{ fontSize: 18 }} />} tooltip="Reply" onClick={onReply} />
+                <EmailActionButton icon={<ReplyAllIcon sx={{ fontSize: 18 }} />} tooltip="Reply All" onClick={onReplyAll} />
                 <EmailActionButton
                   icon={<ForwardIcon sx={{ fontSize: 18 }} />}
                   tooltip="Forward"
-                  variant="button"
                   onClick={() => onForward(conversation)}
-                >
-                  Forward
-                </EmailActionButton>
+                />
               </Stack>
             )}
 
@@ -134,68 +138,57 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
               />
 
               <EmailActionButton
-                icon={<PrintIcon sx={{ fontSize: 20 }} />}
-                tooltip="Print"
-                onClick={() => onPrint(conversation)}
-              />
-
-              <EmailActionButton
-                icon={<ArchiveIcon sx={{ fontSize: 20 }} />}
-                tooltip="Archive"
-                onClick={() => onArchive(conversation.id)}
-              />
-
-              <EmailActionButton
-                icon={<DeleteIcon sx={{ fontSize: 20 }} />}
-                tooltip="Delete"
-                onClick={() => onDelete(conversation.id)}
+                icon={<MoreIcon sx={{ fontSize: 20 }} />}
+                tooltip="More actions"
+                onClick={handleMoreActionsClick}
               />
             </Stack>
           </Stack>
         </Stack>
-
-        {/* Status Tags and Metadata Row */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ flex: 1 }}>
-            {/* Status Tags */}
-            {conversation.labels?.map((label) => (
-              <Chip
-                key={label}
-                label={label}
-                size="small"
-                icon={<LabelIcon sx={{ fontSize: 14 }} />}
-                sx={{
-                  height: 24,
-                  fontSize: "0.75rem",
-                  fontWeight: 500,
-                  backgroundColor: alpha(primaryColor(100), 0.8),
-                  color: primaryColor(700),
-                  border: `1px solid ${alpha(primaryColor(300), 0.5)}`,
-                  borderRadius: 2,
-                  "& .MuiChip-icon": {
-                    color: primaryColor(600),
-                  },
-                }}
-              />
-            ))}
-
-            {/* Date */}
-            <Typography
-              variant="caption"
-              sx={{
-                color: neutralColor(500),
-                fontWeight: 500,
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-              }}
-            >
-              <TimeIcon sx={{ fontSize: 14 }} />
-              {safeFormatDate(conversation.date)}
-            </Typography>
-          </Stack>
-        </Stack>
       </Stack>
+
+      {/* More Actions Dropdown Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMoreActionsClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          sx: {
+            mt: 1,
+            minWidth: 160,
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          },
+        }}
+      >
+        <MenuItem onClick={() => handleMenuAction(() => onPrint(conversation))}>
+          <ListItemIcon>
+            <PrintIcon sx={{ fontSize: 20 }} />
+          </ListItemIcon>
+          <ListItemText>Print</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={() => handleMenuAction(() => onArchive(conversation.id))}>
+          <ListItemIcon>
+            <ArchiveIcon sx={{ fontSize: 20 }} />
+          </ListItemIcon>
+          <ListItemText>Archive</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={() => handleMenuAction(() => onDelete(conversation.id))} sx={{ color: "error.main" }}>
+          <ListItemIcon>
+            <DeleteIcon sx={{ fontSize: 20, color: "error.main" }} />
+          </ListItemIcon>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };

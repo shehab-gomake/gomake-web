@@ -105,9 +105,6 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
               message={message}
               isLast={index === messages.length - 1}
               showInlineReply={showInlineReply}
-              onReply={handleReply}
-              onReplyAll={handleReplyAll}
-              onForward={() => onForward(conversation)}
             />
           ))
         )}
