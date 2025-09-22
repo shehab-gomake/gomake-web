@@ -108,7 +108,7 @@ export const list: IListItem[] = [
   {
     component: SettingsSubscriptionWidget,
     text: "settings.subscriptions",
-    value: "11",
+    value: "12",
     icon: DollarCircleIcon,
     path: "subscriptions",
   },
