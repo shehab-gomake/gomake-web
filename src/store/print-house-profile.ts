@@ -32,4 +32,8 @@ export interface IPrintHouseProfile {
   isShowOnBoardingMenu?: boolean;
   mailingProviderType?: number;
   stripeCustomerId?: string;
+  isTrial?: boolean;
+  maxTrialDays?: number;
+  remainingTrialDays?: number;
+  trialFinished?: boolean;
 }
