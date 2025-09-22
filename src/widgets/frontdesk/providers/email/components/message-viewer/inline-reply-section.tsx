@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Stack, Typography, TextField, Button, IconButton, CircularProgress } from "@mui/material";
+import { Box, Stack, Typography, Button, IconButton, CircularProgress } from "@mui/material";
 import { Send as SendIcon, Close as CloseIcon } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { BaseMessageInput } from "@/widgets/frontdesk/components/shared/BaseMessageInput";
 
 interface InlineReplySectionProps {
   isReplyAll: boolean;
@@ -40,31 +41,18 @@ export const InlineReplySection: React.FC<InlineReplySectionProps> = ({
           </IconButton>
         </Stack>
 
-        <TextField
-          multiline
-          rows={4}
-          fullWidth
-          placeholder={`Type your ${isReplyAll ? "reply to all" : "reply"}...`}
+        <BaseMessageInput
           value={replyText}
-          onChange={(e) => onReplyTextChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault();
-              onSend();
-            }
+          onChange={onReplyTextChange}
+          onSend={async (message) => {
+            onReplyTextChange(message);
+            onSend();
           }}
+          placeholder={`Type your ${isReplyAll ? "reply to all" : "reply"}...`}
           disabled={isSending}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              backgroundColor: "white",
-              "&:hover fieldset": {
-                borderColor: primaryColor(300),
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: primaryColor(500),
-              },
-            },
-          }}
+          isSending={isSending}
+          showAttachments={true}
+          showEmojis={true}
         />
 
         <Stack direction="row" justifyContent="space-between" alignItems="center">
