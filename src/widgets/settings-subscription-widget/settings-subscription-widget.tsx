@@ -3,10 +3,14 @@ import { useTranslation } from "react-i18next";
 import { StripePricingTable } from "@/components";
 import { useStyle } from "@/widgets/settings-subscription-widget/style";
 import Head from "next/head";
+import { useRecoilValue } from "recoil";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 const SettingsSubscriptionWidget = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
 
   return (
     <>
@@ -23,8 +27,9 @@ const SettingsSubscriptionWidget = () => {
 
         <div style={classes.pricingContainer}>
           <StripePricingTable
-            pricingTableId="prctbl_1RQwSqP05M77HWgukWNMDKWZ"
-            publishableKey="pk_test_51RFtGyP05M77HWgu5OIZ9lwCyQypUn0aIjzgIMSMnNprMc7utXNQ7n55rnxoTEBirdJHbp72icj1VddYQeNz60Js00zgVNmZl3"
+            pricingTableId="prctbl_1SA9FgP444riBeBrGcuI4KD7"
+            publishableKey="pk_live_51RFtGmP444riBeBr18hRSoV5hPgPKmshvZYSHyfA3BiJTnWYR13qBa142UCJdlOMnwAyfAO1LhqO8tbW7nECanx4008dAKXic0"
+            clientReferenceId={printHouseProfileState?.stripeCustomerId}
             className="custom-scrollbar"
             style={classes.pricingTable}
           />

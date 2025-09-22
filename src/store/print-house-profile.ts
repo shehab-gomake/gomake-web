@@ -31,4 +31,5 @@ export interface IPrintHouseProfile {
   domain?: string;
   isShowOnBoardingMenu?: boolean;
   mailingProviderType?: number;
+  stripeCustomerId?: string;
 }
