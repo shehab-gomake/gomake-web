@@ -28,6 +28,7 @@ import { ConversationListProps } from '../../types/direct-messages.types';
 export const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
   selectedId,
+  currentUserId,
   onSelect,
   loading = false,
   hasMore = false,
@@ -54,7 +55,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     
     if (conversation.type === 'DM') {
       // For DM, show the other participant's name
-      const otherMember = conversation.members?.find(member => member.userId !== selectedId);
+      const otherMember = conversation.members?.find(member => member.userId !== currentUserId);
       return otherMember?.name || 'Direct Message';
     }
     
@@ -67,7 +68,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
   const getConversationAvatar = (conversation: Conversation) => {
     if (conversation.type === 'DM') {
-      const otherMember = conversation.members?.find(member => member.userId !== selectedId);
+      const otherMember = conversation.members?.find(member => member.userId !== currentUserId);
       if (otherMember) {
         return (
           <Avatar sx={{ width: 40, height: 40 }}>

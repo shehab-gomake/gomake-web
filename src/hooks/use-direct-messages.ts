@@ -128,11 +128,14 @@ export const useDirectMessages = () => {
         includeArchived: false,
       });
 
-      setConversations(response.conversations);
+      // Filter out any invalid conversations before setting
+      const validConversations = response.conversations.filter(conv => conv && conv.id);
+      console.log('Loaded conversations:', validConversations);
+      setConversations(validConversations);
       
       // Update unread counts
       const unreadMap: Record<string, number> = {};
-      response.conversations.forEach(conv => {
+      validConversations.forEach(conv => {
         unreadMap[conv.id] = conv.unreadCount || 0;
       });
       setUnreadCounts(unreadMap);
@@ -213,8 +216,10 @@ export const useDirectMessages = () => {
         setError(null);
         const response = await directMessagesService.createConversation(data);
         
-        // Add to conversations list
-        setConversations((prev) => [response.conversation, ...prev]);
+        // Add to conversations list (ensure the conversation is valid)
+        if (response.conversation && response.conversation.id) {
+          setConversations((prev) => [response.conversation, ...prev]);
+        }
         
         // Select the new conversation
         await selectConversation(response.conversation);
@@ -236,9 +241,9 @@ export const useDirectMessages = () => {
 
       // Check if conversation already exists
       const existingConversation = conversations.find(
-        conv => conv.type === 'DM' && 
-        conv.members?.some(member => member.userId === userId) &&
-        conv.members?.some(member => member.userId === currentUser.userId)
+        conv => conv && conv.id && conv.type === 'DM' && 
+        conv.members?.some(member => member && member.userId === userId) &&
+        conv.members?.some(member => member && member.userId === currentUser.userId)
       );
 
       if (existingConversation) {

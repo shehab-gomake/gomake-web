@@ -66,14 +66,46 @@ export class DirectMessagesService {
     includeArchived?: boolean;
   } = {}): Promise<ListConversationsResponse> {
     const params = new URLSearchParams();
-    if (options.limit) params.append('limit', options.limit.toString());
-    if (options.offset) params.append('offset', options.offset.toString());
+    if (options.limit !== undefined) params.append('limit', options.limit.toString());
+    if (options.offset !== undefined) params.append('offset', options.offset.toString());
     if (options.includeArchived !== undefined) {
       params.append('includeArchived', options.includeArchived.toString());
     }
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    return this.makeRequest<ListConversationsResponse>(`/dms${queryString}`);
+    const rawResponse = await this.makeRequest<any[]>(`/dms${queryString}`);
+    console.log('Raw API response:', rawResponse);
+    
+    // Transform API response to match expected Conversation interface
+    const conversations: Conversation[] = rawResponse.map((conv: any) => ({
+      id: conv.id,
+      type: conv.type,
+      participantCount: conv.participantCount,
+      lastMessageAt: conv.lastMessageAt,
+      name: conv.name,
+      isActive: conv.isActive,
+      unreadCount: conv.unreadCount,
+      members: conv.members?.map((member: any) => ({
+        userId: member.userId,
+        email: member.user?.email || '',
+        firstName: member.user?.firstName || '',
+        lastName: member.user?.lastName || '',
+        name: member.user?.name || '',
+        isArchived: member.isArchived,
+        isFavorite: member.isFavorite,
+        lastReadAt: member.lastReadAt,
+        lastReadMessageId: member.lastReadMessageId,
+        role: member.role === 'admin' ? 'admin' : 'member',
+      })) || [],
+    }));
+    
+    console.log('Transformed conversations:', conversations);
+    
+    return {
+      conversations,
+      hasMore: false, // TODO: Implement pagination when backend supports it
+      total: conversations.length,
+    };
   }
 
   // Get conversation details

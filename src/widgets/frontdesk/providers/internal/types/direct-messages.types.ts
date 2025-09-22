@@ -170,6 +170,7 @@ export interface DirectMessagesState {
 export interface ConversationListProps {
   conversations: Conversation[];
   selectedId?: string;
+  currentUserId?: string;
   onSelect: (conversation: Conversation) => void;
   loading?: boolean;
   hasMore?: boolean;

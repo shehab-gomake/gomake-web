@@ -344,6 +344,7 @@ const DirectMessagesProviderView: React.FC = () => {
             <ConversationList
               conversations={conversations}
               selectedId={activeConversationId}
+              currentUserId={currentUser?.userId}
               onSelect={selectConversation}
               loading={isLoadingConversations}
             />

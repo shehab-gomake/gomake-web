@@ -115,7 +115,10 @@ export const dmActiveConversationSelector = selector({
   get: ({ get }) => {
     const conversations = get(dmConversationsState);
     const activeId = get(dmActiveConversationIdState);
-    return conversations.find(conv => conv.id === activeId) || null;
+    
+    // Filter out any undefined/null conversations and ensure they have valid id
+    const validConversations = conversations.filter(conv => conv && conv.id);
+    return validConversations.find(conv => conv.id === activeId) || null;
   }
 });
 
@@ -160,7 +163,10 @@ export const dmConversationsWithUnreadSelector = selector({
     const conversations = get(dmConversationsState);
     const unreadCounts = get(dmUnreadCountsState);
     
-    return conversations.map(conv => ({
+    // Filter out any undefined/null conversations and ensure they have valid id
+    const validConversations = conversations.filter(conv => conv && conv.id);
+    
+    return validConversations.map(conv => ({
       ...conv,
       unreadCount: unreadCounts[conv.id] || 0
     }));
@@ -235,10 +241,13 @@ export const dmFilteredConversationsSelector = selector({
     
     const query = searchQuery.toLowerCase();
     return conversations.filter(conv => 
-      conv.name?.toLowerCase().includes(query) ||
-      conv.members?.some(member => 
-        member.name.toLowerCase().includes(query) ||
-        member.email.toLowerCase().includes(query)
+      conv && conv.id && (
+        conv.name?.toLowerCase().includes(query) ||
+        conv.members?.some(member => 
+          member && member.name && member.email &&
+          (member.name.toLowerCase().includes(query) ||
+           member.email.toLowerCase().includes(query))
+        )
       )
     );
   }

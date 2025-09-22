@@ -6,6 +6,7 @@ import {
   Stack,
   Tooltip,
   CircularProgress,
+  Typography,
 } from '@mui/material';
 import {
   Send as SendIcon,
