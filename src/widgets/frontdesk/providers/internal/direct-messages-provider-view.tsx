@@ -300,12 +300,12 @@ const DirectMessagesProviderView: React.FC = () => {
   }
 
   return (
-    <Stack sx={{ 
-      width: "100%", 
+    <Stack sx={{
+      width: "100%",
       height: "100%",
       display: "flex",
       flexDirection: "column",
-      gap: 2,
+      gap: 0,
       overflow: "hidden",
       boxSizing: "border-box"
     }}>
@@ -333,7 +333,8 @@ const DirectMessagesProviderView: React.FC = () => {
       <Stack direction="row" gap={2} sx={{
         width: "100%",
         flex: 1,
-        height: "100%"
+        height: "100%",
+        mt: 2
       }}>
         {/* Left: Conversations sidebar */}
         <div style={{ width: 280, minWidth: 280, height: "100%" }}>

@@ -26,7 +26,7 @@ export const ContentArea: React.FC<ContentAreaProps> = ({
         backgroundColor: theme.palette.background.paper,
         overflow: 'hidden',
         position: 'relative',
-        padding: noPadding ? 0 : 0, // Content padding handled by child components
+        padding: noPadding ? 0 : '0 24px 16px 16px', // No top padding, keep side/bottom padding
         // Add fade animation for content changes
         '& > *': {
           animation: 'fadeIn 0.2s ease-in-out',
