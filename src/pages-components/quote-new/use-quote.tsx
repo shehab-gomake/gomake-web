@@ -432,11 +432,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
@@ -455,8 +455,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-        ? "10%"
-        : null, // Details column (optional)
+      ? "10%"
+      : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -1215,7 +1215,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-                (isPrintHouseMaterialItem || selectedFirstMaterial)
+              (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1458,7 +1458,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1846,7 +1846,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2556,10 +2556,10 @@ const useQuoteNew = ({
         isOrder
           ? onclickCreateNew()
           : navigate(
-            isOutgoingPayments
-              ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-              : `/${documentPath}?isNewCreation=true`
-          )
+              isOutgoingPayments
+                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+                : `/${documentPath}?isNewCreation=true`
+            )
       }
       startIcon={<PlusIcon />}
     >
