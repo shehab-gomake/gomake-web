@@ -291,7 +291,15 @@ const DirectMessagesProviderView: React.FC = () => {
   }
 
   return (
-    <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
+    <Stack sx={{ 
+      width: "100%", 
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+      overflow: "hidden",
+      boxSizing: "border-box"
+    }}>
       {/* Connection status */}
       <Alert
         severity={getSeverity(connectionStatus)}
@@ -313,7 +321,12 @@ const DirectMessagesProviderView: React.FC = () => {
       </Alert>
 
       {/* Three-pane layout */}
-      <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
+      <Stack direction="row" gap={2} sx={{ 
+        width: "100%", 
+        flex: 1, 
+        minHeight: 0,
+        overflow: "hidden"
+      }}>
         {/* Left: Conversations sidebar */}
         <Paper
           elevation={0}
@@ -367,11 +380,10 @@ const DirectMessagesProviderView: React.FC = () => {
             flex: 1,
             border: "1px solid #EAECF0",
             borderRadius: 2,
-            overflow: "hidden",
             display: "flex",
             flexDirection: "column",
             minWidth: 0,
-            height: "100%",
+            overflow: "hidden",
           }}
         >
           {activeConversationId ? (

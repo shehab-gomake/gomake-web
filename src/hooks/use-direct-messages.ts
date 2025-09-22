@@ -458,6 +458,9 @@ export const useDirectMessages = () => {
 
         // Clear draft for this conversation
         setDraft((prev) => ({ ...prev, [activeConversationId]: "" }));
+        
+        // Stop typing indicator when message is sent
+        stopTyping();
 
         setIsSending(false);
         return true;
@@ -468,7 +471,7 @@ export const useDirectMessages = () => {
         return false;
       }
     },
-    [activeConversationId, currentUser, setIsSending, setError, setDraft, setMessages]
+    [activeConversationId, currentUser, setIsSending, setError, setDraft, setMessages, stopTyping]
   );
 
   // Typing indicators
@@ -653,8 +656,12 @@ export const useDirectMessages = () => {
       console.log("Message confirmed:", data);
     };
 
-    // Typing handlers
+    // Typing handlers with auto-cleanup
+    const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
+    
     const handleUserTyping = (data: DMUserTypingEvent) => {
+      const timeoutKey = `${data.conversationId}-${data.userId}`;
+      
       setTypingUsers((prev) => {
         const newTypingUsers = { ...prev };
         const conversationTypers = newTypingUsers[data.conversationId] || [];
@@ -663,8 +670,32 @@ export const useDirectMessages = () => {
           if (!conversationTypers.includes(data.userId)) {
             newTypingUsers[data.conversationId] = [...conversationTypers, data.userId];
           }
+          
+          // Clear any existing timeout for this user
+          if (typingTimeouts.current[timeoutKey]) {
+            clearTimeout(typingTimeouts.current[timeoutKey]);
+          }
+          
+          // Set auto-cleanup after 5 seconds (in case stop event is missed)
+          typingTimeouts.current[timeoutKey] = setTimeout(() => {
+            setTypingUsers((prev) => {
+              const updatedTypers = { ...prev };
+              updatedTypers[data.conversationId] = (updatedTypers[data.conversationId] || [])
+                .filter((id) => id !== data.userId);
+              return updatedTypers;
+            });
+            delete typingTimeouts.current[timeoutKey];
+          }, 5000);
+          
         } else {
+          // User stopped typing
           newTypingUsers[data.conversationId] = conversationTypers.filter((id) => id !== data.userId);
+          
+          // Clear the timeout if it exists
+          if (typingTimeouts.current[timeoutKey]) {
+            clearTimeout(typingTimeouts.current[timeoutKey]);
+            delete typingTimeouts.current[timeoutKey];
+          }
         }
 
         return newTypingUsers;
@@ -762,6 +793,8 @@ export const useDirectMessages = () => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
+      // Clear all typing timeouts
+      Object.values(typingTimeouts.current).forEach(timeout => clearTimeout(timeout));
     };
   }, [
     connected,
