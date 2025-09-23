@@ -370,7 +370,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                     )}
                   </div>
 
-                  <div style={{ marginBottom: "5px" }}>
+                  {/* <div style={{ marginBottom: "5px" }}>
                     <Pagination
                       count={pagesCount}
                       variant="outlined"
@@ -378,7 +378,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       page={pageNumber}
                       onChange={(event, value) => setPageNumber(value)}
                     />
-                  </div>
+                  </div> */}
                 </Stack>
               )}
             </>

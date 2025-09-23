@@ -52,7 +52,7 @@ const CombinedTable = ({
     };
 
 
-    const fixedColumnsCount = 3;
+    const fixedColumnsCount = 4;
 
     return (
         <>

@@ -12,6 +12,7 @@ interface IInventoryInputProps {
 }
 
 const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
+    console.log('value', value);
     const { t } = useTranslation();
     const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);

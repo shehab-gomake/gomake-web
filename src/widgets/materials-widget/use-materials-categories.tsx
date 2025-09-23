@@ -17,7 +17,6 @@ import {
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { getPrintHouseMaterialCategoryDataApi, getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { isLoadingMaterialsState, userState } from "@/store";
@@ -25,6 +24,7 @@ import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
+import { getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
@@ -126,85 +126,6 @@ const useMaterialsCategories = (isAdmin: boolean) => {
                 value: row.isActive,
                 isEditable: true,
                 type: 2 // BOOLEAN
-              };
-            }
-
-            // Handle storageLocation from API response (top level)
-            if (row.storageLocation !== null && row.storageLocation !== undefined) {
-              newRow.rowData.storageLocation = {
-                value: row.storageLocation,
-                isEditable: true,
-                type: 6, // LIST
-                values: [
-                  { key: "storage1", value: "Storage 1" },
-                  { key: "storage2", value: "Storage 2" },
-                  { key: "storage3", value: "Storage 3" },
-                  { key: "storage4", value: "Storage 4" },
-                  { key: "storage5", value: "Storage 5" }
-                ]
-              };
-            } else if (!newRow.rowData.storageLocation) {
-              newRow.rowData.storageLocation = {
-                value: "",
-                isEditable: true,
-                type: 6, // LIST
-                values: [
-                  { key: "storage1", value: "Storage 1" },
-                  { key: "storage2", value: "Storage 2" },
-                  { key: "storage3", value: "Storage 3" },
-                  { key: "storage4", value: "Storage 4" },
-                  { key: "storage5", value: "Storage 5" }
-                ]
-              };
-            }
-
-            // Handle minStock and optimalStock from API response
-            if (row.minStock !== null && row.minStock !== undefined) {
-              newRow.rowData.minimalStock = {
-                value: row.minStock.toString(),
-                isEditable: true,
-                type: 1, // NUMBER
-                unit: "m"
-              };
-            } else if (!newRow.rowData.minimalStock) {
-              newRow.rowData.minimalStock = {
-                value: "",
-                isEditable: true,
-                type: 1, // NUMBER
-                unit: "m"
-              };
-            }
-
-            if (row.optimalStock !== null && row.optimalStock !== undefined) {
-              newRow.rowData.optimalStock = {
-                value: row.optimalStock.toString(),
-                isEditable: true,
-                type: 1, // NUMBER
-                unit: "m"
-              };
-            } else if (!newRow.rowData.optimalStock) {
-              newRow.rowData.optimalStock = {
-                value: "",
-                isEditable: true,
-                type: 1, // NUMBER
-                unit: "m"
-              };
-            }
-            // Handle inventory field - use real data from API
-            if (!newRow.rowData.inventory) {
-              newRow.rowData.inventory = {
-                value: "Open",
-                isEditable: false,
-                type: EDataTypeEnum.INVENTORY, // INVENTORY
-              };
-            }
-
-            // Handle purchasePricing field - use real data from API
-            if (!newRow.rowData.purchasePricing) {
-              newRow.rowData.purchasePricing = {
-                value: "Open",
-                isEditable: false,
-                type: EDataTypeEnum.PURCHASE_PRICING, // PURCHASE_PRICING
               };
             }
 

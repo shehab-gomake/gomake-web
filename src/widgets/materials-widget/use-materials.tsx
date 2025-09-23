@@ -287,66 +287,6 @@ const useMaterials = (isAdmin: boolean) => {
         const updatedArray = tableHeaders.filter(
           (item) => item.key !== "Active"
         );
-
-        // Add new headers for the new feature
-        const newHeaders = [
-          {
-            "key": "storageLocation",
-            "value": "Storage Location",
-            "unit": null,
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 6,
-            "filterType": null,
-            "values": [
-              { "key": "storage1", "value": "Storage 1" },
-              { "key": "storage2", "value": "Storage 2" },
-              { "key": "storage3", "value": "Storage 3" },
-              { "key": "storage4", "value": "Storage 4" },
-              { "key": "storage5", "value": "Storage 5" }
-            ]
-          },
-          {
-            "key": "minimalStock",
-            "value": "Minimal Stock",
-            "unit": "m",
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 1,
-            "filterType": null,
-            "values": []
-          },
-          {
-            "key": "optimalStock",
-            "value": "Optimal Stock",
-            "unit": "m",
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 1,
-            "filterType": null,
-            "values": []
-          }
-        ];
-
-        // Find the index of isOutSource to insert new headers before it
-        const isOutSourceIndex = updatedArray.findIndex(item => item.key === "isOutSource");
-
-        if (isOutSourceIndex !== -1) {
-          // Insert new headers before isOutSource
-          updatedArray.splice(isOutSourceIndex, 0, ...newHeaders);
-        } else {
-          // If isOutSource not found, add at the end
-          updatedArray.push(...newHeaders);
-        }
         setMaterialHeaders(updatedArray);
         setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
@@ -436,10 +376,9 @@ const useMaterials = (isAdmin: boolean) => {
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
-      t("Suppliers"),
       t("usersSettings.isActive"),
-      t("Total inventory"),
-      t("Purchase Pricing"),
+      // t("Total inventory"),
+      // t("Purchase Pricing"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -501,32 +440,10 @@ const useMaterials = (isAdmin: boolean) => {
             />
           )),
           // Add suppliers column manually since it's now static
-          <TableCellData
-            {...dataRow.rowData.suppliers}
-            id={dataRow.id}
-            isAdmin={isAdmin}
-            parameterKey="suppliers"
-            onChangeRowCheckBox={onChangeRowCheckBox}
-          />,
           dataRow?.isActive
             ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
             : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
-          // Add inventory column manually since it's now static
-          <TableCellData
-            {...dataRow.rowData.inventory}
-            id={dataRow.id}
-            isAdmin={isAdmin}
-            parameterKey="inventory"
-            onChangeRowCheckBox={onChangeRowCheckBox}
-          />,
-          // Add purchasePricing column manually since it's now static
-          <TableCellData
-            {...dataRow.rowData.purchasePricing}
-            id={dataRow.id}
-            isAdmin={isAdmin}
-            parameterKey="purchasePricing"
-            onChangeRowCheckBox={onChangeRowCheckBox}
-          />,
+
           <MaterialMenuWidget
             dataRow={dataRow}
             isAdmin={isAdmin}
