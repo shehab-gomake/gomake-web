@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 // Layout components
 import { ThreeColumnLayout } from './layouts/three-column';
@@ -12,6 +13,7 @@ import { ContentArea } from './layouts/components/ContentArea';
 // Navigation controller
 import { useNavigationController } from './controllers/NavigationController';
 import { ProviderWrapper } from './providers/registry/ProviderRegistry';
+import { unreadCountByProviderSelector } from '@/store/frontdesk';
 
 // Provider-specific list components (to be imported when available)
 // import { UnifiedConversationList } from './providers/unified/components/UnifiedConversationList';
@@ -62,13 +64,8 @@ const FrontdeskWidgetV2: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
-  // Mock unread counts (will be replaced with real data)
-  const channelBadges = useMemo(() => ({
-    all: 12,
-    email: 7,
-    whatsapp: 3,
-    internal: 2
-  }), []);
+  const unreadCounts = useRecoilValue(unreadCountByProviderSelector);
+  const channelBadges = useMemo(() => unreadCounts, [unreadCounts]);
 
   // Render list content based on selected channel
   const renderListContent = () => {

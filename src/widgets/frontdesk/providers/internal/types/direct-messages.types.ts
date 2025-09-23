@@ -107,6 +107,11 @@ export interface DMNewMessageEvent {
   tempId?: string;
 }
 
+export interface DMUnreadCountUpdatedEvent {
+  conversationId: string;
+  unreadCount: number;
+}
+
 export interface DMTypingEvent {
   conversationId: string;
 }

@@ -11,6 +11,7 @@ import {
   DMMessageReadEvent,
   JoinConversationEvent,
   DMPresenceData,
+  DMUnreadCountUpdatedEvent,
 } from "@/widgets/frontdesk/providers/internal/types/direct-messages.types";
 
 export type DMMessageEventHandler = (message: DMNewMessageEvent) => void;
@@ -19,6 +20,7 @@ export type DMTypingEventHandler = (data: DMUserTypingEvent) => void;
 export type DMPresenceEventHandler = (data: any) => void;
 export type DMConnectionEventHandler = (connected: boolean) => void;
 export type DMErrorEventHandler = (error: string) => void;
+export type DMUnreadCountEventHandler = (data: DMUnreadCountUpdatedEvent) => void;
 
 export class DirectMessagesWebSocketService {
   private socket: Socket | null = null;
@@ -271,6 +273,14 @@ export class DirectMessagesWebSocketService {
   onMessageRead(handler: (data: DMMessageReadEvent) => void): void {
     if (this.socket) {
       this.socket.on("dm:messageRead", handler);
+    }
+  }
+
+  onUnreadCountUpdated(handler: DMUnreadCountEventHandler): void {
+    if (this.socket) {
+      this.socket.on("unread_count_updated", handler);
+      this.socket.on("dm:unread_count_updated", handler);
+      this.socket.on("dm:unreadCountUpdated", handler);
     }
   }
   
