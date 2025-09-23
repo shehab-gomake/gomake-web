@@ -135,7 +135,7 @@ const InternalProviderView: React.FC = () => {
               Unable to connect to the messaging service. Please check your connection and try again.
             </Typography>
             <Typography variant="caption" sx={{ color: "#9CA3AF", mt: 1, fontFamily: "monospace" }}>
-              Trying to connect to: {config.messaging_server || config.api_server}/messaging
+              Trying to connect to: {config.messaging_server}/messaging
             </Typography>
             <Button variant="contained" onClick={handleRetryConnection} startIcon={<RefreshIcon />} disabled={isLoading}>
               Retry Connection
