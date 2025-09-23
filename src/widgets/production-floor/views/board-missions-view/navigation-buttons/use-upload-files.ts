@@ -251,6 +251,7 @@ const useUploadFiles = (
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
+    formData.append("uploadFileRequestId", uploadId);
     formData.append("productType", productType ? productType.toString() : null);
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
