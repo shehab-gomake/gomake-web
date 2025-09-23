@@ -36,7 +36,7 @@ const HotfolderArrayInput = ({
       hotFolderName: "",
       remoteName: "",
       fileType: [],
-      fileDeliveryMode: EFileDeliveryMode.ALWAYS_SEND.toString(),
+      fileDeliveryMode: "",
       folderPath: "",
       fileInternalStructure: "",
       username: "",
