@@ -1,7 +1,7 @@
 import { useGomakeAxios} from "@/hooks";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState} from "@/widgets/materials-widget/state";
-import {updatePrintHouseMaterialPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
@@ -63,11 +63,12 @@ const useTableCellData = (isAdmin:boolean) => {
                 priceIndex: index,
             })
         }else{
-            await updatePrintHouseMaterialPropApi(callApi, callBack, {
+            await updateSupplierInventoryApi(callApi, callBack, {
                 key: key,
                 id,
                 updatedValue: value,
                 priceIndex: index,
+                pricingType:1
             })
         }
         

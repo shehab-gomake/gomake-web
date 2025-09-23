@@ -42,6 +42,15 @@ const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
 const GET_SUPPLIER_INVENTORIES_URL = "/v1/printhouse-materials/get-supplier-inventories";
 const GET_PURCHASE_PRICING_URL = "/v1/printhouse-materials/get-purchase-pricing";
 
+// New supplier inventory management endpoints
+const GET_SUPPLIER_INVENTORY_USAGE_URL = "/v1/printhouse-materials/get-supplier-inventory-usage";
+const DELETE_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/delete-supplier-inventory";
+const DELETE_PRINTHOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/delete-print-house-material-supplier";
+const REORDER_PRINTHOUSE_MATERIALS_URL = "/v1/printhouse-materials/reorder-print-house-materials";
+const REORDER_PRINTHOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/reorder-print-house-material-supplier";
+const UPDATE_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/update-supplier-inventory";
+const ADD_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/add-supplier-inventory";
+
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -325,6 +334,102 @@ const getPurchasePricingApi: ICallAndSetData = async (
     setState
   );
 };
+
+// New supplier inventory management API functions
+const getSupplierInventoryUsageApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  supplierInventoryId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_SUPPLIER_INVENTORY_USAGE_URL}/${supplierInventoryId}`,
+    setState
+  );
+};
+
+const deleteSupplierInventoryApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  supplierInventoryId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${DELETE_SUPPLIER_INVENTORY_URL}/${supplierInventoryId}`,
+    callBack
+  );
+};
+
+const deletePrintHouseMaterialSupplierApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  printHouseMaterialSupplierId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${DELETE_PRINTHOUSE_MATERIAL_SUPPLIER_URL}/${printHouseMaterialSupplierId}`,
+    callBack
+  );
+};
+
+const reorderPrintHouseMaterialsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    REORDER_PRINTHOUSE_MATERIALS_URL,
+    callBack,
+    data
+  );
+};
+
+const reorderPrintHouseMaterialSupplierApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    REORDER_PRINTHOUSE_MATERIAL_SUPPLIER_URL,
+    callBack,
+    data
+  );
+};
+
+const updateSupplierInventoryApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SUPPLIER_INVENTORY_URL,
+    callBack,
+    data
+  );
+};
+
+const addSupplierInventoryApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_SUPPLIER_INVENTORY_URL,
+    callBack,
+    data
+  );
+};
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -344,4 +449,12 @@ export {
   updateCategoriesOrderApi,
   getSupplierInventoriesApi,
   getPurchasePricingApi,
+  // New supplier inventory management APIs
+  getSupplierInventoryUsageApi,
+  deleteSupplierInventoryApi,
+  deletePrintHouseMaterialSupplierApi,
+  reorderPrintHouseMaterialsApi,
+  reorderPrintHouseMaterialSupplierApi,
+  updateSupplierInventoryApi,
+  addSupplierInventoryApi,
 };
