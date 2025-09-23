@@ -12,7 +12,6 @@ interface IInventoryInputProps {
 }
 
 const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
-    console.log('value', value);
     const { t } = useTranslation();
     const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
@@ -39,15 +38,34 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
                 onClick={toggleExpanded}
                 size="small"
                 sx={{
-                    backgroundColor: secondColor(500),
-                    minWidth: '60px',
-                    width: '60px',
+                    backgroundColor: isExpanded ? secondColor(600) : secondColor(500),
+                    minWidth: '70px',
+                    width: 'auto',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     '&:hover': {
                         backgroundColor: secondColor(600),
-                    }
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+                    },
+                    transition: 'all 0.2s ease-in-out'
                 }}
             >
-                {isExpanded ? "Hide" : "Open"}
+                {value || '0'}
+                <Box
+                    component="span"
+                    sx={{
+                        fontSize: '10px',
+                        marginLeft: '4px',
+                        opacity: 0.8
+                    }}
+                >
+                    {isExpanded ? '▼' : '▶'}
+                </Box>
             </Button>
         </Box>
     );

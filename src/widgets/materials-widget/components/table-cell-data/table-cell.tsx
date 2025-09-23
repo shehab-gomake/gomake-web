@@ -17,6 +17,7 @@ import { MultiSelectClientsInput } from "./multi-select-clients-input";
 import { SuppliersInput } from "./suppliers-input";
 import { InventoryInput } from "./inventory-input";
 import { PurchasePricingInput } from "./purchase-pricing-input";
+import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
 
@@ -195,6 +196,14 @@ const TableCellData = ({
     case EDataTypeEnum.PURCHASE_PRICING:
       return (
         <PurchasePricingInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.LONG_TEXT:
+      return (
+        <LongTextInput
           value={value as string}
           isAdmin={isAdmin}
           id={id}
