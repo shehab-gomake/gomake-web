@@ -190,10 +190,6 @@ const useMaterialsCategories = (isAdmin: boolean) => {
                 unit: "m"
               };
             }
-
-            // Handle suppliers field - use real data from API
-            // The suppliers field is now provided by the API in rowData, so no need to add mock data
-
             // Handle inventory field - use real data from API
             if (!newRow.rowData.inventory) {
               newRow.rowData.inventory = {
