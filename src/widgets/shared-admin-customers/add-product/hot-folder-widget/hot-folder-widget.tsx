@@ -29,6 +29,7 @@ const HotFolderWidget = () => {
     deleteProductHotFolderRule,
     onDragEnd,
     setSelectedItem,
+    getHotFolderNameById,
   } = useHotFolder();
   const { open, anchorEl, handleClose, handleClick } = useMenuModal();
   const { isOpen, open: openModal, close: closeModal } = useModal();
@@ -101,7 +102,7 @@ const HotFolderWidget = () => {
                                 </div>
                                 <div style={{ fontWeight: 500 }}>
                                   {t("products.profits.exceptions.folderName")}:{" "}
-                                  {rule.hotFolderPath}
+                                  {getHotFolderNameById(rule.hotFolderPath)}
                                 </div>
                               </div>
                               <IconButton

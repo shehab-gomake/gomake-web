@@ -7,7 +7,8 @@ import {
 } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { AddPlusIcon } from "@/icons";
+import { AddPlusIcon, SettingNavBar } from "@/icons";
+import { IconButton } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
@@ -18,6 +19,9 @@ import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { getHotFolderNames } from "@/services/api-service/files-api-settings/files-api-settings-endpoint";
+import { useGomakeAxios } from "@/hooks";
+import { OsSettingsIcon } from "@/icons";
 
 const AddRuleModal = ({
   openModal,
@@ -88,6 +92,8 @@ const AddRuleModal = ({
     isFetching,
     getConditionText,
     setAdditionType,
+    hotFolderNames,
+    fetchHotFolderNames,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -104,6 +110,14 @@ const AddRuleModal = ({
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
+
+  // Fetch hot folder names when modal opens
+  useEffect(() => {
+    if (openModal && isHotFolderWidget) {
+      fetchHotFolderNames();
+    }
+  }, [openModal, isHotFolderWidget, fetchHotFolderNames]);
+
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
 
@@ -442,18 +456,48 @@ const AddRuleModal = ({
     );
   };
   const _renderInptsForHotFolder = () => {
+    const handleOpenSettings = () => {
+      window.open("/settings/file-api-settings", "_blank");
+    };
+
     return (
       <div style={clasess.inputsForQuotesContainer}>
         <div>
-          {/* !here */}
-          <div style={clasess.selectTypeStyle}>
-            {t("products.profits.exceptions.folderName")}
-          </div>
-          <GomakeTextInput
-            placeholder={t("products.profits.exceptions.enterFolderName")}
-            onChange={(e) => {
-              setPropertieValue(e.target.value);
+          <div
+            style={{
+              ...clasess.selectTypeStyle,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
+          >
+            {t("products.profits.exceptions.folderName")}
+            <IconButton
+              onClick={handleOpenSettings}
+              size="small"
+              style={{
+                color: "#ed028c",
+                fontSize: "16px",
+                padding: "4px",
+                width: "20px",
+                height: "20px",
+              }}
+              title={t("products.profits.exceptions.openFileApiSettings")}
+            >
+              +
+            </IconButton>
+          </div>
+          <GoMakeAutoComplate
+            options={hotFolderNames}
+            getOptionLabel={(option) => option.hotFolderName || option}
+            onChange={(event, value) => {
+              setPropertieValue(value?.id || value || "");
+            }}
+            placeholder={t("products.profits.exceptions.selectFolderName")}
+            style={clasess.dropDownListContainer}
+            isOptionEqualToValue={(option, value) =>
+              option?.id === value?.id || option === value
+            }
           />
         </div>
       </div>
