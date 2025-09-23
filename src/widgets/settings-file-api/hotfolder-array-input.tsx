@@ -107,25 +107,33 @@ const HotfolderArrayInput = ({
           </h3>
         )}
         {!disableAddValue && (
-          <div style={classes.inputsRow}>
-            {inputs.map((input: IInput, index: number) => {
-              input.value = state[input.parameterKey]
-                ? state[input.parameterKey]
-                : "";
-              return (
-                <FormInput
-                  key={input.parameterKey + index}
-                  input={input}
-                  error={
-                    !!input.value && !!input.regex
-                      ? !input.regex.test(input.value)
-                      : !!(errors && errors[input.parameterKey]) || !isValid
-                  }
-                  changeState={handleInputChanges1}
-                />
-              );
-            })}
-            <div style={classes.addColor}>
+          <>
+            <div style={classes.inputsRow}>
+              {inputs.map((input: IInput, index: number) => {
+                input.value = state[input.parameterKey]
+                  ? state[input.parameterKey]
+                  : "";
+                return (
+                  <FormInput
+                    key={input.parameterKey + index}
+                    input={input}
+                    error={
+                      !!input.value && !!input.regex
+                        ? !input.regex.test(input.value)
+                        : !!(errors && errors[input.parameterKey]) || !isValid
+                    }
+                    changeState={handleInputChanges1}
+                  />
+                );
+              })}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                marginTop: "16px",
+              }}
+            >
               <GomakePrimaryButton
                 variant={"contained"}
                 onClick={addParameter}
@@ -134,7 +142,7 @@ const HotfolderArrayInput = ({
                 {t("fileApiSettings.addNewHotfolder")}
               </GomakePrimaryButton>
             </div>
-          </div>
+          </>
         )}
         <TransitionGroup>
           {value?.map((v: Record<string, string>, index: number) => {
