@@ -72,17 +72,20 @@ const useStyle = () => {
         flex: 1,
         overflowY: "auto" as "auto",
       },
+      //!here
       contentContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "16px",
-        maxWidth: "1200px",
+        padding: "0 4px",
+        // maxWidth: "1200px",
       },
       authKeyContainer: {
         padding: "12px",
         backgroundColor: "#F8F9FA",
         borderRadius: "6px",
         border: "1px solid #E9ECEF",
+        maxWidth: "1200px", //!here new
       },
       authKeyHeader: {
         display: "flex",
