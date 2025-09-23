@@ -499,6 +499,14 @@ const useMaterials = (isAdmin: boolean) => {
               onChangeRowCheckBox={onChangeRowCheckBox}
             />
           )),
+          // Add suppliers column manually since it's now static
+          <TableCellData
+            {...dataRow.rowData.suppliers}
+            id={dataRow.id}
+            isAdmin={isAdmin}
+            parameterKey="suppliers"
+            onChangeRowCheckBox={onChangeRowCheckBox}
+          />,
           dataRow?.isActive
             ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
             : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,

@@ -190,14 +190,8 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               };
             }
 
-            // Handle suppliers field - keep existing logic or add from API if available
-            if (!newRow.rowData.suppliers) {
-              newRow.rowData.suppliers = {
-                value: "Fares, mohand, Aous",
-                isEditable: false,
-                type: 15, // SUPPLIERS
-              };
-            }
+            // Handle suppliers field - use real data from API
+            // The suppliers field is now provided by the API in rowData, so no need to add mock data
 
             // Handle inventory field - use real data from API
             if (!newRow.rowData.inventory) {

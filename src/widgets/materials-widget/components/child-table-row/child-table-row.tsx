@@ -7,6 +7,9 @@ import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton } from "@/components";
+import { useGomakeAxios } from "@/hooks";
+import { updatePrintHouseMaterialPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { TableCellData } from "../table-cell-data/table-cell";
 
 
 interface IChildTableRowProps {
@@ -32,6 +35,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
 
     const { inventoryData, fetchInventoryData, clearInventoryData } = useInventoryData();
     const { purchasePricingData, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
+    const { callApi } = useGomakeAxios();
 
     useEffect(() => {
         if (isVisible && openChildTable.rowId === rowId && rowId) {
@@ -165,40 +169,87 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                             {/* Existing data rows */}
                             {purchasePricingData.map((row, index) => (
                                 <TableRow key={index}>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.supplierName || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        {row.purchasePrice?.amount || row.purchasePrice?.value || '—'}
+                                        <TableCellData
+                                            value={row.supplierName || ''}
+                                            isEditable={false}
+                                            type={0}
+                                            id={row.id}
+                                            parameterKey="supplierName"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: '#f5f5f5',
-                                                borderRadius: '16px',
-                                                padding: '4px 8px',
-                                                display: 'inline-block',
-                                                fontSize: '0.75rem'
-                                            }}
-                                        >
-                                            {row.purchasePrice?.currency || '—'}
-                                        </Box>
+                                        <TableCellData
+                                            value={row.purchasePrice?.amount || row.purchasePrice?.value || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="purchasePrice"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.quantityInPackage || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.supplementTime || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.order || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: row.isActive ? '#e8f5e8' : '#ffe8e8',
-                                                color: row.isActive ? '#2e7d32' : '#d32f2f',
-                                                borderRadius: '16px',
-                                                padding: '4px 8px',
-                                                display: 'inline-block',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 'bold'
-                                            }}
-                                        >
-                                            {row.isActive ? 'Active' : 'Inactive'}
-                                        </Box>
+                                        <TableCellData
+                                            value={row.purchasePrice?.currency || 'ILS'}
+                                            isEditable={true}
+                                            type={6}
+                                            id={row.id}
+                                            parameterKey="currency"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                            values={[
+                                                { key: 'ILS', value: 'ILS' },
+                                                { key: 'USD', value: 'USD' },
+                                                { key: 'EUR', value: 'EUR' }
+                                            ]}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.quantityInPackage || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="quantityInPackage"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.supplementTime || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="supplementTime"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.order || ''}
+                                            isEditable={true}
+                                            type={0}
+                                            id={row.id}
+                                            parameterKey="order"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.isActive ? 'Active' : 'Inactive'}
+                                            isEditable={false}
+                                            type={0}
+                                            id={row.id}
+                                            parameterKey="isActive"
+                                            isAdmin={true}
+                                            onChangeRowCheckBox={() => { }}
+                                        />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <IconButton
