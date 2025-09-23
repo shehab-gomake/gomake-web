@@ -8,9 +8,11 @@ const useStyle = () => {
     return {
       // Main container styles
       mainContainer: {
-        maxHeight: "85vh",
+        height: "80vh",
         display: "flex",
         flexDirection: "column" as "column",
+        position: "relative" as "relative",
+        overflow: "hidden" as "hidden",
       },
       headerContainer: {
         display: "flex",
@@ -70,22 +72,24 @@ const useStyle = () => {
       },
       scrollableContent: {
         flex: 1,
-        overflowY: "auto" as "auto",
+        overflow: "hidden" as "hidden",
+        display: "flex",
+        flexDirection: "column" as "column",
       },
-      //!here
       contentContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "16px",
+        gap: "8px",
         padding: "0 4px",
-        // maxWidth: "1200px",
+        flex: 1,
+        overflow: "hidden" as "hidden",
       },
       authKeyContainer: {
         padding: "12px",
         backgroundColor: "#F8F9FA",
         borderRadius: "6px",
         border: "1px solid #E9ECEF",
-        maxWidth: "1200px", //!here new
+        maxWidth: "1200px",
       },
       authKeyHeader: {
         display: "flex",
@@ -124,14 +128,27 @@ const useStyle = () => {
         justifyContent: "flex-end",
         gap: "20px",
       },
+      fixedSubmitButtonContainer: {
+        position: "fixed" as "fixed",
+        bottom: "20px",
+        right: "20px",
+        backgroundColor: "#FFFFFF",
+        padding: "16px",
+        borderRadius: "8px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        border: "1px solid #E5E7EB",
+        zIndex: 1000,
+      },
       submitButton: {
         width: "fit-content" as "fit-content",
       },
-      // Hotfolder array input styles
+      // HotFolder array input styles
       container: {
         width: "100%",
-        padding: "16px 0",
-        gap: 16,
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
+        overflow: "hidden" as "hidden",
       },
       inputsRow: {
         display: "flex",
@@ -204,6 +221,20 @@ const useStyle = () => {
         gap: "16px",
         flexWrap: "wrap" as "wrap",
         paddingTop: 0,
+      },
+      stickyButtonContainer: {
+        position: "sticky" as "sticky",
+        top: 0,
+        zIndex: 10,
+        marginBottom: "16px",
+        display: "flex",
+        justifyContent: "flex-start",
+      },
+      scrollableTransitionGroup: {
+        flex: 1,
+        overflowY: "auto" as "auto",
+        paddingRight: "8px",
+        minHeight: 0, // Important for flex child to shrink
       },
     };
   }, [theme]);

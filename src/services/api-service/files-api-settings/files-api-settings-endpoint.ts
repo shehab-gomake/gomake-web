@@ -4,6 +4,8 @@ import { EHttpMethod } from "@/services/api-service/enums";
 
 const UPDATE_CONFIGS_URL = "/v1/admin/file-service-configs/update-configs";
 const GET_CONFIGS_URL = "/v1/admin/file-service-configs/get-configs";
+const GET_HOT_FOLDER_NAMES_URL =
+  "/v1/admin/file-service-configs/get-hot-folder-names";
 
 const submitFilesApiSettings: ICallAndSetData = async (
   callApi,
@@ -28,4 +30,13 @@ const getFileServiceConfigs: ICallAndSetData = async (callApi, setState) => {
   );
 };
 
-export { submitFilesApiSettings, getFileServiceConfigs };
+const getHotFolderNames: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_HOT_FOLDER_NAMES_URL,
+    setState
+  );
+};
+
+export { submitFilesApiSettings, getFileServiceConfigs, getHotFolderNames };
