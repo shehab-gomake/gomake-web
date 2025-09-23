@@ -46,8 +46,23 @@ export const useFileApiSettings = () => {
   const fetchFileServiceConfigs = async () => {
     const callBack = (res) => {
       if (res.success && res.data) {
+        // Convert integer enum values back to strings for form inputs
+        const processedHotFolders = (res.data.hotFolders || []).map(
+          (hotfolder: any) => ({
+            ...hotfolder,
+            fileType: Array.isArray(hotfolder.fileType)
+              ? hotfolder.fileType.map((type: number) => type.toString())
+              : hotfolder.fileType?.toString() || [],
+            fileInternalStructure:
+              hotfolder.fileInternalStructure?.toString() || "",
+            fileDeliveryMode:
+              hotfolder.fileDeliveryMode?.toString() ||
+              EFileDeliveryMode.ALWAYS_SEND.toString(),
+          })
+        );
+
         setFormData({
-          hotFolders: res.data.hotFolders || [],
+          hotFolders: processedHotFolders,
         });
         setIsConfigured(res.data.isConfigured || false);
         const newStatus = res.data.fileServiceStatus || 0;
@@ -59,7 +74,6 @@ export const useFileApiSettings = () => {
     await getFileServiceConfigs(callApi, callBack);
   };
 
-  //!here
   const handleSubmitAndDownload = async () => {
     setLoading(true);
     const callBack = async (res) => {

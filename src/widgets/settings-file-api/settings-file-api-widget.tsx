@@ -84,7 +84,21 @@ const SettingsFileApiWidget = () => {
                 onClick={handleDownloadInstaller}
                 style={classes.downloadButton}
               >
-                {t("translations.download")} API
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    lineHeight: "1.1",
+                  }}
+                >
+                  <span>Download API</span>
+                  <span
+                    style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px" }}
+                  >
+                    for Windows only
+                  </span>
+                </div>
               </PrimaryButton>
 
               {/* Service Status Display */}
