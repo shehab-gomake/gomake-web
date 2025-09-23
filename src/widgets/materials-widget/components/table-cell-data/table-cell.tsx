@@ -184,13 +184,6 @@ const TableCellData = ({
           placeHolder={t("materials.inputs.selectNotebookType")}
         />
       );
-    case EDataTypeEnum.SUPPLIERS:
-      return (
-        <SuppliersInput
-          value={value as string}
-          isAdmin={isAdmin}
-        />
-      );
     case EDataTypeEnum.INVENTORY:
       return (
         <InventoryInput

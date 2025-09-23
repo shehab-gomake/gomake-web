@@ -24,6 +24,7 @@ import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
+import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
@@ -198,7 +199,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               newRow.rowData.inventory = {
                 value: "Open",
                 isEditable: false,
-                type: 16, // INVENTORY
+                type: EDataTypeEnum.INVENTORY, // INVENTORY
               };
             }
 
@@ -207,7 +208,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               newRow.rowData.purchasePricing = {
                 value: "Open",
                 isEditable: false,
-                type: 17, // PURCHASE_PRICING
+                type: EDataTypeEnum.PURCHASE_PRICING, // PURCHASE_PRICING
               };
             }
 

@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
-import { Add as AddIcon } from "@mui/icons-material";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState } from "../../state";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
-import { GomakeTextInput, GomakePrimaryButton } from "@/components";
+import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { updatePrintHouseMaterialPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { updatePrintHouseMaterialPropApi, deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
+import { ModalType } from "@/enums";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 
 
 interface IChildTableRowProps {
@@ -23,6 +27,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
     const [isAddPurchasePricingModalOpen, setIsAddPurchasePricingModalOpen] = useState(false);
+    const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
     const [formData, setFormData] = useState({
         supplierName: '',
         purchasePrice: '',
@@ -32,10 +39,26 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
         order: '',
         isActive: true
     });
+    const [inventoryFormData, setInventoryFormData] = useState({
+        printHouseMaterialId: '',
+        supplierId: '',
+        code: '',
+        quantity: 0,
+        inventory: 0,
+        isActive: true,
+        purchasePrice: 0,
+        salePrice: 0,
+        clients: []
+    });
+    const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
 
     const { inventoryData, fetchInventoryData, clearInventoryData } = useInventoryData();
     const { purchasePricingData, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
     const { callApi } = useGomakeAxios();
+    const materialCategorySuppliers = useRecoilValue(materialCategorySuppliersState);
+    const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
+        clientType: CLIENT_TYPE.SUPPLIER,
+    });
 
     useEffect(() => {
         if (isVisible && openChildTable.rowId === rowId && rowId) {
@@ -62,7 +85,32 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                     <CircularProgress />
                 </Box>
             ) : inventoryData.length === 0 ? (
-                <Alert severity="info">No inventory data available</Alert>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: 1,
+                    p: 3,
+                    border: '1px dashed #ccc',
+                    borderRadius: '8px',
+                    backgroundColor: '#f9f9f9'
+                }}>
+                    <span style={{ fontSize: '14px', color: '#666' }}>
+                        No inventory data available,
+                    </span>
+                    <span
+                        onClick={() => setIsAddInventoryModalOpen(true)}
+                        style={{
+                            fontSize: '14px',
+                            color: '#1976d2',
+                            textDecoration: 'underline',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                        }}
+                    >
+                        add new?
+                    </span>
+                </Box>
             ) : (
                 <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
                     <Table size="small" stickyHeader>
@@ -78,6 +126,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                 <TableCell sx={{ textAlign: 'center' }}>Sale Currency</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Length Stock (m)</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Client</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -117,6 +166,20 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>{row.lengthStock || row.length_stock || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>{row.client || '—'}</TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setIsAddInventoryModalOpen(true)}
+                                            sx={{
+                                                color: '#1976d2',
+                                                '&:hover': {
+                                                    backgroundColor: '#e3f2fd'
+                                                }
+                                            }}
+                                        >
+                                            <AddIcon fontSize="small" />
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -252,18 +315,32 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                            sx={{
-                                                color: '#1976d2',
-                                                '&:hover': {
-                                                    backgroundColor: '#e3f2fd'
-                                                }
-                                            }}
-                                        >
-                                            <AddIcon fontSize="small" />
-                                        </IconButton>
+                                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                                                sx={{
+                                                    color: '#1976d2',
+                                                    '&:hover': {
+                                                        backgroundColor: '#e3f2fd'
+                                                    }
+                                                }}
+                                            >
+                                                <AddIcon fontSize="small" />
+                                            </IconButton>
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => handleOpenDeleteModal(row)}
+                                                sx={{
+                                                    color: '#f44336',
+                                                    '&:hover': {
+                                                        backgroundColor: '#ffebee'
+                                                    }
+                                                }}
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -298,6 +375,96 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
             ...prev,
             [field]: value
         }));
+    };
+
+    const handleInventoryFormChange = (field: string, value: any) => {
+        setInventoryFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleCloseAddInventoryModal = () => {
+        setIsAddInventoryModalOpen(false);
+        setSelectedSupplier(null);
+        setInventoryFormData({
+            printHouseMaterialId: '',
+            supplierId: '',
+            code: '',
+            quantity: 0,
+            inventory: 0,
+            isActive: true,
+            purchasePrice: 0,
+            salePrice: 0,
+            clients: []
+        });
+    };
+
+    const handleSupplierSelect = (e, supplier: any) => {
+        setSelectedSupplier(supplier);
+        handleInventoryFormChange('supplierId', supplier?.id || '');
+    };
+
+    const handleAddInventory = async () => {
+        try {
+            const inventoryData = {
+                printHouseMaterialId: rowId,
+                supplierId: inventoryFormData.supplierId,
+                code: inventoryFormData.code,
+                quantity: parseInt(inventoryFormData.quantity.toString()) || 0,
+                inventory: parseInt(inventoryFormData.inventory.toString()) || 0,
+                isActive: inventoryFormData.isActive,
+                purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
+                salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
+                clients: inventoryFormData.clients
+            };
+
+            const callBack = (res) => {
+                if (res.success) {
+                    console.log('Inventory added successfully');
+                    // Refresh the inventory data
+                    fetchInventoryData(rowId);
+                    handleCloseAddInventoryModal();
+                } else {
+                    console.error('Failed to add inventory:', res.message);
+                }
+            };
+
+            await addSupplierInventoryApi(callApi, callBack, inventoryData);
+        } catch (error) {
+            console.error('Error adding inventory:', error);
+        }
+    };
+
+    const handleOpenDeleteModal = (row: any) => {
+        setSelectedRowForDelete(row);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setSelectedRowForDelete(null);
+    };
+
+    const handleDeletePurchasePricing = async () => {
+        if (!selectedRowForDelete) return;
+
+        try {
+            const callBack = (res) => {
+                if (res.success) {
+                    console.log('Purchase pricing deleted successfully');
+                    // Refresh the purchase pricing data
+                    fetchPurchasePricingData(rowId);
+                    handleCloseDeleteModal();
+                } else {
+                    console.error('Failed to delete purchase pricing:', res.message);
+                }
+            };
+
+            await deletePrintHouseMaterialSupplierApi(callApi, callBack, selectedRowForDelete.id);
+        } catch (error) {
+            console.error('Error deleting purchase pricing:', error);
+        }
     };
 
     return (
@@ -413,6 +580,97 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                     </GomakePrimaryButton>
                 </DialogActions>
             </Dialog>
+
+            {/* Add Inventory Modal */}
+            <Dialog
+                open={isAddInventoryModalOpen}
+                onClose={handleCloseAddInventoryModal}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>Add New Inventory</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <Box>
+                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Supplier</div>
+                            <ClientAutocomplete
+                                key={selectedSupplier?.id}
+                                clientType={CLIENT_TYPE.SUPPLIER}
+                                onChange={handleSupplierSelect}
+                                options={renderOptions() ? renderOptions() : []}
+                                placeholder="Select a supplier"
+                                style={{ width: '100%' }}
+                                value={selectedSupplier}
+                                onChangeTextField={checkWhatRenderArray}
+                                getOptionLabel={(option: any) => `${option.name}`}
+                                loading={isFetching}
+                            />
+                        </Box>
+                        <GomakeTextInput
+                            labelText="Code"
+                            value={inventoryFormData.code}
+                            onChange={(e) => handleInventoryFormChange('code', e.target.value)}
+                            placeholder="Enter code"
+                        />
+                        <GomakeTextInput
+                            labelText="Quantity"
+                            value={inventoryFormData.quantity.toString()}
+                            onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
+                            type="number"
+                            placeholder="Enter quantity"
+                        />
+                        <GomakeTextInput
+                            labelText="Inventory"
+                            value={inventoryFormData.inventory.toString()}
+                            onChange={(e) => handleInventoryFormChange('inventory', parseInt(e.target.value) || 0)}
+                            type="number"
+                            placeholder="Enter inventory amount"
+                        />
+                        <GomakeTextInput
+                            labelText="Purchase Price"
+                            value={inventoryFormData.purchasePrice.toString()}
+                            onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
+                            type="number"
+                            placeholder="Enter purchase price"
+                        />
+                        <GomakeTextInput
+                            labelText="Sale Price"
+                            value={inventoryFormData.salePrice.toString()}
+                            onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
+                            type="number"
+                            placeholder="Enter sale price"
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ padding: '16px 24px' }}>
+                    <GomakePrimaryButton
+                        onClick={handleCloseAddInventoryModal}
+                        style={{
+                            backgroundColor: '#f5f5f5',
+                            color: '#666',
+                            marginRight: '8px',
+                            width: 'auto',
+                            padding: '8px 16px'
+                        }}
+                    >
+                        Cancel
+                    </GomakePrimaryButton>
+                    <GomakePrimaryButton
+                        onClick={handleAddInventory}
+                        style={{ width: 'auto', padding: '8px 16px' }}
+                    >
+                        Add Inventory
+                    </GomakePrimaryButton>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Confirmation Modal */}
+            <GoMakeDeleteModal
+                modalType={ModalType.DELETE}
+                openModal={isDeleteModalOpen}
+                onClose={handleCloseDeleteModal}
+                onClickDelete={handleDeletePurchasePricing}
+            />
         </Box>
     );
 };
