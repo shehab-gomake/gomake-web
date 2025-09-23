@@ -265,7 +265,7 @@ const useUploadFiles = (
     formData.append("totalPackets", totalChunks.toString());
     formData.append("signalRConnectId", connectionId);
     formData.append("fileId", fileId || "");
-
+    formData.append("fileType", fileType);
     formData.append(
       "path",
       fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath
