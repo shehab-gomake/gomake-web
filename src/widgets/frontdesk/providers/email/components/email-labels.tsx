@@ -78,7 +78,6 @@ export const EmailLabels: React.FC<EmailLabelsProps> = ({
 
   return (
     <Box sx={{ px: 1 }}>
-      {/* System Labels */}
       {systemLabels.length > 0 && (
         <Box sx={{ mb: 1 }}>
           <Typography
