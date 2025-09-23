@@ -347,35 +347,6 @@ const useMaterials = (isAdmin: boolean) => {
           // If isOutSource not found, add at the end
           updatedArray.push(...newHeaders);
         }
-
-        // Add headers after isOutSource
-        const afterOutSourceHeaders = [
-          {
-            "key": "suppliers",
-            "value": "Suppliers",
-            "unit": null,
-            "isFilter": false,
-            "isForAdmin": null,
-            "isHideInDuplicate": null,
-            "isRequired": false,
-            "parameterId": null,
-            "inputType": 7,
-            "filterType": null,
-            "values": []
-          },
-        ];
-
-        // Find the index of isOutSource to insert headers after it
-        const isOutSourceIndexAfter = updatedArray.findIndex(item => item.key === "isOutSource");
-
-        if (isOutSourceIndexAfter !== -1) {
-          // Insert new headers after isOutSource
-          updatedArray.splice(isOutSourceIndexAfter + 1, 0, ...afterOutSourceHeaders);
-        } else {
-          // If isOutSource not found, add at the end
-          updatedArray.push(...afterOutSourceHeaders);
-        }
-
         setMaterialHeaders(updatedArray);
         setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
