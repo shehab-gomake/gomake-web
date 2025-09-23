@@ -436,6 +436,7 @@ const useMaterials = (isAdmin: boolean) => {
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
+      t("Suppliers"),
       t("usersSettings.isActive"),
       t("Total inventory"),
       t("Purchase Pricing"),

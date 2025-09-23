@@ -94,8 +94,8 @@ const CombinedTable = ({
                                             whiteSpace: 'nowrap',
                                             padding: '12px 8px',
                                             backgroundColor: '#EBECFF',
-                                            minWidth: isFixedColumn ? '120px' : 'auto',
-                                            width: isFixedColumn ? '120px' : 'auto',
+                                            minWidth: isFixedColumn ? '123px' : 'auto',
+                                            width: isFixedColumn ? '123px' : 'auto',
                                             ...(isFixedColumn && {
                                                 position: 'sticky',
                                                 right: (headers.length - 1 - index) * 123,
@@ -123,8 +123,8 @@ const CombinedTable = ({
                                                     textAlign: 'center',
                                                     padding: '12px 8px',
                                                     whiteSpace: 'nowrap',
-                                                    minWidth: isFixedColumn ? '120px' : 'auto',
-                                                    width: isFixedColumn ? '120px' : 'auto',
+                                                    minWidth: isFixedColumn ? '123px' : 'auto',
+                                                    width: isFixedColumn ? '123px' : 'auto',
                                                     borderBottom: '1px solid #e0e0e0',
                                                     ...(isFixedColumn && {
                                                         position: 'sticky',
