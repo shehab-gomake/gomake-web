@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useFileServiceStatusSocketIo } from "@/hooks/socket-io/use-file-service-status-socket-io";
-import { FoldersCreationTypes } from "@/enums";
+import { EFileType, EFileInternalStructure, EFileDeliveryMode } from "./enums";
 import { IInput } from "@/components/form-inputs/interfaces";
 import {
   submitFilesApiSettings,
@@ -20,16 +20,7 @@ export const useFileApiSettings = () => {
   } = useFileServiceStatusSocketIo();
 
   const [formData, setFormData] = useState({
-    remoteName: "",
-    computerName: "",
-    username: "",
-    password: "",
-    baseDir: "",
-    workFlowDir: "",
-    workFlowRemoteName: "",
-    workFlowUsername: "",
-    workFlowPassword: "",
-    foldersCreationType: FoldersCreationTypes.Default.toString(),
+    hotFolders: [],
   });
 
   const [isConfigured, setIsConfigured] = useState(false);
@@ -45,29 +36,33 @@ export const useFileApiSettings = () => {
     }
   }, [socketFileServiceStatus]);
 
-  const handleInputChange = (key: string, value: any) => {
+  const handleHotfolderChange = (key: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
-      [key]: value,
+      hotFolders: value,
     }));
   };
 
   const fetchFileServiceConfigs = async () => {
     const callBack = (res) => {
       if (res.success && res.data) {
+        // Convert integer enum values back to strings for form inputs
+        const processedHotFolders = (res.data.hotFolders || []).map(
+          (hotfolder: any) => ({
+            ...hotfolder,
+            fileType: Array.isArray(hotfolder.fileType)
+              ? hotfolder.fileType.map((type: number) => type.toString())
+              : hotfolder.fileType?.toString() || [],
+            fileInternalStructure:
+              hotfolder.fileInternalStructure?.toString() || "",
+            fileDeliveryMode:
+              hotfolder.fileDeliveryMode?.toString() ||
+              EFileDeliveryMode.ALWAYS_SEND.toString(),
+          })
+        );
+
         setFormData({
-          remoteName: res.data.remoteName || "",
-          computerName: res.data.computerName || "",
-          username: res.data.username || "",
-          password: res.data.password || "",
-          baseDir: res.data.baseDir || "",
-          workFlowDir: res.data.workFlowDir || "",
-          workFlowRemoteName: res.data.workFlowRemoteName || "",
-          workFlowUsername: res.data.workFlowUsername || "",
-          workFlowPassword: res.data.workFlowPassword || "",
-          foldersCreationType:
-            res.data.foldersCreationType?.toString() ||
-            FoldersCreationTypes.Default.toString(),
+          hotFolders: processedHotFolders,
         });
         setIsConfigured(res.data.isConfigured || false);
         const newStatus = res.data.fileServiceStatus || 0;
@@ -95,11 +90,23 @@ export const useFileApiSettings = () => {
       setLoading(false);
     };
     try {
+      // Parse enum values to integers for API
+      const processedHotFolders = formData.hotFolders.map((hotfolder: any) => ({
+        ...hotfolder,
+        fileType: Array.isArray(hotfolder.fileType)
+          ? hotfolder.fileType.map((type: string) => parseInt(type))
+          : parseInt(hotfolder.fileType),
+        fileInternalStructure: parseInt(hotfolder.fileInternalStructure),
+        fileDeliveryMode: parseInt(hotfolder.fileDeliveryMode),
+      }));
+
       const apiData = {
-        ...formData,
-        foldersCreationType: parseInt(formData.foldersCreationType),
+        hotFolders: processedHotFolders,
+        fileServiceStatus: fileServiceStatus,
+        isConfigured: isConfigured,
+        authorizationKey: authorizationKey,
       };
-      await submitFilesApiSettings(callApi, callBack, apiData);
+      await submitFilesApiSettings(callApi, callBack, processedHotFolders);
     } catch (error) {
       console.error("Error submitting file API settings:", error);
       alertFault("Failed to save and download file API settings");
@@ -139,153 +146,147 @@ export const useFileApiSettings = () => {
     }
   };
 
-  const formInputs: IInput[] = [
+  // Hotfolder inputs for FormArrayInput
+  const hotfolderInputs: IInput[] = [
     {
-      name: "baseDir",
-      label: "fileApiSettings.baseDir",
+      name: "hotFolderName",
+      label: "fileApiSettings.hotfolderName",
       type: "text",
-      placeholder: "fileApiSettings.baseDirPlaceholder",
+      placeholder: "fileApiSettings.hotfolderNamePlaceholder",
       required: true,
-      parameterKey: "baseDir",
+      parameterKey: "hotFolderName",
       options: [],
-      value: formData.baseDir,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "remoteName",
-      label: "fileApiSettings.remoteName",
-      type: "text",
-      placeholder: "fileApiSettings.remoteNamePlaceholder",
-      required: true,
-      parameterKey: "remoteName",
-      options: [],
-      value: formData.remoteName,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "computerName",
-      label: "fileApiSettings.computerName",
-      type: "text",
-      placeholder: "fileApiSettings.computerNamePlaceholder",
-      required: true,
-      parameterKey: "computerName",
-      options: [],
-      value: formData.computerName,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "username",
-      label: "fileApiSettings.username",
-      type: "text",
-      placeholder: "fileApiSettings.usernamePlaceholder",
-      required: true,
-      parameterKey: "username",
-      options: [],
-      value: formData.username,
+      value: "",
       isValid: true,
     },
     {
-      name: "password",
-      label: "fileApiSettings.password",
-      type: "password",
-      placeholder: "fileApiSettings.passwordPlaceholder",
+      name: "fileType",
+      label: "fileApiSettings.fileType",
+      type: "select",
+      placeholder: "fileApiSettings.fileTypePlaceholder",
       required: true,
-      parameterKey: "password",
-      options: [],
-      value: formData.password,
+      parameterKey: "fileType",
+      options: [
+        { value: EFileType.ORIGINAL.toString(), text: "Original Files" },
+        { value: EFileType.PRINT.toString(), text: "Print Files" },
+        { value: EFileType.GOMAKE_JDF.toString(), text: "GoMake JDF" },
+        {
+          value: EFileType.ULTIMATE_IMPOSTRIP.toString(),
+          text: "Ultimate Impostrip XML",
+        },
+        { value: EFileType.FREEFLOW.toString(), text: "FreeFlow XML" },
+      ],
+      value: "",
       isValid: true,
+      multiple: true, // Make it multi-select
     },
 
     {
-      name: "workFlowDir",
-      label: "fileApiSettings.workFlowDir",
+      name: "folderPath",
+      label: "fileApiSettings.folderPath",
       type: "text",
-      placeholder: "fileApiSettings.workFlowDirPlaceholder",
+      placeholder: "fileApiSettings.folderPathPlaceholder",
       required: true,
-      parameterKey: "workFlowDir",
+      parameterKey: "folderPath",
       options: [],
-      value: formData.workFlowDir,
+      value: "",
       isValid: true,
-      note: "",
+      note: "fileApiSettings.folderPathNote",
     },
     {
-      name: "workFlowRemoteName",
-      label: "fileApiSettings.workFlowRemoteName",
-      type: "text",
-      placeholder: "fileApiSettings.workFlowRemoteNamePlaceholder",
-      required: true,
-      parameterKey: "workFlowRemoteName",
-      options: [],
-      value: formData.workFlowRemoteName,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "workFlowUsername",
-      label: "fileApiSettings.workFlowUsername",
-      type: "text",
-      placeholder: "fileApiSettings.workFlowUsernamePlaceholder",
-      required: true,
-      parameterKey: "workFlowUsername",
-      options: [],
-      value: formData.workFlowUsername,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "workFlowPassword",
-      label: "fileApiSettings.workFlowPassword",
-      type: "password",
-      placeholder: "fileApiSettings.workFlowPasswordPlaceholder",
-      required: true,
-      parameterKey: "workFlowPassword",
-      options: [],
-      value: formData.workFlowPassword,
-      isValid: true,
-      note: "",
-    },
-    {
-      name: "foldersCreationType",
-      label: "fileApiSettings.foldersCreationType",
+      name: "fileInternalStructure",
+      label: "fileApiSettings.fileInternalStructure",
       type: "select",
-      placeholder: "fileApiSettings.foldersCreationTypePlaceholder",
+      placeholder: "fileApiSettings.fileInternalStructurePlaceholder",
       required: true,
-      parameterKey: "foldersCreationType",
+      parameterKey: "fileInternalStructure",
       options: [
         {
-          value: FoldersCreationTypes.Default.toString(),
-          text: t("fileApiSettings.foldersCreationTypeOptions.default"),
+          value: EFileInternalStructure.HOTFOLDER_FILES.toString(),
+          text: "HotFolder:// Files",
+        },
+        {
+          value: EFileInternalStructure.HOTFOLDER_CUSTOMER_FILES.toString(),
+          text: "HotFolder:// Customer Name / Files",
+        },
+        {
+          value: EFileInternalStructure.HOTFOLDER_CUSTOMER_JOB_FILES.toString(),
+          text: "HotFolder:// Customer Name / Job Number / Files",
         },
         {
           value:
-            FoldersCreationTypes.OrderNumberAndMissionNumberOnly.toString(),
-          text: t(
-            "fileApiSettings.foldersCreationTypeOptions.orderNumberAndMissionNumberOnly"
-          ),
+            EFileInternalStructure.HOTFOLDER_CUSTOMER_ORDER_JOB_FILES.toString(),
+          text: "HotFolder:// Customer Name / Order Number / Job Number / Files",
         },
         {
-          value: FoldersCreationTypes.MissionFolderInsideOrderFolder.toString(),
-          text: t(
-            "fileApiSettings.foldersCreationTypeOptions.missionFolderInsideOrderFolder"
-          ),
+          value: EFileInternalStructure.HOTFOLDER_JOB_FILES.toString(),
+          text: "HotFolder:// Job Number / Files",
         },
         {
-          value:
-            FoldersCreationTypes.DefaultButWithArrangedOrdersFolder.toString(),
-          text: t(
-            "fileApiSettings.foldersCreationTypeOptions.defaultButWithArrangedOrdersFolder"
-          ),
+          value: EFileInternalStructure.HOTFOLDER_ORDER_JOB_FILES.toString(),
+          text: "HotFolder:// Order Number / Job Number / Files",
         },
       ],
-      value: formData.foldersCreationType,
+      value: "",
       isValid: true,
-      dropdownStyle: {
-        width: "100%",
-        minWidth: "fit-content",
-      },
+      note: "fileApiSettings.fileInternalStructureNote",
+    },
+    {
+      name: "remoteName",
+      label: "fileApiSettings.hotfolderRemoteName",
+      type: "text",
+      placeholder: "fileApiSettings.hotfolderRemoteNamePlaceholder",
+      required: true,
+      parameterKey: "remoteName",
+      options: [],
+      value: "",
+      isValid: true,
+      // note: "fileApiSettings.hotfolderRemoteNameNote",
+    },
+    {
+      name: "username",
+      label: "fileApiSettings.hotfolderUsername",
+      type: "text",
+      placeholder: "fileApiSettings.hotfolderUsernamePlaceholder",
+      required: false,
+      parameterKey: "username",
+      options: [],
+      value: "",
+      isValid: true,
+      note: "fileApiSettings.hotfolderUsernameNote",
+    },
+    {
+      name: "password",
+      label: "fileApiSettings.hotfolderPassword",
+      type: "password",
+      placeholder: "fileApiSettings.hotfolderPasswordPlaceholder",
+      required: false,
+      parameterKey: "password",
+      options: [],
+      value: "",
+      isValid: true,
+      note: "fileApiSettings.hotfolderPasswordNote",
+    },
+    {
+      name: "fileDeliveryMode",
+      label: "fileApiSettings.fileDeliveryMode",
+      type: "select",
+      placeholder: "fileApiSettings.fileDeliveryModePlaceholder",
+      required: true,
+      parameterKey: "fileDeliveryMode",
+      options: [
+        {
+          value: EFileDeliveryMode.ALWAYS_SEND.toString(),
+          text: "Always Send",
+        },
+        {
+          value: EFileDeliveryMode.RULE_BASED_SEND.toString(),
+          text: "Rule-Based Send",
+        },
+      ],
+      value: EFileDeliveryMode.ALWAYS_SEND.toString(),
+      isValid: true,
+      note: "fileApiSettings.fileDeliveryModeNote",
     },
   ];
 
@@ -296,8 +297,8 @@ export const useFileApiSettings = () => {
     fileServiceStatus,
     authorizationKey,
     isCopied,
-    formInputs,
-    handleInputChange,
+    hotfolderInputs,
+    handleHotfolderChange,
     handleSubmitAndDownload,
     handleDownloadInstaller,
     handleCopyAuthorizationKey,

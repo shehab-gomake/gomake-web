@@ -1,0 +1,21 @@
+export enum EFileType {
+  ORIGINAL = 0,
+  PRINT = 1,
+  GOMAKE_JDF = 2,
+  ULTIMATE_IMPOSTRIP = 3,
+  FREEFLOW = 4,
+}
+
+export enum EFileInternalStructure {
+  HOTFOLDER_FILES = 0,
+  HOTFOLDER_CUSTOMER_FILES = 1,
+  HOTFOLDER_CUSTOMER_JOB_FILES = 2,
+  HOTFOLDER_CUSTOMER_ORDER_JOB_FILES = 3,
+  HOTFOLDER_JOB_FILES = 4,
+  HOTFOLDER_ORDER_JOB_FILES = 5,
+}
+
+export enum EFileDeliveryMode {
+  ALWAYS_SEND = 0,
+  RULE_BASED_SEND = 1,
+}
