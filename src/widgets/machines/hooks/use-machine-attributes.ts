@@ -69,9 +69,9 @@ const useMachineAttributes = () => {
             machineState.attributes?.electricityCostPerWorkingHour !==0 &&
             machineState.attributes?.workingDaysAmountInWeek !==0) {
             return machineState?.price?.price /
-                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * (4 * +machineState.attributes?.workingDaysAmountInWeek) * 12) +
-                +machineState.attributes?.monthlyMaintenanceCost / ((4 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours) +
-                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / ((4 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours);
+                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * (4.35 * +machineState.attributes?.workingDaysAmountInWeek) * 12) +
+                +machineState.attributes?.monthlyMaintenanceCost / ((4.35 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours) +
+                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / ((4.35 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours);
         }
         return 0
     };
