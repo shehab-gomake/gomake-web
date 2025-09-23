@@ -75,6 +75,24 @@ export const useFileApiSettings = () => {
   };
 
   const handleSubmitAndDownload = async () => {
+    // Validate required fields before submitting
+    const hasInvalidHotFolders = formData.hotFolders.some((hotfolder: any) => {
+      return (
+        !hotfolder.hotFolderName ||
+        !hotfolder.fileType ||
+        (Array.isArray(hotfolder.fileType) &&
+          hotfolder.fileType.length === 0) ||
+        !hotfolder.folderPath ||
+        !hotfolder.fileInternalStructure ||
+        !hotfolder.fileDeliveryMode
+      );
+    });
+
+    if (hasInvalidHotFolders) {
+      alertFault(t("fileApiSettings.pleaseFillRequiredFields"));
+      return;
+    }
+
     setLoading(true);
     const callBack = async (res) => {
       if (res.success) {
@@ -236,7 +254,7 @@ export const useFileApiSettings = () => {
       label: "fileApiSettings.hotfolderRemoteName",
       type: "text",
       placeholder: "fileApiSettings.hotfolderRemoteNamePlaceholder",
-      required: true,
+      required: false,
       parameterKey: "remoteName",
       options: [],
       value: "",
