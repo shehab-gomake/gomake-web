@@ -1,4 +1,8 @@
-import { GoMakeDeleteModal, GoMakeMenu, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeDeleteModal,
+  GoMakeMenu,
+  GomakePrimaryButton,
+} from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
@@ -9,7 +13,7 @@ import { MoreCircleIcon } from "@/icons";
 import { useMenuModal } from "@/hooks";
 import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
-import { DragDropContext, Droppable, Draggable, } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { CopyAnotherProductsModal } from "../work-flows-widget/copy-another-products-modal";
 
 const HotFolderWidget = () => {
@@ -24,23 +28,35 @@ const HotFolderWidget = () => {
     getProductHotFolderRules,
     deleteProductHotFolderRule,
     onDragEnd,
-    setSelectedItem
+    setSelectedItem,
+    getHotFolderNameById,
   } = useHotFolder();
   const { open, anchorEl, handleClose, handleClick } = useMenuModal();
   const { isOpen, open: openModal, close: closeModal } = useModal();
-  const { isOpen: isOpenCopyAnotherProductsModal, open: openCopyAnotherProductsModal, close: handleCloseCopyAnotherProductsModal } = useModal();
+  const {
+    isOpen: isOpenCopyAnotherProductsModal,
+    open: openCopyAnotherProductsModal,
+    close: handleCloseCopyAnotherProductsModal,
+  } = useModal();
 
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerContainer}>
-        {productHotFolderRules?.length > 0 && <GomakePrimaryButton style={clasess.copyToAnotherProductsButton} onClick={openCopyAnotherProductsModal} >
-          {t("pricingWidget.copyToAnotherProducts")}
-        </GomakePrimaryButton>}
-        <div style={clasess.autoCompleteSelectedSectionName} onClick={onClickOpenAddNewRuleModal}>
+        {productHotFolderRules?.length > 0 && (
+          <GomakePrimaryButton
+            style={clasess.copyToAnotherProductsButton}
+            onClick={openCopyAnotherProductsModal}
+          >
+            {t("pricingWidget.copyToAnotherProducts")}
+          </GomakePrimaryButton>
+        )}
+        <div
+          style={clasess.autoCompleteSelectedSectionName}
+          onClick={onClickOpenAddNewRuleModal}
+        >
           {t("properties.addNewRule")}
           <ArrowDropDownIcon />
         </div>
-
       </div>
       <div style={{ width: "100%" }}>
         {productHotFolderRules?.length > 0 ? (
@@ -50,7 +66,11 @@ const HotFolderWidget = () => {
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     {productHotFolderRules.map((rule, idx) => (
-                      <Draggable key={rule.id} draggableId={rule.id} index={idx}>
+                      <Draggable
+                        key={rule.id}
+                        draggableId={rule.id}
+                        index={idx}
+                      >
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
@@ -68,41 +88,45 @@ const HotFolderWidget = () => {
                               ...provided.draggableProps.style,
                             }}
                           >
-
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: "100%",
+                              }}
+                            >
                               <div>
                                 <div style={{ fontWeight: 500 }}>
                                   {`${rule.expression}`}
                                 </div>
                                 <div style={{ fontWeight: 500 }}>
-                                  {t("products.profits.exceptions.folderName")}: {rule.hotFolderPath}
+                                  {t("products.profits.exceptions.folderName")}:{" "}
+                                  {getHotFolderNameById(rule.hotFolderPath)}
                                 </div>
                               </div>
-                              <IconButton onClick={(e) => {
-                                handleClick(e)
-                                setSelectedItem(rule)
-                              }}>
+                              <IconButton
+                                onClick={(e) => {
+                                  handleClick(e);
+                                  setSelectedItem(rule);
+                                }}
+                              >
                                 <MoreCircleIcon />
                               </IconButton>
                             </div>
                           </div>
                         )}
-
                       </Draggable>
                     ))}
 
                     {provided.placeholder}
-
                   </div>
                 )}
               </Droppable>
             </DragDropContext>
-
           </div>
         ) : (
-          <div
-            style={clasess.noDataContainer}
-          >
+          <div style={clasess.noDataContainer}>
             <Typography variant="h6" color="text.secondary">
               {" "}
               {t("pricingWidget.noData")}{" "}
@@ -117,14 +141,14 @@ const HotFolderWidget = () => {
         getProductHotFolderRules={getProductHotFolderRules}
       />
 
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
-        <MenuItem onClick={() => {
-          openModal()
-          handleClose()
-        }}>
-          <div>
-            {t("navigationButtons.delete")}
-          </div>
+      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+        <MenuItem
+          onClick={() => {
+            openModal();
+            handleClose();
+          }}
+        >
+          <div>{t("navigationButtons.delete")}</div>
         </MenuItem>
       </GoMakeMenu>
 
@@ -133,10 +157,9 @@ const HotFolderWidget = () => {
         onClose={closeModal}
         modalType={ModalType.DELETE}
         onClickDelete={() => {
-          deleteProductHotFolderRule(selectedItem)
-          closeModal()
-          setSelectedItem(null)
-
+          deleteProductHotFolderRule(selectedItem);
+          closeModal();
+          setSelectedItem(null);
         }}
       />
       <CopyAnotherProductsModal
@@ -144,7 +167,6 @@ const HotFolderWidget = () => {
         onClose={handleCloseCopyAnotherProductsModal}
         isHotFolderWidget={true}
       />
-
     </div>
   );
 };

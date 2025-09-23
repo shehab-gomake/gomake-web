@@ -75,6 +75,43 @@ export const useFileApiSettings = () => {
   };
 
   const handleSubmitAndDownload = async () => {
+    // Validate required fields before submitting
+    const hasInvalidHotFolders = formData.hotFolders.some((hotfolder: any) => {
+      // Check if hotfolder is completely empty (ignore empty hotfolders)
+      const isCompletelyEmpty =
+        !hotfolder.hotFolderName &&
+        (!hotfolder.fileType ||
+          (Array.isArray(hotfolder.fileType) &&
+            hotfolder.fileType.length === 0)) &&
+        !hotfolder.folderPath &&
+        !hotfolder.fileInternalStructure &&
+        !hotfolder.fileDeliveryMode &&
+        !hotfolder.remoteName &&
+        !hotfolder.username &&
+        !hotfolder.password;
+
+      // If completely empty, ignore it
+      if (isCompletelyEmpty) {
+        return false;
+      }
+
+      // If not empty, validate required fields
+      return (
+        !hotfolder.hotFolderName ||
+        !hotfolder.fileType ||
+        (Array.isArray(hotfolder.fileType) &&
+          hotfolder.fileType.length === 0) ||
+        !hotfolder.folderPath ||
+        !hotfolder.fileInternalStructure ||
+        !hotfolder.fileDeliveryMode
+      );
+    });
+
+    if (hasInvalidHotFolders) {
+      alertFault(t("fileApiSettings.pleaseFillRequiredFields"));
+      return;
+    }
+
     setLoading(true);
     const callBack = async (res) => {
       if (res.success) {
@@ -90,8 +127,27 @@ export const useFileApiSettings = () => {
       setLoading(false);
     };
     try {
+      // Filter out completely empty hotfolders before processing
+      const nonEmptyHotFolders = formData.hotFolders.filter(
+        (hotfolder: any) => {
+          const isCompletelyEmpty =
+            !hotfolder.hotFolderName &&
+            (!hotfolder.fileType ||
+              (Array.isArray(hotfolder.fileType) &&
+                hotfolder.fileType.length === 0)) &&
+            !hotfolder.folderPath &&
+            !hotfolder.fileInternalStructure &&
+            !hotfolder.fileDeliveryMode &&
+            !hotfolder.remoteName &&
+            !hotfolder.username &&
+            !hotfolder.password;
+
+          return !isCompletelyEmpty; // Keep only non-empty hotfolders
+        }
+      );
+
       // Parse enum values to integers for API
-      const processedHotFolders = formData.hotFolders.map((hotfolder: any) => ({
+      const processedHotFolders = nonEmptyHotFolders.map((hotfolder: any) => ({
         ...hotfolder,
         fileType: Array.isArray(hotfolder.fileType)
           ? hotfolder.fileType.map((type: string) => parseInt(type))
@@ -100,12 +156,6 @@ export const useFileApiSettings = () => {
         fileDeliveryMode: parseInt(hotfolder.fileDeliveryMode),
       }));
 
-      const apiData = {
-        hotFolders: processedHotFolders,
-        fileServiceStatus: fileServiceStatus,
-        isConfigured: isConfigured,
-        authorizationKey: authorizationKey,
-      };
       await submitFilesApiSettings(callApi, callBack, processedHotFolders);
     } catch (error) {
       console.error("Error submitting file API settings:", error);
@@ -236,7 +286,7 @@ export const useFileApiSettings = () => {
       label: "fileApiSettings.hotfolderRemoteName",
       type: "text",
       placeholder: "fileApiSettings.hotfolderRemoteNamePlaceholder",
-      required: true,
+      required: false,
       parameterKey: "remoteName",
       options: [],
       value: "",
@@ -284,7 +334,7 @@ export const useFileApiSettings = () => {
           text: "Rule-Based Send",
         },
       ],
-      value: EFileDeliveryMode.ALWAYS_SEND.toString(),
+      value: "",
       isValid: true,
       note: "fileApiSettings.fileDeliveryModeNote",
     },

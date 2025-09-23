@@ -160,22 +160,23 @@ const SettingsFileApiWidget = () => {
               updateState={handleHotfolderChange}
               isValid={true}
             />
-
-            <div style={classes.submitButtonContainer}>
-              <PrimaryButton
-                variant="contained"
-                onClick={handleSubmitAndDownload}
-                disabled={loading}
-                style={classes.submitButton}
-              >
-                {loading
-                  ? "Loading..."
-                  : isConfigured
-                  ? t("fileApiSettings.updateSettings")
-                  : t("fileApiSettings.submitAndDownload")}
-              </PrimaryButton>
-            </div>
           </div>
+        </div>
+
+        {/* Fixed Submit Button */}
+        <div style={classes.fixedSubmitButtonContainer}>
+          <PrimaryButton
+            variant="contained"
+            onClick={handleSubmitAndDownload}
+            disabled={loading}
+            style={classes.submitButton}
+          >
+            {loading
+              ? "Loading..."
+              : isConfigured
+              ? t("fileApiSettings.updateSettings")
+              : t("fileApiSettings.submitAndDownload")}
+          </PrimaryButton>
         </div>
       </div>
     </>
