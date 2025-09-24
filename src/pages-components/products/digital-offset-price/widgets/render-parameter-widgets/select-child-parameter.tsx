@@ -1,4 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
+import { useEffect, useState } from "react";
+import { EParameterTypes } from "@/enums";
 
 const SelectChildParameterWidget = ({
   parameter,
@@ -15,6 +17,41 @@ const SelectChildParameterWidget = ({
     (item) => item.isDefault === true
   );
 
+  const [selectedValue, setSelectedValue] = useState(
+    index !== -1
+      ? { updateName: temp[index].values }
+      : defaultObject
+  );
+
+  useEffect(() => {
+    setSelectedValue(
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
+    );
+  }, [parameter, index, defaultObject]);
+
+  const handleValueChange = (e, value) => {
+    setSelectedValue(value); // Update the selected value in state
+
+    // Update the subProducts for pricing
+    onChangeSubProductsForPrice(
+      parameter?.id,
+      subSection?.id,
+      section?.id,
+      parameter?.parameterType,
+      parameter?.name,
+      parameter?.actionId,
+      value
+        ? { valueIds: value?.id, values: value?.updateName, value }
+        : { valueIds: null, values: null }, // Handle cleared state
+      subSection?.type,
+      index,
+      parameter?.actionIndex,
+      parameter?.code
+    );
+  };
+
+  const myParameter = temp.find((item) => item.parameterId === parameter.id && item?.actionIndex === parameter.actionIndex);
+
   return (
     <div data-tour={parameter?.id} style={{ width: '100%' }}>
       {parameter?.valuesConfigs?.length > 0 && (
@@ -22,29 +59,16 @@ const SelectChildParameterWidget = ({
           data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
-          key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs + temp[index]?.values}
-          // key={parameter?.valuesConfigs + temp[index]?.values}
-          style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
+          key={
+            parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS ?
+              selectedValue :
+              index !== -1 && temp[index]?.values ? selectedValue
+                : undefined}
+          style={parameter?.isRequired && !selectedValue?.updateName ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
-          defaultValue={
-            index !== -1 ? { updateName: temp[index].values } : defaultObject
-          }
-          disabled={disabled}
-          onChange={(e: any, value: any) => {
-            onChangeSubProductsForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              parameter?.name,
-              parameter?.actionId,
-              { valueIds: value?.id, values: value?.updateName, value },
-              subSection?.type,
-              index,
-              parameter?.actionIndex,
-              parameter?.code
-            );
-          }}
+          value={selectedValue} // Controlled value, reflecting the current state
+          disabled={disabled || (parameter?.isLock ?? myParameter?.isDisabled)}
+          onChange={handleValueChange}
         />
       )}
     </div>
