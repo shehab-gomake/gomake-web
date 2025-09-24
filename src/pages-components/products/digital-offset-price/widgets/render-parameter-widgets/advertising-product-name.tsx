@@ -23,6 +23,7 @@ const AdvertisingProductNameParameterWidget = ({
   getProductById,
   getAllMaterial,
   newDieCutSelect,
+  productTemplate,
 }: any) => {
   const {
     defaultObject,
@@ -79,7 +80,11 @@ const AdvertisingProductNameParameterWidget = ({
 
   const DieCutterOptions = [
     { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true },
-    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true },
+    // Hide generate_new option when templateId equals the specified value
+    ...(productTemplate?.templateId !== "b47bf700-e3fc-4dff-a5fd-638821dc9e25"
+      ? [{ id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true }]
+      : []
+    ),
     ...searchResult?.filter(value => {
       return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
     })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
@@ -100,7 +105,7 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
+  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options, productTemplate?.templateId]);
 
 
   const [selectedValue, setSelectedValue] = useState(
@@ -411,14 +416,17 @@ const AdvertisingProductNameParameterWidget = ({
                     }}
                   >{t("products.offsetPrice.admin.addNewDieCut")}
                   </GomakePrimaryButton>
-                  <GomakePrimaryButton
-                    style={{ width: "fit-content", height: 40, background: "#FF69B4" }}
-                    onClick={() => {
-                      createNewTemplate()
-                      setIsOpenDieCutModal(false)
-                    }}>
-                    {t("products.offsetPrice.admin.generateNewDieCut")}
-                  </GomakePrimaryButton>
+                  {/* Hide generate button when templateId equals the specified value */}
+                  {productTemplate?.templateId !== "b47bf700-e3fc-4dff-a5fd-638821dc9e25" && (
+                    <GomakePrimaryButton
+                      style={{ width: "fit-content", height: 40, background: "#FF69B4" }}
+                      onClick={() => {
+                        createNewTemplate()
+                        setIsOpenDieCutModal(false)
+                      }}>
+                      {t("products.offsetPrice.admin.generateNewDieCut")}
+                    </GomakePrimaryButton>
+                  )}
                 </div>
 
               }

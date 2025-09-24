@@ -22,7 +22,7 @@ const SelectChildParameterWidget = ({
           data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
-          key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs}
+          key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs + temp[index]?.values}
           // key={parameter?.valuesConfigs + temp[index]?.values}
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}

@@ -3534,6 +3534,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           getProductById={getProductById}
           getAllMaterial={getAllMaterial}
           newDieCutSelect={newDieCutSelect}
+          productTemplate={productTemplate}
         />
       );
     }
@@ -5661,21 +5662,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           });
         }
-        if (subSectionParameter?.code === "Shape" && hasDieCutOrDieKissCut) {
-          const parametersToRemove = [
-            "Height",
-            "Width",
-            "size",
-            "DieCut",
-            "DieCutter",
-            "DieKissCut",
-            "DieStamp",
-          ];
+        // if (subSectionParameter?.code === "Shape" && hasDieCutOrDieKissCut) {
+        //   const parametersToRemove = [
+        //     "Height",
+        //     "Width",
+        //     "size",
+        //     "DieCut",
+        //     "DieCutter",
+        //     "DieKissCut",
+        //     "DieStamp",
+        //   ];
 
-          temp = temp.filter(
-            (param) => !parametersToRemove.includes(param.parameterCode)
-          );
-        }
+        //   temp = temp.filter(
+        //     (param) => !parametersToRemove.includes(param.parameterCode)
+        //   );
+        // }
 
         if (
           (subSectionParameter?.code === "DiecutType" ||
@@ -5685,6 +5686,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const parametersToRemove = [
             "Height",
             "Width",
+            "size",
             "DieUnitWidth",
             "DieUnitLength",
             "DieUnitHeight",
@@ -5694,6 +5696,131 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           temp = temp.filter(
             (param) => !parametersToRemove.includes(param.parameterCode)
           );
+
+          // Find and handle size parameter after DieCut removal
+          let sizeParameter = subSection.parameters.find(
+            (param) => param.code === "size"
+          );
+          if (sizeParameter) {
+            // Find the custom value (one with empty values object)
+            let customValue = sizeParameter.valuesConfigs.find(
+              (x) => !x.values || Object.keys(x.values).length === 0
+            );
+
+            if (customValue) {
+              // Check if size parameter already exists in temp
+              let sizeSubProductParameter = temp.find(
+                (x) => x.parameterCode === "size"
+              );
+
+              if (sizeSubProductParameter) {
+                // Update existing size parameter to custom value
+                sizeSubProductParameter.valueIds = [customValue.id];
+                sizeSubProductParameter.values = [customValue.updateName];
+                sizeSubProductParameter.isDisabled = false;
+                sizeSubProductParameter.isLocked = false; // Remove locked status
+              } else {
+                // Add new size parameter with custom value
+                temp.push({
+                  parameterId: sizeParameter.id,
+                  sectionId: sectionId,
+                  subSectionId: subSectionId,
+                  ParameterType: sizeParameter.parameterType,
+                  isQuantityParameter: sizeParameter?.isQuantityParameter,
+                  parameterName: sizeParameter.name,
+                  actionId: sizeParameter.actionId,
+                  values: [customValue.updateName],
+                  valueIds: [customValue.id],
+                  actionIndex: sizeParameter.actionIndex,
+                  parameterCode: sizeParameter.code,
+                  valuesConfigs: sizeParameter?.valuesConfigs,
+                  unitKey: sizeParameter?.unitKey,
+                  defaultUnit: sizeParameter?.defaultUnit,
+                  unitType: sizeParameter?.unitType,
+                  factor: sizeParameter?.factor,
+                  isDisabled: false,
+                  isLocked: false, // Ensure not locked
+                  isGeneralInfoInProductionFloor:
+                    sizeParameter?.isGeneralInfoInProductionFloor,
+                });
+              }
+            }
+          }
+
+          // Remove locked status from other parameters that were removed
+          parametersToRemove.forEach(paramCode => {
+            const paramToUnlock = temp.find(p => p.parameterCode === paramCode);
+            if (paramToUnlock) {
+              paramToUnlock.isLocked = false;
+              paramToUnlock.isDisabled = false;
+            }
+          });
+        }
+
+        // Handle when DieCut or DieKissCut parameters themselves are being removed
+        if (
+          (subSectionParameter?.code === "DieCut" ||
+            subSectionParameter?.code === "DieKissCut") &&
+          (data?.values === null || data?.values === "" || data?.valueIds === null)
+        ) {
+          const parametersToRemove = [
+            "Height",
+            "Width",
+            "size",
+            "DieUnitWidth",
+            "DieUnitLength",
+            "DieUnitHeight",
+          ];
+
+          // Remove the parameters from temp
+          temp = temp.filter(
+            (param) => !parametersToRemove.includes(param.parameterCode)
+          );
+
+          // Find and handle size parameter
+          let sizeParameter = subSection.parameters.find(
+            (param) => param.code === "size"
+          );
+          if (sizeParameter) {
+            // Find the custom value (one with empty values object)
+            let customValue = sizeParameter.valuesConfigs.find(
+              (x) => !x.values || Object.keys(x.values).length === 0
+            );
+
+            if (customValue) {
+              // Add size parameter with custom value
+              temp.push({
+                parameterId: sizeParameter.id,
+                sectionId: sectionId,
+                subSectionId: subSectionId,
+                ParameterType: sizeParameter.parameterType,
+                isQuantityParameter: sizeParameter?.isQuantityParameter,
+                parameterName: sizeParameter.name,
+                actionId: sizeParameter.actionId,
+                values: [customValue.updateName],
+                valueIds: [customValue.id],
+                actionIndex: sizeParameter.actionIndex,
+                parameterCode: sizeParameter.code,
+                valuesConfigs: sizeParameter?.valuesConfigs,
+                unitKey: sizeParameter?.unitKey,
+                defaultUnit: sizeParameter?.defaultUnit,
+                unitType: sizeParameter?.unitType,
+                factor: sizeParameter?.factor,
+                isDisabled: false,
+                isLocked: false,
+                isGeneralInfoInProductionFloor:
+                  sizeParameter?.isGeneralInfoInProductionFloor,
+              });
+            }
+          }
+
+          // Unlock any remaining parameters that might be locked
+          temp.forEach(param => {
+            if (parametersToRemove.includes(param.parameterCode)) {
+              param.isLocked = false;
+              param.isDisabled = false;
+            }
+          });
         }
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
@@ -6036,20 +6163,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     return item ? item.value + "" : "";
                   };
-                  let dieUnitWidth = getValue("dieUnitWidth");
-                  let dieUnitLength = getValue("dieUnitLength");
+                  let dieUnitWidth = getValue("unitWidth");
+                  let dieUnitLength = getValue("unitLength");
                   let finalUnitWidth = getValue("finalUnitWidth");
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
                   const dieCutSizesParametersArray = [];
-                  // dieCutSizesParametersArray.push({
-                  //   parameterCode: "Width",
-                  //   value: dieUnitWidth,
-                  // });
-                  // dieCutSizesParametersArray.push({
-                  //   parameterCode: "Height",
-                  //   value: dieUnitLength,
-                  // });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "Width",
+                    value: dieUnitWidth,
+                  });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "Height",
+                    value: dieUnitLength,
+                  });
                   dieCutSizesParametersArray.push({
                     parameterCode: "DieUnitWidth",
                     value: finalUnitWidth,
@@ -6154,20 +6281,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               );
               return item ? item.value + "" : "";
             };
-            let dieUnitWidth = getValue("dieUnitWidth");
-            let dieUnitLength = getValue("dieUnitLength");
+            let dieUnitWidth = getValue("unitWidth");
+            let dieUnitLength = getValue("unitLength");
             let finalUnitWidth = getValue("finalUnitWidth");
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
             const dieCutSizesParametersArray = [];
-            // dieCutSizesParametersArray.push({
-            //   parameterCode: "Width",
-            //   value: dieUnitWidth,
-            // });
-            // dieCutSizesParametersArray.push({
-            //   parameterCode: "Height",
-            //   value: dieUnitLength,
-            // });
+            dieCutSizesParametersArray.push({
+              parameterCode: "Width",
+              value: dieUnitWidth,
+            });
+            dieCutSizesParametersArray.push({
+              parameterCode: "Height",
+              value: dieUnitLength,
+            });
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitWidth",
               value: finalUnitWidth,
@@ -6231,14 +6358,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
             let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
             const dieCutSizesParametersArray = [];
-            // dieCutSizesParametersArray.push({
-            //   parameterCode: "Width",
-            //   value: dieUnitWidth,
-            // });
-            // dieCutSizesParametersArray.push({
-            //   parameterCode: "Height",
-            //   value: dieUnitLength,
-            // });
+            dieCutSizesParametersArray.push({
+              parameterCode: "Width",
+              value: dieUnitWidth,
+            });
+            dieCutSizesParametersArray.push({
+              parameterCode: "Height",
+              value: dieUnitLength,
+            });
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitWidth",
               value: finalUnitWidth,
