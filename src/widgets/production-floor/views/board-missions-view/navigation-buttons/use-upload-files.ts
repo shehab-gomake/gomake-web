@@ -24,7 +24,7 @@ const useUploadFiles = (
   productType?: string,
   isOpenPrintingModal?: any
 ) => {
-  const CHUNK_SIZE = 20 * 1024 * 1024; // 5MB
+  const CHUNK_SIZE = 3 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
