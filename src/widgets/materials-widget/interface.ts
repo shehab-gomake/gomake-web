@@ -20,6 +20,7 @@ export interface IRowData {
   onChangeRowCheckBox?: any;
   unit?: string;
   isInventoryTable?: boolean;
+  isPurchasePricingTable?: boolean;
 }
 
 export interface IDynamicRowData {

@@ -11,7 +11,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
 
-const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable }: IRowData) => {
+const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable }: IRowData) => {
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");
@@ -29,7 +29,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
     setOpenDeleteTableRowModal(true);
   };
 
-  const { updateCellData, } = useTableCellData(isAdmin, isInventoryTable);
+  const { updateCellData, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);

@@ -32,8 +32,9 @@ const TableCellData = ({
   onChangeRowCheckBox,
   unit,
   isInventoryTable,
+  isPurchasePricingTable,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable);
+  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
@@ -96,6 +97,7 @@ const TableCellData = ({
           id={id}
           isAdmin={isAdmin}
           isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.IMAGE:
@@ -222,6 +224,7 @@ const TableCellData = ({
           isAdmin={isAdmin}
           unit={unit}
           isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
   }

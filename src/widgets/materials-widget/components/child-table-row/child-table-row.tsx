@@ -313,7 +313,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="supplierName"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -325,7 +325,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="purchasePrice"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -353,7 +353,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="quantityInPackage"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -365,7 +365,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="supplementTime"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -377,7 +377,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="order"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -389,7 +389,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             parameterKey="isActive"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={false}
+                                            isPurchasePricingTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
