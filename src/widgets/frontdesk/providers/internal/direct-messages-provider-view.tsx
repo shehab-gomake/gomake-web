@@ -55,6 +55,8 @@ const DirectMessagesProviderView: React.FC = () => {
     messageCursors,
     setActiveConversationId,
     setError,
+    connect,
+    disconnect,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
@@ -121,7 +123,8 @@ const DirectMessagesProviderView: React.FC = () => {
 
   const handleRetryConnection = () => {
     setError(null);
-    // The connect function will be called automatically by the hook
+    disconnect();
+    connect();
   };
 
   const handleStartNewConversation = () => {
