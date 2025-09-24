@@ -3,7 +3,6 @@ import { Stack, Paper, Box, Typography, Fab, Tooltip } from "@mui/material";
 import { Edit as ComposeIcon } from "@mui/icons-material";
 import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
 import { EmailSidebar } from "./components/email-sidebar";
 import { EmailConversationList } from "./components/email-conversation-list";

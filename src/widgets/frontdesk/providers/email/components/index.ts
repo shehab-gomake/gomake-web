@@ -1,5 +1,4 @@
 // Main email components
-export { EmailComposer } from "./email-composer";
 export { EmailConversationList } from "./email-conversation-list";
 export { EmailMessageViewer } from "./email-message-viewer";
 export { EmailSidebar } from "./email-sidebar";
