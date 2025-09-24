@@ -351,6 +351,7 @@ export const useMessaging = () => {
 
     // Presence handlers
     const handleUserOnline = (data: any) => {
+      console.log("Received userOnline event:", data);
       setOnlineUsers(data.onlineUsers || []);
       if (data.userId) {
         setUserPresence((prev) => ({

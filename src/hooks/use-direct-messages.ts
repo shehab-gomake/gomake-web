@@ -784,6 +784,7 @@ export const useDirectMessages = () => {
 
     // Presence handlers
     const handleUserOnline = (data: any) => {
+      console.log("Received userOnline event (direct messages):", data);
       setOnlineUsers((prev) => {
         if (!prev.includes(data.userId)) {
           return [...prev, data.userId];

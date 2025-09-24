@@ -26,6 +26,7 @@ export class MessagingService {
   private socket: Socket | null = null;
   private serverUrl: string;
   private isConnecting: boolean = false;
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.serverUrl = config.messaging_server || config.api_server;
@@ -57,6 +58,7 @@ export class MessagingService {
       }
 
       this.isConnecting = true;
+      this.clearHeartbeat();
 
       const token = authToken || getUserToken();
       console.log("Messaging Service - Auth Token:", token ? "Present" : "Missing");
@@ -90,12 +92,15 @@ export class MessagingService {
       this.socket.on("connect", () => {
         console.log("Connected to messaging service");
         this.isConnecting = false;
+        this.startHeartbeat();
+        this.socket?.emit("heartbeat");
         resolve(this.socket!);
       });
 
       this.socket.on("disconnect", (reason) => {
         console.log("Disconnected from messaging service. Reason:", reason);
         console.log("Disconnect details:", { reason, connected: this.socket?.connected });
+        this.clearHeartbeat();
         this.isConnecting = false;
       });
 
@@ -104,6 +109,7 @@ export class MessagingService {
         console.error("Connection error:", error.message);
         console.error("Error details:", error);
         this.isConnecting = false;
+        this.clearHeartbeat();
         
         // Enhanced error categorization based on knowledge base patterns
         if (error.message.includes('Authentication')) {
@@ -152,6 +158,7 @@ export class MessagingService {
 
       this.socket.on("reconnect_failed", () => {
         console.error("Failed to reconnect after maximum attempts");
+        this.clearHeartbeat();
         this.isConnecting = false;
       });
     });
@@ -163,6 +170,27 @@ export class MessagingService {
       this.socket = null;
     }
     this.isConnecting = false;
+    this.clearHeartbeat();
+  }
+
+  private startHeartbeat(): void {
+    if (!this.socket) return;
+
+    this.clearHeartbeat();
+    this.heartbeatInterval = setInterval(() => {
+      if (this.socket?.connected) {
+        this.socket.emit("heartbeat");
+      } else {
+        this.clearHeartbeat();
+      }
+    }, 30000);
+  }
+
+  private clearHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
   }
 
   isConnected(): boolean {
