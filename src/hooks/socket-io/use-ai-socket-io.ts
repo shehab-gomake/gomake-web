@@ -19,6 +19,7 @@ const aiJobResultsState = {
 const useAISocketIO = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [jobResults, setJobResults] = useState<any[]>([]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const { callApi } = useGomakeAxios();
 
   useEffect(() => {
@@ -53,55 +54,61 @@ const useAISocketIO = () => {
       setIsProcessing(false);
     });
 
-    // Join AI room for this user
-    socket.emit("joinAIRoom", {
-      userId: localStorage.getItem("userId") || "anonymous",
-      timestamp: new Date().toISOString(),
-    });
+    // Join AI room for this user with sessionId
+    if (sessionId) {
+      socket.emit("joinAIRoom", {
+        sessionId: sessionId,
+        userId: localStorage.getItem("userId") || "anonymous",
+        timestamp: new Date().toISOString(),
+      });
+    }
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [sessionId]);
 
-  const sendAIJob = async (jobDescription: string) => {
+  const startSession = async () => {
     try {
-      setIsProcessing(true);
+      // setIsProcessing(true);
 
-      // Send job to backend via API
-      const response = await callApi("POST", "/v1/ai/create-job", {
-        description: jobDescription,
-        timestamp: new Date().toISOString(),
+      // Start new AI session
+      const response = await callApi("POST", "/v1/ai/startSession", {
+        userId: localStorage.getItem("userId") || "anonymous",
       });
 
-      if (response?.success) {
-        console.log("AI Job created successfully:", response.data);
+      if (response?.success && response.data?.sessionId) {
+        console.log("AI Session started successfully:", response.data);
+        setSessionId(response.data.sessionId);
+        // setIsProcessing(false);
         return response.data;
       } else {
-        throw new Error(response?.message || "Failed to create AI job");
+        throw new Error(response?.message || "Failed to start AI session");
       }
     } catch (error) {
-      console.error("Error creating AI job:", error);
-      setIsProcessing(false);
+      console.error("Error starting AI session:", error);
+      // setIsProcessing(false);
       throw error;
     }
   };
 
-  const sendAIChatMessage = async (message: string, jobId?: string) => {
+  const sendMessage = async (prompt: string) => {
     try {
-      const response = await callApi("POST", "/v1/ai/chat", {
-        message,
-        jobId,
-        timestamp: new Date().toISOString(),
+      if (!sessionId) {
+        throw new Error("No active session. Please start a new job first.");
+      }
+
+      // Send message to AI
+      const response = await callApi("POST", "/v1/ai/sendMessage", {
+        sessionId: sessionId,
+        prompt: prompt,
       });
 
-      if (response?.success) {
-        return response.data;
-      } else {
-        throw new Error(response?.message || "Failed to send chat message");
-      }
+      // Response is empty, we get the actual response from socket.io
+      console.log("Message sent successfully, waiting for socket response");
+      return { success: true };
     } catch (error) {
-      console.error("Error sending AI chat message:", error);
+      console.error("Error sending message:", error);
       throw error;
     }
   };
@@ -109,8 +116,9 @@ const useAISocketIO = () => {
   return {
     isProcessing,
     jobResults,
-    sendAIJob,
-    sendAIChatMessage,
+    sessionId,
+    startSession,
+    sendMessage,
   };
 };
 

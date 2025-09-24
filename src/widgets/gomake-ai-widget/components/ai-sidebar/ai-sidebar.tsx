@@ -1,29 +1,16 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
-import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
 import { JobHistoryItem } from "../job-history-item/job-history-item";
 import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
+import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
+
 interface AISidebarProps {
-  selectedTab: "new-job";
-  onTabChange: (tab: "new-job") => void;
   onNewJobClick: () => void;
-  onJobHistoryClick: () => void;
   jobHistory: any[];
 }
 
-const AISidebar = ({
-  selectedTab,
-  onTabChange,
-  onNewJobClick,
-  onJobHistoryClick,
-  jobHistory,
-}: AISidebarProps) => {
+const AISidebar = ({ onNewJobClick, jobHistory }: AISidebarProps) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
 
   return (
     <div style={classes.sidebarContainer}>
@@ -34,7 +21,7 @@ const AISidebar = ({
             <ChatBubbleOutlineOutlinedIcon style={classes.chatIcon} />
           </div>
           <div style={classes.brandingText}>
-            <div style={classes.brandTitle}>GoMake AI</div>
+            <div style={classes.brandTitle}>Go AI</div>
             <div style={classes.brandSubtitle}>Light Edition</div>
           </div>
         </div>
@@ -53,15 +40,6 @@ const AISidebar = ({
           <div style={classes.navIcon}>+</div>
           <div style={classes.navText}>New Job</div>
         </div>
-
-        {/* <div
-          className="ai-sidebar-nav-item"
-          style={classes.navItem}
-          onClick={onJobHistoryClick}
-        >
-          <div style={classes.navIcon}>📋</div>
-          <div style={classes.navText}>Job History</div>
-        </div> */}
       </div>
 
       {/* Content Area */}
@@ -96,10 +74,10 @@ const AISidebar = ({
       </div>
 
       {/* Footer */}
-      {/* <div style={classes.footer}>
+      <div style={classes.footer}>
         <div style={classes.poweredByLbl}>Powered by</div>
         <GoMakeIcon />
-      </div> */}
+      </div>
     </div>
   );
 };

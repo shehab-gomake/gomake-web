@@ -21,7 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
-import { DashboardIcon } from "@/icons/side-list-icons/dashboard";
+import ReviewsOutlinedIcon from "@mui/icons-material/ReviewsOutlined";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -58,6 +58,19 @@ const useAuthLayoutHook = (
         isProduction: true,
         tourData: "menu-home",
       },
+      {
+        isLine: false,
+        key: "goAI",
+        title: "Go-AI",
+        path: "/gomake-ai",
+        isList: false,
+        icon: () => {
+          return <ReviewsOutlinedIcon />;
+        },
+        isProduction: true,
+        tourData: "menu-go-ai",
+      },
+
       {
         isLine: false,
         key: "productFloor",
@@ -534,4 +547,5 @@ const useAuthLayoutHook = (
     handleLogout,
   };
 };
+
 export { useAuthLayoutHook };

@@ -153,35 +153,49 @@ const useStyle = () => {
       },
       jobTypeCardsContainer: {
         display: "grid",
-        gridTemplateColumns: "repeat(2, 1fr)",
-        gap: 16,
+        gridTemplateColumns: "repeat(2, minmax(400px, 1fr))", // min 400px per card
+        gap: 24,
         marginBottom: 24,
+        maxWidth: 1200, // was 1000
+        margin: "0 auto 24px auto",
       },
       jobTypeCard: {
         backgroundColor: "#FFF",
         borderRadius: 12,
         padding: "20px",
         border: "1px solid #E5E7EB",
-        cursor: "pointer",
+        cursor: "pointer" as "pointer",
         transition: "all 0.2s ease",
+        minHeight: 100,
+        minWidth: 420, // 👈 force card to be wider
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center" as "center",
+        gap: 16,
         "&:hover": {
-          borderColor: "#504FA1",
-          boxShadow: "0 4px 12px rgba(80, 79, 161, 0.1)",
+          borderColor: "#3B82F6",
+          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.1)",
+          transform: "translateY(-2px)",
         },
       },
-      jobTypeIcon: {
-        fontSize: 32,
-        marginBottom: 12,
+
+      jobTypeTextContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        flex: 1,
       },
       jobTypeTitle: {
-        ...FONT_FAMILY.Inter(600, 16),
+        ...FONT_FAMILY.Inter(600, 14),
         color: "#1F2937",
-        marginBottom: 8,
+        marginBottom: 4,
+        textAlign: "left" as "left",
       },
       jobTypeDescription: {
-        ...FONT_FAMILY.Inter(400, 14),
+        ...FONT_FAMILY.Inter(400, 12),
         color: "#6B7280",
-        lineHeight: "20px",
+        lineHeight: "16px",
+        textAlign: "left" as "left",
+        flex: 1,
       },
       bottomFormContainer: {
         position: "absolute" as "absolute",
@@ -251,6 +265,21 @@ const useStyle = () => {
         fontSize: 20,
         transform: "rotate(-15deg)",
         fontStyle: "italic",
+      },
+      jobTypeIconWrapper: {
+        display: "flex",
+        alignItems: "center" as "center",
+        justifyContent: "center" as "center",
+        width: "44px",
+        height: "44px",
+        borderRadius: "8px",
+        backgroundColor: "#e9f0f7",
+        flexShrink: 0,
+      },
+
+      jobTypeIcon: {
+        fontSize: "26px",
+        color: "#2E54E7", // same blue as the theme
       },
     };
   }, []);

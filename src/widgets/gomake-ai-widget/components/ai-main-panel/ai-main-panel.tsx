@@ -3,30 +3,57 @@ import { AIChatInterface } from "../ai-chat-interface/ai-chat-interface";
 import { useStyle } from "./style";
 import SendIcon from "@mui/icons-material/Send";
 
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+
+const jobCards = [
+  {
+    title: "Start a Book Job",
+    description: "Design covers, layouts, and more.",
+    icon: <MenuBookOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+  },
+  {
+    title: "Start a Package Job",
+    description: "Create packaging for a new product.",
+    icon: <Inventory2OutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+  },
+  {
+    title: "Start a Commercial Product Job",
+    description: "Develop branding for a commercial item.",
+    icon: <AssignmentOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+  },
+  {
+    title: "Start a Labels Job",
+    description: "Design and print custom labels.",
+    icon: <LocalOfferOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+  },
+];
+
 interface AIMainPanelProps {
-  selectedTab: "new-job";
   onNewJobCreated: (job: any) => void;
-  sendAIJob: (description: string) => Promise<any>;
-  sendAIChatMessage: (message: string, jobId?: string) => Promise<any>;
+  startSession: () => Promise<any>;
+  sendMessage: (prompt: string) => Promise<any>;
   isProcessing: boolean;
+  sessionId: string | null;
   chatMessages: any[];
   onChatMessagesUpdate: (messages: any[]) => void;
 }
 
 const AIMainPanel = ({
-  selectedTab,
   onNewJobCreated,
-  sendAIJob,
-  sendAIChatMessage,
+  startSession,
+  sendMessage,
   isProcessing,
+  sessionId,
   chatMessages,
   onChatMessagesUpdate,
 }: AIMainPanelProps) => {
   const { classes } = useStyle();
   const [jobDescription, setJobDescription] = useState("");
 
-  //!here send action
-  const handleSubmitJob = async () => {
+  const handleSendMessage = async () => {
     if (!jobDescription.trim()) return;
 
     const currentDescription = jobDescription; // Store the current description
@@ -45,37 +72,26 @@ const AIMainPanel = ({
       ];
       onChatMessagesUpdate(newMessages);
 
-      // Send job to AI via socket
-      const jobResult = await sendAIJob(currentDescription);
+      // If this is the first message and we have a session, create job entry
+      if (chatMessages.length === 0 && sessionId) {
+        const newJob = {
+          id: sessionId,
+          title:
+            currentDescription.substring(0, 50) +
+            (currentDescription.length > 50 ? "..." : ""),
+          description: currentDescription,
+          createdAt: new Date().toISOString(),
+          status: "processing" as const,
+        };
+        onNewJobCreated(newJob);
+      }
 
-      // Create new job object
-      const newJob = {
-        id: jobResult.id || Date.now().toString(),
-        title:
-          currentDescription.substring(0, 50) +
-          (currentDescription.length > 50 ? "..." : ""),
-        description: currentDescription,
-        createdAt: new Date().toISOString(),
-        status: "processing" as const,
-      };
+      // Send message to AI
+      await sendMessage(currentDescription);
 
-      onNewJobCreated(newJob);
-
-      // Add AI response to chat
-      const aiResponseMessages = [
-        ...newMessages,
-        {
-          id: (Date.now() + 1).toString(),
-          type: "ai",
-          message:
-            jobResult.result?.message ||
-            "I'm analyzing your job requirements. Let me help you create a detailed quote for this project...",
-          timestamp: new Date().toISOString(),
-        },
-      ];
-      onChatMessagesUpdate(aiResponseMessages);
+      // Note: AI response will come through socket.io, not here
     } catch (error) {
-      console.error("Error submitting job:", error);
+      console.error("Error sending message:", error);
       // Add error message to chat
       const errorMessages = [
         ...chatMessages,
@@ -83,7 +99,7 @@ const AIMainPanel = ({
           id: (Date.now() + 1).toString(),
           type: "ai",
           message:
-            "Sorry, I encountered an error processing your request. Please try again.",
+            "Sorry, I encountered an error processing your message. Please try again.",
           timestamp: new Date().toISOString(),
         },
       ];
@@ -94,63 +110,91 @@ const AIMainPanel = ({
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmitJob();
+      handleSendMessage();
     }
+  };
+
+  const handleJobCardClick = async (title: string, description: string) => {
+    // Set the job description to the title
+    setJobDescription(title);
+
+    // Wait a moment for the state to update, then auto-send
+    setTimeout(async () => {
+      await handleSendMessage();
+    }, 500);
   };
 
   return (
     <div style={classes.mainPanelContainer}>
-      {selectedTab === "new-job" && (
-        <div style={classes.newJobContainer}>
-          {/* Header - Only show when no chat messages */}
-          {chatMessages.length === 0 && (
-            <div style={classes.header}>
-              <div style={classes.headerIcon}>✨</div>
-              <div style={classes.headerTitle}>
-                Start a New Job with GoMake AI
-              </div>
-              <div style={classes.headerSubtitle}>
-                Describe your project, and our intelligent assistant will guide
-                you through the creation process.
-              </div>
+      <div style={classes.newJobContainer}>
+        {/* Header - Only show when no chat messages */}
+        {chatMessages.length === 0 && (
+          <div style={classes.header}>
+            <div style={classes.headerIcon}>✨</div>
+            <div style={classes.headerTitle}>
+              Start a New Job with GoMake AI
             </div>
-          )}
-
-          {/* Chat Interface */}
-          <div style={classes.chatContainer}>
-            <AIChatInterface
-              messages={chatMessages}
-              isProcessing={isProcessing}
-            />
+            <div style={classes.headerSubtitle}>
+              Describe your project, and our intelligent assistant will guide
+              you through the creation process.
+            </div>
           </div>
+        )}
 
-          {/* Job Description Form - Always at Bottom */}
-          <div style={classes.bottomFormContainer}>
-            <div style={classes.bottomFormWrapper}>
-              <textarea
-                style={classes.bottomTextArea}
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Describe your new job requirements..."
-                disabled={isProcessing}
-                rows={1}
-              />
-              <button
-                className={`send-button ${isProcessing ? "disabled" : ""}`}
-                style={{
-                  ...classes.sendButton,
-                  ...(isProcessing ? classes.sendButtonDisabled : {}),
-                }}
-                onClick={handleSubmitJob}
-                disabled={!jobDescription.trim() || isProcessing}
+        {chatMessages.length === 0 && (
+          <div style={classes.jobTypeCardsContainer}>
+            {jobCards.map((card, index) => (
+              <div
+                key={index}
+                style={classes.jobTypeCard}
+                onClick={() => handleJobCardClick(card.title, card.description)}
               >
-                <SendIcon style={classes.sendIcon} />
-              </button>
-            </div>
+                <div style={classes.jobTypeIconWrapper}>{card.icon}</div>
+                <div style={classes.jobTypeTextContainer}>
+                  <div style={classes.jobTypeTitle}>{card.title}</div>
+                  <div style={classes.jobTypeDescription}>
+                    {card.description}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Chat Interface */}
+        <div style={classes.chatContainer}>
+          <AIChatInterface
+            messages={chatMessages}
+            isProcessing={isProcessing}
+          />
+        </div>
+
+        {/* Job Description Form - Always at Bottom */}
+        <div style={classes.bottomFormContainer}>
+          <div style={classes.bottomFormWrapper}>
+            <textarea
+              style={classes.bottomTextArea}
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Describe your new job requirements..."
+              disabled={isProcessing}
+              rows={1}
+            />
+            <button
+              className={`send-button ${isProcessing ? "disabled" : ""}`}
+              style={{
+                ...classes.sendButton,
+                ...(isProcessing ? classes.sendButtonDisabled : {}),
+              }}
+              onClick={handleSendMessage}
+              disabled={!jobDescription.trim() || isProcessing}
+            >
+              <SendIcon style={classes.sendIcon} />
+            </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
