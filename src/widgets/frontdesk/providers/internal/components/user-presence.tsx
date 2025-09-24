@@ -13,7 +13,7 @@ import {
   Divider,
 } from "@mui/material";
 import { Circle as OnlineIcon, Person as PersonIcon } from "@mui/icons-material";
-import { PresenceData } from "../types";
+import { DMPresenceData as PresenceData } from "../types";
 
 interface UserPresenceProps {
   onlineUsers: string[];

@@ -1,5 +1,5 @@
 import { UnifiedConversation, UnifiedFilters, UnifiedSortOptions, AggregationResult } from '../types/unified.types';
-import { Channel } from '../../internal/types/internal.types';
+import { BaseConversation } from '../../base/provider.interface';
 
 // Provider icons (these would be actual icon components in production)
 const PROVIDER_ICONS = {
@@ -12,7 +12,7 @@ const PROVIDER_ICONS = {
  * Tag conversations with provider information
  */
 export const tagConversations = (
-  conversations: Channel[],
+  conversations: BaseConversation[],
   provider: 'email' | 'whatsapp' | 'internal',
   accountId?: string,
   accountName?: string
@@ -35,7 +35,7 @@ export const tagConversations = (
 /**
  * Determine priority based on conversation properties
  */
-const determinePriority = (conversation: Channel): 'high' | 'medium' | 'low' => {
+const determinePriority = (conversation: BaseConversation): 'high' | 'medium' | 'low' => {
   // High priority if unread count is high or has specific keywords
   if ((conversation.unreadCount || 0) > 5) return 'high';
   if ((conversation.unreadCount || 0) > 0) return 'medium';
@@ -45,17 +45,17 @@ const determinePriority = (conversation: Channel): 'high' | 'medium' | 'low' => 
 /**
  * Extract tags from conversation (placeholder implementation)
  */
-const extractTags = (conversation: Channel): string[] => {
+const extractTags = (conversation: BaseConversation): string[] => {
   const tags: string[] = [];
   
   if (conversation.unreadCount && conversation.unreadCount > 0) {
     tags.push('unread');
   }
   
-  if (conversation.type === 'direct') {
+  if (conversation.type === 'dm') {
     tags.push('dm');
-  } else if (conversation.type === 'channel') {
-    tags.push('channel');
+  } else if (conversation.type === 'group') {
+    tags.push('group');
   }
   
   return tags;
@@ -64,7 +64,7 @@ const extractTags = (conversation: Channel): string[] => {
 /**
  * Extract assignee information (placeholder implementation)
  */
-const extractAssignee = (conversation: Channel): string | undefined => {
+const extractAssignee = (conversation: BaseConversation): string | undefined => {
   // This would be extracted from conversation metadata in real implementation
   return undefined;
 };
@@ -170,9 +170,9 @@ export const sortConversations = (
  * Main aggregation function
  */
 export const aggregateConversations = (
-  emailConversations: Channel[],
-  whatsappConversations: Channel[],
-  internalConversations: Channel[],
+  emailConversations: BaseConversation[],
+  whatsappConversations: BaseConversation[],
+  internalConversations: BaseConversation[],
   filters?: UnifiedFilters,
   sortOptions?: UnifiedSortOptions
 ): AggregationResult => {

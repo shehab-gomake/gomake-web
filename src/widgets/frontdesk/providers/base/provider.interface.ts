@@ -1,7 +1,31 @@
-import { Message, Channel } from '../internal/types/internal.types';
+// Base message interface for all providers
+export interface Message {
+  id: string;
+  conversationId: string;
+  content: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  organizationId: string;
+  timestamp: string;
+  recipientId?: string;
+  metadata?: {
+    type: 'text' | 'file' | 'image';
+    timestamp?: string;
+    [key: string]: any;
+  };
+}
 
-// Re-export types for external use
-export type { Message, Channel };
+// Base conversation interface
+export interface BaseConversation {
+  id: string;
+  name: string;
+  type: 'dm' | 'group';
+  unreadCount?: number;
+  lastMessage?: string;
+  lastMessageAt?: string;
+  members?: string[];
+}
 
 // Account type for multi-account providers
 export interface Account {
@@ -14,17 +38,20 @@ export interface Account {
   provider: 'email' | 'whatsapp' | 'internal';
 }
 
-// Base conversation type
-export interface Conversation extends Channel {
+// Provider-specific conversation type
+export interface Conversation extends BaseConversation {
   accountId?: string;
   metadata?: Record<string, any>;
 }
+
+// Legacy alias for backward compatibility - will be removed
+export type Channel = BaseConversation;
 
 // Provider capabilities
 export interface ProviderCapabilities {
   multiAccount: boolean;
   directMessages: boolean;
-  channels: boolean;
+  groupConversations: boolean;
   attachments: boolean;
   reactions: boolean;
   typing: boolean;

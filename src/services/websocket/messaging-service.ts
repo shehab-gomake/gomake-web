@@ -2,18 +2,71 @@ import { io, Socket } from "socket.io-client";
 import config from "@/config";
 import { getUserToken } from "@/services/storage-data";
 import {
-  Message,
-  SendMessageData,
-  JoinChannelData,
-  TypingData,
-  MarkAsReadData,
-  UpdateStatusData,
-  GetPresenceData,
-  SocketResponse,
-  PresenceData,
-  TypingIndicator,
-  MessageConfirmedData,
+  DMMessage,
+  DMPresenceData,
 } from "@/widgets/frontdesk/providers/internal/types";
+
+// Use DMMessage as Message for compatibility
+export type Message = DMMessage;
+export type PresenceData = DMPresenceData;
+
+// Define missing types that were removed from legacy system
+export interface SendMessageData {
+  conversationId: string;
+  content: string;
+  recipientId?: string;
+  tempId?: string;
+  messageId?: string;
+  metadata?: {
+    type: 'text' | 'file' | 'image';
+  };
+}
+
+export interface JoinChannelData {
+  conversationId: string;
+}
+
+export interface TypingData {
+  conversationId: string;
+}
+
+export interface MarkAsReadData {
+  messageId: string;
+}
+
+export interface UpdateStatusData {
+  status: 'online' | 'away' | 'busy' | 'offline';
+}
+
+export interface GetPresenceData {
+  userIds?: string[];
+}
+
+export interface SocketResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: any;
+  messageId?: string;
+  conversationId?: string;
+  onlineUsers?: string[];
+  presence?: Record<string, PresenceData>;
+}
+
+export interface TypingIndicator {
+  userId: string;
+  userEmail: string;
+  userName: string;
+  conversationId: string;
+  isTyping: boolean;
+}
+
+export interface MessageConfirmedData {
+  tempId: string;
+  messageId: string;
+  conversationId: string;
+  timestamp?: string;
+}
 
 export type MessageEventHandler = (message: Message) => void;
 export type PresenceEventHandler = (data: any) => void;

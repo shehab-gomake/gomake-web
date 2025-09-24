@@ -11,7 +11,7 @@ import {
   internalChannelsAtom,
   internalDirectMessagesAtom 
 } from '../atoms/internal.atoms';
-import { Channel } from '@/widgets/frontdesk/providers/internal/types/internal.types';
+import { BaseConversation } from '@/widgets/frontdesk/providers/base/provider.interface';
 import { Conversation } from '@/widgets/frontdesk/providers/internal/types/direct-messages.types';
 import { 
   unifiedFiltersAtom,
@@ -23,11 +23,11 @@ import { aggregateConversations } from '@/widgets/frontdesk/providers/unified/ut
 /**
  * Convert Conversation to Channel format for aggregation
  */
-const convertConversationToChannel = (conversation: Conversation): Channel => {
+const convertConversationToBaseConversation = (conversation: Conversation): BaseConversation => {
   return {
     id: conversation.id,
     name: conversation.name || (conversation.type === 'DM' ? 'Direct Message' : 'Group Chat'),
-    type: conversation.type === 'DM' ? 'direct' : 'channel',
+    type: conversation.type === 'DM' ? 'dm' : 'group',
     unreadCount: conversation.unreadCount,
     lastMessageAt: conversation.lastMessageAt,
     members: conversation.members?.map(member => member.userId)
@@ -70,8 +70,9 @@ export const allInternalConversationsSelector = selector({
   get: ({ get }) => {
     const channels = get(internalChannelsAtom);
     const dms = get(internalDirectMessagesAtom);
-    const convertedDms = dms.map(convertConversationToChannel);
-    return [...channels, ...convertedDms];
+    const convertedChannels = channels.map(convertConversationToBaseConversation);
+    const convertedDms = dms.map(convertConversationToBaseConversation);
+    return [...convertedChannels, ...convertedDms];
   }
 });
 

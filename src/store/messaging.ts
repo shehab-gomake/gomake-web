@@ -1,11 +1,32 @@
 import { atom } from 'recoil';
 import {
-  Message,
-  Channel,
-  User,
-  PresenceData,
-  MessagingState
+  DMMessage,
+  Conversation,
+  ConversationMember,
+  DMPresenceData,
 } from '@/widgets/frontdesk/providers/internal/types';
+
+// Type aliases for compatibility
+export type Message = DMMessage;
+export type Channel = Conversation;
+export type User = ConversationMember;
+export type PresenceData = DMPresenceData;
+
+// Define MessagingState since it was removed from legacy types
+export interface MessagingState {
+  isConnected: boolean;
+  connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error';
+  currentUser: User | null;
+  channels: Channel[];
+  activeChannelId: string | null;
+  messages: Record<string, Message[]>;
+  unreadCounts: Record<string, number>;
+  onlineUsers: string[];
+  userPresence: Record<string, PresenceData>;
+  typingUsers: Record<string, string[]>;
+  isTyping: boolean;
+  draft: Record<string, string>;
+}
 
 // Connection state
 export const messagingConnectionState = atom<'connecting' | 'connected' | 'disconnected' | 'error'>({
@@ -28,9 +49,9 @@ export const messagingCurrentUserState = atom<User | null>({
 export const messagingChannelsState = atom<Channel[]>({
   key: 'messagingChannelsState',
   default: [
-    { id: 'general', name: 'General', type: 'channel', unreadCount: 0 },
-    { id: 'development', name: 'Development', type: 'channel', unreadCount: 0 },
-    { id: 'design', name: 'Design', type: 'channel', unreadCount: 0 }
+    { id: 'general', name: 'General', type: 'GROUP_DM', participantCount: 1, isActive: true, unreadCount: 0 },
+    { id: 'development', name: 'Development', type: 'GROUP_DM', participantCount: 1, isActive: true, unreadCount: 0 },
+    { id: 'design', name: 'Design', type: 'GROUP_DM', participantCount: 1, isActive: true, unreadCount: 0 }
   ]
 });
 

@@ -212,30 +212,3 @@ export interface UserSelectorProps {
   onClose: () => void;
 }
 
-// Legacy types for backward compatibility (to be phased out)
-export interface LegacyMessage {
-  channelId: string;
-  content: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
-  organizationId: string;
-  timestamp: string;
-  recipientId?: string;
-  messageId?: string;
-  tempId?: string;
-  metadata?: {
-    type: 'text' | 'file' | 'image';
-    timestamp?: string;
-  };
-}
-
-export interface LegacyChannel {
-  id: string;
-  name: string;
-  type: 'channel' | 'direct';
-  unreadCount?: number;
-  lastMessage?: string;
-  lastMessageAt?: string;
-  members?: string[];
-}

@@ -7,9 +7,9 @@ import {
   AggregationResult 
 } from '../types/unified.types';
 import { aggregateConversations } from '../utils/conversation-aggregator';
-import { 
-  messagingChannelsState as internalChannelsAtom
-} from '@/store/messaging';
+import {
+  allInternalConversationsSelector
+} from '@/store/frontdesk/selectors/aggregation.selectors';
 
 // Mock atoms for email and whatsapp (will be replaced with real ones)
 const emailConversationsAtom = { key: 'mockEmail', default: [] };
@@ -23,13 +23,7 @@ export const useAggregatedConversations = (
   // Note: These will be replaced with actual provider atoms/hooks
   const emailConversations = []; // useRecoilValue(emailConversationsAtom);
   const whatsappConversations = []; // useRecoilValue(whatsappConversationsAtom);
-  const internalChannels = useRecoilValue(internalChannelsAtom);
-  
-  // Separate channels and direct messages
-  const internalConversations = useMemo(() => {
-    // All internal channels (both regular channels and direct messages)
-    return internalChannels;
-  }, [internalChannels]);
+  const internalConversations = useRecoilValue(allInternalConversationsSelector);
   
   // Aggregate conversations
   const aggregationResult = useMemo(() => {
