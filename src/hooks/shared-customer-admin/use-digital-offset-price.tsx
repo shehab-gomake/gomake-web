@@ -5444,6 +5444,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
       }
+
+      // Handle DieCut Type removal - unlock Size parameter if it's locked
+      if (subSectionParameter?.code === "DiecutType" &&
+        (data?.values === null || data?.values === "" || data?.valueIds === null)) {
+        // Only unlock Size parameter if it's currently locked
+        let sizeParam = temp.find(p => p.parameterCode === "size");
+        if (sizeParam && sizeParam.isLocked) {
+          sizeParam.isLocked = false;
+          sizeParam.isDisabled = false;
+        }
+      }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -6521,43 +6532,46 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
 
-          let sizeParameter = subSection.parameters.find(
-            (param) => param.code === "size"
-          );
-          if (sizeParameter) {
-            let sizeSubProductParameter = temp.find(
-              (x) => x.parameterCode == "size"
+          // Skip size parameter changes for DiecutType - only process for DieCut/DieKissCut parameters
+          if (subSectionParameter?.code !== "DiecutType") {
+            let sizeParameter = subSection.parameters.find(
+              (param) => param.code === "size"
             );
-            let customValue = sizeParameter.valuesConfigs.find(
-              (x) => !x.values || Object.keys(x.values).length === 0
-            );
-            if (customValue) {
-              if (sizeSubProductParameter) {
-                sizeSubProductParameter.valueIds = [customValue.id];
-                sizeSubProductParameter.values = [customValue.updateName];
-                sizeSubProductParameter.isDisabled = true;
-              } else {
-                temp.push({
-                  parameterId: sizeParameter.id,
-                  sectionId: sectionId,
-                  subSectionId: subSectionId,
-                  ParameterType: sizeParameter.parameterType,
-                  isQuantityParameter: sizeParameter?.isQuantityParameter,
-                  parameterName: sizeParameter.name,
-                  actionId: sizeParameter.actionId,
-                  values: [customValue.updateName],
-                  valueIds: [customValue.id],
-                  actionIndex: sizeParameter.actionIndex,
-                  parameterCode: sizeParameter.code,
-                  valuesConfigs: sizeParameter?.valuesConfigs,
-                  unitKey: sizeParameter?.unitKey,
-                  defaultUnit: sizeParameter?.defaultUnit,
-                  unitType: sizeParameter?.unitType,
-                  factor: sizeParameter?.factor,
-                  isDisabled: true,
-                  isGeneralInfoInProductionFloor:
-                    sizeParameter?.isGeneralInfoInProductionFloor,
-                });
+            if (sizeParameter) {
+              let sizeSubProductParameter = temp.find(
+                (x) => x.parameterCode == "size"
+              );
+              let customValue = sizeParameter.valuesConfigs.find(
+                (x) => !x.values || Object.keys(x.values).length === 0
+              );
+              if (customValue) {
+                if (sizeSubProductParameter) {
+                  sizeSubProductParameter.valueIds = [customValue.id];
+                  sizeSubProductParameter.values = [customValue.updateName];
+                  sizeSubProductParameter.isDisabled = true;
+                } else {
+                  temp.push({
+                    parameterId: sizeParameter.id,
+                    sectionId: sectionId,
+                    subSectionId: subSectionId,
+                    ParameterType: sizeParameter.parameterType,
+                    isQuantityParameter: sizeParameter?.isQuantityParameter,
+                    parameterName: sizeParameter.name,
+                    actionId: sizeParameter.actionId,
+                    values: [customValue.updateName],
+                    valueIds: [customValue.id],
+                    actionIndex: sizeParameter.actionIndex,
+                    parameterCode: sizeParameter.code,
+                    valuesConfigs: sizeParameter?.valuesConfigs,
+                    unitKey: sizeParameter?.unitKey,
+                    defaultUnit: sizeParameter?.defaultUnit,
+                    unitType: sizeParameter?.unitType,
+                    factor: sizeParameter?.factor,
+                    isDisabled: true,
+                    isGeneralInfoInProductionFloor:
+                      sizeParameter?.isGeneralInfoInProductionFloor,
+                  });
+                }
               }
             }
           }
