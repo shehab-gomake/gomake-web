@@ -225,7 +225,7 @@ const useStyle = () => {
         width: 48,
         height: 48,
         borderRadius: 8,
-        backgroundColor: "#3B82F6",
+        background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)",
         border: "none",
         cursor: "pointer",
         display: "flex",
@@ -233,11 +233,11 @@ const useStyle = () => {
         justifyContent: "center",
         transition: "all 0.2s ease",
         "&:hover": {
-          backgroundColor: "#2563eb",
+          background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
           transform: "translateY(-1px)",
         },
         "&:disabled": {
-          backgroundColor: "#D1D5DB",
+          background: "#D1D5DB",
           cursor: "not-allowed",
           transform: "none",
         },
@@ -249,6 +249,8 @@ const useStyle = () => {
       sendIcon: {
         color: "#FFF",
         fontSize: 20,
+        transform: "rotate(-15deg)",
+        fontStyle: "italic",
       },
     };
   }, []);

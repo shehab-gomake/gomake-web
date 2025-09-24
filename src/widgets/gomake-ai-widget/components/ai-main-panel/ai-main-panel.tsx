@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { AIChatInterface } from "../ai-chat-interface/ai-chat-interface";
 import { useStyle } from "./style";
 import SendIcon from "@mui/icons-material/Send";
@@ -26,9 +23,9 @@ const AIMainPanel = ({
   onChatMessagesUpdate,
 }: AIMainPanelProps) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
   const [jobDescription, setJobDescription] = useState("");
 
+  //!here send action
   const handleSubmitJob = async () => {
     if (!jobDescription.trim()) return;
 
@@ -71,6 +68,7 @@ const AIMainPanel = ({
           id: (Date.now() + 1).toString(),
           type: "ai",
           message:
+            jobResult.result?.message ||
             "I'm analyzing your job requirements. Let me help you create a detailed quote for this project...",
           timestamp: new Date().toISOString(),
         },

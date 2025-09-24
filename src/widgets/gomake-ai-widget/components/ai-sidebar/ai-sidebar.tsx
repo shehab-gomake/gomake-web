@@ -5,7 +5,7 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
 import { JobHistoryItem } from "../job-history-item/job-history-item";
 import { useStyle } from "./style";
-
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 interface AISidebarProps {
   selectedTab: "new-job";
   onTabChange: (tab: "new-job") => void;
@@ -28,15 +28,21 @@ const AISidebar = ({
     <div style={classes.sidebarContainer}>
       {/* Header */}
       <div style={classes.header}>
-        <div style={classes.logoContainer}>
-          <GoMakeIcon />
+        <div style={classes.brandingContainer}>
+          <div style={classes.logoContainer}>
+            <ChatBubbleOutlineOutlinedIcon style={classes.chatIcon} />
+          </div>
+          <div style={classes.brandingText}>
+            <div style={classes.brandTitle}>GoMake AI</div>
+            <div style={classes.brandSubtitle}>Light Edition</div>
+          </div>
         </div>
-        <div style={classes.title}>GoMake AI</div>
       </div>
 
       {/* Navigation Buttons */}
       <div style={classes.navigationContainer}>
         <div
+          className="ai-sidebar-nav-item"
           style={{
             ...classes.navItem,
             ...classes.activeNavItem,
@@ -47,7 +53,11 @@ const AISidebar = ({
           <div style={classes.navText}>New Job</div>
         </div>
 
-        <div style={classes.navItem} onClick={onJobHistoryClick}>
+        <div
+          className="ai-sidebar-nav-item"
+          style={classes.navItem}
+          onClick={onJobHistoryClick}
+        >
           <div style={classes.navIcon}>📋</div>
           <div style={classes.navText}>Job History</div>
         </div>
@@ -58,7 +68,7 @@ const AISidebar = ({
         <div style={classes.jobHistorySection}>
           <div style={classes.sectionTitle}>Recent Jobs</div>
           {jobHistory.length === 0 ? (
-            <div style={classes.emptyState}>
+            <div className="ai-empty-state" style={classes.emptyState}>
               <div style={classes.emptyStateIcon}>📋</div>
               <div style={classes.emptyStateText}>No jobs yet</div>
               <div style={classes.emptyStateSubtext}>

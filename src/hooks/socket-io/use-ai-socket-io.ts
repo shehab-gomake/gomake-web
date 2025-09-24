@@ -15,6 +15,7 @@ const aiJobResultsState = {
   default: [],
 };
 
+//!here socket
 const useAISocketIO = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [jobResults, setJobResults] = useState<any[]>([]);
@@ -63,6 +64,7 @@ const useAISocketIO = () => {
     };
   }, []);
 
+  //!
   const sendAIJob = async (jobDescription: string) => {
     try {
       setIsProcessing(true);
