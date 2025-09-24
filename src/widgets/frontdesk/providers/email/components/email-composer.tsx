@@ -2,9 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Box, Paper, Collapse, Fade, InputBase } from "@mui/material";
 import { EmailDraft, EmailMessage } from "../types/email.types";
 import { useEmailComposerForm } from "../hooks/use-email-composer-form";
-import {EmailComposerHeader} from "@/widgets/frontdesk/providers/email/components/composer/email-composer-header";
-import {EmailRecipientsSection} from "@/widgets/frontdesk/providers/email/components/composer/email-recipients-section";
-import {EmailComposerToolbar} from "@/widgets/frontdesk/providers/email/components/composer/email-composer-toolbar";
+import { EmailComposerHeader, EmailRecipientsSection, EmailComposerToolbar } from "@/widgets/frontdesk/providers/email/components/composer";
 
 interface EmailComposerProps {
   open: boolean;
