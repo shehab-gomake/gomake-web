@@ -102,17 +102,19 @@ const AIMainPanel = ({
     <div style={classes.mainPanelContainer}>
       {selectedTab === "new-job" && (
         <div style={classes.newJobContainer}>
-          {/* Header */}
-          <div style={classes.header}>
-            <div style={classes.headerIcon}>✨</div>
-            <div style={classes.headerTitle}>
-              Start a New Job with GoMake AI
+          {/* Header - Only show when no chat messages */}
+          {chatMessages.length === 0 && (
+            <div style={classes.header}>
+              <div style={classes.headerIcon}>✨</div>
+              <div style={classes.headerTitle}>
+                Start a New Job with GoMake AI
+              </div>
+              <div style={classes.headerSubtitle}>
+                Describe your project, and our intelligent assistant will guide
+                you through the creation process.
+              </div>
             </div>
-            <div style={classes.headerSubtitle}>
-              Describe your project, and our intelligent assistant will guide
-              you through the creation process.
-            </div>
-          </div>
+          )}
 
           {/* Chat Interface */}
           <div style={classes.chatContainer}>

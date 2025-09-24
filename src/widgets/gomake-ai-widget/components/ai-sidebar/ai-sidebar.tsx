@@ -53,14 +53,14 @@ const AISidebar = ({
           <div style={classes.navText}>New Job</div>
         </div>
 
-        <div
+        {/* <div
           className="ai-sidebar-nav-item"
           style={classes.navItem}
           onClick={onJobHistoryClick}
         >
           <div style={classes.navIcon}>📋</div>
           <div style={classes.navText}>Job History</div>
-        </div>
+        </div> */}
       </div>
 
       {/* Content Area */}
@@ -92,10 +92,10 @@ const AISidebar = ({
       </div>
 
       {/* Footer */}
-      <div style={classes.footer}>
+      {/* <div style={classes.footer}>
         <div style={classes.poweredByLbl}>Powered by</div>
         <GoMakeIcon />
-      </div>
+      </div> */}
     </div>
   );
 };

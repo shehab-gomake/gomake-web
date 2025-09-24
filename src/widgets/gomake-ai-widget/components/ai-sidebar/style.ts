@@ -41,8 +41,8 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 35,
-        minHeight: 35,
+        minWidth: 24,
+        minHeight: 24,
         boxShadow: "0 6px 12px rgba(46, 84, 231, 0.35)", // stronger shadow
       },
       chatIcon: {
@@ -56,13 +56,13 @@ const useStyle = () => {
         gap: 2,
       },
       brandTitle: {
-        ...FONT_FAMILY.Inter(700, 18),
+        ...FONT_FAMILY.Inter(700, 16),
         color: "#1F2937",
         lineHeight: "22px",
         letterSpacing: "-0.02em",
       },
       brandSubtitle: {
-        ...FONT_FAMILY.Inter(400, 12),
+        ...FONT_FAMILY.Inter(400, 11),
         color: "#6B7280",
         lineHeight: "16px",
         letterSpacing: "0.01em",
@@ -71,14 +71,14 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: 8,
-        marginBottom: convertHeightToVH(30),
+        // marginBottom: convertHeightToVH(30),
       },
       navItem: {
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center",
         gap: convertWidthToVW(12),
-        padding: "14px 16px",
+        padding: "8px 12px",
         borderRadius: 12,
         cursor: "pointer",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
