@@ -69,7 +69,7 @@ const AdvertisingProductNameParameterWidget = ({
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
-  const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
+  const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.unitKey;
 
   const DieCutTypeOptions = [
     { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
@@ -564,27 +564,45 @@ const AdvertisingProductNameParameterWidget = ({
         modalTitle={t("products.offsetPrice.admin.enterCustomDimensions")}
       >
         <Stack gap={3} justifyContent={'flex-start'} margin={'auto'} marginTop={"20px"}>
-          <GomakeTextInput
-            value={customDimensions.finalUnitWidth}
-            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
-            placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
-            style={{ width: '100%', height: "40px" }}
-            type="number"
-          />
-          <GomakeTextInput
-            value={customDimensions.finalUnitLength}
-            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
-            placeholder={t("products.offsetPrice.admin.finalUnitLength")}
-            style={{ width: '100%', height: "40px" }}
-            type="number"
-          />
-          <GomakeTextInput
-            value={customDimensions.finalUnitHeight}
-            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
-            placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
-            style={{ width: '100%', height: "40px" }}
-            type="number"
-          />
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitWidth")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitWidth}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitLength")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitLength}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitLength")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitHeight")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitHeight}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
             <SecondaryButton
               onClick={() => setOpenCustomModal(false)}
