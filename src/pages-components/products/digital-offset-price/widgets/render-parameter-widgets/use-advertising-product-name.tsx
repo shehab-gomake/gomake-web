@@ -216,6 +216,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     finalUnitLength: "",
     finalUnitHeight: ""
   })
+  const [openErrorModal, setOpenErrorModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const createNewTemplateEndPoint = async () => {
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
@@ -339,14 +341,21 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         }
 
       } else {
+        // Use custom error modal instead of alertFault
         if (res?.resultMessage) {
-          alertFault(t(`${res?.resultMessage}`))
+          setErrorMessage(t(`${res?.resultMessage}`));
+        } else {
+          setErrorMessage(t("products.offsetPrice.admin.errorAddingTemplate"));
         }
-        else {
-          alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
-        }
-        setIsView(false)
-        setIsViewInfoAfterGenerate(false)
+
+        // Close all other modals before showing error modal
+        setOpenCustomModal(false);
+        setOpenGenerateModal(false);
+        setOpenModal(false);
+        setIsOpenDieCutModal(false);
+        setOpenErrorModal(true);
+        setIsView(false);
+        setIsViewInfoAfterGenerate(false);
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
@@ -363,8 +372,15 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     if (result) {
       setOpenGenerateModal(true)
     } else {
-      const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
-      alertFault(errorMessage)
+      // Use custom error modal instead of alertFault
+      setErrorMessage(t("products.offsetPrice.admin.errorMakerTemplate1"));
+
+      // Close all other modals before showing error modal
+      setOpenCustomModal(false);
+      setOpenGenerateModal(false);
+      setOpenModal(false);
+      setIsOpenDieCutModal(false);
+      setOpenErrorModal(true);
     }
   }
 
@@ -492,14 +508,21 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         }
 
       } else {
+        // Use custom error modal instead of alertFault for createNewTemplateWithCustomDimensions
         if (res?.resultMessage) {
-          alertFault(t(`${res?.resultMessage}`))
+          setErrorMessage(t(`${res?.resultMessage}`));
+        } else {
+          setErrorMessage(t("products.offsetPrice.admin.errorAddingTemplate"));
         }
-        else {
-          alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
-        }
-        setIsView(false)
-        setIsViewInfoAfterGenerate(false)
+
+        // Close all other modals before showing error modal
+        setOpenCustomModal(false);
+        setOpenGenerateModal(false);
+        setOpenModal(false);
+        setIsOpenDieCutModal(false);
+        setOpenErrorModal(true);
+        setIsView(false);
+        setIsViewInfoAfterGenerate(false);
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
@@ -600,7 +623,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     setOpenCustomModal,
     customDimensions,
     setCustomDimensions,
-    createNewTemplateWithCustomDimensions
+    createNewTemplateWithCustomDimensions,
+    openErrorModal,
+    setOpenErrorModal,
+    errorMessage
   };
 };
 

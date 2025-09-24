@@ -1,5 +1,5 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-import { AddNewIcon, AdvertisingIcon } from "@/icons";
+import { AddNewIcon, AdvertisingIcon, WarnIcon, WarningModalIcon } from "@/icons";
 import { IconButton, Stack, Tooltip } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
@@ -65,7 +65,10 @@ const AdvertisingProductNameParameterWidget = ({
     setOpenCustomModal,
     customDimensions,
     setCustomDimensions,
-    createNewTemplateWithCustomDimensions
+    createNewTemplateWithCustomDimensions,
+    openErrorModal,
+    setOpenErrorModal,
+    errorMessage
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
@@ -623,6 +626,45 @@ const AdvertisingProductNameParameterWidget = ({
               {t("products.offsetPrice.admin.generate")}
             </GomakePrimaryButton>
           </div>
+        </Stack>
+      </GoMakeModal>
+
+      {/* Warning/Message Modal */}
+      <GoMakeModal
+        open={openErrorModal}
+        onClose={() => setOpenErrorModal(false)}
+        insideStyle={{ width: 450, height: "fit-content", padding: 25 }}
+        modalTitle={t(" ")}
+        withClose={false}
+      >
+        <Stack gap={3} justifyContent={'center'} alignItems={'center'} margin={'auto'} marginTop={"20px"}>
+          <WarningModalIcon color={"#F59E0B"} />
+          <div style={{
+            textAlign: "center",
+            fontSize: 16,
+            fontWeight: 600,
+            lineHeight: 1.5,
+            color: "#374151",
+          }}>
+            {errorMessage}
+          </div>
+
+          <GomakePrimaryButton
+            onClick={() => setOpenErrorModal(false)}
+            sx={{
+              width: 'fit-content',
+              minWidth: 120,
+              height: 40,
+              background: "#F59E0B",
+              display: "flex",
+
+              '&:hover': {
+                background: "#F59E0B"
+              }
+            }}
+          >
+            {t("modal.ok")}
+          </GomakePrimaryButton>
         </Stack>
       </GoMakeModal>
     </div>
