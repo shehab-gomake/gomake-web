@@ -23,7 +23,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         alignItems: "flex-start",
         marginBottom: convertHeightToVH(30),
-        padding: "20px 0",
+        padding: "0px 0px 20px 0px",
         borderBottom: "1px solid #F3F4F6",
       },
       brandingContainer: {
@@ -46,7 +46,7 @@ const useStyle = () => {
         boxShadow: "0 6px 12px rgba(46, 84, 231, 0.35)", // stronger shadow
       },
       chatIcon: {
-        fontSize: 20,
+        fontSize: 16,
         color: "#FFF",
         filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))",
       },
@@ -143,6 +143,13 @@ const useStyle = () => {
         textTransform: "uppercase" as "uppercase",
         letterSpacing: "0.05em",
         fontSize: 12,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+      },
+      sectionIcon: {
+        fontSize: 16,
+        color: "#374151",
       },
       jobHistoryList: {
         display: "flex",

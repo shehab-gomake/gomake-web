@@ -6,6 +6,7 @@ import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
 import { JobHistoryItem } from "../job-history-item/job-history-item";
 import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 interface AISidebarProps {
   selectedTab: "new-job";
   onTabChange: (tab: "new-job") => void;
@@ -66,7 +67,10 @@ const AISidebar = ({
       {/* Content Area */}
       <div style={classes.contentContainer}>
         <div style={classes.jobHistorySection}>
-          <div style={classes.sectionTitle}>Recent Jobs</div>
+          <div style={classes.sectionTitle}>
+            <HistoryRoundedIcon style={classes.sectionIcon} />
+            Job History
+          </div>
           {jobHistory.length === 0 ? (
             <div className="ai-empty-state" style={classes.emptyState}>
               <div style={classes.emptyStateIcon}>📋</div>

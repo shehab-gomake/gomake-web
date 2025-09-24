@@ -64,7 +64,6 @@ const useAISocketIO = () => {
     };
   }, []);
 
-  //!
   const sendAIJob = async (jobDescription: string) => {
     try {
       setIsProcessing(true);
