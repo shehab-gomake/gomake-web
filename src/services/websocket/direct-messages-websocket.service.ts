@@ -318,6 +318,12 @@ export class DirectMessagesWebSocketService {
     }
   }
 
+  onStatusChanged(handler: (data: any) => void): void {
+    if (this.socket) {
+      this.socket.on("statusChanged", handler);
+    }
+  }
+
   onUserOnline(handler: DMPresenceEventHandler): void {
     if (this.socket) {
       this.socket.on("userOnline", handler);

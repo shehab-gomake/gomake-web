@@ -543,6 +543,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
               const { conversation } = await directMessagesService.createConversation({
                 participantIds: [participantId],
                 name: `Quote Approval - ${quoteItemValue?.number || quoteItemValue?.id}`,
+                contextId: quoteItemValue?.id,
+                contextType: 'QUOTE'
               });
 
               // Send the approval request message

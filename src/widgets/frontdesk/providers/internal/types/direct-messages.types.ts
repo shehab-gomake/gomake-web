@@ -43,9 +43,14 @@ export interface DMMessage {
   };
 }
 
+// Context types for contextual conversations
+export type ConversationContextType = 'QUOTE';
+
 export interface CreateConversationRequest {
   participantIds: string[];
   name?: string;
+  contextId?: string;
+  contextType?: ConversationContextType;
 }
 
 export interface CreateConversationResponse {

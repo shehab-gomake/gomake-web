@@ -134,8 +134,13 @@ export const useDirectMessages = () => {
       // Get initial presence data
       const presenceData = await directMessagesWebSocketService.getPresence();
       if (presenceData) {
+        console.log('[DM] Initial presence data loaded:', presenceData);
         setUserPresence(presenceData);
-        setOnlineUsers(Object.keys(presenceData));
+        const onlineUserIds = Object.keys(presenceData).filter(userId =>
+          presenceData[userId].status === 'online'
+        );
+        console.log('[DM] Online users from presence:', onlineUserIds);
+        setOnlineUsers(onlineUserIds);
       }
     } catch (error: any) {
       console.error("Failed to connect to DM service:", error);
@@ -490,7 +495,7 @@ export const useDirectMessages = () => {
         setIsSending(true);
         setError(null);
 
-        const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
         console.log('[DM] Generated tempId:', tempId);
 
         // Create optimistic message for immediate UI update
@@ -782,46 +787,6 @@ export const useDirectMessages = () => {
       });
     };
 
-    // Presence handlers
-    const handleUserOnline = (data: any) => {
-      console.log("Received userOnline event (direct messages):", data);
-      setOnlineUsers((prev) => {
-        if (!prev.includes(data.userId)) {
-          return [...prev, data.userId];
-        }
-        return prev;
-      });
-      
-      if (data.userId) {
-        setUserPresence((prev) => ({
-          ...prev,
-          [data.userId]: {
-            userId: data.userId,
-            email: data.email || '',
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            name: data.name || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
-            status: "online",
-            timestamp: data.timestamp || new Date().toISOString(),
-          },
-        }));
-      }
-    };
-
-    const handleUserOffline = (data: any) => {
-      setOnlineUsers((prev) => prev.filter((id) => id !== data.userId));
-      if (data.userId) {
-        setUserPresence((prev) => ({
-          ...prev,
-          [data.userId]: {
-            ...prev[data.userId],
-            status: "offline",
-            lastSeen: data.lastSeen,
-            timestamp: data.timestamp || new Date().toISOString(),
-          },
-        }));
-      }
-    };
 
     // Connection handlers
     const handleConnect = () => {
@@ -884,13 +849,46 @@ export const useDirectMessages = () => {
         });
       });
     };
+    // Status change handler (replaces userOnline/userOffline)
+    const handleStatusChanged = (data: any) => {
+      console.log('[DM] User status changed:', data);
+      setUserPresence((prev) => ({
+        ...prev,
+        [data.userId]: {
+          ...prev[data.userId],
+          userId: data.userId,
+          status: data.status,
+          timestamp: data.timestamp || new Date().toISOString(),
+          lastSeen: data.status === 'offline' ? data.timestamp : prev[data.userId]?.lastSeen,
+        },
+      }));
+
+      // Update online users list
+      if (data.status === 'online') {
+        setOnlineUsers((prev) => {
+          if (!prev.includes(data.userId)) {
+            return [...prev, data.userId];
+          }
+          return prev;
+        });
+      } else {
+        setOnlineUsers((prev) => prev.filter((id) => id !== data.userId));
+      }
+    };
+
+    // Message read handler
+    const handleMessageRead = (data: any) => {
+      console.log('[DM] Message read:', data);
+      // Update message read status in the UI if needed
+      // This could be used to show read receipts
+    };
 
     // Register event listeners
     directMessagesWebSocketService.onNewMessage(handleNewMessage);
     directMessagesWebSocketService.onMessageConfirmed(handleMessageConfirmed);
     directMessagesWebSocketService.onUserTyping(handleUserTyping);
-    directMessagesWebSocketService.onUserOnline(handleUserOnline);
-    directMessagesWebSocketService.onUserOffline(handleUserOffline);
+    directMessagesWebSocketService.onMessageRead(handleMessageRead);
+    directMessagesWebSocketService.onStatusChanged(handleStatusChanged);
     directMessagesWebSocketService.onConnect(handleConnect);
     directMessagesWebSocketService.onDisconnect(handleDisconnect);
     directMessagesWebSocketService.onError(handleError);
