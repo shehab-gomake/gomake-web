@@ -7,7 +7,7 @@ import { lastOptionState, subProductsParametersState } from "@/store/general-par
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -210,6 +210,12 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   }, [newDieCutSelect])
   const [pdfUrl, setPdfUrl] = useState(null)
   const [dxfUrl, setDxfUrl] = useState(null)
+  const [openCustomModal, setOpenCustomModal] = useState(false)
+  const [customDimensions, setCustomDimensions] = useState({
+    finalUnitWidth: "",
+    finalUnitLength: "",
+    finalUnitHeight: ""
+  })
   const createNewTemplateEndPoint = async () => {
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
@@ -347,14 +353,156 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   }
 
   const createNewTemplate = () => {
+    // Check if this is the special templateId that needs custom dimensions
+    if (productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
+      setOpenCustomModal(true);
+      return;
+    }
+
     const result = checkRequiredParameters(subProducts);
     if (result) {
       setOpenGenerateModal(true)
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
       alertFault(errorMessage)
-
     }
+  }
+
+  const createNewTemplateWithCustomDimensions = async () => {
+    setIsView(true)
+    setOpenCustomModal(false)
+    setOpenGenerateModal(true)
+
+    const sheetWeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetWeight")?.values[0];
+    const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
+    const sheetColor = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetColor")?.values[0];
+    const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
+    const lidHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "LidHeight")?.values[0];
+
+    const reqObj = {
+      dieCutCategory: category,
+      unitWidth: Number(customDimensions.finalUnitWidth),
+      unitLength: Number(customDimensions.finalUnitLength),
+      unitHeight: Number(customDimensions.finalUnitHeight),
+      lidHeight: lidHeight,
+      sheetsWeight: sheetWeight,
+      sheetsCategory: sheetcategory,
+      sheetsColor: sheetColor,
+      unit: unit,
+    }
+
+    const callBack = (res) => {
+      if (res?.isOkay) {
+        setPdfUrl(res.data.pdfUrl)
+        setDxfUrl(res.data.dxfUrl)
+        getAllMaterial().then((materials) => {
+          // getProductById(materials);
+        });
+        if (parameter?.code === "DieCutter") {
+          const formattedData = {
+            id: res.data.data.id,
+            activateAction: false,
+            isDefault: false,
+            isDeleted: false,
+            isHidden: false,
+            materialValueIds: null,
+            selectedParameterValues: null,
+            updateName: res.data.data.rowData.name.value,
+            values: [res.data.data.rowData.name.value],
+            additionalAttribute: [
+              {
+                valueId: "name",
+                value: res.data.data.rowData.name.value
+              },
+              {
+                valueId: "image",
+                value: res.data.data.rowData.image.value
+              },
+              {
+                valueId: "width",
+                value: res.data.data.rowData.width.value
+              },
+              {
+                valueId: "length",
+                value: res.data.data.rowData.length.value
+              },
+              {
+                valueId: "code",
+                value: res.data.data.rowData.code.value
+              },
+              {
+                valueId: "shape",
+                value: res.data.data.rowData.shape.value
+              },
+              {
+                valueId: "type",
+                value: res.data.data.rowData.type.value
+              },
+              {
+                valueId: "unitWidth",
+                value: res?.data?.data?.rowData?.unitWidth?.value
+              },
+              {
+                valueId: "unitLength",
+                value: res?.data?.data?.rowData?.unitLength?.value
+              },
+              {
+                valueId: "finalUnitWidth",
+                value: res?.data?.data?.rowData?.finalUnitWidth?.value
+              },
+              {
+                valueId: "finalUnitLength",
+                value: res?.data?.data?.rowData?.finalUnitLength?.value
+              },
+              {
+                valueId: "finalUnitHeight",
+                value: res?.data?.data?.rowData?.finalUnitHeight?.value
+              },
+              {
+                valueId: "columnsAmount",
+                value: res?.data?.data?.rowData?.columnsAmount?.value
+              },
+              {
+                valueId: "linesAmount",
+                value: res?.data?.data?.rowData?.linesAmount?.value
+              },
+              {
+                valueId: "cuttingLineLength",
+                value: res?.data?.data?.rowData?.cuttingLineLength?.value
+              },
+              {
+                valueId: "scoringLineLength",
+                value: res?.data?.data?.rowData?.scoringLineLength?.value
+              },
+              {
+                valueId: "perforationLineLength",
+                value: res?.data?.data?.rowData?.perforationLineLength?.value
+              },
+            ],
+          };
+          setSearchResult((prev: any) => {
+            return [formattedData, ...prev,] // Add the new item to the data list
+          });
+          setLastOption(formattedData)
+          setIsView(false)
+          setIsRenderData(false)
+
+          setIsViewInfoAfterGenerate(true)
+          setNewDataGenerated(res.data.data)
+        }
+
+      } else {
+        if (res?.resultMessage) {
+          alertFault(t(`${res?.resultMessage}`))
+        }
+        else {
+          alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        }
+        setIsView(false)
+        setIsViewInfoAfterGenerate(false)
+      }
+    };
+    await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
   }
 
 
@@ -447,7 +595,12 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     pdfUrl,
     setPdfUrl,
     dxfUrl,
-    setDxfUrl
+    setDxfUrl,
+    openCustomModal,
+    setOpenCustomModal,
+    customDimensions,
+    setCustomDimensions,
+    createNewTemplateWithCustomDimensions
   };
 };
 

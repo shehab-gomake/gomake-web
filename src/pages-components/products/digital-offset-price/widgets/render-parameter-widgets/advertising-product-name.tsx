@@ -60,8 +60,13 @@ const AdvertisingProductNameParameterWidget = ({
     pdfUrl,
     setPdfUrl,
     dxfUrl,
-    setDxfUrl
-  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
+    setDxfUrl,
+    openCustomModal,
+    setOpenCustomModal,
+    customDimensions,
+    setCustomDimensions,
+    createNewTemplateWithCustomDimensions
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
   const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
@@ -80,11 +85,7 @@ const AdvertisingProductNameParameterWidget = ({
 
   const DieCutterOptions = [
     { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true },
-    // Hide generate_new option when templateId equals the specified value
-    ...(productTemplate?.templateId !== "b47bf700-e3fc-4dff-a5fd-638821dc9e25"
-      ? [{ id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true }]
-      : []
-    ),
+    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true },
     ...searchResult?.filter(value => {
       return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
     })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
@@ -105,7 +106,7 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options, productTemplate?.templateId]);
+  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
 
 
   const [selectedValue, setSelectedValue] = useState(
@@ -416,17 +417,14 @@ const AdvertisingProductNameParameterWidget = ({
                     }}
                   >{t("products.offsetPrice.admin.addNewDieCut")}
                   </GomakePrimaryButton>
-                  {/* Hide generate button when templateId equals the specified value */}
-                  {productTemplate?.templateId !== "b47bf700-e3fc-4dff-a5fd-638821dc9e25" && (
-                    <GomakePrimaryButton
-                      style={{ width: "fit-content", height: 40, background: "#FF69B4" }}
-                      onClick={() => {
-                        createNewTemplate()
-                        setIsOpenDieCutModal(false)
-                      }}>
-                      {t("products.offsetPrice.admin.generateNewDieCut")}
-                    </GomakePrimaryButton>
-                  )}
+                  <GomakePrimaryButton
+                    style={{ width: "fit-content", height: 40, background: "#FF69B4" }}
+                    onClick={() => {
+                      createNewTemplate()
+                      setIsOpenDieCutModal(false)
+                    }}>
+                    {t("products.offsetPrice.admin.generateNewDieCut")}
+                  </GomakePrimaryButton>
                 </div>
 
               }
@@ -556,6 +554,58 @@ const AdvertisingProductNameParameterWidget = ({
             }}>{t("pricingWidget.selecte")}</GomakePrimaryButton>
           </div>}
         </div>
+      </GoMakeModal>
+
+      {/* Custom Dimensions Modal for specific templateId */}
+      <GoMakeModal
+        open={openCustomModal}
+        onClose={() => setOpenCustomModal(false)}
+        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
+        modalTitle={t("products.offsetPrice.admin.enterCustomDimensions")}
+      >
+        <Stack gap={3} justifyContent={'flex-start'} margin={'auto'} marginTop={"20px"}>
+          <GomakeTextInput
+            value={customDimensions.finalUnitWidth}
+            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
+            placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
+            style={{ width: '100%', height: "40px" }}
+            type="number"
+          />
+          <GomakeTextInput
+            value={customDimensions.finalUnitLength}
+            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
+            placeholder={t("products.offsetPrice.admin.finalUnitLength")}
+            style={{ width: '100%', height: "40px" }}
+            type="number"
+          />
+          <GomakeTextInput
+            value={customDimensions.finalUnitHeight}
+            onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
+            placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
+            style={{ width: '100%', height: "40px" }}
+            type="number"
+          />
+          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <SecondaryButton
+              onClick={() => setOpenCustomModal(false)}
+              variant={'outlined'}
+              sx={{ width: 'fit-content' }}
+            >
+              {t("modal.cancel")}
+            </SecondaryButton>
+            <GomakePrimaryButton
+              onClick={() => {
+                if (customDimensions.finalUnitWidth && customDimensions.finalUnitLength && customDimensions.finalUnitHeight) {
+                  createNewTemplateWithCustomDimensions();
+                }
+              }}
+              sx={{ width: 'fit-content', height: 40, color: "#FFF", backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092" }}
+              disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
+            >
+              {t("products.offsetPrice.admin.generate")}
+            </GomakePrimaryButton>
+          </div>
+        </Stack>
       </GoMakeModal>
     </div>
   );
