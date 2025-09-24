@@ -50,18 +50,48 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
 
     const onBlur = () => {
         if (updateValue !== value) {
-            if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+            if (isInventoryTable) {
+                // Determine priceIndex and pricingType for inventory fields
+                let priceIndex = 0;
+                let pricingType = 1; // Default to PurchasePrice
+
+                if (parameterKey === "purchaseM2Price") {
+                    priceIndex = 0;
+                    pricingType = 1;
+                } else if (parameterKey === "purchaseRollPrice") {
+                    priceIndex = 1;
+                    pricingType = 1;
+                } else if (parameterKey === "saleM2Price") {
+                    priceIndex = 0;
+                    pricingType = 2;
+                } else if (parameterKey === "saleRollPrice") {
+                    priceIndex = 1;
+                    pricingType = 2;
+                } else if (parameterKey === "purchaseCurrency") {
+                    priceIndex = 0;
+                    pricingType = 1;
+                } else if (parameterKey === "saleCurrency") {
+                    priceIndex = 0;
+                    pricingType = 2;
+                }
+
+                const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
+                setIsLoading(true)
+                updateCellData(id, parameterKey.includes("Currency") ? "currency" : parameterKey, originalValue, priceIndex, pricingType).then(
+                    () => {
+                        setIsLoading(false);
+                        setIsUpdate(false);
+                    }
+                );
+            } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
                 onClickOpenDeleteTableRowModal()
-            }
-            else {
+            } else {
                 const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                 setIsLoading(true)
                 updateCellData(id, parameterKey, originalValue).then(
                     () => {
                         setIsLoading(false);
                         setIsUpdate(false);
-
-
                     }
                 );
             }

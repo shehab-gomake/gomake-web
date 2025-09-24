@@ -61,6 +61,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     };
 
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
+        
         const callBack = (res) => {
             if (res.success) {
                 if (inventoryTable) {

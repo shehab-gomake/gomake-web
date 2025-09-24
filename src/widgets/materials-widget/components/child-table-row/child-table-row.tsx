@@ -150,7 +150,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             isEditable={true}
                                             type={0}
                                             id={row.id}
-                                            parameterKey="code"
+                                            parameterKey="sku"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             isInventoryTable={true}
@@ -162,7 +162,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
-                                            parameterKey="purchaseM2Price"
+                                            parameterKey="price Unit / ton"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             isInventoryTable={true}
@@ -182,7 +182,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.purchasePrice?.currency || 'USD'}
+                                            value={row.purchasePrice?.currency || 'usd'}
                                             isEditable={true}
                                             type={6}
                                             id={row.id}
@@ -190,10 +190,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             values={[
-                                                { key: 'ILS', value: 'ILS' },
-                                                { key: 'USD', value: 'USD' },
-                                                { key: 'EUR', value: 'EUR' }
+                                                { key: 'ils', value: 'ILS' },
+                                                { key: 'usd', value: 'USD' },
+                                                { key: 'eur', value: 'EUR' }
                                             ]}
+                                            isInventoryTable={true}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -222,7 +223,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.salePrice?.currency || 'USD'}
+                                            value={row.salePrice?.currency || 'usd'}
                                             isEditable={true}
                                             type={6}
                                             id={row.id}
@@ -230,13 +231,14 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             values={[
-                                                { key: 'ILS', value: 'ILS' },
-                                                { key: 'USD', value: 'USD' },
-                                                { key: 'EUR', value: 'EUR' }
+                                                { key: 'ils', value: 'ILS' },
+                                                { key: 'usd', value: 'USD' },
+                                                { key: 'eur', value: 'EUR' }
                                             ]}
+                                            isInventoryTable={true}
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.lengthStock || row.length_stock || '—'}</TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>{row.inventory || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>{row.client || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <IconButton
