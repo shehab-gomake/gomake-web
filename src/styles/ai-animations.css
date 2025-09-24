@@ -1,0 +1,100 @@
+/* AI Chat Typing Animation */
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* AI Sidebar Hover Effects */
+.ai-sidebar-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  transform: translateX(4px);
+  transition: all 0.2s ease;
+}
+
+.ai-sidebar-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left: 3px solid #fff;
+}
+
+/* AI Chat Message Animations */
+.ai-message-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: messageSlideIn 0.3s ease forwards;
+}
+
+@keyframes messageSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* AI Processing Pulse */
+.ai-processing-pulse {
+  animation: processingPulse 2s infinite;
+}
+
+@keyframes processingPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* AI Form Focus Effects */
+.ai-form-input:focus {
+  border-color: #504fa1 !important;
+  box-shadow: 0 0 0 3px rgba(80, 79, 161, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+/* AI Button Hover Effects */
+.ai-primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(80, 79, 161, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* AI Loading Spinner */
+.ai-loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* AI Send Button Hover Effects */
+.send-button:hover:not(.disabled) {
+  background-color: #2563eb !important;
+  transform: translateY(-1px) !important;
+}
+
+.send-button.disabled {
+  background-color: #d1d5db !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* AI Job Type Card Hover Effects */
+.ai-job-type-card:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1) !important;
+}
