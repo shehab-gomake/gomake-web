@@ -13,7 +13,7 @@ export { DisconnectAccountDialog } from "./disconnect-account-dialog";
 export * from "./ui";
 
 // Re-export sub-components
-export * from "./composer";
+//export * from "./composer";
 export * from "./conversation";
 export * from "./message-viewer";
 export * from "./sidebar";
