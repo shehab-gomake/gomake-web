@@ -102,7 +102,8 @@ const SettingsFileApiWidget = () => {
               </PrimaryButton>
 
               {/* Service Status Display */}
-              <div
+              {
+                /*<div
                 style={{
                   ...classes.statusDisplay,
                   backgroundColor: statusDisplay.bgColor,
@@ -119,7 +120,9 @@ const SettingsFileApiWidget = () => {
                     }}
                   />
                 </span>
-              </div>
+              </div>*/
+              }
+              
             </div>
           )}
         </div>
