@@ -132,37 +132,109 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                         <TableBody>
                             {inventoryData.map((row, index) => (
                                 <TableRow key={index}>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.supplierName || row.supplier_name || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.code || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.purchaseM2Price || row.purchase_m2_price || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.purchaseRollPrice || row.purchase_roll_price || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: '#f5f5f5',
-                                                borderRadius: '16px',
-                                                padding: '4px 8px',
-                                                display: 'inline-block',
-                                                fontSize: '0.75rem'
-                                            }}
-                                        >
-                                            {row.purchaseCurrency || row.purchase_currency || '—'}
-                                        </Box>
+                                        <TableCellData
+                                            value={row.supplierName || ''}
+                                            isEditable={false}
+                                            type={0}
+                                            id={row.id}
+                                            parameterKey="supplierName"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.saleM2Price || row.sale_m2_price || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.saleRollPrice || row.sale_roll_price || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: '#f5f5f5',
-                                                borderRadius: '16px',
-                                                padding: '4px 8px',
-                                                display: 'inline-block',
-                                                fontSize: '0.75rem'
-                                            }}
-                                        >
-                                            {row.saleCurrency || row.sale_currency || '—'}
-                                        </Box>
+                                        <TableCellData
+                                            value={row.code || ''}
+                                            isEditable={true}
+                                            type={0}
+                                            id={row.id}
+                                            parameterKey="code"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="purchaseM2Price"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="purchaseRollPrice"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.purchasePrice?.currency || 'USD'}
+                                            isEditable={true}
+                                            type={6}
+                                            id={row.id}
+                                            parameterKey="purchaseCurrency"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            values={[
+                                                { key: 'ILS', value: 'ILS' },
+                                                { key: 'USD', value: 'USD' },
+                                                { key: 'EUR', value: 'EUR' }
+                                            ]}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.salePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="saleM2Price"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.salePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="saleRollPrice"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.salePrice?.currency || 'USD'}
+                                            isEditable={true}
+                                            type={6}
+                                            id={row.id}
+                                            parameterKey="saleCurrency"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            values={[
+                                                { key: 'ILS', value: 'ILS' },
+                                                { key: 'USD', value: 'USD' },
+                                                { key: 'EUR', value: 'EUR' }
+                                            ]}
+                                        />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>{row.lengthStock || row.length_stock || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>{row.client || '—'}</TableCell>
@@ -239,8 +311,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={0}
                                             id={row.id}
                                             parameterKey="supplierName"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -250,8 +323,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={1}
                                             id={row.id}
                                             parameterKey="purchasePrice"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -261,7 +335,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={6}
                                             id={row.id}
                                             parameterKey="currency"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             values={[
                                                 { key: 'ILS', value: 'ILS' },
@@ -277,8 +351,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={1}
                                             id={row.id}
                                             parameterKey="quantityInPackage"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -288,8 +363,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={1}
                                             id={row.id}
                                             parameterKey="supplementTime"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -299,8 +375,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={0}
                                             id={row.id}
                                             parameterKey="order"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
@@ -310,8 +387,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             type={0}
                                             id={row.id}
                                             parameterKey="isActive"
-                                            isAdmin={true}
+                                            isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
+                                            isInventoryTable={false}
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>

@@ -9,7 +9,7 @@ import { useCallback } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
 import { openPriceModalState } from "@/store";
 
-const useTableCellData = (isAdmin:boolean) => {
+const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false) => {
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState(materialCategoryDataState);
     const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
@@ -37,7 +37,7 @@ const useTableCellData = (isAdmin:boolean) => {
         label: `${client.name} - ${client.code}`,
       }));
     
-    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number) => {
+    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
         const callBack = (res) => {
             if (res.success) {
                 setData(data.map(row => row.id === id ? {...row, ...res.data} : row));
@@ -55,7 +55,17 @@ const useTableCellData = (isAdmin:boolean) => {
               
             }
         }
-        if(isAdmin){
+        
+        if(inventoryTable){
+            // Use inventory API with correct payload structure
+            await updateSupplierInventoryApi(callApi, callBack, {
+                id: id,
+                key: key,
+                priceIndex: index || 0,
+                updatedValue: value.toString(),
+                pricingType: pricingType || 1
+            })
+        } else if(isAdmin){
             await updateMaterialPropApi(callApi, callBack, {
                 key: key,
                 id,
@@ -63,12 +73,11 @@ const useTableCellData = (isAdmin:boolean) => {
                 priceIndex: index,
             })
         }else{
-            await updateSupplierInventoryApi(callApi, callBack, {
+            await updatePrintHouseMaterialPropApi(callApi, callBack, {
                 key: key,
                 id,
                 updatedValue: value,
                 priceIndex: index,
-                pricingType:1
             })
         }
         

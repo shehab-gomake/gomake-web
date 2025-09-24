@@ -15,7 +15,7 @@ import { convertValueToOriginalUnit } from "@/utils/helpers";
 
 import { userState } from "@/store/user";
 
-const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit }: IRowData) => {
+const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit, isInventoryTable }: IRowData) => {
 
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -36,7 +36,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
     const onClickOpenDeleteTableRowModal = () => {
         setOpenDeleteTableRowModal(true);
     };
-    const { updateCellData } = useTableCellData(isAdmin);
+    const { updateCellData } = useTableCellData(isAdmin, isInventoryTable);
     const onClick = () => {
         if (isEditable) {
             const data = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, value) : value
