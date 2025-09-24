@@ -325,13 +325,13 @@ export const EmailProviderView: React.FC = () => {
       )}
 
       {/* Composer Modal - Only for new messages */}
-      <EmailComposer
+      {/*<EmailComposer
         open={showComposer}
         onClose={handleCloseComposer}
         onSend={handleSendEmail}
         draft={composerDraft || undefined}
         isSending={isSending}
-      />
+      />*/}
 
       <EmailAuthModal
         open={showAuthModal}
