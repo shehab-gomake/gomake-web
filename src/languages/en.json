@@ -2316,6 +2316,29 @@
     },
     "IframeDocument": {
       "Document": "Document"
+    },
+    "list": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days",
+      "thisWeek": "This Week",
+      "lastWeek": "Last Week",
+      "thisMonth": "This Month",
+      "lastMonth": "Last Month",
+      "dateRange": "Date Range",
+      "creationDate": "Creation Date",
+      "dueDate": "Due Date",
+      "readyDate": "Ready Date",
+      "scheduleReport": "Schedule Report",
+      "reportName": "Report Name",
+      "filterConfirmationTitle": "Filter Confirmation",
+      "filterConfirmationMessage": "There is a filter in the table and this filters will used to generate the report, do you want to keep this filters?",
+      "continueWithFilters": "Continue with the current filters",
+      "resetFiltersAndGenerate": "Reset filters and generate report",
+      "scheduledReports": "Scheduled Reports",
+      "deleteReportTitle": "Delete Scheduled Report",
+      "deleteReportMessage": "Are you sure you want to delete this scheduled report? This action cannot be undone."
     }
   },
   "documentType": {

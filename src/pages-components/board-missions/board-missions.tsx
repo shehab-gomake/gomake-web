@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DuplicateType, ModalType } from "@/enums";
+import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
@@ -58,6 +58,9 @@ import {
 import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
 import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
+import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
+import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
+import { JobsFiltersSection } from "./components/jobs-filters-section";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -184,6 +187,30 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isJobsTableLoading,
     isJobsTableError,
     isSocketRefreshingJobs,
+    // Generate Report functions
+    onOpenAddRuleModal,
+    onCloseAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openAddRule,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    openScheduledReportsModal,
+    getAvailableDateFilters,
+    createScheduledReport,
+    // Scheduled Reports data
+    scheduledReports,
+    scheduledReportsTotalCount,
+    scheduledReportsIsLoading,
+    scheduledReportsPageNumber,
+    scheduledReportsPageSize,
+    scheduledReportsPagesCount,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    handleScheduledReportsPageChange,
+    handleScheduledReportsPageSizeChange,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -322,272 +349,64 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             marginTop={1}
             marginBottom={1}
           />
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <SearchInputComponent
-              searchInputStyle={{ width: 400 }}
-              filtersButton={
-                <InputAdornment position="start">
-                  <div>
-                    <IconButton onClick={handleClick}>
-                      <TuneIcon />
-                      {Object.keys(router.query).filter(
-                        (k) => k !== "pageNumber" && k !== "pageSize"
-                      ).length > 0 && (
-                        <div
-                          style={{ position: "absolute", top: -5, right: -1 }}
-                        >
-                          <DotIcon />
-                        </div>
-                      )}
-                    </IconButton>
-                    <GoMakeMenu
-                      handleClose={handleClose}
-                      open={open}
-                      anchorEl={anchorEl}
-                    >
-                      <div style={classes.filtersContainer}>
-                        <div style={classes.selectedFilterContainer}>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {isPurchaseJobs
-                                ? t("reports.supplier")
-                                : t("sales.quote.customer")}
-                            </h3>
-                            <ClientAutocomplete
-                              key={customer?.id}
-                              clientType={
-                                isPurchaseJobs
-                                  ? CLIENT_TYPE.SUPPLIER
-                                  : CLIENT_TYPE.CUSTOMER
-                              }
-                              options={renderOptions() ? renderOptions() : []}
-                              onChangeTextField={checkWhatRenderArray}
-                              getOptionLabel={(option: any) => `${option.name}`}
-                              style={classes.textInputStyle}
-                              onChange={handleCustomerChange}
-                              value={customer}
-                              withArrow={true}
-                              loading={isFetching}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("sales.quote.agent")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={agent?.id}
-                              options={agentsCategories}
-                              style={classes.textInputStyle}
-                              getOptionLabel={(option: any) => option.label}
-                              placeholder={t("sales.quote.ChooseAgent")}
-                              onChange={handleAgentChange}
-                              value={agent}
-                              withArrow={true}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.productionStatus")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={status?.value}
-                              options={productionStatuses}
-                              style={classes.textInputStyle}
-                              placeholder={t("boardMissions.productionStatus")}
-                              onChange={handleStatusChange}
-                              value={status}
-                              withArrow={true}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.orderStatus")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              key={orderStatus?.value}
-                              options={orderStatuses}
-                              style={classes.textInputStyle}
-                              placeholder={t("boardMissions.orderStatus")}
-                              onChange={handleOrderStatusChange}
-                              value={orderStatus}
-                              withArrow={true}
-                            />
-                          </div>
 
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("products.offsetPrice.admin.proof")}
-                            </h3>
-                            <GoMakeMultiSelect
-                              onChange={handleProofTypesChange}
-                              style={{
-                                ...classes.textInputForProductsStyle,
-                                ...(!!isPrintHouseUsePrintNode && {
-                                  width: "100%",
-                                }),
-                              }}
-                              options={
-                                exampleTypeValues?.map((option) => ({
-                                  label: t(
-                                    `products.proofTypes.${option.value}`
-                                  ),
-                                  value: option.key,
-                                })) || []
-                              }
-                              values={proofTypes}
-                              placeholder={t(
-                                "products.offsetPrice.admin.proof"
-                              )}
-                            />
-                          </div>
-
-                          {!!isPrintHouseUsePrintNode && (
-                            <div style={classes.statusFilterContainer}>
-                              <h3 style={classes.filterLabelStyle}>
-                                {t("boardMissions.isPrinted")}
-                              </h3>
-                              <GoMakeAutoComplate
-                                options={[
-                                  { value: true, text: t("modal.yes") },
-                                  { value: false, text: t("modal.no") },
-                                ]}
-                                getOptionLabel={(option: any) => option.text}
-                                placeholder={t("boardMissions.isPrinted")}
-                                style={classes.textInputStyle}
-                                onChange={(e, value) =>
-                                  setIsPrintedState(value?.value ?? null)
-                                }
-                                value={
-                                  isPrintedState === null
-                                    ? null
-                                    : isPrintedState === true
-                                    ? { value: true, text: t("modal.yes") }
-                                    : { value: false, text: t("modal.no") }
-                                }
-                              />
-                            </div>
-                          )}
-                          <div style={classes.statusFilterContainer}>
-                            <ProductMultiSelect
-                              products={productsList}
-                              selectedProductIds={productIds}
-                              onProductChange={handleMultiSelectChange}
-                              placeholder={t("boardMissions.selectProducts")}
-                              label={t("boardMissions.products")}
-                              labelStyle={classes.filterLabelStyle}
-                              selectStyle={classes.textInputForProductsStyle}
-                            />
-                          </div>
-                          {/* <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.products")}
-                            </h3>
-                            <GoMakeMultiSelect
-                              onChange={handleMultiSelectChange}
-                              style={classes.textInputForProductsStyle}
-                              options={productsList}
-                              values={productIds}
-                              placeholder={t("boardMissions.selectProducts")}
-                            />
-                          </div> */}
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.dateRange")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectDeliveryTimeDates}
-                              value={
-                                fromDate && toDate ? [fromDate, toDate] : null
-                              }
-                              ranges={predefinedRanges}
-                            />
-                          </div>
-
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.dueDate")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectDueTimeDates}
-                              value={
-                                fromDueDate && toDueDate
-                                  ? [fromDueDate, toDueDate]
-                                  : null
-                              }
-                              ranges={predefinedRanges}
-                            />
-                          </div>
-                          <div style={classes.statusFilterContainer}>
-                            <GlobalStyle RTL={RTL} />
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("boardMissions.readyDate")}
-                            </h3>
-                            <DateRangePicker
-                              onChange={onSelectReadyTimeDates}
-                              value={
-                                fromReadyDate && toReadyDate
-                                  ? [fromReadyDate, toReadyDate]
-                                  : null
-                              }
-                              ranges={predefinedRanges}
-                            />
-                          </div>
-                        </div>
-
-                        <div style={classes.buttonsFiltersContainer}>
-                          <div style={classes.buttonsFilterContainer}>
-                            <div style={classes.filterLabelStyle} />
-                            <GomakePrimaryButton
-                              style={classes.clearBtnStyle}
-                              onClick={handleClickClear}
-                            >
-                              {t("sales.quote.clear")}
-                            </GomakePrimaryButton>
-                          </div>
-                          <div style={classes.buttonsFilterContainer}>
-                            <div style={classes.filterLabelStyle} />
-                            <GomakePrimaryButton
-                              style={classes.searchBtnStyle}
-                              onClick={handleClickSearch}
-                            >
-                              {t("sales.quote.search")}
-                            </GomakePrimaryButton>
-                          </div>
-                        </div>
-                      </div>
-                    </GoMakeMenu>
-                  </div>
-                </InputAdornment>
-              }
-              onChange={onChangeMissionsSearch}
-              value={patternSearch}
-              inputRef={searchInputRef}
-            />
-
-            <Stack direction={"row"} gap={1}>
-              {columnsReady && (
-                <BoardMissionsColumnSettingsMenu
-                  tableKey={tableKey}
-                  isPurchaseJobs={isPurchaseJobs}
-                />
-              )}
-              {!isPurchaseJobs && (
-                <ExcelMenu
-                  onExportTableClick={ExportJobsTableToExcel}
-                  documentType={null}
-                />
-              )}
-            </Stack>
-          </div>
+          <JobsFiltersSection
+            // Customer/Supplier props
+            customer={customer}
+            handleCustomerChange={handleCustomerChange}
+            renderOptions={renderOptions}
+            checkWhatRenderArray={checkWhatRenderArray}
+            isFetching={isFetching}
+            isPurchaseJobs={isPurchaseJobs}
+            // Agent props
+            agent={agent}
+            agentsCategories={agentsCategories}
+            handleAgentChange={handleAgentChange}
+            // Production status props
+            status={status}
+            handleStatusChange={handleStatusChange}
+            productionStatuses={productionStatuses}
+            // Status props
+            orderStatus={orderStatus}
+            handleOrderStatusChange={handleOrderStatusChange}
+            orderStatuses={orderStatuses}
+            // Proof types props
+            proofTypes={proofTypes}
+            exampleTypeValues={exampleTypeValues}
+            handleProofTypesChange={handleProofTypesChange}
+            // Is printed props
+            isPrintedState={isPrintedState}
+            setIsPrintedState={setIsPrintedState}
+            isPrintHouseUsePrintNode={isPrintHouseUsePrintNode}
+            // Products props
+            productsList={productsList}
+            productIds={productIds}
+            handleMultiSelectChange={handleMultiSelectChange}
+            // Date range props
+            fromDate={fromDate}
+            toDate={toDate}
+            onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+            fromDueDate={fromDueDate}
+            toDueDate={toDueDate}
+            onSelectDueTimeDates={onSelectDueTimeDates}
+            fromReadyDate={fromReadyDate}
+            toReadyDate={toReadyDate}
+            onSelectReadyTimeDates={onSelectReadyTimeDates}
+            predefinedRanges={predefinedRanges}
+            // Search props
+            patternSearch={patternSearch}
+            onChangeMissionsSearch={onChangeMissionsSearch}
+            // Action props
+            onClickClearFilter={handleClickClear}
+            onClickSearchFilter={handleClickSearch}
+            // Menu component props
+            columnsReady={columnsReady}
+            tableKey={tableKey}
+            ExportJobsTableToExcel={ExportJobsTableToExcel}
+            onGenerateReportClick={onOpenAddRuleModal}
+            // Styles
+            classes={classes}
+          />
           {/* jobs table */}
           <>
             {columnsReady ? (
@@ -923,6 +742,79 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onCloseMarkReadyTypeModal}
         onClickYes={() => handleMarkReadyTypeChoice(true)}
         onClickNo={() => handleMarkReadyTypeChoice(false)}
+      />
+
+      {/* Generate Report Modals */}
+      {!isPurchaseJobs && (
+        <AddRuleModal
+          openModal={openAddRule}
+          onCloseModal={onCloseAddRuleModal}
+          isQuoteWidge={true}
+          filterData={{
+            customerId: customer?.id,
+            agentId: agent?.id,
+            statusId: status?.value,
+            orderStatus: orderStatus?.value,
+            productIds: productIds,
+            proofTypes: proofTypes,
+            isPrinted: isPrintedState,
+            fromDate: fromDate,
+            toDate: toDate,
+            fromDueDate: fromDueDate,
+            toDueDate: toDueDate,
+            fromReadyDate: fromReadyDate,
+            toReadyDate: toReadyDate,
+            patternSearch: patternSearch,
+          }}
+          boardMissionTableFilterDTO={{
+            customerId: customer?.id,
+            agentId: agent?.id,
+            statusId: status?.value,
+            orderStatus: orderStatus?.value,
+            productIds: productIds,
+            proofTypes: proofTypes,
+            isPrinted: isPrintedState,
+            fromDate: fromDate,
+            toDate: toDate,
+            fromDueDate: fromDueDate,
+            toDueDate: toDueDate,
+            fromReadyDate: fromReadyDate,
+            toReadyDate: toReadyDate,
+            patternSearch: patternSearch,
+          }}
+          documentType={DocumentTypeEnums.BoardMission}
+          availableDateFilters={getAvailableDateFilters()}
+          onShowScheduledReports={onShowScheduledReports}
+          createScheduledReport={createScheduledReport}
+        />
+      )}
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.list.filterConfirmationTitle")}
+        subTitle={t(" ")}
+        yesBtn={t("sales.list.continueWithCurrentFilters")}
+        cancelBtn={t("sales.list.resetFiltersAndGenerate")}
+        openModal={openFilterConfirmationModal}
+        onClose={onCloseFilterConfirmationModal}
+        onClickDelete={onContinueWithFilters}
+        onClickCancel={onResetFiltersAndGenerate}
+        style={{ width: "35%" }}
+      />
+
+      <ScheduledReportsTable
+        openModal={openScheduledReportsModal}
+        onCloseModal={onCloseScheduledReportsModal}
+        scheduledReports={scheduledReports}
+        totalCount={scheduledReportsTotalCount}
+        pageNumber={scheduledReportsPageNumber}
+        pageSize={scheduledReportsPageSize}
+        pagesCount={scheduledReportsPagesCount}
+        isLoading={scheduledReportsIsLoading}
+        onToggleActive={onToggleScheduledReportActive}
+        onDelete={onDeleteScheduledReport}
+        onPageChange={handleScheduledReportsPageChange}
+        onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
     </>
   );

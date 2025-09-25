@@ -16,6 +16,10 @@ const SetupSection = () => {
     handleOpenDemoVideo,
     videoUrl,
     setVideoUrl,
+    currentVideoStep,
+    videoSteps,
+    handleNextVideo,
+    handlePreviousVideo,
     resetPasswordModal,
     onOpenResetModal,
     onCloseResetModal,
@@ -47,6 +51,10 @@ const SetupSection = () => {
         modalControl={DemoVideoModalControl}
         videoUrl={videoUrl}
         setVideoUrl={setVideoUrl}
+        currentVideoStep={currentVideoStep}
+        videoSteps={videoSteps}
+        handleNextVideo={handleNextVideo}
+        handlePreviousVideo={handlePreviousVideo}
         updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
       />
     </>

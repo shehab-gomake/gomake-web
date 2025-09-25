@@ -29,6 +29,7 @@ import { machineCategoriesState } from "@/store/machine-categories";
 import { actionEmployeesState } from "@/store/action-employees-state";
 import { endOfToday, startOfYear } from "date-fns";
 import { addProductHotFolderRuleApi } from "@/services/api-service/products/product-endpoints";
+import { getHotFolderNames } from "@/services/api-service/files-api-settings/files-api-settings-endpoint";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -48,7 +49,18 @@ const useAddRuleModal = ({
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
+  const [hotFolderNames, setHotFolderNames] = useState([]);
   const categoriesList = useRecoilValue(machineCategoriesState);
+
+  const fetchHotFolderNames = useCallback(async () => {
+    const callBack = (res) => {
+      if (res.success && res.data) {
+        setHotFolderNames(res.data || []);
+      }
+    };
+    await getHotFolderNames(callApi, callBack);
+  }, [callApi]);
+
   const [additionType, setAdditionType] = useState<number>(null);
 
   const onCloseScheduleModal = () => {
@@ -812,6 +824,8 @@ const useAddRuleModal = ({
     getConditionText,
     setAdditionType,
     createForHotFolderWidget,
+    hotFolderNames,
+    fetchHotFolderNames,
   };
 };
 

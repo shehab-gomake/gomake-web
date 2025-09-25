@@ -24,7 +24,7 @@ const useUploadFiles = (
   productType?: string,
   isOpenPrintingModal?: any
 ) => {
-  const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+  const CHUNK_SIZE = 10 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -251,6 +251,7 @@ const useUploadFiles = (
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
+    formData.append("uploadFileRequestId", uploadId);
     formData.append("productType", productType ? productType.toString() : null);
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
@@ -264,7 +265,7 @@ const useUploadFiles = (
     formData.append("totalPackets", totalChunks.toString());
     formData.append("signalRConnectId", connectionId);
     formData.append("fileId", fileId || "");
-
+    formData.append("fileType", fileType);
     formData.append(
       "path",
       fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath

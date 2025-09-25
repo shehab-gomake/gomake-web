@@ -25,12 +25,7 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 
-const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted ,downloadFilePath}: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
-  console.log("fileName", fileName);
-  console.log("fileStatus", fileStatus);
-  console.log("filePath", filePath);
-  console.log("orderItemId", orderItemId);
-  console.log("productType", productType);
+const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
   const { successColor, errorColor, primaryColor, grayColor } =
     useGomakeTheme();
   const { t } = useTranslation();
@@ -49,8 +44,6 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
       setIsLoading(true);
       const callBack = (res) => {
         if (res.success) {
-          // Handle success - file deleted
-          console.log("File deleted successfully");
           // Call the callback to update the parent component
           if (onFileDeleted && fileType !== undefined) {
             onFileDeleted(fileName, fileType);

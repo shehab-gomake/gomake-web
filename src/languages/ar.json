@@ -2391,6 +2391,29 @@
       "noDataToExport": "لا توجد بيانات للتصدير",
       "excelExportSuccess": "تم تصدير البيانات إلى Excel بنجاح",
       "excelExportError": "فشل في تصدير البيانات إلى Excel"
+    },
+    "list": {
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "last7Days": "آخر 7 أيام",
+      "last30Days": "آخر 30 يوم",
+      "thisWeek": "هذا الأسبوع",
+      "lastWeek": "الأسبوع الماضي",
+      "thisMonth": "هذا الشهر",
+      "lastMonth": "الشهر الماضي",
+      "dateRange": "نطاق التاريخ",
+      "creationDate": "تاريخ الإنشاء",
+      "dueDate": "تاريخ الاستحقاق",
+      "readyDate": "تاريخ الجاهزية",
+      "scheduleReport": "جدولة التقرير",
+      "reportName": "اسم التقرير",
+      "filterConfirmationTitle": "تأكيد المرشح",
+      "filterConfirmationMessage": "يوجد مرشح في الجدول وستستخدم هذه المرشحات لتوليد التقرير، هل تريد الاحتفاظ بهذه المرشحات؟",
+      "continueWithFilters": "المتابعة مع المرشحات الحالية",
+      "resetFiltersAndGenerate": "إعادة تعيين المرشحات وتوليد التقرير",
+      "scheduledReports": "التقارير المجدولة",
+      "deleteReportTitle": "حذف التقرير المجدول",
+      "deleteReportMessage": "هل أنت متأكد من أنك تريد حذف هذا التقرير المجدول؟ لا يمكن التراجع عن هذا الإجراء."
     }
   },
   "logs": {

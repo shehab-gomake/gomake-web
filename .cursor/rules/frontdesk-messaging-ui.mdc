@@ -1,0 +1,35 @@
+---
+description: FrontDesk messaging UI requirements
+globs:
+  - "src/widgets/frontdesk/**/*.tsx"
+  - "frontdesk docs/frontend-ui-requirements.md"
+---
+
+# FrontDesk Messaging UI
+
+## Conversation Thread
+- Render message bubbles with sender name, timestamp, status icons (✓ sent, ✓✓ read).
+- Keep the view auto-scrolled to the latest message unless the user manually scrolls up.
+- Surface typing indicators ("User is typing…") with animated feedback below the thread.
+- Support rich text content (links, bold, emoji) and sanitize HTML before injecting into the DOM.
+
+## Channel Sidebar
+- Group items by channels vs. direct messages; display unread counts using `Typography` with `color="text.secondary"`.
+- Show presence dots (`🟢 🟡 🔴 ⚫`) or themed equivalents for user status; map these to presence data in Recoil.
+- Provide affordances for creating channels/DMs (`+ Add Channel`, `+ New Message`).
+- Collapse the sidebar on narrow widths; expose a toggle in responsive breakpoints.
+
+## User Presence Panel
+- List online users with real-time updates; include last seen text for offline users (e.g., `Last: 2h ago`).
+- Clicking a user should open or focus the corresponding DM channel (create it if absent).
+- Use avatars or initials; fall back to `Avatar` with user initials when photo missing.
+
+## Composer Experience
+- Input area accepts multi-line text; Enter sends, Shift+Enter inserts newline.
+- Include emoji picker access, file attachment entry point, and optional sound toggle for notifications.
+- Autosave drafts in `messagingDraftState` keyed by channel so switching channels preserves work.
+
+## Notifications & Responsiveness
+- Display desktop notifications/badge counts when tab inactive (respect user settings).
+- Badge unread totals in both sidebar entries and browser title.
+- Ensure layout adapts from desktop (three-column) to mobile (stacked view with collapsible sidebar and presence panel).

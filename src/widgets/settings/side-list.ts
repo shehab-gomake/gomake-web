@@ -21,6 +21,10 @@ import { PreferencesIcon } from "@/components/icons/preferences-icons";
 import { SettingsPreferencesWidget } from "../settings-preferences/preferences";
 import { SettingsMyProfileWidget } from "../settings-profile-widget/settings-my-profile-widget";
 import { CompanyProfileIcon } from "@/components/icons/company-profile";
+import { SettingsSubscriptionWidget } from "@/widgets/settings-subscription-widget/settings-subscription-widget";
+import { SettingsFileApiWidget } from "../settings-file-api/settings-file-api-widget";
+import { FileApiIcon } from "@/components/icons/file-api-icon";
+import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 
 export const list: IListItem[] = [
   {
@@ -86,7 +90,13 @@ export const list: IListItem[] = [
     dataTour: "usersSettingsLink",
     permission: [Permissions.SHOW_EMPLOYEES, Permissions.SHOW_PERMISSIONS],
   },
-
+  {
+    component: SettingsFileApiWidget,
+    text: "settings.fileApiSettings",
+    value: "11",
+    icon: FileApiIcon,
+    path: "file-api-settings",
+  },
   {
     component: SettingsPreferencesWidget,
     text: "settings.preferences",
@@ -94,6 +104,13 @@ export const list: IListItem[] = [
     icon: PreferencesIcon,
     path: "preferences",
     permission: Permissions.SHOW_PREFERENCES,
+  },
+  {
+    component: SettingsSubscriptionWidget,
+    text: "settings.subscriptions",
+    value: "12",
+    icon: DollarCircleIcon,
+    path: "subscriptions",
   },
   {
     component: TranslationsWidget,

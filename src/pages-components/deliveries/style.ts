@@ -208,6 +208,14 @@ const useStyle = () => {
         alignItems: "center",
         width: "max-content",
       },
+      searchInputStyle: {
+        borderRadius: "4px",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08);",
+        width: "100%",
+        border: "none",
+        height: "40px",
+        marginRight: "0px",
+      },
     };
   }, [i18next.language, t, theme]);
   return {

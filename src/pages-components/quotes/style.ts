@@ -24,7 +24,8 @@ const useStyle = () => {
         paddingRight: 20,
         height: "100%",
         overflowY: "hidden" as "hidden",
-        gap: 20,
+        // gap: 20,
+        gap: 10,
       },
       headerStyle: {
         display: "flex",
@@ -82,6 +83,14 @@ const useStyle = () => {
       textInputStyle: {
         width: "100%",
         border: "none",
+      },
+      searchInputStyle: {
+        borderRadius: "4px",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08);",
+        width: "100%",
+        border: "none",
+        height: "40px",
+        marginRight: "0px",
       },
       searchBtnStyle: {
         height: 40,

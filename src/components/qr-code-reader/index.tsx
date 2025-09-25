@@ -5,6 +5,7 @@ import {
     handleBoardMissionsBarcodeActions,
     handleBoardMissionsBarcodeActionsApi, moveBoardMissionToDoneApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { moveOrderToDoneApi } from "@/services/api-service/generic-doc/documents-api";
 import { ModalType, QrCodeAction } from "@/enums";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import { useRecoilState } from "recoil";
@@ -110,6 +111,9 @@ const QrCodeReader = (props: IProps) => {
                         } else if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
                             setSelectedJobQuantity(res?.data?.quantity);
                             setOpenMoveToReadyModal(true)
+                        } else if (res?.data?.qrCodeAction === QrCodeAction.OrderToReady) {
+                            setSelectedJobQuantity(res?.data?.quantity);
+                            setOpenMoveToReadyModal(true)
                         }
                     }
                     else {
@@ -119,6 +123,9 @@ const QrCodeReader = (props: IProps) => {
                         }
                         else {
                             if (res?.data?.qrCodeAction === QrCodeAction.DELIVERY) {
+                                setSelectedJobQuantity(res?.data?.quantity);
+                                setOpenMoveToReadyModal(true)
+                            } else if (res?.data?.qrCodeAction === QrCodeAction.OrderToReady) {
                                 setSelectedJobQuantity(res?.data?.quantity);
                                 setOpenMoveToReadyModal(true)
                             }
@@ -156,7 +163,7 @@ const QrCodeReader = (props: IProps) => {
     };
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
         const callBack = (res) => {
-            setOpenMarkReadyModal(false);
+            setOpenMoveToReadyModal(false);
             if (res?.success) {
                 alertSuccessUpdate();
                 setOpenPackagesModal(true);
@@ -165,12 +172,21 @@ const QrCodeReader = (props: IProps) => {
                 alertFaultUpdate();
             }
         };
-        await moveBoardMissionToDoneApi(callApi, callBack, {
-            boardMissionId: selectedMission.id || selectedMission.boardMissionId,
-            sendMessage,
-            productType: "",
-            storage: selectedMission.storage ?? "",
-        });
+
+        // Check if this is an order action (OrderToReady) or board mission action
+        if (selectedMission?.qrCodeAction === QrCodeAction.OrderToReady) {
+            await moveOrderToDoneApi(callApi, callBack, {
+                orderId: selectedMission.orderId,
+                isSendMessage: sendMessage,
+            });
+        } else {
+            await moveBoardMissionToDoneApi(callApi, callBack, {
+                boardMissionId: selectedMission.id || selectedMission.boardMissionId,
+                sendMessage,
+                productType: "",
+                storage: selectedMission.storage ?? "",
+            });
+        }
     };
 
     return (

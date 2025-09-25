@@ -1,5 +1,5 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-import { AddNewIcon, AdvertisingIcon } from "@/icons";
+import { AddNewIcon, AdvertisingIcon, WarnIcon, WarningModalIcon } from "@/icons";
 import { IconButton, Stack, Tooltip } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
@@ -23,6 +23,7 @@ const AdvertisingProductNameParameterWidget = ({
   getProductById,
   getAllMaterial,
   newDieCutSelect,
+  productTemplate,
 }: any) => {
   const {
     defaultObject,
@@ -59,11 +60,35 @@ const AdvertisingProductNameParameterWidget = ({
     pdfUrl,
     setPdfUrl,
     dxfUrl,
-    setDxfUrl
-  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
+    setDxfUrl,
+    openCustomModal,
+    setOpenCustomModal,
+    customDimensions,
+    setCustomDimensions,
+    createNewTemplateWithCustomDimensions,
+    openErrorModal,
+    setOpenErrorModal,
+    errorMessage
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
-  const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
+  // Get unit from subProducts first, then fallback to productTemplate
+  const unitFromSubProducts = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.unitKey;
+
+  const getUnitFromTemplate = () => {
+    if (unitFromSubProducts) return unitFromSubProducts;
+
+    // Search in productTemplate if not found in subProducts using existing helper function
+    const widthParamFromTemplate = productTemplate?.sections?.flatMap(section =>
+      section.subSections?.flatMap(subSection =>
+        subSection.parameters?.filter(param => param.code === "Width" || param.code === "Height")
+      )
+    ).find(param => param?.unitKey);
+
+    return widthParamFromTemplate?.unitKey;
+  };
+
+  const unit = getUnitFromTemplate();
 
   const DieCutTypeOptions = [
     { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
@@ -111,7 +136,7 @@ const AdvertisingProductNameParameterWidget = ({
 
   useEffect(() => {
     setSelectedValue(
-      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : defaultObject ?? undefined
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
     );
   }, [parameter, index,]);
 
@@ -548,6 +573,115 @@ const AdvertisingProductNameParameterWidget = ({
             }}>{t("pricingWidget.selecte")}</GomakePrimaryButton>
           </div>}
         </div>
+      </GoMakeModal>
+
+      {/* Custom Dimensions Modal for specific templateId */}
+      <GoMakeModal
+        open={openCustomModal}
+        onClose={() => setOpenCustomModal(false)}
+        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
+        modalTitle={t("products.offsetPrice.admin.enterCustomDimensions")}
+      >
+        <Stack gap={3} justifyContent={'flex-start'} margin={'auto'} marginTop={"20px"}>
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitWidth")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitWidth}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitLength")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitLength}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitLength")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
+          <div>
+            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+              {t("products.offsetPrice.admin.finalUnitHeight")} {unit && <small>({unit})</small>}
+              <span style={{ color: 'red' }}> *</span>
+            </div>
+            <GomakeTextInput
+              value={customDimensions.finalUnitHeight}
+              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
+              placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
+              style={{ width: '100%', height: "40px" }}
+              type="number"
+            />
+          </div>
+          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <SecondaryButton
+              onClick={() => setOpenCustomModal(false)}
+              variant={'outlined'}
+              sx={{ width: 'fit-content' }}
+            >
+              {t("modal.cancel")}
+            </SecondaryButton>
+            <GomakePrimaryButton
+              onClick={() => {
+                if (customDimensions.finalUnitWidth && customDimensions.finalUnitLength && customDimensions.finalUnitHeight) {
+                  createNewTemplateWithCustomDimensions();
+                }
+              }}
+              sx={{ width: 'fit-content', height: 40, color: "#FFF", backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092" }}
+              disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
+            >
+              {t("products.offsetPrice.admin.generate")}
+            </GomakePrimaryButton>
+          </div>
+        </Stack>
+      </GoMakeModal>
+
+      {/* Warning/Message Modal */}
+      <GoMakeModal
+        open={openErrorModal}
+        onClose={() => setOpenErrorModal(false)}
+        insideStyle={{ width: 450, height: "fit-content", padding: 25 }}
+        modalTitle={t(" ")}
+        withClose={false}
+      >
+        <Stack gap={3} justifyContent={'center'} alignItems={'center'} margin={'auto'} marginTop={"20px"}>
+          <WarningModalIcon color={"#F59E0B"} />
+          <div style={{
+            textAlign: "center",
+            fontSize: 16,
+            fontWeight: 600,
+            lineHeight: 1.5,
+            color: "#374151",
+          }}>
+            {errorMessage}
+          </div>
+
+          <GomakePrimaryButton
+            onClick={() => setOpenErrorModal(false)}
+            sx={{
+              width: 'fit-content',
+              minWidth: 120,
+              height: 40,
+              background: "#F59E0B",
+              display: "flex",
+
+              '&:hover': {
+                background: "#F59E0B"
+              }
+            }}
+          >
+            {t("modal.ok")}
+          </GomakePrimaryButton>
+        </Stack>
       </GoMakeModal>
     </div>
   );
