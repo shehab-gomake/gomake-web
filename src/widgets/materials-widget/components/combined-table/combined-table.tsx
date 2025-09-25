@@ -129,10 +129,6 @@ const CombinedTable = ({
                                 {headers?.map((header, index) => {
                                     const isFirstColumn = index === 0;
                                     const isLastFixedColumn = index >= Math.max(headers.length - 3, 0); // Last 3 columns
-                                    const isFixedColumn = isFirstColumn || isLastFixedColumn;
-
-
-
                                     return (
                                         <TableCell
                                             key={index}
@@ -209,21 +205,6 @@ const CombinedTable = ({
                                                         })
                                                     }}
                                                 >
-                                                    {isFirstColumn && (
-                                                        <Box
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: '50%',
-                                                                left: '8px',
-                                                                transform: 'translateY(-50%)',
-                                                                width: '8px',
-                                                                height: '8px',
-                                                                borderRadius: '50%',
-                                                                backgroundColor: row?.isActive ? '#4caf50' : '#f44336',
-                                                                zIndex: 10
-                                                            }}
-                                                        />
-                                                    )}
                                                     {cell}
                                                 </TableCell>
                                             );

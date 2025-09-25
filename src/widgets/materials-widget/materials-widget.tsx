@@ -1,12 +1,10 @@
-import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -24,17 +22,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
-import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Skeleton, Stack, Box, IconButton } from "@mui/material";
-import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { Skeleton, Stack, IconButton } from "@mui/material";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
-import { isLoadgingState, isLoadingMaterialsState } from "@/store";
+import { isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
 interface IMaterialsWidgetProps {
@@ -272,55 +268,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
       {/* Absolute positioned sidebar overlay */}
-      {isSidebarOpen && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1300,
-            display: 'flex',
-            flexDirection: dir === 'rtl' ? 'row-reverse' : 'row',
-            backdropFilter: 'blur(2px)'
-          }}
-          onClick={() => setIsSidebarOpen(false)}
-        >
-          <Box
-            sx={{
-              width: '400px',
-              backgroundColor: '#fff',
-              height: '100%',
-              overflow: 'auto',
-              boxShadow: dir === 'rtl' ? '-8px 0 20px rgba(0,0,0,0.3)' : '8px 0 20px rgba(0,0,0,0.3)',
-              position: 'relative'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close icon */}
-            <IconButton
-              onClick={() => setIsSidebarOpen(false)}
-              sx={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                zIndex: 1,
-                backgroundColor: '#f5f5f5',
-                width: '32px',
-                height: '32px',
-                '&:hover': {
-                  backgroundColor: '#e0e0e0'
-                }
-              }}
-            >
-              <Box sx={{ fontSize: '18px', fontWeight: 'bold', color: '#666' }}>×</Box>
-            </IconButton>
-            {Side()}
-          </Box>
-        </Box>
-      )}
+
 
       {/* Full width content */}
       <div style={{ width: '100%', padding: '10px 20px' }}>
@@ -390,16 +338,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <></>
                     )}
                   </div>
-
-                  {/* <div style={{ marginBottom: "5px" }}>
-                    <Pagination
-                      count={pagesCount}
-                      variant="outlined"
-                      color="primary"
-                      page={pageNumber}
-                      onChange={(event, value) => setPageNumber(value)}
-                    />
-                  </div> */}
                 </Stack>
               )}
             </>

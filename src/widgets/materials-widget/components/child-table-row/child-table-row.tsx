@@ -8,7 +8,7 @@ import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -261,12 +261,25 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             onClick={() => setIsAddInventoryModalOpen(true)}
                                             sx={{
                                                 color: '#1976d2',
+                                                marginRight: '4px',
                                                 '&:hover': {
                                                     backgroundColor: '#e3f2fd'
                                                 }
                                             }}
                                         >
                                             <AddIcon fontSize="small" />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleOpenDeleteInventoryModal(row)}
+                                            sx={{
+                                                color: '#f44336',
+                                                '&:hover': {
+                                                    backgroundColor: '#ffebee'
+                                                }
+                                            }}
+                                        >
+                                            <DeleteIcon fontSize="small" />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -542,6 +555,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
         setIsDeleteModalOpen(true);
     };
 
+    const handleOpenDeleteInventoryModal = (row: any) => {
+        setSelectedRowForDelete(row);
+        setIsDeleteModalOpen(true);
+    };
+
     const handleCloseDeleteModal = () => {
         setIsDeleteModalOpen(false);
         setSelectedRowForDelete(null);
@@ -565,6 +583,27 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
             await deletePrintHouseMaterialSupplierApi(callApi, callBack, selectedRowForDelete.id);
         } catch (error) {
             console.error('Error deleting purchase pricing:', error);
+        }
+    };
+
+    const handleDeleteInventory = async () => {
+        if (!selectedRowForDelete) return;
+
+        try {
+            const callBack = (res) => {
+                if (res.success) {
+                    console.log('Inventory deleted successfully');
+                    // Refresh the inventory data
+                    fetchInventoryData(rowId);
+                    handleCloseDeleteModal();
+                } else {
+                    console.error('Failed to delete inventory:', res.message);
+                }
+            };
+
+            await deleteSupplierInventoryApi(callApi, callBack, selectedRowForDelete.id);
+        } catch (error) {
+            console.error('Error deleting inventory:', error);
         }
     };
 
@@ -767,7 +806,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                 modalType={ModalType.DELETE}
                 openModal={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
-                onClickDelete={handleDeletePurchasePricing}
+                onClickDelete={openChildTable.tableType === 'inventory' ? handleDeleteInventory : handleDeletePurchasePricing}
             />
         </Box>
     );
