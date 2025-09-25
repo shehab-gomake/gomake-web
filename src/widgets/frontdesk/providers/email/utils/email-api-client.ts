@@ -8,9 +8,10 @@ import {
   ConversationDetailResponse,
   EmailLabelsResponse,
 } from "../types/email.types";
+import config from "@/config";
 
 const getBaseUrl = () => {
-  const url = process.env.NEXT_PUBLIC_MESSAGING_SERVICE_URL || "http://localhost:3000";
+  const url = config.messaging_server;
   return url.replace(/\/$/, "");
 };
 
