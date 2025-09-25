@@ -6550,6 +6550,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sizeSubProductParameter.values = [customValue.updateName];
                   sizeSubProductParameter.isDisabled = true;
                 } else {
+                  // Add size parameter first
                   temp.push({
                     parameterId: sizeParameter.id,
                     sectionId: sectionId,
@@ -6571,6 +6572,66 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     isGeneralInfoInProductionFloor:
                       sizeParameter?.isGeneralInfoInProductionFloor,
                   });
+
+                  // Get DieCut values for child parameters
+                  const getValue = (id) => {
+                    if (dieCut.additionalAttribute) {
+                      const item = dieCut.additionalAttribute.find((attr) => attr.valueId === id);
+                      return item ? item.value + "" : "";
+                    } else if (dieCut.rowData) {
+                      return dieCut.rowData[id]?.value + "" || "";
+                    }
+                    return "";
+                  };
+
+                  let widthValue = getValue("unitWidth") || getValue("dieUnitWidth") || "";
+                  let heightValue = getValue("unitLength") || getValue("dieUnitLength") || "";
+
+                  // Directly process child parameters like the existing child parameters logic
+                  if (sizeParameter?.childsParameters) {
+                    sizeParameter.childsParameters.forEach((childParam) => {
+                      const childParameterDef = subSection.parameters.find(p => p.id === childParam.id);
+
+                      if (childParameterDef) {
+
+                        // Determine the value based on child parameter type
+                        let childValue = "";
+                        if (childParameterDef.code === "Width") {
+                          childValue = widthValue;
+                        } else if (childParameterDef.code === "Height") {
+                          childValue = heightValue;
+                        } else {
+                          childValue = childParam.defaultValue || childParameterDef.defaultValue || "";
+                        }
+
+                        // Make child parameter visible in productTemplate
+                        childParameterDef.isHidden = false;
+
+                        // Add child parameter directly to temp (same logic as existing child parameters)
+                        temp.push({
+                          parameterId: childParameterDef.id,
+                          sectionId: sectionId,
+                          subSectionId: subSectionId,
+                          ParameterType: childParameterDef.parameterType,
+                          isQuantityParameter: childParameterDef?.isQuantityParameter,
+                          parameterName: childParameterDef.name,
+                          actionId: childParameterDef.actionId,
+                          values: [childValue],
+                          valueIds: [],
+                          actionIndex: childParameterDef.actionIndex,
+                          parameterCode: childParameterDef.code,
+                          valuesConfigs: childParameterDef?.valuesConfigs,
+                          unitKey: childParameterDef?.unitKey,
+                          defaultUnit: childParameterDef?.defaultUnit,
+                          unitType: childParameterDef?.unitType,
+                          factor: childParameterDef?.factor,
+                          isDisabled: false, // Enable child parameters for custom size
+                          isGeneralInfoInProductionFloor:
+                            childParameterDef?.isGeneralInfoInProductionFloor,
+                        });
+                      }
+                    });
+                  }
                 }
               }
             }
