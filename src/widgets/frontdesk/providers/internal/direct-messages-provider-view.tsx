@@ -11,6 +11,7 @@ import {
   Snackbar,
   Avatar,
   Fade,
+  Divider,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -20,6 +21,8 @@ import {
   FilterList as FilterIcon,
   Close as CloseIcon,
   Group as GroupIcon,
+  StarBorder,
+  ArchiveOutlined,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
 import { UserPresence } from "./components";
@@ -138,6 +141,12 @@ const DirectMessagesProviderView: React.FC = () => {
 
   const handleCloseConversation = () => {
     setActiveConversationId(null);
+  };
+  const handleStarConversation = () => {
+    
+  };
+  const handleArchiveConversation = () => {
+    
   };
 
   const handleUserSelect = async (user: ConversationMember) => {
@@ -465,25 +474,50 @@ const DirectMessagesProviderView: React.FC = () => {
                         {getConversationTitle()}
                       </Typography>
                     </Stack>
-                    {/* Close button */}
-                    <Tooltip title="Close conversation">
-                      <IconButton 
-                        size="medium" 
-                        onClick={handleCloseConversation}
-                        sx={{ 
-                          color: "#374151",
-                          backgroundColor: "#F3F4F6",
-                          border: "1px solid #D1D5DB",
-                          '&:hover': {
-                            color: "#111827",
-                            backgroundColor: "#E5E7EB",
-                            border: "1px solid #9CA3AF",
-                          }
-                        }}
-                      >
-                        <CloseIcon fontSize="medium" />
-                      </IconButton>
-                    </Tooltip>
+                    <Stack direction="row" spacing={1}>
+                      <Tooltip title="Star conversation">
+                        <IconButton
+                          size="small"
+                          onClick={handleStarConversation}
+                          sx={{
+                            color: 'grey.500',
+                            '&:hover': {
+                              color: 'warning.main',
+                            }
+                          }}
+                        >
+                          <StarBorder fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Archive conversation">
+                        <IconButton
+                          size="small"
+                          onClick={handleArchiveConversation}
+                          sx={{
+                            color: 'grey.500',
+                            '&:hover': {
+                              color: 'primary.main',
+                            }
+                          }}
+                        >
+                          <ArchiveOutlined fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Close conversation">
+                        <IconButton
+                          size="small"
+                          onClick={handleCloseConversation}
+                          sx={{
+                            color: 'grey.500',
+                            '&:hover': {
+                              color: 'error.main',
+                            }
+                          }}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </Stack>
                   
                   {/* Participants */}

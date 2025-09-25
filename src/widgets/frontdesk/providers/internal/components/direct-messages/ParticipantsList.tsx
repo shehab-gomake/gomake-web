@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Stack,
@@ -7,7 +7,6 @@ import {
   Chip,
   IconButton,
   Tooltip,
-  Popover,
   List,
   ListItem,
   ListItemAvatar,
@@ -15,11 +14,19 @@ import {
   ListItemSecondaryAction,
   Divider,
   AvatarGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
 import {
   PersonAdd as PersonAddIcon,
   Group as GroupIcon,
   Close as CloseIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 import { ConversationMember, DMPresenceData } from '../../types/direct-messages.types';
 
@@ -42,15 +49,16 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
   onRemoveMember,
   maxVisible = 3,
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
+    setSearchTerm('');
   };
 
   const getMemberStatus = (member: ConversationMember) => {
@@ -86,19 +94,21 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
     );
   };
 
-  const visibleMembers = members.slice(0, maxVisible);
-  const remainingCount = members.length - maxVisible;
-
-  
+  const filteredMembers = useMemo(() => {
+    if (!searchTerm) return members;
+    return members.filter(member =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [members, searchTerm]);
 
   return (
     <Box>
       <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
-        {/* Member avatars */}
         <AvatarGroup
           max={maxVisible}
           total={members.length}
-          onClick={handleClick}
+          onClick={handleClickOpen}
           sx={{
             cursor: 'pointer',
             '& .MuiAvatar-root': {
@@ -146,7 +156,6 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
           ))}
         </AvatarGroup>
 
-        {/* Add button for group chats */}
         {conversationType === 'GROUP_DM' && onAddMember && (
           <Tooltip title="Add participant">
             <IconButton
@@ -165,38 +174,46 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
         )}
       </Stack>
 
-      {/* Participants popover */}
-      <Popover
+      <Dialog
         open={open}
-        anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        fullWidth
+        maxWidth="xs"
         PaperProps={{
           sx: {
-            width: 280,
-            maxHeight: 400,
+            borderRadius: 2,
           },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Participants ({members.length})
             </Typography>
-            <IconButton size="small" onClick={handleClose}>
-              <CloseIcon fontSize="small" />
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
             </IconButton>
           </Stack>
-
-          <List dense>
-            {members.map((member, index) => {
+        </DialogTitle>
+        <DialogContent sx={{ p: 2 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            placeholder="Search participants..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mb: 2 }}
+          />
+          <List dense sx={{ maxHeight: 300, overflowY: 'auto', pr: 1 }}>
+            {filteredMembers.map((member, index) => {
               const status = getMemberStatus(member);
               const isCurrentUser = member.userId === currentUserId;
               
@@ -227,68 +244,47 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
                         </Typography>
                       }
                       secondary={
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography variant="caption" color="text.secondary">
-                            {member.email}
-                          </Typography>
-                          <Chip
-                            label={status}
-                            size="small"
-                            sx={{
-                              height: 16,
-                              fontSize: '0.65rem',
-                              textTransform: 'capitalize',
-                              backgroundColor: getStatusColor(status),
-                              color: 'white',
-                            }}
-                          />
-                        </Stack>
+                        <Typography variant="caption" color="text.secondary">
+                          {member.email}
+                        </Typography>
                       }
                     />
                     {conversationType === 'GROUP_DM' && !isCurrentUser && onRemoveMember && (
                       <ListItemSecondaryAction>
-                        <IconButton
-                          size="small"
-                          onClick={() => onRemoveMember(member.userId)}
-                          sx={{ opacity: 0.7 }}
-                        >
-                          <CloseIcon fontSize="small" />
-                        </IconButton>
+                        <Tooltip title="Remove from group">
+                          <IconButton
+                            edge="end"
+                            size="small"
+                            onClick={() => onRemoveMember(member.userId)}
+                          >
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       </ListItemSecondaryAction>
                     )}
                   </ListItem>
-                  {index < members.length - 1 && <Divider />}
+                  {index < filteredMembers.length - 1 && <Divider />}
                 </React.Fragment>
               );
             })}
           </List>
-
-          {conversationType === 'GROUP_DM' && onAddMember && (
-            <>
-              <Divider sx={{ my: 1 }} />
-              <Box sx={{ textAlign: 'center', pt: 1 }}>
-                <IconButton
-                  onClick={() => {
-                    onAddMember();
-                    handleClose();
-                  }}
-                  sx={{
-                    backgroundColor: 'primary.50',
-                    '&:hover': {
-                      backgroundColor: 'primary.100',
-                    },
-                  }}
-                >
-                  <PersonAddIcon />
-                </IconButton>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                  Add participant
-                </Typography>
-              </Box>
-            </>
-          )}
-        </Box>
-      </Popover>
+        </DialogContent>
+        {conversationType === 'GROUP_DM' && onAddMember && (
+          <DialogActions sx={{ p: 2 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<PersonAddIcon />}
+              onClick={() => {
+                onAddMember();
+                handleClose();
+              }}
+            >
+              Add Participant
+            </Button>
+          </DialogActions>
+        )}
+      </Dialog>
     </Box>
   );
 };
