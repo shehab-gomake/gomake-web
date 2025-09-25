@@ -230,6 +230,70 @@ input::placeholder {
   text-align: unset !important;
 }
 
+/* RTL DateRangePicker fixes */
+[dir="rtl"] .rs-picker-daterange-panel {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-table {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-table th,
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-table td {
+  text-align: center;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-month-dropdown {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-month-dropdown-list {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-header {
+  direction: rtl;
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-header-backward,
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-header-forward {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .rs-picker-daterange-panel .rs-calendar-month-dropdown-toggle {
+  direction: rtl;
+}
+
+[dir="rtl"]
+  .rs-picker-daterange-panel
+  .rs-calendar-month-dropdown-toggle::after {
+  transform: scaleX(-1);
+}
+
+/* Fix for RTL modal positioning */
+[dir="rtl"] .rs-picker-daterange-panel {
+  right: auto !important;
+  left: 0 !important;
+}
+
+/* Fix for RTL preset ranges */
+[dir="rtl"] .rs-picker-daterange-panel .rs-picker-daterange-predefined {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"]
+  .rs-picker-daterange-panel
+  .rs-picker-daterange-predefined
+  .rs-picker-daterange-predefined-option {
+  text-align: right;
+}
+
 .dots-loader > div {
   animation: dots-loader 0.6s infinite alternate;
 }

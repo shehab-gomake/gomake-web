@@ -24,7 +24,6 @@ import {
 import { useDateFormat } from "@/hooks/use-date-format";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
-import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { DuplicateType, ORDER_STATUSES } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
@@ -57,6 +56,8 @@ import {
   columnVisibilityStateFamily,
 } from "./states/board-missions-columns-settings-state";
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import { useScheduledReports } from "@/hooks/use-scheduled-reports";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 type StatusOption = {
   label: string;
@@ -86,6 +87,7 @@ interface Query {
   sampleType?: number;
   proofTypes?: string[];
   isPrinted?: boolean;
+  finalPatternSearch?: string;
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -120,13 +122,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [proofTypes, setProofTypes] = useState([]);
   const [isPrintedState, setIsPrintedState] = useState<boolean | null>(null);
 
+  // Generate Report states
+  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] =
+    useState(false);
+  const [openAddRule, setOpenAddRule] = useState(false);
+  const [openScheduledReportsModal, setOpenScheduledReportsModal] =
+    useState(false);
+
   // Handler for proof types multi-select change
   const handleProofTypesChange = (selectedValues) => {
     setProofTypes(selectedValues);
   };
-  // const [patternSearch, setPatternSearch] = useState<string>("");
   const [patternSearch, setPatternSearch] = useState<any>(null);
-
+  const [finalPatternSearch, setFinalPatternSearch] = useState("");
   //DATE
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -144,7 +152,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const { GetDateFormat, formatISODateTime } = useDateFormat();
-  const [finalPatternSearch, setFinalPatternSearch] = useState("");
+
   const {
     pageSize,
     setPageSize,
@@ -368,8 +376,18 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedSupplierId(value);
   };
 
+  //!here
   const handleClickSearch = () => {
     const newQuery: Query = { ...router.query };
+
+    const trimmedSearch = patternSearch?.trim() || "";
+    setFinalPatternSearch(trimmedSearch);
+
+    if (trimmedSearch) {
+      newQuery.finalPatternSearch = trimmedSearch;
+    } else {
+      delete newQuery.finalPatternSearch;
+    }
 
     if (productIds.length > 0) {
       newQuery.productsIds = productIds;
@@ -1736,45 +1754,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setPatternSearch(value);
   };
 
-  const debouncePatternSearch = useDebounce(patternSearch, 1000);
   useEffect(() => {
     if (router.query.targetOrderNumber) {
       setPatternSearch(router.query.targetOrderNumber);
     }
   }, []);
-
-  useEffect(() => {
-    if (debouncePatternSearch == null) return;
-
-    const trimmedSearch = debouncePatternSearch.trim();
-    setFinalPatternSearch(trimmedSearch);
-
-    // Create a new query object
-    const newQuery = { ...router.query };
-
-    if (trimmedSearch) {
-      newQuery.finalPatternSearch = trimmedSearch;
-      newQuery.pageNumber = "1";
-    } else {
-      delete newQuery.finalPatternSearch; // Remove the parameter if empty
-      newQuery.pageNumber = "1";
-    }
-
-    // Only push if the query is actually changing
-    const hasQueryChanged =
-      JSON.stringify(newQuery) !== JSON.stringify(router.query);
-
-    if (hasQueryChanged) {
-      router.push(
-        {
-          pathname: router.pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow: true } // Optional: prevents full page reload
-      );
-    }
-  }, [debouncePatternSearch]);
 
   const ExportJobsTableToExcel = async () => {
     const callBack = (res) => {
@@ -1968,6 +1952,116 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const visibleHeaders = columnOrder.filter((key) => columnVisibility[key]);
 
+  // Scheduled Reports functionality
+  const {
+    scheduledReports,
+    totalCount: scheduledReportsTotalCount,
+    isLoading: scheduledReportsIsLoading,
+    getAllScheduledReports,
+    createScheduledReport: createScheduledReportApi,
+    updateScheduledReport,
+    deleteScheduledReport,
+    toggleScheduledReport,
+    pageNumber: scheduledReportsPageNumber,
+    pageSize: scheduledReportsPageSize,
+    pagesCount: scheduledReportsPagesCount,
+  } = useScheduledReports();
+
+  // Generate Report functions
+  const onOpenAddRuleModal = () => {
+    // Check if there are active filters
+    const activeFilters = Object.keys(router.query).filter(
+      (key) => key !== "pageNumber" && key !== "pageSize"
+    );
+
+    if (activeFilters.length > 0) {
+      setOpenFilterConfirmationModal(true);
+    } else {
+      setOpenAddRule(true);
+    }
+  };
+
+  const onCloseAddRuleModal = () => {
+    setOpenAddRule(false);
+  };
+
+  const onCloseFilterConfirmationModal = () => {
+    setOpenFilterConfirmationModal(false);
+  };
+
+  const onContinueWithFilters = () => {
+    setOpenAddRule(true);
+  };
+
+  const onResetFiltersAndGenerate = () => {
+    // Reset all filters
+    setPatternSearch("");
+    setStatus(null);
+    setCustomer(null);
+    setAgent(null);
+    setOrderStatus(null);
+    setProductIds([]);
+    setProofTypes([]);
+    setIsPrintedState(null);
+    setFromDate(null);
+    setToDate(null);
+    setFromDueDate(null);
+    setToDueDate(null);
+    setFromReadyDate(null);
+    setToReadyDate(null);
+
+    // Clear URL query parameters
+    router.push({
+      pathname: router.pathname,
+      query: {},
+    });
+
+    setOpenAddRule(true);
+  };
+
+  const onShowScheduledReports = () => {
+    setOpenScheduledReportsModal(true);
+    getAllScheduledReports(1, 10, DocumentTypeEnums.BoardMission); // Start with page 1 and page size 10, filter by BoardMission
+  };
+
+  const onCloseScheduledReportsModal = () => {
+    setOpenScheduledReportsModal(false);
+  };
+
+  const onToggleScheduledReportActive = (id: string, isActive: boolean) => {
+    toggleScheduledReport(id, isActive);
+  };
+
+  const onDeleteScheduledReport = (id: string) => {
+    deleteScheduledReport(id);
+  };
+
+  const handleScheduledReportsPageChange = (page: number) => {
+    getAllScheduledReports(
+      page,
+      scheduledReportsPageSize,
+      DocumentTypeEnums.BoardMission
+    );
+  };
+
+  const handleScheduledReportsPageSizeChange = (pageSize: number) => {
+    getAllScheduledReports(1, pageSize, DocumentTypeEnums.BoardMission);
+  };
+
+  // Get available date filters for jobs table
+  const getAvailableDateFilters = () => {
+    return [
+      { label: t("boardMissions.creationDate"), value: "creationDate" },
+      { label: t("boardMissions.dueDate"), value: "dueDate" },
+      { label: t("boardMissions.readyDate"), value: "readyDate" },
+    ];
+  };
+
+  // Create scheduled report function
+  const createScheduledReport = (data: any) => {
+    createScheduledReportApi(data);
+  };
+
   return {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -2096,6 +2190,30 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     isJobsTableLoading,
     isJobsTableError,
     isSocketRefreshingJobs,
+    // Generate Report functions
+    onOpenAddRuleModal,
+    onCloseAddRuleModal,
+    openFilterConfirmationModal,
+    onCloseFilterConfirmationModal,
+    onContinueWithFilters,
+    onResetFiltersAndGenerate,
+    openAddRule,
+    onShowScheduledReports,
+    onCloseScheduledReportsModal,
+    openScheduledReportsModal,
+    getAvailableDateFilters,
+    createScheduledReport,
+    // Scheduled Reports data
+    scheduledReports,
+    scheduledReportsTotalCount,
+    scheduledReportsIsLoading,
+    scheduledReportsPageNumber,
+    scheduledReportsPageSize,
+    scheduledReportsPagesCount,
+    onToggleScheduledReportActive,
+    onDeleteScheduledReport,
+    handleScheduledReportsPageChange,
+    handleScheduledReportsPageSizeChange,
   };
 };
 

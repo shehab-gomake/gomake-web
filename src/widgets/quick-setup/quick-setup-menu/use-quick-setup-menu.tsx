@@ -76,8 +76,12 @@ const useSetupGuideMenu = ({
   const progressValue =
     totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
-  const productsSetupStatus = printHouseSetupSteps?.find(
-    (step) => step?.step === SetupStep.PRODUCTS_SETUPS
+  const machinesSetupStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.SETUP_YOUR_MACHINES
+  )?.status;
+
+  const materialsSetupStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.SETUP_YOUR_MATERIALS
   )?.status;
 
   const resetPasswordStatus = printHouseSetupSteps?.find(
@@ -121,13 +125,22 @@ const useSetupGuideMenu = ({
       status: resetPasswordStatus,
     },
     {
-      key: SetupStep.PRODUCTS_SETUPS,
+      key: SetupStep.SETUP_YOUR_MACHINES,
       label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-        productsSetupStatus !== StepStatus.DONE
+        machinesSetupStatus !== StepStatus.DONE
           ? () => navigate("/onboarding-setup")
           : undefined,
-      status: productsSetupStatus,
+      status: machinesSetupStatus,
+    },
+    {
+      key: SetupStep.SETUP_YOUR_MATERIALS,
+      label: t("quickSetup.steps.setUpYourMaterials"),
+      onClick:
+        materialsSetupStatus !== StepStatus.DONE
+          ? () => navigate("/materials-setup")
+          : undefined,
+      status: materialsSetupStatus,
     },
     {
       key: "company_profile",
@@ -250,13 +263,46 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.basicWalkthrough"),
           status: getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH),
           onClick: () => {
-            handleOpenDemoVideo();
+            handleOpenDemoVideo(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH);
             if (
               getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH) !==
               StepStatus.DONE
             ) {
               updatePrintHouseSetupSteps(
                 SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
+                StepStatus.DONE
+              );
+            }
+          },
+        },
+        {
+          key: SetupStep.HELP_CENTER_CREATE_A_QUOTE,
+          label: t("quickSetup.steps.createAQuote"),
+          status: getStepStatus(SetupStep.HELP_CENTER_CREATE_A_QUOTE),
+          onClick: () => {
+            handleOpenDemoVideo(SetupStep.HELP_CENTER_CREATE_A_QUOTE);
+            if (
+              getStepStatus(SetupStep.HELP_CENTER_CREATE_A_QUOTE) !==
+              StepStatus.DONE
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.HELP_CENTER_CREATE_A_QUOTE,
+                StepStatus.DONE
+              );
+            }
+          },
+        },
+        {
+          key: SetupStep.FILE_SERVICE_CONFIGS,
+          label: t("quickSetup.steps.fileServiceConfigs"),
+          status: getStepStatus(SetupStep.FILE_SERVICE_CONFIGS),
+          onClick: () => {
+            handleOpenDemoVideo(SetupStep.FILE_SERVICE_CONFIGS);
+            if (
+              getStepStatus(SetupStep.FILE_SERVICE_CONFIGS) !== StepStatus.DONE
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.FILE_SERVICE_CONFIGS,
                 StepStatus.DONE
               );
             }
@@ -364,7 +410,8 @@ const useSetupGuideMenu = ({
     handleToggleVerifyBusiness,
     isRtl,
     printHouseSetupSteps,
-    productsSetupStatus,
+    machinesSetupStatus,
+    materialsSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,

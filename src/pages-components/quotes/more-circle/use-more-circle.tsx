@@ -24,7 +24,7 @@ import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  closeAsInvoiceState,
+  closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
@@ -67,7 +67,9 @@ const useMoreCircle = () => {
     isSelectedCLoseAsDeliveryNoteState
   );
 
-  const setCloseAsInvoice = useSetRecoilState(closeAsInvoiceState);
+  const setCloseAsInvoiceOrDeliveryNote = useSetRecoilState(
+    closeOrderAsInvoiceOrDeliveryNoteState
+  );
 
   const getMenuList = ({
     t,
@@ -102,8 +104,9 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -224,8 +227,10 @@ const useMoreCircle = () => {
     const isCanReOpenManuallyClosedDocument = quote?.isCanCancelManualClose;
     const isCanReopenCanceledOrder = isOrder && isCanceledOrder;
 
-    const isCanReOpenCancledPurchaseOrder = isPurchaseOrder && isClosedPurchaseOrder;
-    const isCanReOpenCanceledPurchaseInvoice = isPurchaseInvoice && isClosedPurchaseOrder;
+    const isCanReOpenCancledPurchaseOrder =
+      isPurchaseOrder && isClosedPurchaseOrder;
+    const isCanReOpenCanceledPurchaseInvoice =
+      isPurchaseInvoice && isClosedPurchaseOrder;
     const isCanReOpenClosedDocument =
       CheckPermission(Permissions.CAN_OPEN_CLOSED_DOCUMENTS) &&
       ((isOrder && isClosedOrder) ||
@@ -395,6 +400,7 @@ const useMoreCircle = () => {
           !isCanceledOrder &&
           isEditableDocument,
         onClick: () => {
+          setCloseAsInvoiceOrDeliveryNote(true); //!new change must check this
           if (quote?.productionStatus) {
             if (quote?.closeOrderNotes?.trim()) {
               onClickOpenCloseOrderNotesModal(
@@ -427,7 +433,7 @@ const useMoreCircle = () => {
           isEditableDocument,
         onClick: () => {
           if (isOrder) {
-            setCloseAsInvoice(true);
+            setCloseAsInvoiceOrDeliveryNote(true);
             if (quote?.productionStatus) {
               if (quote?.closeOrderNotes?.trim()) {
                 onClickOpenCloseOrderNotesModal(quote, "closeAsInvoice", () =>
@@ -455,7 +461,7 @@ const useMoreCircle = () => {
       {
         condition: !isPauseOrder && isOrder && !quote?.productionStatus,
         onClick: () => {
-          setCloseAsInvoice(false);
+          setCloseAsInvoiceOrDeliveryNote(false);
           onClickOpenMoveOrderToReadyModal(quote);
         },
         icon: (
@@ -538,8 +544,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-              onClickOpenCloseOrderModal(quote)
-            )
+                onClickOpenCloseOrderModal(quote)
+              )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),
@@ -592,8 +598,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -635,7 +641,8 @@ const useMoreCircle = () => {
           onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
         icon: <MailIcon />,
         name: t(
-          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          `sales.quote.${
+            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
           }`
         ),
       },

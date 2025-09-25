@@ -7,19 +7,21 @@ import {
 } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { AddPlusIcon } from "@/icons";
+import { AddPlusIcon, SettingNavBar } from "@/icons";
+import { IconButton } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
-import { EAdditionType, EParameterTypes } from "@/enums";
+import { DocumentTypeEnums, EAdditionType, EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
-import { DateRangePicker } from "rsuite";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { predefinedRanges } from "@/utils/dateRanges";
+import { getHotFolderNames } from "@/services/api-service/files-api-settings/files-api-settings-endpoint";
+import { useGomakeAxios } from "@/hooks";
+import { OsSettingsIcon } from "@/icons";
 
 const AddRuleModal = ({
   openModal,
@@ -37,12 +39,19 @@ const AddRuleModal = ({
   onCreate,
   isHotFolderWidget,
   getProductHotFolderRules,
+  documentType,
+  onShowScheduledReports,
+  createScheduledReport,
+  filterDTO,
+  boardMissionTableFilterDTO,
+  availableDateFilters = [],
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
   const {
     rules,
+    propertieValue,
     machincesList,
     allMachincesList,
     productsStateValue,
@@ -83,6 +92,8 @@ const AddRuleModal = ({
     isFetching,
     getConditionText,
     setAdditionType,
+    hotFolderNames,
+    fetchHotFolderNames,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -99,8 +110,45 @@ const AddRuleModal = ({
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
+
+  // Fetch hot folder names when modal opens
+  useEffect(() => {
+    if (openModal && isHotFolderWidget) {
+      fetchHotFolderNames();
+    }
+  }, [openModal, isHotFolderWidget, fetchHotFolderNames]);
+
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
+
+  // Get available date filters based on document type
+  const getAvailableDateFilters = () => {
+    // If availableDateFilters is passed as prop, use it
+    if (availableDateFilters && availableDateFilters.length > 0) {
+      return availableDateFilters;
+    }
+
+    const baseFilters = [
+      { label: t("sales.list.creationDate"), value: "creationDate" },
+    ];
+
+    switch (documentType) {
+      case "order":
+        return [
+          ...baseFilters,
+          { label: t("sales.list.dueDate"), value: "dueDate" },
+          { label: t("sales.list.readyDate"), value: "readyDate" },
+        ];
+      case "job":
+        return [
+          ...baseFilters,
+          { label: t("sales.list.dueDate"), value: "dueDate" },
+          { label: t("sales.list.readyDate"), value: "readyDate" },
+        ];
+      default:
+        return baseFilters;
+    }
+  };
 
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -133,19 +181,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                      return {
-                        ...value,
-                        label: value?.machineName,
-                        id: value.machineId,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: value?.machineName,
+                          id: value.machineId,
+                        };
+                      })
                     : allMachincesList?.map((value) => {
-                      return {
-                        ...value,
-                        label: `${value?.nickName}`,
-                        id: value.id,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: `${value?.nickName}`,
+                          id: value.id,
+                        };
+                      })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -404,32 +452,52 @@ const AddRuleModal = ({
             }}
           />
         </div>
-        <div style={clasess.statusFilterContainer}>
-          <h3 style={clasess.filterLabelStyle}>
-            {t("boardMissions.dateRange")}
-          </h3>
-          {/* <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} /> */}
-          <DateRangePicker
-            onChange={onSelectDeliveryTimeDates}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
-          />
-        </div>
       </div>
     );
   };
   const _renderInptsForHotFolder = () => {
+    const handleOpenSettings = () => {
+      window.open("/settings/file-api-settings", "_blank");
+    };
+
     return (
       <div style={clasess.inputsForQuotesContainer}>
         <div>
-          <div style={clasess.selectTypeStyle}>
-            {t("products.profits.exceptions.folderName")}
-          </div>
-          <GomakeTextInput
-            placeholder={t("products.profits.exceptions.enterFolderName")}
-            onChange={(e) => {
-              setPropertieValue(e.target.value);
+          <div
+            style={{
+              ...clasess.selectTypeStyle,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
+          >
+            {t("products.profits.exceptions.folderName")}
+            <IconButton
+              onClick={handleOpenSettings}
+              size="small"
+              style={{
+                color: "#ed028c",
+                fontSize: "16px",
+                padding: "4px",
+                width: "20px",
+                height: "20px",
+              }}
+              title={t("products.profits.exceptions.openFileApiSettings")}
+            >
+              +
+            </IconButton>
+          </div>
+          <GoMakeAutoComplate
+            options={hotFolderNames}
+            getOptionLabel={(option) => option.hotFolderName || option}
+            onChange={(event, value) => {
+              setPropertieValue(value?.id || value || "");
+            }}
+            placeholder={t("products.profits.exceptions.selectFolderName")}
+            style={clasess.dropDownListContainer}
+            isOptionEqualToValue={(option, value) =>
+              option?.id === value?.id || option === value
+            }
           />
         </div>
       </div>
@@ -443,9 +511,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-            " (" +
-            selectedProperties?.propertyName +
-            ")"
+              " (" +
+              selectedProperties?.propertyName +
+              ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -594,19 +662,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.nickName}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                             : allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.nickName}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -658,19 +726,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.nickName}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.nickName}`,
+                                    id: value.id,
+                                  };
+                                })
                               : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.nickName}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.nickName}`,
+                                    id: value.id,
+                                  };
+                                })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -806,11 +874,11 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                        rules[index]?.statement2?.type === 5 ||
-                        rules[index]?.statement2?.type === 4 ||
-                        rules[index]?.statement2?.type === 10 ||
-                        rules[index]?.statement2?.type === 13 ||
-                        rules[index]?.statement2?.type === 11 ? (
+                      rules[index]?.statement2?.type === 5 ||
+                      rules[index]?.statement2?.type === 4 ||
+                      rules[index]?.statement2?.type === 10 ||
+                      rules[index]?.statement2?.type === 13 ||
+                      rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -1059,12 +1127,20 @@ const AddRuleModal = ({
 
           <div style={clasess.btnContainer}>
             {isQuoteWidge && (
-              <GomakePrimaryButton
-                style={clasess.sendBtn}
-                onClick={onOpenScheduleModal}
-              >
-                {t("properties.scheduleSend")}
-              </GomakePrimaryButton>
+              <>
+                <GomakePrimaryButton
+                  style={clasess.sendBtn}
+                  onClick={onOpenScheduleModal}
+                >
+                  {t("properties.scheduleSend")}
+                </GomakePrimaryButton>
+                <GomakePrimaryButton
+                  style={clasess.sendBtn}
+                  onClick={onShowScheduledReports}
+                >
+                  {t("sales.list.scheduledReports")}
+                </GomakePrimaryButton>
+              </>
             )}
             <GomakePrimaryButton
               style={clasess.sendBtn}
@@ -1114,6 +1190,13 @@ const AddRuleModal = ({
         <ScheduleSendWidget
           openModal={openScheduleModal}
           onCloseModal={onCloseScheduleModal}
+          documentType={documentType}
+          availableDateFilters={availableDateFilters}
+          createScheduledReport={createScheduledReport}
+          filterData={filterDTO}
+          boardMissionTableFilterDTO={boardMissionTableFilterDTO}
+          rules={rules}
+          propertieValue={propertieValue}
         />
       </GoMakeModal>
     </>

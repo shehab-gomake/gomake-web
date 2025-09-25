@@ -59,12 +59,53 @@ const useQuickSetup = () => {
   };
 
   const [videoUrl, setVideoUrl] = useState(
-    "https://www.youtube.com/embed/mnRav10tl80"
+    "https://www.youtube.com/embed/0JzMbKDcI9Q"
+  );
+  const [currentVideoStep, setCurrentVideoStep] = useState(
+    SetupStep.HELP_CENTER_BASIC_WALKTHROUGH
   );
 
-  const handleOpenDemoVideo = () => {
-    setVideoUrl("https://www.youtube.com/embed/mnRav10tl80");
+  const videoSteps = {
+    [SetupStep.HELP_CENTER_BASIC_WALKTHROUGH]: {
+      url: "https://www.youtube.com/embed/0JzMbKDcI9Q",
+      nextStep: SetupStep.HELP_CENTER_CREATE_A_QUOTE,
+    },
+    [SetupStep.HELP_CENTER_CREATE_A_QUOTE]: {
+      url: "https://www.youtube.com/embed/G1wdiiUY98g",
+      nextStep: SetupStep.FILE_SERVICE_CONFIGS,
+    },
+    [SetupStep.FILE_SERVICE_CONFIGS]: {
+      url: "https://www.youtube.com/embed/NSgmf82eFTE",
+      nextStep: null,
+    },
+  };
+
+  const handleOpenDemoVideo = (
+    step: SetupStep = SetupStep.HELP_CENTER_BASIC_WALKTHROUGH
+  ) => {
+    setCurrentVideoStep(step);
+    setVideoUrl(videoSteps[step].url);
     DemoVideoModalControl.open();
+  };
+
+  const handleNextVideo = () => {
+    const currentStepData = videoSteps[currentVideoStep];
+    if (currentStepData.nextStep) {
+      handleOpenDemoVideo(currentStepData.nextStep);
+    }
+  };
+
+  const handlePreviousVideo = () => {
+    // Find the previous step
+    const currentStepIndex = Object.keys(videoSteps).indexOf(
+      currentVideoStep.toString()
+    );
+    if (currentStepIndex > 0) {
+      const previousStep = parseInt(
+        Object.keys(videoSteps)[currentStepIndex - 1]
+      );
+      handleOpenDemoVideo(previousStep);
+    }
   };
 
   const onOpenResetModal = () => {
@@ -85,6 +126,10 @@ const useQuickSetup = () => {
     handleOpenDemoVideo,
     videoUrl,
     setVideoUrl,
+    currentVideoStep,
+    videoSteps,
+    handleNextVideo,
+    handlePreviousVideo,
     resetPasswordModal,
     onOpenResetModal,
     onCloseResetModal,

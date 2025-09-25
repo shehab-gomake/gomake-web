@@ -29,7 +29,7 @@ import {
   abortControllerStationState,
   getBoardMissionsByIdState,
 } from "./views/board-missions-view/stations/state";
-import { GoMakeDeleteModal, QRErrorModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -174,6 +174,7 @@ const ProductionFloorWidget = () => {
     );
   };
 
+
   const handleScan = (data: { text: string } | null) => {
     //if (!data) return;
     //setIsScanningFlag(false);
@@ -217,7 +218,6 @@ const ProductionFloorWidget = () => {
       barcode,
     });
   };*/
-
   const setStatusesList = useSetRecoilState(statusesListState);
   const getAllBoardMissionStatus = async () => {
     const callBack = (res) => {
@@ -357,12 +357,6 @@ const ProductionFloorWidget = () => {
       <QrCodeReader
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
-      />
-      <QRErrorModal
-        openModal={isQRErrorModalOpen}
-        onClose={() => setIsQRErrorModalOpen(false)}
-        errorMessage={qrErrorMessage}
-        errorKey={qrErrorKey}
       />
     </Stack>
   );

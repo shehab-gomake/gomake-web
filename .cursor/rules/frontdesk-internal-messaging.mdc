@@ -1,0 +1,43 @@
+---
+description: Internal messaging provider rules
+globs:
+  - "src/widgets/frontdesk/providers/internal/**"
+  - "src/store/messaging.ts"
+  - "src/services/websocket/messaging-service.ts"
+  - "frontdesk docs/internal-messaging-guide.md"
+---
+
+# Internal Messaging Provider
+
+## Channel Model
+- Generate channel IDs `dm-{sortedUserId1}-{sortedUserId2}` for 1:1 conversations and descriptive names (`general`, `team-updates`) for group channels.
+- Hydrate the sidebar from `messagingChannelsState`; sort by last message timestamp and surface unread counts from `messagingUnreadCountsState`.
+- When a channel becomes active, reset its unread counter and persist the active ID in `messagingActiveChannelIdState`.
+
+## Message Lifecycle
+```typescript
+const tempId = `tmp_${Date.now()}`;
+appendMessage(channelId, { ...draft, tempId });
+
+messagingService.sendMessage({ channelId, content: draft.content, tempId });
+messageStatusState.set(tempId, 'pending');
+```
+- Track status transitions (`pending → sent → delivered → read`) in a parallel Recoil selector/atom keyed by `tempId`/`messageId` and reflect them in the UI (single/double check icons).
+- Reconcile `{ tempId, messageId }` pairs from `messageConfirmed` events and update both the stored message and the status map.
+- Apply read receipt updates from `messageRead` events so the thread renders accurate delivery indicators.
+
+## Presence & Typing
+- Consume `userOnline`, `userOffline`, and `statusChanged` events to update `messagingUserPresenceState` and sidebar badges.
+- Maintain typing indicators per channel by updating `messagingTypingUsersState[channelId]` and clearing entries after a grace period.
+- Drive the status selector (`online`, `away`, `busy`, `offline`) through `messagingService.updateStatus` and persist the result in Recoil.
+
+## UI Responsibilities
+- Sidebar: channels + DMs with unread badges, search/filter, and a "New Conversation" CTA that opens the DM/channel dialog.
+- Thread: render avatar, display name, timestamp, message content, typing indicator row, and context actions (edit/delete/reply per guide).
+- Presence panel: list online users with last-seen text for offline users; clicking starts/opens the DM channel.
+- Composer: honour keyboard shortcuts (Enter send, Shift+Enter newline), autosave drafts in `messagingDraftState`, and expose attachment/emoji controls.
+
+## Error & Recovery
+- On connection loss, set `messagingConnectionState` to `disconnected` and render a reconnect banner/toast.
+- After reconnect, replay `joinChannel` for the active conversation and fetch missing history with `messagingService.fetchChannelMessages`.
+- Surface socket/API errors via `Alert` components and log details for troubleshooting.

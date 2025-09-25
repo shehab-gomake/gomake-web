@@ -22,6 +22,7 @@ const useStyle = () => {
         ...adaptPaddingLeft(direction, 20),
         ...adaptPaddingRight(direction, 20),
         width: "100%",
+
       },
       container: {
         display: "flex",

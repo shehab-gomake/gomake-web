@@ -176,6 +176,7 @@ export enum QrCodeAction {
   START = 1,
   FINISH,
   DELIVERY,
+  OrderToReady,
 }
 
 export enum ShowDocumentDetailsEnum {

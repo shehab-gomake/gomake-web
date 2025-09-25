@@ -3,10 +3,14 @@ import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "./use-admin-auth-layout-hook";
 import { HeaderWidget } from "@/widgets/header";
+import { useTrialRedirect } from "@/hooks/use-trial-redirect";
 
 const AdminAuthLayout = ({ children }: IAuthLayout) => {
   const {} = useAuthLayoutHook();
-  const { classes } = useStyle({isHover:null, navStatus:null});
+  const { classes } = useStyle({ isHover: null, navStatus: null });
+
+  // Handle trial redirect
+  useTrialRedirect();
 
   return (
     <div style={classes.container}>

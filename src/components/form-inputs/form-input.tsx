@@ -24,7 +24,7 @@ import {
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
-import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
+import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
 
 const FormInput = ({
   input,
@@ -253,11 +253,55 @@ const FormInput = ({
                 {input.iconElement && <span>{input.iconElement}</span>}
 
                 {input.note && (
-                  <Tooltip title={t(input.note)}>
-                    <HelpOutlineRoundedIcon
+                  <Tooltip
+                    title={
+                      <div style={{ whiteSpace: "pre-line" }}>
+                        {t(input.note)}
+                      </div>
+                    }
+                    PopperProps={{
+                      sx: {
+                        "& .MuiTooltip-tooltip": {
+                          maxWidth: 320, // keep width under control
+                          maxHeight: 450, // set a maximum height
+                          overflowY: "auto", // enable vertical scroll if too tall
+                          whiteSpace: "pre-line",
+                          wordBreak: "break-word",
+                          // Custom scrollbar styling
+                          "&::-webkit-scrollbar": {
+                            width: "8px",
+                          },
+                          "&::-webkit-scrollbar-track": {
+                            background: "rgba(255, 255, 255, 0.1)",
+                            borderRadius: "4px",
+                          },
+                          "&::-webkit-scrollbar-thumb": {
+                            background: "rgba(255, 255, 255, 0.3)",
+                            borderRadius: "4px",
+                            "&:hover": {
+                              background: "rgba(255, 255, 255, 0.5)",
+                            },
+                          },
+                          // Firefox scrollbar styling
+                          scrollbarWidth: "thin",
+                          scrollbarColor:
+                            "rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)",
+                        },
+                      },
+                    }}
+                  >
+                    {/* <HelpOutlineRoundedIcon
                       fontSize="small"
                       color="action"
                       style={{ cursor: "pointer", marginTop: "2px" }}
+                    /> */}
+                    <HelpOutlinedIcon
+                      fontSize="small"
+                      style={{
+                        cursor: "pointer",
+                        marginTop: "2px",
+                        color: "#2e3092",
+                      }}
                     />
                   </Tooltip>
                 )}
@@ -286,7 +330,20 @@ const FormInput = ({
                   height: 40,
                   overflow: "scroll",
                 }}
-                onChange={input.multiple ? () => null : selectChange}
+                onChange={
+                  input.multiple
+                    ? (event: any, newValue: any) => {
+                        // Handle multi-select changes including chip deletions
+                        setSelectedOptions(newValue || []);
+                        // Convert objects back to value strings for the form state
+                        const valueStrings = (newValue || []).map(
+                          (item: any) => item.value
+                        );
+
+                        changeState(input.parameterKey, valueStrings);
+                      }
+                    : selectChange
+                }
                 // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
                 //   return {
                 //     label: item?.label,
@@ -381,7 +438,17 @@ const FormInput = ({
                     : undefined
                 }
                 PaperComponent={(props: any) => (
-                  <Paper style={{ width: "180px" }} {...props}>
+                  <Paper
+                    style={{
+                      width:
+                        input.dropdownStyle?.width ||
+                        props?.style?.width ||
+                        "180px",
+                      ...input.dropdownStyle,
+                      ...props?.style,
+                    }}
+                    {...props}
+                  >
                     {props?.children}
                   </Paper>
                 )}
