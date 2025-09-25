@@ -85,19 +85,7 @@ const PriceCurveFit = ({
           },
         ]
       : []),
-    // 4) Cost vs Cost (diagonal helper) — optional
-    // {
-    //   label: t("products.profits.cost"),
-    //   data: costLineX.map((x, i) => ({ x, y: costLineY[i] })),
-    //   borderColor: "rgba(153,102,255,1)",
-    //   backgroundColor: "rgba(153,102,255,0.2)",
-    //   fill: false,
-    //   borderWidth: 1,
-    //   tension: 0,
-    //   showLine: true,
-    //   pointRadius: 0,
-    // },
-    // scatter points (if you add regression later)
+
     ...(pointsX.length
       ? [
           {
@@ -154,7 +142,7 @@ const PriceCurveFit = ({
   };
 
   // Dynamic height based on summary card visibility
-  const chartHeight = isSummaryVisible ? "60vh" : "70vh";
+  const chartHeight = isSummaryVisible ? "57vh" : "70vh";
 
   return (
     <div style={{ width: "100%", height: chartHeight, position: "relative" }}>
