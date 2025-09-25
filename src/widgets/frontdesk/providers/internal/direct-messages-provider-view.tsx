@@ -31,7 +31,6 @@ import { ConversationList, MessageList, MessageInput, UserSelector, Participants
 import { UserPresence } from "./components";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
-import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
 
 const DirectMessagesProviderView: React.FC = () => {
   
@@ -59,6 +58,9 @@ const DirectMessagesProviderView: React.FC = () => {
     selectConversation,
     createConversation,
     startDirectMessage,
+    favoriteConversation,
+    archiveConversation,
+    addMembersToConversation,
     sendMessage,
     updateDraft,
     loadUserSuggestions,
@@ -160,55 +162,16 @@ const DirectMessagesProviderView: React.FC = () => {
     setActiveConversationId(null);
   };
 
-  const handleStarConversation = async () => {
-    if (!activeConversationId || !activeConversation || !currentUser) return;
-
-    try {
-      // Check if the current user has this conversation favorited
-      const currentMember = activeConversation.members?.find(m => m.userId === currentUser.userId);
-      const isFavorited = currentMember?.isFavorite || false;
-
-      // Toggle the favorite status
-      if (isFavorited) {
-        await directMessagesService.unfavoriteConversation(activeConversationId);
-      } else {
-        await directMessagesService.favoriteConversation(activeConversationId);
-      }
-
-      // Reload conversations to get updated state
-      await loadConversations();
-
-    } catch (error) {
-      console.error('Failed to update favorite status:', error);
-      setError('Failed to update favorite status');
+  const handleStarConversation = () => {
+    if (activeConversationId) {
+      favoriteConversation(activeConversationId);
     }
   };
 
-  const handleArchiveConversation = async () => {
-    if (!activeConversationId || !activeConversation || !currentUser) return;
-
-    try {
-      // Check if already archived
-      const currentMember = activeConversation.members?.find(m => m.userId === currentUser.userId);
-      const isArchived = currentMember?.isArchived || false;
-
-      if (isArchived) {
-        // Unarchive
-        await directMessagesService.unarchiveConversation(activeConversationId);
-      } else {
-        // Archive
-        await directMessagesService.archiveConversation(activeConversationId);
-
-        // Clear selected conversation when archiving
-        setActiveConversationId(null);
-      }
-
-      // Reload conversations to get updated state
-      await loadConversations();
-
-    } catch (error) {
-      console.error('Failed to archive/unarchive conversation:', error);
-      setError('Failed to archive conversation');
+  const handleArchiveConversation = () => {
+    if (activeConversationId) {
+      // The function in the hook will handle toggling based on current state
+      archiveConversation(activeConversationId);
     }
   };
 
@@ -283,11 +246,7 @@ const DirectMessagesProviderView: React.FC = () => {
         
         try {
           // Try to add members using the API
-          await directMessagesService.addMembers(activeConversationId, {
-            participantIds: users.map(u => u.userId),
-          });
-          
-          await loadConversations();
+          await addMembersToConversation(activeConversationId, users.map(u => u.userId));
         } catch (error: any) {
           console.error('[DM] Failed to add members:', error);
           

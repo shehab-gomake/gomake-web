@@ -531,7 +531,7 @@ export const useDirectMessages = () => {
     async (userId: string): Promise<Conversation | null> => {
       console.log('[DM] Starting direct message with user:', userId);
       console.log('[DM] Current user:', currentUser);
-      
+
       if (!currentUser || currentUser.userId === userId) {
         console.warn('[DM] Cannot start DM - invalid current user or same user');
         return null;
@@ -539,7 +539,7 @@ export const useDirectMessages = () => {
 
       // Check if conversation already exists
       const existingConversation = conversations.find(
-        conv => conv && conv.id && conv.type === 'DM' && 
+        conv => conv && conv.id && conv.type === 'DM' &&
         conv.members?.some(member => member && member.userId === userId) &&
         conv.members?.some(member => member && member.userId === currentUser.userId)
       );
@@ -557,6 +557,103 @@ export const useDirectMessages = () => {
       });
     },
     [currentUser, conversations, selectConversation, createConversation]
+  );
+
+  // Favorite/unfavorite conversation
+  const favoriteConversation = useCallback(
+    async (conversationId: string): Promise<void> => {
+      try {
+        const conversation = conversations.find(c => c.id === conversationId);
+        if (!conversation || !currentUser) {
+          console.warn('[DM] Cannot favorite - conversation not found or no current user');
+          return;
+        }
+
+        const currentMember = conversation.members?.find(m => m.userId === currentUser.userId);
+        const isFavorited = currentMember?.isFavorite || false;
+
+        // Toggle favorite status
+        if (isFavorited) {
+          await directMessagesService.unfavoriteConversation(conversationId);
+        } else {
+          await directMessagesService.favoriteConversation(conversationId);
+        }
+
+        // Reload conversations to get updated state
+        await loadConversations();
+
+      } catch (error: any) {
+        console.error('Failed to update favorite status:', error);
+        setError(error.message || 'Failed to update favorite status');
+      }
+    },
+    [conversations, currentUser, loadConversations, setError]
+  );
+
+  // Archive/unarchive conversation
+  const archiveConversation = useCallback(
+    async (conversationId: string, shouldArchive?: boolean): Promise<void> => {
+      try {
+        const conversation = conversations.find(c => c.id === conversationId);
+        if (!conversation || !currentUser) {
+          console.warn('[DM] Cannot archive - conversation not found or no current user');
+          return;
+        }
+
+        const currentMember = conversation.members?.find(m => m.userId === currentUser.userId);
+        const isArchived = currentMember?.isArchived || false;
+
+        // Use shouldArchive parameter if provided, otherwise toggle
+        const archive = shouldArchive !== undefined ? shouldArchive : !isArchived;
+
+        if (archive && !isArchived) {
+          await directMessagesService.archiveConversation(conversationId);
+
+          // Clear selected conversation if archiving the active one
+          if (conversationId === activeConversationId) {
+            setActiveConversationId(null);
+          }
+        } else if (!archive && isArchived) {
+          await directMessagesService.unarchiveConversation(conversationId);
+        }
+
+        // Reload conversations to get updated state
+        await loadConversations();
+
+      } catch (error: any) {
+        console.error('Failed to archive/unarchive conversation:', error);
+        setError(error.message || 'Failed to archive conversation');
+      }
+    },
+    [conversations, currentUser, activeConversationId, setActiveConversationId, loadConversations, setError]
+  );
+
+  // Add members to conversation (for group chats)
+  const addMembersToConversation = useCallback(
+    async (conversationId: string, userIds: string[]): Promise<void> => {
+      try {
+        await directMessagesService.addMembers(conversationId, {
+          participantIds: userIds,
+        });
+
+        // Reload conversations to get updated state
+        await loadConversations();
+
+        // Reload the active conversation if it's the one we're adding members to
+        if (conversationId === activeConversationId) {
+          const updatedConversation = conversations.find(c => c.id === conversationId);
+          if (updatedConversation) {
+            await selectConversation(updatedConversation);
+          }
+        }
+
+      } catch (error: any) {
+        console.error('Failed to add members to conversation:', error);
+        setError(error.message || 'Failed to add members');
+        throw error; // Re-throw so the UI can handle it
+      }
+    },
+    [activeConversationId, conversations, loadConversations, selectConversation, setError]
   );
 
   // Send message
@@ -1214,6 +1311,9 @@ export const useDirectMessages = () => {
     selectConversation,
     createConversation,
     startDirectMessage,
+    favoriteConversation,
+    archiveConversation,
+    addMembersToConversation,
     sendMessage,
     loadMessageHistory,
     loadMoreMessages,
