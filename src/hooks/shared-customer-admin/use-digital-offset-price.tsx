@@ -6183,7 +6183,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   let finalUnitWidth = getValue("finalUnitWidth");
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
-                  console.log("unitWidth11", { unitWidth, unitLength, dieUnitWidth, dieUnitLength, width, length });
 
                   const dieCutSizesParametersArray = [];
                   dieCutSizesParametersArray.push({
@@ -6307,7 +6306,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let finalUnitWidth = getValue("finalUnitWidth");
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
-            console.log("unitWidth", { unitWidth, unitLength, dieUnitWidth, dieUnitLength, dieCut, width, length });
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
