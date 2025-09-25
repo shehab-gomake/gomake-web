@@ -330,7 +330,20 @@ const FormInput = ({
                   height: 40,
                   overflow: "scroll",
                 }}
-                onChange={input.multiple ? () => null : selectChange}
+                onChange={
+                  input.multiple
+                    ? (event: any, newValue: any) => {
+                        // Handle multi-select changes including chip deletions
+                        setSelectedOptions(newValue || []);
+                        // Convert objects back to value strings for the form state
+                        const valueStrings = (newValue || []).map(
+                          (item: any) => item.value
+                        );
+
+                        changeState(input.parameterKey, valueStrings);
+                      }
+                    : selectChange
+                }
                 // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
                 //   return {
                 //     label: item?.label,
