@@ -18,6 +18,8 @@ import {
   Stack,
   Chip,
   IconButton,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -34,6 +36,8 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
   loading = false,
   onClose,
   open,
+  onlineOnly = false,
+  onToggleOnlineOnly,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<ConversationMember[]>([]);
@@ -127,6 +131,34 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
           />
         </Box>
 
+        <Box
+          sx={{
+            px: 2,
+            py: 1,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Switch
+                size="small"
+                checked={onlineOnly}
+                onChange={(event) => onToggleOnlineOnly?.(event.target.checked)}
+                disabled={!onToggleOnlineOnly}
+              />
+            }
+            label="Online only"
+            sx={{ m: 0 }}
+          />
+          {onlineOnly && (
+            <Chip label="Online" size="small" color="success" sx={{ fontWeight: 500 }} />
+          )}
+        </Box>
+
         {selectedUsers.length > 0 && (
           <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
@@ -154,7 +186,11 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
           ) : filteredUsers.length === 0 ? (
             <Box sx={{ p: 3, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
-                {searchQuery ? 'No users found matching your search' : 'No users available'}
+                {searchQuery
+                  ? 'No users found matching your search'
+                  : onlineOnly
+                    ? 'No team members are online right now'
+                    : 'No users available'}
               </Typography>
             </Box>
           ) : (

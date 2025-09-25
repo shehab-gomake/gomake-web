@@ -1,7 +1,8 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { directMessagesWebSocketService } from "@/services/websocket/direct-messages-websocket.service";
 import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
+import { parsePresenceResponse, parseStatusChangeEvent, isValidUserId } from "@/widgets/frontdesk/providers/internal/utils/presence-helpers";
 import {
   dmConnectionState,
   dmConnectedState,
@@ -50,6 +51,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { internalDirectMessagesAtom } from "@/store/frontdesk";
 
 export const useDirectMessages = () => {
+  const debug = process.env.NEXT_PUBLIC_DM_DEBUG === 'true';
   const [connectionStatus, setConnectionStatus] = useRecoilState(dmConnectionState);
   const [connected, setConnected] = useRecoilState(dmConnectedState);
   const [currentUser, setCurrentUser] = useRecoilState(dmCurrentUserState);
@@ -71,11 +73,15 @@ export const useDirectMessages = () => {
   const [userSuggestions, setUserSuggestions] = useRecoilState(dmUserSuggestionsState);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useRecoilState(dmIsLoadingSuggestionsState);
   const [messageCursors, setMessageCursors] = useRecoilState(dmMessageCursorsState);
+  const [suggestionsOnlineOnly, setSuggestionsOnlineOnlyState] = useState(true);
 
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
   const joinedConversationsRef = useRef<Set<string>>(new Set());
+  const lastPresenceEventRef = useRef<Record<string, { status: string; timestamp?: string }>>({});
+  const pendingPresenceHydrations = useRef<Set<string>>(new Set());
+  const userSuggestionQueryRef = useRef<string>("");
 
   // Selectors
   const activeConversation = useRecoilValue(dmActiveConversationSelector);
@@ -132,14 +138,15 @@ export const useDirectMessages = () => {
       await loadConversations();
 
       // Get initial presence data
-      const presenceData = await directMessagesWebSocketService.getPresence();
-      if (presenceData) {
-        console.log('[DM] Initial presence data loaded:', presenceData);
+      const presenceResponse = await directMessagesWebSocketService.getPresence();
+      if (presenceResponse) {
+        if (debug) console.log('[DM] Initial presence data loaded:', presenceResponse);
+        const { presenceData, onlineUserIds } = parsePresenceResponse(presenceResponse);
+        if (debug) {
+          console.log('[DM] Processed presence data:', presenceData);
+          console.log('[DM] Online users from initial presence:', onlineUserIds);
+        }
         setUserPresence(presenceData);
-        const onlineUserIds = Object.keys(presenceData).filter(userId =>
-          presenceData[userId].status === 'online'
-        );
-        console.log('[DM] Online users from presence:', onlineUserIds);
         setOnlineUsers(onlineUserIds);
       }
     } catch (error: any) {
@@ -195,6 +202,68 @@ export const useDirectMessages = () => {
             console.error('[DM] Failed to join conversation room:', conv.id, joinError);
           }
         }));
+
+        // Fetch presence data for all conversation participants
+        const uniqueUserIds = new Set<string>();
+        validConversations.forEach(conv => {
+          if (conv.members) {
+            conv.members.forEach(member => {
+              if (member.userId) {
+                uniqueUserIds.add(member.userId);
+              }
+            });
+          }
+        });
+
+        if (uniqueUserIds.size > 0) {
+          try {
+            const userIdArray = Array.from(uniqueUserIds);
+            console.log('[DM] Fetching presence for users:', userIdArray);
+            const presenceResponse = await directMessagesWebSocketService.getPresence(userIdArray);
+
+            if (presenceResponse) {
+              if (debug) console.log('[DM] Presence data received for conversations:', presenceResponse);
+              const { presenceData, onlineUserIds: newOnlineUserIds } = parsePresenceResponse(presenceResponse);
+              if (debug) {
+                console.log('[DM] Processed conversation presence:', presenceData);
+                console.log('[DM] Online users from conversation presence:', newOnlineUserIds);
+              }
+
+              // Merge with existing presence data
+              setUserPresence(prev => ({
+                ...prev,
+                ...presenceData
+              }));
+
+              // Update online users list - properly merge with existing
+              setOnlineUsers(prev => {
+                // Start with a Set to avoid duplicates
+                const combined = new Set<string>(prev.filter(id => isValidUserId(id)));
+
+                // Add new online users
+                newOnlineUserIds.forEach(id => {
+                  if (isValidUserId(id)) {
+                    combined.add(id);
+                  }
+                });
+
+                // Remove offline users
+                Object.entries(presenceData).forEach(([userId, data]) => {
+                  if (data.status === 'offline') {
+                    combined.delete(userId);
+                  }
+                });
+
+                const result = Array.from(combined);
+                if (debug) console.log('[DM] Updated online users list:', result);
+                return result;
+              });
+            }
+          } catch (presenceError) {
+            console.error('[DM] Failed to fetch presence data:', presenceError);
+            // Non-critical error, don't throw
+          }
+        }
       }
     } catch (error: any) {
       console.error("Failed to load conversations:", error);
@@ -202,7 +271,7 @@ export const useDirectMessages = () => {
     } finally {
       setIsLoadingConversations(false);
     }
-  }, [setIsLoadingConversations, setError, setConversations, setUnreadCounts]);
+  }, [setIsLoadingConversations, setError, setConversations, setUnreadCounts, setUserPresence, setOnlineUsers]);
 
   // Load message history for a conversation
   const loadMessageHistory = useCallback(
@@ -217,28 +286,37 @@ export const useDirectMessages = () => {
           after: options?.after,
         });
 
-        // Enrich messages with user data from presence
+        // Enrich messages with user data
         const enrichedMessages = response.messages.map((msg) => {
-          // Check if this is the current user's message
+          // If message already has complete user data from backend, use it
+          if (msg.user && msg.user.name) {
+            return {
+              ...msg,
+              userEmail: msg.user.email || msg.userEmail || '',
+              userName: msg.user.name || msg.userName || '',
+            };
+          }
+
+          // Fallback: Check if this is the current user's message
           if (currentUser && msg.userId === currentUser.userId) {
             return {
               ...msg,
-              userEmail: currentUser.email || msg.userEmail || '',
-              userName: currentUser.name || msg.userName || 'You',
+              userEmail: msg.userEmail || currentUser.email || '',
+              userName: msg.userName || currentUser.name || 'You',
             };
           }
-          
-          // Check presence data for other users
+
+          // Fallback: Check presence data for other users (for older messages)
           const presence = userPresence[msg.userId];
           if (presence) {
             return {
               ...msg,
-              userEmail: presence.email || msg.userEmail || '',
-              userName: presence.name || msg.userName || presence.email || 'User',
+              userEmail: msg.userEmail || presence.email || '',
+              userName: msg.userName || presence.name || presence.email || 'User',
             };
           }
-          
-          // If no presence data, use what we have from the message
+
+          // Last resort: use what we have from the message
           return {
             ...msg,
             userEmail: msg.userEmail || '',
@@ -598,12 +676,17 @@ export const useDirectMessages = () => {
 
   // Load user suggestions
   const loadUserSuggestions = useCallback(
-    async (query?: string) => {
+    async (query?: string, onlineOnlyOverride?: boolean) => {
       try {
         setIsLoadingSuggestions(true);
-        const suggestions = await directMessagesService.getUserSuggestions(query, {
+        if (query !== undefined) {
+          userSuggestionQueryRef.current = query;
+        }
+        const effectiveQuery = query ?? userSuggestionQueryRef.current ?? "";
+        const effectiveOnlineOnly = onlineOnlyOverride ?? suggestionsOnlineOnly;
+        const suggestions = await directMessagesService.getUserSuggestions(effectiveQuery, {
           limit: 10,
-          onlineOnly: true,
+          onlineOnly: effectiveOnlineOnly ? true : undefined,
         });
         setUserSuggestions(suggestions);
       } catch (error: any) {
@@ -613,7 +696,15 @@ export const useDirectMessages = () => {
         setIsLoadingSuggestions(false);
       }
     },
-    [setIsLoadingSuggestions, setUserSuggestions, setError]
+    [setIsLoadingSuggestions, setUserSuggestions, setError, suggestionsOnlineOnly]
+  );
+
+  const setUserSuggestionsOnlineOnly = useCallback(
+    (value: boolean) => {
+      setSuggestionsOnlineOnlyState(value);
+      loadUserSuggestions(undefined, value);
+    },
+    [loadUserSuggestions]
   );
 
   // Event handlers
@@ -648,28 +739,39 @@ export const useDirectMessages = () => {
         // Enrich with user data
         let userEmail = '';
         let userName = '';
-        
-        if (currentUser && message.userId === currentUser.userId) {
+        let user = undefined;
+
+        // First priority: Use embedded user object from backend
+        if (message.user && message.user.name) {
+          userEmail = message.user.email || '';
+          userName = message.user.name || '';
+          user = message.user;
+        }
+        // Fallback: Check if this is the current user's message
+        else if (currentUser && message.userId === currentUser.userId) {
           userEmail = currentUser.email || '';
           userName = currentUser.name || '';
-        } else {
+        }
+        // Fallback: Check presence data for other users
+        else {
           const presence = userPresence[message.userId];
           if (presence) {
             userEmail = presence.email || '';
             userName = presence.name || '';
           }
         }
-        
+
         const newMessage: DMMessage = {
           id: message.messageId,
           conversationId: message.conversationId,
-          userId: message.userId,
+          userId: message.userId || message.user?.id || '',
           userEmail,
           userName,
           content: message.content,
           createdAt: message.timestamp,
           tempId: message.tempId,
           metadata: { type: "text" },
+          user,
         };
 
         return {
@@ -849,30 +951,105 @@ export const useDirectMessages = () => {
         });
       });
     };
-    // Status change handler (replaces userOnline/userOffline)
-    const handleStatusChanged = (data: any) => {
-      console.log('[DM] User status changed:', data);
+    // Presence update handler from canonical presence:update events
+    const hasIdentityInfo = (data?: Partial<DMPresenceData>) => {
+      if (!data) return false;
+      const safeString = (value?: string) => (typeof value === 'string' ? value.trim() : '');
+      return Boolean(
+        safeString(data.name) ||
+        safeString(data.firstName) ||
+        safeString(data.lastName) ||
+        safeString(data.email)
+      );
+    };
+
+    const handleStatusChanged = (event: any) => {
+      if (debug) console.log('[DM] User status changed event:', event);
+
+      const { userId, status, userData } = parseStatusChangeEvent(event);
+
+      if (!userId || !isValidUserId(userId)) {
+        console.warn('[DM] Status change event has invalid or missing userId:', event);
+        return;
+      }
+
+      if (!status) {
+        console.warn('[DM] Status change event missing status:', event);
+        return;
+      }
+
+      // Lightweight de-duplication: ignore same status with equal or older timestamp
+      const incomingTs = (event?.timestamp || userData?.timestamp) as string | undefined;
+      const prev = lastPresenceEventRef.current[userId];
+      if (prev && prev.status === status) {
+        if (!incomingTs || !prev.timestamp || new Date(incomingTs) <= new Date(prev.timestamp)) {
+          if (debug) console.log('[DM] Skipping duplicate/older presence event for', userId, status, incomingTs);
+          return;
+        }
+      }
+      lastPresenceEventRef.current[userId] = { status, timestamp: incomingTs };
+
+      if (debug) console.log('[DM] Parsed status change:', { userId, status });
+
+      const existingPresence = userPresence[userId];
+      const combinedPresence = {
+        ...existingPresence,
+        ...userData,
+      } as Partial<DMPresenceData>;
+
+      // Update presence data
       setUserPresence((prev) => ({
         ...prev,
-        [data.userId]: {
-          ...prev[data.userId],
-          userId: data.userId,
-          status: data.status,
-          timestamp: data.timestamp || new Date().toISOString(),
-          lastSeen: data.status === 'offline' ? data.timestamp : prev[data.userId]?.lastSeen,
+        [userId]: {
+          ...prev[userId],
+          ...userData,
+          userId,
+          status,
+          timestamp: event.timestamp || userData.timestamp || new Date().toISOString(),
+          lastSeen: status === 'offline'
+            ? (event.timestamp || userData.timestamp || new Date().toISOString())
+            : prev[userId]?.lastSeen,
         },
       }));
 
       // Update online users list
-      if (data.status === 'online') {
+      if (status === 'online') {
+        if (debug) console.log('[DM] Adding user to online list:', userId);
         setOnlineUsers((prev) => {
-          if (!prev.includes(data.userId)) {
-            return [...prev, data.userId];
+          if (!prev.includes(userId)) {
+            return [...prev, userId];
           }
           return prev;
         });
-      } else {
-        setOnlineUsers((prev) => prev.filter((id) => id !== data.userId));
+      } else if (status === 'offline') {
+        if (debug) console.log('[DM] Removing user from online list:', userId);
+        setOnlineUsers((prev) => prev.filter((id) => id !== userId));
+      }
+
+      // If we still don't have identifying details for this user, hydrate via getPresence
+      if (!hasIdentityInfo(combinedPresence) && !pendingPresenceHydrations.current.has(userId)) {
+        pendingPresenceHydrations.current.add(userId);
+        directMessagesWebSocketService
+          .getPresence([userId])
+          .then((presenceResponse) => {
+            const { presenceData } = parsePresenceResponse(presenceResponse);
+            const hydrated = presenceData[userId];
+            if (hydrated && hasIdentityInfo(hydrated)) {
+              setUserPresence((prev) => ({
+                ...prev,
+                [userId]: {
+                  ...prev[userId],
+                  ...hydrated,
+                },
+              }));
+            }
+          })
+          .catch((error) => {
+            console.error('[DM] Failed to hydrate presence details for user:', userId, error);
+          })
+          .finally(() => {
+            pendingPresenceHydrations.current.delete(userId);
+          });
       }
     };
 
@@ -895,6 +1072,49 @@ export const useDirectMessages = () => {
     directMessagesWebSocketService.onConversationUpdated(handleConversationUpdated);
     directMessagesWebSocketService.onUnreadCountUpdated(handleUnreadCountUpdated);
 
+    // Reconnect flow: clear joined cache and wait for dm:welcome to rejoin
+    directMessagesWebSocketService.onReconnect(() => {
+      joinedConversationsRef.current.clear();
+    });
+
+    const handleWelcome = async (data: { conversationIds: string[] }) => {
+      try {
+        if (debug) console.log('[DM] dm:welcome received with conversationIds:', data?.conversationIds);
+        if (!Array.isArray(data?.conversationIds)) return;
+        
+        // Join each provided room idempotently
+        for (const conversationId of data.conversationIds) {
+          if (!conversationId || joinedConversationsRef.current.has(conversationId)) continue;
+          try {
+            await directMessagesWebSocketService.joinConversation({ conversationId });
+            joinedConversationsRef.current.add(conversationId);
+          } catch (e) {
+            console.error('[DM] Failed to join conversation on welcome:', conversationId, e);
+          }
+        }
+
+        // Refresh presence for members of these conversations
+        const memberIds = new Set<string>();
+        conversations
+          .filter((c) => c && data.conversationIds.includes(c.id))
+          .forEach((c) => c.members?.forEach((m) => m?.userId && memberIds.add(m.userId)));
+        const ids = Array.from(memberIds);
+        if (ids.length > 0) {
+          try {
+            const presence = await directMessagesWebSocketService.getPresence(ids);
+            const { presenceData, onlineUserIds } = parsePresenceResponse(presence);
+            setUserPresence((prev) => ({ ...prev, ...presenceData }));
+            setOnlineUsers((prev) => Array.from(new Set([...prev, ...onlineUserIds])));
+          } catch (e) {
+            console.error('[DM] Failed to refresh presence after welcome:', e);
+          }
+        }
+      } catch (e) {
+        console.error('[DM] Error handling dm:welcome:', e);
+      }
+    };
+    directMessagesWebSocketService.onWelcome(handleWelcome);
+
     // Cleanup
     return () => {
       directMessagesWebSocketService.removeAllListeners();
@@ -908,6 +1128,7 @@ export const useDirectMessages = () => {
     connected,
     activeConversationId,
     currentUser,
+    conversations,
     userPresence,
     setMessages,
     setUnreadCounts,
@@ -983,6 +1204,8 @@ export const useDirectMessages = () => {
     // User suggestions
     userSuggestions,
     isLoadingSuggestions,
+    suggestionsOnlineOnly,
+    setUserSuggestionsOnlineOnly,
 
     // Actions
     connect,

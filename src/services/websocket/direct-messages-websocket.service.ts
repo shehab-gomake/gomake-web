@@ -17,7 +17,6 @@ import {
 export type DMMessageEventHandler = (message: DMNewMessageEvent) => void;
 export type DMMessageConfirmedHandler = (data: DMMessageConfirmedEvent) => void;
 export type DMTypingEventHandler = (data: DMUserTypingEvent) => void;
-export type DMPresenceEventHandler = (data: any) => void;
 export type DMConnectionEventHandler = (connected: boolean) => void;
 export type DMErrorEventHandler = (error: string) => void;
 export type DMUnreadCountEventHandler = (data: DMUnreadCountUpdatedEvent) => void;
@@ -27,6 +26,21 @@ export class DirectMessagesWebSocketService {
   private serverUrl: string;
   private isConnecting: boolean = false;
   private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
+  
+  private isDebugEnabled(): boolean {
+    try {
+      // NEXT_PUBLIC_* is available client-side
+      // Also allow runtime override via window for debugging
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const w: any = typeof window !== 'undefined' ? window : {};
+      return (
+        process.env.NEXT_PUBLIC_DM_DEBUG === 'true' ||
+        w.DM_DEBUG === true
+      );
+    } catch {
+      return false;
+    }
+  }
 
   constructor() {
     this.serverUrl = config.messaging_server || config.api_server;
@@ -85,15 +99,25 @@ export class DirectMessagesWebSocketService {
       });
 
       this.socket.on("connect", () => {
-        console.log("Connected to DM messaging service");
+        if (this.isDebugEnabled()) console.log("Connected to DM messaging service");
         this.isConnecting = false;
         this.startHeartbeat();
         this.socket?.emit("heartbeat");
         resolve(this.socket!);
       });
 
+      // Debug: Log all events to see what the backend is actually sending
+      this.socket.onAny((eventName: string, ...args: any[]) => {
+        if (this.isDebugEnabled()) {
+          // Avoid flooding logs for high-frequency events
+          if (!eventName.startsWith('dm:') && !eventName.includes('typing') && !eventName.includes('message')) {
+            console.log(`[DM WebSocket] Event received: ${eventName}`, args);
+          }
+        }
+      });
+
       this.socket.on("disconnect", (reason) => {
-        console.log("Disconnected from DM messaging service. Reason:", reason);
+        if (this.isDebugEnabled()) console.log("Disconnected from DM messaging service. Reason:", reason);
         this.clearHeartbeat();
         this.isConnecting = false;
       });
@@ -124,11 +148,11 @@ export class DirectMessagesWebSocketService {
       });
 
       this.socket.on("reconnect", (attemptNumber) => {
-        console.log(`DM Reconnected after ${attemptNumber} attempts`);
+        if (this.isDebugEnabled()) console.log(`DM Reconnected after ${attemptNumber} attempts`);
       });
 
       this.socket.on("reconnect_attempt", (attemptNumber) => {
-        console.log(`DM Reconnection attempt ${attemptNumber}`);
+        if (this.isDebugEnabled()) console.log(`DM Reconnection attempt ${attemptNumber}`);
       });
 
       this.socket.on("reconnect_error", (error) => {
@@ -270,10 +294,19 @@ export class DirectMessagesWebSocketService {
       }
 
       this.socket.emit("getPresence", { userIds }, (response: any) => {
-        if (response?.success !== false && response?.presence) {
-          resolve(response.presence);
-        } else {
-          reject(new Error(response?.error || "Failed to get presence"));
+        try {
+          if (response?.success === false) {
+            return reject(new Error(response?.error || "Failed to get presence"));
+          }
+
+          const payload = response?.presence ?? response;
+          if (payload && typeof payload === "object" && !Array.isArray(payload)) {
+            return resolve(payload as Record<string, DMPresenceData>);
+          }
+
+          return reject(new Error("Unexpected presence response format"));
+        } catch (e: any) {
+          return reject(new Error(e?.message || "Failed to parse presence response"));
         }
       });
     });
@@ -306,8 +339,6 @@ export class DirectMessagesWebSocketService {
 
   onUnreadCountUpdated(handler: DMUnreadCountEventHandler): void {
     if (this.socket) {
-      this.socket.on("unread_count_updated", handler);
-      this.socket.on("dm:unread_count_updated", handler);
       this.socket.on("dm:unreadCountUpdated", handler);
     }
   }
@@ -320,19 +351,20 @@ export class DirectMessagesWebSocketService {
 
   onStatusChanged(handler: (data: any) => void): void {
     if (this.socket) {
-      this.socket.on("statusChanged", handler);
+      // Canonical presence event
+      this.socket.on("presence:update", handler);
     }
   }
 
-  onUserOnline(handler: DMPresenceEventHandler): void {
+  onWelcome(handler: (data: { conversationIds: string[] }) => void): void {
     if (this.socket) {
-      this.socket.on("userOnline", handler);
+      this.socket.on('dm:welcome', handler);
     }
   }
 
-  onUserOffline(handler: DMPresenceEventHandler): void {
+  onReconnect(handler: (attemptNumber: number) => void): void {
     if (this.socket) {
-      this.socket.on("userOffline", handler);
+      this.socket.on('reconnect', handler as unknown as (...args: any[]) => void);
     }
   }
 

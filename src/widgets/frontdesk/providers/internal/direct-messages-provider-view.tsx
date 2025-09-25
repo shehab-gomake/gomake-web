@@ -8,6 +8,7 @@ import {
   Box,
   IconButton,
   Tooltip,
+  Snackbar,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -44,6 +45,8 @@ const DirectMessagesProviderView: React.FC = () => {
     isSending,
     userSuggestions,
     isLoadingSuggestions,
+    suggestionsOnlineOnly,
+    setUserSuggestionsOnlineOnly,
     selectConversation,
     createConversation,
     startDirectMessage,
@@ -62,6 +65,7 @@ const DirectMessagesProviderView: React.FC = () => {
   const [showUserSelector, setShowUserSelector] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
+  const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
 
 
   // Debug logging
@@ -97,6 +101,16 @@ const DirectMessagesProviderView: React.FC = () => {
     userPresence,
   ]);
 
+  // Auto-clear error message after 6 seconds
+  React.useEffect(() => {
+    if (userErrorMessage) {
+      const timer = setTimeout(() => {
+        setUserErrorMessage(null);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [userErrorMessage]);
+
   const getSeverity = (status: typeof connectionStatus) => {
     switch (status) {
       case "connected":
@@ -130,7 +144,7 @@ const DirectMessagesProviderView: React.FC = () => {
   const handleStartNewConversation = () => {
     setShowUserSelector(true);
     setUserSelectorMode('new');
-    loadUserSuggestions();
+    loadUserSuggestions('');
   };
 
   const handleCloseConversation = () => {
@@ -186,7 +200,7 @@ const DirectMessagesProviderView: React.FC = () => {
   const handleAddParticipant = () => {
     setShowUserSelector(true);
     setUserSelectorMode('add');
-    loadUserSuggestions();
+    loadUserSuggestions('');
   };
 
   const handleRemoveParticipant = async (userId: string) => {
@@ -204,12 +218,40 @@ const DirectMessagesProviderView: React.FC = () => {
           await createConversation({ participantIds: users.map(u => u.userId) });
         }
       } else if (userSelectorMode === 'add') {
-        if (!activeConversationId) return;
-        await directMessagesService.addMembers(activeConversationId, {
-          participantIds: users.map(u => u.userId),
-        });
-        await loadConversations();
+        if (!activeConversationId) {
+          console.error('[DM] No active conversation to add members to');
+          return;
+        }
+        
+        try {
+          console.log('[DM] Adding members to conversation:', {
+            conversationId: activeConversationId,
+            participantIds: users.map(u => u.userId),
+            users: users
+          });
+          
+          // Try to add members using the API
+          await directMessagesService.addMembers(activeConversationId, {
+            participantIds: users.map(u => u.userId),
+          });
+          
+          console.log('[DM] Members added successfully');
+          await loadConversations();
+        } catch (error: any) {
+          console.error('[DM] Failed to add members:', error);
+          
+          // Check if it's a 500 error - the endpoint might not be implemented yet
+          if (error.message?.includes('500') || error.message?.includes('Internal server error')) {
+            console.warn('[DM] Add members endpoint not available. This feature may not be implemented on the server yet.');
+            setUserErrorMessage('Adding members to conversations is not available yet. Please create a new group conversation instead.');
+          } else {
+            setUserErrorMessage(error.message || 'Failed to add members to conversation');
+          }
+        }
       }
+    } catch (error: any) {
+      console.error('[DM] Error in handleUserConfirm:', error);
+      setUserErrorMessage(error.message || 'An error occurred');
     } finally {
       setShowUserSelector(false);
     }
@@ -410,13 +452,6 @@ const DirectMessagesProviderView: React.FC = () => {
                       <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
                         {getConversationTitle()}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                        {getConversationSubtitle()}
-                      </Typography>
-                      {/* Debug info */}
-                      <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.7rem" }}>
-                        Debug: activeConversationId = {activeConversationId}
-                      </Typography>
                     </div>
                     {/* Close button */}
                     <Tooltip title="Close conversation">
@@ -551,10 +586,28 @@ const DirectMessagesProviderView: React.FC = () => {
         onSelect={handleUserSelect}
         onConfirm={handleUserConfirm}
         onSearch={handleUserSearch}
+        onlineOnly={suggestionsOnlineOnly}
+        onToggleOnlineOnly={setUserSuggestionsOnlineOnly}
         loading={isLoadingSuggestions}
         onClose={() => setShowUserSelector(false)}
         open={showUserSelector}
       />
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!userErrorMessage}
+        autoHideDuration={6000}
+        onClose={() => setUserErrorMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setUserErrorMessage(null)}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {userErrorMessage}
+        </Alert>
+      </Snackbar>
     </Stack>
   );
 };

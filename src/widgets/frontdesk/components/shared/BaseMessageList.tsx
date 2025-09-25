@@ -84,6 +84,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     // Try to construct name from userPresence
     const user = userPresence[message.userId];
     if (user) {
+      // Prefer full name field if present
+      if (user.name && typeof user.name === "string" && user.name.trim()) {
+        return user.name.trim();
+      }
       const firstName = user.firstName || "";
       const lastName = user.lastName || "";
       const fullName = `${firstName} ${lastName}`.trim();

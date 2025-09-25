@@ -139,15 +139,18 @@ export class DirectMessagesService {
     const messages: DMMessage[] = rawResponse.map((msg: any) => ({
       id: msg.id,
       conversationId: msg.conversationId,
-      userId: msg.userId,
-      userEmail: msg.userEmail || msg.user?.email || "", // Preserve if exists, will be enriched from user presence
-      userName: msg.userName || msg.user?.name || "", // Preserve if exists, will be enriched from user presence
+      userId: msg.userId || msg.user?.id || "",
+      // Prioritize user object data, then flat fields
+      userEmail: msg.user?.email || msg.userEmail || "",
+      userName: msg.user?.name || msg.userName || msg.user?.email || "",
       content: msg.content,
       createdAt: msg.createdAt,
       isSystem: msg.isSystem || false,
       editedAt: msg.editedAt || null,
       deletedAt: msg.deletedAt || null,
       metadata: msg.metadata || { type: "text" },
+      // Preserve the complete user object if provided
+      user: msg.user || undefined,
     }));
 
     // Determine if there are more messages
@@ -229,7 +232,7 @@ export class DirectMessagesService {
   async searchConversations(query: string): Promise<Conversation[]> {
     const params = new URLSearchParams();
     params.append("q", query);
-    return this.makeRequest<Conversation[]>(`/api/dms/search?${params.toString()}`);
+    return this.makeRequest<Conversation[]>(`/dms/search?${params.toString()}`);
   }
 
   // Get user suggestions for starting new conversations (maps from /api/users/search)
