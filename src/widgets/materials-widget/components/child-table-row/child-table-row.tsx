@@ -205,9 +205,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell>
-
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell}></TableCell>
                                     <TableCell sx={classes.headerCell}>Supplier Name</TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase m² Price</TableCell>
@@ -216,6 +214,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Sale m² Price (Base)</TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Roll Price (Base)</TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>Inventory</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
@@ -353,6 +352,18 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
+                                                                value={row.inventory || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="inventory"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
                                                                 value={row.isActive}
                                                                 isEditable={true}
                                                                 type={2}
@@ -363,6 +374,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isInventoryTable={true}
                                                             />
                                                         </TableCell>
+
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <IconButton
