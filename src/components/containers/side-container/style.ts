@@ -21,7 +21,6 @@ const useStyle = () => {
         // height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         ...adaptPaddingLeft(direction, 20),
         ...adaptPaddingRight(direction, 20),
-        width: "85%",
       },
       container: {
         display: "flex",
