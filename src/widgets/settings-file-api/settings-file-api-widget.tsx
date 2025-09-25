@@ -92,11 +92,11 @@ const SettingsFileApiWidget = () => {
                     lineHeight: "1.1",
                   }}
                 >
-                  <span>Download API</span>
+                  <span> {t("fileApiSettings.downloadFileServer")}</span>
                   <span
                     style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px" }}
                   >
-                    for Windows only
+                    {t("fileApiSettings.forWindowsOnly")}
                   </span>
                 </div>
               </PrimaryButton>
