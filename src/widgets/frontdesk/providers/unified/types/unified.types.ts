@@ -1,7 +1,7 @@
-import { Message, Channel as BaseChannel } from '../../internal/types/internal.types';
+import { Message, BaseConversation } from '../../base/provider.interface';
 
 // Unified conversation type that aggregates from all providers
-export interface UnifiedConversation extends BaseChannel {
+export interface UnifiedConversation extends BaseConversation {
   provider: 'email' | 'whatsapp' | 'internal';
   providerIcon?: React.ReactNode;
   originalId: string; // Original ID from the provider

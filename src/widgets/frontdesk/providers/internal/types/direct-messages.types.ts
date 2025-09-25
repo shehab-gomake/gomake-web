@@ -43,9 +43,14 @@ export interface DMMessage {
   };
 }
 
+// Context types for contextual conversations
+export type ConversationContextType = 'QUOTE';
+
 export interface CreateConversationRequest {
   participantIds: string[];
   name?: string;
+  contextId?: string;
+  contextType?: ConversationContextType;
 }
 
 export interface CreateConversationResponse {
@@ -105,6 +110,11 @@ export interface DMNewMessageEvent {
   userId: string;
   timestamp: string;
   tempId?: string;
+}
+
+export interface DMUnreadCountUpdatedEvent {
+  conversationId: string;
+  unreadCount: number;
 }
 
 export interface DMTypingEvent {
@@ -207,30 +217,3 @@ export interface UserSelectorProps {
   onClose: () => void;
 }
 
-// Legacy types for backward compatibility (to be phased out)
-export interface LegacyMessage {
-  channelId: string;
-  content: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
-  organizationId: string;
-  timestamp: string;
-  recipientId?: string;
-  messageId?: string;
-  tempId?: string;
-  metadata?: {
-    type: 'text' | 'file' | 'image';
-    timestamp?: string;
-  };
-}
-
-export interface LegacyChannel {
-  id: string;
-  name: string;
-  type: 'channel' | 'direct';
-  unreadCount?: number;
-  lastMessage?: string;
-  lastMessageAt?: string;
-  members?: string[];
-}

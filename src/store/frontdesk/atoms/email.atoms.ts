@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { Account, Conversation } from '@/widgets/frontdesk/providers/base/provider.interface';
-import { Message } from '@/widgets/frontdesk/providers/internal/types/internal.types';
+import { Message } from '@/widgets/frontdesk/providers/base/provider.interface';
 
 /**
  * Connected email accounts

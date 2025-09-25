@@ -2,18 +2,71 @@ import { io, Socket } from "socket.io-client";
 import config from "@/config";
 import { getUserToken } from "@/services/storage-data";
 import {
-  Message,
-  SendMessageData,
-  JoinChannelData,
-  TypingData,
-  MarkAsReadData,
-  UpdateStatusData,
-  GetPresenceData,
-  SocketResponse,
-  PresenceData,
-  TypingIndicator,
-  MessageConfirmedData,
+  DMMessage,
+  DMPresenceData,
 } from "@/widgets/frontdesk/providers/internal/types";
+
+// Use DMMessage as Message for compatibility
+export type Message = DMMessage;
+export type PresenceData = DMPresenceData;
+
+// Define missing types that were removed from legacy system
+export interface SendMessageData {
+  conversationId: string;
+  content: string;
+  recipientId?: string;
+  tempId?: string;
+  messageId?: string;
+  metadata?: {
+    type: 'text' | 'file' | 'image';
+  };
+}
+
+export interface JoinChannelData {
+  conversationId: string;
+}
+
+export interface TypingData {
+  conversationId: string;
+}
+
+export interface MarkAsReadData {
+  messageId: string;
+}
+
+export interface UpdateStatusData {
+  status: 'online' | 'away' | 'busy' | 'offline';
+}
+
+export interface GetPresenceData {
+  userIds?: string[];
+}
+
+export interface SocketResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: any;
+  messageId?: string;
+  conversationId?: string;
+  onlineUsers?: string[];
+  presence?: Record<string, PresenceData>;
+}
+
+export interface TypingIndicator {
+  userId: string;
+  userEmail: string;
+  userName: string;
+  conversationId: string;
+  isTyping: boolean;
+}
+
+export interface MessageConfirmedData {
+  tempId: string;
+  messageId: string;
+  conversationId: string;
+  timestamp?: string;
+}
 
 export type MessageEventHandler = (message: Message) => void;
 export type PresenceEventHandler = (data: any) => void;
@@ -26,6 +79,7 @@ export class MessagingService {
   private socket: Socket | null = null;
   private serverUrl: string;
   private isConnecting: boolean = false;
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.serverUrl = config.messaging_server || config.api_server;
@@ -57,6 +111,7 @@ export class MessagingService {
       }
 
       this.isConnecting = true;
+      this.clearHeartbeat();
 
       const token = authToken || getUserToken();
       console.log("Messaging Service - Auth Token:", token ? "Present" : "Missing");
@@ -90,12 +145,15 @@ export class MessagingService {
       this.socket.on("connect", () => {
         console.log("Connected to messaging service");
         this.isConnecting = false;
+        this.startHeartbeat();
+        this.socket?.emit("heartbeat");
         resolve(this.socket!);
       });
 
       this.socket.on("disconnect", (reason) => {
         console.log("Disconnected from messaging service. Reason:", reason);
         console.log("Disconnect details:", { reason, connected: this.socket?.connected });
+        this.clearHeartbeat();
         this.isConnecting = false;
       });
 
@@ -104,6 +162,7 @@ export class MessagingService {
         console.error("Connection error:", error.message);
         console.error("Error details:", error);
         this.isConnecting = false;
+        this.clearHeartbeat();
         
         // Enhanced error categorization based on knowledge base patterns
         if (error.message.includes('Authentication')) {
@@ -152,6 +211,7 @@ export class MessagingService {
 
       this.socket.on("reconnect_failed", () => {
         console.error("Failed to reconnect after maximum attempts");
+        this.clearHeartbeat();
         this.isConnecting = false;
       });
     });
@@ -163,6 +223,27 @@ export class MessagingService {
       this.socket = null;
     }
     this.isConnecting = false;
+    this.clearHeartbeat();
+  }
+
+  private startHeartbeat(): void {
+    if (!this.socket) return;
+
+    this.clearHeartbeat();
+    this.heartbeatInterval = setInterval(() => {
+      if (this.socket?.connected) {
+        this.socket.emit("heartbeat");
+      } else {
+        this.clearHeartbeat();
+      }
+    }, 30000);
+  }
+
+  private clearHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
   }
 
   isConnected(): boolean {

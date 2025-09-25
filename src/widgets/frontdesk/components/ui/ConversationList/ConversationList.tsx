@@ -13,28 +13,28 @@ import {
   Skeleton
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Channel } from '@/widgets/frontdesk/providers/internal/types/internal.types';
+import { BaseConversation } from '@/widgets/frontdesk/providers/base/provider.interface';
 
 export interface ConversationListProps {
-  conversations: Channel[];
+  conversations: BaseConversation[];
   selectedId?: string;
-  onSelect: (conversation: Channel) => void;
+  onSelect: (conversation: BaseConversation) => void;
   loading?: boolean;
   hasMore?: boolean;
   onLoadMore?: () => void;
   emptyMessage?: string;
   showChannelIndicator?: boolean;
-  renderChannelIndicator?: (conversation: Channel) => React.ReactNode;
+  renderChannelIndicator?: (conversation: BaseConversation) => React.ReactNode;
   groupByDate?: boolean;
   compact?: boolean;
 }
 
 const ConversationListItem: React.FC<{
-  conversation: Channel;
+  conversation: BaseConversation;
   isSelected: boolean;
   onSelect: () => void;
   showChannelIndicator?: boolean;
-  renderChannelIndicator?: (conversation: Channel) => React.ReactNode;
+  renderChannelIndicator?: (conversation: BaseConversation) => React.ReactNode;
   compact?: boolean;
 }> = ({ 
   conversation, 

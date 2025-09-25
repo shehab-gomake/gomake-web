@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import { useRouter } from "next/router";
+import { useRecoilValue } from 'recoil';
 // Three-column layout components (now actually two-column)
 import { ThreeColumnLayout } from './layouts/three-column';
 import { NavigationSidebar, Channel, Section } from './layouts/components/NavigationSidebar';
@@ -14,6 +15,7 @@ import { DirectMessagesProviderView } from "@/widgets/frontdesk/providers/intern
 
 // For unified view placeholder
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';
+import { unreadCountByProviderSelector } from '@/store/frontdesk';
 
 const FrontdeskWidget: React.FC = () => {
   const router = useRouter();
@@ -47,6 +49,8 @@ const FrontdeskWidget: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
   // Only sync with route on initial load
   useEffect(() => {
@@ -82,14 +86,6 @@ const FrontdeskWidget: React.FC = () => {
     // Use window.history API for smoother navigation
     window.history.pushState({}, '', url);
   };
-
-  // Mock unread counts
-  const channelBadges = useMemo(() => ({
-    all: 12,
-    email: 7,
-    whatsapp: 3,
-    internal: 2
-  }), []);
 
   // Render list content based on selection (kept for compatibility but not displayed)
   const renderListContent = () => {

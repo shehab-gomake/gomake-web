@@ -44,8 +44,10 @@ import {
   DMUserTypingEvent,
   DMPresenceData,
   CreateConversationRequest,
+  DMUnreadCountUpdatedEvent,
 } from "@/widgets/frontdesk/providers/internal/types/direct-messages.types";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { internalDirectMessagesAtom } from "@/store/frontdesk";
 
 export const useDirectMessages = () => {
   const [connectionStatus, setConnectionStatus] = useRecoilState(dmConnectionState);
@@ -61,6 +63,7 @@ export const useDirectMessages = () => {
   const [isTyping, setIsTyping] = useRecoilState(dmIsTypingState);
   const [draft, setDraft] = useRecoilState(dmDraftState);
   const setError = useSetRecoilState(dmErrorState);
+  const setFrontdeskDirectMessages = useSetRecoilState(internalDirectMessagesAtom);
   const [isLoading, setIsLoading] = useRecoilState(dmIsLoadingState);
   const [isSending, setIsSending] = useRecoilState(dmIsSendingState);
   const [isLoadingHistory, setIsLoadingHistory] = useRecoilState(dmIsLoadingHistoryState);
@@ -72,6 +75,7 @@ export const useDirectMessages = () => {
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
+  const joinedConversationsRef = useRef<Set<string>>(new Set());
 
   // Selectors
   const activeConversation = useRecoilValue(dmActiveConversationSelector);
@@ -82,6 +86,33 @@ export const useDirectMessages = () => {
   const sortedConversations = useRecoilValue(dmSortedConversationsSelector);
   const onlineUsersWithPresence = useRecoilValue(dmOnlineUsersWithPresenceSelector);
   const otherMembers = useRecoilValue(dmOtherMembersSelector);
+
+  useEffect(() => {
+    setFrontdeskDirectMessages(sortedConversations);
+  }, [sortedConversations, setFrontdeskDirectMessages]);
+
+  // Ensure we are subscribed to all known conversations whenever the list changes
+  useEffect(() => {
+    const joinAllConversations = async () => {
+      if (!directMessagesWebSocketService.isConnected()) {
+        return;
+      }
+
+      for (const conversation of conversations) {
+        if (!conversation?.id) continue;
+        if (joinedConversationsRef.current.has(conversation.id)) continue;
+
+        try {
+          await directMessagesWebSocketService.joinConversation({ conversationId: conversation.id });
+          joinedConversationsRef.current.add(conversation.id);
+        } catch (error) {
+          console.error('[DM] Failed to join conversation room during sync:', conversation.id, error);
+        }
+      }
+    };
+
+    joinAllConversations();
+  }, [conversations]);
 
   // Initialize connection
   const connect = useCallback(async () => {
@@ -94,14 +125,22 @@ export const useDirectMessages = () => {
       setConnectionStatus("connected");
       setConnected(true);
 
+      // Clear joined cache on fresh connection so we can rejoin rooms
+      joinedConversationsRef.current.clear();
+
       // Load initial conversations
       await loadConversations();
 
       // Get initial presence data
       const presenceData = await directMessagesWebSocketService.getPresence();
       if (presenceData) {
+        console.log('[DM] Initial presence data loaded:', presenceData);
         setUserPresence(presenceData);
-        setOnlineUsers(Object.keys(presenceData));
+        const onlineUserIds = Object.keys(presenceData).filter(userId =>
+          presenceData[userId].status === 'online'
+        );
+        console.log('[DM] Online users from presence:', onlineUserIds);
+        setOnlineUsers(onlineUserIds);
       }
     } catch (error: any) {
       console.error("Failed to connect to DM service:", error);
@@ -117,6 +156,7 @@ export const useDirectMessages = () => {
     directMessagesWebSocketService.disconnect();
     setConnectionStatus("disconnected");
     setConnected(false);
+    joinedConversationsRef.current.clear();
   }, [setConnectionStatus, setConnected]);
 
   // Load conversations
@@ -142,6 +182,20 @@ export const useDirectMessages = () => {
         unreadMap[conv.id] = conv.unreadCount || 0;
       });
       setUnreadCounts(unreadMap);
+
+      // Join rooms for all loaded conversations to receive live updates
+      if (directMessagesWebSocketService.isConnected()) {
+        await Promise.all(validConversations.map(async (conv) => {
+          if (!conv.id) return;
+          if (joinedConversationsRef.current.has(conv.id)) return;
+          try {
+            await directMessagesWebSocketService.joinConversation({ conversationId: conv.id });
+            joinedConversationsRef.current.add(conv.id);
+          } catch (joinError) {
+            console.error('[DM] Failed to join conversation room:', conv.id, joinError);
+          }
+        }));
+      }
     } catch (error: any) {
       console.error("Failed to load conversations:", error);
       setError(error.message || "Failed to load conversations");
@@ -321,14 +375,22 @@ export const useDirectMessages = () => {
         }
 
         // Join conversation room for real-time updates
-        if (connected) {
+        const isSocketConnected = directMessagesWebSocketService.isConnected();
+        if (isSocketConnected && !joinedConversationsRef.current.has(conversation.id)) {
           await directMessagesWebSocketService.joinConversation({
             conversationId: conversation.id,
           });
+          joinedConversationsRef.current.add(conversation.id);
         }
 
         // Clear unread count for this conversation
         setUnreadCounts((prev) => ({ ...prev, [conversation.id]: 0 }));
+
+        setConversations((prev) => prev.map((conv) => (
+          conv.id === conversation.id
+            ? { ...conv, unreadCount: 0 }
+            : conv
+        )));
 
         // Mark as read
         await directMessagesService.markAsRead(conversation.id, {
@@ -361,6 +423,15 @@ export const useDirectMessages = () => {
         if (response.conversation && response.conversation.id) {
           console.log('[DM] Adding conversation to list:', response.conversation.id);
           setConversations((prev) => [response.conversation, ...prev]);
+
+          if (directMessagesWebSocketService.isConnected() && !joinedConversationsRef.current.has(response.conversation.id)) {
+            try {
+              await directMessagesWebSocketService.joinConversation({ conversationId: response.conversation.id });
+              joinedConversationsRef.current.add(response.conversation.id);
+            } catch (joinError) {
+              console.error('[DM] Failed to join room for new conversation:', response.conversation.id, joinError);
+            }
+          }
         }
         
         // Select the new conversation
@@ -424,7 +495,7 @@ export const useDirectMessages = () => {
         setIsSending(true);
         setError(null);
 
-        const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
         console.log('[DM] Generated tempId:', tempId);
 
         // Create optimistic message for immediate UI update
@@ -607,13 +678,17 @@ export const useDirectMessages = () => {
         };
       });
 
-      // Update unread count if not in active conversation
-      if (message.conversationId !== activeConversationId && message.userId !== currentUser?.userId) {
-        console.log('[DM] Updating unread count for conversation:', message.conversationId);
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [message.conversationId]: (prev[message.conversationId] || 0) + 1,
-        }));
+      const isActiveConversation = message.conversationId === activeConversationId;
+      const isOwnMessage = message.userId === currentUser?.userId;
+
+      if (!isActiveConversation && !isOwnMessage) {
+        setUnreadCounts((prev) => {
+          const nextCount = (prev[message.conversationId] || 0) + 1;
+          return {
+            ...prev,
+            [message.conversationId]: nextCount,
+          };
+        });
       }
       
       // Update conversation's lastMessageAt to trigger re-sort
@@ -621,9 +696,13 @@ export const useDirectMessages = () => {
         return prev.map(conv => {
           if (conv.id === message.conversationId) {
             console.log('[DM] Updating conversation lastMessageAt:', message.conversationId);
+            const shouldIncrementUnread = !isActiveConversation && !isOwnMessage;
             return {
               ...conv,
               lastMessageAt: message.timestamp,
+              unreadCount: shouldIncrementUnread
+                ? (conv.unreadCount || 0) + 1
+                : conv.unreadCount,
             };
           }
           return conv;
@@ -708,45 +787,6 @@ export const useDirectMessages = () => {
       });
     };
 
-    // Presence handlers
-    const handleUserOnline = (data: any) => {
-      setOnlineUsers((prev) => {
-        if (!prev.includes(data.userId)) {
-          return [...prev, data.userId];
-        }
-        return prev;
-      });
-      
-      if (data.userId) {
-        setUserPresence((prev) => ({
-          ...prev,
-          [data.userId]: {
-            userId: data.userId,
-            email: data.email || '',
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            name: data.name || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
-            status: "online",
-            timestamp: data.timestamp || new Date().toISOString(),
-          },
-        }));
-      }
-    };
-
-    const handleUserOffline = (data: any) => {
-      setOnlineUsers((prev) => prev.filter((id) => id !== data.userId));
-      if (data.userId) {
-        setUserPresence((prev) => ({
-          ...prev,
-          [data.userId]: {
-            ...prev[data.userId],
-            status: "offline",
-            lastSeen: data.lastSeen,
-            timestamp: data.timestamp || new Date().toISOString(),
-          },
-        }));
-      }
-    };
 
     // Connection handlers
     const handleConnect = () => {
@@ -762,6 +802,34 @@ export const useDirectMessages = () => {
     const handleError = (error: string) => {
       setConnectionStatus("error");
       setError(error);
+    };
+
+    const handleUnreadCountUpdated = (data: DMUnreadCountUpdatedEvent) => {
+      console.log('[DM] Unread count updated:', data);
+      setUnreadCounts((prev) => {
+        if (prev[data.conversationId] === data.unreadCount) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [data.conversationId]: data.unreadCount,
+        };
+      });
+
+      setConversations((prev) => prev.map((conv) => {
+        if (conv.id !== data.conversationId) {
+          return conv;
+        }
+
+        if (conv.unreadCount === data.unreadCount) {
+          return conv;
+        }
+
+        return {
+          ...conv,
+          unreadCount: data.unreadCount,
+        };
+      }));
     };
 
     // Conversation update handler
@@ -781,17 +849,51 @@ export const useDirectMessages = () => {
         });
       });
     };
+    // Status change handler (replaces userOnline/userOffline)
+    const handleStatusChanged = (data: any) => {
+      console.log('[DM] User status changed:', data);
+      setUserPresence((prev) => ({
+        ...prev,
+        [data.userId]: {
+          ...prev[data.userId],
+          userId: data.userId,
+          status: data.status,
+          timestamp: data.timestamp || new Date().toISOString(),
+          lastSeen: data.status === 'offline' ? data.timestamp : prev[data.userId]?.lastSeen,
+        },
+      }));
+
+      // Update online users list
+      if (data.status === 'online') {
+        setOnlineUsers((prev) => {
+          if (!prev.includes(data.userId)) {
+            return [...prev, data.userId];
+          }
+          return prev;
+        });
+      } else {
+        setOnlineUsers((prev) => prev.filter((id) => id !== data.userId));
+      }
+    };
+
+    // Message read handler
+    const handleMessageRead = (data: any) => {
+      console.log('[DM] Message read:', data);
+      // Update message read status in the UI if needed
+      // This could be used to show read receipts
+    };
 
     // Register event listeners
     directMessagesWebSocketService.onNewMessage(handleNewMessage);
     directMessagesWebSocketService.onMessageConfirmed(handleMessageConfirmed);
     directMessagesWebSocketService.onUserTyping(handleUserTyping);
-    directMessagesWebSocketService.onUserOnline(handleUserOnline);
-    directMessagesWebSocketService.onUserOffline(handleUserOffline);
+    directMessagesWebSocketService.onMessageRead(handleMessageRead);
+    directMessagesWebSocketService.onStatusChanged(handleStatusChanged);
     directMessagesWebSocketService.onConnect(handleConnect);
     directMessagesWebSocketService.onDisconnect(handleDisconnect);
     directMessagesWebSocketService.onError(handleError);
     directMessagesWebSocketService.onConversationUpdated(handleConversationUpdated);
+    directMessagesWebSocketService.onUnreadCountUpdated(handleUnreadCountUpdated);
 
     // Cleanup
     return () => {
@@ -809,6 +911,7 @@ export const useDirectMessages = () => {
     userPresence,
     setMessages,
     setUnreadCounts,
+    setConversations,
     setOnlineUsers,
     setUserPresence,
     setTypingUsers,
