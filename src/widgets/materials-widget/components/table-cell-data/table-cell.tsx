@@ -14,6 +14,10 @@ import { MultiSelectList } from "./multi-select-list";
 import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
+import { SuppliersInput } from "./suppliers-input";
+import { InventoryInput } from "./inventory-input";
+import { PurchasePricingInput } from "./purchase-pricing-input";
+import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
 
@@ -27,8 +31,10 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
   unit,
+  isInventoryTable,
+  isPurchasePricingTable,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
+  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
@@ -51,7 +57,6 @@ const TableCellData = ({
 
     }
   };
-
   switch (type) {
 
     case EDataTypeEnum.BOOLEAN:
@@ -91,6 +96,8 @@ const TableCellData = ({
           parameterKey={parameterKey}
           id={id}
           isAdmin={isAdmin}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.IMAGE:
@@ -182,6 +189,30 @@ const TableCellData = ({
           placeHolder={t("materials.inputs.selectNotebookType")}
         />
       );
+    case EDataTypeEnum.INVENTORY:
+      return (
+        <InventoryInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.PURCHASE_PRICING:
+      return (
+        <PurchasePricingInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.LONG_TEXT:
+      return (
+        <LongTextInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
     default:
       return (
         <NumberStringInput
@@ -192,6 +223,8 @@ const TableCellData = ({
           value={value}
           isAdmin={isAdmin}
           unit={unit}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
   }

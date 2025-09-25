@@ -11,7 +11,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
 
-const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowData) => {
+const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable }: IRowData) => {
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");
@@ -29,7 +29,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
     setOpenDeleteTableRowModal(true);
   };
 
-  const { updateCellData, } = useTableCellData(isAdmin);
+  const { updateCellData, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -43,23 +43,27 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
 
   const onBlur = async () => {
     if (updateValue !== valueArray[isUpdate]) {
-      // if(parameterKey.includes("price")){
-      //   onClickOpenPriceModal()
-      // }
-      // else{
-      if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-        onClickOpenDeleteTableRowModal()
-      }
-      else {
-        await updateCellData(id, parameterKey, updateValue, isUpdate);
+      if (isInventoryTable) {
+        // Determine pricingType based on the parameter key for inventory
+        let pricingType = 1; // Default to PurchasePrice
+        if (parameterKey.includes('sale') || parameterKey.toLowerCase().includes('sale')) {
+          pricingType = 2; // SalesPrice
+        }
+
+        await updateCellData(id, "price Unit / ton", updateValue, isUpdate, pricingType);
         setIsUpdate(null);
+      } else {
+        // Use original logic for main table
+        if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+          onClickOpenDeleteTableRowModal()
+        } else {
+          await updateCellData(id, parameterKey, updateValue, isUpdate);
+          setIsUpdate(null);
+        }
       }
-    }
-    // }
-    else {
+    } else {
       setIsUpdate(null);
     }
-
   };
   return (
     <>
@@ -123,7 +127,17 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={async () => {
-          await updateCellData(id, parameterKey, updateValue, isUpdate);
+          if (isInventoryTable) {
+            // Determine pricingType based on the parameter key for inventory
+            let pricingType = 1; // Default to PurchasePrice
+            if (parameterKey.includes('sale') || parameterKey.toLowerCase().includes('sale')) {
+              pricingType = 2; // SalesPrice
+            }
+
+            await updateCellData(id, "price Unit / ton", updateValue, isUpdate, pricingType);
+          } else {
+            await updateCellData(id, parameterKey, updateValue, isUpdate);
+          }
           setIsUpdate(null);
         }}
       />

@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import {
   getPrintHouseMaterialExcelFileApi,
-  updatePrintHouseMaterialsPropApi, uploadPrintHouseMaterialExcelFileApi
+  updatePrintHouseMaterialsPropApi, updatePrintHouseMaterialsRowsApi, uploadPrintHouseMaterialExcelFileApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {
   ActiveMaterial,
@@ -238,7 +238,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFault(t("products.offsetPrice.admin.fillValue"));
       return;
     }
-    return await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+    return await updatePrintHouseMaterialsRowsApi(callApi, onUpdateCallBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: materialCategory.toString(),
       ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
@@ -428,7 +428,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         ).then();
       }
     } else {
-      const result = await updatePrintHouseMaterialsPropApi(
+      const result = await updatePrintHouseMaterialsRowsApi(
         callApi,
         onUpdateCallBack,
         {

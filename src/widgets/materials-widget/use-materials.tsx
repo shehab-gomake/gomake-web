@@ -54,6 +54,7 @@ import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { EMaterialActiveFilter } from "./enums";
+import { ChildTableRow } from "./components/child-table-row/child-table-row";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -66,11 +67,13 @@ const useMaterials = (isAdmin: boolean) => {
     useRecoilState<
       { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
     >(materialHeadersState);
+
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
       categoryName: string;
       isDeletable: boolean;
+      imageURL?: string | null;
     }[]
   >(materialCategoriesState);
 
@@ -196,7 +199,12 @@ const useMaterials = (isAdmin: boolean) => {
   const getMaterialCategories = async (material) => {
     const callBack = (res) => {
       if (res?.success) {
-        setMaterialCategories(res?.data);
+        // Map the response to include imageURL
+        const categoriesWithImages = res?.data?.map((category) => ({
+          ...category,
+          imageURL: category.imageURL || null
+        }));
+        setMaterialCategories(categoriesWithImages);
       } else {
         // push("/materials");
       }
@@ -214,10 +222,60 @@ const useMaterials = (isAdmin: boolean) => {
       text: category.categoryName,
       value: category.categoryKey,
       icon: () => (
-        <SideLeftMenuWidget
-          onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-          category={category}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Category Image */}
+          <div style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f5f5f5',
+            border: '1px solid #e0e0e0'
+          }}>
+            {category.imageURL && category.imageURL !== "" ? (
+              <img
+                src={category.imageURL}
+                alt={category.categoryName}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+                onError={(e) => {
+                  // Fallback to default icon if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (nextElement) {
+                    nextElement.style.display = 'flex';
+                  }
+                }}
+              />
+            ) : null}
+            <div
+              style={{
+                display: category.imageURL && category.imageURL !== "" ? 'none' : 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                fontSize: '14px',
+                color: '#666',
+                fontWeight: 'bold'
+              }}
+            >
+              {category.categoryName.charAt(0).toUpperCase()}
+            </div>
+          </div>
+
+          {/* Action Menu */}
+          <SideLeftMenuWidget
+            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+            category={category}
+          />
+        </div>
       ),
     }));
   }, [materialCategories]);
@@ -319,6 +377,8 @@ const useMaterials = (isAdmin: boolean) => {
         );
       }),
       t("usersSettings.isActive"),
+      // t("Total inventory"),
+      // t("Purchase Pricing"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -354,40 +414,51 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
   const tableRowsNew = useMemo(() => {
-    return materialCategoryData.map((dataRow) => {
+    const rows = [];
+
+    materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
-      return [
-        <Checkbox
-          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
-          checked={dataRow.checked}
-        />,
-        ...filteredHeaders.map((header) => (
-          <TableCellData
-            {...dataRow.rowData[header.key]}
-            id={dataRow.id}
+
+      // Main row
+      rows.push({
+        id: dataRow.id,
+        cells: [
+          <Checkbox
+            onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+            checked={dataRow.checked}
+          />,
+          ...filteredHeaders.map((header) => (
+            <TableCellData
+              {...dataRow.rowData[header.key]}
+              id={dataRow.id}
+              isAdmin={isAdmin}
+              unit={header.unit}
+              parameterKey={header.key}
+              onChangeRowCheckBox={onChangeRowCheckBox}
+            />
+          )),
+          // Add suppliers column manually since it's now static
+          dataRow?.isActive
+            ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+            : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+
+          <MaterialMenuWidget
+            dataRow={dataRow}
             isAdmin={isAdmin}
-            unit={header.unit}
-            parameterKey={header.key}
+            onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
             onChangeRowCheckBox={onChangeRowCheckBox}
-          />
-        )),
-        dataRow?.isActive
-          ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
-          : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
-        <MaterialMenuWidget
-          dataRow={dataRow}
-          isAdmin={isAdmin}
-          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onChangeRowCheckBox={onChangeRowCheckBox}
-          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
-            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
-          }
-          toggleIsActive={toggleIsActive}
-        />,
-      ];
+            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
+              onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
+            }
+            toggleIsActive={toggleIsActive}
+          />,
+        ]
+      });
     });
+
+    return rows;
   }, [
     materialHeaders,
     materialCategoryData,
@@ -545,6 +616,9 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    onChangeRowCheckBox,
+    onClickOpenDeleteTableRowModal,
+    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   };
 };
 
