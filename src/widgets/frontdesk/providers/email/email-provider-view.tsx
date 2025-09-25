@@ -107,17 +107,14 @@ export const EmailProviderView: React.FC = () => {
 
   const handleForward = (conversation: any) => {
     // TODO: Implement forward functionality
-    console.log("Forward:", conversation);
   };
 
   const handlePrint = (conversation: any) => {
     // TODO: Implement print functionality
-    console.log("Print:", conversation);
   };
 
   const handleAddLabel = (conversationId: string, label: string) => {
     // TODO: Implement add label functionality
-    console.log("Add label:", conversationId, label);
   };
 
   // Render empty state when not connected
