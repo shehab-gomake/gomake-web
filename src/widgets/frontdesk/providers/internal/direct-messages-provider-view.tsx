@@ -21,8 +21,11 @@ import {
   FilterList as FilterIcon,
   Close as CloseIcon,
   Group as GroupIcon,
+  Star,
   StarBorder,
+  Archive,
   ArchiveOutlined,
+  Unarchive,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
 import { UserPresence } from "./components";
@@ -109,12 +112,26 @@ const DirectMessagesProviderView: React.FC = () => {
     }
   };
 
+  const getStatusColor = (status: typeof connectionStatus) => {
+    switch (status) {
+      case "connected":
+        return "success.main";
+      case "connecting":
+        return "info.main";
+      case "disconnected":
+        return "warning.main";
+      case "error":
+        return "error.main";
+      default:
+        return "grey.main";
+    }
+  };
+
   const getStatusMessage = (status: typeof connectionStatus): React.ReactNode => {
     switch (status) {
       case "connected":
         return (
           <Stack direction="row" alignItems="center" spacing={1}>
-            {currentUser?.avatar && <Avatar src={currentUser.avatar} sx={{ width: 24, height: 24 }} />}
             <Typography variant="body2">
               Connected {currentUser ? ` as ${currentUser.name}` : ""}
             </Typography>
@@ -142,11 +159,57 @@ const DirectMessagesProviderView: React.FC = () => {
   const handleCloseConversation = () => {
     setActiveConversationId(null);
   };
-  const handleStarConversation = () => {
-    
+
+  const handleStarConversation = async () => {
+    if (!activeConversationId || !activeConversation || !currentUser) return;
+
+    try {
+      // Check if the current user has this conversation favorited
+      const currentMember = activeConversation.members?.find(m => m.userId === currentUser.userId);
+      const isFavorited = currentMember?.isFavorite || false;
+
+      // Toggle the favorite status
+      if (isFavorited) {
+        await directMessagesService.unfavoriteConversation(activeConversationId);
+      } else {
+        await directMessagesService.favoriteConversation(activeConversationId);
+      }
+
+      // Reload conversations to get updated state
+      await loadConversations();
+
+    } catch (error) {
+      console.error('Failed to update favorite status:', error);
+      setError('Failed to update favorite status');
+    }
   };
-  const handleArchiveConversation = () => {
-    
+
+  const handleArchiveConversation = async () => {
+    if (!activeConversationId || !activeConversation || !currentUser) return;
+
+    try {
+      // Check if already archived
+      const currentMember = activeConversation.members?.find(m => m.userId === currentUser.userId);
+      const isArchived = currentMember?.isArchived || false;
+
+      if (isArchived) {
+        // Unarchive
+        await directMessagesService.unarchiveConversation(activeConversationId);
+      } else {
+        // Archive
+        await directMessagesService.archiveConversation(activeConversationId);
+
+        // Clear selected conversation when archiving
+        setActiveConversationId(null);
+      }
+
+      // Reload conversations to get updated state
+      await loadConversations();
+
+    } catch (error) {
+      console.error('Failed to archive/unarchive conversation:', error);
+      setError('Failed to archive conversation');
+    }
   };
 
   const handleUserSelect = async (user: ConversationMember) => {
@@ -380,7 +443,7 @@ const DirectMessagesProviderView: React.FC = () => {
               width: 10,
               height: 10,
               borderRadius: '50%',
-              backgroundColor: connectionStatus === 'connected' ? 'success.main' : connectionStatus === 'connecting' ? 'info.main' : 'error.main',
+              backgroundColor: getStatusColor(connectionStatus),
               mr: 1
             }} />
             {getStatusMessage(connectionStatus)}
@@ -475,32 +538,52 @@ const DirectMessagesProviderView: React.FC = () => {
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={1}>
-                      <Tooltip title="Star conversation">
+                      <Tooltip title={
+                        activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite
+                          ? "Unfavorite conversation"
+                          : "Favorite conversation"
+                      }>
                         <IconButton
                           size="small"
                           onClick={handleStarConversation}
                           sx={{
-                            color: 'grey.500',
+                            color: activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite
+                              ? 'warning.main'
+                              : 'grey.500',
                             '&:hover': {
                               color: 'warning.main',
                             }
                           }}
                         >
-                          <StarBorder fontSize="small" />
+                          {activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite ? (
+                            <Star fontSize="small" />
+                          ) : (
+                            <StarBorder fontSize="small" />
+                          )}
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Archive conversation">
+                      <Tooltip title={
+                        activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived
+                          ? "Unarchive conversation"
+                          : "Archive conversation"
+                      }>
                         <IconButton
                           size="small"
                           onClick={handleArchiveConversation}
                           sx={{
-                            color: 'grey.500',
+                            color: activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived
+                              ? 'primary.main'
+                              : 'grey.500',
                             '&:hover': {
                               color: 'primary.main',
                             }
                           }}
                         >
-                          <ArchiveOutlined fontSize="small" />
+                          {activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived ? (
+                            <Unarchive fontSize="small" />
+                          ) : (
+                            <ArchiveOutlined fontSize="small" />
+                          )}
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Close conversation">
