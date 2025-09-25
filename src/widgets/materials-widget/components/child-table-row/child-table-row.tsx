@@ -31,14 +31,16 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
     const [formData, setFormData] = useState({
-        supplierName: '',
-        purchasePrice: '',
+        supplierId: '',
+        purchaseM2Price: '',
+        purchaseRollPrice: '',
         currency: 'ILS',
         quantityInPackage: '',
         supplementTime: '',
         order: '',
         isActive: true
     });
+    const [selectedSupplierForPricing, setSelectedSupplierForPricing] = useState<any>(null);
     const [inventoryFormData, setInventoryFormData] = useState({
         printHouseMaterialId: '',
         supplierId: '',
@@ -281,7 +283,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                         Supplier Name
                                         <IconButton
                                             size="small"
-                                            onClick={() => setOpenAddSupplierModal(true)}
+                                            onClick={() => setIsAddPurchasePricingModalOpen(true)}
                                             sx={{
                                                 color: '#1976d2',
                                                 '&:hover': {
@@ -293,7 +295,8 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                         </IconButton>
                                     </Box>
                                 </TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase Price</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }}>Purchase m² Price</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }}>Purchase Roll Price</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Currency</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Quantity in Package</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Supplement Time</TableCell>
@@ -320,11 +323,23 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.purchasePrice?.amount || row.purchasePrice?.value || ''}
+                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
-                                            parameterKey="purchasePrice"
+                                            parameterKey="purchaseM2Price"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
+                                            isPurchasePricingTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                            isEditable={true}
+                                            type={1}
+                                            id={row.id}
+                                            parameterKey="purchaseRollPrice"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             isPurchasePricingTable={true}
@@ -395,32 +410,18 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                         />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
-                                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                                sx={{
-                                                    color: '#1976d2',
-                                                    '&:hover': {
-                                                        backgroundColor: '#e3f2fd'
-                                                    }
-                                                }}
-                                            >
-                                                <AddIcon fontSize="small" />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDeleteModal(row)}
-                                                sx={{
-                                                    color: '#f44336',
-                                                    '&:hover': {
-                                                        backgroundColor: '#ffebee'
-                                                    }
-                                                }}
-                                            >
-                                                <DeleteIcon fontSize="small" />
-                                            </IconButton>
-                                        </Box>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleOpenDeleteModal(row)}
+                                            sx={{
+                                                color: '#f44336',
+                                                '&:hover': {
+                                                    backgroundColor: '#ffebee'
+                                                }
+                                            }}
+                                        >
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -433,9 +434,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
 
     const handleCloseAddPurchasePricingModal = () => {
         setIsAddPurchasePricingModalOpen(false);
+        setSelectedSupplierForPricing(null);
         setFormData({
-            supplierName: '',
-            purchasePrice: '',
+            supplierId: '',
+            purchaseM2Price: '',
+            purchaseRollPrice: '',
             currency: 'ILS',
             quantityInPackage: '',
             supplementTime: '',
@@ -483,6 +486,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
     const handleSupplierSelect = (e, supplier: any) => {
         setSelectedSupplier(supplier);
         handleInventoryFormChange('supplierId', supplier?.id || '');
+    };
+
+    const handleSupplierSelectForPricing = (e, supplier: any) => {
+        setSelectedSupplierForPricing(supplier);
+        handleFormChange('supplierId', supplier?.id || '');
     };
 
     const handleAddInventory = async () => {
@@ -565,18 +573,34 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                 <DialogTitle>Add Purchase Pricing</DialogTitle>
                 <DialogContent>
                     <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <Box>
+                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Supplier</div>
+                            <ClientAutocomplete
+                                key={selectedSupplierForPricing?.id}
+                                clientType={CLIENT_TYPE.SUPPLIER}
+                                onChange={handleSupplierSelectForPricing}
+                                options={renderOptions() ? renderOptions() : []}
+                                placeholder="Select a supplier"
+                                style={{ width: '100%' }}
+                                value={selectedSupplierForPricing}
+                                onChangeTextField={checkWhatRenderArray}
+                                getOptionLabel={(option: any) => `${option.name}`}
+                                loading={isFetching}
+                            />
+                        </Box>
                         <GomakeTextInput
-                            labelText="Supplier Name"
-                            value={formData.supplierName}
-                            onChange={(e) => handleFormChange('supplierName', e.target.value)}
-                            placeholder="Enter supplier name"
+                            labelText="Purchase m² Price"
+                            value={formData.purchaseM2Price}
+                            onChange={(e) => handleFormChange('purchaseM2Price', e.target.value)}
+                            type="number"
+                            placeholder="Enter purchase m² price"
                         />
                         <GomakeTextInput
-                            labelText="Purchase Price"
-                            value={formData.purchasePrice}
-                            onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
+                            labelText="Purchase Roll Price"
+                            value={formData.purchaseRollPrice}
+                            onChange={(e) => handleFormChange('purchaseRollPrice', e.target.value)}
                             type="number"
-                            placeholder="Enter purchase price"
+                            placeholder="Enter purchase roll price"
                         />
                         <Box>
                             <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Currency</div>
@@ -618,25 +642,6 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                             onChange={(e) => handleFormChange('order', e.target.value)}
                             placeholder="Enter order number"
                         />
-                        <Box>
-                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Status</div>
-                            <select
-                                value={formData.isActive ? 'true' : 'false'}
-                                onChange={(e) => handleFormChange('isActive', e.target.value === 'true')}
-                                style={{
-                                    width: '100%',
-                                    height: '37px',
-                                    padding: '0 12px',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '4px',
-                                    fontSize: '14px',
-                                    backgroundColor: '#fff'
-                                }}
-                            >
-                                <option value="true">Active</option>
-                                <option value="false">Inactive</option>
-                            </select>
-                        </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions sx={{ padding: '16px 24px' }}>

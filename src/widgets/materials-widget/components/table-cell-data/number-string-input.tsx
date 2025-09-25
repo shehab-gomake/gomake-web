@@ -65,8 +65,8 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
 
             const originalPreviousValue = optimisticValue; // Store previous value for rollback
 
-            if (isInventoryTable) {
-                // Determine priceIndex and pricingType for inventory fields
+            if (isInventoryTable || isPurchasePricingTable) {
+                // Determine priceIndex and pricingType for inventory and purchase pricing fields
                 let priceIndex = 0;
                 let pricingType = 1; // Default to PurchasePrice
 
@@ -82,7 +82,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                 } else if (parameterKey === "saleRollPrice") {
                     priceIndex = 1;
                     pricingType = 2;
-                } else if (parameterKey === "purchaseCurrency") {
+                } else if (parameterKey === "purchaseCurrency" || parameterKey === "currency") {
                     priceIndex = 0;
                     pricingType = 1;
                 } else if (parameterKey === "saleCurrency") {
