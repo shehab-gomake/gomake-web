@@ -223,19 +223,19 @@ const useMaterials = (isAdmin: boolean) => {
       value: category.categoryKey,
       icon: () => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Category Image */}
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '4px',
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f5f5f5',
-            border: '1px solid #e0e0e0'
-          }}>
-            {category.imageURL && category.imageURL !== "" ? (
+          {/* Category Image - only show container if image exists */}
+          {category.imageURL && category.imageURL !== "" && (
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '4px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f5f5f5',
+              border: '1px solid #e0e0e0'
+            }}>
               <img
                 src={category.imageURL}
                 alt={category.categoryName}
@@ -244,31 +244,9 @@ const useMaterials = (isAdmin: boolean) => {
                   height: '100%',
                   objectFit: 'cover'
                 }}
-                onError={(e) => {
-                  // Fallback to default icon if image fails to load
-                  e.currentTarget.style.display = 'none';
-                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                  if (nextElement) {
-                    nextElement.style.display = 'flex';
-                  }
-                }}
               />
-            ) : null}
-            <div
-              style={{
-                display: category.imageURL && category.imageURL !== "" ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: '100%',
-                fontSize: '14px',
-                color: '#666',
-                fontWeight: 'bold'
-              }}
-            >
-              {category.categoryName.charAt(0).toUpperCase()}
             </div>
-          </div>
+          )}
 
           {/* Action Menu */}
           <SideLeftMenuWidget
