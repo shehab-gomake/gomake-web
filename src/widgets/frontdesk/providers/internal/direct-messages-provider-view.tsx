@@ -68,39 +68,6 @@ const DirectMessagesProviderView: React.FC = () => {
   const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
 
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log("Direct Messages Provider - State:", {
-      connected,
-      connectionStatus,
-      isLoading,
-      isLoadingHistory,
-      isLoadingConversations,
-      error,
-      currentUser,
-      activeConversationId,
-      messagesCount: messages.length,
-      conversationsCount: conversations.length,
-      onlineUsersCount: onlineUsers.length,
-      onlineUsers,
-      userPresenceCount: Object.keys(userPresence).length,
-      userPresence,
-    });
-  }, [
-    connected,
-    connectionStatus,
-    isLoading,
-    isLoadingHistory,
-    isLoadingConversations,
-    error,
-    currentUser,
-    activeConversationId,
-    messages,
-    conversations,
-    onlineUsers,
-    userPresence,
-  ]);
-
   // Auto-clear error message after 6 seconds
   React.useEffect(() => {
     if (userErrorMessage) {
@@ -148,9 +115,7 @@ const DirectMessagesProviderView: React.FC = () => {
   };
 
   const handleCloseConversation = () => {
-    console.log('Closing conversation, current activeConversationId:', activeConversationId);
     setActiveConversationId(null);
-    console.log('Conversation closed');
   };
 
   const handleUserSelect = async (user: ConversationMember) => {
@@ -205,7 +170,6 @@ const DirectMessagesProviderView: React.FC = () => {
 
   const handleRemoveParticipant = async (userId: string) => {
     // Placeholder: will call service when API is confirmed
-    console.log('Remove participant', userId);
   };
 
   const handleUserConfirm = async (users: ConversationMember[]) => {
@@ -224,18 +188,11 @@ const DirectMessagesProviderView: React.FC = () => {
         }
         
         try {
-          console.log('[DM] Adding members to conversation:', {
-            conversationId: activeConversationId,
-            participantIds: users.map(u => u.userId),
-            users: users
-          });
-          
           // Try to add members using the API
           await directMessagesService.addMembers(activeConversationId, {
             participantIds: users.map(u => u.userId),
           });
           
-          console.log('[DM] Members added successfully');
           await loadConversations();
         } catch (error: any) {
           console.error('[DM] Failed to add members:', error);
@@ -457,12 +414,7 @@ const DirectMessagesProviderView: React.FC = () => {
                     <Tooltip title="Close conversation">
                       <IconButton 
                         size="medium" 
-                        onClick={(e) => {
-                          console.log('Close button clicked!', e);
-                          console.log('Current activeConversationId before close:', activeConversationId);
-                          alert('Close button clicked!');
-                          handleCloseConversation();
-                        }}
+                        onClick={handleCloseConversation}
                         sx={{ 
                           color: "#374151",
                           backgroundColor: "#F3F4F6",
