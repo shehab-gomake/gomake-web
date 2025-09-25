@@ -276,26 +276,47 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         <Box
           sx={{
             position: 'fixed',
-            top: 115,
-            [dir === 'rtl' ? 'right' : 'left']: 140,
-            [dir === 'rtl' ? 'left' : 'right']: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 1300,
             display: 'flex',
+            flexDirection: dir === 'rtl' ? 'row-reverse' : 'row',
+            backdropFilter: 'blur(2px)'
           }}
           onClick={() => setIsSidebarOpen(false)}
         >
           <Box
             sx={{
-              width: '330px',
+              width: '400px',
               backgroundColor: '#fff',
               height: '100%',
               overflow: 'auto',
-              boxShadow: '2px 0 8px rgba(0,0,0,0.1)'
+              boxShadow: dir === 'rtl' ? '-8px 0 20px rgba(0,0,0,0.3)' : '8px 0 20px rgba(0,0,0,0.3)',
+              position: 'relative'
             }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close icon */}
+            <IconButton
+              onClick={() => setIsSidebarOpen(false)}
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                zIndex: 1,
+                backgroundColor: '#f5f5f5',
+                width: '32px',
+                height: '32px',
+                '&:hover': {
+                  backgroundColor: '#e0e0e0'
+                }
+              }}
+            >
+              <Box sx={{ fontSize: '18px', fontWeight: 'bold', color: '#666' }}>×</Box>
+            </IconButton>
             {Side()}
           </Box>
         </Box>

@@ -1,8 +1,8 @@
 import { useGomakeAxios} from "@/hooks";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState, openChildTableState, inventoryDataState, purchasePricingDataState} from "@/widgets/materials-widget/state";
-import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, getSupplierInventoriesApi, getPurchasePricingApi, updatePrintHouseMaterialRowApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
+import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState, openChildTableState, inventoryDataState, purchasePricingDataState, activeFilterState, materialsTablePageState} from "@/widgets/materials-widget/state";
+import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, getSupplierInventoriesApi, getPurchasePricingApi, updatePrintHouseMaterialRowApi, getPrintHouseMaterialCategoryDataNewApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updateMaterialPropApi, getMaterialCategoryDataApi} from "@/services/api-service/materials/materials-endpoints";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -16,6 +16,8 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     const openChildTable = useRecoilValue(openChildTableState);
     const setInventoryData = useSetRecoilState(inventoryDataState);
     const setPurchasePricingData = useSetRecoilState(purchasePricingDataState);
+    const activeFilter = useRecoilValue(activeFilterState);
+    const pageNumber = useRecoilValue(materialsTablePageState);
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -60,65 +62,110 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         await getPurchasePricingApi(callApi, callBack, printHouseMaterialId);
     };
 
-    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
-        
+    // Function to refresh main table data without showing loading spinner
+    const refreshMainTableData = async () => {
         const callBack = (res) => {
             if (res.success) {
-                if (inventoryTable) {
-                    // Refresh inventory data after successful update
-                    refreshInventoryData(openChildTable.rowId);
-                } else if (purchasePricingTable) {
-                    // Refresh purchase pricing data after successful update
-                    refreshPurchasePricingData(openChildTable.rowId);
-                } else {
-                    setData(data.map(row => row.id === id ? {...row, ...res.data} : row));
-                    if(materialType ==="devices"){
-                        getMaterialCategoryData(
-                            materialType?.toString(),
-                            materialCategory?.toString(),
-                            [],
-                            supplierId
-                        )
+                const processedData = res.data?.result?.data?.map((row) => {
+                    const newRow = { ...row, checked: false };
+                    
+                    // Handle SKU from API response (top level)
+                    if (row.sku !== null && row.sku !== undefined && row.sku !== "") {
+                        newRow.rowData.sku = {
+                            value: row.sku,
+                            isEditable: true,
+                            type: 1 // NUMBER
+                        };
                     }
-                }
-                if(key.includes("price")){
-                    onClickOpenPriceModal()
-                }
+
+                    // Handle isActive from API response (top level)
+                    if (row.isActive !== null && row.isActive !== undefined) {
+                        newRow.rowData.Active = {
+                            value: row.isActive,
+                            isEditable: true,
+                            type: 2 // BOOLEAN
+                        };
+                    }
+
+                  
+                    return newRow;
+                });
+                
+                setData(processedData);
             }
-        }
+        };
         
-        if(inventoryTable){
-            // Use inventory API with correct payload structure
-            await updateSupplierInventoryApi(callApi, callBack, {
-                id: id,
-                key: key,
-                priceIndex: index ,
-                updatedValue: value.toString(),
-                pricingType: pricingType 
-            })
-        } else if(purchasePricingTable){
-            // Use same API for purchase pricing (will change when BE is ready)
-            await updatePrintHouseMaterialPropApi(callApi, callBack, {
-                id: id,
-                key: key,
-                priceIndex: index ,
-                updatedValue: value.toString(),
-            })
-        } else if(isAdmin){
-            await updateMaterialPropApi(callApi, callBack, {
-                key: key,
-                id,
-                updatedValue: value,
-                priceIndex: index,
-            })
-        }else{
-            await updatePrintHouseMaterialRowApi(callApi, callBack, {
-                key: key,
-                id,
-                updatedValue: value,
-                priceIndex: index,
-            })
+        const requestData = {
+            materialKey: materialType?.toString(),
+            categoryKey: materialCategory?.toString(),
+            supplierId: supplierId,
+            isActive: true, // Default to active for refresh
+            customFiltersKeyValueList: []
+        };
+
+        if (isAdmin) {
+            await getMaterialCategoryDataApi(callApi, callBack, requestData, false, new AbortController());
+        } else {
+            await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, requestData, false, new AbortController());
         }
+    };
+
+    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
+        return new Promise((resolve, reject) => {
+            const callBack = (res) => {
+                if (res.success) {
+                    if (inventoryTable) {
+                        // Refresh inventory data after successful update
+                        refreshInventoryData(openChildTable.rowId);
+                    } else if (purchasePricingTable) {
+                        // Refresh purchase pricing data after successful update
+                        refreshPurchasePricingData(openChildTable.rowId);
+                    } else {
+                        // Refresh main table data without loading spinner
+                        refreshMainTableData();
+                    }
+                    if(key.includes("price")){
+                        onClickOpenPriceModal()
+                    }
+                    resolve(res); // Resolve with success response
+                } else {
+                    reject(res); // Reject with error response
+                }
+            };
+        
+            if(inventoryTable){
+                // Use inventory API with correct payload structure
+                updateSupplierInventoryApi(callApi, callBack, {
+                    id: id,
+                    key: key,
+                    priceIndex: index ,
+                    updatedValue: value.toString(),
+                    pricingType: pricingType 
+                });
+            } else if(purchasePricingTable){
+                // Use same API for purchase pricing (will change when BE is ready)
+                updatePrintHouseMaterialPropApi(callApi, callBack, {
+                    id: id,
+                    key: key,
+                    priceIndex: index ,
+                    updatedValue: value.toString(),
+                });
+            } else if(isAdmin){
+                updateMaterialPropApi(callApi, callBack, {
+                    key: key,
+                    id,
+                    updatedValue: value,
+                    priceIndex: index,
+                });
+            }else{
+                updatePrintHouseMaterialPropApi(callApi, callBack, {
+                    key: key,
+                    id,
+                    updatedValue: value,
+                    priceIndex: index,
+                });
+            }
+        });
         
     }
 
