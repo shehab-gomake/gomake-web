@@ -28,6 +28,7 @@ export enum EUploadingFileStatus {
   Uploaded,
   ERROR,
   DONE,
+  UploadedToGoogleCloud
 }
 
 export enum FileTypeENUM {

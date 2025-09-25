@@ -198,9 +198,10 @@ const useUploadFiles = (
           screenShot: response.screenShot,
           productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
-          status: EUploadingFileStatus.Uploaded,
+          status: response.isUploadedToGoogleCloud ? EUploadingFileStatus.UploadedToGoogleCloud : EUploadingFileStatus.Uploaded,
           fileType,
-          fileId: fileId
+          fileId: fileId,
+          bucketKey: response.bucketKey,
         });
         if(response.jdfFileUrl){
           await setOrderItemFileStatus({
