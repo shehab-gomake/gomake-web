@@ -8,7 +8,7 @@ import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { updatePrintHouseMaterialPropApi, deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";

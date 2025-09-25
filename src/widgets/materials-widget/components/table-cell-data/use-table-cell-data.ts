@@ -111,57 +111,61 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     };
 
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
-        
-        const callBack = (res) => {
-            if (res.success) {
-                if (inventoryTable) {
-                    // Refresh inventory data after successful update
-                    refreshInventoryData(openChildTable.rowId);
-                } else if (purchasePricingTable) {
-                    // Refresh purchase pricing data after successful update
-                    refreshPurchasePricingData(openChildTable.rowId);
+        return new Promise((resolve, reject) => {
+            const callBack = (res) => {
+                if (res.success) {
+                    if (inventoryTable) {
+                        // Refresh inventory data after successful update
+                        refreshInventoryData(openChildTable.rowId);
+                    } else if (purchasePricingTable) {
+                        // Refresh purchase pricing data after successful update
+                        refreshPurchasePricingData(openChildTable.rowId);
+                    } else {
+                        // Refresh main table data without loading spinner
+                        refreshMainTableData();
+                    }
+                    if(key.includes("price")){
+                        onClickOpenPriceModal()
+                    }
+                    resolve(res); // Resolve with success response
                 } else {
-                    // Refresh main table data without loading spinner
-                    refreshMainTableData();
+                    reject(res); // Reject with error response
                 }
-                if(key.includes("price")){
-                    onClickOpenPriceModal()
-                }
-            }
-        }
+            };
         
-        if(inventoryTable){
-            // Use inventory API with correct payload structure
-            await updateSupplierInventoryApi(callApi, callBack, {
-                id: id,
-                key: key,
-                priceIndex: index ,
-                updatedValue: value.toString(),
-                pricingType: pricingType 
-            })
-        } else if(purchasePricingTable){
-            // Use same API for purchase pricing (will change when BE is ready)
-            await updatePrintHouseMaterialPropApi(callApi, callBack, {
-                id: id,
-                key: key,
-                priceIndex: index ,
-                updatedValue: value.toString(),
-            })
-        } else if(isAdmin){
-            await updateMaterialPropApi(callApi, callBack, {
-                key: key,
-                id,
-                updatedValue: value,
-                priceIndex: index,
-            })
-        }else{
-            await updatePrintHouseMaterialRowApi(callApi, callBack, {
-                key: key,
-                id,
-                updatedValue: value,
-                priceIndex: index,
-            })
-        }
+            if(inventoryTable){
+                // Use inventory API with correct payload structure
+                updateSupplierInventoryApi(callApi, callBack, {
+                    id: id,
+                    key: key,
+                    priceIndex: index ,
+                    updatedValue: value.toString(),
+                    pricingType: pricingType 
+                });
+            } else if(purchasePricingTable){
+                // Use same API for purchase pricing (will change when BE is ready)
+                updatePrintHouseMaterialPropApi(callApi, callBack, {
+                    id: id,
+                    key: key,
+                    priceIndex: index ,
+                    updatedValue: value.toString(),
+                });
+            } else if(isAdmin){
+                updateMaterialPropApi(callApi, callBack, {
+                    key: key,
+                    id,
+                    updatedValue: value,
+                    priceIndex: index,
+                });
+            }else{
+                updatePrintHouseMaterialPropApi(callApi, callBack, {
+                    key: key,
+                    id,
+                    updatedValue: value,
+                    priceIndex: index,
+                });
+            }
+        });
         
     }
 

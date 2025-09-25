@@ -94,9 +94,16 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                 setIsLoading(true);
 
                 updateCellData(id, parameterKey.includes("Currency") ? "currency" : parameterKey, originalValue, priceIndex, pricingType)
-                    .then(() => {
+                    .then((response: any) => {
                         setIsLoading(false);
-                        alertSuccessUpdate();
+                        // Check if the response indicates success or failure
+                        if (response && response.success !== false) {
+                            alertSuccessUpdate();
+                        } else {
+                            // Revert to previous value if API response indicates failure
+                            setOptimisticValue(originalPreviousValue);
+                            alertFaultUpdate();
+                        }
                     })
                     .catch(() => {
                         setIsLoading(false);
@@ -111,9 +118,16 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                 setIsLoading(true);
 
                 updateCellData(id, parameterKey, originalValue)
-                    .then(() => {
+                    .then((response: any) => {
                         setIsLoading(false);
-                        alertSuccessUpdate();
+                        // Check if the response indicates success or failure
+                        if (response && response.success !== false) {
+                            alertSuccessUpdate();
+                        } else {
+                            // Revert to previous value if API response indicates failure
+                            setOptimisticValue(originalPreviousValue);
+                            alertFaultUpdate();
+                        }
                     })
                     .catch(() => {
                         setIsLoading(false);
