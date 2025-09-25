@@ -115,6 +115,7 @@ const PriceProfitHeaderWidget = ({
           profitsPricingTables &&
           profitsPricingTables.length > 0 && (
             <GoMakeAutoComplate
+              key={`${selectedPricingTable?.value}-selectedPricingTable`}
               options={(profitsPricingTables ?? [])
                 .filter(
                   (table) =>

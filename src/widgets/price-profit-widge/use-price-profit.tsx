@@ -61,6 +61,11 @@ const usePriceProfit = () => {
     diffBeforeOptimization: number;
     accuracyBeforeOptimization: number;
     accuracyAfterOptimization: number;
+    totalPoints: number;
+    totalAbnormalPoints: number;
+    totalCalculatedPrice: number;
+    totalUserInputPrice: number;
+    totalFixedPrice: number;
   } | null>(null);
 
   const [chartData, setChartData] = useState({
@@ -87,12 +92,39 @@ const usePriceProfit = () => {
     setSelectedPricingTable(option);
   };
 
-  const getProfitsPricingTables = useCallback(async () => {
+  const getProfitsPricingTablesOld = useCallback(async () => {
     if (action?.actionId) {
       await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
         actionIdOrProductId: action.actionId,
         isOutSource: false,
       });
+    }
+  }, [action, callApi]);
+
+  //!here check
+  const getProfitsPricingTables = useCallback(async () => {
+    if (action?.actionId) {
+      // Store the current selected pricing table ID before refreshing
+      const currentSelectedId = selectedPricingTable?.value;
+
+      const result = await getAndSetProfitsPricingTables(
+        callApi,
+        setProfitsPricingTables,
+        {
+          actionIdOrProductId: action.actionId,
+          isOutSource: false,
+        }
+      );
+
+      // Reselect the pricing table by ID if it was previously selected
+      if (currentSelectedId && result && Array.isArray(result)) {
+        const tableToReselect = result.find(
+          (table) => table.id === currentSelectedId
+        );
+        if (tableToReselect) {
+          setSelectedPricingTable(tableToReselect);
+        }
+      }
     }
   }, [action, callApi]);
 
@@ -209,6 +241,11 @@ const usePriceProfit = () => {
 
         // Store the summary data from the response
         if (res?.data?.[0]) {
+          // Calculate total points (actionChartData + abnormalActionChartData)
+          const totalPoints = (rows?.length || 0) + (abnormalRows?.length || 0);
+          // Calculate total abnormal points (abnormalActionChartData)
+          const totalAbnormalPoints = abnormalRows?.length || 0;
+
           setSummaryData({
             diffAfterOptimization: res.data[0].diffAfterOptimization || 0,
             diffBeforeOptimization: res.data[0].diffBeforeOptimization || 0,
@@ -216,7 +253,17 @@ const usePriceProfit = () => {
               res.data[0].accuracyBeforeOptimization || 0,
             accuracyAfterOptimization:
               res.data[0].accuracyAfterOptimization || 0,
+            totalPoints,
+            totalAbnormalPoints,
+            totalCalculatedPrice: res.data[0].totalCalculatedPrice || 0,
+            totalUserInputPrice: res.data[0].totalUserInputPrice || 0,
+            totalFixedPrice: res.data[0].totalFixedPrice || 0,
           });
+        }
+
+        // Call getProfitsPricingTables after successful fix
+        if (action?.actionId) {
+          getProfitsPricingTables();
         }
       }
     };
@@ -243,6 +290,11 @@ const usePriceProfit = () => {
           actionId,
           pricingTableId
         );
+
+        // Call getProfitsPricingTables after successful rollback
+        if (action?.actionId) {
+          getProfitsPricingTables();
+        }
       }
     };
     await rollbackUpdatedPricingTablesAfterOptimizationApi(callApi, callBack);
