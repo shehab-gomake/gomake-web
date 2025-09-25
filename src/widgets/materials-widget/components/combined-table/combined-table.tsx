@@ -236,7 +236,7 @@ const CombinedTable = ({
                             sx={{
                                 position: 'absolute',
                                 top: '50%',
-                                right: `${3 * 121}px`, // Position at the start of fixed columns
+                                right: `${3 * 118}px`, // Position at the start of fixed columns
                                 transform: 'translateY(-50%)',
                                 backgroundColor: '#1976d2',
                                 color: '#fff',

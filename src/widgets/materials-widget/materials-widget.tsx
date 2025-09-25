@@ -379,22 +379,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           )
         }
       />
-      {/* <GoMakeDeleteModal
-        openModal={openPriceModal}
-        onClose={onClickClosePriceModal}
-        hideIcon
-        modalType={ModalType.EDIT}
-        title={t("materials.modals.editPriceModalTitle")}
-        subTitle={t("materials.modals.editPriceModalSubTitle")}
-        yesBtn={t("materials.modals.editPriceModalYesBtn")}
-        cancelBtn={t("materials.modals.editPriceModalCancelBtn")}
-        onClickDelete={async () => {
-          updateProfitProfileProductHidden(true)
-        }}
-        onClickCancel={async () => {
-          updateProfitProfileProductHidden(false)
-        }}
-      /> */}
       <input
         ref={elementRef}
         onChange={uploadExcelFile}
