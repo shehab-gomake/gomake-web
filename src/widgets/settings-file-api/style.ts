@@ -8,7 +8,7 @@ const useStyle = () => {
     return {
       // Main container styles
       mainContainer: {
-        height: "80vh",
+        height: "75vh",
         display: "flex",
         flexDirection: "column" as "column",
         position: "relative" as "relative",
@@ -131,9 +131,9 @@ const useStyle = () => {
       fixedSubmitButtonContainer: {
         position: "fixed" as "fixed",
         bottom: "20px",
-        right: "20px",
+        // right: "20px",
         backgroundColor: "#FFFFFF",
-        padding: "16px",
+        padding: "10px",
         borderRadius: "8px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
         border: "1px solid #E5E7EB",
@@ -205,7 +205,7 @@ const useStyle = () => {
         color: errorColor(500),
       },
       hotfolderItemContainer: {
-        marginTop: "24px",
+        marginTop: "16px",
       },
       hotfolderLabel: {
         fontSize: "16px",
