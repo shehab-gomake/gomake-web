@@ -14,9 +14,9 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
+  AvatarGroup,
 } from '@mui/material';
 import {
-  MoreVert as MoreVertIcon,
   PersonAdd as PersonAddIcon,
   Group as GroupIcon,
   Close as CloseIcon,
@@ -89,106 +89,79 @@ export const ParticipantsList: React.FC<ParticipantsListProps> = ({
   const visibleMembers = members.slice(0, maxVisible);
   const remainingCount = members.length - maxVisible;
 
-  const renderMemberChip = (member: ConversationMember, showStatus = true) => {
-    const status = getMemberStatus(member);
-    const isCurrentUser = member.userId === currentUserId;
-    
-    return (
-      <Chip
-        key={member.userId}
-        avatar={
-          <Box sx={{ position: 'relative' }}>
-            {getMemberAvatar(member)}
-            {showStatus && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: -2,
-                  right: -2,
-                  width: 12,
-                  height: 12,
-                  borderRadius: '50%',
-                  backgroundColor: getStatusColor(status),
-                  border: '2px solid white',
-                }}
-              />
-            )}
-          </Box>
-        }
-        label={
-          <Typography variant="caption" sx={{ fontWeight: 500 }}>
-            {isCurrentUser ? 'You' : member.name}
-          </Typography>
-        }
-        size="small"
-        variant="outlined"
-        sx={{
-          height: 32,
-          '& .MuiChip-avatar': {
-            width: 32,
-            height: 32,
-            marginLeft: 0,
-          },
-          '& .MuiChip-label': {
-            paddingLeft: 1,
-            paddingRight: 1,
-          },
-        }}
-      />
-    );
-  };
+  
 
   return (
     <Box>
       <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
-        {/* Conversation type icon */}
-        <Tooltip title={conversationType === 'DM' ? 'Direct Message' : 'Group Chat'}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {conversationType === 'DM' ? (
-              <Avatar sx={{ width: 24, height: 24, bgcolor: 'primary.main' }}>
-                <GroupIcon sx={{ fontSize: 16 }} />
-              </Avatar>
-            ) : (
-              <Avatar sx={{ width: 24, height: 24, bgcolor: 'secondary.main' }}>
-                <GroupIcon sx={{ fontSize: 16 }} />
-              </Avatar>
-            )}
-          </Box>
-        </Tooltip>
-
-        {/* Member chips */}
-        {visibleMembers.map(member => renderMemberChip(member))}
-        
-        {/* Remaining count */}
-        {remainingCount > 0 && (
-          <Chip
-            label={`+${remainingCount}`}
-            size="small"
-            variant="outlined"
-            onClick={handleClick}
-            sx={{
-              height: 32,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              },
-            }}
-          />
-        )}
-
-        {/* More button for group chats */}
-        {conversationType === 'GROUP_DM' && (
-          <IconButton
-            size="small"
-            onClick={handleClick}
-            sx={{
+        {/* Member avatars */}
+        <AvatarGroup
+          max={maxVisible}
+          total={members.length}
+          onClick={handleClick}
+          sx={{
+            cursor: 'pointer',
+            '& .MuiAvatar-root': {
               width: 32,
               height: 32,
-              ml: 0.5,
-            }}
-          >
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              border: '2px solid white',
+            },
+          }}
+          renderSurplus={(surplus) => (
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                backgroundColor: 'grey.300',
+                color: 'text.primary',
+                border: '2px solid white',
+              }}
+            >
+              +{surplus}
+            </Avatar>
+          )}
+        >
+          {members.map(member => (
+            <Tooltip key={member.userId} title={member.userId === currentUserId ? 'You' : member.name}>
+              <Box sx={{ position: 'relative' }}>
+                {getMemberAvatar(member)}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    backgroundColor: getStatusColor(getMemberStatus(member)),
+                    border: '2px solid white',
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          ))}
+        </AvatarGroup>
+
+        {/* Add button for group chats */}
+        {conversationType === 'GROUP_DM' && onAddMember && (
+          <Tooltip title="Add participant">
+            <IconButton
+              size="small"
+              onClick={onAddMember}
+              sx={{
+                width: 32,
+                height: 32,
+                ml: 0.5,
+                border: '1px dashed grey',
+              }}
+            >
+              <PersonAddIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         )}
       </Stack>
 

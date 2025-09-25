@@ -9,6 +9,8 @@ import {
   IconButton,
   Tooltip,
   Snackbar,
+  Avatar,
+  Fade,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -17,6 +19,7 @@ import {
   Search as SearchIcon,
   FilterList as FilterIcon,
   Close as CloseIcon,
+  Group as GroupIcon,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
 import { UserPresence } from "./components";
@@ -66,6 +69,7 @@ const DirectMessagesProviderView: React.FC = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
   const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
+  const [showConnectionStatus, setShowConnectionStatus] = useState(true);
 
 
   // Auto-clear error message after 6 seconds
@@ -77,6 +81,17 @@ const DirectMessagesProviderView: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [userErrorMessage]);
+
+  // Auto-hide connection status after 3 seconds on success
+  React.useEffect(() => {
+    setShowConnectionStatus(true); // Show on any status change
+    if (connectionStatus === "connected") {
+      const timer = setTimeout(() => {
+        setShowConnectionStatus(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [connectionStatus]);
 
   const getSeverity = (status: typeof connectionStatus) => {
     switch (status) {
@@ -91,10 +106,17 @@ const DirectMessagesProviderView: React.FC = () => {
     }
   };
 
-  const getStatusMessage = (status: typeof connectionStatus) => {
+  const getStatusMessage = (status: typeof connectionStatus): React.ReactNode => {
     switch (status) {
       case "connected":
-        return `Connected to Direct Messages${currentUser ? ` as ${currentUser.name}` : ""}`;
+        return (
+          <Stack direction="row" alignItems="center" spacing={1}>
+            {currentUser?.avatar && <Avatar src={currentUser.avatar} sx={{ width: 24, height: 24 }} />}
+            <Typography variant="body2">
+              Connected {currentUser ? ` as ${currentUser.name}` : ""}
+            </Typography>
+          </Stack>
+        );
       case "connecting":
         return "Connecting to Direct Messages service...";
       default:
@@ -312,24 +334,50 @@ const DirectMessagesProviderView: React.FC = () => {
       boxSizing: "border-box"
     }}>
       {/* Connection status */}
-      <Alert
-        severity={getSeverity(connectionStatus)}
-        action={
-          connectionStatus !== "connected" && (
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={handleRetryConnection}
-              startIcon={<RefreshIcon />}
-              disabled={isLoading}
-            >
-              Retry
-            </Button>
-          )
-        }
-      >
-        {getStatusMessage(connectionStatus)}
-      </Alert>
+      <Fade in={showConnectionStatus}>
+        <Alert
+          severity={getSeverity(connectionStatus)}
+          icon={false}
+          sx={{
+            borderRadius: 2,
+            p: 1,
+            display: 'flex',
+            alignItems: 'center',
+            width: 'fit-content',
+            minWidth: 280,
+            position: 'absolute',
+            top: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1200,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          }}
+          action={
+            connectionStatus !== "connected" && (
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={handleRetryConnection}
+                startIcon={<RefreshIcon />}
+                disabled={isLoading}
+              >
+                Retry
+              </Button>
+            )
+          }
+        >
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Box sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: connectionStatus === 'connected' ? 'success.main' : connectionStatus === 'connecting' ? 'info.main' : 'error.main',
+              mr: 1
+            }} />
+            {getStatusMessage(connectionStatus)}
+          </Stack>
+        </Alert>
+      </Fade>
 
       {/* Three-pane layout */}
       <Stack direction="row" gap={2} sx={{
@@ -405,11 +453,18 @@ const DirectMessagesProviderView: React.FC = () => {
               <Box sx={{ p: 2, borderBottom: "1px solid #EAECF0" }}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <div>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      {activeConversation?.type === 'GROUP_DM' && (
+                        <Tooltip title="Group Chat">
+                          <Avatar sx={{ width: 28, height: 28, bgcolor: 'secondary.main' }}>
+                            <GroupIcon sx={{ fontSize: 18 }} />
+                          </Avatar>
+                        </Tooltip>
+                      )}
                       <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
                         {getConversationTitle()}
                       </Typography>
-                    </div>
+                    </Stack>
                     {/* Close button */}
                     <Tooltip title="Close conversation">
                       <IconButton 
