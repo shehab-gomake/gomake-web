@@ -206,7 +206,16 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
                                     <TableCell sx={classes.headerCell}></TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplier Name</TableCell>
+                                    <TableCell sx={classes.headerCell}>Supplier Name
+
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setIsAddInventoryModalOpen(true)}
+                                            sx={classes.actionButton}
+                                        >
+                                            <AddIcon fontSize="small" />
+                                        </IconButton>
+                                    </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Price (m² / Roll)</TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
@@ -347,13 +356,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
 
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
-                                                            <IconButton
-                                                                size="small"
-                                                                onClick={() => setIsAddInventoryModalOpen(true)}
-                                                                sx={classes.actionButton}
-                                                            >
-                                                                <AddIcon fontSize="small" />
-                                                            </IconButton>
+
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleOpenDeleteInventoryModal(row)}
