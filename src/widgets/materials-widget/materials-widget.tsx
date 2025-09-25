@@ -32,6 +32,8 @@ import { ModalType } from "@/enums";
 import { isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
+import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -115,6 +117,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       },
     },
   ];
+
+  const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
+    clientType: CLIENT_TYPE.SUPPLIER,
+  });
 
   const { } = useGoMakeTour(materialsSteps, []);
 
@@ -298,6 +304,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
+                        renderOptions={renderOptions}
+                        checkWhatRenderArray={checkWhatRenderArray}
+                        isFetching={isFetching}
+                        materialType={materialType?.toString()}
+                        materialCategory={materialCategory?.toString()}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -306,6 +317,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
+                        renderOptions={renderOptions}
+                        checkWhatRenderArray={checkWhatRenderArray}
+                        isFetching={isFetching}
+                        materialType={materialType?.toString()}
+                        materialCategory={materialCategory?.toString()}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>

@@ -3,7 +3,6 @@ import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState, openChildTableState, inventoryDataState, purchasePricingDataState, activeFilterState, materialsTablePageState} from "@/widgets/materials-widget/state";
 import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, getSupplierInventoriesApi, getPurchasePricingApi, updatePrintHouseMaterialRowApi, getPrintHouseMaterialCategoryDataNewApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi, getMaterialCategoryDataApi} from "@/services/api-service/materials/materials-endpoints";
-import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
@@ -12,12 +11,9 @@ import { openPriceModalState } from "@/store";
 const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purchasePricingTable: boolean = false) => {
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState(materialCategoryDataState);
-    const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
     const openChildTable = useRecoilValue(openChildTableState);
     const setInventoryData = useSetRecoilState(inventoryDataState);
     const setPurchasePricingData = useSetRecoilState(purchasePricingDataState);
-    const activeFilter = useRecoilValue(activeFilterState);
-    const pageNumber = useRecoilValue(materialsTablePageState);
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -158,7 +154,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     priceIndex: index,
                 });
             }else{
-                updatePrintHouseMaterialPropApi(callApi, callBack, {
+                updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
                     updatedValue: value,

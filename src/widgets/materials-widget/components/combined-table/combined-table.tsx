@@ -6,17 +6,31 @@ import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight } from "@mui/icons-material";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
+import { useStyle } from "./style";
 
 
 interface ICombinedTableProps {
     headers: any[];
     rows: any[];
+    renderOptions: any;
+    checkWhatRenderArray: any;
+    isFetching: boolean;
+    materialType?: string;
+    materialCategory?: string;
 }
 
 const CombinedTable = ({
     headers,
     rows,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    materialType,
+    materialCategory,
 }: ICombinedTableProps) => {
+    const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
     const openChildTable = useRecoilValue(openChildTableState);
     const jobsModal = useRecoilValue(openJobsModalState);
@@ -75,69 +89,27 @@ const CombinedTable = ({
             };
         }
     }, [rows]); // Re-check when rows change
+
+
+
     return (
         <>
-            <Box sx={{ position: 'relative', width: '100%' }}>
+            <Box sx={classes.mainContainer}>
                 <TableContainer
                     ref={tableContainerRef}
                     component={Paper}
-                    sx={{
-                        maxHeight: 800,
-                        width: '100%',
-                        overflowX: 'auto',
-                        overflowY: 'auto',
-                        position: 'relative',
-                        '&::-webkit-scrollbar': {
-                            height: '8px',
-                        },
-                        '&::-webkit-scrollbar-track': {
-                            backgroundColor: '#f1f1f1',
-                            borderRadius: '4px',
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                            backgroundColor: '#c1c1c1',
-                            borderRadius: '4px',
-                            '&:hover': {
-                                backgroundColor: '#a8a8a8',
-                            },
-                        },
-                    }}
+                    sx={classes.tableContainer}
                 >
-                    <Table sx={{ width: '100%', tableLayout: 'auto' }} stickyHeader>
+                    <Table sx={classes.table} stickyHeader>
                         <TableHead>
-                            <TableRow sx={{
-                                backgroundColor: '#EBECFF',
-                                position: 'sticky',
-                                top: 0,
-                                zIndex: 100
-                            }}>
+                            <TableRow sx={classes.headerRow}>
                                 {headers?.map((header, index) => {
                                     const isFirstColumn = index === 0;
                                     const isLastFixedColumn = index >= Math.max(headers.length - 3, 0); // Last 3 columns
                                     return (
                                         <TableCell
                                             key={index}
-                                            sx={{
-                                                textAlign: 'center',
-                                                fontWeight: 'bold',
-                                                whiteSpace: 'nowrap',
-                                                padding: '4px',
-                                                backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF', // Only last 3 columns get different bg
-                                                minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-                                                width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-                                                ...(isFirstColumn && {
-                                                    position: "sticky",
-                                                    left: 0,
-                                                    zIndex: 110,
-                                                }),
-                                                ...(isLastFixedColumn && {
-                                                    position: 'sticky',
-                                                    right: (headers.length - 1 - index) * 123,
-                                                    zIndex: 105,
-                                                    boxShadow: index === headers.length && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
-                                                    borderLeft: index === headers.length - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
-                                                })
-                                            }}
+                                            sx={getHeaderCellStyle(isFirstColumn, isLastFixedColumn, index, headers.length)}
                                         >
                                             {header}
                                         </TableCell>
@@ -148,14 +120,7 @@ const CombinedTable = ({
                         <TableBody>
                             {rows?.map((row, rowIndex) => (
                                 <React.Fragment key={rowIndex}>
-                                    <TableRow sx={{
-                                        '&:hover': {
-                                            backgroundColor: '#f8f9fa',
-                                            '& .MuiTableCell-root.fixed-column': {
-                                                backgroundColor: '#f5f5f5'
-                                            }
-                                        }
-                                    }}>
+                                    <TableRow sx={classes.bodyRow}>
                                         {row.cells?.map((cell, cellIndex) => {
                                             const isFirstColumn = cellIndex === 0;
                                             const isLastFixedColumn = cellIndex >= Math.max(headers.length - 3, 0);
@@ -166,29 +131,7 @@ const CombinedTable = ({
                                                 <TableCell
                                                     key={cellIndex}
                                                     className={isFixedColumn ? 'fixed-column' : ''}
-                                                    sx={{
-                                                        textAlign: 'center',
-                                                        padding: '12px 8px',
-                                                        whiteSpace: 'nowrap',
-                                                        minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-                                                        width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-                                                        borderBottom: '1px solid #e0e0e0',
-                                                        position: 'relative',
-                                                        ...(isFirstColumn && {
-                                                            position: 'sticky',
-                                                            left: 0,
-                                                            zIndex: 5,
-                                                            backgroundColor: '#fff',
-                                                        }),
-                                                        ...(isLastFixedColumn && {
-                                                            position: 'sticky',
-                                                            right: (headers.length - 1 - cellIndex) * 123,
-                                                            zIndex: 5,
-                                                            backgroundColor: '#fff',
-                                                            boxShadow: cellIndex === headers.length && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
-                                                            borderLeft: cellIndex === headers.length - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
-                                                        })
-                                                    }}
+                                                    sx={getBodyCellStyle(isFirstColumn, isLastFixedColumn, cellIndex, headers.length)}
                                                 >
                                                     {cell}
                                                 </TableCell>
@@ -200,22 +143,17 @@ const CombinedTable = ({
                                         <TableRow>
                                             <TableCell
                                                 colSpan={headers.length}
-                                                sx={{
-                                                    padding: 0,
-                                                    border: 'none',
-                                                    position: 'relative',
-                                                    zIndex: 1
-                                                }}
+                                                sx={classes.childTableRowContainer}
                                             >
-                                                <Box sx={{
-                                                    padding: '16px',
-                                                    backgroundColor: '#f8f9fa',
-                                                    borderTop: '1px solid #e0e0e0',
-                                                    borderBottom: '1px solid #e0e0e0'
-                                                }}>
+                                                <Box sx={classes.childTableContentBox}>
                                                     <ChildTableRow
                                                         rowId={row.id}
                                                         isVisible={true}
+                                                        renderOptions={renderOptions}
+                                                        checkWhatRenderArray={checkWhatRenderArray}
+                                                        isFetching={isFetching}
+                                                        materialType={materialType}
+                                                        materialCategory={materialCategory}
                                                     />
                                                 </Box>
                                             </TableCell>
@@ -232,38 +170,7 @@ const CombinedTable = ({
                     <Tooltip title="Scroll to see more columns" arrow>
                         <IconButton
                             onClick={scrollToRight}
-                            sx={{
-                                position: 'absolute',
-                                top: '50%',
-                                right: `${3 * 118}px`, // Position at the start of fixed columns
-                                transform: 'translateY(-50%)',
-                                backgroundColor: '#1976d2',
-                                color: '#fff',
-                                width: '32px',
-                                height: '32px',
-                                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
-                                zIndex: 1000,
-                                '&:hover': {
-                                    backgroundColor: '#1565c0',
-                                    boxShadow: '0 6px 16px rgba(25, 118, 210, 0.4)',
-                                },
-                                '&:active': {
-                                    transform: 'translateY(-50%) scale(0.95)',
-                                },
-                                transition: 'all 0.2s ease-in-out',
-                                '@keyframes pulse': {
-                                    '0%': {
-                                        boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)'
-                                    },
-                                    '50%': {
-                                        boxShadow: '0 6px 20px rgba(25, 118, 210, 0.5)'
-                                    },
-                                    '100%': {
-                                        boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)'
-                                    }
-                                },
-                                animation: 'pulse 2s ease-in-out infinite'
-                            }}
+                            sx={classes.scrollIndicatorButton}
                         >
                             <ChevronRight />
                         </IconButton>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Add as AddIcon, Delete as DeleteIcon, DragIndicator } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
@@ -8,20 +8,28 @@ import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useStyle } from "./style";
+import { SortIcon } from "@/icons";
 
 
 interface IChildTableRowProps {
     rowId: string;
     isVisible: boolean;
+    renderOptions: any;
+    checkWhatRenderArray: any;
+    isFetching: boolean;
+    materialType?: string;
+    materialCategory?: string;
 }
 
-const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
+const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory }: IChildTableRowProps) => {
+    const { classes } = useStyle();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
@@ -57,10 +65,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
     const { inventoryData, fetchInventoryData, clearInventoryData } = useInventoryData();
     const { purchasePricingData, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
     const { callApi } = useGomakeAxios();
-    const materialCategorySuppliers = useRecoilValue(materialCategorySuppliersState);
-    const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
-        clientType: CLIENT_TYPE.SUPPLIER,
-    });
+
 
     useEffect(() => {
         if (isVisible && openChildTable.rowId === rowId && rowId) {
@@ -80,379 +85,506 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
         return null;
     }
 
+    // Drag and drop handlers
+    const handleInventoryDragEnd = async (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const sourceIndex = result.source.index;
+        const destinationIndex = result.destination.index;
+
+        if (sourceIndex === destinationIndex) {
+            return;
+        }
+
+        // Reorder inventory data locally
+        const reorderedData = Array.from(inventoryData);
+        const [removed] = reorderedData.splice(sourceIndex, 1);
+        reorderedData.splice(destinationIndex, 0, removed);
+
+        // Update local state (you might need to implement this in the hook)
+        // For now, we'll just call the API and refetch
+
+        try {
+            // Format data according to API specification
+            const reorderData = {
+                materialTypeKey: materialType,
+                categoryKey: materialCategory,
+                suppliers: reorderedData.map((item, index) => ({
+                    printHouseMaterialSupplierId: item.id,
+                    order: index
+                }))
+            };
+
+            const callBack = (res) => {
+                if (res.success) {
+                    console.log('Inventory reordered successfully');
+                    // Refetch data to get updated order
+                    fetchInventoryData(rowId);
+                } else {
+                    console.error('Failed to reorder inventory:', res.message);
+                }
+            };
+
+            await reorderPrintHouseMaterialSupplierApi(callApi, callBack, reorderData);
+        } catch (error) {
+            console.error('Error reordering inventory:', error);
+        }
+    };
+
+    const handlePurchasePricingDragEnd = async (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const sourceIndex = result.source.index;
+        const destinationIndex = result.destination.index;
+
+        if (sourceIndex === destinationIndex) {
+            return;
+        }
+
+        // Reorder purchase pricing data locally
+        const reorderedData = Array.from(purchasePricingData);
+        const [removed] = reorderedData.splice(sourceIndex, 1);
+        reorderedData.splice(destinationIndex, 0, removed);
+
+        try {
+            // Format data according to API specification
+            const reorderData = {
+                materialTypeKey: materialType,
+                categoryKey: materialCategory,
+                suppliers: reorderedData.map((item, index) => ({
+                    printHouseMaterialSupplierId: item.id,
+                    order: index
+                }))
+            };
+
+            const callBack = (res) => {
+                if (res.success) {
+                    console.log('Purchase pricing reordered successfully');
+                    // Refetch data to get updated order
+                    fetchPurchasePricingData(rowId);
+                } else {
+                    console.error('Failed to reorder purchase pricing:', res.message);
+                }
+            };
+
+            await reorderPrintHouseMaterialSupplierApi(callApi, callBack, reorderData);
+        } catch (error) {
+            console.error('Error reordering purchase pricing:', error);
+        }
+    };
+
     const renderInventoryTable = () => (
-        <Box sx={{ width: '100%', mt: 1 }}>
+        <Box sx={classes.childTableContainer}>
             {isLoadingInventory ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <Box sx={classes.loadingContainer}>
                     <CircularProgress />
                 </Box>
             ) : inventoryData.length === 0 ? (
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flex-start',
-                    gap: 1,
-                    p: 3,
-                    border: '1px dashed #ccc',
-                    borderRadius: '8px',
-                    backgroundColor: '#f9f9f9'
-                }}>
-                    <span style={{ fontSize: '14px', color: '#666' }}>
+                <Box sx={classes.noDataContainer}>
+                    <span style={classes.noDataText}>
                         No inventory data available,
                     </span>
                     <span
                         onClick={() => setIsAddInventoryModalOpen(true)}
-                        style={{
-                            fontSize: '14px',
-                            color: '#1976d2',
-                            textDecoration: 'underline',
-                            cursor: 'pointer',
-                            fontWeight: '500'
-                        }}
+                        style={classes.noDataLink}
                     >
                         add new?
                     </span>
                 </Box>
             ) : (
-                <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
-                    <Table size="small" stickyHeader>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ textAlign: 'center' }}>Supplier Name</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Code</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase m² Price</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase Roll Price</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase Currency</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Sale m² Price (Base)</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Sale Roll Price (Base)</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Sale Currency</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Status</TableCell>
-                                {/* <TableCell sx={{ textAlign: 'center' }}>Length Stock (m)</TableCell> */}
-                                <TableCell sx={{ textAlign: 'center' }}>Client</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {inventoryData.map((row, index) => (
-                                <TableRow key={index}>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.supplierName || ''}
-                                            isEditable={false}
-                                            type={0}
-                                            id={row.id}
-                                            parameterKey="supplierName"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
+                <TableContainer
+                    component={Paper}
+                    sx={classes.tableContainer}
+                >
+                    <DragDropContext onDragEnd={handleInventoryDragEnd}>
+                        <Table sx={classes.table} stickyHeader>
+                            <TableHead>
+                                <TableRow sx={classes.headerRow}>
+                                    {/* Add drag handle header */}
+                                    <TableCell>
+
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.code || ''}
-                                            isEditable={true}
-                                            type={0}
-                                            id={row.id}
-                                            parameterKey="sku"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.perUnit?.toString() || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="purchaseM2Price"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.perTon?.toString() || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="purchaseRollPrice"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
-                                            isEditable={true}
-                                            type={6}
-                                            id={row.id}
-                                            parameterKey="purchaseCurrency"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            values={[
-                                                { key: 'ils', value: 'ILS' },
-                                                { key: 'usd', value: 'USD' },
-                                                { key: 'eur', value: 'EUR' }
-                                            ]}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.salePrice?.perUnit?.toString() || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="saleM2Price"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.salePrice?.perTon?.toString() || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="saleRollPrice"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.salePrice?.currency?.toLowerCase() || 'usd'}
-                                            isEditable={true}
-                                            type={6}
-                                            id={row.id}
-                                            parameterKey="saleCurrency"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            values={[
-                                                { key: 'ils', value: 'ILS' },
-                                                { key: 'usd', value: 'USD' },
-                                                { key: 'eur', value: 'EUR' }
-                                            ]}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.isActive}
-                                            isEditable={true}
-                                            type={2}
-                                            id={row.id}
-                                            parameterKey="isActive"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isInventoryTable={true}
-                                        />
-                                    </TableCell>
-                                    {/* <TableCell sx={{ textAlign: 'center' }}>{row.inventory || '—'}</TableCell> */}
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.client || '—'}</TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setIsAddInventoryModalOpen(true)}
-                                            sx={{
-                                                color: '#1976d2',
-                                                marginRight: '4px',
-                                                '&:hover': {
-                                                    backgroundColor: '#e3f2fd'
-                                                }
-                                            }}
-                                        >
-                                            <AddIcon fontSize="small" />
-                                        </IconButton>
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => handleOpenDeleteInventoryModal(row)}
-                                            sx={{
-                                                color: '#f44336',
-                                                '&:hover': {
-                                                    backgroundColor: '#ffebee'
-                                                }
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell}>Supplier Name</TableCell>
+                                    <TableCell sx={classes.headerCell}>Code</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase m² Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase Roll Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>Sale m² Price (Base)</TableCell>
+                                    <TableCell sx={classes.headerCell}>Sale Roll Price (Base)</TableCell>
+                                    <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>Status</TableCell>
+                                    <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <Droppable droppableId="inventory-rows">
+                                {(provided) => (
+                                    <TableBody
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                    >
+                                        {inventoryData.map((row, index) => (
+                                            <Draggable key={row.id || `inventory-${index}`} draggableId={row.id || `inventory-${index}`} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <TableRow
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        sx={{
+                                                            ...classes.bodyRow,
+                                                            ...(snapshot.isDragging && classes.draggingRow)
+                                                        }}
+                                                    >
+                                                        {/* Drag handle cell */}
+                                                        <TableCell
+                                                            {...provided.dragHandleProps}
+                                                            sx={classes.dragHandleCell}
+                                                        >
+                                                            <SortIcon />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.supplierName || ''}
+                                                                isEditable={false}
+                                                                type={0}
+                                                                id={row.id}
+                                                                parameterKey="supplierName"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.code || ''}
+                                                                isEditable={true}
+                                                                type={0}
+                                                                id={row.id}
+                                                                parameterKey="sku"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.perUnit?.toString() || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="purchaseM2Price"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.perTon?.toString() || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="purchaseRollPrice"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
+                                                                isEditable={true}
+                                                                type={6}
+                                                                id={row.id}
+                                                                parameterKey="purchaseCurrency"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                values={[
+                                                                    { key: 'ils', value: 'ILS' },
+                                                                    { key: 'usd', value: 'USD' },
+                                                                    { key: 'eur', value: 'EUR' }
+                                                                ]}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.salePrice?.perUnit?.toString() || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="saleM2Price"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.salePrice?.perTon?.toString() || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="saleRollPrice"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.salePrice?.currency?.toLowerCase() || 'usd'}
+                                                                isEditable={true}
+                                                                type={6}
+                                                                id={row.id}
+                                                                parameterKey="saleCurrency"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                values={[
+                                                                    { key: 'ils', value: 'ILS' },
+                                                                    { key: 'usd', value: 'USD' },
+                                                                    { key: 'eur', value: 'EUR' }
+                                                                ]}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.isActive}
+                                                                isEditable={true}
+                                                                type={2}
+                                                                id={row.id}
+                                                                parameterKey="isActive"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => setIsAddInventoryModalOpen(true)}
+                                                                sx={classes.actionButton}
+                                                            >
+                                                                <AddIcon fontSize="small" />
+                                                            </IconButton>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleOpenDeleteInventoryModal(row)}
+                                                                sx={classes.deleteButton}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </TableBody>
+                                )}
+                            </Droppable>
+                        </Table>
+                    </DragDropContext>
                 </TableContainer>
             )}
         </Box>
     );
 
     const renderPurchasePricingTable = () => (
-        <Box sx={{ width: '100%', mt: 1 }}>
+        <Box sx={classes.childTableContainer}>
             {isLoadingPurchasePricing ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <Box sx={classes.loadingContainer}>
                     <CircularProgress />
                 </Box>
             ) : purchasePricingData.length === 0 ? (
                 <Alert severity="info">No purchase pricing data available</Alert>
             ) : (
-                <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
-                    <Table size="small" stickyHeader>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ textAlign: 'center' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                                        Supplier Name
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                            sx={{
-                                                color: '#1976d2',
-                                                '&:hover': {
-                                                    backgroundColor: '#e3f2fd'
-                                                }
-                                            }}
-                                        >
-                                            <AddIcon fontSize="small" />
-                                        </IconButton>
-                                    </Box>
-                                </TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase m² Price</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Purchase Roll Price</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Currency</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Quantity in Package</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Supplement Time</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Order</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Status</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {/* Existing data rows */}
-                            {purchasePricingData.map((row, index) => (
-                                <TableRow key={index}>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.supplierName || ''}
-                                            isEditable={false}
-                                            type={0}
-                                            id={row.id}
-                                            parameterKey="supplierName"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        ...classes.tableContainer,
+                    }}
+                >
+                    <DragDropContext onDragEnd={handlePurchasePricingDragEnd}>
+                        <Table sx={classes.table} stickyHeader>
+                            <TableHead>
+                                <TableRow sx={classes.headerRow}>
+                                    {/* Add drag handle header */}
+                                    <TableCell >
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="purchaseM2Price"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
+                                    <TableCell sx={classes.headerCell}>
+                                        <Box sx={classes.headerButtonContainer}>
+                                            Supplier Name
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                                                sx={classes.addButton}
+                                            >
+                                                <AddIcon fontSize="small" />
+                                            </IconButton>
+                                        </Box>
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="purchaseRollPrice"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.purchasePrice?.currency || 'ILS'}
-                                            isEditable={true}
-                                            type={6}
-                                            id={row.id}
-                                            parameterKey="currency"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            values={[
-                                                { key: 'ILS', value: 'ILS' },
-                                                { key: 'USD', value: 'USD' },
-                                                { key: 'EUR', value: 'EUR' }
-                                            ]}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.quantityInPackage || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="quantityInPackage"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.supplementTime || ''}
-                                            isEditable={true}
-                                            type={1}
-                                            id={row.id}
-                                            parameterKey="supplementTime"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.order || ''}
-                                            isEditable={true}
-                                            type={0}
-                                            id={row.id}
-                                            parameterKey="order"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <TableCellData
-                                            value={row.isActive}
-                                            isEditable={true}
-                                            type={2}
-                                            id={row.id}
-                                            parameterKey="isActive"
-                                            isAdmin={false}
-                                            onChangeRowCheckBox={() => { }}
-                                            isPurchasePricingTable={true}
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => handleOpenDeleteModal(row)}
-                                            sx={{
-                                                color: '#f44336',
-                                                '&:hover': {
-                                                    backgroundColor: '#ffebee'
-                                                }
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase m² Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase Roll Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>Quantity in Package</TableCell>
+                                    <TableCell sx={classes.headerCell}>Supplement Time</TableCell>
+                                    <TableCell sx={classes.headerCell}>Order</TableCell>
+                                    <TableCell sx={classes.headerCell}>Status</TableCell>
+                                    <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <Droppable droppableId="purchase-pricing-rows">
+                                {(provided) => (
+                                    <TableBody
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                    >
+                                        {/* Existing data rows */}
+                                        {purchasePricingData.map((row, index) => (
+                                            <Draggable key={row.id || `pricing-${index}`} draggableId={row.id || `pricing-${index}`} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <TableRow
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        sx={{
+                                                            ...classes.bodyRow,
+                                                            ...(snapshot.isDragging && classes.draggingRow)
+                                                        }}
+                                                    >
+                                                        {/* Drag handle cell */}
+                                                        <TableCell
+                                                            {...provided.dragHandleProps}
+                                                            sx={classes.dragHandleCell}
+                                                        >
+                                                            <SortIcon />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.supplierName || ''}
+                                                                isEditable={false}
+                                                                type={0}
+                                                                id={row.id}
+                                                                parameterKey="supplierName"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="purchaseM2Price"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="purchaseRollPrice"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.purchasePrice?.currency || 'ILS'}
+                                                                isEditable={true}
+                                                                type={6}
+                                                                id={row.id}
+                                                                parameterKey="currency"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                values={[
+                                                                    { key: 'ILS', value: 'ILS' },
+                                                                    { key: 'USD', value: 'USD' },
+                                                                    { key: 'EUR', value: 'EUR' }
+                                                                ]}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.quantityInPackage || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="quantityInPackage"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.supplementTime || ''}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="supplementTime"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.order || '-'}
+                                                                isEditable={true}
+                                                                type={0}
+                                                                id={row.id}
+                                                                parameterKey="order"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <TableCellData
+                                                                value={row.isActive}
+                                                                isEditable={true}
+                                                                type={2}
+                                                                id={row.id}
+                                                                parameterKey="isActive"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleOpenDeleteModal(row)}
+                                                                sx={classes.deleteButton}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </TableBody>
+                                )}
+                            </Droppable>
+                        </Table>
+                    </DragDropContext>
                 </TableContainer>
             )}
         </Box>
@@ -608,7 +740,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
     };
 
     return (
-        <Box sx={{ width: '100%', gridColumn: '1 / -1' }}>
+        <Box sx={classes.mainContainer}>
             {openChildTable.tableType === 'inventory' && renderInventoryTable()}
             {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
 
@@ -624,9 +756,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
             >
                 <DialogTitle>Add Purchase Pricing</DialogTitle>
                 <DialogContent>
-                    <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box sx={classes.modalContent}>
                         <Box>
-                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Supplier</div>
+                            <div style={classes.modalLabelText}>Supplier</div>
                             <ClientAutocomplete
                                 key={selectedSupplierForPricing?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
@@ -655,19 +787,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                             placeholder="Enter purchase roll price"
                         />
                         <Box>
-                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Currency</div>
+                            <div style={classes.modalLabelText}>Currency</div>
                             <select
                                 value={formData.currency}
                                 onChange={(e) => handleFormChange('currency', e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    height: '37px',
-                                    padding: '0 12px',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '4px',
-                                    fontSize: '14px',
-                                    backgroundColor: '#fff'
-                                }}
+                                style={classes.modalSelect}
                             >
                                 <option value="ILS">ILS</option>
                                 <option value="USD">USD</option>
@@ -696,22 +820,16 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                         />
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ padding: '16px 24px' }}>
+                <DialogActions sx={classes.modalActions}>
                     <GomakePrimaryButton
                         onClick={handleCloseAddPurchasePricingModal}
-                        style={{
-                            backgroundColor: '#f5f5f5',
-                            color: '#666',
-                            marginRight: '8px',
-                            width: 'auto',
-                            padding: '8px 16px'
-                        }}
+                        style={classes.modalCancelButton}
                     >
                         Cancel
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
                         onClick={handleAddPurchasePricing}
-                        style={{ width: 'auto', padding: '8px 16px' }}
+                        style={classes.modalSubmitButton}
                     >
                         Add Purchase Pricing
                     </GomakePrimaryButton>
@@ -727,9 +845,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
             >
                 <DialogTitle>Add New Inventory</DialogTitle>
                 <DialogContent>
-                    <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box sx={classes.modalContent}>
                         <Box>
-                            <div style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#000' }}>Supplier</div>
+                            <div style={classes.modalLabelText}>Supplier</div>
                             <ClientAutocomplete
                                 key={selectedSupplier?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
@@ -779,22 +897,16 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                         />
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ padding: '16px 24px' }}>
+                <DialogActions sx={classes.modalActions}>
                     <GomakePrimaryButton
                         onClick={handleCloseAddInventoryModal}
-                        style={{
-                            backgroundColor: '#f5f5f5',
-                            color: '#666',
-                            marginRight: '8px',
-                            width: 'auto',
-                            padding: '8px 16px'
-                        }}
+                        style={classes.modalCancelButton}
                     >
                         Cancel
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
                         onClick={handleAddInventory}
-                        style={{ width: 'auto', padding: '8px 16px' }}
+                        style={classes.modalSubmitButton}
                     >
                         Add Inventory
                     </GomakePrimaryButton>
