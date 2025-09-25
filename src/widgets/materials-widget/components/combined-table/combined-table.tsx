@@ -142,8 +142,8 @@ const CombinedTable = ({
                                                 whiteSpace: 'nowrap',
                                                 padding: '12px 8px',
                                                 backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF', // Only last 3 columns get different bg
-                                                minWidth: isFixedColumn ? '123px' : 'auto',
-                                                width: isFixedColumn ? '123px' : 'auto',
+                                                minWidth: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
+                                                width: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
                                                 ...(isFirstColumn && {
                                                     position: "sticky",
                                                     left: 0,
@@ -189,8 +189,8 @@ const CombinedTable = ({
                                                         textAlign: 'center',
                                                         padding: '12px 8px',
                                                         whiteSpace: 'nowrap',
-                                                        minWidth: isFixedColumn ? '123px' : 'auto',
-                                                        width: isFixedColumn ? '123px' : 'auto',
+                                                        minWidth: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
+                                                        width: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
                                                         borderBottom: '1px solid #e0e0e0',
                                                         position: 'relative',
                                                         ...(isFirstColumn && {
@@ -198,7 +198,6 @@ const CombinedTable = ({
                                                             left: 0,
                                                             zIndex: 5,
                                                             backgroundColor: '#fff',
-                                                            boxShadow: '2px 0 4px rgba(0,0,0,0.1)',
                                                         }),
                                                         ...(isLastFixedColumn && {
                                                             position: 'sticky',
