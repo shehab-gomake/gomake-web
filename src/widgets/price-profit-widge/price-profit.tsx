@@ -5,9 +5,21 @@ import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-wi
 import { SummaryWidget } from "./widgets/summary/summary-widget";
 import { useEffect } from "react";
 import PriceCurveFit from "./widgets/chart/price-curve-fit";
+import { TotalCardComponent } from "@/pages-components/quotes/widgets/statistics-section/total-card";
+import { useTranslation } from "react-i18next";
 
 const PriceProfitWidget = () => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
+
+  // Currency formatting utilities
+  const numberFormatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const formatNumber = (value: number) => numberFormatter.format(value);
+
   const {
     actionList,
     onChangeActionId,
@@ -74,11 +86,43 @@ const PriceProfitWidget = () => {
           handleRollback={handleRollback}
           isFixed={isFixed}
           onClickDownloadExcel={exportDataForProfitsByAction}
+          summaryData={summaryData}
         />
         <Divider style={classes.divider} />
       </div>
       <div style={classes.contentSection}>
+        {/* Totals Section */}
+
+        {isFixed && summaryData && (
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexDirection: "row",
+              flexWrap: "nowrap",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TotalCardComponent
+              text={t("priceProfit.totalUserInputPrice")}
+              number={formatNumber(summaryData.totalUserInputPrice)}
+              withCurrency={true}
+            />
+            <TotalCardComponent
+              text={t("priceProfit.totalCalculatedPrice")}
+              number={formatNumber(summaryData.totalCalculatedPrice)}
+              withCurrency={true}
+            />
+            <TotalCardComponent
+              text={t("priceProfit.totalFixedPrice")}
+              number={formatNumber(summaryData.totalFixedPrice)}
+              withCurrency={true}
+            />
+          </div>
+        )}
         <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
+
         <PriceCurveFit
           {...chartData}
           isSummaryVisible={isFixed && !!summaryData}
