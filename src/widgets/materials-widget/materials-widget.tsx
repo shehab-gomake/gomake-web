@@ -1,12 +1,10 @@
-import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -24,17 +22,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
-import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Skeleton, Stack, Box, IconButton } from "@mui/material";
-import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
-import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
-import { isLoadgingState, isLoadingMaterialsState } from "@/store";
+import { isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
 interface IMaterialsWidgetProps {
@@ -45,16 +40,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
-    useMaterialsCategories(props.isAdmin);
-  const pageSize = 14;
+  const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
-  const {
-    openPriceModal,
-    onClickClosePriceModal,
-    updateProfitProfileProductHidden,
-  } = useTableCellData(props.isAdmin);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(
     isEditCategoryModalState
@@ -93,13 +81,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     selectedTableRow,
     materialName,
     toggleIsActive,
-    selectedMaterialCategory,
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
-    onChangeRowCheckBox,
-    onClickOpenDeleteTableRowModal,
-    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
   } = useMaterials(props.isAdmin);
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
@@ -178,9 +162,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           pathname: materialType.toString(),
           query: { materialCategory: defaultCategory },
         });
-
         setSelectedMaterialCategory(defaultCategory);
-        // onSelectCategory(defaultCategory); //  is setSelectedMaterialCategory sufficient to update or need onSelectCategory
       }
     }
   }, [materialCategories]);
@@ -189,7 +171,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     getCurrenciesApi().then();
     getMachinesMaterials();
     getClientsMaterials();
-  }, [pageNumber]);
+  }, []);
 
   useEffect(() => {
     getMaterialCategories(materialType).then();
@@ -210,8 +192,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           materialCategory?.toString(),
           materialFilter,
           supplierId,
-          pageNumber,
-          pageSize
         ).then();
       } else {
         if (supplierId) {
@@ -220,8 +200,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             materialCategory?.toString(),
             materialFilter,
             supplierId,
-            pageNumber,
-            pageSize
           ).then();
         }
       }
@@ -230,8 +208,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialType,
     materialCategory,
     supplierId,
-    pageNumber,
-    pageSize,
     activeFilter,
     materialFilter,
   ]);
@@ -360,16 +336,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                     ) : (
                       <></>
                     )}
-                  </div>
-
-                  <div style={{ marginBottom: "5px" }}>
-                    <Pagination
-                      count={pagesCount}
-                      variant="outlined"
-                      color="primary"
-                      page={pageNumber}
-                      onChange={(event, value) => setPageNumber(value)}
-                    />
                   </div>
                 </Stack>
               )}

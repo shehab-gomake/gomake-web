@@ -83,7 +83,7 @@ const CombinedTable = ({
                     ref={tableContainerRef}
                     component={Paper}
                     sx={{
-                        maxHeight: 750,
+                        maxHeight: 800,
                         width: '100%',
                         overflowX: 'auto',
                         overflowY: 'auto',
