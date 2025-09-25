@@ -136,7 +136,7 @@ const AdvertisingProductNameParameterWidget = ({
 
   useEffect(() => {
     setSelectedValue(
-      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : defaultObject ?? undefined
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
     );
   }, [parameter, index,]);
 
