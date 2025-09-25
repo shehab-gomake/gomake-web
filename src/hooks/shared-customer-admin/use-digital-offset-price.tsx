@@ -6174,19 +6174,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     return item ? item.value + "" : "";
                   };
-                  let dieUnitWidth = getValue("unitWidth");
-                  let dieUnitLength = getValue("unitLength");
+                  let width = getValue("width");
+                  let length = getValue("length");
+                  let unitWidth = getValue("unitWidth");
+                  let unitLength = getValue("unitLength");
+                  let dieUnitWidth = getValue("dieUnitWidth");
+                  let dieUnitLength = getValue("dieUnitLength");
                   let finalUnitWidth = getValue("finalUnitWidth");
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
+                  console.log("unitWidth11", { unitWidth, unitLength, dieUnitWidth, dieUnitLength, width, length });
+
                   const dieCutSizesParametersArray = [];
                   dieCutSizesParametersArray.push({
                     parameterCode: "Width",
-                    value: dieUnitWidth,
+                    value: dieUnitWidth || unitWidth || width,
                   });
                   dieCutSizesParametersArray.push({
                     parameterCode: "Height",
-                    value: dieUnitLength,
+                    value: dieUnitLength || unitLength || length,
                   });
                   dieCutSizesParametersArray.push({
                     parameterCode: "DieUnitWidth",
@@ -6292,19 +6298,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               );
               return item ? item.value + "" : "";
             };
-            let dieUnitWidth = getValue("unitWidth");
-            let dieUnitLength = getValue("unitLength");
+            let width = getValue("width");
+            let length = getValue("length");
+            let unitWidth = getValue("unitWidth");
+            let unitLength = getValue("unitLength");
+            let dieUnitWidth = getValue("dieUnitWidth");
+            let dieUnitLength = getValue("dieUnitLength");
             let finalUnitWidth = getValue("finalUnitWidth");
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
+            console.log("unitWidth", { unitWidth, unitLength, dieUnitWidth, dieUnitLength, dieCut, width, length });
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
-              value: dieUnitWidth,
+              value: width || unitWidth || dieUnitWidth,
             });
             dieCutSizesParametersArray.push({
               parameterCode: "Height",
-              value: dieUnitLength,
+              value: length || unitLength || dieUnitLength,
             });
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitWidth",
