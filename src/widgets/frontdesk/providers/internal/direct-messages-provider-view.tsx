@@ -8,6 +8,10 @@ import {
   Box,
   IconButton,
   Tooltip,
+  Snackbar,
+  Avatar,
+  Fade,
+  Divider,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -16,12 +20,17 @@ import {
   Search as SearchIcon,
   FilterList as FilterIcon,
   Close as CloseIcon,
+  Group as GroupIcon,
+  Star,
+  StarBorder,
+  Archive,
+  ArchiveOutlined,
+  Unarchive,
 } from "@mui/icons-material";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
 import { UserPresence } from "./components";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
-import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
 
 const DirectMessagesProviderView: React.FC = () => {
   
@@ -44,9 +53,14 @@ const DirectMessagesProviderView: React.FC = () => {
     isSending,
     userSuggestions,
     isLoadingSuggestions,
+    suggestionsOnlineOnly,
+    setUserSuggestionsOnlineOnly,
     selectConversation,
     createConversation,
     startDirectMessage,
+    favoriteConversation,
+    archiveConversation,
+    addMembersToConversation,
     sendMessage,
     updateDraft,
     loadUserSuggestions,
@@ -62,40 +76,30 @@ const DirectMessagesProviderView: React.FC = () => {
   const [showUserSelector, setShowUserSelector] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
+  const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
+  const [showConnectionStatus, setShowConnectionStatus] = useState(true);
 
 
-  // Debug logging
+  // Auto-clear error message after 6 seconds
   React.useEffect(() => {
-    console.log("Direct Messages Provider - State:", {
-      connected,
-      connectionStatus,
-      isLoading,
-      isLoadingHistory,
-      isLoadingConversations,
-      error,
-      currentUser,
-      activeConversationId,
-      messagesCount: messages.length,
-      conversationsCount: conversations.length,
-      onlineUsersCount: onlineUsers.length,
-      onlineUsers,
-      userPresenceCount: Object.keys(userPresence).length,
-      userPresence,
-    });
-  }, [
-    connected,
-    connectionStatus,
-    isLoading,
-    isLoadingHistory,
-    isLoadingConversations,
-    error,
-    currentUser,
-    activeConversationId,
-    messages,
-    conversations,
-    onlineUsers,
-    userPresence,
-  ]);
+    if (userErrorMessage) {
+      const timer = setTimeout(() => {
+        setUserErrorMessage(null);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [userErrorMessage]);
+
+  // Auto-hide connection status after 3 seconds on success
+  React.useEffect(() => {
+    setShowConnectionStatus(true); // Show on any status change
+    if (connectionStatus === "connected") {
+      const timer = setTimeout(() => {
+        setShowConnectionStatus(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [connectionStatus]);
 
   const getSeverity = (status: typeof connectionStatus) => {
     switch (status) {
@@ -110,10 +114,31 @@ const DirectMessagesProviderView: React.FC = () => {
     }
   };
 
-  const getStatusMessage = (status: typeof connectionStatus) => {
+  const getStatusColor = (status: typeof connectionStatus) => {
     switch (status) {
       case "connected":
-        return `Connected to Direct Messages${currentUser ? ` as ${currentUser.name}` : ""}`;
+        return "success.main";
+      case "connecting":
+        return "info.main";
+      case "disconnected":
+        return "warning.main";
+      case "error":
+        return "error.main";
+      default:
+        return "grey.main";
+    }
+  };
+
+  const getStatusMessage = (status: typeof connectionStatus): React.ReactNode => {
+    switch (status) {
+      case "connected":
+        return (
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="body2">
+              Connected {currentUser ? ` as ${currentUser.name}` : ""}
+            </Typography>
+          </Stack>
+        );
       case "connecting":
         return "Connecting to Direct Messages service...";
       default:
@@ -130,13 +155,24 @@ const DirectMessagesProviderView: React.FC = () => {
   const handleStartNewConversation = () => {
     setShowUserSelector(true);
     setUserSelectorMode('new');
-    loadUserSuggestions();
+    loadUserSuggestions('');
   };
 
   const handleCloseConversation = () => {
-    console.log('Closing conversation, current activeConversationId:', activeConversationId);
     setActiveConversationId(null);
-    console.log('Conversation closed');
+  };
+
+  const handleStarConversation = () => {
+    if (activeConversationId) {
+      favoriteConversation(activeConversationId);
+    }
+  };
+
+  const handleArchiveConversation = () => {
+    if (activeConversationId) {
+      // The function in the hook will handle toggling based on current state
+      archiveConversation(activeConversationId);
+    }
   };
 
   const handleUserSelect = async (user: ConversationMember) => {
@@ -186,12 +222,11 @@ const DirectMessagesProviderView: React.FC = () => {
   const handleAddParticipant = () => {
     setShowUserSelector(true);
     setUserSelectorMode('add');
-    loadUserSuggestions();
+    loadUserSuggestions('');
   };
 
   const handleRemoveParticipant = async (userId: string) => {
     // Placeholder: will call service when API is confirmed
-    console.log('Remove participant', userId);
   };
 
   const handleUserConfirm = async (users: ConversationMember[]) => {
@@ -204,12 +239,29 @@ const DirectMessagesProviderView: React.FC = () => {
           await createConversation({ participantIds: users.map(u => u.userId) });
         }
       } else if (userSelectorMode === 'add') {
-        if (!activeConversationId) return;
-        await directMessagesService.addMembers(activeConversationId, {
-          participantIds: users.map(u => u.userId),
-        });
-        await loadConversations();
+        if (!activeConversationId) {
+          console.error('[DM] No active conversation to add members to');
+          return;
+        }
+        
+        try {
+          // Try to add members using the API
+          await addMembersToConversation(activeConversationId, users.map(u => u.userId));
+        } catch (error: any) {
+          console.error('[DM] Failed to add members:', error);
+          
+          // Check if it's a 500 error - the endpoint might not be implemented yet
+          if (error.message?.includes('500') || error.message?.includes('Internal server error')) {
+            console.warn('[DM] Add members endpoint not available. This feature may not be implemented on the server yet.');
+            setUserErrorMessage('Adding members to conversations is not available yet. Please create a new group conversation instead.');
+          } else {
+            setUserErrorMessage(error.message || 'Failed to add members to conversation');
+          }
+        }
       }
+    } catch (error: any) {
+      console.error('[DM] Error in handleUserConfirm:', error);
+      setUserErrorMessage(error.message || 'An error occurred');
     } finally {
       setShowUserSelector(false);
     }
@@ -313,24 +365,50 @@ const DirectMessagesProviderView: React.FC = () => {
       boxSizing: "border-box"
     }}>
       {/* Connection status */}
-      <Alert
-        severity={getSeverity(connectionStatus)}
-        action={
-          connectionStatus !== "connected" && (
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={handleRetryConnection}
-              startIcon={<RefreshIcon />}
-              disabled={isLoading}
-            >
-              Retry
-            </Button>
-          )
-        }
-      >
-        {getStatusMessage(connectionStatus)}
-      </Alert>
+      <Fade in={showConnectionStatus}>
+        <Alert
+          severity={getSeverity(connectionStatus)}
+          icon={false}
+          sx={{
+            borderRadius: 2,
+            p: 1,
+            display: 'flex',
+            alignItems: 'center',
+            width: 'fit-content',
+            minWidth: 280,
+            position: 'absolute',
+            top: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1200,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          }}
+          action={
+            connectionStatus !== "connected" && (
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={handleRetryConnection}
+                startIcon={<RefreshIcon />}
+                disabled={isLoading}
+              >
+                Retry
+              </Button>
+            )
+          }
+        >
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Box sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: getStatusColor(connectionStatus),
+              mr: 1
+            }} />
+            {getStatusMessage(connectionStatus)}
+          </Stack>
+        </Alert>
+      </Fade>
 
       {/* Three-pane layout */}
       <Stack direction="row" gap={2} sx={{
@@ -406,42 +484,82 @@ const DirectMessagesProviderView: React.FC = () => {
               <Box sx={{ p: 2, borderBottom: "1px solid #EAECF0" }}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <div>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      {activeConversation?.type === 'GROUP_DM' && (
+                        <Tooltip title="Group Chat">
+                          <Avatar sx={{ width: 28, height: 28, bgcolor: 'secondary.main' }}>
+                            <GroupIcon sx={{ fontSize: 18 }} />
+                          </Avatar>
+                        </Tooltip>
+                      )}
                       <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
                         {getConversationTitle()}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#6B7280" }}>
-                        {getConversationSubtitle()}
-                      </Typography>
-                      {/* Debug info */}
-                      <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.7rem" }}>
-                        Debug: activeConversationId = {activeConversationId}
-                      </Typography>
-                    </div>
-                    {/* Close button */}
-                    <Tooltip title="Close conversation">
-                      <IconButton 
-                        size="medium" 
-                        onClick={(e) => {
-                          console.log('Close button clicked!', e);
-                          console.log('Current activeConversationId before close:', activeConversationId);
-                          alert('Close button clicked!');
-                          handleCloseConversation();
-                        }}
-                        sx={{ 
-                          color: "#374151",
-                          backgroundColor: "#F3F4F6",
-                          border: "1px solid #D1D5DB",
-                          '&:hover': {
-                            color: "#111827",
-                            backgroundColor: "#E5E7EB",
-                            border: "1px solid #9CA3AF",
-                          }
-                        }}
-                      >
-                        <CloseIcon fontSize="medium" />
-                      </IconButton>
-                    </Tooltip>
+                    </Stack>
+                    <Stack direction="row" spacing={1}>
+                      <Tooltip title={
+                        activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite
+                          ? "Unfavorite conversation"
+                          : "Favorite conversation"
+                      }>
+                        <IconButton
+                          size="small"
+                          onClick={handleStarConversation}
+                          sx={{
+                            color: activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite
+                              ? 'warning.main'
+                              : 'grey.500',
+                            '&:hover': {
+                              color: 'warning.main',
+                            }
+                          }}
+                        >
+                          {activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite ? (
+                            <Star fontSize="small" />
+                          ) : (
+                            <StarBorder fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={
+                        activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived
+                          ? "Unarchive conversation"
+                          : "Archive conversation"
+                      }>
+                        <IconButton
+                          size="small"
+                          onClick={handleArchiveConversation}
+                          sx={{
+                            color: activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived
+                              ? 'primary.main'
+                              : 'grey.500',
+                            '&:hover': {
+                              color: 'primary.main',
+                            }
+                          }}
+                        >
+                          {activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isArchived ? (
+                            <Unarchive fontSize="small" />
+                          ) : (
+                            <ArchiveOutlined fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Close conversation">
+                        <IconButton
+                          size="small"
+                          onClick={handleCloseConversation}
+                          sx={{
+                            color: 'grey.500',
+                            '&:hover': {
+                              color: 'error.main',
+                            }
+                          }}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </Stack>
                   
                   {/* Participants */}
@@ -551,10 +669,28 @@ const DirectMessagesProviderView: React.FC = () => {
         onSelect={handleUserSelect}
         onConfirm={handleUserConfirm}
         onSearch={handleUserSearch}
+        onlineOnly={suggestionsOnlineOnly}
+        onToggleOnlineOnly={setUserSuggestionsOnlineOnly}
         loading={isLoadingSuggestions}
         onClose={() => setShowUserSelector(false)}
         open={showUserSelector}
       />
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!userErrorMessage}
+        autoHideDuration={6000}
+        onClose={() => setUserErrorMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setUserErrorMessage(null)}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {userErrorMessage}
+        </Alert>
+      </Snackbar>
     </Stack>
   );
 };

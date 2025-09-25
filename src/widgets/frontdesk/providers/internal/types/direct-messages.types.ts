@@ -41,6 +41,14 @@ export interface DMMessage {
     type: 'text' | 'file' | 'image';
     [key: string]: any;
   };
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
 // Context types for contextual conversations
@@ -101,6 +109,14 @@ export interface DMMessageConfirmedEvent {
   timestamp: string;
   tempId?: string;
   status: 'sent';
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
 export interface DMNewMessageEvent {
@@ -110,11 +126,23 @@ export interface DMNewMessageEvent {
   userId: string;
   timestamp: string;
   tempId?: string;
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
 export interface DMUnreadCountUpdatedEvent {
   conversationId: string;
   unreadCount: number;
+}
+
+export interface DMWelcomeEvent {
+  conversationIds: string[];
 }
 
 export interface DMTypingEvent {
@@ -215,5 +243,6 @@ export interface UserSelectorProps {
   loading?: boolean;
   open: boolean;
   onClose: () => void;
+  onlineOnly?: boolean;
+  onToggleOnlineOnly?: (value: boolean) => void;
 }
-

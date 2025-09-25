@@ -10,7 +10,6 @@ import {
   Avatar,
   Chip,
   Stack,
-  Divider,
 } from "@mui/material";
 import { Circle as OnlineIcon, Person as PersonIcon } from "@mui/icons-material";
 import { DMPresenceData as PresenceData } from "../types";
@@ -64,6 +63,9 @@ const StatusChip: React.FC<{ status: "online" | "away" | "busy" | "offline" }> =
 
 export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPresence, currentUserId, onUserClick }) => {
   const getDisplayName = (presence: PresenceData) => {
+    // Prefer explicit name field when provided
+    if (presence.name && presence.name.trim()) return presence.name.trim();
+
     const firstName = presence.firstName || "";
     const lastName = presence.lastName || "";
     const fullName = `${firstName} ${lastName}`.trim();
@@ -80,62 +82,21 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
       .slice(0, 2);
   };
 
-  const getLastSeenText = (presence: PresenceData) => {
-    if (presence.status === "offline" && presence.lastSeen) {
-      const lastSeenDate = new Date(presence.lastSeen);
-      const now = new Date();
-      const diffMinutes = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60));
-
-      if (diffMinutes < 1) {
-        return "Just now";
-      } else if (diffMinutes < 60) {
-        return `${diffMinutes}m ago`;
-      } else if (diffMinutes < 1440) {
-        return `${Math.floor(diffMinutes / 60)}h ago`;
-      } else {
-        return `${Math.floor(diffMinutes / 1440)}d ago`;
-      }
-    }
-    return null;
-  };
-
-  // Separate online and offline users (excluding current user and ensuring uniqueness)
-  const uniqueUserIds = new Set<string>();
+  const seenUserIds = new Set<string>();
   const onlineUsersData = onlineUsers
     .map((userId) => userPresence[userId])
     .filter(Boolean)
     .filter((presence) => {
-      // Exclude current user and duplicates
-      if (presence.userId === currentUserId || uniqueUserIds.has(presence.userId)) {
+      if (!presence || presence.status === "offline") return false;
+      if (presence.userId === currentUserId || seenUserIds.has(presence.userId)) {
         return false;
       }
-      uniqueUserIds.add(presence.userId);
+      seenUserIds.add(presence.userId);
       return true;
     })
     .sort((a, b) => getDisplayName(a).localeCompare(getDisplayName(b)));
 
-  const offlineUsersData = Object.values(userPresence)
-    .filter((presence) => {
-      // Exclude online users, current user, and duplicates
-      if (onlineUsers.includes(presence.userId) ||
-          presence.userId === currentUserId ||
-          uniqueUserIds.has(presence.userId)) {
-        return false;
-      }
-      uniqueUserIds.add(presence.userId);
-      return true;
-    })
-    .sort((a, b) => {
-      // Sort by last seen (most recent first) then by name
-      if (a.lastSeen && b.lastSeen) {
-        return new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime();
-      }
-      return getDisplayName(a).localeCompare(getDisplayName(b));
-    })
-    .slice(0, 10); // Limit offline users shown
-
   const totalOnline = onlineUsersData.length;
-  const totalUsers = uniqueUserIds.size; // Count unique users only
 
   return (
     <Paper
@@ -167,7 +128,7 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
           />
         </Stack>
         <Typography variant="body2" sx={{ color: "#6B7280", mt: 0.5 }}>
-          {totalUsers} total members
+          {totalOnline} active now
         </Typography>
       </Box>
 
@@ -226,73 +187,8 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
             </List>
           </>
         )}
-
-        {/* Divider */}
-        {onlineUsersData.length > 0 && offlineUsersData.length > 0 && <Divider sx={{ my: 1 }} />}
-
-        {/* Offline Users */}
-        {offlineUsersData.length > 0 && (
-          <>
-            <Box sx={{ p: 2, pb: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#374151", fontSize: "0.75rem" }}>
-                OFFLINE
-              </Typography>
-            </Box>
-            <List dense sx={{ py: 0 }}>
-              {offlineUsersData.map((presence) => (
-                <ListItem
-                  key={presence.userId}
-                  onClick={() => onUserClick?.(presence.userId)}
-                  sx={{
-                    py: 1,
-                    px: 2,
-                    opacity: 0.7,
-                    cursor: onUserClick ? "pointer" : "default",
-                    "&:hover": onUserClick
-                      ? {
-                          backgroundColor: "#F9FAFB",
-                          opacity: 1,
-                        }
-                      : {},
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        fontSize: "0.75rem",
-                        bgcolor: "#6B7280",
-                      }}
-                    >
-                      {getInitials(presence)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Typography variant="body2" sx={{ fontWeight: 500, color: "#374151" }}>
-                        {getDisplayName(presence)}
-                      </Typography>
-                    }
-                    secondary={
-                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
-                        <StatusChip status="offline" />
-                        {getLastSeenText(presence) && (
-                          <Typography variant="caption" sx={{ color: "#9CA3AF" }}>
-                            {getLastSeenText(presence)}
-                          </Typography>
-                        )}
-                      </Stack>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </>
-        )}
-
         {/* Empty state */}
-        {onlineUsersData.length === 0 && offlineUsersData.length === 0 && (
+        {onlineUsersData.length === 0 && (
           <Box sx={{ p: 4, textAlign: "center" }}>
             <PersonIcon sx={{ fontSize: 48, color: "#D1D5DB", mb: 2 }} />
             <Typography variant="body2" sx={{ color: "#6B7280" }}>

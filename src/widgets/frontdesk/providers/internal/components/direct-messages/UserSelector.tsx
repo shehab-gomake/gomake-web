@@ -15,14 +15,21 @@ import {
   Box,
   Typography,
   CircularProgress,
-  Stack,
+  Grid,
   Chip,
   IconButton,
+  FormControlLabel,
+  Switch,
+  Divider,
+  Stack,
 } from '@mui/material';
 import {
   Search as SearchIcon,
   PersonAdd as PersonAddIcon,
   Close as CloseIcon,
+  CheckCircle as CheckCircleIcon,
+  PeopleOutline as PeopleOutlineIcon,
+  GroupAdd as GroupAddIcon,
 } from '@mui/icons-material';
 import { ConversationMember, UserSelectorProps } from '../../types/direct-messages.types';
 
@@ -34,6 +41,8 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
   loading = false,
   onClose,
   open,
+  onlineOnly = false,
+  onToggleOnlineOnly,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<ConversationMember[]>([]);
@@ -78,9 +87,9 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
     onClose();
   };
 
-  const getUserAvatar = (user: ConversationMember) => {
+  const getUserAvatar = (user: ConversationMember, size = 40) => {
     return (
-      <Avatar sx={{ width: 40, height: 40 }}>
+      <Avatar sx={{ width: size, height: size, fontSize: size > 32 ? '1rem' : '0.8rem' }}>
         {user.firstName?.[0]}{user.lastName?.[0]}
       </Avatar>
     );
@@ -93,14 +102,14 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: { height: '70vh' }
+        sx: { height: '70vh', maxHeight: '600px', borderRadius: 2 }
       }}
     >
-      <DialogTitle>
+      <DialogTitle sx={{ bgcolor: 'background.paper', borderBottom: '1px solid', borderColor: 'divider' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <PersonAddIcon />
-            <Typography variant="h6">Start New Conversation</Typography>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <GroupAddIcon color="primary" />
+            <Typography variant="h6">Create a conversation</Typography>
           </Stack>
           <IconButton onClick={handleCancel} size="small">
             <CloseIcon />
@@ -108,100 +117,159 @@ export const UserSelector: React.FC<UserSelectorProps> = ({
         </Stack>
       </DialogTitle>
 
-      <DialogContent sx={{ p: 0 }}>
-        <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-          <TextField
-            fullWidth
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => {
-              const q = e.target.value;
-              setSearchQuery(q);
-              if (onSearch) onSearch(q);
-            }}
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
-            }}
-            variant="outlined"
-            size="small"
-          />
-        </Box>
-
-        {selectedUsers.length > 0 && (
-          <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Selected ({selectedUsers.length})
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-              {selectedUsers.map(user => (
-                <Chip
-                  key={user.userId}
-                  label={user.name}
-                  onDelete={() => handleUserToggle(user)}
+      <DialogContent sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
+        <Grid container sx={{ flex: 1, overflow: 'hidden' }}>
+          {/* Left side: User list and search */}
+          <Grid item xs={7} sx={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid', borderColor: 'divider' }}>
+            <Box sx={{ p: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <TextField
+                  fullWidth
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const q = e.target.value;
+                    setSearchQuery(q);
+                    if (onSearch) onSearch(q);
+                  }}
+                  InputProps={{
+                    startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                  }}
+                  variant="outlined"
                   size="small"
-                  color="primary"
                 />
-              ))}
-            </Stack>
-          </Box>
-        )}
+                <FormControlLabel
+                  control={
+                    <Switch
+                      size="small"
+                      checked={onlineOnly}
+                      onChange={(event) => onToggleOnlineOnly?.(event.target.checked)}
+                      disabled={!onToggleOnlineOnly}
+                    />
+                  }
+                  label="Online"
+                  sx={{ whiteSpace: 'nowrap' }}
+                />
+              </Box>
+            </Box>
+            <Box sx={{ flex: 1, overflow: 'auto', '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'divider', borderRadius: '3px' } }}>
+              {loading ? (
+                <Box sx={{ p: 3, textAlign: 'center' }}>
+                  <CircularProgress />
+                  <Typography sx={{ mt: 1 }}>Loading users...</Typography>
+                </Box>
+              ) : filteredUsers.length === 0 ? (
+                <Box sx={{ p: 3, textAlign: 'center', mt: 4 }}>
+                  <PeopleOutlineIcon sx={{ fontSize: 48, color: 'text.secondary' }} />
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    {searchQuery
+                      ? 'No users found'
+                      : 'No users available'}
+                  </Typography>
+                </Box>
+              ) : (
+                <List sx={{ py: 0 }}>
+                  {filteredUsers.map(user => {
+                    const isSelected = selectedUsers.some(selected => selected.userId === user.userId);
+                    return (
+                      <ListItem key={user.userId} disablePadding>
+                        <ListItemButton
+                          onClick={() => handleUserToggle(user)}
+                          selected={isSelected}
+                          sx={{
+                            py: 0.5,
+                            px: 2,
+                            '&.Mui-selected': {
+                              backgroundColor: 'action.selected',
+                            },
+                          }}
+                        >
+                          <ListItemAvatar sx={{ minWidth: 40 }}>
+                            {getUserAvatar(user, 32)}
+                          </ListItemAvatar>
+                          <ListItemText
+                            primaryTypographyProps={{ fontSize: '0.9rem' }}
+                            secondaryTypographyProps={{ fontSize: '0.8rem' }}
+                            primary={user.name}
+                            secondary={user.email}
+                          />
+                          {isSelected && <CheckCircleIcon color="primary" />}
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              )}
+            </Box>
+          </Grid>
 
-        <Box sx={{ flex: 1, overflow: 'auto' }}>
-          {loading ? (
-            <Box sx={{ p: 3, textAlign: 'center' }}>
-              <CircularProgress size={20} />
-            </Box>
-          ) : filteredUsers.length === 0 ? (
-            <Box sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
-                {searchQuery ? 'No users found matching your search' : 'No users available'}
+          {/* Right side: Selected users */}
+          <Grid item xs={5} sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider' }}>
+              <Typography variant="h6" sx={{ fontSize: '1rem', fontWeight: 600 }}>
+                Selected ({selectedUsers.length})
               </Typography>
+              <Button
+                size="small"
+                onClick={() => setSelectedUsers([])}
+                disabled={selectedUsers.length === 0}
+              >
+                Clear
+              </Button>
             </Box>
-          ) : (
-            <List>
-              {filteredUsers.map(user => {
-                const isSelected = selectedUsers.some(selected => selected.userId === user.userId);
-                
-                return (
-                  <ListItem key={user.userId} disablePadding>
-                    <ListItemButton
-                      onClick={() => handleUserToggle(user)}
-                      selected={isSelected}
-                      sx={{
-                        py: 1.5,
-                        px: 2,
-                        '&.Mui-selected': {
-                          backgroundColor: 'primary.50',
-                        },
-                      }}
+            <Box sx={{ flex: 1, overflow: 'auto', p: 2, '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'divider', borderRadius: '3px' } }}>
+              {selectedUsers.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                  <GroupAddIcon sx={{ fontSize: 48, color: 'text.secondary' }} />
+                  <Typography color="text.secondary" sx={{ mt: 1 }}>
+                    Select users from the list to start a conversation.
+                  </Typography>
+                </Box>
+              ) : (
+                <List sx={{ py: 0 }}>
+                  {selectedUsers.map(user => (
+                    <ListItem
+                      key={user.userId}
+                      disablePadding
+                      sx={{ mb: 1 }}
                     >
-                      <ListItemAvatar>
-                        {getUserAvatar(user)}
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={user.name}
-                        secondary={user.email}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-          )}
-        </Box>
+                      <ListItemButton sx={{ py: 0.5, borderRadius: 1, bgcolor: 'action.hover' }}>
+                        <ListItemAvatar sx={{ minWidth: 40 }}>
+                          {getUserAvatar(user, 32)}
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={user.name}
+                          primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
+                        />
+                        <IconButton
+                          edge="end"
+                          aria-label={`Remove ${user.name}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUserToggle(user);
+                          }}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Box>
+          </Grid>
+        </Grid>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-        <Button onClick={handleCancel} color="inherit">
-          Cancel
-        </Button>
+      <DialogActions sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
         <Button
           onClick={handleConfirm}
           variant="contained"
           disabled={selectedUsers.length === 0}
           startIcon={<PersonAddIcon />}
+          sx={{ ml: 'auto' }}
         >
-          Start Conversation
+          {`Start Conversation (${selectedUsers.length})`}
         </Button>
       </DialogActions>
     </Dialog>
