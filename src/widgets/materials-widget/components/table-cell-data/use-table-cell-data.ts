@@ -1,8 +1,8 @@
 import { useGomakeAxios} from "@/hooks";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState, openChildTableState, inventoryDataState, purchasePricingDataState} from "@/widgets/materials-widget/state";
-import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, getSupplierInventoriesApi, getPurchasePricingApi, updatePrintHouseMaterialRowApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
+import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState, openChildTableState, inventoryDataState, purchasePricingDataState, activeFilterState, materialsTablePageState} from "@/widgets/materials-widget/state";
+import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, getSupplierInventoriesApi, getPurchasePricingApi, updatePrintHouseMaterialRowApi, getPrintHouseMaterialCategoryDataNewApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updateMaterialPropApi, getMaterialCategoryDataApi} from "@/services/api-service/materials/materials-endpoints";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -16,6 +16,8 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     const openChildTable = useRecoilValue(openChildTableState);
     const setInventoryData = useSetRecoilState(inventoryDataState);
     const setPurchasePricingData = useSetRecoilState(purchasePricingDataState);
+    const activeFilter = useRecoilValue(activeFilterState);
+    const pageNumber = useRecoilValue(materialsTablePageState);
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -60,6 +62,54 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         await getPurchasePricingApi(callApi, callBack, printHouseMaterialId);
     };
 
+    // Function to refresh main table data without showing loading spinner
+    const refreshMainTableData = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                const processedData = res.data?.result?.data?.map((row) => {
+                    const newRow = { ...row, checked: false };
+                    
+                    // Handle SKU from API response (top level)
+                    if (row.sku !== null && row.sku !== undefined && row.sku !== "") {
+                        newRow.rowData.sku = {
+                            value: row.sku,
+                            isEditable: true,
+                            type: 1 // NUMBER
+                        };
+                    }
+
+                    // Handle isActive from API response (top level)
+                    if (row.isActive !== null && row.isActive !== undefined) {
+                        newRow.rowData.Active = {
+                            value: row.isActive,
+                            isEditable: true,
+                            type: 2 // BOOLEAN
+                        };
+                    }
+
+                  
+                    return newRow;
+                });
+                
+                setData(processedData);
+            }
+        };
+        
+        const requestData = {
+            materialKey: materialType?.toString(),
+            categoryKey: materialCategory?.toString(),
+            supplierId: supplierId,
+            isActive: true, // Default to active for refresh
+            customFiltersKeyValueList: []
+        };
+
+        if (isAdmin) {
+            await getMaterialCategoryDataApi(callApi, callBack, requestData, false, new AbortController());
+        } else {
+            await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, requestData, false, new AbortController());
+        }
+    };
+
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
         
         const callBack = (res) => {
@@ -71,15 +121,8 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     // Refresh purchase pricing data after successful update
                     refreshPurchasePricingData(openChildTable.rowId);
                 } else {
-                    setData(data.map(row => row.id === id ? {...row, ...res.data} : row));
-                    if(materialType ==="devices"){
-                        getMaterialCategoryData(
-                            materialType?.toString(),
-                            materialCategory?.toString(),
-                            [],
-                            supplierId
-                        )
-                    }
+                    // Refresh main table data without loading spinner
+                    refreshMainTableData();
                 }
                 if(key.includes("price")){
                     onClickOpenPriceModal()
