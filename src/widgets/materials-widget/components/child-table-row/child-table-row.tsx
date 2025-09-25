@@ -208,11 +208,9 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}></TableCell>
                                     <TableCell sx={classes.headerCell}>Supplier Name</TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase m² Price</TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase Roll Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase Price (m² / Roll)</TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Sale m² Price (Base)</TableCell>
-                                    <TableCell sx={classes.headerCell}>Sale Roll Price (Base)</TableCell>
+                                    <TableCell sx={classes.headerCell}>Sale Price (m² / Roll)</TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>Inventory</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
@@ -270,23 +268,14 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.perUnit?.toString() || ''}
+                                                                value={[
+                                                                    row.purchasePrice?.perUnit?.toString() || '',
+                                                                    row.purchasePrice?.perTon?.toString() || ''
+                                                                ]}
                                                                 isEditable={true}
-                                                                type={1}
+                                                                type={3}
                                                                 id={row.id}
-                                                                parameterKey="purchaseM2Price"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isInventoryTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.purchasePrice?.perTon?.toString() || ''}
-                                                                isEditable={true}
-                                                                type={1}
-                                                                id={row.id}
-                                                                parameterKey="purchaseRollPrice"
+                                                                parameterKey="purchasePrice"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -298,7 +287,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isEditable={true}
                                                                 type={6}
                                                                 id={row.id}
-                                                                parameterKey="purchaseCurrency"
+                                                                parameterKey="currency"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 values={[
@@ -311,23 +300,14 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.perUnit?.toString() || ''}
+                                                                value={[
+                                                                    row.salePrice?.perUnit?.toString() || '',
+                                                                    row.salePrice?.perTon?.toString() || ''
+                                                                ]}
                                                                 isEditable={true}
-                                                                type={1}
+                                                                type={3}
                                                                 id={row.id}
-                                                                parameterKey="saleM2Price"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isInventoryTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.salePrice?.perTon?.toString() || ''}
-                                                                isEditable={true}
-                                                                type={1}
-                                                                id={row.id}
-                                                                parameterKey="saleRollPrice"
+                                                                parameterKey="salePrice"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -427,8 +407,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell >
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell} ></TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         <Box sx={classes.headerButtonContainer}>
                                             Supplier Name
@@ -441,8 +420,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                             </IconButton>
                                         </Box>
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase m² Price</TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase Roll Price</TableCell>
+                                    <TableCell sx={classes.headerCell}>Purchase Price (m² / Roll)</TableCell>
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>Quantity in Package</TableCell>
                                     <TableCell sx={classes.headerCell}>Supplement Time</TableCell>
@@ -491,23 +469,14 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                                                value={[
+                                                                    row.purchasePrice?.["price Unit / ton"]?.value?.[0] || '',
+                                                                    row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''
+                                                                ]}
                                                                 isEditable={true}
-                                                                type={1}
+                                                                type={3}
                                                                 id={row.id}
-                                                                parameterKey="purchaseM2Price"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
-                                                                isEditable={true}
-                                                                type={1}
-                                                                id={row.id}
-                                                                parameterKey="purchaseRollPrice"
+                                                                parameterKey="price Unit / ton"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isPurchasePricingTable={true}
