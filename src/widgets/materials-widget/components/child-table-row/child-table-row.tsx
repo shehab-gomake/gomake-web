@@ -127,7 +127,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                 <TableCell sx={{ textAlign: 'center' }}>Sale Roll Price (Base)</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Sale Currency</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Status</TableCell>
-                                <TableCell sx={{ textAlign: 'center' }}>Length Stock (m)</TableCell>
+                                {/* <TableCell sx={{ textAlign: 'center' }}>Length Stock (m)</TableCell> */}
                                 <TableCell sx={{ textAlign: 'center' }}>Client</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
                             </TableRow>
@@ -253,7 +253,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                             isInventoryTable={true}
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center' }}>{row.inventory || '—'}</TableCell>
+                                    {/* <TableCell sx={{ textAlign: 'center' }}>{row.inventory || '—'}</TableCell> */}
                                     <TableCell sx={{ textAlign: 'center' }}>{row.client || '—'}</TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <IconButton
