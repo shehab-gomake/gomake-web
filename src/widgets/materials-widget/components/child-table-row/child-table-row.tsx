@@ -126,6 +126,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                 <TableCell sx={{ textAlign: 'center' }}>Sale m² Price (Base)</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Sale Roll Price (Base)</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Sale Currency</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }}>Status</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Length Stock (m)</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Client</TableCell>
                                 <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
@@ -160,11 +161,11 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                            value={row.purchasePrice?.perUnit?.toString() || ''}
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
-                                            parameterKey="price Unit / ton"
+                                            parameterKey="purchaseM2Price"
                                             isAdmin={false}
                                             onChangeRowCheckBox={() => { }}
                                             isInventoryTable={true}
@@ -172,7 +173,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                            value={row.purchasePrice?.perTon?.toString() || ''}
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
@@ -184,7 +185,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.purchasePrice?.currency || 'usd'}
+                                            value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
                                             isEditable={true}
                                             type={6}
                                             id={row.id}
@@ -201,7 +202,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.salePrice?.["price Unit / ton"]?.value?.[0] || ''}
+                                            value={row.salePrice?.perUnit?.toString() || ''}
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
@@ -213,7 +214,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.salePrice?.["price Unit / ton"]?.value?.[1] || ''}
+                                            value={row.salePrice?.perTon?.toString() || ''}
                                             isEditable={true}
                                             type={1}
                                             id={row.id}
@@ -225,7 +226,7 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.salePrice?.currency || 'usd'}
+                                            value={row.salePrice?.currency?.toLowerCase() || 'usd'}
                                             isEditable={true}
                                             type={6}
                                             id={row.id}
@@ -237,6 +238,18 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                                 { key: 'usd', value: 'USD' },
                                                 { key: 'eur', value: 'EUR' }
                                             ]}
+                                            isInventoryTable={true}
+                                        />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCellData
+                                            value={row.isActive}
+                                            isEditable={true}
+                                            type={2}
+                                            id={row.id}
+                                            parameterKey="isActive"
+                                            isAdmin={false}
+                                            onChangeRowCheckBox={() => { }}
                                             isInventoryTable={true}
                                         />
                                     </TableCell>
@@ -399,9 +412,9 @@ const ChildTableRow = ({ rowId, isVisible }: IChildTableRowProps) => {
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <TableCellData
-                                            value={row.isActive ? 'Active' : 'Inactive'}
-                                            isEditable={false}
-                                            type={0}
+                                            value={row.isActive}
+                                            isEditable={true}
+                                            type={2}
                                             id={row.id}
                                             parameterKey="isActive"
                                             isAdmin={false}

@@ -93,7 +93,21 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                 const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                 setIsLoading(true);
 
-                updateCellData(id, parameterKey.includes("Currency") ? "currency" : parameterKey, originalValue, priceIndex, pricingType)
+                // Map parameterKey to correct API key for new data structure
+                let apiKey = parameterKey;
+                if (parameterKey === "purchaseM2Price") {
+                    apiKey = "perUnit";
+                } else if (parameterKey === "purchaseRollPrice") {
+                    apiKey = "perTon";
+                } else if (parameterKey === "saleM2Price") {
+                    apiKey = "perUnit";
+                } else if (parameterKey === "saleRollPrice") {
+                    apiKey = "perTon";
+                } else if (parameterKey.includes("Currency")) {
+                    apiKey = "currency";
+                }
+
+                updateCellData(id, apiKey, originalValue, priceIndex, pricingType)
                     .then((response: any) => {
                         setIsLoading(false);
                         // Check if the response indicates success or failure
