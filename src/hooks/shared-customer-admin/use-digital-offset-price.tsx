@@ -5704,9 +5704,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             // "DieCutter"
           ];
 
-          temp = temp.filter(
-            (param) => !parametersToRemove.includes(param.parameterCode)
-          );
+          // temp = temp.filter(
+          //   (param) => !parametersToRemove.includes(param.parameterCode)
+          // );
 
           // Find and handle size parameter after DieCut removal
           let sizeParameter = subSection.parameters.find(
