@@ -7,9 +7,16 @@ const useStyle = ({isHaveDeleteIcon}) => {
   const classes = useMemo(() => {
     return {
       container: {
+        position: "relative" as "relative",
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
         //   height: convertHeightToVH(735)
         //  height:"100%"
+      },
+      closeIcon: {
+        position: "absolute" as "absolute",
+        top: 5,
+        right: 5,
+        cursor: "pointer" as "pointer",
       },
       header: {
         ...FONT_FAMILY.Lexend(500, 20),

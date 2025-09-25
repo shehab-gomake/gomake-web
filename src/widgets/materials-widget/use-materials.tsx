@@ -39,6 +39,7 @@ import {
   materialsUnCheckedState,
   materialTypeTableState,
   openAddRowModalState,
+  openChildTableState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
@@ -155,6 +156,7 @@ const useMaterials = (isAdmin: boolean) => {
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const setIsLoadingMaterials = useSetRecoilState<boolean>(isLoadingMaterialsState);
+  const setOpenChildTable = useSetRecoilState(openChildTableState);
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
@@ -162,6 +164,8 @@ const useMaterials = (isAdmin: boolean) => {
       setMaterialCategoryData([]);
       setIsLoadingMaterials(true);
     }
+    // Reset child table state when changing categories
+    setOpenChildTable({ rowId: '', tableType: null });
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";

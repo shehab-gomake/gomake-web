@@ -11,7 +11,6 @@ interface IPurchasePricingInputProps {
 }
 
 const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps) => {
-    console.log('value', value);
     const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'purchasePricing';

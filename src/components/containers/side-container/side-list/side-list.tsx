@@ -2,6 +2,7 @@ import { ISideListProps } from "@/components/containers/interface";
 import {
   Box,
   Divider,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
@@ -32,6 +33,7 @@ import {
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { useRouter } from "next/router";
 import { adaptPaddingLeft } from "@/utils/adapter";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 
 const ListButton = styled(ListItemButton)(() => {
   const { primaryColor } = useGomakeTheme();
@@ -57,6 +59,7 @@ const SideList = ({
   children,
   isAdmin,
   isHaveDeleteIcon = false,
+  onClickCloseSidebar
 }: ISideListProps) => {
   const { query } = useRouter();
   const { materialType } = query;
@@ -148,6 +151,9 @@ const SideList = ({
     <>
       <Box style={classes.container}>
         <h1 style={classes.header}>{title}</h1>
+        {isHaveDeleteIcon && <IconButton style={classes.closeIcon} onClick={onClickCloseSidebar}>
+          <CloseIcon />
+        </IconButton>}
         <div data-tour="first-step">
           <SearchInput
             name={"side-list-search"}
