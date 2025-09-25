@@ -354,9 +354,7 @@ const useMaterials = (isAdmin: boolean) => {
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
-      t("usersSettings.isActive"),
-      // t("Total inventory"),
-      // t("Purchase Pricing"),
+      // t("usersSettings.isActive"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -418,9 +416,9 @@ const useMaterials = (isAdmin: boolean) => {
             />
           )),
           // Add suppliers column manually since it's now static
-          dataRow?.isActive
-            ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
-            : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+          // dataRow?.isActive
+          //   ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+          //   : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
 
           <MaterialMenuWidget
             dataRow={dataRow}
