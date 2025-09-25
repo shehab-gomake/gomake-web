@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { openChildTableState, openJobsModalState, openAddSupplierModalState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight } from "@mui/icons-material";
 
@@ -136,7 +135,7 @@ const CombinedTable = ({
                                                     right: (headers.length - 1 - index) * 123,
                                                     zIndex: 105,
                                                     boxShadow: index === headers.length && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
-                                                    borderLeft: index === headers.length - 3 ? '2px solid rgba(0,0,0,0.15)' : 'none'
+                                                    borderLeft: index === headers.length - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
                                                 })
                                             }}
                                         >
@@ -187,7 +186,7 @@ const CombinedTable = ({
                                                             zIndex: 5,
                                                             backgroundColor: '#fff',
                                                             boxShadow: cellIndex === headers.length && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
-                                                            borderLeft: cellIndex === headers.length - 3 ? '2px solid rgba(0,0,0,0.15)' : 'none'
+                                                            borderLeft: cellIndex === headers.length - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
                                                         })
                                                     }}
                                                 >

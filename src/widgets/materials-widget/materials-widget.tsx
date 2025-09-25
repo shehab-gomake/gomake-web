@@ -280,7 +280,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       )}
 
       {/* Full width content */}
-      <div style={{ width: '100%', padding: '0 20px' }}>
+      <div style={{ width: '100%', padding: '10px 20px' }}>
         {
           isLoadingMaterials ?
             <div style={{ height: 795, width: "100%" }}>
