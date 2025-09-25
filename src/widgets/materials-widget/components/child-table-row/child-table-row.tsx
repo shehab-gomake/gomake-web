@@ -285,16 +285,11 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
                                                                 isEditable={true}
-                                                                type={6}
+                                                                type={5}
                                                                 id={row.id}
                                                                 parameterKey="currency"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
-                                                                values={[
-                                                                    { key: 'ils', value: 'ILS' },
-                                                                    { key: 'usd', value: 'USD' },
-                                                                    { key: 'eur', value: 'EUR' }
-                                                                ]}
                                                                 isInventoryTable={true}
                                                             />
                                                         </TableCell>
@@ -317,16 +312,11 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.salePrice?.currency?.toLowerCase() || 'usd'}
                                                                 isEditable={true}
-                                                                type={6}
+                                                                type={5}
                                                                 id={row.id}
                                                                 parameterKey="saleCurrency"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
-                                                                values={[
-                                                                    { key: 'ils', value: 'ILS' },
-                                                                    { key: 'usd', value: 'USD' },
-                                                                    { key: 'eur', value: 'EUR' }
-                                                                ]}
                                                                 isInventoryTable={true}
                                                             />
                                                         </TableCell>
@@ -486,16 +476,12 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.purchasePrice?.currency || 'ILS'}
                                                                 isEditable={true}
-                                                                type={6}
+                                                                type={5}
                                                                 id={row.id}
                                                                 parameterKey="currency"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
-                                                                values={[
-                                                                    { key: 'ILS', value: 'ILS' },
-                                                                    { key: 'USD', value: 'USD' },
-                                                                    { key: 'EUR', value: 'EUR' }
-                                                                ]}
+                                                                isPurchasePricingTable={true}
                                                             />
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
