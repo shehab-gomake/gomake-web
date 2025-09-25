@@ -1,10 +1,12 @@
+import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
+import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -22,15 +24,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
+import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Skeleton, Stack, IconButton } from "@mui/material";
+import { Skeleton, Stack, Box, IconButton } from "@mui/material";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
-import { isLoadingMaterialsState } from "@/store";
+import { isLoadgingState, isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
 interface IMaterialsWidgetProps {
@@ -142,6 +146,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         }}
         title={t("materials.chooseCategory")}
         isHaveDeleteIcon={true}
+        onClickCloseSidebar={() => setIsSidebarOpen(false)}
       >
         <Stack style={classes.buttonsContainerStyle}>
           <PrimaryButton
@@ -268,10 +273,38 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
       {/* Absolute positioned sidebar overlay */}
-
+      {isSidebarOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 120,
+            [dir === 'rtl' ? 'right' : 'left']: 140,
+            [dir === 'rtl' ? 'left' : 'right']: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            zIndex: 1300,
+            display: 'flex',
+            flexDirection: dir === 'rtl' ? 'row-reverse' : 'row'
+          }}
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <Box
+            sx={{
+              width: '380px',
+              backgroundColor: '#fff',
+              height: '100%',
+              overflow: 'auto',
+              boxShadow: dir === 'rtl' ? '-2px 0 8px rgba(0,0,0,0.1)' : '2px 0 8px rgba(0,0,0,0.1)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {Side()}
+          </Box>
+        </Box>
+      )}
 
       {/* Full width content */}
-      <div style={{ width: '100%', padding: '10px 20px' }}>
+      <div style={{ width: '100%', padding: '0 20px' }}>
         {
           isLoadingMaterials ?
             <div style={{ height: 795, width: "100%" }}>
@@ -289,11 +322,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
-                        isAdmin={props.isAdmin}
-                        onChangeRowCheckBox={onChangeRowCheckBox}
-                        onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-                        onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
-                        toggleIsActive={toggleIsActive}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -302,11 +330,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
-                        isAdmin={props.isAdmin}
-                        onChangeRowCheckBox={onChangeRowCheckBox}
-                        onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-                        onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
-                        toggleIsActive={toggleIsActive}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>
@@ -337,6 +360,16 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                     ) : (
                       <></>
                     )}
+                  </div>
+
+                  <div style={{ marginBottom: "5px" }}>
+                    <Pagination
+                      count={pagesCount}
+                      variant="outlined"
+                      color="primary"
+                      page={pageNumber}
+                      onChange={(event, value) => setPageNumber(value)}
+                    />
                   </div>
                 </Stack>
               )}
@@ -403,7 +436,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         accept=".xlsx"
         hidden={true}
       />
-    </div>
+    </div >
   );
 };
 

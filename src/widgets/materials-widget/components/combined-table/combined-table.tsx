@@ -12,24 +12,13 @@ import { ChevronRight } from "@mui/icons-material";
 interface ICombinedTableProps {
     headers: any[];
     rows: any[];
-    isAdmin: boolean;
-    onChangeRowCheckBox: (id: string, checked: boolean) => void;
-    onClickOpenDeleteTableRowModal: (dataRow: any) => void;
-    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal: (dataRow: any) => void;
-    toggleIsActive: (id: string, parameterKey: string, value: boolean) => void;
 }
 
 const CombinedTable = ({
     headers,
     rows,
-    isAdmin,
-    onChangeRowCheckBox,
-    onClickOpenDeleteTableRowModal,
-    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
-    toggleIsActive
 }: ICombinedTableProps) => {
     const { t } = useTranslation();
-    const { secondColor } = useGomakeTheme();
     const openChildTable = useRecoilValue(openChildTableState);
     const jobsModal = useRecoilValue(openJobsModalState);
     const setJobsModal = useSetRecoilState(openJobsModalState);
@@ -87,9 +76,6 @@ const CombinedTable = ({
             };
         }
     }, [rows]); // Re-check when rows change
-
-    const fixedColumnsCount = 4; // Last 3 columns + first column = 4 total fixed
-
     return (
         <>
             <Box sx={{ position: 'relative', width: '100%' }}>
@@ -136,10 +122,10 @@ const CombinedTable = ({
                                                 textAlign: 'center',
                                                 fontWeight: 'bold',
                                                 whiteSpace: 'nowrap',
-                                                padding: '12px 8px',
+                                                padding: '4px',
                                                 backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF', // Only last 3 columns get different bg
-                                                minWidth: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
-                                                width: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
+                                                minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
+                                                width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
                                                 ...(isFirstColumn && {
                                                     position: "sticky",
                                                     left: 0,
@@ -185,8 +171,8 @@ const CombinedTable = ({
                                                         textAlign: 'center',
                                                         padding: '12px 8px',
                                                         whiteSpace: 'nowrap',
-                                                        minWidth: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
-                                                        width: isFirstColumn ? '100px' : isLastFixedColumn ? '123px' : 'auto',
+                                                        minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
+                                                        width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
                                                         borderBottom: '1px solid #e0e0e0',
                                                         position: 'relative',
                                                         ...(isFirstColumn && {

@@ -18,6 +18,7 @@ export interface ISideListProps {
   quickActions?: boolean;
   isAdmin?: boolean;
   isHaveDeleteIcon?: boolean;
+  onClickCloseSidebar?: () => void;
 }
 
 export interface IListItem {
