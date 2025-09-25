@@ -93,7 +93,7 @@ const PriceProfitWidget = () => {
       <div style={classes.contentSection}>
         {/* Totals Section */}
 
-        {isFixed && summaryData && (
+        {/* {isFixed && summaryData && (
           <div
             style={{
               display: "flex",
@@ -105,28 +105,47 @@ const PriceProfitWidget = () => {
             }}
           >
             <TotalCardComponent
-              text={t("priceProfit.totalUserInputPrice")}
-              number={formatNumber(summaryData.totalUserInputPrice)}
-              withCurrency={true}
+              text={t("priceProfit.totalPoints")}
+              number={summaryData.totalPoints}
+              withCurrency={false}
             />
             <TotalCardComponent
-              text={t("priceProfit.totalCalculatedPrice")}
-              number={formatNumber(summaryData.totalCalculatedPrice)}
-              withCurrency={true}
-            />
-            <TotalCardComponent
-              text={t("priceProfit.totalFixedPrice")}
-              number={formatNumber(summaryData.totalFixedPrice)}
-              withCurrency={true}
+              text={t("priceProfit.totalAbnormalPoints")}
+              number={summaryData.totalAbnormalPoints}
+              withCurrency={false}
             />
           </div>
-        )}
+        )} */}
         <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
 
         <PriceCurveFit
           {...chartData}
           isSummaryVisible={isFixed && !!summaryData}
         />
+        {isFixed && summaryData && (
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexDirection: "row",
+              flexWrap: "nowrap",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              padding: "0px 16px",
+            }}
+          >
+            <TotalCardComponent
+              text={t("priceProfit.totalPoints")}
+              number={summaryData.totalPoints}
+              withCurrency={false}
+            />
+            <TotalCardComponent
+              text={t("priceProfit.totalAbnormalPoints")}
+              number={summaryData.totalAbnormalPoints}
+              withCurrency={false}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
