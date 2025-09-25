@@ -91,42 +91,29 @@ const PriceProfitWidget = () => {
         <Divider style={classes.divider} />
       </div>
       <div style={classes.contentSection}>
-        {/* Totals Section */}
-
-        {isFixed && summaryData && (
-          <div
-            style={{
-              display: "flex",
-              gap: "12px",
-              flexDirection: "row",
-              flexWrap: "nowrap",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <TotalCardComponent
-              text={t("priceProfit.totalUserInputPrice")}
-              number={formatNumber(summaryData.totalUserInputPrice)}
-              withCurrency={true}
-            />
-            <TotalCardComponent
-              text={t("priceProfit.totalCalculatedPrice")}
-              number={formatNumber(summaryData.totalCalculatedPrice)}
-              withCurrency={true}
-            />
-            <TotalCardComponent
-              text={t("priceProfit.totalFixedPrice")}
-              number={formatNumber(summaryData.totalFixedPrice)}
-              withCurrency={true}
-            />
-          </div>
-        )}
         <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
-
         <PriceCurveFit
           {...chartData}
           isSummaryVisible={isFixed && !!summaryData}
         />
+        {isFixed && summaryData && (
+          <div style={classes.totalsContainer}>
+            <div style={classes.totalCard}>
+              <span style={classes.totalLabel}>
+                {t("priceProfit.totalPoints")}
+              </span>
+              <span style={classes.totalValue}>{summaryData.totalPoints}</span>
+            </div>
+            <div style={classes.totalCard}>
+              <span style={classes.totalLabel}>
+                {t("priceProfit.totalAbnormalPoints")}
+              </span>
+              <span style={classes.totalValue}>
+                {summaryData.totalAbnormalPoints}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

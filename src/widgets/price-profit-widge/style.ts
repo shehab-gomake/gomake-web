@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
+
 const useStyle = () => {
   const classes = useMemo(() => {
     return {
@@ -39,6 +41,37 @@ const useStyle = () => {
         height: "auto",
         maxHeight: 600,
         gap: "10px",
+      },
+      totalsContainer: {
+        display: "flex",
+        gap: "8px",
+        flexDirection: "row" as "row",
+        flexWrap: "nowrap" as "nowrap",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: "0px 16px",
+        marginTop: "8px",
+      },
+      totalCard: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        gap: "8px",
+        alignItems: "center",
+        padding: "3px 6px",
+        backgroundColor: "#2E3092",
+        borderRadius: "4px",
+        minWidth: "50px",
+        height: "28px",
+        justifyContent: "center",
+      },
+      totalLabel: {
+        color: "#FFFFFF",
+        marginBottom: "1px",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
+      totalValue: {
+        color: "#FFFFFF",
+        ...FONT_FAMILY.Lexend(600, 12),
       },
     };
   }, []);

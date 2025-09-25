@@ -49,61 +49,23 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
       : formatNumber(value);
   };
 
-  const metricsold = [
-    {
-      key: "diffBeforeOptimization",
-      label: t("priceProfit.diffBeforeOptimization"),
-      value: formatNumberWithCurrency(summaryData.diffBeforeOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalCalculatedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalCalculatedPrice)}`,
-    },
-    {
-      key: "diffAfterOptimization",
-      label: t("priceProfit.diffAfterOptimization"),
-      value: formatNumberWithCurrency(summaryData.diffAfterOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalFixedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalFixedPrice)}`,
-    },
-    {
-      key: "accuracyBeforeOptimization",
-      label: t("priceProfit.accuracyBeforeOptimization"),
-      value: formatPercentage(summaryData.accuracyBeforeOptimization),
-      color:
-        summaryData.accuracyAfterOptimization <
-        summaryData.accuracyBeforeOptimization
-          ? "#4caf50"
-          : "#f44336",
-    },
-    {
-      key: "accuracyAfterOptimization",
-      label: t("priceProfit.accuracyAfterOptimization"),
-      value: formatPercentage(summaryData.accuracyAfterOptimization),
-      color:
-        summaryData.accuracyAfterOptimization >
-        summaryData.accuracyBeforeOptimization
-          ? "#4caf50"
-          : "#f44336",
-    },
-    {
-      key: "totalPoints",
-      label: t("priceProfit.totalPoints"),
-      value: summaryData.totalPoints,
-    },
-    {
-      key: "totalAbnormalPoints",
-      label: t("priceProfit.totalAbnormalPoints"),
-      value: summaryData.totalAbnormalPoints,
-    },
-  ];
-
   const metrics = [
     {
+      key: "totalUserInputPrice",
+      label: t("priceProfit.totalUserInputPrice"),
+      value: formatNumberWithCurrency(summaryData.totalUserInputPrice),
+    },
+    {
+      key: "totalCalculatedPrice",
+      label: t("priceProfit.totalCalculatedPrice"),
+      value: formatNumberWithCurrency(summaryData.totalCalculatedPrice),
+    },
+    {
+      key: "totalFixedPrice",
+      label: t("priceProfit.totalFixedPrice"),
+      value: formatNumberWithCurrency(summaryData.totalFixedPrice),
+    },
+    {
       key: "diffBeforeOptimization",
       label: t("priceProfit.diffBeforeOptimization"),
       value: formatNumberWithCurrency(summaryData.diffBeforeOptimization),
@@ -132,16 +94,6 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
         summaryData.accuracyBeforeOptimization
           ? "#4caf50"
           : "#f44336",
-    },
-    {
-      key: "totalPoints",
-      label: t("priceProfit.totalPoints"),
-      value: summaryData.totalPoints,
-    },
-    {
-      key: "totalAbnormalPoints",
-      label: t("priceProfit.totalAbnormalPoints"),
-      value: summaryData.totalAbnormalPoints,
     },
   ];
 
@@ -151,7 +103,13 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
         <CardContent style={classes.cardContent}>
           <Grid container spacing={1} alignItems="stretch">
             {metrics.map(({ key, label, value, color }) => (
-              <Grid item xs={2} md={2} key={key} style={{ display: "flex" }}>
+              <Grid
+                item
+                xs={12 / 7}
+                md={12 / 7}
+                key={key}
+                style={{ display: "flex" }}
+              >
                 <Box style={{ ...classes.metricContainer, flex: 1 }}>
                   <Typography variant="body2" style={classes.metricLabel}>
                     {label}
