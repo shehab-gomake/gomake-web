@@ -13,9 +13,9 @@ const useStyle = () => {
       },
       cardContent: {
         width: "100%",
-        padding: "20px 30px 5px 30px",
+        padding: "0px 16px 8px 16px",
         "&:last-child": {
-          paddingBottom: "20px",
+          paddingBottom: "12px",
         },
       },
       title: {
@@ -25,20 +25,20 @@ const useStyle = () => {
       },
       metricContainer: {
         textAlign: "center" as "center",
-        padding: "12px",
-        borderRadius: "6px",
+        padding: "8px",
+        borderRadius: "8px",
         backgroundColor: "#f8f9fa",
         border: "1px solid #e9ecef",
       },
       metricLabel: {
         color: "#6c757d",
-        marginBottom: "8px",
+        marginBottom: "4px",
         fontWeight: 500,
-        fontSize: "0.875rem",
+        fontSize: "0.78rem",
       },
       metricValue: {
         fontWeight: 700,
-        fontSize: "1.25rem",
+        fontSize: "1rem",
         color: "#212529",
       },
     };
