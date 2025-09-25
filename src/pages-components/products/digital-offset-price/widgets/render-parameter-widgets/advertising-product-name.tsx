@@ -72,7 +72,23 @@ const AdvertisingProductNameParameterWidget = ({
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
-  const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.unitKey;
+  // Get unit from subProducts first, then fallback to productTemplate
+  const unitFromSubProducts = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.unitKey;
+
+  const getUnitFromTemplate = () => {
+    if (unitFromSubProducts) return unitFromSubProducts;
+
+    // Search in productTemplate if not found in subProducts using existing helper function
+    const widthParamFromTemplate = productTemplate?.sections?.flatMap(section =>
+      section.subSections?.flatMap(subSection =>
+        subSection.parameters?.filter(param => param.code === "Width" || param.code === "Height")
+      )
+    ).find(param => param?.unitKey);
+
+    return widthParamFromTemplate?.unitKey;
+  };
+
+  const unit = getUnitFromTemplate();
 
   const DieCutTypeOptions = [
     { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
