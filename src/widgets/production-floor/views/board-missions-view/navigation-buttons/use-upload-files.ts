@@ -183,7 +183,7 @@ const useUploadFiles = (
                   ...fg,
                   filesInfo: fg.filesInfo.map(fileInfo =>
                     fileInfo.uploadId === uploadId
-                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded,downloadFilePath:response.source }
+                      ? { ...fileInfo, fileStatus: response.isUploadedToGoogleCloud ? EUploadingFileStatus.UploadedToGoogleCloud : EUploadingFileStatus.Uploaded,downloadFilePath:response.source ,bucketKey:response.bucketKey}
                       : fileInfo
                   ),
                 }

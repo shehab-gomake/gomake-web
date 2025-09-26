@@ -21,6 +21,7 @@ export interface IUploadingFile {
   orderItemId?: string;
   productType?: string;
   downloadFilePath?: string;
+  bucketKey?: string;
 }
 
 export enum EUploadingFileStatus {

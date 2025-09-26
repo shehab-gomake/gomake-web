@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import config from "@/config";
-import { useRecoilState } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {
   fileUploaderConnectionIdState,
   openFileUploaderList,
   pinFileUploaderState,
   uploadingFilesState,
 } from "@/store/file-uploader-state";
+import {printHouseProfile} from "@/store/print-house-profile";
+import {EUploadingFileStatus} from "@/widgets/file-uploader-widget/interface";
 
 const useFilesUploaderSocketIO = () => {
   const [connectionId, setConnectionId] = useState<string>();
@@ -16,7 +18,7 @@ const useFilesUploaderSocketIO = () => {
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [, setOpen] = useRecoilState(openFileUploaderList);
   const [, setConnectionIdState] = useRecoilState(fileUploaderConnectionIdState);
-
+  const profile = useRecoilValue(printHouseProfile);
 
   useEffect(()=>{
     const socket = io(config.api_server);
@@ -36,10 +38,6 @@ const useFilesUploaderSocketIO = () => {
 
       
     });
-  
-
-  
-   
     socket.on('connect', () => {
       setConnectionId(socket.id);
       setConnectionIdState(socket.id);
