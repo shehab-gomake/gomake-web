@@ -235,6 +235,276 @@ export class DirectMessagesService {
     return this.makeRequest<Conversation[]>(`/dms/search?${params.toString()}`);
   }
 
+  // Search messages globally across all conversations
+  async searchAllMessages(
+    query: string,
+    options: {
+      limit?: number;
+      offset?: number;
+      sortBy?: 'relevance' | 'date_desc' | 'date_asc';
+      useFullText?: boolean;
+      includeConversationInfo?: boolean;
+    } = {}
+  ): Promise<{
+    results: Array<{
+      id: string;
+      conversationId: string;
+      content: string;
+      contentSnippet: string;
+      createdAt: string;
+      userId: string;
+      isSystem: boolean;
+      rank?: number;
+      highlights?: Array<{ start: number; end: number; text: string }>;
+      messagePosition?: {
+        messageIndex: number;
+        totalMessages: number;
+        previousMessageId?: string;
+        nextMessageId?: string;
+      };
+      user?: {
+        name: string | null;
+        firstName: string | null;
+        lastName: string | null;
+      };
+      conversation?: {
+        id: string;
+        name: string | null;
+        type: 'DM' | 'GROUP_DM' | 'direct' | 'group';
+        participantCount: number;
+      };
+    }>;
+    total: number;
+    hasMore: boolean;
+  }> {
+    const params = new URLSearchParams();
+    params.append("query", query);
+    if (options.limit !== undefined) params.append("limit", options.limit.toString());
+    if (options.offset !== undefined) params.append("offset", options.offset.toString());
+    if (options.sortBy) params.append("sortBy", options.sortBy);
+    if (options.useFullText !== undefined) params.append("useFullText", options.useFullText.toString());
+    if (options.includeConversationInfo !== undefined) {
+      params.append("includeConversationInfo", options.includeConversationInfo.toString());
+    }
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+
+    const fetchSearch = async (endpoint: string) => this.makeRequest<any>(endpoint);
+
+    let response: any;
+    try {
+      response = await fetchSearch(`/dms/search${queryString}`);
+    } catch (error: any) {
+      const message = typeof error?.message === 'string' ? error.message : '';
+      if (message.includes('404') || message.includes('Not Found')) {
+        response = await fetchSearch(`/dms/search/all${queryString}`);
+      } else {
+        throw error;
+      }
+    }
+
+    const rawResults = Array.isArray(response)
+      ? response
+      : Array.isArray(response?.results)
+        ? response.results
+        : [];
+
+    const mappedResults = rawResults.map((result: any, index: number) => ({
+      id: result.id,
+      conversationId: result.conversationId ?? result.conversation?.id ?? '',
+      content: result.content,
+      contentSnippet: result.contentSnippet || result.content,
+      createdAt: result.createdAt,
+      userId: result.userId,
+      isSystem: Boolean(result.isSystem),
+      rank: typeof result.rank === 'number' ? result.rank : undefined,
+      highlights: Array.isArray(result.highlights) ? result.highlights : undefined,
+      messagePosition: result.messagePosition
+        ? {
+            messageIndex: result.messagePosition.messageIndex ?? index,
+            totalMessages: result.messagePosition.totalMessages ?? 0,
+            previousMessageId: result.messagePosition.previousMessageId,
+            nextMessageId: result.messagePosition.nextMessageId,
+          }
+        : undefined,
+      user: result.user
+        ? {
+            name: result.user.name ?? null,
+            firstName: result.user.firstName ?? null,
+            lastName: result.user.lastName ?? null,
+          }
+        : undefined,
+      conversation: result.conversation
+        ? {
+            id: result.conversation.id,
+            name: result.conversation.name ?? null,
+            type: result.conversation.type,
+            participantCount: result.conversation.participantCount ?? 0,
+          }
+        : undefined,
+    }));
+
+    const total = typeof response?.total === 'number' ? response.total : mappedResults.length;
+    const hasMore =
+      typeof response?.hasMore === 'boolean'
+        ? response.hasMore
+        : options.limit !== undefined
+          ? mappedResults.length === options.limit
+          : false;
+
+    return {
+      results: mappedResults,
+      total,
+      hasMore,
+    };
+  }
+
+  // Search messages within a specific conversation
+  async searchMessagesInConversation(
+    conversationId: string,
+    query: string,
+    options: {
+      limit?: number;
+      offset?: number;
+      sortBy?: 'relevance' | 'date_desc' | 'date_asc';
+      useFullText?: boolean;
+    } = {}
+  ): Promise<{
+    results: Array<{
+      id: string;
+      content: string;
+      contentSnippet: string;
+      createdAt: string;
+      userId: string;
+      isSystem: boolean;
+      rank?: number;
+      highlights?: Array<{ start: number; end: number; text: string }>;
+      messagePosition?: {
+        messageIndex: number;
+        totalMessages: number;
+        previousMessageId?: string;
+        nextMessageId?: string;
+      };
+      index: number;
+    }>;
+    total: number;
+    hasMore: boolean;
+  }> {
+    const params = new URLSearchParams();
+    params.append("query", query);
+    if (options.limit !== undefined) params.append("limit", options.limit.toString());
+    if (options.offset !== undefined) params.append("offset", options.offset.toString());
+    if (options.sortBy) params.append("sortBy", options.sortBy);
+    if (options.useFullText !== undefined) params.append("useFullText", options.useFullText.toString());
+
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+
+    const fetchConversationSearch = async (endpoint: string) => this.makeRequest<any>(endpoint);
+
+    let response: any;
+    try {
+      response = await fetchConversationSearch(`/dms/${conversationId}/search${queryString}`);
+    } catch (error: any) {
+      const message = typeof error?.message === 'string' ? error.message : '';
+      if (message.includes('404') || message.includes('Not Found')) {
+        response = await fetchConversationSearch(`/dms/${conversationId}/messages/search${queryString}`);
+      } else {
+        throw error;
+      }
+    }
+
+    const rawResults = Array.isArray(response)
+      ? response
+      : Array.isArray(response?.results)
+        ? response.results
+        : [];
+
+    const mappedResults = rawResults.map((result: any, index: number) => ({
+      id: result.id,
+      content: result.content,
+      contentSnippet: result.contentSnippet || result.content,
+      createdAt: result.createdAt,
+      userId: result.userId,
+      isSystem: Boolean(result.isSystem),
+      rank: typeof result.rank === 'number' ? result.rank : undefined,
+      highlights: Array.isArray(result.highlights) ? result.highlights : undefined,
+      messagePosition: result.messagePosition
+        ? {
+            messageIndex: result.messagePosition.messageIndex ?? index,
+            totalMessages: result.messagePosition.totalMessages ?? 0,
+            previousMessageId: result.messagePosition.previousMessageId,
+            nextMessageId: result.messagePosition.nextMessageId,
+          }
+        : undefined,
+      index: result.index !== undefined
+        ? result.index
+        : result.messagePosition?.messageIndex !== undefined
+          ? result.messagePosition.messageIndex
+          : index,
+    }));
+
+    const total = typeof response?.total === 'number' ? response.total : mappedResults.length;
+    const hasMore =
+      typeof response?.hasMore === 'boolean'
+        ? response.hasMore
+        : options.limit !== undefined
+          ? mappedResults.length === options.limit
+          : false;
+
+    return {
+      results: mappedResults,
+      total,
+      hasMore,
+    };
+  }
+
+  // Load messages around a target message for search result context
+  async loadMessagesAroundTarget(
+    conversationId: string,
+    targetMessageId: string,
+    options: {
+      beforeCount?: number;
+      afterCount?: number;
+    } = {}
+  ): Promise<{
+    messagesBefore: DMMessage[];
+    messagesAfter: DMMessage[];
+    targetExists: boolean;
+  }> {
+    const { beforeCount = 25, afterCount = 10 } = options;
+
+    try {
+      // Load messages before the target
+      const beforeResponse = await this.listMessages(conversationId, {
+        before: targetMessageId,
+        limit: beforeCount,
+      });
+
+      // Load messages after the target
+      const afterResponse = await this.listMessages(conversationId, {
+        after: targetMessageId,
+        limit: afterCount,
+      });
+
+      // Check if target message exists in either response
+      const targetExists = beforeResponse.messages.some(m => m.id === targetMessageId) ||
+                          afterResponse.messages.some(m => m.id === targetMessageId);
+
+      return {
+        messagesBefore: beforeResponse.messages,
+        messagesAfter: afterResponse.messages,
+        targetExists,
+      };
+    } catch (error: any) {
+      console.error('Failed to load messages around target:', error);
+      return {
+        messagesBefore: [],
+        messagesAfter: [],
+        targetExists: false,
+      };
+    }
+  }
+
   // Get user suggestions for starting new conversations (maps from /api/users/search)
   async getUserSuggestions(
     query?: string,

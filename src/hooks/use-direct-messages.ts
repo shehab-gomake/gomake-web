@@ -34,6 +34,17 @@ import {
   dmOtherMembersSelector,
   dmSearchQueryState,
   dmFilteredConversationsSelector,
+  dmSearchModeState,
+  dmGlobalSearchResultsState,
+  dmConversationSearchResultsState,
+  dmConversationSearchQueryState,
+  dmCurrentSearchIndexState,
+  dmHighlightedMessageIdState,
+  dmSearchLoadingState,
+  dmGlobalSearchOpenState,
+  dmConversationSearchOpenState,
+  MessageSearchResult,
+  ConversationSearchResult,
 } from "@/store/direct-messages";
 import {
   Conversation,
@@ -74,6 +85,17 @@ export const useDirectMessages = () => {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useRecoilState(dmIsLoadingSuggestionsState);
   const [messageCursors, setMessageCursors] = useRecoilState(dmMessageCursorsState);
   const [suggestionsOnlineOnly, setSuggestionsOnlineOnlyState] = useState(true);
+
+  // Search states
+  const [searchMode, setSearchMode] = useRecoilState(dmSearchModeState);
+  const [globalSearchResults, setGlobalSearchResults] = useRecoilState(dmGlobalSearchResultsState);
+  const [conversationSearchResults, setConversationSearchResults] = useRecoilState(dmConversationSearchResultsState);
+  const [conversationSearchQuery, setConversationSearchQuery] = useRecoilState(dmConversationSearchQueryState);
+  const [currentSearchIndex, setCurrentSearchIndex] = useRecoilState(dmCurrentSearchIndexState);
+  const [highlightedMessageId, setHighlightedMessageId] = useRecoilState(dmHighlightedMessageIdState);
+  const [searchLoading, setSearchLoading] = useRecoilState(dmSearchLoadingState);
+  const [globalSearchOpen, setGlobalSearchOpen] = useRecoilState(dmGlobalSearchOpenState);
+  const [conversationSearchOpen, setConversationSearchOpen] = useRecoilState(dmConversationSearchOpenState);
 
   const { profileState: userProfile } = useUserProfile();
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -804,6 +826,226 @@ export const useDirectMessages = () => {
     [loadUserSuggestions]
   );
 
+  // Search methods
+  const performGlobalSearch = useCallback(
+    async (query: string): Promise<MessageSearchResult[]> => {
+      if (!query.trim()) {
+        setGlobalSearchResults([]);
+        return [];
+      }
+
+      try {
+        setSearchLoading(true);
+        const response = await directMessagesService.searchAllMessages(query, {
+          limit: 50,
+          sortBy: 'relevance',
+          useFullText: true,
+          includeConversationInfo: true,
+        });
+
+        const results = response.results;
+        setGlobalSearchResults(results);
+        return results;
+      } catch (error: any) {
+        console.error("Global search failed:", error);
+        setError(error.message || "Search failed");
+        setGlobalSearchResults([]);
+        return [];
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    [setGlobalSearchResults, setSearchLoading, setError]
+  );
+
+  const performConversationSearch = useCallback(
+    async (query: string): Promise<ConversationSearchResult[]> => {
+      setConversationSearchQuery(query);
+
+      const normalizedQuery = query.trim();
+
+      if (!normalizedQuery || !activeConversationId) {
+        setConversationSearchResults([]);
+        setCurrentSearchIndex(0);
+        setHighlightedMessageId(null);
+        return [];
+      }
+
+      try {
+        setSearchLoading(true);
+        const response = await directMessagesService.searchMessagesInConversation(
+          activeConversationId,
+          normalizedQuery,
+          {
+            limit: 100,
+            sortBy: 'relevance',
+            useFullText: true,
+          }
+        );
+
+        const results = response.results;
+        setConversationSearchResults(results);
+        setCurrentSearchIndex(0);
+        return results;
+      } catch (error: any) {
+        console.error("Conversation search failed:", error);
+        setError(error.message || "Search failed");
+        setConversationSearchResults([]);
+        setCurrentSearchIndex(0);
+        setHighlightedMessageId(null);
+        return [];
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    [
+      activeConversationId,
+      setConversationSearchQuery,
+      setConversationSearchResults,
+      setCurrentSearchIndex,
+      setHighlightedMessageId,
+      setSearchLoading,
+      setError,
+    ]
+  );
+
+  const jumpToMessage = useCallback(
+    async (conversationId: string, messageId: string) => {
+      try {
+        // Switch conversation if necessary
+        if (conversationId !== activeConversationId) {
+          const conversation = conversations.find(c => c.id === conversationId);
+          if (conversation) {
+            await selectConversation(conversation);
+          }
+        }
+
+        // Highlight the message immediately
+        setHighlightedMessageId(messageId);
+
+        // Check if message already exists in current messages
+        const conversationMessages = messages[conversationId] || [];
+        const messageExists = conversationMessages.some(m => m.id === messageId);
+
+        if (!messageExists) {
+          // Use smart loading to get messages around the target
+          const contextResult = await directMessagesService.loadMessagesAroundTarget(conversationId, messageId, {
+            beforeCount: 25,
+            afterCount: 10,
+          });
+
+          if (contextResult.targetExists) {
+            // Merge the loaded messages with existing ones
+            setMessages(prev => {
+              const existing = prev[conversationId] || [];
+              const allMessages = [
+                ...contextResult.messagesBefore,
+                ...contextResult.messagesAfter,
+                ...existing,
+              ];
+
+              // Remove duplicates and sort by timestamp
+              const uniqueMessages = allMessages.reduce((acc: DMMessage[], msg) => {
+                if (!acc.some(m => m.id === msg.id)) {
+                  acc.push(msg);
+                }
+                return acc;
+              }, []);
+
+              uniqueMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+              return {
+                ...prev,
+                [conversationId]: uniqueMessages,
+              };
+            });
+          } else {
+            // Fallback to regular message history loading
+            await loadMessageHistory(conversationId);
+          }
+        }
+
+        // Clear highlight after 3 seconds
+        setTimeout(() => {
+          setHighlightedMessageId(null);
+        }, 3000);
+      } catch (error: any) {
+        console.error("Failed to jump to message:", error);
+        setError(error.message || "Failed to jump to message");
+      }
+    },
+    [activeConversationId, conversations, messages, selectConversation, setHighlightedMessageId, setMessages, loadMessageHistory, setError]
+  );
+
+  const navigateToSearchResult = useCallback(
+    (messageId: string, index: number) => {
+      setCurrentSearchIndex(index);
+
+      if (activeConversationId) {
+        void jumpToMessage(activeConversationId, messageId);
+        return;
+      }
+
+      setHighlightedMessageId(messageId);
+
+      // Clear highlight after 3 seconds when we cannot jump
+      setTimeout(() => {
+        setHighlightedMessageId(null);
+      }, 3000);
+    },
+    [activeConversationId, setCurrentSearchIndex, jumpToMessage, setHighlightedMessageId]
+  );
+
+  const clearSearch = useCallback(
+    (scope: 'global' | 'conversation' | 'all' = 'all') => {
+      if (scope === 'global' || scope === 'all') {
+        setGlobalSearchResults([]);
+        setGlobalSearchOpen(false);
+        if (searchMode === 'global') {
+          setSearchMode(null);
+        }
+      }
+
+      if (scope === 'conversation' || scope === 'all') {
+        setConversationSearchResults([]);
+        setConversationSearchQuery('');
+        setCurrentSearchIndex(0);
+        setHighlightedMessageId(null);
+        setConversationSearchOpen(false);
+        if (scope === 'conversation' && searchMode === 'conversation') {
+          setSearchMode(null);
+        }
+      }
+
+      if (scope === 'all') {
+        setSearchMode(null);
+      }
+    },
+    [
+      searchMode,
+      setSearchMode,
+      setGlobalSearchResults,
+      setConversationSearchResults,
+      setConversationSearchQuery,
+      setCurrentSearchIndex,
+      setHighlightedMessageId,
+      setGlobalSearchOpen,
+      setConversationSearchOpen,
+    ]
+  );
+
+  const openGlobalSearch = useCallback(() => {
+    setSearchMode('global');
+    setGlobalSearchOpen(true);
+    setConversationSearchOpen(false);
+  }, [setSearchMode, setGlobalSearchOpen, setConversationSearchOpen]);
+
+  const openConversationSearch = useCallback(() => {
+    setSearchMode('conversation');
+    setConversationSearchOpen(true);
+    setGlobalSearchOpen(false);
+  }, [setSearchMode, setConversationSearchOpen, setGlobalSearchOpen]);
+
   // Event handlers
   useEffect(() => {
     if (!connected) return;
@@ -1238,6 +1480,22 @@ export const useDirectMessages = () => {
     setError,
   ]);
 
+  // Reset conversation-scoped search state when switching conversations
+  useEffect(() => {
+    setConversationSearchResults([]);
+    setConversationSearchQuery('');
+    setCurrentSearchIndex(0);
+    setHighlightedMessageId(null);
+    setConversationSearchOpen(false);
+  }, [
+    activeConversationId,
+    setConversationSearchResults,
+    setConversationSearchQuery,
+    setCurrentSearchIndex,
+    setHighlightedMessageId,
+    setConversationSearchOpen,
+  ]);
+
   // Auto-connect on mount
   useEffect(() => {
     const userId = userProfile?.id || userProfile?.userId;
@@ -1304,6 +1562,17 @@ export const useDirectMessages = () => {
     suggestionsOnlineOnly,
     setUserSuggestionsOnlineOnly,
 
+    // Search state
+    searchMode,
+    globalSearchResults,
+    conversationSearchResults,
+    conversationSearchQuery,
+    currentSearchIndex,
+    highlightedMessageId,
+    searchLoading,
+    globalSearchOpen,
+    conversationSearchOpen,
+
     // Actions
     connect,
     disconnect,
@@ -1323,7 +1592,17 @@ export const useDirectMessages = () => {
     loadUserSuggestions,
     setActiveConversationId,
     setError,
-    
+
+    // Search actions
+    performGlobalSearch,
+    performConversationSearch,
+    jumpToMessage,
+    navigateToSearchResult,
+    clearSearch,
+    openGlobalSearch,
+    openConversationSearch,
+    setConversationSearchQuery,
+
     // Pagination state
     messageCursors,
   };

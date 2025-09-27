@@ -224,6 +224,8 @@ export interface MessageListProps {
   onLoadMore?: () => void;
   lastReadMessageId?: string;
   onScrollToUnread?: () => void;
+  highlightedMessageId?: string | null;
+  searchQuery?: string;
 }
 
 export interface MessageInputProps {
