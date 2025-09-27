@@ -29,6 +29,11 @@ export const dmConversationsState = atom<Conversation[]>({
   default: []
 });
 
+export const dmConversationsFilterState = atom<'active' | 'archived'>({
+  key: 'dmConversationsFilterState',
+  default: 'active'
+});
+
 export const dmActiveConversationIdState = atom<string | null>({
   key: 'dmActiveConversationIdState',
   default: null

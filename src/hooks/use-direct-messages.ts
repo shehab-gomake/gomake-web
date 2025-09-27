@@ -45,6 +45,7 @@ import {
   dmConversationSearchOpenState,
   MessageSearchResult,
   ConversationSearchResult,
+  dmConversationsFilterState,
 } from "@/store/direct-messages";
 import {
   Conversation,
@@ -67,6 +68,7 @@ export const useDirectMessages = () => {
   const [connected, setConnected] = useRecoilState(dmConnectedState);
   const [currentUser, setCurrentUser] = useRecoilState(dmCurrentUserState);
   const [conversations, setConversations] = useRecoilState(dmConversationsState);
+  const [conversationsFilter, setConversationsFilter] = useRecoilState(dmConversationsFilterState);
   const [activeConversationId, setActiveConversationId] = useRecoilState(dmActiveConversationIdState);
   const [messages, setMessages] = useRecoilState(dmMessagesState);
   const [unreadCounts, setUnreadCounts] = useRecoilState(dmUnreadCountsState);
@@ -197,7 +199,7 @@ export const useDirectMessages = () => {
       const response = await directMessagesService.listConversations({
         limit: 50,
         offset: 0,
-        includeArchived: false,
+        includeArchived: conversationsFilter === 'archived',
       });
 
       // Filter out any invalid conversations before setting
@@ -293,7 +295,13 @@ export const useDirectMessages = () => {
     } finally {
       setIsLoadingConversations(false);
     }
-  }, [setIsLoadingConversations, setError, setConversations, setUnreadCounts, setUserPresence, setOnlineUsers]);
+  }, [setIsLoadingConversations, setError, setConversations, setUnreadCounts, setUserPresence, setOnlineUsers, conversationsFilter]);
+
+  useEffect(() => {
+    if (connected) {
+      loadConversations();
+    }
+  }, [conversationsFilter, connected]);
 
   // Load message history for a conversation
   const loadMessageHistory = useCallback(
@@ -639,15 +647,15 @@ export const useDirectMessages = () => {
           await directMessagesService.unarchiveConversation(conversationId);
         }
 
-        // Reload conversations to get updated state
-        await loadConversations();
+        // Optimistically update the local state
+        setConversations(prev => prev.filter(c => c.id !== conversationId));
 
       } catch (error: any) {
         console.error('Failed to archive/unarchive conversation:', error);
         setError(error.message || 'Failed to archive conversation');
       }
     },
-    [conversations, currentUser, activeConversationId, setActiveConversationId, loadConversations, setError]
+    [conversations, currentUser, activeConversationId, setActiveConversationId, setConversations, setError]
   );
 
   // Add members to conversation (for group chats)
@@ -1605,5 +1613,9 @@ export const useDirectMessages = () => {
 
     // Pagination state
     messageCursors,
+
+    // Conversation filter
+    conversationsFilter,
+    setConversationFilter: setConversationsFilter,
   };
 };
