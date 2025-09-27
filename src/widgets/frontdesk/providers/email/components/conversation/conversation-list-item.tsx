@@ -33,8 +33,12 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   const initials = getEmailInitials(conversation.participants[0] || "");
 
   return (
-    <ListItem disablePadding sx={{ borderRadius: 1, mb: 0.5, mx: 1 }}>
-      <ListItemButton selected={isSelected} onClick={() => onSelect(conversation)} sx={styles}>
+    <ListItem disablePadding>
+      <ListItemButton
+        selected={isSelected}
+        onClick={() => onSelect(conversation)}
+        sx={{ ...styles, py: 1.5, px: 2 }}
+      >
         <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ width: "100%" }}>
           <Avatar
             sx={{
@@ -58,7 +62,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
                 sx={{
                   ...typographyStyles.participant,
                   fontWeight: conversation.isRead ? 400 : 600,
-                  color: isSelected ? primaryColor(700) : neutralColor(700),
+                  color: isSelected ? primaryColor(900) : neutralColor(700),
                 }}
                 noWrap
               >
@@ -72,7 +76,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
                   variant="caption"
                   sx={{
                     ...typographyStyles.timestamp,
-                    color: isSelected ? primaryColor(600) : neutralColor(500),
+                    color: isSelected ? primaryColor(700) : neutralColor(500),
                   }}
                 >
                   {formatConversationDate(conversation.date)}
@@ -86,7 +90,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
               sx={{
                 ...typographyStyles.participant,
                 fontWeight: conversation.isRead ? 500 : 700,
-                color: isSelected ? primaryColor(700) : neutralColor(800),
+                color: isSelected ? primaryColor(800) : neutralColor(800),
                 cursor: "pointer",
                 "&:hover": {
                   textDecoration: "underline",
@@ -108,7 +112,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
               variant="body2"
               sx={{
                 ...typographyStyles.snippet,
-                color: isSelected ? primaryColor(600) : neutralColor(500),
+                color: isSelected ? primaryColor(700) : neutralColor(500),
               }}
             >
               {safeDecodeHtml(conversation.snippet)}

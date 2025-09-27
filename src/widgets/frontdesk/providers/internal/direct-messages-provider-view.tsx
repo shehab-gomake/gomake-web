@@ -87,6 +87,8 @@ const DirectMessagesProviderView: React.FC = () => {
     openGlobalSearch,
     openConversationSearch,
     setConversationSearchQuery,
+    conversationsFilter,
+    setConversationFilter,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
@@ -460,6 +462,17 @@ const DirectMessagesProviderView: React.FC = () => {
                   <Tooltip title="Start new conversation">
                     <IconButton size="small" onClick={handleStartNewConversation}>
                       <AddIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={conversationsFilter === 'archived' ? "Show active conversations" : "Show archived conversations"}>
+                    <IconButton
+                      size="small"
+                      onClick={() => setConversationFilter(conversationsFilter === 'active' ? 'archived' : 'active')}
+                      sx={{
+                        color: conversationsFilter === 'archived' ? 'primary.main' : 'inherit',
+                      }}
+                    >
+                      <ArchiveOutlined fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 </Stack>

@@ -74,7 +74,7 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
       />
 
       {/* Content */}
-      <Box sx={{ flex: 1, overflow: "auto" }}>
+      <Box sx={{ flex: 1, overflow: "auto", px: 1 }}>
         {error ? (
           <Box sx={{ p: 2 }}>
             <Alert severity="error">{error}</Alert>
