@@ -1,13 +1,10 @@
 import React from 'react';
 import { Box, IconButton, Tooltip, Badge, Divider, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import InboxIcon from '@mui/icons-material/Inbox';
 import EmailIcon from '@mui/icons-material/Email';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ChatIcon from '@mui/icons-material/Chat';
 import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
@@ -115,9 +112,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   ];
 
   const systemItems = [
-    { id: 'inbox' as Section, icon: <InboxIcon />, label: 'Inbox' },
-    { id: 'assigned' as Section, icon: <AssignmentIcon />, label: 'Assigned' },
-    { id: 'admin' as Section, icon: <AdminPanelSettingsIcon />, label: 'Admin' },
     { id: 'settings' as Section, icon: <SettingsIcon />, label: 'Settings' }
   ];
 
@@ -128,31 +122,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        paddingTop: '64px' // Added padding to push content down
       }}
     >
-      {/* Logo/Brand Section */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 64,
-          borderBottom: `1px solid ${theme.palette.divider}`
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            color: theme.palette.primary.main,
-            letterSpacing: -0.5
-          }}
-        >
-          FD
-        </Typography>
-      </Box>
-
       {/* Channels Section */}
       <Box sx={{ py: 1 }}>
         <Typography
@@ -188,24 +161,16 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       <Divider sx={{ my: 1 }} />
 
-      {/* System Section */}
-      <Box sx={{ py: 1 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            px: 2,
-            py: 1,
-            display: 'block',
-            color: theme.palette.text.secondary,
-            fontWeight: 500,
-            fontSize: '0.625rem',
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            opacity: 0.7
-          }}
-        >
-          System
-        </Typography>
+      {/* Spacer */}
+      <Box sx={{ flex: 1 }} />
+
+      {/* Footer/Version */}
+      <Box
+        sx={{
+          p: 1,
+          borderTop: `1px solid ${theme.palette.divider}`
+        }}
+      >
         {systemItems.map(item => (
           <NavItem
             key={item.id}
@@ -215,28 +180,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             onClick={() => onSectionSelect(item.id)}
           />
         ))}
-      </Box>
-
-      {/* Spacer */}
-      <Box sx={{ flex: 1 }} />
-
-      {/* Footer/Version */}
-      <Box
-        sx={{
-          p: 1,
-          textAlign: 'center',
-          borderTop: `1px solid ${theme.palette.divider}`
-        }}
-      >
-        <Typography
-          variant="caption"
-          sx={{
-            fontSize: '0.625rem',
-            color: theme.palette.text.disabled
-          }}
-        >
-          v1.0.0
-        </Typography>
       </Box>
     </Box>
   );
