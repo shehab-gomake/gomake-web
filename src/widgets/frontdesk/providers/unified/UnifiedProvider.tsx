@@ -183,7 +183,7 @@ export const UnifiedProvider: React.FC = () => {
               Provider: {selectedConversation.provider}
             </Typography>
             <Typography variant="body1" sx={{ mt: 2 }}>
-              Messages will be displayed here by routing to the appropriate provider's message viewer.
+              Messages will be displayed here by routing to the appropriate provider&apos;s message viewer.
             </Typography>
           </Box>
         ) : (

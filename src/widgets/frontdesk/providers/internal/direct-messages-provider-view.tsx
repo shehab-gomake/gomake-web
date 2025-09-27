@@ -27,7 +27,7 @@ import {
   ArchiveOutlined,
   Unarchive,
 } from "@mui/icons-material";
-import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList } from "./components/direct-messages";
+import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList, GlobalSearch, InConversationSearch } from "./components/direct-messages";
 import { UserPresence } from "./components";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
 import { ConversationMember } from "./types/direct-messages.types";
@@ -71,10 +71,25 @@ const DirectMessagesProviderView: React.FC = () => {
     setError,
     connect,
     disconnect,
+    // Search functionality
+    conversationSearchResults,
+    conversationSearchQuery,
+    currentSearchIndex,
+    highlightedMessageId,
+    searchLoading,
+    globalSearchOpen,
+    conversationSearchOpen,
+    performGlobalSearch,
+    performConversationSearch,
+    jumpToMessage,
+    navigateToSearchResult,
+    clearSearch,
+    openGlobalSearch,
+    openConversationSearch,
+    setConversationSearchQuery,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
   const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
   const [showConnectionStatus, setShowConnectionStatus] = useState(true);
@@ -438,7 +453,7 @@ const DirectMessagesProviderView: React.FC = () => {
                 </Typography>
                 <Stack direction="row" spacing={1}>
                   <Tooltip title="Search conversations">
-                    <IconButton size="small" onClick={() => setShowSearch(!showSearch)}>
+                    <IconButton size="small" onClick={openGlobalSearch}>
                       <SearchIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -497,6 +512,20 @@ const DirectMessagesProviderView: React.FC = () => {
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={1}>
+                      <Tooltip title="Search in conversation">
+                        <IconButton
+                          size="small"
+                          onClick={openConversationSearch}
+                          sx={{
+                            color: conversationSearchOpen ? 'primary.main' : 'grey.500',
+                            '&:hover': {
+                              color: 'primary.main',
+                            }
+                          }}
+                        >
+                          <SearchIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title={
                         activeConversation?.members?.find(m => m.userId === currentUser?.userId)?.isFavorite
                           ? "Unfavorite conversation"
@@ -577,6 +606,20 @@ const DirectMessagesProviderView: React.FC = () => {
                 </Stack>
               </Box>
 
+              {/* In-conversation Search */}
+              <InConversationSearch
+                open={conversationSearchOpen}
+                query={conversationSearchQuery}
+                results={conversationSearchResults}
+                currentIndex={currentSearchIndex}
+                onQueryChange={setConversationSearchQuery}
+                onClose={() => clearSearch('conversation')}
+                onSearch={performConversationSearch}
+                onNavigateToResult={navigateToSearchResult}
+                conversationName={getConversationTitle()}
+                loading={searchLoading}
+              />
+
               {/* Messages */}
               <Box sx={{ 
                 flex: 1, 
@@ -604,6 +647,8 @@ const DirectMessagesProviderView: React.FC = () => {
                       console.log('Scrolled to unread messages, marking as read');
                     }
                   }}
+                  highlightedMessageId={highlightedMessageId}
+                  searchQuery={conversationSearchQuery.trim() || undefined}
                 />
               </Box>
 
@@ -691,6 +736,21 @@ const DirectMessagesProviderView: React.FC = () => {
           {userErrorMessage}
         </Alert>
       </Snackbar>
+
+      {/* Global Search Modal */}
+      <GlobalSearch
+        open={globalSearchOpen}
+        onClose={() => clearSearch('global')}
+        onSearch={performGlobalSearch}
+        onResultSelect={(result) => {
+          if (!result.conversationId) {
+            console.warn('[DM] Global search result missing conversationId', result);
+            return;
+          }
+          jumpToMessage(result.conversationId, result.id);
+        }}
+        loading={searchLoading}
+      />
     </Stack>
   );
 };

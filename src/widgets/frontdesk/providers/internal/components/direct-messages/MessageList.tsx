@@ -12,6 +12,8 @@ export const MessageList: React.FC<MessageListProps> = ({
   onLoadMore,
   lastReadMessageId,
   onScrollToUnread,
+  highlightedMessageId,
+  searchQuery,
 }) => {
   // Convert DMMessage to BaseMessage format
   const baseMessages: BaseMessage[] = messages.map((message) => ({
@@ -35,6 +37,8 @@ export const MessageList: React.FC<MessageListProps> = ({
       themLabel="Team Member"
       lastReadMessageId={lastReadMessageId}
       onScrollToUnread={onScrollToUnread}
+      highlightedMessageId={highlightedMessageId}
+      searchQuery={searchQuery}
     />
   );
 };
