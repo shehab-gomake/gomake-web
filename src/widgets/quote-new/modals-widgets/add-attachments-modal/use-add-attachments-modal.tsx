@@ -57,6 +57,7 @@ const useAddAttachmentsModal = ({
       fileName: data?.fileName,
       screenShot: data?.screenShot,
       url: data?.url,
+      bucketName: data?.bucketName,
     });
   };
 
@@ -81,6 +82,79 @@ const useAddAttachmentsModal = ({
     // Use the filesApiAddress directly in the fetch call
     const file = event.target.files?.[0];
     if (file) {
+      let userToken = getUserToken();
+      if (!userToken) {
+        userToken = getTempUserToken();
+      }
+      debugger;
+      const response = await axios.post(
+          `${quoteConfirm?.filesApiAddress}/api/Files/CreateUploadSession`,
+          { fileName: file.name, contentType: file.type },
+          {
+            headers: {
+              authorization: "Bearer " + userToken,
+            },
+          }
+      );
+      const sessionUri = response.data.sessionUri;
+      const bucketName = response.data.bucketName;
+      const fileUrl = response.data.fileUrl;
+      await uploadFileToGCS(sessionUri,file, (progress) => {})
+      await uploadQuoteItemFileForDocument({
+        id: item.id,
+        fileName: file.name,
+        screenShot: "",
+        url: fileUrl,
+        bucketName: bucketName,
+      });
+      setFileItems((prevItems) => {
+        const existingItemIndex = prevItems.findIndex(
+            (i) => i.id === item.id
+        );
+        debugger
+        if (existingItemIndex >= 0) {
+          const updatedItems = [...prevItems];
+          if(updatedItems?.find(x=>x.fileUrl === fileUrl)){
+            return updatedItems;
+          }
+          updatedItems[existingItemIndex] = {
+            ...updatedItems[existingItemIndex],
+            files: updatedItems[existingItemIndex].files
+                ? [
+                  ...updatedItems[existingItemIndex].files,
+                  {
+                    fileName: file.name,
+                    screenShot: "",
+                    url:fileUrl,
+                  },
+                ]
+                : [
+                  {
+                    fileName: file.name,
+                    screenShot: "",
+                    url: fileUrl,
+                  },
+                ],
+          };
+          return updatedItems;
+        } else {
+          return [
+            ...prevItems,
+            {
+              id: item.id,
+              productName: item.productName,
+              files: [
+                {
+                  fileName: file.name,
+                  screenShot: "",
+                  url: fileUrl,
+                },
+              ],
+            },
+          ];
+        }
+      });
+      return;
       // Call onFileUploadStart if provided
       if (onFileUploadStart) {
         onFileUploadStart();
@@ -195,7 +269,34 @@ const useAddAttachmentsModal = ({
       reader.readAsArrayBuffer(file);
     }
   };
+  async function uploadFileToGCS(sessionUri: string, file: File, onProgress?: (n:number)=>void) {
+    const chunkSize = 8 * 1024 * 1024; // 8 MiB; tune to 8–32 MiB
+    let offset = 0;
 
+    while (offset < file.size) {
+      const end = Math.min(offset + chunkSize, file.size);
+      const chunk = file.slice(offset, end);
+      /*const res = await fetch(sessionUri, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "Content-Range": `bytes ${offset}-${end - 1}/${file.size}`,
+        },
+        body: chunk,
+      });*/
+      const res = await fetch(sessionUri, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "Content-Range": `bytes ${offset}-${end - 1}/${file.size}`,
+        },
+        body: chunk,
+      });
+      if (!(res.ok || res.status === 308)) throw new Error(`Upload failed: ${res.status}`);
+      offset = end;
+      onProgress?.(Math.round((offset / file.size) * 100));
+    }
+  }
   const getAttachmentsRowsQuoteConfirmation = useCallback(
     (item) => {
       const fileItem = fileItems?.find((f) => f.id === item.id);

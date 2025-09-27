@@ -922,6 +922,7 @@ const QuoteNewPageWidget = ({
             quoteConfirm={quoteConfirm}
           />
         )}
+      
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

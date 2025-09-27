@@ -5,9 +5,21 @@ import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-wi
 import { SummaryWidget } from "./widgets/summary/summary-widget";
 import { useEffect } from "react";
 import PriceCurveFit from "./widgets/chart/price-curve-fit";
+import { TotalCardComponent } from "@/pages-components/quotes/widgets/statistics-section/total-card";
+import { useTranslation } from "react-i18next";
 
 const PriceProfitWidget = () => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
+
+  // Currency formatting utilities
+  const numberFormatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const formatNumber = (value: number) => numberFormatter.format(value);
+
   const {
     actionList,
     onChangeActionId,
@@ -74,12 +86,34 @@ const PriceProfitWidget = () => {
           handleRollback={handleRollback}
           isFixed={isFixed}
           onClickDownloadExcel={exportDataForProfitsByAction}
+          summaryData={summaryData}
         />
         <Divider style={classes.divider} />
       </div>
       <div style={classes.contentSection}>
         <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
-        <PriceCurveFit {...chartData} />
+        <PriceCurveFit
+          {...chartData}
+          isSummaryVisible={isFixed && !!summaryData}
+        />
+        {isFixed && summaryData && (
+          <div style={classes.totalsContainer}>
+            <div style={classes.totalCard}>
+              <span style={classes.totalLabel}>
+                {t("priceProfit.totalPoints")}
+              </span>
+              <span style={classes.totalValue}>{summaryData.totalPoints}</span>
+            </div>
+            <div style={classes.totalCard}>
+              <span style={classes.totalLabel}>
+                {t("priceProfit.totalAbnormalPoints")}
+              </span>
+              <span style={classes.totalValue}>
+                {summaryData.totalAbnormalPoints}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
