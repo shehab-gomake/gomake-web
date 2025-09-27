@@ -23,7 +23,7 @@ export interface EmailMessage {
   to: EmailRecipient[];
   cc?: EmailRecipient[];
   bcc?: EmailRecipient[];
-  createdAt: string;
+  date: string;
   text: string;
   html?: string;
   snippet: string;

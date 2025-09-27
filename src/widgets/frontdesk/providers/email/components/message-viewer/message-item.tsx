@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, Avatar } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { alpha } from "@mui/material";
 import { EmailMessage } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { safeFormatDate } from "../../utils/date-utils";
+import { formatMessageDate } from "../../utils/date-utils";
+import { getAvatarColor, getEmailInitials } from "../../utils/avatar-utils";
 
 interface MessageItemProps {
   message: EmailMessage;
@@ -16,7 +17,26 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
   const { primaryColor, neutralColor } = useGomakeTheme();
   const isOwn = false; // TODO: Check if message is from current user
 
-  const formatMessageDate = (dateString: string) => safeFormatDate(dateString);
+  let senderName: string;
+  let senderEmail: string | undefined;
+
+  if (typeof message.from === "string") {
+    const fromString = message.from.replace(/ @/g, "@");
+    const match = fromString.match(/(.*)<(.*)>/);
+    if (match && match[1] && match[2]) {
+      senderName = match[1].replace(/"/g, "").trim();
+      senderEmail = match[2].trim();
+    } else {
+      senderName = fromString;
+      senderEmail = fromString.includes("@") ? fromString : undefined;
+    }
+  } else {
+    senderName = message.from.name || message.from.email;
+    senderEmail = message.from.email;
+  }
+
+  const avatarColor = getAvatarColor(senderName, primaryColor);
+  const initials = getEmailInitials(senderName);
 
   return (
     <Box
@@ -26,33 +46,46 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
         backgroundColor: isOwn ? alpha(primaryColor(50), 0.3) : "transparent",
       }}
     >
-      <Stack spacing={1}>
+      <Stack spacing={2}>
         {/* Message Header */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 600,
-                color: isOwn ? primaryColor(700) : neutralColor(800),
-              }}
-            >
-              {typeof message.from === "string" ? message.from : message.from.name || message.from.email}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: neutralColor(500),
-              }}
-            >
-              {formatMessageDate(message.createdAt)}
-            </Typography>
+        <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Avatar sx={{ width: 40, height: 40, backgroundColor: avatarColor, color: "white" }}>
+              {initials}
+            </Avatar>
+            <Stack>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 600,
+                  color: isOwn ? primaryColor(700) : neutralColor(800),
+                }}
+              >
+                {senderName}
+              </Typography>
+              {senderEmail && (
+                <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+                  {senderEmail}
+                </Typography>
+              )}
+            </Stack>
           </Stack>
+          <Typography
+            variant="caption"
+            sx={{
+              color: neutralColor(500),
+              fontWeight: 500,
+              pt: 0.5,
+            }}
+          >
+            {formatMessageDate(message.date)}
+          </Typography>
         </Stack>
 
         {/* Message Content */}
         <Box
           sx={{
+            pl: "56px", // Align with avatar
             "& p": {
               margin: 0,
               marginBottom: 1,
