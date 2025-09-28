@@ -95,6 +95,7 @@ const DirectMessagesProviderView: React.FC = () => {
   const [userSelectorMode, setUserSelectorMode] = useState<'new' | 'add'>('new');
   const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
   const [showConnectionStatus, setShowConnectionStatus] = useState(true);
+  const [isTeamColumnVisible, setIsTeamColumnVisible] = useState(true);
 
 
   // Auto-clear error message after 6 seconds
@@ -709,16 +710,40 @@ const DirectMessagesProviderView: React.FC = () => {
         </Paper>
 
         {/* Right: User presence */}
-        <div style={{ width: 240, minWidth: 240, height: "100%" }}>
-          <UserPresence
-            onlineUsers={onlineUsers}
-            userPresence={userPresence}
-            currentUserId={currentUser?.userId}
-            onUserClick={(userId: string) => {
-              startDirectMessage(userId);
-            }}
-          />
-        </div>
+        {isTeamColumnVisible ? (
+          <div style={{ width: 240, minWidth: 240, height: "100%" }}>
+            <UserPresence
+              onlineUsers={onlineUsers}
+              userPresence={userPresence}
+              currentUserId={currentUser?.userId}
+              onUserClick={(userId: string) => {
+                startDirectMessage(userId);
+              }}
+              onToggleVisibility={() => setIsTeamColumnVisible(false)}
+            />
+          </div>
+        ) : (
+          <Tooltip title="Show Team">
+            <IconButton
+              onClick={() => setIsTeamColumnVisible(true)}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                right: 0,
+                transform: 'translateY(-50%)',
+                zIndex: 1,
+                color: 'primary.main',
+                backgroundColor: 'white',
+                border: '1px solid #EAECF0',
+                '&:hover': {
+                  backgroundColor: '#F9FAFB',
+                },
+              }}
+            >
+              <GroupIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Stack>
 
       {/* User Selector Dialog */}
