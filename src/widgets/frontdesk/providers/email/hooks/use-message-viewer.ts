@@ -33,7 +33,7 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
               subject: conversation.subject,
               from: { email: conversation.lastMessage.from, name: "" },
               to: [{ email: "", name: "" }],
-              createdAt: conversation.lastMessage.date,
+              date: conversation.lastMessage.date,
               text: conversation.lastMessage.snippet,
               snippet: conversation.lastMessage.snippet,
               isRead: conversation.lastMessage.isRead,
