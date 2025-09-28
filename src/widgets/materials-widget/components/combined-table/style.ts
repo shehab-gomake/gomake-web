@@ -135,11 +135,11 @@ const useStyle = () => {
         color: '#fff',
         width: '32px',
         height: '32px',
-        boxShadow: `0 4px 12px ${primaryColor(300, 0.3)}`,
+        boxShadow: `0 4px 12px ${primaryColor(300)}`,
         zIndex: 1000,
         '&:hover': {
           backgroundColor: primaryColor(600),
-          boxShadow: `0 6px 16px ${primaryColor(400, 0.4)}`,
+          boxShadow: `0 6px 16px ${primaryColor(400)}`,
         },
         '&:active': {
           transform: 'translateY(-50%) scale(0.95)',
@@ -147,13 +147,13 @@ const useStyle = () => {
         transition: 'all 0.2s ease-in-out',
         '@keyframes pulse': {
           '0%': {
-            boxShadow: `0 4px 12px ${primaryColor(300, 0.3)}`
+            boxShadow: `0 4px 12px ${primaryColor(300)}`
           },
           '50%': {
-            boxShadow: `0 6px 20px ${primaryColor(500, 0.5)}`
+            boxShadow: `0 6px 20px ${primaryColor(500)}`
           },
           '100%': {
-            boxShadow: `0 4px 12px ${primaryColor(300, 0.3)}`
+            boxShadow: `0 4px 12px ${primaryColor(300)}`
           }
         },
         animation: 'pulse 2s ease-in-out infinite'
@@ -163,14 +163,14 @@ const useStyle = () => {
   }, [theme, primaryColor, secondColor]);
 
   // Utility functions for dynamic styles
-  const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number) => ({
+  const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean) => ({
     textAlign: 'center',
     fontWeight: 'bold',
     whiteSpace: 'nowrap',
     padding: '4px',
     backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
+    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
+    width: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
     ...(isFirstColumn && {
       position: "sticky",
       left: 0,
@@ -178,21 +178,21 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      right: (headersLength - 1 - index) * 123,
+      right:  isLastSecondColumn?0?(headersLength-3):57: isLastColumn?0:180,
       zIndex: 105,
       boxShadow: index === headersLength && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
       borderLeft: index === headersLength - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
     })
   });
 
-  const getBodyCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, cellIndex: number, headersLength: number) => ({
+  const getBodyCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, cellIndex: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean) => ({
     textAlign: 'center',
     padding: '12px 8px',
     whiteSpace: 'nowrap',
     borderBottom: '1px solid #e0e0e0',
     position: 'relative',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ? '123px' : 'auto',
+    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
+    width: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
     ...(isFirstColumn && {
       position: 'sticky',
       left: 0,
@@ -201,7 +201,7 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      right: (headersLength - 1 - cellIndex) * 123,
+      right: isLastSecondColumn?0?(headersLength-2):57: isLastColumn?0:180,
       zIndex: 5,
       backgroundColor: '#fff',
       boxShadow: cellIndex === headersLength && '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)',
