@@ -8,7 +8,7 @@ import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -41,6 +41,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
+    const [jobsData, setJobsData] = useState<any[]>([]);
+    const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [formData, setFormData] = useState({
         supplierId: '',
         purchaseM2Price: '',
@@ -180,13 +182,42 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         }
     };
 
-    const handleOpenJobsModal = (supplierName: string, materialCode: string, materialName: string = "m1") => {
+    const handleOpenJobsModal = async (supplierName: string, materialCode: string, materialName: string = "m1", supplierInventoryId?: string) => {
+        // Open modal first
         setJobsModal({
             open: true,
             supplierName,
             materialCode,
             materialName
         });
+
+        // Fetch jobs data if we have a supplier inventory ID
+        if (supplierInventoryId) {
+            setIsLoadingJobs(true);
+            setJobsData([]);
+
+            try {
+                const callBack = (res) => {
+                    setIsLoadingJobs(false);
+                    if (res.success) {
+                        setJobsData(res.data || []);
+                    } else {
+                        console.error('Failed to fetch jobs data:', res.message);
+                        setJobsData([]);
+                    }
+                };
+
+                await getSupplierInventoryUsageApi(callApi, callBack, supplierInventoryId);
+            } catch (error) {
+                console.error('Error fetching jobs data:', error);
+                setIsLoadingJobs(false);
+                setJobsData([]);
+            }
+        } else {
+            // No supplier inventory ID, use empty data
+            setJobsData([]);
+            setIsLoadingJobs(false);
+        }
     };
 
     const handleCloseJobsModal = () => {
@@ -374,7 +405,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <Box
-                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType)}
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType, row.id)}
                                                                 sx={{
                                                                     padding: '6px',
                                                                     borderRadius: '8px',
@@ -581,21 +612,22 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <Box
-                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code || '', materialType)}
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code || '', materialType, row.id)}
                                                                 sx={{
-                                                                    padding: '4px 8px',
-                                                                    borderRadius: '4px',
+                                                                    padding: '6px',
+                                                                    borderRadius: '8px',
+                                                                    border: '1px solid #ccc',
                                                                     cursor: 'pointer',
                                                                     backgroundColor: 'transparent',
                                                                     fontSize: '12px',
                                                                     fontWeight: '500',
-                                                                    color: '#1976d2',
+                                                                    color: '#000',
                                                                     textAlign: 'center',
                                                                     minWidth: '50px',
                                                                     display: 'inline-block',
                                                                     '&:hover': {
                                                                         backgroundColor: '#f5f5f5',
-                                                                        color: '#1565c0'
+                                                                        borderColor: '#999'
                                                                     },
                                                                     transition: 'all 0.2s ease-in-out'
                                                                 }}
@@ -965,6 +997,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                 supplierName={jobsModal.supplierName}
                 materialCode={jobsModal.materialCode}
                 materialName={jobsModal.materialName}
+                jobsData={jobsData}
+                isLoading={isLoadingJobs}
             />
         </Box>
     );

@@ -15,6 +15,7 @@ import {
     Box,
     Typography,
     IconButton,
+    CircularProgress,
 } from "@mui/material";
 import { TabCloseIcon } from "@/icons";
 interface JobsModalProps {
@@ -23,6 +24,8 @@ interface JobsModalProps {
     supplierName?: string;
     materialCode?: string;
     materialName?: string;
+    jobsData?: any[];
+    isLoading?: boolean;
 }
 
 // Mock data for Jobs modal
@@ -69,8 +72,12 @@ const JobsModal = ({
     onClose,
     supplierName = "Fares",
     materialCode = "1234",
-    materialName = "m1"
+    materialName = "m1",
+    jobsData = [],
+    isLoading = false
 }: JobsModalProps) => {
+    // Use real data if available, otherwise fall back to mock data
+    const displayData = jobsData.length > 0 ? jobsData : mockJobsData;
     return (
         <Dialog
             open={open}
@@ -100,97 +107,103 @@ const JobsModal = ({
             </DialogTitle>
 
             <DialogContent sx={{ padding: 0 }}>
-                <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
-                    <Table stickyHeader>
-                        <TableHead>
-                            <TableRow sx={{ backgroundColor: "#EBECFF" }}>
-                                <TableCell sx={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
-                                }}>
-                                    CLIENT NAME
-                                </TableCell>
-                                <TableCell sx={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
-                                }}>
-                                    DOCUMENT TYPE
-                                </TableCell>
-                                <TableCell sx={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
-                                }}>
-                                    DOCUMENT NUMBER
-                                </TableCell>
-                                <TableCell sx={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
-                                }}>
-                                    JOB NAME
-                                </TableCell>
-                                <TableCell sx={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
-                                }}>
-                                    STATUS
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {mockJobsData.map((job, index) => (
-                                <TableRow key={index} hover>
-                                    <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                        {job.clientName}
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+                        <Table stickyHeader>
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: "#EBECFF" }}>
+                                    <TableCell sx={{
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                        backgroundColor: "#EBECFF"
+                                    }}>
+                                        CLIENT NAME
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: "#f5f5f5",
-                                                borderRadius: "16px",
-                                                padding: "4px 8px",
-                                                display: "inline-block",
-                                                fontSize: "0.75rem"
-                                            }}
-                                        >
-                                            {job.documentType}
-                                        </Box>
+                                    <TableCell sx={{
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                        backgroundColor: "#EBECFF"
+                                    }}>
+                                        DOCUMENT TYPE
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                        {job.documentNumber}
+                                    <TableCell sx={{
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                        backgroundColor: "#EBECFF"
+                                    }}>
+                                        DOCUMENT NUMBER
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                        {job.jobName}
+                                    <TableCell sx={{
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                        backgroundColor: "#EBECFF"
+                                    }}>
+                                        JOB NAME
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                        <Box
-                                            sx={{
-                                                backgroundColor: getStatusColor(job.status),
-                                                color: "white",
-                                                borderRadius: "16px",
-                                                padding: "4px 8px",
-                                                display: "inline-block",
-                                                fontSize: "0.75rem",
-                                                fontWeight: "bold"
-                                            }}
-                                        >
-                                            {job.status}
-                                        </Box>
+                                    <TableCell sx={{
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        whiteSpace: "nowrap",
+                                        backgroundColor: "#EBECFF"
+                                    }}>
+                                        STATUS
                                     </TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {displayData.map((job, index) => (
+                                    <TableRow key={index} hover>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.clientName}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "#f5f5f5",
+                                                    borderRadius: "16px",
+                                                    padding: "4px 8px",
+                                                    display: "inline-block",
+                                                    fontSize: "0.75rem"
+                                                }}
+                                            >
+                                                {job.documentType}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.documentNumber}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.jobName}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: getStatusColor(job.status),
+                                                    color: "white",
+                                                    borderRadius: "16px",
+                                                    padding: "4px 8px",
+                                                    display: "inline-block",
+                                                    fontSize: "0.75rem",
+                                                    fontWeight: "bold"
+                                                }}
+                                            >
+                                                {job.status}
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
             </DialogContent>
 
             <DialogActions sx={{ padding: "16px", backgroundColor: "#f5f5f5" }}>
