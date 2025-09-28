@@ -39,7 +39,6 @@ const useAddAttachmentsModal = ({
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFaultDelete, alertSuccessDelete } = useSnackBar();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
   const [uploadingFiles, setUploadingFiles] = useState<{
@@ -47,10 +46,6 @@ const useAddAttachmentsModal = ({
   }>({});
   const [downloadingFiles, setDownloadingFiles] = useState<string[]>([]);
   const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
-
-  const onClickCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
 
   const uploadQuoteItemFileForDocument = async (data: any) => {
     const callBack = (res) => {
@@ -465,20 +460,10 @@ const useAddAttachmentsModal = ({
             </IconButton>,
             <IconButton
               key={`delete-${file.fileName}-${index}`}
-              onClick={() => {
-                if (isQuoteConfirmation) {
-                  setOpenDeleteModal(true);
-                  setSelectedAttachment({ ...file, parentItem: item });
-                } else {
-                  handleDeleteFile(file.bucketName, item.id);
-                }
-              }}
-              disabled={
-                !isQuoteConfirmation && deletingFiles.includes(file.bucketName)
-              }
+              onClick={() => handleDeleteFile(file.bucketName, item.id)}
+              disabled={deletingFiles.includes(file.bucketName)}
             >
-              {!isQuoteConfirmation &&
-              deletingFiles.includes(file.bucketName) ? (
+              {deletingFiles.includes(file.bucketName) ? (
                 <DotsLoader />
               ) : (
                 <WastebasketNew width={32} height={32} />
@@ -535,7 +520,6 @@ const useAddAttachmentsModal = ({
       downloadingFiles,
       deletingFiles,
       isQuoteConfirmation,
-      setOpenDeleteModal,
       setSelectedAttachment,
     ]
   );
@@ -635,9 +619,7 @@ const useAddAttachmentsModal = ({
   }, [quoteConfirm?.documentItems]);
   return {
     t,
-    onClickCloseDeleteModal,
     selectedAttachment,
-    openDeleteModal,
     handleFileUploadQuoteConfirmation,
     getAttachmentsRowsQuoteConfirmation,
     handleDeleteFileFromItems,
