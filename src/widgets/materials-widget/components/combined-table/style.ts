@@ -129,7 +129,7 @@ const useStyle = () => {
       scrollIndicatorButton: {
         position: 'absolute',
         top: '50%',
-        right: `${3 * 118}px`, // Position at the start of fixed columns
+        right: `${3 * 96}px`, // Position at the start of fixed columns
         transform: 'translateY(-50%)',
         backgroundColor: primaryColor(500),
         color: '#fff',

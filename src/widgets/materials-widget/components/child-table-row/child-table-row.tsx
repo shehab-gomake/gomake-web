@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon, DragIndicator } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState } from "../../state";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
@@ -16,6 +16,7 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
 import { SortIcon } from "@/icons";
+import { JobsModal } from "../jobs-modal/jobs-modal";
 
 
 interface IChildTableRowProps {
@@ -34,6 +35,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
+    const jobsModal = useRecoilValue(openJobsModalState);
+    const setJobsModal = useSetRecoilState(openJobsModalState);
     const [isAddPurchasePricingModalOpen, setIsAddPurchasePricingModalOpen] = useState(false);
     const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -177,6 +180,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         }
     };
 
+    const handleOpenJobsModal = (supplierName: string, materialCode: string, materialName: string = "m1") => {
+        setJobsModal({
+            open: true,
+            supplierName,
+            materialCode,
+            materialName
+        });
+    };
+
+    const handleCloseJobsModal = () => {
+        setJobsModal({ open: false });
+    };
+
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
             {isLoadingInventory ? (
@@ -224,6 +240,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Inventory</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -356,6 +373,31 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
 
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <Box
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType)}
+                                                                sx={{
+                                                                    padding: '6px',
+                                                                    borderRadius: '8px',
+                                                                    border: '1px solid #ccc',
+                                                                    cursor: 'pointer',
+                                                                    backgroundColor: 'transparent',
+                                                                    fontSize: '12px',
+                                                                    fontWeight: '500',
+                                                                    color: '#000',
+                                                                    textAlign: 'center',
+                                                                    minWidth: '50px',
+                                                                    display: 'inline-block',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f5f5f5',
+                                                                        color: '#1565c0'
+                                                                    },
+                                                                    transition: 'all 0.2s ease-in-out'
+                                                                }}
+                                                            >
+                                                                Show
+                                                            </Box>
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
 
                                                             <IconButton
                                                                 size="small"
@@ -420,6 +462,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Order</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -536,6 +579,30 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             />
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <Box
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code || '', materialType)}
+                                                                sx={{
+                                                                    padding: '4px 8px',
+                                                                    borderRadius: '4px',
+                                                                    cursor: 'pointer',
+                                                                    backgroundColor: 'transparent',
+                                                                    fontSize: '12px',
+                                                                    fontWeight: '500',
+                                                                    color: '#1976d2',
+                                                                    textAlign: 'center',
+                                                                    minWidth: '50px',
+                                                                    display: 'inline-block',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f5f5f5',
+                                                                        color: '#1565c0'
+                                                                    },
+                                                                    transition: 'all 0.2s ease-in-out'
+                                                                }}
+                                                            >
+                                                                Show
+                                                            </Box>
+                                                        </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <IconButton
                                                                 size="small"
@@ -889,6 +956,15 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                 openModal={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onClickDelete={openChildTable.tableType === 'inventory' ? handleDeleteInventory : handleDeletePurchasePricing}
+            />
+
+            {/* Jobs Modal */}
+            <JobsModal
+                open={jobsModal.open}
+                onClose={handleCloseJobsModal}
+                supplierName={jobsModal.supplierName}
+                materialCode={jobsModal.materialCode}
+                materialName={jobsModal.materialName}
             />
         </Box>
     );
