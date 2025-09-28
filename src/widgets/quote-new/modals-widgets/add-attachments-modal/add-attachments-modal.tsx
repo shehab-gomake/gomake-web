@@ -1,7 +1,6 @@
-import { GoMakeDeleteModal, GoMakeModal } from "@/components";
+import { GoMakeModal } from "@/components";
 import { useStyle } from "../style";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { ModalType } from "@/enums";
 import { useAddAttachmentsModal } from "./use-add-attachments-modal";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,12 +20,8 @@ const AddAttachmentsModal = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
-    onClickCloseDeleteModal,
-    selectedAttachment,
-    openDeleteModal,
     handleFileUploadQuoteConfirmation,
     getAttachmentsRowsQuoteConfirmation,
-    handleDeleteFileFromItems,
   } = useAddAttachmentsModal({
     getQuote,
     documentType,
@@ -78,11 +73,12 @@ const AddAttachmentsModal = ({
                               maxHeight={400}
                               rows={getAttachmentsRowsQuoteConfirmation(item)}
                               headers={[
+                                "",
                                 t("fileUploader.fileName"),
                                 t("fileUploader.downloadFile"),
                                 t("fileUploader.deleteFile"),
                               ]}
-                              columnWidths={["70%", "15%", "15%", "15%"]}
+                              columnWidths={["10%", "55%", "15%", "20%"]}
                             />
                             <div
                               onClick={() =>
@@ -160,21 +156,6 @@ const AddAttachmentsModal = ({
                             style={{ display: "none" }}
                             onChange={(e) =>
                               handleFileUploadQuoteConfirmation(e, item)
-                            }
-                          />
-
-                          <GoMakeDeleteModal
-                            modalType={ModalType.DELETE}
-                            title={t("sales.quote.deleteAttachment")}
-                            yesBtn={t("sales.quote.yesBtn")}
-                            openModal={openDeleteModal}
-                            onClose={onClickCloseDeleteModal}
-                            onClickDelete={() =>
-                              handleDeleteFileFromItems(
-                                selectedAttachment.parentItem.id,
-                                selectedAttachment.fileName,
-                                selectedAttachment.url
-                              )
                             }
                           />
                         </div>
@@ -202,11 +183,12 @@ const AddAttachmentsModal = ({
                               maxHeight={400}
                               rows={getAttachmentsRowsQuoteConfirmation(item)}
                               headers={[
+                                "",
                                 t("fileUploader.fileName"),
                                 t("fileUploader.downloadFile"),
-                                // t("fileUploader.deleteFile"),
+                                t("fileUploader.deleteFile"),
                               ]}
-                              columnWidths={["70%", "15%", "15%", "15%"]}
+                              columnWidths={["10%", "55%", "15%", "20%"]}
                             />
                             <div
                               onClick={() =>
@@ -284,21 +266,6 @@ const AddAttachmentsModal = ({
                             style={{ display: "none" }}
                             onChange={(e) =>
                               handleFileUploadQuoteConfirmation(e, item)
-                            }
-                          />
-
-                          <GoMakeDeleteModal
-                            modalType={ModalType.DELETE}
-                            title={t("sales.quote.deleteAttachment")}
-                            yesBtn={t("sales.quote.yesBtn")}
-                            openModal={openDeleteModal}
-                            onClose={onClickCloseDeleteModal}
-                            onClickDelete={() =>
-                              handleDeleteFileFromItems(
-                                selectedAttachment.parentItem.id,
-                                selectedAttachment.fileName,
-                                selectedAttachment.url
-                              )
                             }
                           />
                         </div>

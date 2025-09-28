@@ -17,6 +17,7 @@ import { loadingWithShadowState } from "@/store/loading-with-shadow";
 import { getTempUserToken, getUserToken } from "@/services/storage-data";
 import axios from "axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 
 interface AttachmentPayload {
   documentId: string;
@@ -25,6 +26,7 @@ interface AttachmentPayload {
   base64Content: string;
   fileUrl?: string;
 }
+
 const useAddAttachmentsModal = ({
   getQuote,
   documentType,
@@ -37,13 +39,14 @@ const useAddAttachmentsModal = ({
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFaultDelete, alertSuccessDelete } = useSnackBar();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedAttachment, setSelectedAttachment] = useState(null);
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+  const [uploadingFiles, setUploadingFiles] = useState<{
+    [key: string]: string[];
+  }>({});
+  const [downloadingFiles, setDownloadingFiles] = useState<string[]>([]);
+  const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
 
-  const onClickCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
   const uploadQuoteItemFileForDocument = async (data: any) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -75,6 +78,95 @@ const useAddAttachmentsModal = ({
     });
   };
 
+  const handleDownloadFile = async (bucketName: string) => {
+    // Add file to downloading state
+    setDownloadingFiles((prev) => [...prev, bucketName]);
+
+    try {
+      let userToken = getUserToken();
+      if (!userToken) {
+        userToken = getTempUserToken();
+      }
+
+      const response = await axios.post(
+        `${quoteConfirm?.filesApiAddress}/api/Files/CreateDownloadFilePreSignedUrl`,
+        { bucketKey: bucketName },
+        {
+          headers: {
+            authorization: "Bearer " + userToken,
+          },
+        }
+      );
+
+      if (response.data && typeof response.data === "string") {
+        // Open the presigned URL in a new tab
+        window.open(response.data, "_blank");
+      } else {
+        console.error("Invalid response from CreateDownloadFilePreSignedUrl");
+      }
+    } catch (error) {
+      console.error("Error getting download URL:", error);
+    } finally {
+      // Remove file from downloading state
+      setDownloadingFiles((prev) => prev.filter((key) => key !== bucketName));
+    }
+  };
+
+  const handleDeleteFile = async (bucketName: string, quoteItemId: string) => {
+    // Add file to deleting state
+    setDeletingFiles((prev) => [...prev, bucketName]);
+
+    try {
+      let userToken = getUserToken();
+      if (!userToken) {
+        userToken = getTempUserToken();
+      }
+
+      const response = await axios.post(
+        `${quoteConfirm?.filesApiAddress}/api/Files/DeleteUploadedFile`,
+        {
+          bucketName: bucketName,
+          quoteItemId: quoteItemId,
+        },
+        {
+          headers: {
+            authorization: "Bearer " + userToken,
+          },
+        }
+      );
+
+      if (response.data?.success || response.status === 200) {
+        // Remove file from fileItems state
+        setFileItems((prevItems) => {
+          return prevItems.map((item) => {
+            if (item.id === quoteItemId) {
+              const updatedFiles = item.files?.filter(
+                (file) => file.bucketName !== bucketName
+              );
+              return {
+                ...item,
+                files:
+                  updatedFiles && updatedFiles.length > 0 ? updatedFiles : null,
+              };
+            }
+            return item;
+          });
+        });
+
+        alertSuccessDelete();
+      } else {
+        console.error("Failed to delete file");
+        alertFaultDelete();
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alertFaultDelete();
+    } finally {
+      // Remove file from deleting state
+      setDeletingFiles((prev) => prev.filter((key) => key !== bucketName));
+    }
+  };
+
   const handleFileUploadQuoteConfirmation = async (
     event: React.ChangeEvent<HTMLInputElement>,
     item
@@ -82,12 +174,19 @@ const useAddAttachmentsModal = ({
     // Use the filesApiAddress directly in the fetch call
     const file = event.target.files?.[0];
     if (file) {
-      let userToken = getUserToken();
-      if (!userToken) {
-        userToken = getTempUserToken();
-      }
-      debugger;
-      const response = await axios.post(
+      // Add file to uploading state
+      setUploadingFiles((prev) => ({
+        ...prev,
+        [item.id]: [...(prev[item.id] || []), file.name],
+      }));
+
+      try {
+        let userToken = getUserToken();
+        if (!userToken) {
+          userToken = getTempUserToken();
+        }
+        debugger;
+        const response = await axios.post(
           `${quoteConfirm?.filesApiAddress}/api/Files/CreateUploadSession`,
           { fileName: file.name, contentType: file.type },
           {
@@ -95,65 +194,84 @@ const useAddAttachmentsModal = ({
               authorization: "Bearer " + userToken,
             },
           }
-      );
-      const sessionUri = response.data.sessionUri;
-      const bucketName = response.data.bucketName;
-      const fileUrl = response.data.fileUrl;
-      await uploadFileToGCS(sessionUri,file, (progress) => {})
-      await uploadQuoteItemFileForDocument({
-        id: item.id,
-        fileName: file.name,
-        screenShot: "",
-        url: fileUrl,
-        bucketName: bucketName,
-      });
-      setFileItems((prevItems) => {
-        const existingItemIndex = prevItems.findIndex(
-            (i) => i.id === item.id
         );
-        debugger
-        if (existingItemIndex >= 0) {
-          const updatedItems = [...prevItems];
-          if(updatedItems?.find(x=>x.fileUrl === fileUrl)){
-            return updatedItems;
-          }
-          updatedItems[existingItemIndex] = {
-            ...updatedItems[existingItemIndex],
-            files: updatedItems[existingItemIndex].files
+        const sessionUri = response.data.sessionUri;
+        const bucketName = response.data.bucketName;
+        const fileUrl = response.data.fileUrl;
+        await uploadFileToGCS(sessionUri, file, (progress) => {});
+        await uploadQuoteItemFileForDocument({
+          id: item.id,
+          fileName: file.name,
+          screenShot: "",
+          url: fileUrl,
+          bucketName: bucketName,
+        });
+
+        // Remove file from uploading state on success
+        setUploadingFiles((prev) => ({
+          ...prev,
+          [item.id]: (prev[item.id] || []).filter((f) => f !== file.name),
+        }));
+
+        setFileItems((prevItems) => {
+          const existingItemIndex = prevItems.findIndex(
+            (i) => i.id === item.id
+          );
+          debugger;
+          if (existingItemIndex >= 0) {
+            const updatedItems = [...prevItems];
+            if (updatedItems?.find((x) => x.fileUrl === fileUrl)) {
+              return updatedItems;
+            }
+            updatedItems[existingItemIndex] = {
+              ...updatedItems[existingItemIndex],
+              files: updatedItems[existingItemIndex].files
                 ? [
-                  ...updatedItems[existingItemIndex].files,
-                  {
-                    fileName: file.name,
-                    screenShot: "",
-                    url:fileUrl,
-                  },
-                ]
+                    ...updatedItems[existingItemIndex].files,
+                    {
+                      fileName: file.name,
+                      screenShot: "",
+                      url: fileUrl,
+                      bucketName: bucketName,
+                    },
+                  ]
                 : [
+                    {
+                      fileName: file.name,
+                      screenShot: "",
+                      url: fileUrl,
+                      bucketName: bucketName,
+                    },
+                  ],
+            };
+            return updatedItems;
+          } else {
+            return [
+              ...prevItems,
+              {
+                id: item.id,
+                productName: item.productName,
+                files: [
                   {
                     fileName: file.name,
                     screenShot: "",
                     url: fileUrl,
+                    bucketName: bucketName,
                   },
                 ],
-          };
-          return updatedItems;
-        } else {
-          return [
-            ...prevItems,
-            {
-              id: item.id,
-              productName: item.productName,
-              files: [
-                {
-                  fileName: file.name,
-                  screenShot: "",
-                  url: fileUrl,
-                },
-              ],
-            },
-          ];
-        }
-      });
+              },
+            ];
+          }
+        });
+      } catch (error) {
+        console.error("File upload error:", error);
+        // Remove file from uploading state on error
+        setUploadingFiles((prev) => ({
+          ...prev,
+          [item.id]: (prev[item.id] || []).filter((f) => f !== file.name),
+        }));
+        return;
+      }
       return;
       // Call onFileUploadStart if provided
       if (onFileUploadStart) {
@@ -269,7 +387,11 @@ const useAddAttachmentsModal = ({
       reader.readAsArrayBuffer(file);
     }
   };
-  async function uploadFileToGCS(sessionUri: string, file: File, onProgress?: (n:number)=>void) {
+  async function uploadFileToGCS(
+    sessionUri: string,
+    file: File,
+    onProgress?: (n: number) => void
+  ) {
     const chunkSize = 8 * 1024 * 1024; // 8 MiB; tune to 8–32 MiB
     let offset = 0;
 
@@ -292,7 +414,8 @@ const useAddAttachmentsModal = ({
         },
         body: chunk,
       });
-      if (!(res.ok || res.status === 308)) throw new Error(`Upload failed: ${res.status}`);
+      if (!(res.ok || res.status === 308))
+        throw new Error(`Upload failed: ${res.status}`);
       offset = end;
       onProgress?.(Math.round((offset / file.size) * 100));
     }
@@ -300,11 +423,18 @@ const useAddAttachmentsModal = ({
   const getAttachmentsRowsQuoteConfirmation = useCallback(
     (item) => {
       const fileItem = fileItems?.find((f) => f.id === item.id);
+      const uploadingFileNames = uploadingFiles[item.id] || [];
 
-      return (
-        fileItem?.files?.map((file) => {
+      // Combine existing files with uploading files
+      const allRows = [];
+
+      // Add existing files
+      if (fileItem?.files) {
+        fileItem.files.forEach((file, index) => {
           const row = [
+            <div key={`empty-${file.fileName}-${index}`}></div>,
             <h4
+              key={`file-${file.fileName}-${index}`}
               style={{
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -316,32 +446,82 @@ const useAddAttachmentsModal = ({
                 : file.fileName}
             </h4>,
             <IconButton
+              key={`download-${file.fileName}-${index}`}
               onClick={() => {
-                window.open(file.url, "_blank");
+                handleDownloadFile(file.bucketName);
               }}
+              disabled={downloadingFiles.includes(file.bucketName)}
             >
-              <FileOpenIcon />
+              {downloadingFiles.includes(file.bucketName) ? (
+                <DotsLoader />
+              ) : (
+                <FileOpenIcon />
+              )}
+            </IconButton>,
+            <IconButton
+              key={`delete-${file.fileName}-${index}`}
+              onClick={() => handleDeleteFile(file.bucketName, item.id)}
+              disabled={deletingFiles.includes(file.bucketName)}
+            >
+              {deletingFiles.includes(file.bucketName) ? (
+                <DotsLoader />
+              ) : (
+                <WastebasketNew width={32} height={32} />
+              )}
             </IconButton>,
           ];
 
-          if (isQuoteConfirmation) {
-            row.push(
-              <IconButton
-                onClick={() => {
-                  setOpenDeleteModal(true);
-                  setSelectedAttachment({ ...file, parentItem: item });
-                }}
-              >
-                <WastebasketNew width={32} height={32} />
-              </IconButton>
-            );
-          }
+          allRows.push(row);
+        });
+      }
 
-          return row;
-        }) || []
-      );
+      // Add uploading files with loader
+      uploadingFileNames.forEach((fileName, index) => {
+        const row = [
+          <DotsLoader key={`uploading-loader-${fileName}-${index}`} />,
+          <h4
+            key={`uploading-${fileName}-${index}`}
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {fileName.length > 50
+              ? `${fileName.substring(0, 35)}...`
+              : fileName}
+          </h4>,
+          <div
+            key={`uploading-download-${fileName}-${index}`}
+            style={{ opacity: 0.5 }}
+          >
+            <IconButton disabled>
+              <FileOpenIcon />
+            </IconButton>
+          </div>,
+          <div
+            key={`uploading-delete-${fileName}-${index}`}
+            style={{ opacity: 0.5 }}
+          >
+            <IconButton disabled>
+              <WastebasketNew width={32} height={32} />
+            </IconButton>
+          </div>,
+        ];
+
+        allRows.push(row);
+      });
+
+      return allRows;
     },
-    [fileItems, isQuoteConfirmation, setOpenDeleteModal, setSelectedAttachment]
+    [
+      fileItems,
+      uploadingFiles,
+      downloadingFiles,
+      deletingFiles,
+      isQuoteConfirmation,
+      setSelectedAttachment,
+    ]
   );
   const handleDeleteFileFromItems = (
     itemId: string,
@@ -386,6 +566,7 @@ const useAddAttachmentsModal = ({
             fileName: file.fileName,
             screenShot: file.screenShot,
             url: file.url,
+            bucketName: file.bucketName,
           })),
         }));
 
@@ -438,12 +619,15 @@ const useAddAttachmentsModal = ({
   }, [quoteConfirm?.documentItems]);
   return {
     t,
-    onClickCloseDeleteModal,
     selectedAttachment,
-    openDeleteModal,
     handleFileUploadQuoteConfirmation,
     getAttachmentsRowsQuoteConfirmation,
     handleDeleteFileFromItems,
+    handleDownloadFile,
+    handleDeleteFile,
+    uploadingFiles,
+    downloadingFiles,
+    deletingFiles,
   };
 };
 
