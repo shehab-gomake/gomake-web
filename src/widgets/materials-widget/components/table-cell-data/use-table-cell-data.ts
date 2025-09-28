@@ -116,9 +116,10 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     } else if (purchasePricingTable) {
                         // Refresh purchase pricing data after successful update
                         refreshPurchasePricingData(openChildTable.rowId);
-                    } else {
+                    } 
+                    else {
                         // Refresh main table data without loading spinner
-                        refreshMainTableData();
+                        // refreshMainTableData();
                     }
                     if(key.includes("price")){
                         onClickOpenPriceModal()

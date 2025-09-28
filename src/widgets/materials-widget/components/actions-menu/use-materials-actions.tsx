@@ -101,13 +101,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const setOpenCreatePurchaseOrderModal = useSetRecoilState<boolean>(openCreatePurchaseOrderModalState);
 
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
-  useEffect(() => {
-    if (selectedMaterialIdForUpdate) {
-      setSelectedMaterialsIds([selectedMaterialIdForUpdate])
-    } else {
-      const getSelectedMaterialsIds = () => materialCategoryData.filter((row) => row.checked).map((row) => row.id);
 
-      setSelectedMaterialsIds(getSelectedMaterialsIds());
+  useEffect(() => {
+    const getSelectedMaterialsIds = () => materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+    const checkedIds = getSelectedMaterialsIds();
+    // Prioritize multiple checkbox selections over single material update
+    if (checkedIds.length > 0) {
+      setSelectedMaterialsIds(checkedIds);
+      // Clear single selection if we have multiple selections
+      if (checkedIds.length > 1) {
+        setSelectedMaterialIdForUpdate("");
+      }
+    } else if (selectedMaterialIdForUpdate) {
+      setSelectedMaterialsIds([selectedMaterialIdForUpdate]);
+    } else {
+      setSelectedMaterialsIds([]);
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);

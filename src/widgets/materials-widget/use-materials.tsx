@@ -302,6 +302,8 @@ const useMaterials = (isAdmin: boolean) => {
   );
 
   const onChangeRowCheckBox = (id: string, checked: boolean) => {
+    console.log("onChangeRowCheckBox called:", { id, checked });
+
     if (isAllMaterialsChecked && !checked) {
       const temp = cloneDeep(materialsUnChecked);
       temp.push(id);
@@ -312,11 +314,13 @@ const useMaterials = (isAdmin: boolean) => {
         materialsUnChecked.filter((materialId) => materialId != id)
       );
     }
-    setMaterialCategoryData(
-      materialCategoryData.map((row) =>
-        id === row.id ? { ...row, checked: checked } : row
-      )
+
+    const updatedData = materialCategoryData.map((row) =>
+      id === row.id ? { ...row, checked: checked } : row
     );
+
+    console.log("Updated materialCategoryData:", updatedData.map(row => ({ id: row.id, checked: row.checked })));
+    setMaterialCategoryData(updatedData);
   };
 
   const tableHeaders = useCallback(() => {
