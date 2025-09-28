@@ -1,9 +1,13 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const classes = useMemo(() => {
     return {
       // Container styles
@@ -94,7 +98,7 @@ const useStyle = () => {
         padding: '4px',
         backgroundColor: '#EBECFF',
         position: 'sticky',
-        right: '123px',
+        [isRTL ? 'left' : 'right']: '123px',
         zIndex: 105,
         width: 'fit-content',
         minWidth: 'fit-content',
@@ -106,7 +110,7 @@ const useStyle = () => {
         padding: '4px',
         backgroundColor: '#EBECFF',
         position: 'sticky',
-        right: 0,
+        [isRTL ? 'left' : 'right']: 0,
         zIndex: 105,
         width: 'fit-content',
         minWidth: 'fit-content',
@@ -135,7 +139,7 @@ const useStyle = () => {
         whiteSpace: 'nowrap',
         borderBottom: '1px solid #e0e0e0',
         position: 'sticky',
-        right: '123px',
+        [isRTL ? 'left' : 'right']: '123px',
         zIndex: 5,
         backgroundColor: '#fff',
       },
@@ -147,7 +151,7 @@ const useStyle = () => {
         minWidth: '123px',
         width: '123px',
         position: 'sticky',
-        right: 0,
+        [isRTL ? 'left' : 'right']: 0,
         zIndex: 5,
         backgroundColor: '#fff'
       },
@@ -253,7 +257,7 @@ const useStyle = () => {
         borderTop: `2px solid ${primaryColor(500)}`,
       },
     };
-  }, [theme, primaryColor, secondColor]);
+  }, [theme, primaryColor, secondColor, isRTL, dir]);
   
   return {
     classes,

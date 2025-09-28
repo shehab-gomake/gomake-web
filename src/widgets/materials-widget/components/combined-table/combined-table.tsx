@@ -5,7 +5,7 @@ import { openChildTableState, openJobsModalState, openAddSupplierModalState } fr
 import { useTranslation } from "react-i18next";
 import { JobsModal } from "../jobs-modal/jobs-modal";
 import { ChildTableRow } from "../child-table-row/child-table-row";
-import { ChevronRight } from "@mui/icons-material";
+import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
 
 
@@ -30,6 +30,8 @@ const CombinedTable = ({
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     const openChildTable = useRecoilValue(openChildTableState);
     const jobsModal = useRecoilValue(openJobsModalState);
     const setJobsModal = useSetRecoilState(openJobsModalState);
@@ -51,24 +53,43 @@ const CombinedTable = ({
         setJobsModal({ open: false });
     };
 
-    const handleOpenAddSupplierModal = () => {
-        setOpenAddSupplierModal(true);
-    };
+
 
     const handleScroll = () => {
         if (tableContainerRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
-            const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 5; // 5px tolerance
+
+            let isAtEnd;
+            if (isRTL) {
+                // In RTL (Arabic), scrollLeft starts at 0 and becomes negative as we scroll left
+                // Hide indicator when we've scrolled all the way to the left (most negative value)
+                const maxScrollLeft = scrollWidth - clientWidth;
+                isAtEnd = Math.abs(scrollLeft) >= maxScrollLeft - 5; // 5px tolerance
+            } else {
+                // In LTR, hide indicator when scrolled to the right edge
+                isAtEnd = scrollLeft + clientWidth >= scrollWidth - 5; // 5px tolerance
+            }
+
             setShowScrollIndicator(!isAtEnd);
         }
     };
 
     const scrollToRight = () => {
         if (tableContainerRef.current) {
-            tableContainerRef.current.scrollTo({
-                left: tableContainerRef.current.scrollWidth,
-                behavior: 'smooth'
-            });
+            if (isRTL) {
+                // In RTL (Arabic), scroll to the leftmost position (negative scrollLeft)
+                const maxScrollLeft = tableContainerRef.current.scrollWidth - tableContainerRef.current.clientWidth;
+                tableContainerRef.current.scrollTo({
+                    left: -maxScrollLeft,
+                    behavior: 'smooth'
+                });
+            } else {
+                // In LTR, scroll to the rightmost position
+                tableContainerRef.current.scrollTo({
+                    left: tableContainerRef.current.scrollWidth,
+                    behavior: 'smooth'
+                });
+            }
         }
     };
 
@@ -176,7 +197,7 @@ const CombinedTable = ({
                             onClick={scrollToRight}
                             sx={classes.scrollIndicatorButton}
                         >
-                            <ChevronRight />
+                            {isRTL ? <ChevronLeft /> : <ChevronRight />}
                         </IconButton>
                     </Tooltip>
                 )}
