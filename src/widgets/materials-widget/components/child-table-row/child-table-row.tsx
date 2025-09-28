@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon, DragIndicator } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState } from "../../state";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -16,6 +16,7 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
 import { SortIcon } from "@/icons";
+import { JobsModal } from "../jobs-modal/jobs-modal";
 
 
 interface IChildTableRowProps {
@@ -34,10 +35,14 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
     const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
+    const jobsModal = useRecoilValue(openJobsModalState);
+    const setJobsModal = useSetRecoilState(openJobsModalState);
     const [isAddPurchasePricingModalOpen, setIsAddPurchasePricingModalOpen] = useState(false);
     const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
+    const [jobsData, setJobsData] = useState<any[]>([]);
+    const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [formData, setFormData] = useState({
         supplierId: '',
         purchaseM2Price: '',
@@ -177,6 +182,48 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         }
     };
 
+    const handleOpenJobsModal = async (supplierName: string, materialCode: string, materialName: string = "m1", supplierInventoryId?: string) => {
+        // Open modal first
+        setJobsModal({
+            open: true,
+            supplierName,
+            materialCode,
+            materialName
+        });
+
+        // Fetch jobs data if we have a supplier inventory ID
+        if (supplierInventoryId) {
+            setIsLoadingJobs(true);
+            setJobsData([]);
+
+            try {
+                const callBack = (res) => {
+                    setIsLoadingJobs(false);
+                    if (res.success) {
+                        setJobsData(res.data || []);
+                    } else {
+                        console.error('Failed to fetch jobs data:', res.message);
+                        setJobsData([]);
+                    }
+                };
+
+                await getSupplierInventoryUsageApi(callApi, callBack, supplierInventoryId);
+            } catch (error) {
+                console.error('Error fetching jobs data:', error);
+                setIsLoadingJobs(false);
+                setJobsData([]);
+            }
+        } else {
+            // No supplier inventory ID, use empty data
+            setJobsData([]);
+            setIsLoadingJobs(false);
+        }
+    };
+
+    const handleCloseJobsModal = () => {
+        setJobsModal({ open: false });
+    };
+
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
             {isLoadingInventory ? (
@@ -224,6 +271,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Inventory</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -356,6 +404,31 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
 
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <Box
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType, row.id)}
+                                                                sx={{
+                                                                    padding: '6px',
+                                                                    borderRadius: '8px',
+                                                                    border: '1px solid #ccc',
+                                                                    cursor: 'pointer',
+                                                                    backgroundColor: 'transparent',
+                                                                    fontSize: '12px',
+                                                                    fontWeight: '500',
+                                                                    color: '#000',
+                                                                    textAlign: 'center',
+                                                                    minWidth: '50px',
+                                                                    display: 'inline-block',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f5f5f5',
+                                                                        color: '#1565c0'
+                                                                    },
+                                                                    transition: 'all 0.2s ease-in-out'
+                                                                }}
+                                                            >
+                                                                Show
+                                                            </Box>
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
 
                                                             <IconButton
                                                                 size="small"
@@ -420,6 +493,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Order</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
+                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -536,6 +610,31 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             />
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                            <Box
+                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code || '', materialType, row.id)}
+                                                                sx={{
+                                                                    padding: '6px',
+                                                                    borderRadius: '8px',
+                                                                    border: '1px solid #ccc',
+                                                                    cursor: 'pointer',
+                                                                    backgroundColor: 'transparent',
+                                                                    fontSize: '12px',
+                                                                    fontWeight: '500',
+                                                                    color: '#000',
+                                                                    textAlign: 'center',
+                                                                    minWidth: '50px',
+                                                                    display: 'inline-block',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f5f5f5',
+                                                                        borderColor: '#999'
+                                                                    },
+                                                                    transition: 'all 0.2s ease-in-out'
+                                                                }}
+                                                            >
+                                                                Show
+                                                            </Box>
+                                                        </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <IconButton
                                                                 size="small"
@@ -889,6 +988,17 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                 openModal={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onClickDelete={openChildTable.tableType === 'inventory' ? handleDeleteInventory : handleDeletePurchasePricing}
+            />
+
+            {/* Jobs Modal */}
+            <JobsModal
+                open={jobsModal.open}
+                onClose={handleCloseJobsModal}
+                supplierName={jobsModal.supplierName}
+                materialCode={jobsModal.materialCode}
+                materialName={jobsModal.materialName}
+                jobsData={jobsData}
+                isLoading={isLoadingJobs}
             />
         </Box>
     );
