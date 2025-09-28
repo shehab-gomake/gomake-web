@@ -7,6 +7,7 @@ import {
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { CircularProgress, IconButton, MenuItem, Paper } from "@mui/material";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -26,7 +27,7 @@ import {
 import { useGomakeAxios } from "@/hooks";
 
 const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
-  const { successColor, errorColor, primaryColor, grayColor } =
+  const { successColor, errorColor, primaryColor, grayColor ,warningColor} =
     useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
@@ -134,18 +135,33 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
           {fileStatus === EUploadingFileStatus.UPLOADING ? (
             <CircularProgress size={"25px"} />
           ) : fileStatus === EUploadingFileStatus.DONE ||
-            fileStatus === EUploadingFileStatus.Uploaded ? (
+            fileStatus === EUploadingFileStatus.Uploaded ||  fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ? (
             <>
-              <TaskAltIcon
-                style={{
-                  color: successColor(500),
-                  backgroundColor: successColor(100),
-                  width: "25px",
-                  height: "25px",
-                  padding: "2px",
-                  borderRadius: "50%",
-                }}
-              />
+            {
+              fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ?
+                  <CloudDoneIcon
+                      style={{
+                        color: warningColor(500),
+                        backgroundColor: warningColor(100),
+                        width: "25px",
+                        height: "25px",
+                        padding: "2px",
+                        borderRadius: "50%",
+                      }}
+                  /> :
+                  <TaskAltIcon
+                      style={{
+                        color: successColor(500),
+                        backgroundColor: successColor(100),
+                        width: "25px",
+                        height: "25px",
+                        padding: "2px",
+                        borderRadius: "50%",
+                      }}
+                  />
+            
+            
+            } 
               {isLoading ? (
                 <DotsLoader />
               ) : (
