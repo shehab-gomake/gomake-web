@@ -30,7 +30,7 @@ export const useFabPositioning = ({
     if (isConversationSelected && hasMessageInput) {
       setFabSx({
         ...baseSx,
-        bottom: isMobile ? 140 : 120, // Higher position to clear message input area
+        bottom: isMobile ? 140 : 80, // Higher position to clear message input area
       });
     } else {
       // Default position when no conversation selected or no message input
