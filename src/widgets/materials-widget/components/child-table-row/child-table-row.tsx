@@ -507,11 +507,11 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price ({purchasePricingTableHeadingUnits.pricingUnit || 'm² / Roll'})
+                                        Purchase Price ({purchasePricingTableHeadingUnits.pricingUnit})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Quantity in Package</TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplement Time</TableCell>
+                                    <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
+                                    <TableCell sx={classes.headerCell}>Supplement Time (working days)</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
@@ -711,7 +711,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                 supplierId: inventoryFormData.supplierId,
                 code: inventoryFormData.code,
                 quantity: parseInt(inventoryFormData.quantity.toString()) || 0,
-                inventory: parseInt(inventoryFormData.inventory.toString()) || 0,
                 isActive: inventoryFormData.isActive,
                 purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
                 salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
@@ -926,13 +925,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
                             type="number"
                             placeholder="Enter quantity"
-                        />
-                        <GomakeTextInput
-                            labelText="Inventory"
-                            value={inventoryFormData.inventory.toString()}
-                            onChange={(e) => handleInventoryFormChange('inventory', parseInt(e.target.value) || 0)}
-                            type="number"
-                            placeholder="Enter inventory amount"
                         />
                         <GomakeTextInput
                             labelText="Purchase Price"

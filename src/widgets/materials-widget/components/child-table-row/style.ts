@@ -215,11 +215,13 @@ const useStyle = () => {
         color: '#666',
         marginRight: '8px',
         width: 'auto',
-        padding: '8px 16px'
+        padding: '8px 16px',
+        height: '40px'
       },
       modalSubmitButton: {
         width: 'auto',
-        padding: '8px 16px'
+        padding: '8px 16px',
+        height: '40px'
       },
 
       // Main container
