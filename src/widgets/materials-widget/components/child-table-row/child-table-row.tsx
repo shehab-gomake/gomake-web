@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState } from "../../state";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState, materialCategoryDataState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
@@ -70,6 +70,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData } = useInventoryData();
     const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
     const { callApi } = useGomakeAxios();
+    const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
 
     useEffect(() => {
@@ -289,7 +290,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
                                     >
-                                        {inventoryData.map((row, index) => (
+                                        {inventoryData?.map((row, index) => (
                                             <Draggable key={row.id || `inventory-${index}`} draggableId={row.id || `inventory-${index}`} index={index}>
                                                 {(provided, snapshot) => (
                                                     <TableRow
@@ -704,6 +705,36 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         handleFormChange('supplierId', supplier?.id || '');
     };
 
+    // Function to update Total Inventory in parent table
+    const updateTotalInventoryInParent = (materialId: string, newTotalInventory: number) => {
+        setMaterialCategoryData(prevData =>
+            prevData.map(row => {
+                if (row.id === materialId) {
+                    // Create a new row object with updated inventory data
+                    const updatedRow = { ...row };
+                    // Common field names could be 'inventory', 'totalInventory', 'stock', etc.
+                    const inventoryFields = ['totalInventory'];
+
+                    for (const field of inventoryFields) {
+                        if (updatedRow.rowData[field]) {
+                            updatedRow.rowData = {
+                                ...updatedRow.rowData,
+                                [field]: {
+                                    ...updatedRow.rowData[field],
+                                    value: newTotalInventory.toString()
+                                }
+                            };
+                            break;
+                        }
+                    }
+
+                    return updatedRow;
+                }
+                return row;
+            })
+        );
+    };
+
     const handleAddInventory = async () => {
         try {
             const inventoryData = {
@@ -718,8 +749,15 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             };
 
             const callBack = (res) => {
+                console.log("resresresresresresres", res);
                 if (res.success) {
                     console.log('Inventory added successfully');
+
+                    // Update Total Inventory in parent table
+                    if (res.data && typeof res.data === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data);
+                    }
+
                     // Refresh the inventory data
                     fetchInventoryData(rowId);
                     handleCloseAddInventoryModal();

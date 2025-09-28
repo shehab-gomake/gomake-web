@@ -110,17 +110,17 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         return new Promise((resolve, reject) => {
             const callBack = (res) => {
                 if (res.success) {
-                    if (inventoryTable) {
-                        // Refresh inventory data after successful update
-                        refreshInventoryData(openChildTable.rowId);
-                    } else if (purchasePricingTable) {
-                        // Refresh purchase pricing data after successful update
-                        refreshPurchasePricingData(openChildTable.rowId);
-                    } 
-                    else {
-                        // Refresh main table data without loading spinner
-                        // refreshMainTableData();
-                    }
+                    // if (inventoryTable) {
+                    //     // Refresh inventory data after successful update
+                    //     refreshInventoryData(openChildTable.rowId);
+                    // } else if (purchasePricingTable) {
+                    //     // Refresh purchase pricing data after successful update
+                    //     refreshPurchasePricingData(openChildTable.rowId);
+                    // } 
+                    // else {
+                    //     // Refresh main table data without loading spinner
+                    //     // refreshMainTableData();
+                    // }
                     if(key.includes("price")){
                         onClickOpenPriceModal()
                     }
