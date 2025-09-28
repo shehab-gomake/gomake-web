@@ -274,7 +274,7 @@ const useAddAttachmentsModal = ({
       }
       return;
       // Call onFileUploadStart if provided
-      if (onFileUploadStart) {
+     /* if (onFileUploadStart) {
         onFileUploadStart();
       }
 
@@ -384,7 +384,7 @@ const useAddAttachmentsModal = ({
         }
       };
 
-      reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(file);*/
     }
   };
   async function uploadFileToGCS(
