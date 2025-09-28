@@ -216,3 +216,19 @@ export const openJobsModalState = atom<{
   key: "openJobsModalState",
   default: { open: false },
 });
+
+export const inventoryTableHeadingUnitsState = atom<{
+  inventoryUnit?: string;
+  pricingUnit?: string;
+}>({
+  key: "inventoryTableHeadingUnitsState",
+  default: {},
+});
+
+export const purchasePricingTableHeadingUnitsState = atom<{
+  inventoryUnit?: string;
+  pricingUnit?: string;
+}>({
+  key: "purchasePricingTableHeadingUnitsState",
+  default: {},
+});

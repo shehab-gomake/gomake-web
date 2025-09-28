@@ -2,13 +2,15 @@ import { useGomakeAxios } from "@/hooks";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
     purchasePricingDataState,
-    isLoadingPurchasePricingState
+    isLoadingPurchasePricingState,
+    purchasePricingTableHeadingUnitsState
 } from "../state";
 import { getPurchasePricingApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const usePurchasePricingData = () => {
     const { callApi } = useGomakeAxios();
     const [purchasePricingData, setPurchasePricingData] = useRecoilState(purchasePricingDataState);
+    const [purchasePricingTableHeadingUnits, setPurchasePricingTableHeadingUnits] = useRecoilState(purchasePricingTableHeadingUnitsState);
     const setIsLoadingPurchasePricing = useSetRecoilState(isLoadingPurchasePricingState);
 
     const fetchPurchasePricingData = async (printHouseMaterialId: string) => {
@@ -17,9 +19,11 @@ const usePurchasePricingData = () => {
         const callBack = (res: any) => {
             setIsLoadingPurchasePricing(false);
             if (res.success) {
-                setPurchasePricingData(res.data || []);
+                setPurchasePricingData(res?.data?.data || []);
+                setPurchasePricingTableHeadingUnits(res?.data?.tableHeadingUnits || {});
             } else {
                 setPurchasePricingData([]);
+                setPurchasePricingTableHeadingUnits({});
             }
         };
 
@@ -38,6 +42,7 @@ const usePurchasePricingData = () => {
 
     return {
         purchasePricingData,
+        purchasePricingTableHeadingUnits,
         fetchPurchasePricingData,
         clearPurchasePricingData,
     };

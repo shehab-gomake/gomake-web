@@ -47,6 +47,7 @@ const GET_SUPPLIER_INVENTORY_USAGE_URL = "/v1/printhouse-materials/get-supplier-
 const DELETE_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/delete-supplier-inventory";
 const DELETE_PRINTHOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/delete-print-house-material-supplier";
 const REORDER_PRINTHOUSE_MATERIALS_URL = "/v1/printhouse-materials/reorder-print-house-materials";
+const REORDER_PRINTHOUSE_SUPPLIER_INVENTORIES_URL = "/v1/printhouse-materials/reorder-supplier-inventories";
 const REORDER_PRINTHOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/reorder-print-house-material-supplier";
 const UPDATE_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/update-supplier-inventory";
 const ADD_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/add-supplier-inventory";
@@ -405,6 +406,20 @@ const reorderPrintHouseMaterialSupplierApi: ICallAndSetData = async (
   );
 };
 
+const reorderPrintHouseSupplierInventoriesApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    REORDER_PRINTHOUSE_SUPPLIER_INVENTORIES_URL,
+    callBack,
+    data
+  );
+};
+
 const updateSupplierInventoryApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -485,6 +500,7 @@ export {
   deletePrintHouseMaterialSupplierApi,
   reorderPrintHouseMaterialsApi,
   reorderPrintHouseMaterialSupplierApi,
+  reorderPrintHouseSupplierInventoriesApi,
   updateSupplierInventoryApi,
   addSupplierInventoryApi,
   // New material row update APIs
