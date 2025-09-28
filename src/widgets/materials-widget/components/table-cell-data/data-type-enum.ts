@@ -16,4 +16,5 @@ export enum EDataTypeEnum {
   INVENTORY,
   PURCHASE_PRICING,
   LONG_TEXT,
+  SELECT_FIXED_VALUES_ADD_NEW,
 }
