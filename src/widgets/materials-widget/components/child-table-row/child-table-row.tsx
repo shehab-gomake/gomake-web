@@ -490,10 +490,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>Quantity in Package</TableCell>
                                     <TableCell sx={classes.headerCell}>Supplement Time</TableCell>
-                                    <TableCell sx={classes.headerCell}>Order</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
-                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -585,18 +583,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isPurchasePricingTable={true}
                                                             />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.order || '-'}
-                                                                isEditable={true}
-                                                                type={0}
-                                                                id={row.id}
-                                                                parameterKey="order"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
+
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <TableCellData
                                                                 value={row.isActive}
@@ -610,31 +597,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             />
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
-                                                            <Box
-                                                                onClick={() => handleOpenJobsModal(row.supplierName, row.code || '', materialType, row.id)}
-                                                                sx={{
-                                                                    padding: '6px',
-                                                                    borderRadius: '8px',
-                                                                    border: '1px solid #ccc',
-                                                                    cursor: 'pointer',
-                                                                    backgroundColor: 'transparent',
-                                                                    fontSize: '12px',
-                                                                    fontWeight: '500',
-                                                                    color: '#000',
-                                                                    textAlign: 'center',
-                                                                    minWidth: '50px',
-                                                                    display: 'inline-block',
-                                                                    '&:hover': {
-                                                                        backgroundColor: '#f5f5f5',
-                                                                        borderColor: '#999'
-                                                                    },
-                                                                    transition: 'all 0.2s ease-in-out'
-                                                                }}
-                                                            >
-                                                                Show
-                                                            </Box>
-                                                        </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <IconButton
                                                                 size="small"
