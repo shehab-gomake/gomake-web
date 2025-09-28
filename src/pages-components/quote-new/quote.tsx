@@ -72,6 +72,7 @@ import { useOrdersSocketIo } from "@/hooks/socket-io/use-orders-socket-io";
 import { AddAttachmentsPurchaseModal } from "@/widgets/quote-new/modals-widgets/add-attachments-purchase-modal/add-attachments-purchase-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
+import {useQuoteConfirmation} from "@/pages-components/quote-confirmation/use-quote-confirmation";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -370,6 +371,7 @@ const QuoteNewPageWidget = ({
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
+  const { getQuoteConfirmation } = useQuoteConfirmation();
   if (documentType == DOCUMENT_TYPE.quote) {
     const { } = useQuotesSocketIo({ getQuote });
   }
@@ -1269,7 +1271,7 @@ const QuoteNewPageWidget = ({
         openModal={openAddAttachmentsModal}
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
-        getQuote={getQuote}
+        getQuote={isQuoteConfirmation ? ()=>{} : getQuote}
         isQuoteConfirmation={isQuoteConfirmation}
         quoteConfirm={quoteState}
         onFileUploadStart={onFileUploadStart}
