@@ -65,7 +65,7 @@ const useAuthLayoutHook = (
         path: "/gomake-ai",
         isList: false,
         icon: () => {
-          return <ReviewsOutlinedIcon />;
+          return <ReviewsOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
         tourData: "menu-go-ai",

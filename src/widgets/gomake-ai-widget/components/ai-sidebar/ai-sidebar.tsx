@@ -2,13 +2,15 @@ import { JobHistoryItem } from "../job-history-item/job-history-item";
 import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
-import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
+import HomeIcon from "@mui/icons-material/Home";
+import { GoMakeIcon } from "@/components/icons/go-make-icon";
 
 interface AISidebarProps {
   onNewJobClick: () => void;
   jobHistory: any[];
 }
 
+//!HERE
 const AISidebar = ({ onNewJobClick, jobHistory }: AISidebarProps) => {
   const { classes } = useStyle();
 
@@ -75,8 +77,32 @@ const AISidebar = ({ onNewJobClick, jobHistory }: AISidebarProps) => {
 
       {/* Footer */}
       <div style={classes.footer}>
-        <div style={classes.poweredByLbl}>Powered by</div>
-        <GoMakeIcon />
+        <button
+          style={(classes as any).backButton}
+          onClick={() => {
+            // Navigate back to home or GoMake dashboard
+            window.location.href = "/";
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#E0E7FF";
+            e.currentTarget.style.transform = "translateY(-2px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#EFF6FF";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          <HomeIcon style={(classes as any).backButtonIcon} />
+          <span style={(classes as any).backButtonText}>Back to GoMake</span>
+        </button>
+        <div style={(classes as any).poweredByContainer}>
+          <div style={classes.poweredByLbl}>Powered by</div>
+          <GoMakeIcon
+            color="linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)"
+            height={20}
+            width={100}
+          />
+        </div>
       </div>
     </div>
   );

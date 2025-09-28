@@ -5,6 +5,71 @@ import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 const useStyle = () => {
   const classes = useMemo(() => {
     return {
+      bottomFormContainer: {
+        position: "absolute" as "absolute",
+        bottom: 24,
+        left: 24,
+        right: 24,
+        backgroundColor: "#FFF",
+        borderRadius: 12,
+        border: "1px solid #E5E7EB",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+      },
+      bottomFormWrapper: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center", // 👈 was flex-end
+        padding: "8px 12px",
+        gap: 12,
+      },
+      bottomTextArea: {
+        flex: 1,
+        minHeight: 44,
+        maxHeight: 120,
+        resize: "none" as "none", // 👈 no resize
+        fontFamily: FONT_FAMILY.Inter(400, 14).fontFamily,
+        fontSize: 14,
+        lineHeight: "20px",
+        padding: "12px 16px",
+        border: "none", // 👈 remove border
+        borderRadius: 8,
+        backgroundColor: "#FFF", // 👈 white inside
+        outline: "none",
+        "&:focus": {
+          outline: "none",
+          boxShadow: "none",
+        },
+        "&::placeholder": {
+          color: "#9CA3AF",
+        },
+      },
+      sendButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 8,
+        background: "#3B82F6", // 👈 solid blue
+        border: "none",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "all 0.2s ease",
+        "&:hover": {
+          background: "#2563EB", // darker blue hover
+          transform: "translateY(-1px)",
+        },
+        "&:disabled": {
+          background: "#D1D5DB",
+          cursor: "not-allowed",
+          transform: "none",
+        },
+      },
+      sendIcon: {
+        color: "#FFF",
+        fontSize: 20,
+        transform: "rotate(-15deg)",
+      },
+
       mainPanelContainer: {
         flex: 1,
         display: "flex",
@@ -197,75 +262,75 @@ const useStyle = () => {
         textAlign: "left" as "left",
         flex: 1,
       },
-      bottomFormContainer: {
-        position: "absolute" as "absolute",
-        bottom: 24,
-        left: 24,
-        right: 24,
-        backgroundColor: "#FFF",
-        borderRadius: 12,
-        border: "1px solid #E5E7EB",
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-      },
-      bottomFormWrapper: {
-        display: "flex",
-        flexDirection: "row" as "row",
-        alignItems: "flex-end",
-        gap: 12,
-        padding: "16px",
-      },
-      bottomTextArea: {
-        flex: 1,
-        minHeight: 40,
-        maxHeight: 120,
-        resize: "vertical" as "vertical",
-        fontFamily: FONT_FAMILY.Inter(400, 14).fontFamily,
-        fontSize: 14,
-        lineHeight: "20px",
-        padding: "12px 16px",
-        border: "1px solid #D1D5DB",
-        borderRadius: 8,
-        backgroundColor: "#F9FAFB",
-        outline: "none",
-        "&:focus": {
-          borderColor: "#504FA1",
-          boxShadow: "0 0 0 3px rgba(80, 79, 161, 0.1)",
-        },
-        "&::placeholder": {
-          color: "#9CA3AF",
-        },
-      },
-      sendButton: {
-        width: 48,
-        height: 48,
-        borderRadius: 8,
-        background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)",
-        border: "none",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "all 0.2s ease",
-        "&:hover": {
-          background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
-          transform: "translateY(-1px)",
-        },
-        "&:disabled": {
-          background: "#D1D5DB",
-          cursor: "not-allowed",
-          transform: "none",
-        },
-      },
+      // bottomFormContainer: {
+      //   position: "absolute" as "absolute",
+      //   bottom: 24,
+      //   left: 24,
+      //   right: 24,
+      //   backgroundColor: "#FFF",
+      //   borderRadius: 12,
+      //   border: "1px solid #E5E7EB",
+      //   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+      // },
+      // bottomFormWrapper: {
+      //   display: "flex",
+      //   flexDirection: "row" as "row",
+      //   alignItems: "flex-end",
+      //   gap: 12,
+      //   padding: "16px",
+      // },
+      // bottomTextArea: {
+      //   flex: 1,
+      //   minHeight: 40,
+      //   maxHeight: 120,
+      //   resize: "vertical" as "vertical",
+      //   fontFamily: FONT_FAMILY.Inter(400, 14).fontFamily,
+      //   fontSize: 14,
+      //   lineHeight: "20px",
+      //   padding: "12px 16px",
+      //   border: "1px solid #D1D5DB",
+      //   borderRadius: 8,
+      //   backgroundColor: "#F9FAFB",
+      //   outline: "none",
+      //   "&:focus": {
+      //     borderColor: "#504FA1",
+      //     boxShadow: "0 0 0 3px rgba(80, 79, 161, 0.1)",
+      //   },
+      //   "&::placeholder": {
+      //     color: "#9CA3AF",
+      //   },
+      // },
+      // sendButton: {
+      //   width: 48,
+      //   height: 48,
+      //   borderRadius: 8,
+      //   background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)",
+      //   border: "none",
+      //   cursor: "pointer",
+      //   display: "flex",
+      //   alignItems: "center",
+      //   justifyContent: "center",
+      //   transition: "all 0.2s ease",
+      //   "&:hover": {
+      //     background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
+      //     transform: "translateY(-1px)",
+      //   },
+      //   "&:disabled": {
+      //     background: "#D1D5DB",
+      //     cursor: "not-allowed",
+      //     transform: "none",
+      //   },
+      // },
       sendButtonDisabled: {
         backgroundColor: "#D1D5DB",
         cursor: "not-allowed",
       },
-      sendIcon: {
-        color: "#FFF",
-        fontSize: 20,
-        transform: "rotate(-15deg)",
-        fontStyle: "italic",
-      },
+      // sendIcon: {
+      //   color: "#FFF",
+      //   fontSize: 20,
+      //   transform: "rotate(-15deg)",
+      //   fontStyle: "italic",
+      // },
       jobTypeIconWrapper: {
         display: "flex",
         alignItems: "center" as "center",
