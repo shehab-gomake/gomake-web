@@ -20,20 +20,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
   let senderName: string;
   let senderEmail: string | undefined;
 
-  if (typeof message.from === "string") {
-    const fromString = message.from.replace(/ @/g, "@");
-    const match = fromString.match(/(.*)<(.*)>/);
-    if (match && match[1] && match[2]) {
-      senderName = match[1].replace(/"/g, "").trim();
-      senderEmail = match[2].trim();
-    } else {
-      senderName = fromString;
-      senderEmail = fromString.includes("@") ? fromString : undefined;
-    }
-  } else {
-    senderName = message.from.name || message.from.email;
-    senderEmail = message.from.email;
-  }
+  // message.from is always an EmailRecipient object based on the type definition
+  senderName = message.from.name || message.from.email;
+  senderEmail = message.from.email;
 
   const avatarColor = getAvatarColor(senderName, primaryColor);
   const initials = getEmailInitials(senderName);
