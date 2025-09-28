@@ -1,8 +1,8 @@
 import React from 'react';
-import { 
-  Box, 
-  List, 
-  ListItem, 
+import {
+  Box,
+  List,
+  ListItem,
   ListItemButton,
   ListItemAvatar,
   ListItemText,
@@ -10,7 +10,8 @@ import {
   Typography,
   Badge,
   Chip,
-  Divider
+  Divider,
+  Tooltip
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { UnifiedConversation } from '../types/unified.types';
@@ -73,6 +74,35 @@ const ConversationItem: React.FC<{
       });
     }
   };
+
+  // Get ticket status color
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'OPEN': return theme.palette.error.main;
+      case 'PENDING': return theme.palette.warning.main;
+      case 'IN_PROGRESS': return theme.palette.info.main;
+      case 'RESOLVED': return theme.palette.success.main;
+      case 'CLOSED': return theme.palette.grey[500];
+      case 'REOPENED': return theme.palette.error.main;
+      default: return theme.palette.grey[400];
+    }
+  };
+
+  // Get SLA indicator color
+  const getSLAColor = (sla?: any) => {
+    if (!sla) return 'transparent';
+    switch (sla.status) {
+      case 'breached': return theme.palette.error.main;
+      case 'at-risk': return theme.palette.warning.main;
+      case 'normal': return theme.palette.success.main;
+      default: return 'transparent';
+    }
+  };
+
+  // Build display name with ticket number prefix
+  const displayName = conversation.ticketNumber 
+    ? `#${conversation.ticketNumber} · ${conversation.name}`
+    : conversation.name;
   
   return (
     <ListItem 
@@ -91,6 +121,15 @@ const ConversationItem: React.FC<{
             badgeContent={conversation.unreadCount} 
             color="error"
             overlap="circular"
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            sx={{
+              '& .MuiBadge-badge': {
+                border: conversation.sla?.status ? `2px solid ${getSLAColor(conversation.sla)}` : 'none'
+              }
+            }}
           >
             <Avatar sx={{ width: 40, height: 40 }}>
               {conversation.name.charAt(0).toUpperCase()}
@@ -103,7 +142,7 @@ const ConversationItem: React.FC<{
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <ConversationIndicator provider={conversation.provider} />
               <Typography variant="body1" fontWeight={conversation.unreadCount ? 600 : 400}>
-                {conversation.name}
+                {displayName}
               </Typography>
               {conversation.accountName && (
                 <Chip 
@@ -116,17 +155,44 @@ const ConversationItem: React.FC<{
             </Box>
           }
           secondary={
-            <Typography 
-              variant="body2" 
-              color="text.secondary"
-              sx={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              {conversation.lastMessage || 'No messages yet'}
-            </Typography>
+            <Box>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  mb: conversation.ticketTags?.length ? 0.5 : 0
+                }}
+              >
+                {conversation.lastMessage || 'No messages yet'}
+              </Typography>
+              
+              {/* Show ticket tags if present and there's space */}
+              {conversation.ticketTags && conversation.ticketTags.length > 0 && (
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                  {conversation.ticketTags.slice(0, 2).map((tag, index) => (
+                    <Chip 
+                      key={index}
+                      label={tag}
+                      size="small"
+                      variant="outlined"
+                      sx={{ 
+                        height: 16, 
+                        fontSize: '0.6rem',
+                        '& .MuiChip-label': { px: 0.5 }
+                      }}
+                    />
+                  ))}
+                  {conversation.ticketTags.length > 2 && (
+                    <Typography variant="caption" color="text.secondary">
+                      +{conversation.ticketTags.length - 2}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </Box>
           }
         />
         
@@ -134,18 +200,57 @@ const ConversationItem: React.FC<{
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'flex-end',
-          minWidth: 60
+          minWidth: 80,
+          gap: 0.5
         }}>
+          {/* Timestamp */}
           <Typography variant="caption" color="text.secondary">
             {formatTime(conversation.lastMessageAt)}
           </Typography>
-          {conversation.priority && conversation.priority !== 'low' && (
+          
+          {/* Combined Status/Priority Pill for tickets */}
+          {conversation.isTicket && conversation.ticketStatus && (
+            <Chip 
+              label={
+                conversation.priority && conversation.priority !== 'low' 
+                  ? `${conversation.ticketStatus} ${conversation.priority}`
+                  : conversation.ticketStatus
+              }
+              size="small"
+              sx={{ 
+                height: 18, 
+                fontSize: '0.65rem',
+                backgroundColor: getStatusColor(conversation.ticketStatus),
+                color: 'white',
+                '& .MuiChip-label': { px: 0.75 }
+              }}
+            />
+          )}
+          
+          {/* Legacy priority chip for non-tickets */}
+          {!conversation.isTicket && conversation.priority && conversation.priority !== 'low' && (
             <Chip 
               label={conversation.priority}
               size="small"
               color={conversation.priority === 'high' ? 'error' : 'warning'}
-              sx={{ mt: 0.5, height: 16, fontSize: '0.65rem' }}
+              sx={{ height: 16, fontSize: '0.65rem' }}
             />
+          )}
+          
+          {/* Assignee Avatar for tickets */}
+          {conversation.isTicket && conversation.assigneeName && (
+            <Tooltip title={conversation.assigneeName}>
+              <Avatar 
+                sx={{ 
+                  width: 20, 
+                  height: 20, 
+                  fontSize: '0.7rem',
+                  bgcolor: theme.palette.primary.main
+                }}
+              >
+                {conversation.assigneeName.charAt(0).toUpperCase()}
+              </Avatar>
+            </Tooltip>
           )}
         </Box>
       </ListItemButton>

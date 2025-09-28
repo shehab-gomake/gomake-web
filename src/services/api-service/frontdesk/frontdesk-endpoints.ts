@@ -13,6 +13,9 @@ const DMS_BASE_URL = "/api/dms";
 // Channels endpoints
 const CHANNELS_BASE_URL = "/api/channels";
 
+// Ticketing System endpoints
+const TICKETS_BASE_URL = "/api/tickets";
+
 // ============================================
 // Gmail APIs (Existing)
 // ============================================
@@ -256,6 +259,257 @@ const leaveChannelApi: ICallAndSetData = async (
   );
 };
 
+// ============================================
+// Ticketing System APIs
+// ============================================
+
+// List tickets with filtering
+const getTicketsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  const queryParams = new URLSearchParams();
+
+  if (data?.status) queryParams.append('status', data.status);
+  if (data?.priority) queryParams.append('priority', data.priority);
+  if (data?.assigneeId) queryParams.append('assigneeId', data.assigneeId);
+  if (data?.managerId) queryParams.append('managerId', data.managerId);
+  if (data?.categoryId) queryParams.append('categoryId', data.categoryId);
+  if (data?.customerEmail) queryParams.append('customerEmail', data.customerEmail);
+  if (data?.customerPhone) queryParams.append('customerPhone', data.customerPhone);
+  if (data?.tags) queryParams.append('tags', data.tags.join(','));
+  if (data?.page) queryParams.append('page', data.page.toString());
+  if (data?.limit) queryParams.append('limit', data.limit.toString());
+  if (data?.sortBy) queryParams.append('sortBy', data.sortBy);
+  if (data?.sortOrder) queryParams.append('sortOrder', data.sortOrder);
+
+  const queryString = queryParams.toString();
+  const url = queryString ? `${TICKETS_BASE_URL}?${queryString}` : TICKETS_BASE_URL;
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    url,
+    setState
+  );
+};
+
+// Assign ticket to agent
+const assignTicketApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.assigneeId) {
+    throw new Error('ticketId and assigneeId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/assign`,
+    setState,
+    { assigneeId: data.assigneeId }
+  );
+};
+
+// Reply to ticket
+const replyToTicketApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.content) {
+    throw new Error('ticketId and content are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/reply`,
+    setState,
+    { content: data.content }
+  );
+};
+
+// Update ticket status
+const updateTicketStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.status) {
+    throw new Error('ticketId and status are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PATCH,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/status`,
+    setState,
+    { status: data.status }
+  );
+};
+
+// Update ticket priority
+const updateTicketPriorityApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.priority) {
+    throw new Error('ticketId and priority are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PATCH,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/priority`,
+    setState,
+    { priority: data.priority }
+  );
+};
+
+// Add note to ticket
+const addTicketNoteApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.note) {
+    throw new Error('ticketId and note are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/notes`,
+    setState,
+    { note: data.note }
+  );
+};
+
+// Add tag to ticket
+const addTicketTagApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.tag) {
+    throw new Error('ticketId and tag are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/tags`,
+    setState,
+    { tag: data.tag }
+  );
+};
+
+// Remove tag from ticket
+const removeTicketTagApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId || !data?.tag) {
+    throw new Error('ticketId and tag are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/tags/${encodeURIComponent(data.tag)}`,
+    setState
+  );
+};
+
+// Merge tickets
+const mergeTicketsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.sourceTicketId || !data?.targetTicketId) {
+    throw new Error('sourceTicketId and targetTicketId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.sourceTicketId)}/merge`,
+    setState,
+    { targetTicketId: data.targetTicketId }
+  );
+};
+
+// Reopen ticket (Manager only)
+const reopenTicketApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId) {
+    throw new Error('ticketId is required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/reopen`,
+    setState
+  );
+};
+
+// Get available agents for ticket assignment
+const getAvailableAgentsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${TICKETS_BASE_URL}/agents`,
+    setState
+  );
+};
+
+// Get ticket categories
+const getTicketCategoriesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${TICKETS_BASE_URL}/categories`,
+    setState
+  );
+};
+
+// Get ticket history
+const getTicketHistoryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.ticketId) {
+    throw new Error('ticketId is required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${TICKETS_BASE_URL}/${encodeURIComponent(data.ticketId)}/history`,
+    setState
+  );
+};
+
 // Export all API functions
 export {
   // Gmail APIs
@@ -275,5 +529,20 @@ export {
   getChannelByIdApi,
   getChannelMembersApi,
   joinChannelApi,
-  leaveChannelApi
+  leaveChannelApi,
+
+  // Ticketing APIs
+  getTicketsApi,
+  assignTicketApi,
+  replyToTicketApi,
+  updateTicketStatusApi,
+  updateTicketPriorityApi,
+  addTicketNoteApi,
+  addTicketTagApi,
+  removeTicketTagApi,
+  mergeTicketsApi,
+  reopenTicketApi,
+  getAvailableAgentsApi,
+  getTicketCategoriesApi,
+  getTicketHistoryApi
 };
