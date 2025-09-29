@@ -20,6 +20,7 @@ import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
 import { SelectInputWithAddValue } from "./select-input-with-add-value";
+import { SelectClientsInput } from "./select-clients-input";
 
 const TableCellData = ({
   value,
@@ -83,8 +84,11 @@ const TableCellData = ({
           value={value as string}
           id={id}
           key={parameterKey}
+          parameterKey={parameterKey}
           isAdmin={isAdmin}
           onChangeRowCheckBox={onChangeRowCheckBox}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.ARRAY_INPUT:
@@ -139,6 +143,8 @@ const TableCellData = ({
           isAdmin={isAdmin}
           options={clientsOptions}
           placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.PRODUCTS_LIST:
@@ -221,6 +227,20 @@ const TableCellData = ({
           id={id}
           value={value as string}
           isAdmin={isAdmin}
+        />
+      );
+    case EDataTypeEnum.CLIENT_LIST:
+      return (
+        <SelectClientsInput
+          values={values}
+          parameterKey={parameterKey}
+          id={id}
+          value={value}
+          isAdmin={isAdmin}
+          options={clientsOptions}
+          placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     default:

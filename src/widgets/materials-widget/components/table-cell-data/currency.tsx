@@ -17,17 +17,22 @@ import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 interface ICurrencyInputProps {
   value: string;
   id: string;
+  parameterKey: string;
   isAdmin: boolean;
   onChangeRowCheckBox?: any;
+  isInventoryTable?: boolean;
+  isPurchasePricingTable?: boolean;
 }
 
 const CurrencyInput = ({
   value,
   id,
+  parameterKey,
   isAdmin,
   onChangeRowCheckBox,
+  isInventoryTable,
+  isPurchasePricingTable,
 }: ICurrencyInputProps) => {
-  console.log("valuaaaaaaaaaaaaaaaaaaaaaaaae", value);
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const currencies = useRecoilValue(currenciesState);
@@ -54,7 +59,10 @@ const CurrencyInput = ({
       isUnderLine: true,
       text: "UpdateCurrency",
       icon: "currencyUpdate",
-      action: EMaterialsActions.UpdateCurrency
+      action: EMaterialsActions.UpdateCurrency,
+      parameterKey: parameterKey, // Include parameterKey to know which currency column
+      isInventoryTable: isInventoryTable,
+      isPurchasePricingTable: isPurchasePricingTable,
     });
   };
   return (

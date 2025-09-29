@@ -1,7 +1,7 @@
 import { useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilState, useRecoilValue} from "recoil";
-import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState, inventoryDataState} from "@/widgets/materials-widget/state";
-import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState, inventoryDataState, purchasePricingDataState} from "@/widgets/materials-widget/state";
+import {updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -14,6 +14,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
     const [inventoryData, setInventoryData] = useRecoilState(inventoryDataState);
+    const [purchasePricingData, setPurchasePricingData] = useRecoilState(purchasePricingDataState);
     const openChildTable = useRecoilValue(openChildTableState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -103,6 +104,22 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         );
     };
 
+    // Function to update purchase pricing table data with backend response
+    const updatePurchasePricingTableData = (rowId: string, updatedRowData: any) => {
+        setPurchasePricingData(prevData =>
+            prevData.map(row => {
+                if (row.id === rowId) {
+                    // Update the inventory row with the new data from backend
+                    return {
+                        ...row,
+                        ...updatedRowData
+                    };
+                }
+                return row;
+            })
+        );
+    };
+
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
         return new Promise((resolve, reject) => {
             const callBack = (res) => {
@@ -138,33 +155,38 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         
             if(inventoryTable){
                 // Use inventory API with correct payload structure
+                const updatedValue= value ? value.toString() : "";
                 updateSupplierInventoryApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value.toString(),
+                    updatedValue: updatedValue,
                     pricingType: pricingType 
                 });
-            } else if(purchasePricingTable){
+            } 
+            else if(purchasePricingTable){
                 // Use same API for purchase pricing (will change when BE is ready)
+                const updatedValue = value ? value.toString() : "";
                 updatePrintHouseMaterialSupplierApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value.toString(),
+                    updatedValue: updatedValue,
                 });
             } else if(isAdmin){
+                const updatedValue = value ? value : "";
                 updateMaterialPropApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: updatedValue,
                     priceIndex: index,
                 });
             }else{
+                const updatedValue = value ? value : "";
                 updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: updatedValue,
                     priceIndex: index,
                 });
             }
@@ -191,6 +213,9 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         openPriceModal,
         onClickClosePriceModal,
         updateProfitProfileProductHidden,
+        updateInventoryTableData,
+        updateMainTableData,
+        updatePurchasePricingTableData,
     }
 }
 

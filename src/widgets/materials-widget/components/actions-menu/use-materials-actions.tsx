@@ -26,7 +26,11 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import {
   getPrintHouseMaterialExcelFileApi,
-  updatePrintHouseMaterialsPropApi, updatePrintHouseMaterialsRowsApi, uploadPrintHouseMaterialExcelFileApi
+  updatePrintHouseMaterialsPropApi,
+  updatePrintHouseMaterialsRowsApi,
+  uploadPrintHouseMaterialExcelFileApi,
+  updateSupplierInventoryApi,
+  updatePrintHouseMaterialSupplierApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {
   ActiveMaterial,
@@ -56,6 +60,7 @@ import { actionMenuState, openPriceModalState, userState } from "@/store";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import { CreateOrder } from "@/icons/material-tabs/create-order";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
+import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -66,17 +71,27 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // Get the table cell data functions for inventory updates
+  const { updateInventoryTableData, updateMainTableData, updatePurchasePricingTableData } = useTableCellData(isAdmin, true, true);
   const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  const openChildTable = useRecoilValue(openChildTableState);
+  const openChildTable: any = useRecoilValue(openChildTableState);
+
   const inventoryData = useRecoilValue(inventoryDataState);
   const purchasePricingData = useRecoilValue(purchasePricingDataState);
+  const currencies: any = useRecoilValue(currenciesState);
+
+  console.log("openChildTable", { openChildTable, inventoryData, purchasePricingData, currencies });
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
     text?: string;
+    parameterKey?: string;
+    isInventoryTable?: boolean;
+    isPurchasePricingTable?: boolean;
   } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   useEffect(() => {
@@ -131,15 +146,46 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const myId = selectedMaterialsIds[0];
       let currency = null;
 
-      // Check if we're in inventory/purchase table context
-      if (openChildTable.tableType === 'inventory' && inventoryData.length > 0) {
-        // Get currency from inventory data
-        const inventoryRow = inventoryData.find((row) => row.id === myId);
-        currency = inventoryRow?.purchasePrice?.currency || inventoryRow?.salePrice?.currency;
-      } else if (openChildTable.tableType === 'purchasePricing' && purchasePricingData.length > 0) {
-        // Get currency from purchase pricing data
-        const purchaseRow = purchasePricingData.find((row) => row.id === myId);
-        currency = purchaseRow?.currency;
+      // Use action metadata to determine which table we're in
+      if (action?.isPurchasePricingTable) {
+        // We're specifically in purchase pricing table
+        const purchaseRow = purchasePricingData?.find((row) => row.id === myId);
+        if (purchaseRow) {
+          // For purchase pricing, get currency from the row data structure
+          currency = purchaseRow?.currency ||
+            purchaseRow?.purchasePrice?.currency ||
+            purchaseRow?.rowData?.currency?.value;
+          console.log("Purchase pricing table - found currency:", currency, "for row:", myId, "full row:", purchaseRow);
+        }
+      } else if (action?.isInventoryTable) {
+        // We're specifically in inventory table
+        const inventoryRow = inventoryData?.find((row) => row.id === myId);
+        if (inventoryRow && action?.parameterKey) {
+          // Use the specific currency based on which column was clicked
+          if (action.parameterKey === 'saleCurrency') {
+            currency = inventoryRow?.salePrice?.currency;
+          } else {
+            currency = inventoryRow?.purchasePrice?.currency;
+          }
+          console.log("Inventory table - found currency:", currency, "for parameterKey:", action.parameterKey);
+        } else if (inventoryRow) {
+          // Fallback to purchase currency if no specific parameter key
+          currency = inventoryRow?.purchasePrice?.currency || inventoryRow?.salePrice?.currency;
+        }
+      } else {
+        // Fallback logic for when action metadata is not available
+        // Check data presence as secondary method
+        if (purchasePricingData && purchasePricingData.length > 0) {
+          const purchaseRow = purchasePricingData.find((row) => row.id === myId);
+          if (purchaseRow) {
+            currency = purchaseRow?.currency || purchaseRow?.purchasePrice?.currency;
+          }
+        } else if (inventoryData && inventoryData.length > 0) {
+          const inventoryRow = inventoryData.find((row) => row.id === myId);
+          if (inventoryRow) {
+            currency = inventoryRow?.purchasePrice?.currency || inventoryRow?.salePrice?.currency;
+          }
+        }
       }
 
       // If no currency found from inventory/purchase tables, or we're in main table, use main table data
@@ -148,9 +194,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
         currency = selectedRow?.rowData?.currency?.value;
       }
 
+      console.log("Setting currentCurrency:", currency, "for parameterKey:", action?.parameterKey, "isInventoryTable:", action?.isInventoryTable, "isPurchasePricingTable:", action?.isPurchasePricingTable);
       setCurrentCurrency(currency);
     }
-  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData]);
+  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action]);
 
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
@@ -270,6 +317,81 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFault(t("products.offsetPrice.admin.fillValue"));
       return;
     }
+
+    // Check if we're updating currency in inventory or purchase table
+    console.log("updateMaterials - action:", action.action, "openChildTable:", openChildTable);
+
+    if (action.action === EMaterialsActions.UpdateCurrency) {
+      // Check if this is from inventory or purchase table based on action metadata
+      const isFromInventoryTable = action.isInventoryTable;
+      const isFromPurchaseTable = action.isPurchasePricingTable;
+      const currencyParameterKey = action.parameterKey;
+
+      console.log("Currency update - isFromInventoryTable:", isFromInventoryTable, "isFromPurchaseTable:", isFromPurchaseTable, "parameterKey:", currencyParameterKey);
+
+      if (isFromInventoryTable || isFromPurchaseTable) {
+        console.log("Using inventory/purchase specific endpoints");
+
+        // For inventory/purchase tables, update individual rows using the specific endpoint
+        const updatePromises = selectedMaterialsIds.map(async (rowId) => {
+          const selectedCurrency = currencies?.find(c => c.value === updatedValue);
+          const exchangeRate = rate || selectedCurrency?.exchangeRate || 1;
+
+          // Determine pricing type based on parameterKey (like price updates do)
+          let pricingType = 1; // Default to PurchasePrice
+          if (currencyParameterKey && (currencyParameterKey.includes('sale') || currencyParameterKey.toLowerCase().includes('sale'))) {
+            pricingType = 2; // SalesPrice
+          }
+
+          console.log("Currency update details:", {
+            rowId,
+            currencyParameterKey,
+            updatedValue,
+            exchangeRate,
+            pricingType,
+            currentPurchaseCurrency: inventoryData.find(r => r.id === rowId)?.purchasePrice?.currency,
+            currentSaleCurrency: inventoryData.find(r => r.id === rowId)?.salePrice?.currency
+          });
+          if (isFromInventoryTable) {
+            // Use inventory endpoint with correct pricing type
+            return await updateSupplierInventoryApi(callApi, (res) => {
+              if (res.success && res.data) {
+                updateInventoryTableData(rowId, res.data?.row);
+              }
+            }, {
+              id: rowId,
+              key: "currency",
+              updatedValue: updatedValue,
+              exchangeRate: exchangeRate,
+              pricingType: pricingType,
+            });
+          }
+          else if (isFromPurchaseTable) {
+            // Use purchase pricing endpoint
+            return await updatePrintHouseMaterialSupplierApi(callApi, (res) => {
+              console.log("updatePrintHouseMaterialSupplierApi response:", res);
+              if (res.success && res.data) {
+                // Use the existing updatePurchasePricingTableData function
+                updatePurchasePricingTableData(rowId, res.data);
+              }
+            }, {
+              id: rowId,
+              key: "currency",
+              updatedValue: updatedValue,
+              exchangeRate: exchangeRate,
+              pricingType: 1,
+            });
+          }
+        });
+
+        // Wait for all updates to complete
+        await Promise.all(updatePromises);
+        onUpdateCallBack({ success: true });
+        return;
+      }
+    }
+
+    // Default behavior for main materials table
     return await updatePrintHouseMaterialsRowsApi(callApi, onUpdateCallBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: materialCategory.toString(),
@@ -622,7 +744,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   };
 
-  const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
 
   const materialHeaders =

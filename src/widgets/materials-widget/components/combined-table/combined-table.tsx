@@ -12,21 +12,27 @@ import { useStyle } from "./style";
 interface ICombinedTableProps {
     headers: any[];
     rows: any[];
-    renderOptions: any;
-    checkWhatRenderArray: any;
-    isFetching: boolean;
     materialType?: string;
     materialCategory?: string;
+    renderOptionsCustomer?: any;
+    checkWhatRenderArrayCustomer?: any;
+    isFetchingCustomer?: boolean;
+    renderOptionsSupplier?: any;
+    checkWhatRenderArraySupplier?: any;
+    isFetchingSupplier?: boolean;
 }
 
 const CombinedTable = ({
     headers,
     rows,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
     materialType,
     materialCategory,
+    renderOptionsCustomer,
+    checkWhatRenderArrayCustomer,
+    isFetchingCustomer,
+    renderOptionsSupplier,
+    checkWhatRenderArraySupplier,
+    isFetchingSupplier,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
@@ -174,11 +180,14 @@ const CombinedTable = ({
                                                     <ChildTableRow
                                                         rowId={row.id}
                                                         isVisible={true}
-                                                        renderOptions={renderOptions}
-                                                        checkWhatRenderArray={checkWhatRenderArray}
-                                                        isFetching={isFetching}
                                                         materialType={materialType}
                                                         materialCategory={materialCategory}
+                                                        renderOptionsCustomer={renderOptionsCustomer}
+                                                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                                                        isFetchingCustomer={isFetchingCustomer}
+                                                        renderOptionsSupplier={renderOptionsSupplier}
+                                                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                                                        isFetchingSupplier={isFetchingSupplier}
                                                     />
                                                 </Box>
                                             </TableCell>

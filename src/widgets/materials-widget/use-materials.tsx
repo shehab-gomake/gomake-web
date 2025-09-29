@@ -38,7 +38,6 @@ import {
   materialsTablePageState,
   materialsUnCheckedState,
   materialTypeTableState,
-  openAddRowModalState,
   openChildTableState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
@@ -55,7 +54,6 @@ import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { EMaterialActiveFilter } from "./enums";
-import { ChildTableRow } from "./components/child-table-row/child-table-row";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -363,7 +361,7 @@ const useMaterials = (isAdmin: boolean) => {
         );
       }),
       // t("usersSettings.isActive"),
-      t("properties.more"),
+      " ",
     ];
   }, [materialHeaders, materialCategoryData]);
 
