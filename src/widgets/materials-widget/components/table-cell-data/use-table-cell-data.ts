@@ -1,7 +1,7 @@
 import { useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilState, useRecoilValue} from "recoil";
-import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState, inventoryDataState} from "@/widgets/materials-widget/state";
-import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState, inventoryDataState, purchasePricingDataState} from "@/widgets/materials-widget/state";
+import {updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -14,6 +14,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
     const [inventoryData, setInventoryData] = useRecoilState(inventoryDataState);
+    const [purchasePricingData, setPurchasePricingData] = useRecoilState(purchasePricingDataState);
     const openChildTable = useRecoilValue(openChildTableState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -90,6 +91,22 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     // Function to update inventory table data with backend response
     const updateInventoryTableData = (rowId: string, updatedRowData: any) => {
         setInventoryData(prevData =>
+            prevData.map(row => {
+                if (row.id === rowId) {
+                    // Update the inventory row with the new data from backend
+                    return {
+                        ...row,
+                        ...updatedRowData
+                    };
+                }
+                return row;
+            })
+        );
+    };
+
+    // Function to update purchase pricing table data with backend response
+    const updatePurchasePricingTableData = (rowId: string, updatedRowData: any) => {
+        setPurchasePricingData(prevData =>
             prevData.map(row => {
                 if (row.id === rowId) {
                     // Update the inventory row with the new data from backend
@@ -196,6 +213,9 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         openPriceModal,
         onClickClosePriceModal,
         updateProfitProfileProductHidden,
+        updateInventoryTableData,
+        updateMainTableData,
+        updatePurchasePricingTableData,
     }
 }
 

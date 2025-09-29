@@ -84,8 +84,11 @@ const TableCellData = ({
           value={value as string}
           id={id}
           key={parameterKey}
+          parameterKey={parameterKey}
           isAdmin={isAdmin}
           onChangeRowCheckBox={onChangeRowCheckBox}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.ARRAY_INPUT:
