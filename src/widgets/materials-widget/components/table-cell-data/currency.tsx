@@ -44,14 +44,17 @@ const CurrencyInput = ({
     )?.label;
   }, [value, currencies]);
 
-  const [action, setAction] = useRecoilState<{ action: EMaterialsActions; key: string } | null>(actionMenuState);
+  const [action, setAction] = useRecoilState<any>(actionMenuState);
   const onClickActionModal = () => {
     setIsAllMaterialsChecked(false)
     setMaterialCategoryData(materialCategoryData.map(x => { return { ...x, checked: false } }))
     setSelectedMaterialIdForUpdate(id)
     setAction({
       key: "UpdateCurrency",
-      action: EMaterialsActions.UpdateCurrency,
+      isUnderLine: true,
+      text: "UpdateCurrency",
+      icon: "currencyUpdate",
+      action: EMaterialsActions.UpdateCurrency
     });
   };
   return (

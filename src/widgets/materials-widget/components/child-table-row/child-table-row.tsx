@@ -813,7 +813,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
 
         try {
             const callBack = (res) => {
-                console.log("resresresresresresres", res);
                 if (res.success) {
                     // Update Total Inventory in parent table
                     if (res.data && typeof res.data === 'number') {

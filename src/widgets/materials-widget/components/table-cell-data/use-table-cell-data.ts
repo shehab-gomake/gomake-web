@@ -1,6 +1,6 @@
 import { useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilState, useRecoilValue} from "recoil";
-import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState} from "@/widgets/materials-widget/state";
+import { materialsClientsState, materialsMachinesState, materialCategoryDataState, openChildTableState, inventoryDataState} from "@/widgets/materials-widget/state";
 import {updatePrintHouseMaterialPropApi, updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useRouter } from "next/router";
@@ -13,6 +13,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
+    const [inventoryData, setInventoryData] = useRecoilState(inventoryDataState);
     const openChildTable = useRecoilValue(openChildTableState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
@@ -66,13 +67,62 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         );
     };
 
+    // Function to update main table data with backend response
+    const updateMainTableData = (materialId: string, updatedRowData: any) => {
+        setMaterialCategoryData(prevData =>
+            prevData.map(row => {
+                if (row.id === materialId) {
+                    // Update the row with the new data from backend
+                    return {
+                        ...row,
+                        ...updatedRowData,
+                        rowData: {
+                            ...row.rowData,
+                            ...updatedRowData.rowData
+                        }
+                    };
+                }
+                return row;
+            })
+        );
+    };
+
+    // Function to update inventory table data with backend response
+    const updateInventoryTableData = (rowId: string, updatedRowData: any) => {
+        setInventoryData(prevData =>
+            prevData.map(row => {
+                if (row.id === rowId) {
+                    // Update the inventory row with the new data from backend
+                    return {
+                        ...row,
+                        ...updatedRowData
+                    };
+                }
+                return row;
+            })
+        );
+    };
+
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
         return new Promise((resolve, reject) => {
             const callBack = (res) => {
                 if (res.success) {
-                    // Update Total Inventory in parent table when updating inventory
-                    if (inventoryTable && res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
-                        updateTotalInventoryInParent(openChildTable.rowId, res.data?.totalInventory);
+                    // Handle inventory table updates
+                    if (inventoryTable && res.data) {
+                        // Update the specific inventory row with new data
+                        if (res.data.row) {
+                            updateInventoryTableData(id, res.data.row);
+                        }
+                        
+                        // Update Total Inventory in parent table
+                        if (res.data.totalInventory && typeof res.data.totalInventory === 'number') {
+                            updateTotalInventoryInParent(openChildTable.rowId, res.data.totalInventory);
+                        }
+                    }
+                    
+                    // Update main table data with backend response for non-inventory tables
+                    if (!inventoryTable && !purchasePricingTable && res.data) {
+                        updateMainTableData(id, res.data);
                     }
                     
                     if(key.includes("price")){

@@ -28,8 +28,6 @@ const useExchangeRate = () => {
   };
 
   const getExchangeRate = async (fromCurrency, toCurrency) => {
-    console.log("fromCurrency", fromCurrency);
-    console.log("toCurrency", toCurrency);
     const callBack = (res) => {
       if (res?.success) {
         setRate(res?.data);
