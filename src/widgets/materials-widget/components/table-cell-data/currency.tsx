@@ -27,6 +27,7 @@ const CurrencyInput = ({
   isAdmin,
   onChangeRowCheckBox,
 }: ICurrencyInputProps) => {
+  console.log("valuaaaaaaaaaaaaaaaaaaaaaaaae", value);
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const currencies = useRecoilValue(currenciesState);

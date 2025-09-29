@@ -14,7 +14,6 @@ import { MultiSelectList } from "./multi-select-list";
 import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
-import { SuppliersInput } from "./suppliers-input";
 import { InventoryInput } from "./inventory-input";
 import { PurchasePricingInput } from "./purchase-pricing-input";
 import { LongTextInput } from "./long-text-input";

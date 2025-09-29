@@ -349,7 +349,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
+                                                                value={row.purchasePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -376,7 +376,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.currency?.toLowerCase() || 'usd'}
+                                                                value={row.salePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -416,7 +416,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isEditable={true}
                                                                 type={2}
                                                                 id={row.id}
-                                                                parameterKey="isActive"
+                                                                parameterKey="Active"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -572,7 +572,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency || 'ILS'}
+                                                                value={row.purchasePrice?.currency}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -613,7 +613,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isEditable={true}
                                                                 type={2}
                                                                 id={row.id}
-                                                                parameterKey="isActive"
+                                                                parameterKey="Active"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isPurchasePricingTable={true}
@@ -754,8 +754,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                     console.log('Inventory added successfully');
 
                     // Update Total Inventory in parent table
-                    if (res.data && typeof res.data === 'number') {
-                        updateTotalInventoryInParent(rowId, res.data);
+                    if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data?.totalInventory);
                     }
 
                     // Refresh the inventory data
@@ -813,8 +813,13 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
 
         try {
             const callBack = (res) => {
+                console.log("resresresresresresres", res);
                 if (res.success) {
-                    console.log('Inventory deleted successfully');
+                    // Update Total Inventory in parent table
+                    if (res.data && typeof res.data === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data);
+                    }
+
                     // Refresh the inventory data
                     fetchInventoryData(rowId);
                     handleCloseDeleteModal();

@@ -53,6 +53,7 @@ const UPDATE_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/update-supplier-
 const ADD_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/add-supplier-inventory";
 const UPDATE_PRINT_HOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/update-print-house-material-row";
 const UPDATE_PRINT_HOUSE_MATERIALS_ROWS_URL = "/v1/printhouse-materials/update-print-house-materials-rows";
+const UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/update-print-house-material-supplier";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -475,6 +476,20 @@ const updatePrintHouseMaterialsRowsApi: ICallAndSetData = async (
     data
   );
 };
+
+const updatePrintHouseMaterialSupplierApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL,
+    callBack,
+    data
+  );
+};
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -506,4 +521,5 @@ export {
   // New material row update APIs
   updatePrintHouseMaterialRowApi,
   updatePrintHouseMaterialsRowsApi,
+  updatePrintHouseMaterialSupplierApi
 };
