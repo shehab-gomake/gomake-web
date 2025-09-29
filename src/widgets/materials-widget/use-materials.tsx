@@ -361,7 +361,7 @@ const useMaterials = (isAdmin: boolean) => {
         );
       }),
       // t("usersSettings.isActive"),
-      t("properties.more"),
+      " ",
     ];
   }, [materialHeaders, materialCategoryData]);
 
