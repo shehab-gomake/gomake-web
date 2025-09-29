@@ -26,6 +26,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  keyframes,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -35,6 +36,22 @@ import {
   Machine,
   SelectedMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
+
+// Create pulse animation for the Add button
+const pulseAnimation = keyframes`
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(25, 118, 210, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
+  }
+`;
 
 interface Step1MachineSelectionProps {
   allMachines: Machine[];
@@ -71,10 +88,13 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   useEffect(() => {
     if (machineSearchTerm) {
       const filtered = allMachines.filter((machine) => {
-        const machineName = machine.manufacturer && machine.model 
-          ? `${machine.manufacturer} - ${machine.model}` 
-          : machine.nickName || '';
-        return machineName.toLowerCase().includes(machineSearchTerm.toLowerCase());
+        const machineName =
+          machine.manufacturer && machine.model
+            ? `${machine.manufacturer} - ${machine.model}`
+            : machine.nickName || "";
+        return machineName
+          .toLowerCase()
+          .includes(machineSearchTerm.toLowerCase());
       });
       setMachines(filtered);
     } else {
@@ -172,20 +192,20 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
             label="search for your machine"
             input={<OutlinedInput label="search for your machine" />}
             sx={{
-              borderBottom: '2px solid #e0e0e0',
-              '&:hover': {
-                borderBottom: '2px solid #bdbdbd',
+              borderBottom: "2px solid #e0e0e0",
+              "&:hover": {
+                borderBottom: "2px solid #bdbdbd",
               },
-              '&.Mui-focused': {
-                borderBottom: '2px solid #1976d2',
+              "&.Mui-focused": {
+                borderBottom: "2px solid #1976d2",
               },
-              '& .MuiOutlinedInput-root': {
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+              "& .MuiOutlinedInput-root": {
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
               },
             }}
@@ -243,9 +263,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   value={machine.id}
                   sx={{ py: 1, fontSize: "14px" }}
                 >
-                  {machine.manufacturer && machine.model 
-                    ? `${machine.manufacturer} - ${machine.model}` 
-                    : machine.nickName || 'Unknown Machine'}
+                  {machine.manufacturer && machine.model
+                    ? `${machine.manufacturer} - ${machine.model}`
+                    : machine.nickName || "Unknown Machine"}
                 </MenuItem>
               ))
             )}
@@ -281,20 +301,20 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
             label={t("machineAttributes.category")}
             input={<OutlinedInput label={t("machineAttributes.category")} />}
             sx={{
-              borderBottom: '2px solid #e0e0e0',
-              '&:hover': {
-                borderBottom: '2px solid #bdbdbd',
+              borderBottom: "2px solid #e0e0e0",
+              "&:hover": {
+                borderBottom: "2px solid #bdbdbd",
               },
-              '&.Mui-focused': {
-                borderBottom: '2px solid #1976d2',
+              "&.Mui-focused": {
+                borderBottom: "2px solid #1976d2",
               },
-              '& .MuiOutlinedInput-root': {
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+              "& .MuiOutlinedInput-root": {
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
               },
             }}
@@ -355,11 +375,20 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           variant="contained"
           onClick={handleAddMachine}
           disabled={!selectedMachine || !selectedCategory}
+          // startIcon={<AddIcon />}
           sx={{
             minWidth: 80,
             height: 40,
             fontSize: "14px",
             px: 2,
+            ...(selectedMachine &&
+              selectedCategory && {
+                animation: `${pulseAnimation} 1.5s infinite`,
+                backgroundColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              }),
           }}
         >
           {t("navigationButtons.add")}
@@ -369,8 +398,8 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
       {/* Help text for adding new machines */}
       {hasNoResults && (
         <Typography variant="body2" color="info.main" sx={{ mb: 2 }}>
-          💡 No machines found. Click the "Add new machine" option in the dropdown above to add "
-          {machineSearchTerm}"
+          💡 No machines found. Click the "Add new machine" option in the
+          dropdown above to add "{machineSearchTerm}"
         </Typography>
       )}
 
@@ -457,9 +486,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Select Category for "{pendingMachineName}"
-        </DialogTitle>
+        <DialogTitle>Select Category for "{pendingMachineName}"</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
             Please select a category for the new machine "{pendingMachineName}"
@@ -472,20 +499,20 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
               label={t("machineAttributes.category")}
               input={<OutlinedInput label={t("machineAttributes.category")} />}
               sx={{
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
-                '& .MuiOutlinedInput-root': {
-                  borderBottom: '2px solid #e0e0e0',
-                  '&:hover': {
-                    borderBottom: '2px solid #bdbdbd',
+                "& .MuiOutlinedInput-root": {
+                  borderBottom: "2px solid #e0e0e0",
+                  "&:hover": {
+                    borderBottom: "2px solid #bdbdbd",
                   },
-                  '&.Mui-focused': {
-                    borderBottom: '2px solid #1976d2',
+                  "&.Mui-focused": {
+                    borderBottom: "2px solid #1976d2",
                   },
                 },
               }}
