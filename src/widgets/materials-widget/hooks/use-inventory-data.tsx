@@ -40,11 +40,29 @@ const useInventoryData = () => {
         setInventoryData([]);
     };
 
+    // Local state update functions to avoid refetching data
+    const updateInventoryDataOrder = (reorderedData: any[]) => {
+        setInventoryData(reorderedData);
+    };
+
+    const removeInventoryDataItem = (itemId: string) => {
+        setInventoryData(prevData => prevData.filter(item => item.id !== itemId));
+    };
+
+    const updateInventoryDataItem = (itemId: string, updatedItem: any) => {
+        setInventoryData(prevData =>
+            prevData.map(item => item.id === itemId ? { ...item, ...updatedItem } : item)
+        );
+    };
+
     return {
         inventoryData,
         inventoryTableHeadingUnits,
         fetchInventoryData,
         clearInventoryData,
+        updateInventoryDataOrder,
+        removeInventoryDataItem,
+        updateInventoryDataItem,
     };
 };
 

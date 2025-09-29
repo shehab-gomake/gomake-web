@@ -67,8 +67,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     });
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
 
-    const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData } = useInventoryData();
-    const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
+    const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData, updateInventoryDataOrder, removeInventoryDataItem, updateInventoryDataItem } = useInventoryData();
+    const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData, updatePurchasePricingDataOrder, removePurchasePricingDataItem, updatePurchasePricingDataItem } = usePurchasePricingData();
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
@@ -109,8 +109,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         const [removed] = reorderedData.splice(sourceIndex, 1);
         reorderedData.splice(destinationIndex, 0, removed);
 
-        // Update local state (you might need to implement this in the hook)
-        // For now, we'll just call the API and refetch
+        // Update local state immediately for better UX
+        updateInventoryDataOrder(reorderedData);
 
         try {
             // Format data according to API specification
@@ -125,16 +125,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Inventory reordered successfully');
-                    // Refetch data to get updated order
-                    fetchInventoryData(rowId);
+                    // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder inventory:', res.message);
+                    // Revert local state on error by refetching
+                    fetchInventoryData(rowId);
                 }
             };
 
             await reorderPrintHouseSupplierInventoriesApi(callApi, callBack, reorderData);
         } catch (error) {
             console.error('Error reordering inventory:', error);
+            // Revert local state on error by refetching
+            fetchInventoryData(rowId);
         }
     };
 
@@ -155,6 +158,9 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         const [removed] = reorderedData.splice(sourceIndex, 1);
         reorderedData.splice(destinationIndex, 0, removed);
 
+        // Update local state immediately for better UX
+        updatePurchasePricingDataOrder(reorderedData);
+
         try {
             // Format data according to API specification
             const reorderData = {
@@ -169,16 +175,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Purchase pricing reordered successfully');
-                    // Refetch data to get updated order
-                    fetchPurchasePricingData(rowId);
+                    // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder purchase pricing:', res.message);
+                    // Revert local state on error by refetching
+                    fetchPurchasePricingData(rowId);
                 }
             };
 
             await reorderPrintHouseMaterialSupplierApi(callApi, callBack, reorderData);
         } catch (error) {
             console.error('Error reordering purchase pricing:', error);
+            // Revert local state on error by refetching
+            fetchPurchasePricingData(rowId);
         }
     };
 
@@ -794,8 +803,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Purchase pricing deleted successfully');
-                    // Refresh the purchase pricing data
-                    fetchPurchasePricingData(rowId);
+                    // Update local state instead of refetching
+                    removePurchasePricingDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
                     console.error('Failed to delete purchase pricing:', res.message);
@@ -819,8 +828,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                         updateTotalInventoryInParent(rowId, res.data);
                     }
 
-                    // Refresh the inventory data
-                    fetchInventoryData(rowId);
+                    // Update local state instead of refetching
+                    removeInventoryDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
                     console.error('Failed to delete inventory:', res.message);

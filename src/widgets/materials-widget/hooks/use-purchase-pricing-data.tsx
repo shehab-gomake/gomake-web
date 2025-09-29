@@ -40,11 +40,29 @@ const usePurchasePricingData = () => {
         setPurchasePricingData([]);
     };
 
+    // Local state update functions to avoid refetching data
+    const updatePurchasePricingDataOrder = (reorderedData: any[]) => {
+        setPurchasePricingData(reorderedData);
+    };
+
+    const removePurchasePricingDataItem = (itemId: string) => {
+        setPurchasePricingData(prevData => prevData.filter(item => item.id !== itemId));
+    };
+
+    const updatePurchasePricingDataItem = (itemId: string, updatedItem: any) => {
+        setPurchasePricingData(prevData =>
+            prevData.map(item => item.id === itemId ? { ...item, ...updatedItem } : item)
+        );
+    };
+
     return {
         purchasePricingData,
         purchasePricingTableHeadingUnits,
         fetchPurchasePricingData,
         clearPurchasePricingData,
+        updatePurchasePricingDataOrder,
+        removePurchasePricingDataItem,
+        updatePurchasePricingDataItem,
     };
 };
 
