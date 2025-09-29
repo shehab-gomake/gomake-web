@@ -14,12 +14,12 @@ import { MultiSelectList } from "./multi-select-list";
 import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
-import { SuppliersInput } from "./suppliers-input";
 import { InventoryInput } from "./inventory-input";
 import { PurchasePricingInput } from "./purchase-pricing-input";
 import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
+import { SelectInputWithAddValue } from "./select-input-with-add-value";
 
 const TableCellData = ({
   value,
@@ -211,6 +211,16 @@ const TableCellData = ({
           value={value as string}
           isAdmin={isAdmin}
           id={id}
+        />
+      );
+    case EDataTypeEnum.SELECT_FIXED_VALUES_ADD_NEW:
+      return (
+        <SelectInputWithAddValue
+          values={values}
+          parameterKey={parameterKey}
+          id={id}
+          value={value as string}
+          isAdmin={isAdmin}
         />
       );
     default:

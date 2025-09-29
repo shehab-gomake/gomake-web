@@ -27,6 +27,7 @@ const CurrencyInput = ({
   isAdmin,
   onChangeRowCheckBox,
 }: ICurrencyInputProps) => {
+  console.log("valuaaaaaaaaaaaaaaaaaaaaaaaae", value);
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const currencies = useRecoilValue(currenciesState);
@@ -43,14 +44,17 @@ const CurrencyInput = ({
     )?.label;
   }, [value, currencies]);
 
-  const [action, setAction] = useRecoilState<{ action: EMaterialsActions; key: string } | null>(actionMenuState);
+  const [action, setAction] = useRecoilState<any>(actionMenuState);
   const onClickActionModal = () => {
     setIsAllMaterialsChecked(false)
     setMaterialCategoryData(materialCategoryData.map(x => { return { ...x, checked: false } }))
     setSelectedMaterialIdForUpdate(id)
     setAction({
       key: "UpdateCurrency",
-      action: EMaterialsActions.UpdateCurrency,
+      isUnderLine: true,
+      text: "UpdateCurrency",
+      icon: "currencyUpdate",
+      action: EMaterialsActions.UpdateCurrency
     });
   };
   return (

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon, DragIndicator } from "@mui/icons-material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState } from "../../state";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState, materialCategoryDataState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
 import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -67,9 +67,10 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     });
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
 
-    const { inventoryData, fetchInventoryData, clearInventoryData } = useInventoryData();
-    const { purchasePricingData, fetchPurchasePricingData, clearPurchasePricingData } = usePurchasePricingData();
+    const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData, updateInventoryDataOrder, removeInventoryDataItem, updateInventoryDataItem } = useInventoryData();
+    const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData, updatePurchasePricingDataOrder, removePurchasePricingDataItem, updatePurchasePricingDataItem } = usePurchasePricingData();
     const { callApi } = useGomakeAxios();
+    const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
 
     useEffect(() => {
@@ -108,16 +109,15 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         const [removed] = reorderedData.splice(sourceIndex, 1);
         reorderedData.splice(destinationIndex, 0, removed);
 
-        // Update local state (you might need to implement this in the hook)
-        // For now, we'll just call the API and refetch
+        // Update local state immediately for better UX
+        updateInventoryDataOrder(reorderedData);
 
         try {
             // Format data according to API specification
             const reorderData = {
-                materialTypeKey: materialType,
-                categoryKey: materialCategory,
-                suppliers: reorderedData.map((item, index) => ({
-                    printHouseMaterialSupplierId: item.id,
+                printHouseMaterialId: rowId,
+                inventories: reorderedData.map((item, index) => ({
+                    printHouseMaterialSupplierInventoryId: item.id,
                     order: index
                 }))
             };
@@ -125,16 +125,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Inventory reordered successfully');
-                    // Refetch data to get updated order
-                    fetchInventoryData(rowId);
+                    // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder inventory:', res.message);
+                    // Revert local state on error by refetching
+                    fetchInventoryData(rowId);
                 }
             };
 
-            await reorderPrintHouseMaterialSupplierApi(callApi, callBack, reorderData);
+            await reorderPrintHouseSupplierInventoriesApi(callApi, callBack, reorderData);
         } catch (error) {
             console.error('Error reordering inventory:', error);
+            // Revert local state on error by refetching
+            fetchInventoryData(rowId);
         }
     };
 
@@ -155,6 +158,9 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         const [removed] = reorderedData.splice(sourceIndex, 1);
         reorderedData.splice(destinationIndex, 0, removed);
 
+        // Update local state immediately for better UX
+        updatePurchasePricingDataOrder(reorderedData);
+
         try {
             // Format data according to API specification
             const reorderData = {
@@ -169,16 +175,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Purchase pricing reordered successfully');
-                    // Refetch data to get updated order
-                    fetchPurchasePricingData(rowId);
+                    // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder purchase pricing:', res.message);
+                    // Revert local state on error by refetching
+                    fetchPurchasePricingData(rowId);
                 }
             };
 
             await reorderPrintHouseMaterialSupplierApi(callApi, callBack, reorderData);
         } catch (error) {
             console.error('Error reordering purchase pricing:', error);
+            // Revert local state on error by refetching
+            fetchPurchasePricingData(rowId);
         }
     };
 
@@ -264,11 +273,20 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                         </IconButton>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase Price (m² / Roll)</TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        Purchase Price ({inventoryTableHeadingUnits.pricingUnit})
+                                    </TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Sale Cost (m² / Roll)</TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        Sale Cost ({inventoryTableHeadingUnits.pricingUnit})
+                                    </TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Inventory</TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        Inventory ({inventoryTableHeadingUnits.inventoryUnit})
+                                    </TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        Quantity ({inventoryTableHeadingUnits.inventoryUnit})
+                                    </TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
                                     <TableCell sx={classes.headerCell}>Jobs</TableCell>
@@ -281,7 +299,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
                                     >
-                                        {inventoryData.map((row, index) => (
+                                        {inventoryData?.map((row, index) => (
                                             <Draggable key={row.id || `inventory-${index}`} draggableId={row.id || `inventory-${index}`} index={index}>
                                                 {(provided, snapshot) => (
                                                     <TableRow
@@ -340,7 +358,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency?.toLowerCase() || 'usd'}
+                                                                value={row.purchasePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -367,7 +385,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.currency?.toLowerCase() || 'usd'}
+                                                                value={row.salePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -391,11 +409,23 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
+                                                                value={row.quantity}
+                                                                isEditable={true}
+                                                                type={1}
+                                                                id={row.id}
+                                                                parameterKey="quantity"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
                                                                 value={row.isActive}
                                                                 isEditable={true}
                                                                 type={2}
                                                                 id={row.id}
-                                                                parameterKey="isActive"
+                                                                parameterKey="Active"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -486,10 +516,12 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                             </IconButton>
                                         </Box>
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase Price (m² / Roll)</TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        Purchase Price ({purchasePricingTableHeadingUnits.pricingUnit})
+                                    </TableCell>
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Quantity in Package</TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplement Time</TableCell>
+                                    <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
+                                    <TableCell sx={classes.headerCell}>Supplement Time (working days)</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
                                     <TableCell sx={classes.headerCell}>Client</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
@@ -549,7 +581,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency || 'ILS'}
+                                                                value={row.purchasePrice?.currency}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -590,7 +622,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isEditable={true}
                                                                 type={2}
                                                                 id={row.id}
-                                                                parameterKey="isActive"
+                                                                parameterKey="Active"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isPurchasePricingTable={true}
@@ -682,6 +714,36 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         handleFormChange('supplierId', supplier?.id || '');
     };
 
+    // Function to update Total Inventory in parent table
+    const updateTotalInventoryInParent = (materialId: string, newTotalInventory: number) => {
+        setMaterialCategoryData(prevData =>
+            prevData.map(row => {
+                if (row.id === materialId) {
+                    // Create a new row object with updated inventory data
+                    const updatedRow = { ...row };
+                    // Common field names could be 'inventory', 'totalInventory', 'stock', etc.
+                    const inventoryFields = ['totalInventory'];
+
+                    for (const field of inventoryFields) {
+                        if (updatedRow.rowData[field]) {
+                            updatedRow.rowData = {
+                                ...updatedRow.rowData,
+                                [field]: {
+                                    ...updatedRow.rowData[field],
+                                    value: newTotalInventory.toString()
+                                }
+                            };
+                            break;
+                        }
+                    }
+
+                    return updatedRow;
+                }
+                return row;
+            })
+        );
+    };
+
     const handleAddInventory = async () => {
         try {
             const inventoryData = {
@@ -689,7 +751,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                 supplierId: inventoryFormData.supplierId,
                 code: inventoryFormData.code,
                 quantity: parseInt(inventoryFormData.quantity.toString()) || 0,
-                inventory: parseInt(inventoryFormData.inventory.toString()) || 0,
                 isActive: inventoryFormData.isActive,
                 purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
                 salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
@@ -697,8 +758,15 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             };
 
             const callBack = (res) => {
+                console.log("resresresresresresres", res);
                 if (res.success) {
                     console.log('Inventory added successfully');
+
+                    // Update Total Inventory in parent table
+                    if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data?.totalInventory);
+                    }
+
                     // Refresh the inventory data
                     fetchInventoryData(rowId);
                     handleCloseAddInventoryModal();
@@ -735,8 +803,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             const callBack = (res) => {
                 if (res.success) {
                     console.log('Purchase pricing deleted successfully');
-                    // Refresh the purchase pricing data
-                    fetchPurchasePricingData(rowId);
+                    // Update local state instead of refetching
+                    removePurchasePricingDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
                     console.error('Failed to delete purchase pricing:', res.message);
@@ -755,9 +823,13 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         try {
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Inventory deleted successfully');
-                    // Refresh the inventory data
-                    fetchInventoryData(rowId);
+                    // Update Total Inventory in parent table
+                    if (res.data && typeof res.data === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data);
+                    }
+
+                    // Update local state instead of refetching
+                    removeInventoryDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
                     console.error('Failed to delete inventory:', res.message);
@@ -904,13 +976,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
                             type="number"
                             placeholder="Enter quantity"
-                        />
-                        <GomakeTextInput
-                            labelText="Inventory"
-                            value={inventoryFormData.inventory.toString()}
-                            onChange={(e) => handleInventoryFormChange('inventory', parseInt(e.target.value) || 0)}
-                            type="number"
-                            placeholder="Enter inventory amount"
                         />
                         <GomakeTextInput
                             labelText="Purchase Price"

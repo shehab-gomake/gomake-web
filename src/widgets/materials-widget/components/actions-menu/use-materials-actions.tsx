@@ -12,6 +12,9 @@ import {
   materialsUnCheckedState,
   openAddRowModalState, openCreatePurchaseOrderModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
+  openChildTableState,
+  inventoryDataState,
+  purchasePricingDataState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -67,6 +70,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
+  const openChildTable = useRecoilValue(openChildTableState);
+  const inventoryData = useRecoilValue(inventoryDataState);
+  const purchasePricingData = useRecoilValue(purchasePricingDataState);
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
@@ -101,13 +107,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const setOpenCreatePurchaseOrderModal = useSetRecoilState<boolean>(openCreatePurchaseOrderModalState);
 
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
-  useEffect(() => {
-    if (selectedMaterialIdForUpdate) {
-      setSelectedMaterialsIds([selectedMaterialIdForUpdate])
-    } else {
-      const getSelectedMaterialsIds = () => materialCategoryData.filter((row) => row.checked).map((row) => row.id);
 
-      setSelectedMaterialsIds(getSelectedMaterialsIds());
+  useEffect(() => {
+    const getSelectedMaterialsIds = () => materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+    const checkedIds = getSelectedMaterialsIds();
+    // Prioritize multiple checkbox selections over single material update
+    if (checkedIds.length > 0) {
+      setSelectedMaterialsIds(checkedIds);
+      // Clear single selection if we have multiple selections
+      if (checkedIds.length > 1) {
+        setSelectedMaterialIdForUpdate("");
+      }
+    } else if (selectedMaterialIdForUpdate) {
+      setSelectedMaterialsIds([selectedMaterialIdForUpdate]);
+    } else {
+      setSelectedMaterialsIds([]);
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);
@@ -115,10 +129,28 @@ const useMaterialsActions = (isAdmin: boolean) => {
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
       const myId = selectedMaterialsIds[0];
-      const selectedRow = materialCategoryData.find((row) => row.id === myId);
-      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
+      let currency = null;
+
+      // Check if we're in inventory/purchase table context
+      if (openChildTable.tableType === 'inventory' && inventoryData.length > 0) {
+        // Get currency from inventory data
+        const inventoryRow = inventoryData.find((row) => row.id === myId);
+        currency = inventoryRow?.purchasePrice?.currency || inventoryRow?.salePrice?.currency;
+      } else if (openChildTable.tableType === 'purchasePricing' && purchasePricingData.length > 0) {
+        // Get currency from purchase pricing data
+        const purchaseRow = purchasePricingData.find((row) => row.id === myId);
+        currency = purchaseRow?.currency;
+      }
+
+      // If no currency found from inventory/purchase tables, or we're in main table, use main table data
+      if (!currency) {
+        const selectedRow = materialCategoryData.find((row) => row.id === myId);
+        currency = selectedRow?.rowData?.currency?.value;
+      }
+
+      setCurrentCurrency(currency);
     }
-  }, [selectedMaterialsIds, materialCategoryData]);
+  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData]);
 
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
