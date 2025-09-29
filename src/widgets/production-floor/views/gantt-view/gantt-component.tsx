@@ -20,6 +20,7 @@ import {
   Button,
   Chip,
   IconButton,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -230,9 +231,24 @@ const TimelineWidget = () => {
                     backgroundColor: getGroupColor(group.title),
                   }}
                 />
-                <Typography variant="body2" fontWeight={600}>
-                  {group.title}
-                </Typography>
+                <Tooltip
+                  title={group.title}
+                  arrow
+                  disableHoverListener={group.title.length <= 10}
+                >
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    sx={{
+                      maxWidth: "90px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {group.title}
+                  </Typography>
+                </Tooltip>
                 <Chip
                   label={groups.filter((g) => g.parent === group.id).length}
                   size="small"
@@ -245,13 +261,13 @@ const TimelineWidget = () => {
                   }}
                 />
               </Stack>
+
               <Stack
                 direction="row"
                 alignItems="center"
                 gap={1}
                 height={"31px"}
               >
-                {/* !here fix totalJobs */}
                 <Typography variant="caption" color="#6C757D" fontSize="11px">
                   {stats.totalJobs} {t("sales.quote.jobs")}
                 </Typography>
@@ -286,7 +302,7 @@ const TimelineWidget = () => {
               justifyContent="space-between"
               sx={{
                 padding: "8px 12px 8px 32px",
-                height: "50px", //!here new to hide or not
+                height: "50px",
                 backgroundColor: "#FFF",
                 borderBottom: "1px solid #F1F3F4",
                 ...FONT_FAMILY.Inter(500, 13),
@@ -297,9 +313,24 @@ const TimelineWidget = () => {
                 transition: "background-color 0.2s ease",
               }}
             >
-              <Typography variant="body2" fontWeight={600}>
-                {group.title}
-              </Typography>
+              <Tooltip
+                title={group.title}
+                arrow
+                disableHoverListener={group.title.length <= 15}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  sx={{
+                    maxWidth: "150px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {group.title}
+                </Typography>
+              </Tooltip>
               <Chip
                 label={getStationStats(group.id)}
                 size="small"
