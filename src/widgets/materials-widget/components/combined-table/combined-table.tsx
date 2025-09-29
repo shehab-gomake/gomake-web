@@ -20,6 +20,9 @@ interface ICombinedTableProps {
     renderOptionsCustomer?: any;
     checkWhatRenderArrayCustomer?: any;
     isFetchingCustomer?: boolean;
+    renderOptionsSupplier?: any;
+    checkWhatRenderArraySupplier?: any;
+    isFetchingSupplier?: boolean;
 }
 
 const CombinedTable = ({
@@ -33,6 +36,9 @@ const CombinedTable = ({
     renderOptionsCustomer,
     checkWhatRenderArrayCustomer,
     isFetchingCustomer,
+    renderOptionsSupplier,
+    checkWhatRenderArraySupplier,
+    isFetchingSupplier,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
@@ -188,6 +194,9 @@ const CombinedTable = ({
                                                         renderOptionsCustomer={renderOptionsCustomer}
                                                         checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
                                                         isFetchingCustomer={isFetchingCustomer}
+                                                        renderOptionsSupplier={renderOptionsSupplier}
+                                                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                                                        isFetchingSupplier={isFetchingSupplier}
                                                     />
                                                 </Box>
                                             </TableCell>

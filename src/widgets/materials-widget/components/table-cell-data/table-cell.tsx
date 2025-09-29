@@ -225,6 +225,19 @@ const TableCellData = ({
           isAdmin={isAdmin}
         />
       );
+    case EDataTypeEnum.CLIENT_LIST:
+      return (
+        <MultiSelectClientsInput
+          values={values}
+          parameterKey={parameterKey}
+          id={id}
+          isAdmin={isAdmin}
+          options={clientsOptions}
+          placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
+        />
+      );
     default:
       return (
         <NumberStringInput

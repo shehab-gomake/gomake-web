@@ -17,4 +17,5 @@ export enum EDataTypeEnum {
   PURCHASE_PRICING,
   LONG_TEXT,
   SELECT_FIXED_VALUES_ADD_NEW,
+  CLIENT_LIST,
 }

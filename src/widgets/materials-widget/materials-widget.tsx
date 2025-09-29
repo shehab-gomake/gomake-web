@@ -94,6 +94,90 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
+  // Supplier and Customer management
+  const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
+    clientType: CLIENT_TYPE.SUPPLIER,
+  });
+
+  const { callApi } = useGomakeAxios();
+  const [listClient, setListClient] = useState([]);
+  const [listSupplier, setListSupplier] = useState([])
+  const [isFetchingSupplier, setIsFetchingSupplier] = useState(false);
+
+  const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
+  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    getAllClients(value);
+  }, 1200);
+
+  const debouncedGetAllSuppliers = useDebouncedCallback((value: string) => {
+    getAllSuppliers(value);
+  }, 1200);
+
+  const getAllClients = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingCustomer(true);
+      }
+      await getAndSetAllCustomers(callApi, setListClient, {
+        clientType: CLIENT_TYPE.CUSTOMER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingCustomer(false);
+    },
+    []
+  );
+
+  const getAllSuppliers = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingSupplier(true);
+      }
+      await getAndSetAllCustomers(callApi, setListSupplier, {
+        clientType: CLIENT_TYPE.SUPPLIER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingSupplier(false);
+    },
+    []
+  );
+
+  const checkWhatRenderArrayCustomer = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllClients.cancel();
+      getRecentClients();
+    } else {
+      debouncedGetAllClients(value);
+    }
+  };
+
+  const checkWhatRenderArraySupplier = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllSuppliers.cancel();
+      getRecentSuppliers();
+    } else {
+      debouncedGetAllSuppliers(value);
+    }
+  };
+
+  const getRecentClients = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListClient, {
+      ClientType: CLIENT_TYPE.CUSTOMER,
+    });
+  }, []);
+
+  const getRecentSuppliers = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListSupplier, {
+      ClientType: CLIENT_TYPE.SUPPLIER,
+    });
+  }, []);
+
+  useEffect(() => {
+    getRecentClients();
+    getRecentSuppliers();
+  }, []);
+
   const materialsSteps: StepType[] = [
     {
       selector: '[data-tour="materialsCategories"]',
@@ -121,50 +205,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     },
   ];
 
-  const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
-    clientType: CLIENT_TYPE.SUPPLIER,
-  });
-
-
-  const { callApi } = useGomakeAxios();
-  const [listClient, setListClient] = useState([]);
-  const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
-  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
-    getAllClients(value);
-  }, 1200);
-
-  const getAllClients = useCallback(
-    async (SearchTerm?: string) => {
-      if (SearchTerm) {
-        setIsFetchingCustomer(true);
-      }
-      await getAndSetAllCustomers(callApi, setListClient, {
-        clientType: CLIENT_TYPE.CUSTOMER,
-        searchTerm: SearchTerm as string,
-      });
-      setIsFetchingCustomer(false);
-    },
-    []
-  );
-
-  const checkWhatRenderArrayCustomer = (e: any) => {
-    const value = e.target.value.trim();
-    if (value === "") {
-      debouncedGetAllClients.cancel();
-      getRecentClients();
-    } else {
-      debouncedGetAllClients(value);
-    }
-  };
-  const getRecentClients = useCallback(async () => {
-    await getAndSetRecentCustomers(callApi, setListClient, {
-      ClientType: CLIENT_TYPE.CUSTOMER,
-    });
-  }, []);
-
-  useEffect(() => {
-    getRecentClients();
-  }, []);
 
   const { } = useGoMakeTour(materialsSteps, []);
 
@@ -356,6 +396,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         renderOptionsCustomer={listClient}
                         checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
                         isFetchingCustomer={isFetchingCustomer}
+                        renderOptionsSupplier={listSupplier}
+                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                        isFetchingSupplier={isFetchingSupplier}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -369,6 +412,12 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         isFetching={isFetching}
                         materialType={materialType?.toString()}
                         materialCategory={materialCategory?.toString()}
+                        renderOptionsCustomer={listClient}
+                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                        isFetchingCustomer={isFetchingCustomer}
+                        renderOptionsSupplier={listSupplier}
+                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                        isFetchingSupplier={isFetchingSupplier}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>

@@ -30,9 +30,12 @@ interface IChildTableRowProps {
     renderOptionsCustomer?: any;
     checkWhatRenderArrayCustomer?: any;
     isFetchingCustomer?: boolean;
+    renderOptionsSupplier?: any;
+    checkWhatRenderArraySupplier?: any;
+    isFetchingSupplier?: boolean;
 }
 
-const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer }: IChildTableRowProps) => {
+const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
@@ -540,7 +543,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                     <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
                                     <TableCell sx={classes.headerCell}>Supplement Time (working days)</TableCell>
                                     <TableCell sx={classes.headerCell}>Status</TableCell>
-                                    <TableCell sx={classes.headerCell}>Client</TableCell>
                                     <TableCell sx={classes.headerCell}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -640,19 +642,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 type={2}
                                                                 id={row.id}
                                                                 parameterKey="Active"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.clients || []}
-                                                                isEditable={true}
-                                                                type={9} // EDataTypeEnum.CLIENTS_LIST
-                                                                values={row.clients || []}
-                                                                id={row.id}
-                                                                parameterKey="clients"
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isPurchasePricingTable={true}
@@ -910,13 +899,13 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                 key={selectedSupplierForPricing?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
                                 onChange={handleSupplierSelectForPricing}
-                                options={renderOptions() ? renderOptions() : []}
+                                options={renderOptionsSupplier || []}
                                 placeholder="Select a supplier"
                                 style={{ width: '100%' }}
+                                onChangeTextField={checkWhatRenderArraySupplier}
+                                loading={isFetchingSupplier}
                                 value={selectedSupplierForPricing}
-                                onChangeTextField={checkWhatRenderArray}
                                 getOptionLabel={(option: any) => `${option.name}`}
-                                loading={isFetching}
                             />
                         </Box>
                         <GomakeTextInput
@@ -959,21 +948,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             type="number"
                             placeholder="Enter supplement time"
                         />
-                        <Box>
-                            <div style={classes.modalLabelText}>Clients</div>
-                            <ClientAutocomplete
-                                key={selectedClientsForPricing[0]?.id}
-                                clientType={CLIENT_TYPE.CUSTOMER}
-                                onChange={handleClientSelectForPricing}
-                                options={renderOptionsCustomer ? renderOptionsCustomer : []}
-                                placeholder="Select a client"
-                                style={{ width: '100%' }}
-                                value={selectedClientsForPricing[0] || null}
-                                onChangeTextField={checkWhatRenderArrayCustomer}
-                                getOptionLabel={(option: any) => `${option.name} - ${option.code || ''}`}
-                                loading={isFetchingCustomer}
-                            />
-                        </Box>
 
                     </Box>
                 </DialogContent>
@@ -1009,13 +983,13 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                 key={selectedSupplier?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
                                 onChange={handleSupplierSelect}
-                                options={renderOptions() ? renderOptions() : []}
+                                options={renderOptionsSupplier || []}
                                 placeholder="Select a supplier"
                                 style={{ width: '100%' }}
                                 value={selectedSupplier}
-                                onChangeTextField={checkWhatRenderArray}
+                                onChangeTextField={checkWhatRenderArraySupplier}
+                                loading={isFetchingSupplier}
                                 getOptionLabel={(option: any) => `${option.name}`}
-                                loading={isFetching}
                             />
                         </Box>
                         <GomakeTextInput
@@ -1051,7 +1025,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                 key={selectedClients[0]?.id}
                                 clientType={CLIENT_TYPE.CUSTOMER}
                                 onChange={handleClientSelect}
-                                options={renderOptionsCustomer ? renderOptionsCustomer : []}
+                                options={renderOptionsCustomer || []}
                                 placeholder="Select a client"
                                 style={{ width: '100%' }}
                                 value={selectedClients[0] || null}
