@@ -309,27 +309,4 @@ Persist a minimal, ordered tool plan:
 
 ---
 
-## Minimal PR Template
-
-```
-Title: <type(scope): summary>
-
-Why:
-What changed:
-State model impact (atoms/selectors):
-WS/API impact:
-UX decisions:
-
-Risk & Rollback:
-Flags/Config:
-
-Tests:
-- Unit:
-- Integration/UI:
-
-Checklist:
-[ ] Lint/Build [ ] Tests Green
-[ ] Docs/Memories Updated
-```
-
 **End of protocol.**
