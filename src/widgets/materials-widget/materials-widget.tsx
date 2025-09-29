@@ -1,6 +1,6 @@
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
@@ -34,6 +34,9 @@ import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
 import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useDebouncedCallback } from "use-debounce";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -121,6 +124,47 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
     clientType: CLIENT_TYPE.SUPPLIER,
   });
+
+
+  const { callApi } = useGomakeAxios();
+  const [listClient, setListClient] = useState([]);
+  const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
+  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    getAllClients(value);
+  }, 1200);
+
+  const getAllClients = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingCustomer(true);
+      }
+      await getAndSetAllCustomers(callApi, setListClient, {
+        clientType: CLIENT_TYPE.CUSTOMER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingCustomer(false);
+    },
+    []
+  );
+
+  const checkWhatRenderArrayCustomer = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllClients.cancel();
+      getRecentClients();
+    } else {
+      debouncedGetAllClients(value);
+    }
+  };
+  const getRecentClients = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListClient, {
+      ClientType: CLIENT_TYPE.CUSTOMER,
+    });
+  }, []);
+
+  useEffect(() => {
+    getRecentClients();
+  }, []);
 
   const { } = useGoMakeTour(materialsSteps, []);
 
@@ -309,6 +353,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         isFetching={isFetching}
                         materialType={materialType?.toString()}
                         materialCategory={materialCategory?.toString()}
+                        renderOptionsCustomer={listClient}
+                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                        isFetchingCustomer={isFetchingCustomer}
                       />
                     ) : flag &&
                       materialCategories.find(

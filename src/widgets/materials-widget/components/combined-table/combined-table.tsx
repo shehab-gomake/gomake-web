@@ -17,6 +17,9 @@ interface ICombinedTableProps {
     isFetching: boolean;
     materialType?: string;
     materialCategory?: string;
+    renderOptionsCustomer?: any;
+    checkWhatRenderArrayCustomer?: any;
+    isFetchingCustomer?: boolean;
 }
 
 const CombinedTable = ({
@@ -27,6 +30,9 @@ const CombinedTable = ({
     isFetching,
     materialType,
     materialCategory,
+    renderOptionsCustomer,
+    checkWhatRenderArrayCustomer,
+    isFetchingCustomer,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
@@ -179,6 +185,9 @@ const CombinedTable = ({
                                                         isFetching={isFetching}
                                                         materialType={materialType}
                                                         materialCategory={materialCategory}
+                                                        renderOptionsCustomer={renderOptionsCustomer}
+                                                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                                                        isFetchingCustomer={isFetchingCustomer}
                                                     />
                                                 </Box>
                                             </TableCell>

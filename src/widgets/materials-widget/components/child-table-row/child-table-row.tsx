@@ -27,9 +27,12 @@ interface IChildTableRowProps {
     isFetching: boolean;
     materialType?: string;
     materialCategory?: string;
+    renderOptionsCustomer?: any;
+    checkWhatRenderArrayCustomer?: any;
+    isFetchingCustomer?: boolean;
 }
 
-const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory }: IChildTableRowProps) => {
+const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer }: IChildTableRowProps) => {
     const { classes } = useStyle();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
@@ -51,7 +54,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         quantityInPackage: '',
         supplementTime: '',
         order: '',
-        isActive: true
+        isActive: true,
+        clients: []
     });
     const [selectedSupplierForPricing, setSelectedSupplierForPricing] = useState<any>(null);
     const [inventoryFormData, setInventoryFormData] = useState({
@@ -66,6 +70,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         clients: []
     });
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+    const [selectedClients, setSelectedClients] = useState<any[]>([]);
+    const [selectedClientsForPricing, setSelectedClientsForPricing] = useState<any[]>([]);
 
     const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData, updateInventoryDataOrder, removeInventoryDataItem, updateInventoryDataItem } = useInventoryData();
     const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData, updatePurchasePricingDataOrder, removePurchasePricingDataItem, updatePurchasePricingDataItem } = usePurchasePricingData();
@@ -432,7 +438,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             />
                                                         </TableCell>
 
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.clients || []}
+                                                                isEditable={true}
+                                                                type={11} // EDataTypeEnum.CLIENTS_LIST
+                                                                values={row.clients || []}
+                                                                id={row.id}
+                                                                parameterKey="clients"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isInventoryTable={true}
+                                                            />
+                                                        </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <Box
                                                                 onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType, row.id)}
@@ -628,7 +646,19 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                                 isPurchasePricingTable={true}
                                                             />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">{row.client || '—'}</TableCell>
+                                                        <TableCell sx={classes.bodyCell}>
+                                                            <TableCellData
+                                                                value={row.clients || []}
+                                                                isEditable={true}
+                                                                type={11} // EDataTypeEnum.CLIENTS_LIST
+                                                                values={row.clients || []}
+                                                                id={row.id}
+                                                                parameterKey="clients"
+                                                                isAdmin={false}
+                                                                onChangeRowCheckBox={() => { }}
+                                                                isPurchasePricingTable={true}
+                                                            />
+                                                        </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <IconButton
                                                                 size="small"
@@ -656,6 +686,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const handleCloseAddPurchasePricingModal = () => {
         setIsAddPurchasePricingModalOpen(false);
         setSelectedSupplierForPricing(null);
+        setSelectedClientsForPricing([]);
         setFormData({
             supplierId: '',
             purchaseM2Price: '',
@@ -664,7 +695,8 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
             quantityInPackage: '',
             supplementTime: '',
             order: '',
-            isActive: true
+            isActive: true,
+            clients: []
         });
     };
 
@@ -691,6 +723,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const handleCloseAddInventoryModal = () => {
         setIsAddInventoryModalOpen(false);
         setSelectedSupplier(null);
+        setSelectedClients([]);
         setInventoryFormData({
             printHouseMaterialId: '',
             supplierId: '',
@@ -712,6 +745,18 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const handleSupplierSelectForPricing = (e, supplier: any) => {
         setSelectedSupplierForPricing(supplier);
         handleFormChange('supplierId', supplier?.id || '');
+    };
+
+    const handleClientSelect = (e, client: any) => {
+        const newClients = client ? [client] : [];
+        setSelectedClients(newClients);
+        handleInventoryFormChange('clients', newClients.map(c => c.id));
+    };
+
+    const handleClientSelectForPricing = (e, client: any) => {
+        const newClients = client ? [client] : [];
+        setSelectedClientsForPricing(newClients);
+        handleFormChange('clients', newClients.map(c => c.id));
     };
 
     // Function to update Total Inventory in parent table
@@ -915,12 +960,22 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             type="number"
                             placeholder="Enter supplement time"
                         />
-                        <GomakeTextInput
-                            labelText="Order"
-                            value={formData.order}
-                            onChange={(e) => handleFormChange('order', e.target.value)}
-                            placeholder="Enter order number"
-                        />
+                        <Box>
+                            <div style={classes.modalLabelText}>Clients</div>
+                            <ClientAutocomplete
+                                key={selectedClientsForPricing[0]?.id}
+                                clientType={CLIENT_TYPE.CUSTOMER}
+                                onChange={handleClientSelectForPricing}
+                                options={renderOptionsCustomer ? renderOptionsCustomer : []}
+                                placeholder="Select a client"
+                                style={{ width: '100%' }}
+                                value={selectedClientsForPricing[0] || null}
+                                onChangeTextField={checkWhatRenderArrayCustomer}
+                                getOptionLabel={(option: any) => `${option.name} - ${option.code || ''}`}
+                                loading={isFetchingCustomer}
+                            />
+                        </Box>
+
                     </Box>
                 </DialogContent>
                 <DialogActions sx={classes.modalActions}>
@@ -991,6 +1046,21 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                             type="number"
                             placeholder="Enter sale price"
                         />
+                        <Box>
+                            <div style={classes.modalLabelText}>Clients</div>
+                            <ClientAutocomplete
+                                key={selectedClients[0]?.id}
+                                clientType={CLIENT_TYPE.CUSTOMER}
+                                onChange={handleClientSelect}
+                                options={renderOptionsCustomer ? renderOptionsCustomer : []}
+                                placeholder="Select a client"
+                                style={{ width: '100%' }}
+                                value={selectedClients[0] || null}
+                                onChangeTextField={checkWhatRenderArrayCustomer}
+                                getOptionLabel={(option: any) => `${option.name} - ${option.code || ''}`}
+                                loading={isFetchingCustomer}
+                            />
+                        </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions sx={classes.modalActions}>
