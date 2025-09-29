@@ -585,7 +585,7 @@ const TimelineWidget = () => {
           defaultTimeStart={timeRange.defaultTimeStart}
           defaultTimeEnd={timeRange.defaultTimeEnd}
           sidebarWidth={240}
-          onItemMove={handleItemMove} //!here
+          onItemMove={handleItemMove}
           onItemResize={handleItemResize}
           onZoom={handleZoom}
           canResize={"right"}

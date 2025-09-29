@@ -148,7 +148,6 @@ const useGantt = (reschedulingHook?: any) => {
   };
 
   //!here most important
-  //!fix newGroupOrder
   const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
     debugger;
     const updatedItem = items.find((j) => j.id === itemId);
@@ -157,7 +156,18 @@ const useGantt = (reschedulingHook?: any) => {
       return;
     }
 
-    const newGroup = groups[newGroupOrder];
+    // Create filtered groups to match what the timeline is actually using
+    const filteredGroups = groups.filter(
+      (group) =>
+        group.isRoot ||
+        openGroups[group.parent] ||
+        items.some(
+          (item) =>
+            item.group === group.id && item.isHasSelected && item.selected
+        )
+    );
+
+    const newGroup = filteredGroups[newGroupOrder];
     if (!newGroup) {
       return;
     }
