@@ -138,33 +138,37 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         
             if(inventoryTable){
                 // Use inventory API with correct payload structure
+                const updatedValue = key === "clients" && Array.isArray(value) ? value : value.toString();
                 updateSupplierInventoryApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value.toString(),
+                    updatedValue: updatedValue,
                     pricingType: pricingType 
                 });
             } else if(purchasePricingTable){
                 // Use same API for purchase pricing (will change when BE is ready)
+                const updatedValue = key === "clients" && Array.isArray(value) ? value : value.toString();
                 updatePrintHouseMaterialSupplierApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value.toString(),
+                    updatedValue: updatedValue,
                 });
             } else if(isAdmin){
+                const updatedValue = key === "clients" && Array.isArray(value) ? value : value;
                 updateMaterialPropApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: updatedValue,
                     priceIndex: index,
                 });
             }else{
+                const updatedValue = key === "clients" && Array.isArray(value) ? value : value;
                 updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: updatedValue,
                     priceIndex: index,
                 });
             }

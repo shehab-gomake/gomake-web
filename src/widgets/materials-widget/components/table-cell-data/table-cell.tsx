@@ -139,6 +139,8 @@ const TableCellData = ({
           isAdmin={isAdmin}
           options={clientsOptions}
           placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.PRODUCTS_LIST:

@@ -78,7 +78,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
-
     useEffect(() => {
         if (isVisible && openChildTable.rowId === rowId && rowId) {
             if (openChildTable.tableType === 'inventory') {
@@ -442,7 +441,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.clients || []}
                                                                 isEditable={true}
-                                                                type={11} // EDataTypeEnum.CLIENTS_LIST
+                                                                type={9} // EDataTypeEnum.CLIENTS_LIST
                                                                 values={row.clients || []}
                                                                 id={row.id}
                                                                 parameterKey="clients"
@@ -650,7 +649,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.clients || []}
                                                                 isEditable={true}
-                                                                type={11} // EDataTypeEnum.CLIENTS_LIST
+                                                                type={9} // EDataTypeEnum.CLIENTS_LIST
                                                                 values={row.clients || []}
                                                                 id={row.id}
                                                                 parameterKey="clients"
