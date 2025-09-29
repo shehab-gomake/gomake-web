@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
+import { 
+  Box, 
+  Typography, 
+  Button, 
   ButtonGroup,
   Paper,
   Chip,
   IconButton,
   Menu,
   MenuItem,
-  Badge,
-  Divider
+  Badge
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SortIcon from '@mui/icons-material/Sort';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import AddIcon from '@mui/icons-material/Add';
 import { useUnifiedProvider } from './hooks/useAggregatedConversations';
 import { UnifiedConversationList } from './components/UnifiedConversationList';
-import { TicketDetailHeader } from './components/TicketDetailHeader';
 import { UnifiedFilters, UnifiedSortBy } from './types/unified.types';
 
 export const UnifiedProvider: React.FC = () => {
@@ -38,15 +35,7 @@ export const UnifiedProvider: React.FC = () => {
     updateSort,
     setSearchQuery,
     clearFilters,
-    refreshAll,
-    // Ticket-specific data
-    availableAgents,
-    ticketCategories,
-    ticketHistory,
-    slaMetrics,
-    loadingStates,
-    ticketActions,
-    createSampleTicket
+    refreshAll
   } = useUnifiedProvider();
   
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
@@ -87,13 +76,7 @@ export const UnifiedProvider: React.FC = () => {
     filters.providers && filters.providers.length < 3,
     filters.unreadOnly,
     filters.assigned !== undefined,
-    filters.priority,
-    filters.ticketStatus && filters.ticketStatus.length > 0,
-    filters.unassigned,
-    filters.assigneeId,
-    filters.showClosed,
-    filters.slaBreached,
-    filters.ticketsOnly
+    filters.priority
   ].filter(Boolean).length;
   
   return (
@@ -114,15 +97,6 @@ export const UnifiedProvider: React.FC = () => {
               Unified Inbox
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                size="small"
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={createSampleTicket}
-                sx={{ mr: 1 }}
-              >
-                Create Ticket
-              </Button>
               <IconButton size="small" onClick={refreshAll}>
                 <RefreshIcon fontSize="small" />
               </IconButton>
@@ -137,42 +111,6 @@ export const UnifiedProvider: React.FC = () => {
             </Box>
           </Box>
           
-          {/* SLA Summary Chips */}
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-            {slaMetrics.breachedCount > 0 && (
-              <Chip
-                label={`SLA Breached (${slaMetrics.breachedCount})`}
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.error.main,
-                  color: 'white',
-                  fontWeight: 600
-                }}
-                onClick={() => updateFilters({ slaBreached: true })}
-              />
-            )}
-            {slaMetrics.atRiskCount > 0 && (
-              <Chip
-                label={`Due Soon (${slaMetrics.atRiskCount})`}
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.warning.main,
-                  color: 'white',
-                  fontWeight: 600
-                }}
-                onClick={() => updateFilters({ slaBreached: false })}
-              />
-            )}
-            {slaMetrics.totalActiveTickets > 0 && (
-              <Chip
-                label={`Active Tickets (${slaMetrics.totalActiveTickets})`}
-                size="small"
-                variant="outlined"
-                onClick={() => updateFilters({ ticketsOnly: true })}
-              />
-            )}
-          </Box>
-
           {/* Provider stats */}
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Chip
@@ -239,50 +177,14 @@ export const UnifiedProvider: React.FC = () => {
       {/* Right side - Message viewer */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {selectedConversation ? (
-          <Box sx={{ p: 3, height: '100%', overflow: 'auto' }}>
-            {/* Ticket Detail Header - shown above provider content */}
-            <TicketDetailHeader
-              conversation={selectedConversation}
-              onReply={() => {
-                if (selectedConversation.ticketId) {
-                  ticketActions.reply(selectedConversation.ticketId, '');
-                }
-              }}
-              onAssign={(assigneeId) => {
-                if (selectedConversation.ticketId) {
-                  ticketActions.assign(selectedConversation.ticketId, assigneeId);
-                }
-              }}
-              onStatusChange={(status) => {
-                if (selectedConversation.ticketId) {
-                  ticketActions.updateStatus(selectedConversation.ticketId, status);
-                }
-              }}
-              onPriorityChange={(priority) => {
-                if (selectedConversation.ticketId) {
-                  ticketActions.updatePriority(selectedConversation.ticketId, priority);
-                }
-              }}
-              onAddNote={() => {
-                if (selectedConversation.ticketId) {
-                  ticketActions.addNote(selectedConversation.ticketId, '');
-                }
-              }}
-              availableAgents={availableAgents}
-              ticketHistory={ticketHistory}
-              loading={loadingStates}
-            />
-
-            {/* Provider-specific content area */}
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h5">{selectedConversation.name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Provider: {selectedConversation.provider}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                Messages will be displayed here by routing to the appropriate provider&apos;s message viewer.
-              </Typography>
-            </Box>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5">{selectedConversation.name}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Provider: {selectedConversation.provider}
+            </Typography>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              Messages will be displayed here by routing to the appropriate provider&apos;s message viewer.
+            </Typography>
           </Box>
         ) : (
           <Box 
@@ -318,45 +220,11 @@ export const UnifiedProvider: React.FC = () => {
         <MenuItem onClick={() => { updateFilters({ assigned: filters.assigned === false ? undefined : false }); handleFilterClose(); }}>
           {filters.assigned === false ? '✓' : '  '} Unassigned
         </MenuItem>
-
-        <Divider />
-
-        {/* Ticket Status Filters */}
-        <MenuItem onClick={() => { updateFilters({ ticketStatus: ['OPEN'] }); handleFilterClose(); }}>
-          {filters.ticketStatus?.includes('OPEN') ? '✓' : '  '} Open Tickets
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ ticketStatus: ['PENDING'] }); handleFilterClose(); }}>
-          {filters.ticketStatus?.includes('PENDING') ? '✓' : '  '} Pending
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ ticketStatus: ['IN_PROGRESS'] }); handleFilterClose(); }}>
-          {filters.ticketStatus?.includes('IN_PROGRESS') ? '✓' : '  '} In Progress
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ ticketStatus: ['RESOLVED'] }); handleFilterClose(); }}>
-          {filters.ticketStatus?.includes('RESOLVED') ? '✓' : '  '} Resolved
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ ticketStatus: ['REOPENED'] }); handleFilterClose(); }}>
-          {filters.ticketStatus?.includes('REOPENED') ? '✓' : '  '} Reopened
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ showClosed: true }); handleFilterClose(); }}>
-          {filters.showClosed ? '✓' : '  '} Include Closed
-        </MenuItem>
-
-        <Divider />
-
         <MenuItem onClick={() => { updateFilters({ priority: 'high' }); handleFilterClose(); }}>
           {filters.priority === 'high' ? '✓' : '  '} High Priority
         </MenuItem>
         <MenuItem onClick={() => { updateFilters({ priority: 'medium' }); handleFilterClose(); }}>
           {filters.priority === 'medium' ? '✓' : '  '} Medium Priority
-        </MenuItem>
-
-        <Divider />
-
-        <MenuItem onClick={() => { updateFilters({ slaBreached: true }); handleFilterClose(); }}>
-          {filters.slaBreached ? '✓' : '  '} SLA Breached
-        </MenuItem>
-        <MenuItem onClick={() => { updateFilters({ ticketsOnly: true }); handleFilterClose(); }}>
-          {filters.ticketsOnly ? '✓' : '  '} Tickets Only
         </MenuItem>
       </Menu>
       
@@ -377,19 +245,6 @@ export const UnifiedProvider: React.FC = () => {
         </MenuItem>
         <MenuItem onClick={() => { updateSort({ by: 'provider' }); handleSortClose(); }}>
           {sortOptions.by === 'provider' ? '✓' : '  '} Provider
-        </MenuItem>
-
-        <Divider />
-
-        {/* Ticket-specific sort options */}
-        <MenuItem onClick={() => { updateSort({ by: 'sla' }); handleSortClose(); }}>
-          {sortOptions.by === 'sla' ? '✓' : '  '} SLA Status
-        </MenuItem>
-        <MenuItem onClick={() => { updateSort({ by: 'status' }); handleSortClose(); }}>
-          {sortOptions.by === 'status' ? '✓' : '  '} Ticket Status
-        </MenuItem>
-        <MenuItem onClick={() => { updateSort({ by: 'ticketNumber' }); handleSortClose(); }}>
-          {sortOptions.by === 'ticketNumber' ? '✓' : '  '} Ticket Number
         </MenuItem>
       </Menu>
     </Box>
