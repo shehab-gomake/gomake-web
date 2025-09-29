@@ -58,6 +58,20 @@ export const useRescheduling = () => {
             newChange.originalEmployeeId = originalValue;
           } else if (changeType === "machine") {
             newChange.originalMachineId = originalValue;
+
+            // Extract employee ID from the original group for machine changes
+            if (originalValue) {
+              const originalGroupParts = originalValue.split(",");
+              if (originalGroupParts.length >= 2) {
+                const firstId = originalGroupParts[0].trim();
+                const secondIf = originalGroupParts[1].trim();
+                if (secondIf.includes("-")) {
+                  newChange.originalEmployeeId = secondIf;
+                } else {
+                  newChange.originalEmployeeId = firstId;
+                }
+              }
+            }
           } else if (changeType === "resource") {
             // For resource changes, we need to parse the group ID
             // The originalValue should be the full group ID (e.g., "category,resource")
@@ -81,6 +95,21 @@ export const useRescheduling = () => {
         } else if (changeType === "machine") {
           newChange.newMachineId = newValue;
           newChange.type = ReschedulingType.ResourceChange;
+
+          // Extract employee ID from the original group for machine changes if not already set
+          if (!newChange.originalEmployeeId && originalValue) {
+            const originalGroupParts = originalValue.split(",");
+            if (originalGroupParts.length >= 2) {
+              const firstId = originalGroupParts[0].trim();
+              const secondIf = originalGroupParts[1].trim();
+              if (secondIf.includes("-")) {
+                newChange.originalEmployeeId = secondIf;
+              } else {
+                newChange.originalEmployeeId = firstId;
+              }
+            }
+          }
+
           // Handle combined machine + time changes
           if (newStartTime) newChange.newStartTime = newStartTime;
           if (newEndTime) newChange.newEndTime = newEndTime;
@@ -124,7 +153,9 @@ export const useRescheduling = () => {
       originalStartTime?: string,
       originalEndTime?: string,
       reason?: string,
-      productType?: string
+      productType?: string,
+      originalEmployeeId?: string,
+      originalMachineId?: string
     ) => {
       setLocalChanges((prev) => {
         // Use itemId as unique key since each job has a unique itemId
@@ -132,8 +163,10 @@ export const useRescheduling = () => {
         const newChange: ILocalReschedulingChange = {
           actionId,
           boardMissionId,
-          originalEmployeeId: existingChange?.originalEmployeeId,
-          originalMachineId: existingChange?.originalMachineId,
+          originalEmployeeId:
+            existingChange?.originalEmployeeId || originalEmployeeId,
+          originalMachineId:
+            existingChange?.originalMachineId || originalMachineId,
           originalStartTime:
             originalStartTime || existingChange?.originalStartTime,
           originalEndTime: originalEndTime || existingChange?.originalEndTime,
@@ -202,6 +235,7 @@ export const useRescheduling = () => {
 
           // Always parse group IDs to extract individual resource IDs
           // Parse original employee ID if it exists
+
           if (change.originalEmployeeId) {
             const originalEmployeeParts = change.originalEmployeeId.split(",");
             if (originalEmployeeParts.length >= 2) {
@@ -212,6 +246,7 @@ export const useRescheduling = () => {
           }
 
           // Parse original machine ID if it exists
+
           if (change.originalMachineId) {
             const originalMachineParts = change.originalMachineId.split(",");
             if (originalMachineParts.length >= 2) {
