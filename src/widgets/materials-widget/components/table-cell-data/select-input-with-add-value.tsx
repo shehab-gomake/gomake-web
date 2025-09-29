@@ -8,6 +8,7 @@ import { materialCategorySuppliersState } from "../../state";
 import { ModalType } from "@/enums";
 import { useGomakeAxios } from "@/hooks";
 import { useRouter } from "next/router";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   parameterKey: string;
@@ -132,13 +133,10 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
           setInputValue(newInputValue);
         }}
         placeholder={t("materials.selectValue", "Select a value")}
-        value={value ? baseOptions.find((x) => x.id == value) || { id: value, label: value } : null}
+        defaultValue={value ? baseOptions.find((x) => x.id == value) || { id: value, label: value } : null}
         style={{
           border: 0,
-          width:
-            parameterKey === "productId" || parameterKey === "printed product"
-              ? 200
-              : 150,
+          width: 150,
         }}
         options={options}
         getOptionLabel={(option: any) => option?.label || ""}
