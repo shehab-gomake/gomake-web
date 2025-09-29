@@ -20,6 +20,7 @@ import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
 import { SelectInputWithAddValue } from "./select-input-with-add-value";
+import { SelectClientsInput } from "./select-clients-input";
 
 const TableCellData = ({
   value,
@@ -227,10 +228,11 @@ const TableCellData = ({
       );
     case EDataTypeEnum.CLIENT_LIST:
       return (
-        <MultiSelectClientsInput
+        <SelectClientsInput
           values={values}
           parameterKey={parameterKey}
           id={id}
+          value={value}
           isAdmin={isAdmin}
           options={clientsOptions}
           placeHolder={t("materials.inputs.selectClient")}

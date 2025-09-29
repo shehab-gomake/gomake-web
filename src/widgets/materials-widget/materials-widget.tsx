@@ -94,11 +94,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
-  // Supplier and Customer management
-  const { renderOptions, checkWhatRenderArray, isFetching } = useCustomerDropDownList({
-    clientType: CLIENT_TYPE.SUPPLIER,
-  });
-
   const { callApi } = useGomakeAxios();
   const [listClient, setListClient] = useState([]);
   const [listSupplier, setListSupplier] = useState([])
@@ -388,9 +383,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
-                        renderOptions={renderOptions}
-                        checkWhatRenderArray={checkWhatRenderArray}
-                        isFetching={isFetching}
                         materialType={materialType?.toString()}
                         materialCategory={materialCategory?.toString()}
                         renderOptionsCustomer={listClient}
@@ -407,9 +399,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <CombinedTable
                         headers={tableHeadersNew()}
                         rows={tableRowsNew}
-                        renderOptions={renderOptions}
-                        checkWhatRenderArray={checkWhatRenderArray}
-                        isFetching={isFetching}
                         materialType={materialType?.toString()}
                         materialCategory={materialCategory?.toString()}
                         renderOptionsCustomer={listClient}

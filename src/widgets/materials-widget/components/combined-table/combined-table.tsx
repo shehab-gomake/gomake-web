@@ -12,9 +12,6 @@ import { useStyle } from "./style";
 interface ICombinedTableProps {
     headers: any[];
     rows: any[];
-    renderOptions: any;
-    checkWhatRenderArray: any;
-    isFetching: boolean;
     materialType?: string;
     materialCategory?: string;
     renderOptionsCustomer?: any;
@@ -28,9 +25,6 @@ interface ICombinedTableProps {
 const CombinedTable = ({
     headers,
     rows,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
     materialType,
     materialCategory,
     renderOptionsCustomer,
@@ -186,9 +180,6 @@ const CombinedTable = ({
                                                     <ChildTableRow
                                                         rowId={row.id}
                                                         isVisible={true}
-                                                        renderOptions={renderOptions}
-                                                        checkWhatRenderArray={checkWhatRenderArray}
-                                                        isFetching={isFetching}
                                                         materialType={materialType}
                                                         materialCategory={materialCategory}
                                                         renderOptionsCustomer={renderOptionsCustomer}

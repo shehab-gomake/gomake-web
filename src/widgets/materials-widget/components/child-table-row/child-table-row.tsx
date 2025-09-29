@@ -22,9 +22,6 @@ import { JobsModal } from "../jobs-modal/jobs-modal";
 interface IChildTableRowProps {
     rowId: string;
     isVisible: boolean;
-    renderOptions: any;
-    checkWhatRenderArray: any;
-    isFetching: boolean;
     materialType?: string;
     materialCategory?: string;
     renderOptionsCustomer?: any;
@@ -35,7 +32,7 @@ interface IChildTableRowProps {
     isFetchingSupplier?: boolean;
 }
 
-const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, isFetching, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
+const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
@@ -444,7 +441,7 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
                                                             <TableCellData
                                                                 value={row.clients || []}
                                                                 isEditable={true}
-                                                                type={9} // EDataTypeEnum.CLIENTS_LIST
+                                                                type={18} // EDataTypeEnum.CLIENTS_LIST
                                                                 values={row.clients || []}
                                                                 id={row.id}
                                                                 parameterKey="clients"
@@ -739,12 +736,6 @@ const ChildTableRow = ({ rowId, isVisible, renderOptions, checkWhatRenderArray, 
         const newClients = client ? [client] : [];
         setSelectedClients(newClients);
         handleInventoryFormChange('clients', newClients.map(c => c.id));
-    };
-
-    const handleClientSelectForPricing = (e, client: any) => {
-        const newClients = client ? [client] : [];
-        setSelectedClientsForPricing(newClients);
-        handleFormChange('clients', newClients.map(c => c.id));
     };
 
     // Function to update Total Inventory in parent table
