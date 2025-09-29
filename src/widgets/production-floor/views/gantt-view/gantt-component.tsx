@@ -35,6 +35,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BoltIcon from "@mui/icons-material/Bolt";
 import RestoreIcon from "@mui/icons-material/Restore";
 import EventIcon from "@mui/icons-material/Event";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { TimeFrameTabs } from "./state";
 import {
   adaptLeft,
@@ -132,6 +133,12 @@ const TimelineWidget = () => {
   const getGroupStats = (groupId: string) => {
     // Get all items in this group AND its children
     const groupItems = items.filter((item) => {
+      // Exclude items that have group equal to root group IDs
+      const isRootGroup = groups.find(
+        (group) => group.isRoot && group.id === item.group
+      );
+      if (isRootGroup) return false;
+
       // Include items directly in this group
       if (item.group === groupId) return true;
 
@@ -244,6 +251,7 @@ const TimelineWidget = () => {
                 gap={1}
                 height={"31px"}
               >
+                {/* !here fix totalJobs */}
                 <Typography variant="caption" color="#6C757D" fontSize="11px">
                   {stats.totalJobs} {t("sales.quote.jobs")}
                 </Typography>
@@ -478,6 +486,37 @@ const TimelineWidget = () => {
                 ? "Recovering..."
                 : t("productionFloor.recoverOverdue")}
             </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              disabled={!hasLocalChanges()}
+              onClick={() => {
+                clearAllLocalChanges();
+                getData(currentMonth.clone().month());
+              }}
+              sx={{
+                borderColor: "#6C757D",
+                color: "#6C757D",
+                "&:hover": {
+                  borderColor: "#495057",
+                  backgroundColor: "#F8F9FA",
+                  color: "#495057",
+                },
+                "&:disabled": {
+                  borderColor: "#ccc",
+                  color: "#ccc",
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
+                },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              {t("productionFloor.resetChanges")}
+            </Button>
           </Stack>
         </Stack>
       </Box>
@@ -546,7 +585,7 @@ const TimelineWidget = () => {
           defaultTimeStart={timeRange.defaultTimeStart}
           defaultTimeEnd={timeRange.defaultTimeEnd}
           sidebarWidth={240}
-          onItemMove={handleItemMove}
+          onItemMove={handleItemMove} //!here
           onItemResize={handleItemResize}
           onZoom={handleZoom}
           canResize={"right"}

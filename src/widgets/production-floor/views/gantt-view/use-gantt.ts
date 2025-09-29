@@ -122,6 +122,11 @@ const useGantt = (reschedulingHook?: any) => {
       (g) => g.id === updatedItem.group
     );
     const actionId = currentGroupForAction?.parent || updatedItem.id;
+    const firstGroupId = updatedItem.group.split(",")[0];
+    const secondGroupId = updatedItem.group.split(",")[1];
+    const isCurrentEmployee = secondGroupId && secondGroupId.includes("-");
+    const originalEmployeeId = isCurrentEmployee ? secondGroupId : firstGroupId;
+    const originalMachineId = !isCurrentEmployee ? secondGroupId : undefined;
 
     updateTimeChange(
       itemId, // Use itemId as unique key
@@ -134,14 +139,18 @@ const useGantt = (reschedulingHook?: any) => {
       `Time slot modification - ${
         edge === "left" ? "start" : "end"
       } time changed`,
-      updatedItem.productType // Pass productType from job data
+      updatedItem.productType, // Pass productType from job data
+      originalEmployeeId,
+      originalMachineId
     );
 
     setLoadingItemId("");
   };
 
   //!here most important
+  //!fix newGroupOrder
   const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
+    debugger;
     const updatedItem = items.find((j) => j.id === itemId);
 
     if (!updatedItem) {
@@ -284,6 +293,14 @@ const useGantt = (reschedulingHook?: any) => {
         updatedItem.productType // Pass productType from job data
       );
     } else if (isTimeChange) {
+      const firstGroupId = updatedItem.group.split(",")[0];
+      const secondGroupId = updatedItem.group.split(",")[1];
+      const isCurrentEmployee = secondGroupId && secondGroupId.includes("-");
+      const originalEmployeeId = isCurrentEmployee
+        ? secondGroupId
+        : firstGroupId;
+      const originalMachineId = !isCurrentEmployee ? secondGroupId : undefined;
+
       // Only time change (no resource change)
       updateTimeChange(
         itemId, // Use itemId as unique key
@@ -294,7 +311,9 @@ const useGantt = (reschedulingHook?: any) => {
         updatedItem.start_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         updatedItem.end_time.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         "Time slot modification - job moved to new time slot",
-        updatedItem.productType // Pass productType from job data
+        updatedItem.productType, // Pass productType from job data,
+        originalEmployeeId,
+        originalMachineId
       );
     }
 
