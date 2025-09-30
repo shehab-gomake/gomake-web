@@ -1,16 +1,6 @@
-import React from "react";
-import { BaseMessageInput } from "@/widgets/frontdesk/components/shared/BaseMessageInput";
-
-interface MessageInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSend: (message: string) => Promise<void>;
-  onTypingStart?: () => void;
-  onTypingStop?: () => void;
-  placeholder?: string;
-  disabled?: boolean;
-  isSending?: boolean;
-}
+import React from 'react';
+import { BaseMessageInput } from '@/widgets/frontdesk/components/shared/BaseMessageInput';
+import { MessageInputProps } from '../../types/direct-messages.types';
 
 export const MessageInput: React.FC<MessageInputProps> = ({
   value,
@@ -18,15 +8,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   onSend,
   onTypingStart,
   onTypingStop,
-  placeholder = "Type a message...",
+  placeholder = 'Type a message...',
   disabled = false,
   isSending = false,
 }) => {
+  const handleSend = async (message: string) => {
+    await onSend(message);
+  };
+
   return (
     <BaseMessageInput
       value={value}
       onChange={onChange}
-      onSend={onSend}
+      onSend={handleSend}
       onTypingStart={onTypingStart}
       onTypingStop={onTypingStop}
       placeholder={placeholder}

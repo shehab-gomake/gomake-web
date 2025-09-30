@@ -15,8 +15,8 @@ import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/wha
 import { DirectMessagesProviderView } from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
 
 // Ticket components
-import { TicketListPanel } from './providers/tickets/components/TicketListPanel';
-import { TicketDetailView } from './providers/tickets/components/TicketDetailView';
+import { TicketListPanel } from './providers/tickets/components/ticket-list-panel';
+import { TicketDetailView } from './providers/tickets/components/ticket-detail-view';
 
 // For unified view placeholder
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';

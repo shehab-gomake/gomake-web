@@ -17,7 +17,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Ticket } from '../types/ticket.types';
-import { TicketListItem } from './TicketListItem';
+import { TicketListItem } from './ticket-list-item';
 
 interface TicketListPanelProps {
   viewTitle: string;
