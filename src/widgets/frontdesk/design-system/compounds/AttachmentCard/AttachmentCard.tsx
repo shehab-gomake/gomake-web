@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Paper, Typography } from '@mui/material';
-import { colorTokens, radiusTokens, semanticShadows } from '../../tokens';
+import { colorTokens, radiusTokens, shadowTokens } from '../../tokens';
 import DownloadIcon from '@mui/icons-material/Download';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
@@ -137,7 +137,7 @@ export const AttachmentCard: React.FC<AttachmentCardProps> = ({
             top: 4,
             right: 4,
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            boxShadow: semanticShadows.sm,
+            boxShadow: shadowTokens.sm,
             width: 20,
             height: 20,
             '&:hover': {
