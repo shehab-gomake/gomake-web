@@ -1,1 +1,1 @@
-export { useDirectMessages } from '@/hooks/use-direct-messages';
+export { useDirectMessages } from './use-direct-messages';

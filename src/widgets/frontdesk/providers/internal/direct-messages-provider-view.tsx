@@ -32,7 +32,7 @@ import {
 } from "@/widgets/frontdesk/design-system";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList, GlobalSearch, InConversationSearch } from "./components/direct-messages";
 import { UserPresence } from "./components";
-import { useDirectMessages } from "@/hooks/use-direct-messages";
+import { useDirectMessages } from "./hooks";
 import { ConversationMember } from "./types/direct-messages.types";
 
 const DirectMessagesProviderView: React.FC = () => {
