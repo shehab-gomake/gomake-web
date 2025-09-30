@@ -809,8 +809,10 @@ const QuickSetupFlow: React.FC = () => {
             StepStatus.DONE
           );
 
+          // Navigate to the next setup step (Company Profile Logo)
           alertSuccessAdded();
-          navigate("/");
+          // navigate("/");
+          navigate("/settings/company-profile?tab=company");
         } else {
           alertFaultAdded();
         }
