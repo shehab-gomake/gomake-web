@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { openChildTableState, openJobsModalState, openAddSupplierModalState } from "../../state";
+import { useRecoilValue } from "recoil";
+import { openChildTableState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
