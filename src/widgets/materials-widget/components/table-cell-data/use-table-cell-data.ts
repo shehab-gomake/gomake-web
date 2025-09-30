@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
 import { openPriceModalState } from "@/store";
+import { filterNullFromArrays } from "@/utils/helpers";
 
 const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purchasePricingTable: boolean = false) => {
     const {callApi} = useGomakeAxios();
@@ -162,7 +163,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value ,
+                    updatedValue: filterNullFromArrays(value) ,
                     pricingType: pricingType 
                 });
             } 
@@ -172,20 +173,20 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: value,
+                    updatedValue: filterNullFromArrays(value),
                 });
             } else if(isAdmin){
                 updateMaterialPropApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: filterNullFromArrays(value),
                     priceIndex: index,
                 });
             }else{
                 updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: value,
+                    updatedValue: filterNullFromArrays(value),
                     priceIndex: index,
                 });
             }

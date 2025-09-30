@@ -260,11 +260,51 @@ const useMaterials = (isAdmin: boolean) => {
     }));
   }, [materialCategories]);
 
+  // Helper function to translate header values
+  const translateHeaderValue = (key: string, originalValue: string) => {
+    // Special case for "price Unit / ton"
+    if (key === "price Unit / ton") {
+      return <div>
+        {t("materials.childTable.priceUnitPerTon")}
+        <br />
+        {originalValue}
+      </div>;
+    }
+
+    // Convert key to camelCase for translation lookup
+    const translationKey = key
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[^a-zA-Z0-9]/g, '');
+
+    // Try to get translation, fallback to original value
+    const translationPath = `materials.tableHeaders.${translationKey}`;
+    const translatedValue = t(translationPath);
+
+    // If translation key doesn't exist, t() returns the key itself, so we check if it's different
+    return translatedValue !== translationPath ? translatedValue : originalValue;
+  };
+
+  // Helper function to translate values array
+  const translateValuesArray = (values: any[]) => {
+    return values.map(item => ({
+      ...item,
+      value: translateHeaderValue(item.key, item.value)
+    }));
+  };
+
   const getMaterialTableHeaders = async (materialType: string) => {
     const callBack = (res) => {
       if (res.success) {
         const tableHeaders = res.data?.tableHeaders;
-        const updatedArray = tableHeaders.filter(
+        // Translate header values
+        const translatedHeaders = tableHeaders.map(header => ({
+          ...header,
+          value: translateHeaderValue(header.key, header.value),
+          values: header.values ? translateValuesArray(header.values) : header.values
+        }));
+
+        const updatedArray = translatedHeaders.filter(
           (item) => item.key !== "Active"
         );
         setMaterialHeaders(updatedArray);
@@ -300,8 +340,6 @@ const useMaterials = (isAdmin: boolean) => {
   );
 
   const onChangeRowCheckBox = (id: string, checked: boolean) => {
-    console.log("onChangeRowCheckBox called:", { id, checked });
-
     if (isAllMaterialsChecked && !checked) {
       const temp = cloneDeep(materialsUnChecked);
       temp.push(id);
@@ -317,7 +355,6 @@ const useMaterials = (isAdmin: boolean) => {
       id === row.id ? { ...row, checked: checked } : row
     );
 
-    console.log("Updated materialCategoryData:", updatedData.map(row => ({ id: row.id, checked: row.checked })));
     setMaterialCategoryData(updatedData);
   };
 

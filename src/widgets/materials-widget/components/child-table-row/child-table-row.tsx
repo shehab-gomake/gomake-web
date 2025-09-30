@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
@@ -55,7 +55,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [scrollLeft, setScrollLeft] = useState(0);
-    console.log('scrollLeft', scrollLeft);
     const [formData, setFormData] = useState({
         supplierId: '',
         purchasePrice: '',
@@ -299,7 +298,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     style={classes.addInventoryButton}
                     startIcon={<AddIcon />}
                 >
-                    Add New Inventory
+                    {t("materials.childTable.addNewInventory")}
                 </GomakePrimaryButton>
             </Box>
 
@@ -310,13 +309,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             ) : inventoryData.length === 0 ? (
                 <Box sx={classes.noDataContainer}>
                     <span style={classes.noDataText}>
-                        No inventory data available,
+                        {t("materials.childTable.noInventoryData")}
                     </span>
                     <span
                         onClick={() => setIsAddInventoryModalOpen(true)}
                         style={classes.noDataLink}
                     >
-                        add new?
+                        {t("materials.childTable.addNew")}
                     </span>
                 </Box>
             ) : (
@@ -355,31 +354,31 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         margin: 0,
                                         // Force the browser to recalculate position
                                         willChange: 'transform',
-                                    }}>Supplier Name
+                                    }}>{t("materials.childTable.supplierName")}
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Code</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.code")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price
+                                        {t("materials.childTable.purchasePrice")}
                                         <br />
                                         {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Sale Cost
+                                        {t("materials.childTable.saleCost")}
                                         <br />
                                         {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Inventory ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.inventory")} ({inventoryTableHeadingUnits.inventoryUnit})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Quantity ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.quantity")} ({inventoryTableHeadingUnits.inventoryUnit})
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Status</TableCell>
-                                    <TableCell sx={classes.headerCell}>Client</TableCell>
-                                    <TableCell sx={classes.headerCell}>Jobs</TableCell>
-                                    <TableCell sx={classes.headerCell}>Actions</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.jobs")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.actions")}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <Droppable droppableId="inventory-rows">
@@ -576,7 +575,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                     transition: 'all 0.2s ease-in-out'
                                                                 }}
                                                             >
-                                                                Show
+                                                                {t("materials.childTable.show")}
                                                             </Box>
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
@@ -614,7 +613,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     <CircularProgress />
                 </Box>
             ) : purchasePricingData.length === 0 ? (
-                <Alert severity="info">No purchase pricing data available</Alert>
+                <Alert severity="info">{t("materials.childTable.noPurchasePricingData")}</Alert>
             ) : (
                 <TableContainer
                     component={Paper}
@@ -655,7 +654,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         padding: '4px',
                                         margin: 0,
                                     }}>
-                                        Supplier Name
+                                        {t("materials.childTable.supplierName")}
                                         <IconButton
                                             size="small"
                                             onClick={() => setIsAddPurchasePricingModalOpen(true)}
@@ -666,15 +665,15 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price
+                                        {t("materials.childTable.purchasePrice")}
                                         <br />
                                         {purchasePricingTableHeadingUnits.pricingUnit}
                                     </TableCell>
-                                    <TableCell sx={classes.headerCell}>Currency</TableCell>
-                                    <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplement Time (working days)</TableCell>
-                                    <TableCell sx={classes.headerCell}>Status</TableCell>
-                                    <TableCell sx={classes.headerCell}>Actions</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")} ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.actions")}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <Droppable droppableId="purchase-pricing-rows">
@@ -990,8 +989,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             const callBack = (res) => {
                 if (res.success) {
                     // Update Total Inventory in parent table
-                    if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
-                        updateTotalInventoryInParent(rowId, res.data?.totalInventory);
+                    if (res.data && typeof res.data === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data);
                     }
 
                     // Refresh the inventory data
@@ -1084,17 +1083,17 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>Add Purchase Pricing</DialogTitle>
+                <DialogTitle>{t("materials.childTable.addPurchasePricing")}</DialogTitle>
                 <DialogContent>
                     <Box sx={classes.modalContent}>
                         <Box>
-                            <div style={classes.modalLabelText}>Supplier</div>
+                            <div style={classes.modalLabelText}>{t("materials.childTable.supplier")}</div>
                             <ClientAutocomplete
                                 key={selectedSupplierForPricing?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
                                 onChange={handleSupplierSelectForPricing}
                                 options={renderOptionsSupplier || []}
-                                placeholder="Select a supplier"
+                                placeholder={t("materials.childTable.selectSupplier")}
                                 style={{ width: '100%' }}
                                 onChangeTextField={checkWhatRenderArraySupplier}
                                 loading={isFetchingSupplier}
@@ -1103,14 +1102,14 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             />
                         </Box>
                         <GomakeTextInput
-                            labelText="Purchase Price"
+                            labelText={t("materials.childTable.purchasePrice")}
                             value={formData.purchasePrice}
                             onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
                             type="number"
-                            placeholder="Enter purchase roll price"
+                            placeholder={t("materials.childTable.enterPurchaseRollPrice")}
                         />
                         <Box>
-                            <div style={classes.modalLabelText}>Currency</div>
+                            <div style={classes.modalLabelText}>{t("materials.childTable.currency")}</div>
                             <select
                                 value={formData.currency}
                                 onChange={(e) => handleFormChange('currency', e.target.value)}
@@ -1122,18 +1121,18 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             </select>
                         </Box>
                         <GomakeTextInput
-                            labelText="Quantity in Package"
+                            labelText={t("materials.childTable.quantityInPackage")}
                             value={formData.quantityInPackage}
                             onChange={(e) => handleFormChange('quantityInPackage', e.target.value)}
                             type="number"
-                            placeholder="Enter quantity"
+                            placeholder={t("materials.childTable.enterQuantity")}
                         />
                         <GomakeTextInput
-                            labelText="Supplement Time (days)"
+                            labelText={t("materials.childTable.supplementTimeDays")}
                             value={formData.supplementTime}
                             onChange={(e) => handleFormChange('supplementTime', e.target.value)}
                             type="number"
-                            placeholder="Enter supplement time"
+                            placeholder={t("materials.childTable.enterSupplementTime")}
                         />
 
                     </Box>
@@ -1143,13 +1142,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         onClick={handleCloseAddPurchasePricingModal}
                         style={classes.modalCancelButton}
                     >
-                        Cancel
+                        {t("materials.childTable.cancel")}
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
                         onClick={() => handleAddPurchasePricing(null)}
                         style={classes.modalSubmitButton}
                     >
-                        Add Purchase Pricing
+                        {t("materials.childTable.addPurchasePricing")}
                     </GomakePrimaryButton>
                 </DialogActions>
             </Dialog>
@@ -1161,17 +1160,17 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>Add New Inventory</DialogTitle>
+                <DialogTitle>{t("materials.childTable.addNewInventory")}</DialogTitle>
                 <DialogContent>
                     <Box sx={classes.modalContent}>
                         <Box>
-                            <div style={classes.modalLabelText}>Supplier</div>
+                            <div style={classes.modalLabelText}>{t("materials.childTable.supplier")}</div>
                             <ClientAutocomplete
                                 key={selectedSupplier?.id}
                                 clientType={CLIENT_TYPE.SUPPLIER}
                                 onChange={handleSupplierSelect}
                                 options={renderOptionsSupplier || []}
-                                placeholder="Select a supplier"
+                                placeholder={t("materials.childTable.selectSupplier")}
                                 style={{ width: '100%' }}
                                 value={selectedSupplier}
                                 onChangeTextField={checkWhatRenderArraySupplier}
@@ -1180,40 +1179,40 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             />
                         </Box>
                         <GomakeTextInput
-                            labelText="Code"
+                            labelText={t("materials.childTable.code")}
                             value={inventoryFormData.code}
                             onChange={(e) => handleInventoryFormChange('code', e.target.value)}
-                            placeholder="Enter code"
+                            placeholder={t("materials.childTable.enterCode")}
                         />
                         <GomakeTextInput
-                            labelText="Quantity"
+                            labelText={t("materials.childTable.quantity")}
                             value={inventoryFormData.quantity.toString()}
                             onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
                             type="number"
-                            placeholder="Enter quantity"
+                            placeholder={t("materials.childTable.enterQuantity")}
                         />
                         <GomakeTextInput
-                            labelText="Purchase Price"
+                            labelText={t("materials.childTable.purchasePrice")}
                             value={inventoryFormData.purchasePrice.toString()}
                             onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
                             type="number"
-                            placeholder="Enter purchase price"
+                            placeholder={t("materials.childTable.enterPurchasePrice")}
                         />
                         <GomakeTextInput
-                            labelText="Sale Price"
+                            labelText={t("materials.childTable.salePrice")}
                             value={inventoryFormData.salePrice.toString()}
                             onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
                             type="number"
-                            placeholder="Enter sale price"
+                            placeholder={t("materials.childTable.enterSalePrice")}
                         />
                         <Box>
-                            <div style={classes.modalLabelText}>Clients</div>
+                            <div style={classes.modalLabelText}>{t("materials.childTable.clients")}</div>
                             <ClientAutocomplete
                                 key={selectedClients[0]?.id}
                                 clientType={CLIENT_TYPE.CUSTOMER}
                                 onChange={handleClientSelect}
                                 options={renderOptionsCustomer || []}
-                                placeholder="Select a client"
+                                placeholder={t("materials.childTable.selectClient")}
                                 style={{ width: '100%' }}
                                 value={selectedClients[0] || null}
                                 onChangeTextField={checkWhatRenderArrayCustomer}
@@ -1228,13 +1227,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         onClick={handleCloseAddInventoryModal}
                         style={classes.modalCancelButton}
                     >
-                        Cancel
+                        {t("materials.childTable.cancel")}
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
                         onClick={handleAddInventory}
                         style={classes.modalSubmitButton}
                     >
-                        Add Inventory
+                        {t("materials.childTable.addInventory")}
                     </GomakePrimaryButton>
                 </DialogActions>
             </Dialog>
