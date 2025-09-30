@@ -58,7 +58,6 @@ import { EMaterialActiveFilter } from "./enums";
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
   const { materialType, materialCategory } = query;
-  console.log("materialType", { materialType, materialCategory });
   const [selectedTableRow, setSelectedTableRow] =
     useState<IMaterialCategoryRow>();
   const [requestAbortController, setRequestAbortController] = useState<AbortController | null>(null);

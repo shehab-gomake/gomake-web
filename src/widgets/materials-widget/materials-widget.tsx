@@ -94,6 +94,21 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
+  useEffect(() => {
+    if (!subCategory) {
+      // Wait 2 seconds before opening sidebar if no category selected
+      const timer = setTimeout(() => {
+        setIsSidebarOpen(true);
+      }, 2000);
+
+      // Cleanup timer if component unmounts or subCategory changes
+      return () => clearTimeout(timer);
+    }
+    else {
+      setIsSidebarOpen(false);
+    }
+  }, [materialCategory, subCategory]);
+
   const { callApi } = useGomakeAxios();
   const [listClient, setListClient] = useState([]);
   const [listSupplier, setListSupplier] = useState([])
@@ -233,24 +248,24 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     </Stack>
   );
 
-  useEffect(() => {
-    if (materialType && materialCategories.length > 0) {
-      if (
-        !materialCategory ||
-        !materialCategories.some(
-          (category) => category.categoryKey === materialCategory
-        )
-      ) {
-        const defaultCategory = materialCategories[0].categoryKey;
+  // useEffect(() => {
+  //   if (materialType && materialCategories.length > 0) {
+  //     if (
+  //       !materialCategory ||
+  //       !materialCategories.some(
+  //         (category) => category.categoryKey === materialCategory
+  //       )
+  //     ) {
+  //       const defaultCategory = materialCategories[0].categoryKey;
 
-        replace({
-          pathname: materialType.toString(),
-          query: { materialCategory: defaultCategory },
-        });
-        setSelectedMaterialCategory(defaultCategory);
-      }
-    }
-  }, [materialCategories]);
+  //       replace({
+  //         pathname: materialType.toString(),
+  //         query: { materialCategory: defaultCategory },
+  //       });
+  //       setSelectedMaterialCategory(defaultCategory);
+  //     }
+  //   }
+  // }, [materialCategories]);
 
   useEffect(() => {
     getCurrenciesApi().then();
@@ -317,7 +332,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {t("materials.buttons.back")}
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader}>/ {subCategory}</h4>
+          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? "Choose Category"}</h4>
           <IconButton
             size="small"
             onClick={() => setIsSidebarOpen(true)}

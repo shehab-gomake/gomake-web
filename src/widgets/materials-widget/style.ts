@@ -33,6 +33,7 @@ const useStyle = () => {
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
         color: "#5759A8",
+        cursor: "pointer",
       },
       noData: {
         width: "100%",
