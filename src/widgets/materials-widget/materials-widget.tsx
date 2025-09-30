@@ -44,6 +44,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
+  console.log("dir", dir);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);

@@ -37,6 +37,8 @@ interface IChildTableRowProps {
 const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     const { alertFaultAdded, alertFault } = useSnackBar();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
@@ -53,7 +55,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [scrollLeft, setScrollLeft] = useState(0);
-
+    console.log('scrollLeft', scrollLeft);
     const [formData, setFormData] = useState({
         supplierId: '',
         purchasePrice: '',
@@ -108,6 +110,11 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 const newScrollLeft = mainTableContainer.scrollLeft;
                 setScrollLeft(newScrollLeft);
                 console.log('Main table scroll position:', newScrollLeft);
+                console.log('Column positions will be:', {
+                    column1: `${isRTL ? 'right' : 'left'}: ${newScrollLeft}px`,
+                    column2: `${isRTL ? 'right' : 'left'}: ${newScrollLeft + 50}px`,
+                    isRTL: isRTL
+                });
             }
         };
 
@@ -270,15 +277,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
-            {/* Fixed Add Button - Moves with scroll - Aligned with columns */}
+            {/* Fixed Add Button - Moves with scroll - RTL Support */}
             <Box sx={{
                 position: 'sticky',
-                left: `${scrollLeft > 0 ? scrollLeft : 8}px`,
+                [isRTL ? 'right' : 'left']: isRTL ? `${scrollLeft > 0 ? scrollLeft : 8}px` : `${-scrollLeft > 0 ? scrollLeft : 8}px`,
                 top: 0,
                 zIndex: 999999,
-                backgroundColor: '#fff',
                 padding: '8px 0px',
-                borderBottom: '1px solid #e0e0e0',
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -287,7 +292,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 minWidth: '200px',
                 maxWidth: '200px',
                 margin: 0,
-                // Ensure exact alignment with table cells
                 boxSizing: 'border-box',
             }}>
                 <GomakePrimaryButton
@@ -316,41 +320,41 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     </span>
                 </Box>
             ) : (
-                <TableContainer
-                    component={Paper}
-                    sx={classes.tableContainer}
-                >
+                <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative' }}>
                     <DragDropContext onDragEnd={handleInventoryDragEnd}>
-                        <Table sx={classes.table} stickyHeader>
+                        <Table sx={{ ...classes.table, position: 'relative' }} stickyHeader>
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
                                     <TableCell sx={{
                                         ...classes.headerCell,
                                         position: 'sticky',
-                                        left: `${scrollLeft}px`,
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
                                         zIndex: 999998,
                                         backgroundColor: '#D5D7FF',
                                         width: '50px',
                                         minWidth: '50px',
                                         maxWidth: '50px',
-                                        transform: 'translateZ(0)',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
                                         padding: '4px',
                                         margin: 0,
+                                        willChange: 'transform',
                                     }}></TableCell>
                                     <TableCell sx={{
                                         ...classes.headerCell,
                                         position: 'sticky',
-                                        left: `${scrollLeft + 50}px`,
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
                                         zIndex: 999997,
                                         backgroundColor: '#D5D7FF',
                                         width: '150px',
                                         minWidth: '150px',
                                         maxWidth: '150px',
-                                        boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
-                                        transform: 'translateZ(0)',
+                                        boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
                                         padding: '4px',
                                         margin: 0,
+                                        // Force the browser to recalculate position
+                                        willChange: 'transform',
                                     }}>Supplier Name
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
@@ -402,15 +406,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                 textAlign: 'center',
                                                                 padding: '12px 8px',
                                                                 whiteSpace: 'nowrap',
-                                                                borderBottom: '1px solid #e0e0e0',
                                                                 position: 'sticky',
-                                                                left: `${scrollLeft}px`,
+                                                                [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
                                                                 zIndex: 999998,
                                                                 backgroundColor: '#fff',
                                                                 width: '50px',
                                                                 minWidth: '50px',
                                                                 maxWidth: '50px',
-                                                                transform: 'translateZ(0)',
                                                                 margin: 0,
                                                             }}
                                                         >
@@ -420,15 +422,14 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                             textAlign: 'center',
                                                             padding: '12px 8px',
                                                             whiteSpace: 'nowrap',
-                                                            borderBottom: '1px solid #e0e0e0',
                                                             position: 'sticky',
-                                                            left: `${scrollLeft + 50}px`,
+                                                            [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
                                                             zIndex: 999997,
                                                             backgroundColor: '#fff',
                                                             width: '150px',
                                                             minWidth: '150px',
                                                             maxWidth: '150px',
-                                                            boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
                                                             transform: 'translateZ(0)',
                                                             margin: 0,
                                                         }}>
@@ -598,7 +599,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             </Droppable>
                         </Table>
                     </DragDropContext>
-                </TableContainer>
+                </Box>
             )}
         </Box>
     );
@@ -629,23 +630,30 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={{
                                         ...classes.headerCell,
                                         position: 'sticky',
-                                        left: `${scrollLeft}px`,
-                                        zIndex: 999999,
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 8}px` : `${scrollLeft - 8}px`,
+                                        zIndex: 999998,
                                         backgroundColor: '#D5D7FF',
                                         width: '50px',
                                         minWidth: '50px',
-                                        transform: 'translateZ(0)',
+                                        maxWidth: '50px',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                        padding: '4px',
+                                        margin: 0,
+                                        willChange: 'transform',
                                     }} ></TableCell>
                                     <TableCell sx={{
                                         ...classes.headerCell,
                                         position: 'sticky',
-                                        left: `${scrollLeft + 50}px`,
-                                        zIndex: 999998,
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft + 44}px` : `${scrollLeft + 43}px`,
+                                        zIndex: 999997,
                                         backgroundColor: '#D5D7FF',
                                         width: '150px',
                                         minWidth: '150px',
-                                        boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                        maxWidth: '150px',
+                                        boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
                                         transform: 'translateZ(0)',
+                                        padding: '4px',
+                                        margin: 0,
                                     }}>
                                         Supplier Name
                                         <IconButton
@@ -691,28 +699,37 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         <TableCell
                                                             {...provided.dragHandleProps}
                                                             sx={{
-                                                                ...classes.bodyCell,
+                                                                textAlign: 'center',
+                                                                padding: '12px 8px',
+                                                                whiteSpace: 'nowrap',
                                                                 position: 'sticky',
-                                                                left: `${scrollLeft}px`,
-                                                                zIndex: 999999,
+                                                                [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 8}px` : `${scrollLeft - 8}px`,
+                                                                zIndex: 999998,
                                                                 backgroundColor: '#fff',
                                                                 width: '50px',
                                                                 minWidth: '50px',
-                                                                transform: 'translateZ(0)',
+                                                                maxWidth: '50px',
+                                                                transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                                                margin: 0,
+                                                                willChange: 'transform',
                                                             }}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
                                                         <TableCell sx={{
-                                                            ...classes.bodyCell,
+                                                            textAlign: 'center',
+                                                            padding: '12px 8px',
+                                                            whiteSpace: 'nowrap',
                                                             position: 'sticky',
-                                                            left: `${scrollLeft + 50}px`,
-                                                            zIndex: 999998,
+                                                            [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft + 44}px` : `${scrollLeft + 43}px`,
+                                                            zIndex: 999997,
                                                             backgroundColor: '#fff',
                                                             width: '150px',
                                                             minWidth: '150px',
-                                                            boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            maxWidth: '150px',
+                                                            boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
                                                             transform: 'translateZ(0)',
+                                                            margin: 0,
                                                         }}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
