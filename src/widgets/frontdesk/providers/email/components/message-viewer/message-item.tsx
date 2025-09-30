@@ -4,8 +4,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { alpha } from "@mui/material";
 import { EmailMessage } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { formatMessageDate } from "../../utils/date-utils";
-import { getAvatarColor, getEmailInitials } from "../../utils/avatar-utils";
+import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
 
 interface MessageItemProps {
   message: EmailMessage;
@@ -24,8 +23,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
   senderName = message.from.name || message.from.email;
   senderEmail = message.from.email;
 
-  const avatarColor = getAvatarColor(senderName, primaryColor);
-  const initials = getEmailInitials(senderName);
+  const avatarColor = getAvatarColor(senderEmail || senderName);
+  const initials = getEmailInitials(senderEmail || senderName);
 
   return (
     <Box

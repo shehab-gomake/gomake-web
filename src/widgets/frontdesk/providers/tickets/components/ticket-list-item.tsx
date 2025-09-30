@@ -1,7 +1,7 @@
 import React from 'react';
 import { TicketListItem as DSTicketListItem } from '@/widgets/frontdesk/design-system';
 import { Ticket } from '../types/ticket.types';
-import { format, isToday, isYesterday, parseISO } from 'date-fns';
+import { formatConversationDate } from '@/widgets/frontdesk/utils';
 
 interface TicketListItemProps {
   ticket: Ticket;
@@ -10,17 +10,6 @@ interface TicketListItemProps {
   onSelect: (ticketId: string, openInNewTab?: boolean) => void;
   onCheck?: (ticketId: string, checked: boolean) => void;
 }
-
-const formatDate = (dateString: string) => {
-  const date = parseISO(dateString);
-  if (isToday(date)) {
-    return format(date, 'h:mm a');
-  } else if (isYesterday(date)) {
-    return 'Yesterday';
-  } else {
-    return format(date, 'MMM d');
-  }
-};
 
 /**
  * Ticket List Item - Wrapper around design system component
@@ -57,7 +46,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       title={ticket.title}
       status={ticket.status}
       priority={ticket.priority as 'Urgent' | 'High' | 'Medium' | 'Low'}
-      updatedAt={formatDate(ticket.updatedAt)}
+      updatedAt={formatConversationDate(ticket.updatedAt)}
       isSelected={selected}
       isChecked={checked}
       isUnread={ticket.isUnread}

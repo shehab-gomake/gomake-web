@@ -2,7 +2,7 @@ import React from "react";
 import { ConversationListItem as DSConversationListItem } from "@/widgets/frontdesk/design-system";
 import { EmailConversation } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { formatConversationDate } from "../../utils/date-utils";
+import { formatConversationDate } from "@/widgets/frontdesk/utils";
 
 interface ConversationListItemProps {
   conversation: EmailConversation;

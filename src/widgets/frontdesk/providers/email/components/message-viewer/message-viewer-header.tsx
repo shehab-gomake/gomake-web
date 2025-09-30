@@ -17,7 +17,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { alpha } from "@mui/material";
 import { EmailConversation } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { safeFormatDate } from "../../utils/date-utils";
+import { safeFormatDate } from "@/widgets/frontdesk/utils";
 import { EmailActionButton } from "../ui/email-action-button";
 
 interface MessageViewerHeaderProps {
