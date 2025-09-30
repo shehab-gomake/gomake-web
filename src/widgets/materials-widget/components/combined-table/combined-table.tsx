@@ -181,7 +181,7 @@ const CombinedTable = ({
 
                 {/* Scroll Indicator Button - positioned at first fixed column */}
                 {showScrollIndicator && (
-                    <Tooltip title="Scroll to see more columns" arrow>
+                    <Tooltip title={t("materials.childTable.scrollToSeeMoreColumns")} arrow>
                         <IconButton
                             onClick={scrollToRight}
                             sx={classes.scrollIndicatorButton}
