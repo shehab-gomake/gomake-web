@@ -1,23 +1,34 @@
 import { useDirectMessages } from './use-direct-messages';
+// import { useConnectionManager } from './use-connection-manager';
+// import { useParticipants } from './use-participants';
 
 /**
  * Main orchestrator hook for Internal/Direct Messages provider
  *
- * This is a simplified orchestrator that wraps the existing monolithic hook.
+ * Phase 5 Part 1: Partial refactoring - Pattern demonstration
+ * ✅ Extracted hooks created (not yet integrated):
+ * - use-connection-manager.ts (~110 lines)
+ * - use-participants.ts (~90 lines)
  *
- * TODO: Refactor into focused hooks:
- * - use-connection-manager.ts (connection, reconnect, status)
- * - use-conversations.ts (conversation list, selection, CRUD)
- * - use-messages.ts (message CRUD operations, sending)
- * - use-presence.ts (user presence, typing indicators)
- * - use-drafts.ts (draft management)
- * - use-conversation-search.ts (global & in-conversation search)
- * - use-participants.ts (participant management)
+ * ⏳ Remaining hooks to extract:
+ * - use-presence.ts (~350 lines)
+ * - use-drafts.ts (~50 lines)
+ * - use-conversations.ts (~400 lines)
+ * - use-messages.ts (~350 lines)
+ * - use-conversation-search.ts (~350 lines)
+ *
+ * Integration will happen in Phase 5 Part 2 when all hooks are extracted.
+ * This ensures no breaking changes and allows incremental testing.
  *
  * See: /src/widgets/frontdesk/HOOK_REFACTORING_PLAN.md for detailed breakdown
  */
 export function useInternalProvider() {
+  // Currently using monolithic hook
   const dmHook = useDirectMessages();
+
+  // Extracted hooks (commented out until full integration):
+  // const connectionManager = useConnectionManager();
+  // const participants = useParticipants();
 
   // Return a curated subset of the most commonly used values
   // This provides a cleaner interface than exposing all 78 values
