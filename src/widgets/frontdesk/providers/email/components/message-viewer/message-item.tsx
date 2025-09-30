@@ -5,14 +5,16 @@ import { alpha } from "@mui/material";
 import { EmailMessage } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
 import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
+import { EmailAttachmentList } from "./email-attachment-list";
 
 interface MessageItemProps {
   message: EmailMessage;
+  accountId?: string;
   isLast?: boolean;
   showInlineReply: boolean;
 }
 
-export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = false, showInlineReply }) => {
+export const MessageItem: React.FC<MessageItemProps> = ({ message, accountId, isLast = false, showInlineReply }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const isOwn = false; // TODO: Check if message is from current user
 
@@ -93,6 +95,17 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
             __html: message.html || safeDecodeHtml(message.text || message.snippet || ""),
           }}
         />
+
+        {/* Attachments */}
+        {message.attachments && message.attachments.length > 0 && accountId && (
+          <Box sx={{ pl: "56px" }}>
+            <EmailAttachmentList
+              attachments={message.attachments}
+              accountId={accountId}
+              messageId={message.id}
+            />
+          </Box>
+        )}
       </Stack>
     </Box>
   );

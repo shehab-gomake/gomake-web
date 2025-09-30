@@ -256,6 +256,139 @@ const leaveChannelApi: ICallAndSetData = async (
   );
 };
 
+// ============================================
+// Email Management APIs
+// ============================================
+
+// Mark email as read
+const markEmailAsReadApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId) {
+    throw new Error('accountId and messageId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}/read`,
+    setState
+  );
+};
+
+// Mark email as unread
+const markEmailAsUnreadApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId) {
+    throw new Error('accountId and messageId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}/unread`,
+    setState
+  );
+};
+
+// Archive email
+const archiveEmailApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId) {
+    throw new Error('accountId and messageId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}/archive`,
+    setState
+  );
+};
+
+// Move email to trash
+const trashEmailApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId) {
+    throw new Error('accountId and messageId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}/trash`,
+    setState
+  );
+};
+
+// Delete email permanently
+const deleteEmailPermanentlyApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId) {
+    throw new Error('accountId and messageId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}`,
+    setState
+  );
+};
+
+// Send email with attachments
+const sendEmailWithAttachmentsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId) {
+    throw new Error('accountId is required');
+  }
+
+  const { accountId, ...emailData } = data;
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    `/email/accounts/${encodeURIComponent(accountId)}/send`,
+    setState,
+    emailData
+  );
+};
+
+// Download email attachment
+const downloadEmailAttachmentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  if (!data?.accountId || !data?.messageId || !data?.attachmentId) {
+    throw new Error('accountId, messageId, and attachmentId are required');
+  }
+
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `/email/accounts/${encodeURIComponent(data.accountId)}/messages/${encodeURIComponent(data.messageId)}/attachments/${encodeURIComponent(data.attachmentId)}`,
+    setState
+  );
+};
+
 // Export all API functions
 export {
   // Gmail APIs
@@ -275,5 +408,14 @@ export {
   getChannelByIdApi,
   getChannelMembersApi,
   joinChannelApi,
-  leaveChannelApi
+  leaveChannelApi,
+
+  // Email Management APIs
+  markEmailAsReadApi,
+  markEmailAsUnreadApi,
+  archiveEmailApi,
+  trashEmailApi,
+  deleteEmailPermanentlyApi,
+  sendEmailWithAttachmentsApi,
+  downloadEmailAttachmentApi
 };

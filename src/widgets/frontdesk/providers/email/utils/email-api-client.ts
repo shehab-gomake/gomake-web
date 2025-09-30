@@ -190,6 +190,69 @@ class EmailApiClient {
     }
   }
 
+  async markAsRead(accountId: string, messageId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}/read`, {
+      method: "POST",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to mark message as read: ${response.status}`);
+    }
+  }
+
+  async markAsUnread(accountId: string, messageId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}/unread`, {
+      method: "POST",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to mark message as unread: ${response.status}`);
+    }
+  }
+
+  async trashMessage(accountId: string, messageId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}/trash`, {
+      method: "POST",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to move message to trash: ${response.status}`);
+    }
+  }
+
+  async deleteMessagePermanently(accountId: string, messageId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete message permanently: ${response.status}`);
+    }
+  }
+
+  async downloadAttachment(accountId: string, messageId: string, attachmentId: string): Promise<Blob> {
+    const response = await fetch(
+      `${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}/attachments/${attachmentId}`,
+      {
+        method: "GET",
+        headers: {
+          ...getHeaders(),
+          Accept: "*/*",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to download attachment: ${response.status}`);
+    }
+
+    return await response.blob();
+  }
+
   async getThread(accountId: string, threadId: string): Promise<EmailThread> {
     const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/threads/${threadId}`, {
       method: "GET",

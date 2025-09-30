@@ -123,6 +123,9 @@ export const useEmailProvider = () => {
     starConversation: emailConversations.starConversation,
     deleteConversation: emailConversations.deleteConversation,
     archiveConversation: emailConversations.archiveConversation,
+    markAsRead: emailConversations.markAsRead,
+    markAsUnread: emailConversations.markAsUnread,
+    trashConversation: emailConversations.trashConversation,
 
     // Conversation management
     selectedConversation: conversationManager.selectedConversation,

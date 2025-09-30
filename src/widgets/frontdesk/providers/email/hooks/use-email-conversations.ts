@@ -115,6 +115,55 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
     [selectedAccountId]
   );
 
+  const markAsRead = useCallback(
+    async (conversationId: string) => {
+      if (!selectedAccountId) return;
+
+      try {
+        await emailApiClient.markAsRead(selectedAccountId, conversationId);
+
+        setConversations((prev) =>
+          prev.map((conv) => (conv.id === conversationId ? { ...conv, isRead: true } : conv))
+        );
+      } catch (err: any) {
+        console.error("Failed to mark conversation as read:", err);
+      }
+    },
+    [selectedAccountId]
+  );
+
+  const markAsUnread = useCallback(
+    async (conversationId: string) => {
+      if (!selectedAccountId) return;
+
+      try {
+        await emailApiClient.markAsUnread(selectedAccountId, conversationId);
+
+        setConversations((prev) =>
+          prev.map((conv) => (conv.id === conversationId ? { ...conv, isRead: false } : conv))
+        );
+      } catch (err: any) {
+        console.error("Failed to mark conversation as unread:", err);
+      }
+    },
+    [selectedAccountId]
+  );
+
+  const trashConversation = useCallback(
+    async (conversationId: string) => {
+      if (!selectedAccountId) return;
+
+      try {
+        await emailApiClient.trashMessage(selectedAccountId, conversationId);
+
+        setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
+      } catch (err: any) {
+        console.error("Failed to move conversation to trash:", err);
+      }
+    },
+    [selectedAccountId]
+  );
+
   // Fetch conversations when account or filter changes
   useEffect(() => {
     if (selectedAccountId) {
@@ -134,5 +183,8 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
     starConversation,
     deleteConversation,
     archiveConversation,
+    markAsRead,
+    markAsUnread,
+    trashConversation,
   };
 };

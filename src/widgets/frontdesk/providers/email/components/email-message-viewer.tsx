@@ -103,6 +103,7 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
             <MessageItem
               key={message.id}
               message={message}
+              accountId={accountId}
               isLast={index === messages.length - 1}
               showInlineReply={showInlineReply}
             />

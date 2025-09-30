@@ -45,11 +45,14 @@ export interface EmailThread {
 }
 
 export interface EmailAttachment {
-  id: string;
+  id?: string;
   filename: string;
-  mimeType: string;
+  mimeType?: string;
+  contentType?: string;
   size: number;
   url?: string;
+  content?: string; // base64 encoded content for sending
+  data?: string; // alias for content
 }
 
 export interface EmailFolder {
@@ -82,6 +85,7 @@ export interface EmailSendRequest {
   text: string;
   replyToMessageId?: string;
   threadId?: string;
+  attachments?: EmailAttachment[];
 }
 
 export interface EmailConnectionState {
