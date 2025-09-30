@@ -357,10 +357,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={[
-                                                                    row.purchasePrice?.perUnit?.toString() || '',
-                                                                    row.purchasePrice?.perTon?.toString() || ''
-                                                                ]}
+                                                                value={row.purchasePrice?.["price Unit / ton"]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -372,7 +369,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency?.toLowerCase()}
+                                                                value={row.purchasePrice?.currency?.value?.toLowerCase() || row.purchasePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -384,10 +381,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={[
-                                                                    row.salePrice?.perUnit?.toString() || '',
-                                                                    row.salePrice?.perTon?.toString() || ''
-                                                                ]}
+                                                                value={row.salePrice?.["price Unit / ton"]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -399,7 +393,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.currency?.toLowerCase()}
+                                                                value={row.salePrice?.currency?.value?.toLowerCase() || row.salePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}

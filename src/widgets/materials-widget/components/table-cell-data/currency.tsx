@@ -45,7 +45,7 @@ const CurrencyInput = ({
 
   const currencyName = useCallback(() => {
     return currencies?.find(
-      (c) => c.value.toLowerCase() === value.toLowerCase()
+      (c) => c?.value?.toLowerCase() === value?.toLowerCase()
     )?.label;
   }, [value, currencies]);
 

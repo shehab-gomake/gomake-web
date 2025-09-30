@@ -13,12 +13,12 @@ const useStyle = () => {
       // Container styles
       childTableContainer: {
         width: '100%',
-        mt: 1
+        // mt: 1
       },
       loadingContainer: {
         display: 'flex',
         justifyContent: 'center',
-        p: 3
+        // p: 3
       },
       noDataContainer: {
         display: 'flex',
@@ -160,10 +160,8 @@ const useStyle = () => {
       addButtonContainer: {
         display: 'flex',
         justifyContent: 'flex-start',
-        gap: 2,
         alignItems: 'center',
-        padding: '8px 0',
-        marginBottom: '8px',
+        paddingBottom: '8px',
       },
 
       // Table title text
