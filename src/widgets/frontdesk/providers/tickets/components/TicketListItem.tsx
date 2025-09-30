@@ -12,7 +12,7 @@ interface TicketListItemProps {
   ticket: Ticket;
   selected?: boolean;
   checked?: boolean;
-  onSelect: (ticketId: string) => void;
+  onSelect: (ticketId: string, openInNewTab?: boolean) => void;
   onCheck?: (ticketId: string, checked: boolean) => void;
 }
 
@@ -66,9 +66,35 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   const theme = useTheme();
   const statusColors = getStatusColor(ticket.status);
 
+  const handleClick = (e: React.MouseEvent) => {
+    // Middle click or Ctrl/Cmd + click opens in new tab
+    const openInNewTab = e.button === 1 || e.ctrlKey || e.metaKey;
+
+    if (openInNewTab) {
+      e.preventDefault();
+      onSelect(ticket.id, true);
+    } else {
+      onSelect(ticket.id, false);
+    }
+  };
+
   return (
     <Box
-      onClick={() => onSelect(ticket.id)}
+      onClick={handleClick}
+      onMouseDown={(e) => {
+        // Handle middle click (button 1)
+        if (e.button === 1) {
+          e.preventDefault();
+          onSelect(ticket.id, true);
+        }
+      }}
+      onAuxClick={(e) => {
+        // Handle middle click for browsers that support it
+        if (e.button === 1) {
+          e.preventDefault();
+          onSelect(ticket.id, true);
+        }
+      }}
       sx={{
         display: 'flex',
         alignItems: 'flex-start',

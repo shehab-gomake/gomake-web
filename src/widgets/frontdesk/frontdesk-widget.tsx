@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from "next/router";
 import { useRecoilValue, useRecoilState } from 'recoil';
 // Three-column layout components
@@ -29,7 +30,9 @@ import {
   selectedTicketSelector,
   ticketSearchQueryAtom,
   selectedTicketIdsAtom,
-  ticketCountsSelector
+  ticketCountsSelector,
+  openTicketTabsAtom,
+  ticketsAtom
 } from '@/store/frontdesk/atoms/tickets.atoms';
 
 const FrontdeskWidget: React.FC = () => {
@@ -64,6 +67,11 @@ const FrontdeskWidget: React.FC = () => {
   const getInitialTicketView = (): TicketView | null => {
     // If we're on a tickets route, parse the provider param as ticket view
     if (frontdeskRoute === 'tickets' && provider) {
+      // Check if provider is a ticket ID (format: TICKET-XXXXX or starts with number)
+      if (provider.startsWith('TICKET-') || /^\d+$/.test(provider)) {
+        return null; // Will show ticket detail directly
+      }
+
       const viewMap: Record<string, TicketView> = {
         'my-tickets': 'my-tickets',
         'past-due': 'past-due',
@@ -91,6 +99,8 @@ const FrontdeskWidget: React.FC = () => {
   const [ticketSearchQuery, setTicketSearchQuery] = useRecoilState(ticketSearchQueryAtom);
   const [selectedTicketIds, setSelectedTicketIds] = useRecoilState(selectedTicketIdsAtom);
   const ticketCounts = useRecoilValue(ticketCountsSelector);
+  const [openTicketTabs, setOpenTicketTabs] = useRecoilState(openTicketTabsAtom);
+  const allTickets = useRecoilValue(ticketsAtom);
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
@@ -104,6 +114,15 @@ const FrontdeskWidget: React.FC = () => {
       const initialTicketView = getInitialTicketView();
       if (initialTicketView) {
         setSelectedTicketView(initialTicketView);
+      }
+
+      // Initialize ticket ID from route if present (for direct ticket links)
+      if (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider))) {
+        setSelectedTicketId(provider);
+        // Set a default view so tickets show in the list
+        setSelectedTicketView('all-tickets');
+        // Add to open tabs
+        setOpenTicketTabs([provider]);
       }
 
       setIsInitialized(true);
@@ -161,8 +180,47 @@ const FrontdeskWidget: React.FC = () => {
     window.history.pushState({}, '', url);
   };
 
-  const handleTicketSelect = (ticketId: string) => {
+  const handleTicketSelect = (ticketId: string, openInNewTab?: boolean) => {
+    if (openInNewTab) {
+      // Open ticket in new tab
+      const url = `/frontdesk/tickets/${ticketId}`;
+      window.open(url, '_blank');
+    } else {
+      setSelectedTicketId(ticketId);
+
+      // Add to open tabs if not already there
+      if (!openTicketTabs.includes(ticketId)) {
+        setOpenTicketTabs([...openTicketTabs, ticketId]);
+      }
+
+      // Update URL to reflect selected ticket
+      const url = `/frontdesk/tickets/${ticketId}`;
+      window.history.pushState({}, '', url);
+    }
+  };
+
+  const handleTicketTabChange = (ticketId: string) => {
     setSelectedTicketId(ticketId);
+    const url = `/frontdesk/tickets/${ticketId}`;
+    window.history.pushState({}, '', url);
+  };
+
+  const handleTicketTabClose = (ticketId: string) => {
+    const newTabs = openTicketTabs.filter(id => id !== ticketId);
+    setOpenTicketTabs(newTabs);
+
+    // If we're closing the currently selected ticket, switch to another tab or clear selection
+    if (selectedTicketId === ticketId) {
+      if (newTabs.length > 0) {
+        // Switch to the last remaining tab
+        handleTicketTabChange(newTabs[newTabs.length - 1]);
+      } else {
+        // No more tabs open, clear selection
+        setSelectedTicketId(null);
+        const url = `/frontdesk/tickets/${selectedTicketView || 'all-tickets'}`;
+        window.history.pushState({}, '', url);
+      }
+    }
   };
 
   const handleTicketCheck = (ticketId: string, checked: boolean) => {
@@ -354,21 +412,159 @@ const FrontdeskWidget: React.FC = () => {
       mainContent={
         <ContentArea>
           {isTicketView ? (
-            selectedTicket ? (
-              <TicketDetailView ticket={selectedTicket} onClose={handleTicketClose} />
-            ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <Typography variant="h6" color="text.secondary">
-                  Select a ticket to view details
-                </Typography>
-              </Box>
-            )
+            <>
+              {/* Ticket Tabs Navigation */}
+              {openTicketTabs.length > 0 && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    px: 2,
+                    py: 1,
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid #E5E7EB',
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    minHeight: 48,
+                    '&::-webkit-scrollbar': {
+                      height: 6
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      backgroundColor: 'transparent'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: '#CBD5E0',
+                      borderRadius: 3,
+                      '&:hover': {
+                        backgroundColor: '#A0AEC0'
+                      }
+                    }
+                  }}
+                >
+                  {openTicketTabs.map((tabTicketId) => {
+                    const tabTicket = allTickets.find(t => t.id === tabTicketId);
+                    if (!tabTicket) return null;
+
+                    const isActive = selectedTicketId === tabTicketId;
+
+                    return (
+                      <Box
+                        key={tabTicketId}
+                        onClick={() => handleTicketTabChange(tabTicketId)}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          px: 1.5,
+                          py: 0.75,
+                          backgroundColor: isActive ? '#3B82F6' : '#F3F4F6',
+                          borderRadius: 1.5,
+                          cursor: 'pointer',
+                          minWidth: 140,
+                          maxWidth: 220,
+                          border: isActive ? 'none' : '1px solid #E5E7EB',
+                          transition: 'all 0.15s ease',
+                          '&:hover': {
+                            backgroundColor: isActive ? '#2563EB' : '#E5E7EB',
+                            '& .close-button': {
+                              opacity: 1
+                            }
+                          }
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            flex: 1,
+                            minWidth: 0
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              fontWeight: isActive ? 600 : 500,
+                              fontSize: '0.875rem',
+                              color: isActive ? 'white' : '#374151'
+                            }}
+                          >
+                            {tabTicket.ticketNumber}
+                          </Typography>
+                          <Box
+                            sx={{
+                              width: 4,
+                              height: 4,
+                              borderRadius: '50%',
+                              backgroundColor: isActive ? 'rgba(255, 255, 255, 0.5)' : '#9CA3AF',
+                              flexShrink: 0
+                            }}
+                          />
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              fontSize: '0.813rem',
+                              color: isActive ? 'rgba(255, 255, 255, 0.9)' : '#6B7280',
+                              flex: 1
+                            }}
+                          >
+                            {tabTicket.title}
+                          </Typography>
+                        </Box>
+                        <IconButton
+                          className="close-button"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTicketTabClose(tabTicketId);
+                          }}
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            p: 0,
+                            ml: 0.5,
+                            opacity: isActive ? 0.8 : 0,
+                            transition: 'all 0.15s ease',
+                            flexShrink: 0,
+                            '&:hover': {
+                              opacity: 1,
+                              backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+                              transform: 'scale(1.1)'
+                            }
+                          }}
+                        >
+                          <CloseIcon sx={{ fontSize: 14, color: isActive ? 'white' : '#6B7280' }} />
+                        </IconButton>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              )}
+
+              {/* Ticket Content */}
+              {selectedTicket ? (
+                <TicketDetailView ticket={selectedTicket} onClose={handleTicketClose} />
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                  <Typography variant="h6" color="text.secondary">
+                    Select a ticket to view details
+                  </Typography>
+                </Box>
+              )}
+            </>
           ) : (
             renderMainContent()
           )}
         </ContentArea>
       }
-      hideMiddleColumn={!isTicketView && currentSection !== 'inbox'}
+      hideMiddleColumn={!isTicketView}
     />
   );
 };

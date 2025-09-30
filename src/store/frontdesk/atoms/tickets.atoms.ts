@@ -59,6 +59,14 @@ export const currentUserIdAtom = atom<string>({
 });
 
 /**
+ * Open ticket tabs (for tab navigation)
+ */
+export const openTicketTabsAtom = atom<string[]>({
+  key: 'frontdesk.tickets.openTabs',
+  default: [],
+});
+
+/**
  * Selector: Get currently selected ticket
  */
 export const selectedTicketSelector = selector<Ticket | null>({
