@@ -346,10 +346,30 @@
       "enterPurchasePrice": "Enter purchase price",
       "enterSalePrice": "Enter sale price",
       "enterPurchaseRollPrice": "Enter purchase roll price",
-      "enterSupplementTime": "Enter supplement time"
-    },
-    "combinedTable": {
+      "enterSupplementTime": "Enter supplement time",
       "scrollToSeeMoreColumns": "Scroll to see more columns"
+    },
+    "tableHeaders": {
+      "sku": "SKU",
+      "weight": "Weight",
+      "thickness": "Thickness",
+      "directions": "Directions",
+      "width": "Width",
+      "length": "Length",
+      "color": "Color",
+      "priceUnitPerTon": "Unit price / ton",
+      "currency": "Currency",
+      "active": "Active",
+      "isOutSource": "isOutSource",
+      "storageLocation": "Storage Location",
+      "minStock": "Min Stock",
+      "optimalStock": "Optimal Stock",
+      "totalInventory": "Total Inventory",
+      "purchasePricing": "Suppliers",
+      "internal": "internal",
+      "outSource": "out source",
+      "long": "Long",
+      "short": "Short"
     }
   },
     "sheetPaper": {
