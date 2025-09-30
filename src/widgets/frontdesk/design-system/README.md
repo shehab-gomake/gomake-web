@@ -50,6 +50,11 @@ import {
   PanelHeader,
   PanelContent,
   EmptyState,
+  ConnectionStatusBanner,
+  MessageViewHeader,
+  ConversationSidebar,
+  ConnectionErrorState,
+  ConnectingState,
 
   // Layouts
   ThreeColumnLayout,
@@ -324,6 +329,85 @@ Display when lists or sections have no content.
     label: "View Archive",
     onClick: handleViewArchive,
   }}
+/>
+```
+
+### ConnectionStatusBanner
+
+Real-time connection status indicator with auto-hide and retry functionality.
+
+```tsx
+<ConnectionStatusBanner
+  status="connected"           // disconnected | connecting | connected | reconnecting | error
+  show={showBanner}
+  error="Network timeout"
+  userName="John Doe"
+  onRetry={handleRetry}
+  isLoading={isRetrying}
+  position="absolute"          // absolute | relative | fixed
+  zIndex={1200}
+/>
+```
+
+### MessageViewHeader
+
+Header for message/conversation views with action buttons.
+
+```tsx
+<MessageViewHeader
+  title="Engineering Team"
+  conversationType="GROUP_DM"  // DM | GROUP_DM
+  isFavorite={false}
+  isArchived={false}
+  isSearchActive={false}
+  onSearch={handleSearch}
+  onFavorite={handleFavorite}
+  onArchive={handleArchive}
+  onClose={handleClose}
+>
+  <ParticipantsList members={members} />
+</MessageViewHeader>
+```
+
+### ConversationSidebar
+
+Sidebar component for conversation lists with header actions.
+
+```tsx
+<ConversationSidebar
+  title="Direct Messages"
+  filter="active"              // active | archived | all
+  onFilterChange={setFilter}
+  onSearch={handleSearch}
+  onNewConversation={handleNew}
+  width={280}
+  showArchiveFilter={true}
+>
+  <ConversationList conversations={conversations} />
+</ConversationSidebar>
+```
+
+### ConnectionStates
+
+Pre-built full-page states for connection errors and loading.
+
+```tsx
+// Connection Error State
+<ConnectionErrorState
+  error="Network timeout"
+  onRetry={handleRetry}
+  isLoading={isRetrying}
+  icon={<ChatIcon />}
+  title="Connection Failed"
+  description="Unable to connect. Please check your connection."
+/>
+
+// Connecting State
+<ConnectingState
+  icon={<ChatIcon />}
+  title="Connecting..."
+  description="Establishing secure connection"
+  alertMessage="Connecting to service..."
 />
 ```
 

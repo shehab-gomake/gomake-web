@@ -41,8 +41,9 @@ class EmailApiClient {
       throw new Error(`Failed to fetch accounts: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    const result = await response.json();
+    // API returns {success, data, meta} - extract the data array
+    return result.data || [];
   }
 
   async getAuthUrl(provider: string = "gmail"): Promise<{ url: string; state: string; provider: string }> {

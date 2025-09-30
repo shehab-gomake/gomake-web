@@ -46,6 +46,11 @@ export const useEmailAccounts = () => {
   // Select an account
   const selectAccount = useCallback(
     (accountId: string) => {
+      // Safety check: ensure accounts is an array
+      if (!Array.isArray(accounts)) {
+        console.error('[Email] accounts is not an array:', accounts);
+        return;
+      }
       const account = accounts.find((a) => a.id === accountId);
       if (account) {
         setSelectedAccountId(accountId);
@@ -58,6 +63,13 @@ export const useEmailAccounts = () => {
   const disconnectAccount = useCallback(
     async (accountId: string) => {
       try {
+        // Safety check: ensure accounts is an array
+        if (!Array.isArray(accounts)) {
+          console.error('[Email] accounts is not an array:', accounts);
+          alertFault('Failed to disconnect account: invalid state');
+          return false;
+        }
+
         await emailApiClient.disconnectAccount(accountId);
 
         // Remove from state
@@ -88,6 +100,11 @@ export const useEmailAccounts = () => {
 
   // Get selected account
   const getSelectedAccount = useCallback(() => {
+    // Safety check: ensure accounts is an array
+    if (!Array.isArray(accounts)) {
+      console.error('[Email] accounts is not an array:', accounts);
+      return null;
+    }
     return accounts.find((a) => a.id === selectedAccountId);
   }, [accounts, selectedAccountId]);
 
@@ -98,7 +115,8 @@ export const useEmailAccounts = () => {
 
   // Initial fetch on mount
   useEffect(() => {
-    if (accounts.length === 0 && !isLoading && !error) {
+    // Safety check: ensure accounts is an array before checking length
+    if (Array.isArray(accounts) && accounts.length === 0 && !isLoading && !error) {
       fetchAccounts();
     }
   }, []); // Only run once on mount

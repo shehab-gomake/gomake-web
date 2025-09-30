@@ -47,6 +47,9 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
   const [showAllSystemLabels, setShowAllSystemLabels] = React.useState(false);
   const [showAllUserLabels, setShowAllUserLabels] = React.useState(false);
 
+  // Safety check: ensure accounts is an array
+  const safeAccounts = Array.isArray(accounts) ? accounts : [];
+
   const LabelListItem: React.FC<{ label: EmailLabel; isSystem?: boolean }> = ({ label, isSystem = false }) => {
     const isSelected = label.id === selectedLabelId;
     const IconComponent = getLabelIcon(label.id, label.name, isSystem);
@@ -77,11 +80,11 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
       <SidebarHeader onAddAccount={onAddAccount} onRefresh={onRefresh} />
 
       {/* Account Toggle */}
-      {accounts.length === 0 ? (
+      {safeAccounts.length === 0 ? (
         <AccountListEmpty onAddAccount={onAddAccount} />
       ) : (
         <AccountToggle
-          accounts={accounts}
+          accounts={safeAccounts}
           selectedAccountId={selectedAccountId}
           onAccountSelect={onAccountSelect}
           onDisconnectAccount={onDisconnectAccount}
@@ -89,7 +92,7 @@ export const EmailSidebar: React.FC<EmailSidebarProps> = ({
       )}
 
       {/* Labels Section */}
-      {selectedAccountId && accounts.length > 0 && (
+      {selectedAccountId && safeAccounts.length > 0 && (
         <Box
           sx={{
             borderTop: `1px solid ${neutralColor(200)}`,

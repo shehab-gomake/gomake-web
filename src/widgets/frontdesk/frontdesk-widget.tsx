@@ -12,7 +12,7 @@ import { ContentArea } from './layouts/components/ContentArea';
 // Provider components
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
-import { DirectMessagesProviderView } from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
+import DirectMessagesProviderView from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
 
 // Ticket components
 import { TicketListPanel } from './providers/tickets/components/ticket-list-panel';
