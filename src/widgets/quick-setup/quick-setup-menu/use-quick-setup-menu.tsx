@@ -15,6 +15,7 @@ import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
 import { useGomakeRouter } from "@/hooks";
+import { useRouter } from "next/router";
 import OfflinePinIcon from "@mui/icons-material/OfflinePin";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -33,6 +34,7 @@ const useSetupGuideMenu = ({
   const { primaryColor } = useGomakeTheme();
   const [showGuideMenuState, setShowGuideMenuState] = useState(true);
   const { navigate } = useGomakeRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const saved = getItem("gomake_showGuideMenu");
@@ -65,6 +67,11 @@ const useSetupGuideMenu = ({
       setItem("gomake_setupGuideExpanded", String(next));
       return next;
     });
+  };
+
+  const collapseMenu = () => {
+    setIsExpanded(false);
+    setItem("gomake_setupGuideExpanded", "false");
   };
 
   const totalSteps = printHouseSetupSteps.length;
@@ -121,15 +128,21 @@ const useSetupGuideMenu = ({
     {
       key: SetupStep.RESET_PASSWORD,
       label: t("quickSetup.steps.resetButton"),
-      onClick: handleOpenResetPassword,
+      onClick: () => {
+        handleOpenResetPassword();
+        collapseMenu();
+      },
       status: resetPasswordStatus,
     },
     {
       key: SetupStep.SETUP_YOUR_MACHINES,
       label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-        machinesSetupStatus !== StepStatus.DONE
-          ? () => navigate("/onboarding-setup")
+          machinesSetupStatus !== StepStatus.DONE
+          ? () => {
+              navigate("/onboarding-setup");
+              collapseMenu();
+            }
           : undefined,
       status: machinesSetupStatus,
     },
@@ -158,6 +171,7 @@ const useSetupGuideMenu = ({
               updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_LOGO);
             }
             navigate("/settings/company-profile?tab=company");
+            collapseMenu();
           },
         },
         {
@@ -172,6 +186,7 @@ const useSetupGuideMenu = ({
               updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_HOURS);
             }
             navigate("/settings/company-profile?tab=hours");
+            collapseMenu();
           },
         },
         {
@@ -186,6 +201,7 @@ const useSetupGuideMenu = ({
               updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_STRIPE);
             }
             navigate("/settings/company-profile?tab=financial");
+            collapseMenu();
           },
         },
         {
@@ -200,6 +216,7 @@ const useSetupGuideMenu = ({
               updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_ADDRESSES);
             }
             navigate("/settings/company-profile?tab=addresses");
+            collapseMenu();
           },
         },
         {
@@ -214,6 +231,7 @@ const useSetupGuideMenu = ({
               updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_MAILING);
             }
             navigate("/settings/company-profile?tab=communication");
+            collapseMenu();
           },
         },
       ],
@@ -234,6 +252,7 @@ const useSetupGuideMenu = ({
               );
             }
             navigate("/customers");
+            collapseMenu();
           },
         },
         {
@@ -250,6 +269,7 @@ const useSetupGuideMenu = ({
               );
             }
             navigate("/suppliers");
+            collapseMenu();
           },
         },
       ],
@@ -273,6 +293,7 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
+            collapseMenu();
           },
         },
         {
@@ -290,6 +311,7 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
+            collapseMenu();
           },
         },
         {
@@ -306,6 +328,7 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
+            collapseMenu();
           },
         },
         {
@@ -323,6 +346,7 @@ const useSetupGuideMenu = ({
               );
             }
             window.open("https://gomake.document360.io", "_blank");
+            setIsExpanded(false);
           },
         },
         {
@@ -340,6 +364,7 @@ const useSetupGuideMenu = ({
               );
             }
             navigate("/customer-service");
+            setIsExpanded(false);
           },
         },
       ],
@@ -375,6 +400,154 @@ const useSetupGuideMenu = ({
   };
 
   const findNextStepLabel = (items: any[]): string | null => {
+    // First, flatten all steps to get a linear order
+    const flattenSteps = (items: any[]): any[] => {
+      const result: any[] = [];
+      for (const item of items) {
+        if ("children" in item) {
+          result.push(...flattenSteps(item.children));
+        } else {
+          result.push(item);
+        }
+      }
+      return result;
+    };
+
+    const flatSteps = flattenSteps(items);
+
+    // Find the first non-done step (normal next step)
+    const normalNextIndex = flatSteps.findIndex(
+      (step) => step.status !== StepStatus.DONE
+    );
+
+    if (normalNextIndex === -1) {
+      return null; // All steps are done
+    }
+
+    const normalNextStep = flatSteps[normalNextIndex];
+
+    // Check if we're currently on the normal next step path
+    if (isCurrentRouteMatchingStep(normalNextStep)) {
+      // If we're on the current next step, show the step after it (next + 1)
+      for (let i = normalNextIndex + 1; i < flatSteps.length; i++) {
+        if (flatSteps[i].status !== StepStatus.DONE) {
+          return flatSteps[i].label;
+        }
+      }
+    }
+
+    // Otherwise, return the normal next step label
+    return normalNextStep.label;
+  };
+
+  const findNextStep = (items: any[]): any | null => {
+    // First, flatten all steps to get a linear order
+    const flattenSteps = (items: any[]): any[] => {
+      const result: any[] = [];
+      for (const item of items) {
+        if ("children" in item) {
+          result.push(...flattenSteps(item.children));
+        } else {
+          result.push(item);
+        }
+      }
+      return result;
+    };
+
+    const flatSteps = flattenSteps(items);
+
+    // Find the first non-done step (normal next step)
+    const normalNextIndex = flatSteps.findIndex(
+      (step) => step.status !== StepStatus.DONE
+    );
+
+    if (normalNextIndex === -1) {
+      return null; // All steps are done
+    }
+
+    const normalNextStep = flatSteps[normalNextIndex];
+
+    // Check if we're currently on the normal next step path
+    if (isCurrentRouteMatchingStep(normalNextStep)) {
+      // If we're on the current next step, show the step after it (next + 1)
+      for (let i = normalNextIndex + 1; i < flatSteps.length; i++) {
+        if (flatSteps[i].status !== StepStatus.DONE) {
+          return flatSteps[i];
+        }
+      }
+    }
+
+    // Otherwise, return the normal next step
+    return normalNextStep;
+  };
+
+  // Helper function to check if current route matches a step
+  const isCurrentRouteMatchingStep = (step: any): boolean => {
+    const currentPath = router.asPath.split("?")[0]; // Get the path without query parameters
+    console.log("currentPath", currentPath);
+    const currentTab = router.query.tab;
+
+    // Map step keys to their corresponding routes and tabs
+    const stepRouteMap = {
+      [SetupStep.RESET_PASSWORD]: { path: "/home", tab: null },
+      [SetupStep.PRODUCTS_SETUPS]: { path: "/onboarding-setup", tab: null },
+      [SetupStep.COMPANY_PROFILE_LOGO]: {
+        path: "/settings/company-profile",
+        tab: "company",
+      },
+      [SetupStep.COMPANY_PROFILE_HOURS]: {
+        path: "/settings/company-profile",
+        tab: "hours",
+      },
+      [SetupStep.COMPANY_PROFILE_STRIPE]: {
+        path: "/settings/company-profile",
+        tab: "financial",
+      },
+      [SetupStep.COMPANY_PROFILE_ADDRESSES]: {
+        path: "/settings/company-profile",
+        tab: "addresses",
+      },
+      [SetupStep.COMPANY_PROFILE_MAILING]: {
+        path: "/settings/company-profile",
+        tab: "communication",
+      },
+      [SetupStep.CONTACTS_CLIENTS]: { path: "/customers", tab: null },
+      [SetupStep.CONTACTS_SUPPLIERS]: { path: "/suppliers", tab: null },
+      [SetupStep.HELP_CENTER_BASIC_WALKTHROUGH]: {
+        path: "/customer-service",
+        tab: null,
+      },
+      [SetupStep.HELP_CENTER_CREATE_A_QUOTE]: {
+        path: "/customer-service",
+        tab: null,
+      },
+      [SetupStep.FILE_SERVICE_CONFIGS]: {
+        path: "/customer-service",
+        tab: null,
+      },
+      [SetupStep.HELP_CENTER_KNOWLEDGE_BASE]: {
+        path: "/customer-service",
+        tab: null,
+      },
+      [SetupStep.HELP_CENTER_CUSTOMER_SERVICE]: {
+        path: "/customer-service",
+        tab: null,
+      },
+    };
+
+    const expectedRoute = stepRouteMap[step.key];
+    if (!expectedRoute) return false;
+
+    // Check if path matches
+    if (currentPath !== expectedRoute.path) return false;
+
+    // Check if tab matches (if required)
+    if (expectedRoute.tab && currentTab !== expectedRoute.tab) return false;
+
+    return true;
+  };
+
+  const findNextStepLabelOld = (items: any[]): string | null => {
     for (const item of items) {
       if ("children" in item) {
         const childLabel = findNextStepLabel(item.children);
@@ -386,7 +559,7 @@ const useSetupGuideMenu = ({
     return null;
   };
 
-  const findNextStep = (items: any[]): any | null => {
+  const findNextStepOld = (items: any[]): any | null => {
     for (const item of items) {
       if ("children" in item) {
         const nextChild = findNextStep(item.children);
@@ -407,6 +580,7 @@ const useSetupGuideMenu = ({
     openVerifyBusiness,
     progressValue,
     toggleExpand,
+    collapseMenu,
     handleToggleVerifyBusiness,
     isRtl,
     printHouseSetupSteps,

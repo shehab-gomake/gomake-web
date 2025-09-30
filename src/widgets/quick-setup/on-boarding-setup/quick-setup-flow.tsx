@@ -807,8 +807,12 @@ const QuickSetupFlow: React.FC = () => {
             SetupStep.SETUP_YOUR_MACHINES,
             StepStatus.DONE
           );
+
+          // Navigate to the next setup step (Company Profile Logo)
           alertSuccessAdded();
-          navigate("/materials-setup");
+        //  navigate("/materials-setup");
+          // navigate("/");
+          navigate("/settings/company-profile?tab=company");
         } else {
           alertFaultAdded();
         }

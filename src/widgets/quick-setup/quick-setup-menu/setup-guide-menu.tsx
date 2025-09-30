@@ -199,9 +199,13 @@ export const SetupGuideMenu = ({
             variant="contained"
             fullWidth
             sx={classes.btnStyle}
-            onClick={() =>
-              nextStep?.onClick ? nextStep.onClick() : setShowGuideMenu(false)
-            }
+            onClick={() => {
+              if (nextStep?.onClick) {
+                nextStep.onClick();
+              } else {
+                setShowGuideMenu(false);
+              }
+            }}
           >
             {nextStep
               ? `${t("quickSetup.next")} : ${nextStep.label}`
