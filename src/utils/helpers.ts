@@ -483,3 +483,15 @@ export const round2 = (n: number | string | undefined | null): number =>
 
 export const fmt2 = (n: number | string | undefined | null): string =>
   round2(n).toFixed(2);
+
+/**
+ * Filters out null and undefined values from arrays to prevent [null] being sent to API endpoints.
+ * For non-array values, returns the value as-is.
+ * @param value - The value to process (can be array or any other type)
+ * @returns The processed value with null/undefined filtered out if it's an array
+ */
+export const filterNullFromArrays = (value: any): any => {
+  return Array.isArray(value) 
+    ? value.filter(item => item !== null && item !== undefined)
+    : value;
+};

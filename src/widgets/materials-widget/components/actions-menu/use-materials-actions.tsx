@@ -32,6 +32,7 @@ import {
   updateSupplierInventoryApi,
   updatePrintHouseMaterialSupplierApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { filterNullFromArrays } from "@/utils/helpers";
 import {
   ActiveMaterial,
   AddNewMaterial,
@@ -341,7 +342,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             }, {
               id: rowId,
               key: "currency",
-              updatedValue: updatedValue,
+              updatedValue: filterNullFromArrays(updatedValue),
               exchangeRate: exchangeRate,
               pricingType: pricingType,
             });
@@ -355,7 +356,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             }, {
               id: rowId,
               key: "currency",
-              updatedValue: updatedValue,
+              updatedValue: filterNullFromArrays(updatedValue),
               exchangeRate: exchangeRate,
               pricingType: 1,
             });
@@ -376,7 +377,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
       action: action.action,
       priceIndex: 0,
-      updatedValue,
+      updatedValue: filterNullFromArrays(updatedValue),
       isAllMaterialsChecked: isAllMaterialsChecked,
       uncheckedMaterials: uncheckedMaterials,
       tableFilters: {

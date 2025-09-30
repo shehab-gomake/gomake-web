@@ -990,8 +990,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             const callBack = (res) => {
                 if (res.success) {
                     // Update Total Inventory in parent table
-                    if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
-                        updateTotalInventoryInParent(rowId, res.data?.totalInventory);
+                    if (res.data && typeof res.data === 'number') {
+                        updateTotalInventoryInParent(rowId, res.data);
                     }
 
                     // Refresh the inventory data
