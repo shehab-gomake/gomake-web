@@ -65,12 +65,12 @@ export const useMaterialsSetupFlow = () => {
   };
 
   // Mark materials setup as in progress when component mounts
-  useEffect(() => {
-    updatePrintHouseSetupSteps(
-      SetupStep.SETUP_YOUR_MATERIALS,
-      StepStatus.IN_PROGRESS
-    );
-  }, []);
+  // useEffect(() => {
+  //   updatePrintHouseSetupSteps(
+  //     SetupStep.SETUP_YOUR_MATERIALS,
+  //     StepStatus.IN_PROGRESS
+  //   );
+  // }, []);
 
   // Get machines on component mount
   useEffect(() => {
@@ -153,27 +153,27 @@ export const useMaterialsSetupFlow = () => {
   };
 
   // Complete setup function
-  const handleCompleteSetupMaterials = async () => {
-    try {
-      const callBack = async (res: any) => {
-        if (res.success) {
-          await updatePrintHouseSetupSteps(
-            SetupStep.SETUP_YOUR_MATERIALS,
-            StepStatus.DONE
-          );
-          alertSuccessAdded();
-          navigate("/");
-        } else {
-          alertFaultAdded();
-        }
-      };
+  // const handleCompleteSetupMaterials = async () => {
+  //   try {
+  //     const callBack = async (res: any) => {
+  //       if (res.success) {
+  //         await updatePrintHouseSetupSteps(
+  //           SetupStep.SETUP_YOUR_MATERIALS,
+  //           StepStatus.DONE
+  //         );
+  //         alertSuccessAdded();
+  //         navigate("/");
+  //       } else {
+  //         alertFaultAdded();
+  //       }
+  //     };
 
-      await quickSetupAddMaterials(callApi, callBack, selectedMaterials);
-    } catch (error) {
-      console.error("Error completing setup:", error);
-      alertFaultAdded();
-    }
-  };
+  //     await quickSetupAddMaterials(callApi, callBack, selectedMaterials);
+  //   } catch (error) {
+  //     console.error("Error completing setup:", error);
+  //     alertFaultAdded();
+  //   }
+  // };
 
   // Modal functions
   const openConfirmModal = () => {
@@ -208,7 +208,7 @@ export const useMaterialsSetupFlow = () => {
     // Functions
     handleNext,
     handleBack,
-    handleCompleteSetupMaterials,
+    // handleCompleteSetupMaterials,
     openConfirmModal,
     closeConfirmModal,
     setSelectedMaterials,

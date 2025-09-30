@@ -477,7 +477,7 @@ const useSetupGuideMenu = ({
     // Map step keys to their corresponding routes and tabs
     const stepRouteMap = {
       [SetupStep.RESET_PASSWORD]: { path: "/home", tab: null },
-      [SetupStep.PRODUCTS_SETUPS]: { path: "/onboarding-setup", tab: null },
+      [SetupStep.SETUP_YOUR_MACHINES]: { path: "/onboarding-setup", tab: null },
       [SetupStep.COMPANY_PROFILE_LOGO]: {
         path: "/settings/company-profile",
         tab: "company",
