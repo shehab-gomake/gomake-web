@@ -9,7 +9,7 @@ export interface IPrintingMachineAttributes {
     monthlyCostOfSpace: number;
     dailyProductivityInHours: number;
     lifeExpectancyYears: number;
-    printLife: number;
+    workingDaysAmountInWeek: number;
     minManpowerOperation: number;
     resolution: string;
     printingSides: string;

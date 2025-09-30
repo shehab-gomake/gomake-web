@@ -5,10 +5,10 @@ import { pdfjs, Document, Page } from "react-pdf";
 import { useStyle } from "./style";
 import { GomakeLoaderWidget } from "@/widgets/loading";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "../../../../node_modules/pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+// Import the PDF.js worker
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export default function TermsPDF() {
   const [numPages, setNumPages] = useState<number>();

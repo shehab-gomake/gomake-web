@@ -1057,7 +1057,7 @@
     "electricityCostPerWorkingHour": "עלות חשמל לשעת עבודה",
     "dailyProductivityInHours": "יצור יומי בשעות",
     "lifeExpectancyYears": "צפי במשך חיים (שנים)",
-    "printLife": "משך חיי ההדפסה (מטר)",
+    "workingDaysAmountInWeek": "כמות ימי עבודה בשבוע",
     "minManpowerOperation": "מינימום עובדים להפעלה",
     "setupTimeMin": "זמן הגדרה (דקות)",
     "resolution": "רזולוציה",
