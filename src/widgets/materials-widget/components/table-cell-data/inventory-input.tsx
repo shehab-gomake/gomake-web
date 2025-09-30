@@ -9,9 +9,12 @@ interface IInventoryInputProps {
     value?: string;
     isAdmin: boolean;
     id: string;
+    minStock?: number;
+    optimalStock?: number;
+    currentInventory?: number;
 }
 
-const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
+const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInventory }: IInventoryInputProps) => {
     const { t } = useTranslation();
     const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
@@ -25,6 +28,23 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
         }
     };
 
+    // Determine button color based on stock levels
+    const getButtonColor = () => {
+        const inventory = currentInventory || parseInt(value) || 0;
+        const minStockValue = minStock || 0;
+        const optimalStockValue = optimalStock || 0;
+
+        if (inventory >= optimalStockValue) {
+            return '#66D671'; // Green - Good stock
+        } else if (inventory >= minStockValue && inventory < optimalStockValue) {
+            return '#F0CA45'; // Orange - Low stock
+        } else {
+            return '#E15656'; // Red - Critical stock
+        }
+    };
+
+    const buttonColor = getButtonColor();
+
     return (
         <Box sx={{
             display: 'flex',
@@ -34,11 +54,11 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
         }}>
             <Button
                 variant="contained"
-                color="primary"
                 onClick={toggleExpanded}
                 size="small"
                 sx={{
-                    backgroundColor: isExpanded ? secondColor(600) : secondColor(500),
+                    backgroundColor: buttonColor,
+                    color: '#ffffff',
                     minWidth: '70px',
                     width: 'auto',
                     padding: '6px 12px',
@@ -48,7 +68,8 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
                     textTransform: 'none',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     '&:hover': {
-                        backgroundColor: secondColor(600),
+                        backgroundColor: buttonColor,
+                        filter: 'brightness(0.9)',
                         transform: 'translateY(-1px)',
                         boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
                     },
@@ -59,12 +80,13 @@ const InventoryInput = ({ value, isAdmin, id }: IInventoryInputProps) => {
                 <Box
                     component="span"
                     sx={{
-                        fontSize: '10px',
-                        marginLeft: '4px',
-                        opacity: 0.8
+                        fontSize: '12px',
+                        marginLeft: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
                     }}
                 >
-                    {isExpanded ? '▼' : '▶'}
+                    {isExpanded ? '▲' : '▼'}
                 </Box>
             </Button>
         </Box>

@@ -543,7 +543,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price ({purchasePricingTableHeadingUnits.pricingUnit})
+                                        Purchase Price
+                                        <br />
+                                        {purchasePricingTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>

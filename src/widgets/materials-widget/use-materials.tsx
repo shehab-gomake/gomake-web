@@ -419,6 +419,7 @@ const useMaterials = (isAdmin: boolean) => {
               unit={header.unit}
               parameterKey={header.key}
               onChangeRowCheckBox={onChangeRowCheckBox}
+              rowData={dataRow.rowData}
             />
           )),
           // Add suppliers column manually since it's now static

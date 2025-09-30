@@ -242,7 +242,7 @@ const useStyle = () => {
 
       // Action button styles
       addButton: {
-        color: primaryColor(500),
+        color: secondColor(500),
         '&:hover': {
           backgroundColor: primaryColor(50)
         }
