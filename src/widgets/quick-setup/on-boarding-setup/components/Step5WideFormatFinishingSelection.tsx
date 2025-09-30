@@ -318,7 +318,10 @@ export const Step5WideFormatFinishingSelection: React.FC<
                       !selectedWideFormatFinishingCategoryMachines[category.id]
                     }
                     sx={{
-                      minWidth: 100,
+                      minWidth: 160,
+                      height: 40,
+                      fontSize: "14px",
+                      px: 3,
                       ...(selectedWideFormatFinishingCategoryMachines[
                         category.id
                       ] && {

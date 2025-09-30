@@ -312,7 +312,10 @@ export const Step7PackagingSelection: React.FC<
                     onClick={() => onAddPackagingMachine(category.id)}
                     disabled={!selectedPackagingCategoryMachines[category.id]}
                     sx={{
-                      minWidth: 100,
+                      minWidth: 160,
+                      height: 40,
+                      fontSize: "14px",
+                      px: 3,
                       ...(selectedPackagingCategoryMachines[category.id] && {
                         animation: `${pulseAnimation} 1.5s infinite`,
                         backgroundColor: "primary.main",

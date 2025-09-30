@@ -311,7 +311,10 @@ export const Step2FinishingSelection: React.FC<
                     onClick={() => onAddFinishingMachine(category.id)}
                     disabled={!selectedCategoryMachines[category.id]}
                     sx={{
-                      minWidth: 100,
+                      minWidth: 160,
+                      height: 40,
+                      fontSize: "14px",
+                      px: 3,
                       ...(selectedCategoryMachines[category.id] && {
                         animation: `${pulseAnimation} 1.5s infinite`,
                         backgroundColor: "primary.main",

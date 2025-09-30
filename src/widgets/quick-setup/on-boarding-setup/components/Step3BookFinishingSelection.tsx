@@ -316,7 +316,10 @@ export const Step3BookFinishingSelection: React.FC<
                       !selectedBookFinishingCategoryMachines[category.id]
                     }
                     sx={{
-                      minWidth: 100,
+                      minWidth: 160,
+                      height: 40,
+                      fontSize: "14px",
+                      px: 3,
                       ...(selectedBookFinishingCategoryMachines[
                         category.id
                       ] && {

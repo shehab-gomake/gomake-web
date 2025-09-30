@@ -485,10 +485,10 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           disabled={!selectedMachine || !selectedCategory}
           // startIcon={<AddIcon />}
           sx={{
-            minWidth: 80,
+            minWidth: 120,
             height: 40,
             fontSize: "14px",
-            px: 2,
+            px: 3,
             ...(selectedMachine &&
               selectedCategory && {
                 animation: `${pulseAnimation} 1.5s infinite`,
