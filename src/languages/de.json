@@ -1034,7 +1034,7 @@
     "electricityCostPerWorkingHour": "Stromkosten pro Arbeitsstunde",
     "dailyProductivityInHours": "Tägliche Produktivität in Stunden",
     "lifeExpectancyYears": "Lebenserwartung Jahre",
-    "printLife": "Drucklebensdauer (Meter)",
+    "workingDaysAmountInWeek": "Arbeitstage pro Woche",
     "minManpowerOperation": "Mindestanzahl Mitarbeiter",
     "setupTimeMin": "Einrichtungszeit (Minuten)",
     "resolution": "Auflösung",
