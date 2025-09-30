@@ -5,7 +5,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Divider
+  Divider,
+  Chip,
+  Badge
 } from '@mui/material';
 import {
   Panel,
@@ -13,6 +15,7 @@ import {
   PanelContent,
   SearchInput,
   EmptyState,
+  colorTokens
 } from '@/widgets/frontdesk/design-system';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -57,6 +60,8 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
     handleViewMenuClose();
   };
 
+  const unreadCount = tickets.filter(t => t.isUnread).length;
+
   return (
     <Box sx={{ width: 280, minWidth: 280, height: '100%' }}>
       <Panel
@@ -68,31 +73,46 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           flexDirection: 'column',
         }}
       >
-        {/* Header */}
-        <Box sx={{ p: 2, borderBottom: '1px solid #E5E7EB' }}>
-          {/* View Title with Dropdown */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: 2,
-              cursor: 'pointer'
-            }}
-            onClick={handleViewMenuOpen}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {/* Header with PanelHeader component */}
+        <PanelHeader
+          title={
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                cursor: 'pointer'
+              }}
+              onClick={handleViewMenuOpen}
+            >
               <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1rem' }}>
                 {viewTitle}
               </Typography>
+              {tickets.length > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontSize: '0.75rem'
+                  }}
+                >
+                  ({tickets.length})
+                </Typography>
+              )}
               <ArrowDropDownIcon fontSize="small" />
             </Box>
-            <IconButton size="small">
-              <FilterListIcon fontSize="small" />
+          }
+          actions={
+            <IconButton size="small" aria-label="Filter tickets">
+              <Badge badgeContent={0} color="primary">
+                <FilterListIcon fontSize="small" />
+              </Badge>
             </IconButton>
-          </Box>
+          }
+        />
 
-          {/* Search Bar */}
+        {/* Search Bar */}
+        <Box sx={{ px: 2, pb: 1.5, borderBottom: `1px solid ${colorTokens.semantic.border.default}` }}>
           <SearchInput
             placeholder="Search tickets"
             value={searchQuery}
@@ -107,7 +127,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           {tickets.length === 0 ? (
             <EmptyState
               title="No tickets found"
-              description="Try adjusting your search or filters"
+              description={searchQuery ? "Try adjusting your search" : "No tickets in this view"}
             />
           ) : (
             tickets.map((ticket) => (

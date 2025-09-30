@@ -3,11 +3,10 @@ import { Box, Checkbox, ListItem, Typography, Stack } from '@mui/material';
 import { Avatar } from '../../primitives/Avatar';
 import { AvatarGroup } from '../../primitives/Avatar';
 import { Chip } from '../../primitives/Chip';
+import { PriorityBadge, PriorityLevel } from '../../primitives/Badge/PriorityBadge';
+import { TicketTypeBadge, TicketType } from '../../primitives/Badge/TicketTypeBadge';
 import { colorTokens, semanticSpacing } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 
 export interface TicketListItemProps {
   /** Ticket ID */
@@ -20,6 +19,8 @@ export interface TicketListItemProps {
   status: string;
   /** Priority */
   priority: 'Urgent' | 'High' | 'Medium' | 'Low';
+  /** Ticket type */
+  type?: 'Bug' | 'Feature' | 'Task' | 'Support';
   /** Last updated timestamp */
   updatedAt: string;
   /** Is selected */
@@ -35,20 +36,6 @@ export interface TicketListItemProps {
   /** Check handler */
   onCheck?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-
-const getPriorityIcon = (priority: string) => {
-  switch (priority) {
-    case 'Urgent':
-    case 'High':
-      return <SentimentVeryDissatisfiedIcon fontSize="small" sx={{ color: colorTokens.error[600] }} />;
-    case 'Medium':
-      return <SentimentNeutralIcon fontSize="small" sx={{ color: colorTokens.warning[600] }} />;
-    case 'Low':
-      return <SentimentSatisfiedAltIcon fontSize="small" sx={{ color: colorTokens.success[600] }} />;
-    default:
-      return null;
-  }
-};
 
 const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' => {
   switch (status) {
@@ -68,7 +55,8 @@ const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'er
 /**
  * TicketListItem Component
  *
- * Specialized list item for ticket/task displays
+ * Specialized list item for ticket/task displays.
+ * Improved with professional priority indicators and better visual hierarchy.
  */
 export const TicketListItem: React.FC<TicketListItemProps> = ({
   id,
@@ -76,6 +64,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   title,
   status,
   priority,
+  type,
   updatedAt,
   isSelected = false,
   isChecked = false,
@@ -92,7 +81,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
         display: 'flex',
         alignItems: 'flex-start',
         gap: 1.5,
-        py: semanticSpacing.listItem.default / 8,
+        py: 1.25,
         px: 2,
         borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
         backgroundColor: isSelected
@@ -117,71 +106,75 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
             onCheck(e.target.checked, e);
           }}
           onClick={(e) => e.stopPropagation()}
-          sx={{ p: 0, mt: 0.5 }}
+          sx={{ p: 0, mt: 0.25 }}
         />
       )}
 
       {/* Content */}
-      <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-        {/* Header Row - Ticket Number + Status */}
-        <Stack direction="row" alignItems="center" gap={1}>
-          <Typography
-            variant="caption"
-            sx={{
-              fontWeight: 500,
-              color: colorTokens.semantic.text.secondary,
-              fontSize: 11,
-            }}
-          >
-            {ticketNumber}
-          </Typography>
-          <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
-        </Stack>
-
-        {/* Title */}
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: isUnread ? 600 : 500,
-            color: colorTokens.semantic.text.primary,
-            fontSize: 13,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {title}
-        </Typography>
-
-        {/* Footer Row - Priority + Participants + Date */}
+      <Stack flex={1} spacing={0.75} sx={{ minWidth: 0 }}>
+        {/* Header Row - Ticket Number + Date + Status */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={1}>
-            {/* Priority Icon */}
-            {getPriorityIcon(priority)}
-
-            {/* Participants */}
-            {participants.length > 0 && (
-              <AvatarGroup users={participants} size="xs" max={3} />
-            )}
-
-            {/* Date */}
+          <Stack direction="row" alignItems="center" gap={0.5}>
             <Typography
               variant="caption"
               sx={{
+                fontWeight: 500,
                 color: colorTokens.semantic.text.secondary,
-                fontSize: 11,
+                fontSize: 10.5,
               }}
             >
-              {updatedAt}
+              {ticketNumber}
             </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: colorTokens.semantic.text.tertiary,
+                fontSize: 10.5,
+              }}
+            >
+              · {updatedAt}
+            </Typography>
+          </Stack>
+          <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
+        </Stack>
+
+        {/* Title Row with Type Icon */}
+        <Stack direction="row" alignItems="center" gap={0.75}>
+          {type && <TicketTypeBadge type={type} size="xs" />}
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: isUnread ? 600 : 500,
+              color: colorTokens.semantic.text.primary,
+              fontSize: 13,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              flex: 1,
+            }}
+          >
+            {title}
+          </Typography>
+        </Stack>
+
+        {/* Footer Row - Priority + Participants + Unread */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Stack direction="row" alignItems="center" gap={1}>
+            {/* Priority Badge */}
+            <PriorityBadge priority={priority as PriorityLevel} mode="icon" size="xs" />
+
+            {/* Participants - Show only if present */}
+            {participants.length > 0 && (
+              <AvatarGroup users={participants} size="xs" max={2} />
+            )}
           </Stack>
 
           {/* Unread indicator */}
           {isUnread && (
             <FiberManualRecordIcon
               sx={{
-                fontSize: 8,
-                color: colorTokens.error[600],
+                fontSize: 10,
+                color: colorTokens.primary[600],
               }}
             />
           )}

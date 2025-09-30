@@ -16,7 +16,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Chip,
   Paper,
   Menu
 } from '@mui/material';
@@ -38,6 +37,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import { Ticket, TicketComment } from '../types/ticket.types';
 import { format, parseISO } from 'date-fns';
+import {
+  Chip,
+  PriorityBadge,
+  TicketTypeBadge,
+  AttachmentCard,
+  colorTokens
+} from '@/widgets/frontdesk/design-system';
 
 interface TicketDetailViewProps {
   ticket: Ticket;
@@ -87,69 +93,55 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
         <Box
           sx={{
             p: 2,
-            borderBottom: `1px solid ${theme.palette.divider}`,
+            borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
             backgroundColor: theme.palette.background.paper
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>
-                {ticket.title}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              {/* Ticket meta info */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <TicketTypeBadge type={ticket.type as 'Bug' | 'Feature' | 'Task' | 'Support'} size="sm" />
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontWeight: 600 }}>
                   {ticket.ticketNumber}
                 </Typography>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                  {ticket.id.startsWith('1') ? `(${ticket.id})` : ''}
-                </Typography>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                  | Created {formatDateTime(ticket.createdAt)}
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
+                  · Created {formatDateTime(ticket.createdAt)}
                 </Typography>
               </Box>
+
+              {/* Title */}
+              <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5, fontSize: '1.25rem' }}>
+                {ticket.title}
+              </Typography>
             </Box>
 
-            {/* Action Buttons */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton size="small">
+            {/* Right Actions */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+              <IconButton size="small" title="Send email notification">
                 <EmailIcon fontSize="small" />
               </IconButton>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <VisibilityIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
-                <Typography variant="caption">{ticket.viewCount}</Typography>
-              </Box>
+
               <IconButton size="small" onClick={(e) => setMoreMenuAnchor(e.currentTarget)}>
                 <MoreVertIcon fontSize="small" />
               </IconButton>
 
-              {/* Participants */}
-              <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: '0.75rem' } }}>
-                {ticket.participants.map((participant) => (
-                  <Avatar key={participant.userId} alt={participant.name} src={participant.avatarUrl}>
-                    {participant.name.charAt(0)}
-                  </Avatar>
-                ))}
-              </AvatarGroup>
-
-              {/* Status Dropdown */}
-              <Button
-                variant="outlined"
-                size="small"
-                endIcon={<ExpandMoreIcon />}
+              {/* Status Chip */}
+              <Box
                 onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
-                sx={{
-                  borderColor: '#3B82F6',
-                  color: '#1E40AF',
-                  backgroundColor: '#DBEAFE',
-                  textTransform: 'none',
-                  '&:hover': {
-                    borderColor: '#3B82F6',
-                    backgroundColor: '#BFDBFE'
-                  }
-                }}
+                sx={{ cursor: 'pointer' }}
               >
-                {ticket.status}
-              </Button>
+                <Chip
+                  label={ticket.status}
+                  color={ticket.status === 'To Do' ? 'primary' : ticket.status === 'In Progress' ? 'warning' : ticket.status === 'Done' ? 'success' : 'error'}
+                  variant="soft"
+                  size="small"
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                />
+              </Box>
 
               <IconButton size="small" onClick={onClose}>
                 <CloseIcon fontSize="small" />
@@ -170,39 +162,23 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
         <Box
           sx={{
             p: 2,
-            borderBottom: `1px solid ${theme.palette.divider}`,
+            borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
             backgroundColor: theme.palette.background.paper
           }}
         >
-          {/* Recipient */}
-          <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              To:
-            </Typography>
-            <Chip
-              avatar={<Avatar sx={{ width: 20, height: 20 }}>A</Avatar>}
-              label={`Allison Westervelt <awestervelt@email.com>`}
-              size="small"
-              onDelete={() => {}}
-              sx={{ height: 24 }}
-            />
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, ml: 'auto', cursor: 'pointer' }}>
-              Cc
-            </Typography>
-          </Box>
-
           {/* Text Editor */}
           <TextField
             fullWidth
             multiline
-            rows={3}
-            placeholder="Add a reply..."
+            rows={4}
+            placeholder={activeTab === 0 ? "Write a public reply..." : "Add a private comment..."}
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             sx={{
-              mb: 1,
+              mb: 1.5,
               '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white'
+                backgroundColor: 'white',
+                fontSize: 14,
               }
             }}
           />
@@ -280,43 +256,22 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                   <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mb: 1 }}>
                     {formatDateTime(comment.createdAt)}
                   </Typography>
-                  <Typography variant="body2" sx={{ mb: 2 }}>
+                  <Typography variant="body2" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
                     {comment.content}
                   </Typography>
                   {comment.attachments && comment.attachments.length > 0 && (
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mt: 2 }}>
                       {comment.attachments.map((attachment) => (
-                        <Paper
+                        <AttachmentCard
                           key={attachment.id}
-                          sx={{
-                            p: 1.5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            width: 120,
-                            border: `1px solid ${theme.palette.divider}`,
-                            cursor: 'pointer',
-                            '&:hover': {
-                              backgroundColor: theme.palette.action.hover
-                            }
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: 80,
-                              height: 80,
-                              backgroundColor: theme.palette.grey[200],
-                              borderRadius: 1,
-                              mb: 1
-                            }}
-                          />
-                          <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.688rem' }}>
-                            {attachment.name}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, fontSize: '0.625rem' }}>
-                            {attachment.uploadedAt.split('T')[0]}
-                          </Typography>
-                        </Paper>
+                          name={attachment.name}
+                          size={attachment.size}
+                          mimeType={attachment.mimeType}
+                          url={attachment.url}
+                          uploadedAt={attachment.uploadedAt}
+                          onPreview={() => window.open(attachment.url, '_blank')}
+                          onDownload={() => window.open(attachment.url, '_blank')}
+                        />
                       ))}
                     </Box>
                   )}
@@ -347,40 +302,45 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
         }}
       >
         {/* Priority */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Priority
           </Typography>
-          <FormControl fullWidth size="small">
-            <Select value={ticket.priority}>
-              <MenuItem value="Low">Low</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
-              <MenuItem value="High">High</MenuItem>
-              <MenuItem value="Urgent">Urgent</MenuItem>
-            </Select>
-          </FormControl>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              p: 1.5,
+              backgroundColor: colorTokens.neutral[50],
+              borderRadius: '6px',
+              border: `1px solid ${colorTokens.semantic.border.default}`,
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: colorTokens.neutral[100],
+              }
+            }}
+          >
+            <PriorityBadge priority={ticket.priority as 'Urgent' | 'High' | 'Medium' | 'Low'} mode="both" size="sm" showBackground={false} />
+          </Box>
         </Box>
 
         {/* Assigned To */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Assigned To
           </Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={ticket.assignedTo?.userId || ''}
-              renderValue={() => ticket.assignedTo?.name || 'Unassigned'}
-            >
-              {ticket.participants.map((p) => (
-                <MenuItem key={p.userId} value={p.userId}>
-                  {p.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {ticket.assignedTo && (
-            <Button size="small" sx={{ mt: 0.5, textTransform: 'none' }}>
-              Assign to me
+          {ticket.assignedTo ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+              <Avatar sx={{ width: 32, height: 32 }}>{ticket.assignedTo.name.charAt(0)}</Avatar>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.assignedTo.name}</Typography>
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.assignedTo.email}</Typography>
+              </Box>
+            </Box>
+          ) : (
+            <Button variant="outlined" size="small" fullWidth sx={{ textTransform: 'none', justifyContent: 'flex-start' }}>
+              Assign to someone
             </Button>
           )}
         </Box>
@@ -423,13 +383,16 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
         </Box>
 
         {/* Reporter */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Reporter
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar sx={{ width: 28, height: 28 }}>{ticket.reporter.name.charAt(0)}</Avatar>
-            <Typography variant="body2">{ticket.reporter.name}</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+            <Avatar sx={{ width: 32, height: 32 }}>{ticket.reporter.name.charAt(0)}</Avatar>
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.reporter.name}</Typography>
+              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.reporter.email}</Typography>
+            </Box>
           </Box>
         </Box>
 
@@ -443,74 +406,102 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           </Button>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 3 }} />
 
         {/* Expandable Sections */}
-        <Accordion elevation={0} sx={{ '&:before': { display: 'none' } }}>
+        <Accordion elevation={0} defaultExpanded={false} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
               TASKS
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2" color="text.secondary">
-              No tasks
-            </Typography>
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: 13 }}>
+                No tasks yet
+              </Typography>
+              <Button size="small" startIcon={<AddIcon />} sx={{ textTransform: 'none' }}>
+                Add Task
+              </Button>
+            </Box>
           </AccordionDetails>
         </Accordion>
 
-        <Accordion elevation={0} sx={{ '&:before': { display: 'none' } }}>
+        <Accordion elevation={0} defaultExpanded={false} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
               COLLECTED FIELDS
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2" color="text.secondary">
-              No collected fields
-            </Typography>
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+                No custom fields
+              </Typography>
+            </Box>
           </AccordionDetails>
         </Accordion>
 
-        <Accordion elevation={0} sx={{ '&:before': { display: 'none' } }}>
+        <Accordion elevation={0} defaultExpanded={ticket.linkedTickets.length > 0} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
                 LINKED TICKETS
               </Typography>
               {ticket.linkedTickets.length > 0 && (
-                <Chip label={ticket.linkedTickets.length} size="small" sx={{ height: 20, fontSize: '0.688rem' }} />
+                <Box
+                  sx={{
+                    backgroundColor: colorTokens.primary[100],
+                    color: colorTokens.primary[800],
+                    borderRadius: '10px',
+                    px: 0.75,
+                    py: 0.25,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    minWidth: 18,
+                    textAlign: 'center',
+                  }}
+                >
+                  {ticket.linkedTickets.length}
+                </Box>
               )}
             </Box>
           </AccordionSummary>
           <AccordionDetails>
             {ticket.linkedTickets.length > 0 ? (
               ticket.linkedTickets.map((link) => (
-                <Box key={link.id} sx={{ mb: 1 }}>
-                  <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                <Box key={link.id} sx={{ mb: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+                  <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10, textTransform: 'uppercase', fontWeight: 600 }}>
                     {link.relationship}
                   </Typography>
-                  <Typography variant="body2">{link.title}</Typography>
+                  <Typography variant="body2" sx={{ mt: 0.5, fontSize: 13 }}>{link.title}</Typography>
                 </Box>
               ))
             ) : (
-              <Typography variant="body2" color="text.secondary">
-                No linked tickets
-              </Typography>
+              <Box sx={{ textAlign: 'center', py: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: 13 }}>
+                  No linked tickets
+                </Typography>
+                <Button size="small" startIcon={<AddIcon />} sx={{ textTransform: 'none' }}>
+                  Link Ticket
+                </Button>
+              </Box>
             )}
           </AccordionDetails>
         </Accordion>
 
-        <Accordion elevation={0} sx={{ '&:before': { display: 'none' } }}>
+        <Accordion elevation={0} defaultExpanded={false} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
               HISTORY
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2" color="text.secondary">
-              No history
-            </Typography>
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+                No activity yet
+              </Typography>
+            </Box>
           </AccordionDetails>
         </Accordion>
       </Box>

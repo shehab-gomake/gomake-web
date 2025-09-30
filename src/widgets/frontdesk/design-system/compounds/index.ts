@@ -11,3 +11,4 @@ export * from './ConnectionStatusBanner';
 export * from './MessageViewHeader';
 export * from './ConversationSidebar';
 export * from './ConnectionStates';
+export * from './AttachmentCard';

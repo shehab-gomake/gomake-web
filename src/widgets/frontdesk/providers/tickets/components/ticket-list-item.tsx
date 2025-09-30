@@ -46,6 +46,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       title={ticket.title}
       status={ticket.status}
       priority={ticket.priority as 'Urgent' | 'High' | 'Medium' | 'Low'}
+      type={ticket.type as 'Bug' | 'Feature' | 'Task' | 'Support'}
       updatedAt={formatConversationDate(ticket.updatedAt)}
       isSelected={selected}
       isChecked={checked}
