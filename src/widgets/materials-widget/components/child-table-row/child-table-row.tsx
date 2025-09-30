@@ -6,9 +6,9 @@ import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingS
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
-import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
-import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -17,6 +17,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
 import { SortIcon } from "@/icons";
 import { JobsModal } from "../jobs-modal/jobs-modal";
+import { ExistingSupplierActionEnum } from "../../enums";
 
 
 interface IChildTableRowProps {
@@ -34,6 +35,7 @@ interface IChildTableRowProps {
 
 const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
+    const { alertFaultAdded, alertFault } = useSnackBar();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
@@ -44,12 +46,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
+    const [isExistingSupplierModalOpen, setIsExistingSupplierModalOpen] = useState(false);
+    const [pendingPurchasePricingData, setPendingPurchasePricingData] = useState<any>(null);
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [formData, setFormData] = useState({
         supplierId: '',
-        purchaseM2Price: '',
-        purchaseRollPrice: '',
+        purchasePrice: '',
         currency: 'ILS',
         quantityInPackage: '',
         supplementTime: '',
@@ -129,7 +132,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Inventory reordered successfully');
                     // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder inventory:', res.message);
@@ -179,7 +181,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Purchase pricing reordered successfully');
                     // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder purchase pricing:', res.message);
@@ -279,7 +280,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price ({inventoryTableHeadingUnits.pricingUnit})
+                                        Purchase Price
+                                        <br />
+                                        {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>
@@ -674,8 +677,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         setSelectedClientsForPricing([]);
         setFormData({
             supplierId: '',
-            purchaseM2Price: '',
-            purchaseRollPrice: '',
+            purchasePrice: '',
             currency: 'ILS',
             quantityInPackage: '',
             supplementTime: '',
@@ -685,10 +687,54 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         });
     };
 
-    const handleAddPurchasePricing = () => {
-        // TODO: Implement add purchase pricing functionality
-        console.log('Add purchase pricing clicked with data:', formData);
-        handleCloseAddPurchasePricingModal();
+    const handleAddPurchasePricing = async (existingSupplierAction?: ExistingSupplierActionEnum) => {
+        try {
+            const requestBody = {
+                printHouseMaterialId: rowId,
+                supplierId: selectedSupplierForPricing?.id || formData.supplierId,
+                price: parseFloat(formData.purchasePrice) || 0,
+                currency: formData.currency,
+                isActive: formData.isActive,
+                stock: 0,
+                quantity: parseInt(formData.quantityInPackage) || 0,
+                supplementTime: parseInt(formData.supplementTime) || 0,
+                ...(existingSupplierAction >= 0 && { existingSupplierAction }),
+            };
+
+            const callBack = (res) => {
+                if (res.success) {
+                    // Refresh the purchase pricing data
+                    fetchPurchasePricingData(rowId);
+                    handleCloseAddPurchasePricingModal();
+                    setIsExistingSupplierModalOpen(false);
+                    setPendingPurchasePricingData(null);
+                } else {
+                    if (res?.data?.statusCode === 94) {
+                        // Existing supplier conflict - show options modal
+                        alertFault(`${res?.data?.ErrorMessage}`);
+
+                    }
+                    else if (res?.data?.statusCode === 103) {
+                        alertFault(`${res?.data?.ErrorMessage}`);
+                        setPendingPurchasePricingData(requestBody);
+                        setIsExistingSupplierModalOpen(true);
+                    }
+                    else {
+                        alertFaultAdded();
+                    }
+                }
+            };
+
+            await addPrintHouseMaterialSupplierApi(callApi, callBack, requestBody);
+        } catch (error) {
+            console.error('Error adding purchase pricing:', error);
+        }
+    };
+
+    const handleExistingSupplierAction = (action: ExistingSupplierActionEnum) => {
+        if (pendingPurchasePricingData) {
+            handleAddPurchasePricing(action);
+        }
     };
 
     const handleFormChange = (field: string, value: any) => {
@@ -782,10 +828,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             };
 
             const callBack = (res) => {
-                console.log("resresresresresresres", res);
                 if (res.success) {
-                    console.log('Inventory added successfully');
-
                     // Update Total Inventory in parent table
                     if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
                         updateTotalInventoryInParent(rowId, res.data?.totalInventory);
@@ -826,7 +869,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         try {
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Purchase pricing deleted successfully');
                     // Update local state instead of refetching
                     removePurchasePricingDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
@@ -900,16 +942,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             />
                         </Box>
                         <GomakeTextInput
-                            labelText="Purchase m² Price"
-                            value={formData.purchaseM2Price}
-                            onChange={(e) => handleFormChange('purchaseM2Price', e.target.value)}
-                            type="number"
-                            placeholder="Enter purchase m² price"
-                        />
-                        <GomakeTextInput
-                            labelText="Purchase Roll Price"
-                            value={formData.purchaseRollPrice}
-                            onChange={(e) => handleFormChange('purchaseRollPrice', e.target.value)}
+                            labelText="Purchase Price"
+                            value={formData.purchasePrice}
+                            onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
                             type="number"
                             placeholder="Enter purchase roll price"
                         />
@@ -950,7 +985,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         Cancel
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
-                        onClick={handleAddPurchasePricing}
+                        onClick={() => handleAddPurchasePricing(null)}
                         style={classes.modalSubmitButton}
                     >
                         Add Purchase Pricing
@@ -1049,6 +1084,23 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 openModal={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onClickDelete={openChildTable.tableType === 'inventory' ? handleDeleteInventory : handleDeletePurchasePricing}
+            />
+
+            {/* Existing Supplier Action Modal */}
+            <ThreeOptionsModal
+                modalType={ModalType.WARNING}
+                title="materials.modals.existingSupplierTitle"
+                subTitle="materials.modals.existingSupplierSubTitle"
+                yesBtn="materials.modals.activateOnly"
+                noBtn="materials.modals.activateAndOverride"
+                cancelBtn="modal.cancel"
+                openModal={isExistingSupplierModalOpen}
+                onClose={() => {
+                    setIsExistingSupplierModalOpen(false);
+                    setPendingPurchasePricingData(null);
+                }}
+                onClickYes={() => handleExistingSupplierAction(ExistingSupplierActionEnum.ActivateOnly)}
+                onClickNo={() => handleExistingSupplierAction(ExistingSupplierActionEnum.ActivateAndOverride)}
             />
 
             {/* Jobs Modal */}

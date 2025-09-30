@@ -303,7 +303,11 @@
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
-      "uploadImage": "Upload image"
+      "uploadImage": "Upload image",
+      "existingSupplierTitle": "Supplier Already Exists",
+      "existingSupplierSubTitle": "This supplier already exists for this material. How would you like to proceed?",
+      "activateOnly": "Activate Only",
+      "activateAndOverride": "Activate and Override"
     },
     "sheetPaper": {
       "inputs": {

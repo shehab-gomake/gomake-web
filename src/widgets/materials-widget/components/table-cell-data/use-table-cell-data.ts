@@ -141,6 +141,9 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     if (!inventoryTable && !purchasePricingTable && res.data) {
                         updateMainTableData(id, res.data);
                     }
+                    if(purchasePricingTable && res.data){
+                        updatePurchasePricingTableData(id, res.data);
+                    }
                     
                     if(key.includes("price")){
                         onClickOpenPriceModal()
@@ -155,38 +158,34 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
         
             if(inventoryTable){
                 // Use inventory API with correct payload structure
-                const updatedValue= value ? value.toString() : "";
                 updateSupplierInventoryApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: updatedValue,
+                    updatedValue: value ,
                     pricingType: pricingType 
                 });
             } 
             else if(purchasePricingTable){
                 // Use same API for purchase pricing (will change when BE is ready)
-                const updatedValue = value ? value.toString() : "";
                 updatePrintHouseMaterialSupplierApi(callApi, callBack, {
                     id: id,
                     key: key,
                     priceIndex: index ,
-                    updatedValue: updatedValue,
+                    updatedValue: value,
                 });
             } else if(isAdmin){
-                const updatedValue = value ? value : "";
                 updateMaterialPropApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: updatedValue,
+                    updatedValue: value,
                     priceIndex: index,
                 });
             }else{
-                const updatedValue = value ? value : "";
                 updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: updatedValue,
+                    updatedValue: value,
                     priceIndex: index,
                 });
             }
