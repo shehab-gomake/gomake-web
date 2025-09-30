@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { Stack, Paper, Divider } from "@mui/material";
+import { Stack, Divider } from "@mui/material";
+import {
+  Panel,
+  PanelContent,
+  EmptyState,
+} from "@/widgets/frontdesk/design-system";
 import { ConversationToolbar } from "@/widgets/frontdesk/components/conversation/conversation-toolbar";
 import { ConversationHeader } from "@/widgets/frontdesk/components/conversation/conversation-header";
 import { ConversationThread } from "@/widgets/frontdesk/components/conversation/conversation-thread";
 import { ConversationReplyBox } from "@/widgets/frontdesk/components/conversation/conversation-reply-box";
-import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
 import { WhatsAppConversationList } from "./components/whatsapp-conversation-list";
 import { useWhatsAppProvider } from "./hooks/use-whatsapp-provider";
 
@@ -45,12 +49,11 @@ const WhatsAppProviderView: React.FC = () => {
           />
         </div>
 
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -85,9 +88,14 @@ const WhatsAppProviderView: React.FC = () => {
               />
             </>
           ) : (
-            <FrontdeskEmptyState title="No conversation selected" subtitle="Choose a conversation to preview" />
+            <PanelContent padding="lg">
+              <EmptyState
+                title="No conversation selected"
+                description="Choose a conversation to preview"
+              />
+            </PanelContent>
           )}
-        </Paper>
+        </Panel>
       </Stack>
     </Stack>
   );

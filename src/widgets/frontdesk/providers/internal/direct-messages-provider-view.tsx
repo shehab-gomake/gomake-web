@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Stack,
-  Paper,
   Typography,
   Alert,
   Button,
@@ -18,15 +17,19 @@ import {
   Refresh as RefreshIcon,
   Add as AddIcon,
   Search as SearchIcon,
-  FilterList as FilterIcon,
   Close as CloseIcon,
   Group as GroupIcon,
   Star,
   StarBorder,
-  Archive,
   ArchiveOutlined,
   Unarchive,
 } from "@mui/icons-material";
+import {
+  Panel,
+  PanelHeader,
+  PanelContent,
+  EmptyState,
+} from "@/widgets/frontdesk/design-system";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList, GlobalSearch, InConversationSearch } from "./components/direct-messages";
 import { UserPresence } from "./components";
 import { useDirectMessages } from "@/hooks/use-direct-messages";
@@ -308,31 +311,29 @@ const DirectMessagesProviderView: React.FC = () => {
           Failed to connect to Direct Messages service: {error}
         </Alert>
 
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             minHeight: 400,
           }}
         >
-          <Stack alignItems="center" spacing={2}>
-            <ChatIcon sx={{ fontSize: 64, color: "#D1D5DB" }} />
-            <Typography variant="h6" sx={{ color: "#6B7280" }}>
-              Connection Failed
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-              Unable to connect to the Direct Messages service. Please check your connection and try again.
-            </Typography>
-            <Button variant="contained" onClick={handleRetryConnection} startIcon={<RefreshIcon />} disabled={isLoading}>
-              Retry Connection
-            </Button>
-          </Stack>
-        </Paper>
+          <PanelContent padding="lg">
+            <EmptyState
+              icon={<ChatIcon sx={{ fontSize: 64 }} />}
+              title="Connection Failed"
+              description="Unable to connect to the Direct Messages service. Please check your connection and try again."
+              action={{
+                label: "Retry Connection",
+                onClick: handleRetryConnection,
+              }}
+            />
+          </PanelContent>
+        </Panel>
       </Stack>
     );
   }
@@ -343,31 +344,25 @@ const DirectMessagesProviderView: React.FC = () => {
       <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
         <Alert severity="info">Connecting to Direct Messages service...</Alert>
 
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             minHeight: 400,
           }}
         >
-          <Stack alignItems="center" spacing={2}>
-            <ChatIcon sx={{ fontSize: 64, color: "#D1D5DB" }} />
-            <Typography variant="h6" sx={{ color: "#6B7280" }}>
-              Connecting...
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#9CA3AF" }}>
-              Establishing connection to Direct Messages service
-            </Typography>
-            <Typography variant="caption" sx={{ color: "#9CA3AF", mt: 2 }}>
-              Debug: {connectionStatus} | User: {currentUser?.email || "Loading..."}
-            </Typography>
-          </Stack>
-        </Paper>
+          <PanelContent padding="lg">
+            <EmptyState
+              icon={<ChatIcon sx={{ fontSize: 64 }} />}
+              title="Connecting..."
+              description="Establishing connection to Direct Messages service"
+            />
+          </PanelContent>
+        </Panel>
       </Stack>
     );
   }
@@ -437,24 +432,21 @@ const DirectMessagesProviderView: React.FC = () => {
       }}>
         {/* Left: Conversations sidebar */}
         <div style={{ width: 280, minWidth: 280, height: "100%" }}>
-          <Paper
+          <Panel
             elevation={0}
+            border="default"
             sx={{
               height: "100%",
-              border: "1px solid #EAECF0",
-              borderRadius: 2,
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
             }}
           >
             {/* Conversations header */}
-            <Box sx={{ p: 2, borderBottom: "1px solid #EAECF0" }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
-                  Conversations
-                </Typography>
-                <Stack direction="row" spacing={1}>
+            <PanelHeader
+              title="Conversations"
+              actions={
+                <>
                   <Tooltip title="Search conversations">
                     <IconButton size="small" onClick={openGlobalSearch}>
                       <SearchIcon fontSize="small" />
@@ -476,12 +468,12 @@ const DirectMessagesProviderView: React.FC = () => {
                       <ArchiveOutlined fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                </Stack>
-              </Stack>
-            </Box>
+                </>
+              }
+            />
 
             {/* Conversations list */}
-            <Box sx={{ flex: 1, overflow: "hidden" }}>
+            <PanelContent padding="none" scrollable sx={{ flex: 1 }}>
               <ConversationList
                 conversations={conversations}
                 selectedId={activeConversationId}
@@ -489,17 +481,16 @@ const DirectMessagesProviderView: React.FC = () => {
                 onSelect={selectConversation}
                 loading={isLoadingConversations}
               />
-            </Box>
-          </Paper>
+            </PanelContent>
+          </Panel>
         </div>
 
         {/* Center: Message area */}
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -679,35 +670,19 @@ const DirectMessagesProviderView: React.FC = () => {
               </Box>
             </>
           ) : (
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Stack alignItems="center" spacing={3}>
-                <ChatIcon sx={{ fontSize: 64, color: "#D1D5DB" }} />
-                <Typography variant="h6" sx={{ color: "#6B7280" }}>
-                  Select a conversation
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Choose a conversation from the sidebar to start messaging
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={handleStartNewConversation}
-                  sx={{
-                    backgroundColor: 'primary.main',
-                    '&:hover': {
-                      backgroundColor: 'primary.dark',
-                    }
-                  }}
-                >
-                  Start New Conversation
-                </Button>
-                <Typography variant="caption" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Current user: {currentUser?.email || "Loading..."}
-                </Typography>
-              </Stack>
-            </Box>
+            <PanelContent padding="lg">
+              <EmptyState
+                icon={<ChatIcon sx={{ fontSize: 64 }} />}
+                title="Select a conversation"
+                description="Choose a conversation from the sidebar to start messaging"
+                action={{
+                  label: "Start New Conversation",
+                  onClick: handleStartNewConversation,
+                }}
+              />
+            </PanelContent>
           )}
-        </Paper>
+        </Panel>
 
         {/* Right: User presence */}
         {isTeamColumnVisible ? (

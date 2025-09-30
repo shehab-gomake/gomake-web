@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Stack, Paper, Box, Typography, Fab, Tooltip } from "@mui/material";
 import { Edit as ComposeIcon } from "@mui/icons-material";
-import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
+import {
+  EmptyState,
+  Panel,
+  PanelContent,
+} from "@/widgets/frontdesk/design-system";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
@@ -143,35 +147,22 @@ export const EmailProviderView: React.FC = () => {
 
           {/* Empty state for conversations */}
           <div style={{ width: 320, minWidth: 320, height: "100%" }}>
-            <Paper
-              elevation={0}
-              sx={{
-                height: "100%",
-                border: "1px solid #EAECF0",
-                borderRadius: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Stack alignItems="center" spacing={2}>
-                <Typography variant="h6" sx={{ color: "#6B7280" }}>
-                  Connect an account
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Add an email account to view conversations
-                </Typography>
-              </Stack>
-            </Paper>
+            <Panel elevation={0} border="default">
+              <PanelContent padding="lg">
+                <EmptyState
+                  title="Connect an account"
+                  description="Add an email account to view conversations"
+                />
+              </PanelContent>
+            </Panel>
           </div>
 
           {/* Empty state for message viewer */}
-          <Paper
+          <Panel
             elevation={0}
+            border="default"
             sx={{
               flex: 1,
-              border: "1px solid #EAECF0",
-              borderRadius: 2,
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
@@ -179,13 +170,13 @@ export const EmailProviderView: React.FC = () => {
               height: "100%",
             }}
           >
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <FrontdeskEmptyState
+            <PanelContent padding="lg">
+              <EmptyState
                 title="No email account connected"
-                subtitle="Connect your email account to start managing messages"
+                description="Connect your email account to start managing messages"
               />
-            </Box>
-          </Paper>
+            </PanelContent>
+          </Panel>
         </Stack>
 
         <EmailAuthModal
@@ -238,36 +229,23 @@ export const EmailProviderView: React.FC = () => {
               searchDisabled={conversationsLoading}
             />
           ) : (
-            <Paper
-              elevation={0}
-              sx={{
-                height: "100%",
-                border: "1px solid #EAECF0",
-                borderRadius: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Stack alignItems="center" spacing={2}>
-                <Typography variant="h6" sx={{ color: "#6B7280" }}>
-                  Select an account
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Choose an email account to view conversations
-                </Typography>
-              </Stack>
-            </Paper>
+            <Panel elevation={0} border="default" sx={{ height: "100%" }}>
+              <PanelContent padding="lg">
+                <EmptyState
+                  title="Select an account"
+                  description="Choose an email account to view conversations"
+                />
+              </PanelContent>
+            </Panel>
           )}
         </div>
 
         {/* Message Viewer */}
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -292,14 +270,14 @@ export const EmailProviderView: React.FC = () => {
               isSending={isSending}
             />
           ) : (
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <FrontdeskEmptyState
+            <PanelContent padding="lg">
+              <EmptyState
                 title="No conversation selected"
-                subtitle="Choose a conversation from the list to start viewing messages"
+                description="Choose a conversation from the list to start viewing messages"
               />
-            </Box>
+            </PanelContent>
           )}
-        </Paper>
+        </Panel>
       </Stack>
 
       {/* Compose Button - Floating Action Button */}
