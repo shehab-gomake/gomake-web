@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
@@ -52,6 +52,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [pendingPurchasePricingData, setPendingPurchasePricingData] = useState<any>(null);
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+    const [scrollLeft, setScrollLeft] = useState(0);
+
     const [formData, setFormData] = useState({
         supplierId: '',
         purchasePrice: '',
@@ -96,6 +98,31 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             clearPurchasePricingData();
         }
     }, [isVisible, openChildTable.rowId, openChildTable.tableType, rowId]);
+
+    // Track main table scroll position
+    useEffect(() => {
+        const handleMainTableScroll = () => {
+            // Find the main table container
+            const mainTableContainer = document.querySelector('.MuiTableContainer-root');
+            if (mainTableContainer) {
+                const newScrollLeft = mainTableContainer.scrollLeft;
+                setScrollLeft(newScrollLeft);
+                console.log('Main table scroll position:', newScrollLeft);
+            }
+        };
+
+        // Listen for scroll events on main table
+        const mainTableContainer = document.querySelector('.MuiTableContainer-root');
+        if (mainTableContainer && isVisible && openChildTable.rowId === rowId) {
+            mainTableContainer.addEventListener('scroll', handleMainTableScroll);
+            // Initial position
+            handleMainTableScroll();
+
+            return () => {
+                mainTableContainer.removeEventListener('scroll', handleMainTableScroll);
+            };
+        }
+    }, [isVisible, openChildTable.rowId, rowId]);
 
     if (!isVisible || openChildTable.rowId !== rowId) {
         return null;
@@ -243,7 +270,26 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
-            <Box sx={classes.addButtonContainer}>
+            {/* Fixed Add Button - Moves with scroll - Aligned with columns */}
+            <Box sx={{
+                position: 'sticky',
+                left: `${scrollLeft > 0 ? scrollLeft : 8}px`,
+                top: 0,
+                zIndex: 999999,
+                backgroundColor: '#fff',
+                padding: '8px 0px',
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                transform: 'translateZ(0)',
+                width: '200px', // Exact same as columns: 50px + 150px
+                minWidth: '200px',
+                maxWidth: '200px',
+                margin: 0,
+                // Ensure exact alignment with table cells
+                boxSizing: 'border-box',
+            }}>
                 <GomakePrimaryButton
                     onClick={() => setIsAddInventoryModalOpen(true)}
                     style={classes.addInventoryButton}
@@ -279,8 +325,33 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell sx={classes.headerCell}></TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplier Name
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        left: `${scrollLeft}px`,
+                                        zIndex: 999998,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '50px',
+                                        minWidth: '50px',
+                                        maxWidth: '50px',
+                                        transform: 'translateZ(0)',
+                                        padding: '4px',
+                                        margin: 0,
+                                    }}></TableCell>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        left: `${scrollLeft + 50}px`,
+                                        zIndex: 999997,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '150px',
+                                        minWidth: '150px',
+                                        maxWidth: '150px',
+                                        boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                        transform: 'translateZ(0)',
+                                        padding: '4px',
+                                        margin: 0,
+                                    }}>Supplier Name
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>
@@ -327,11 +398,40 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         {/* Drag handle cell */}
                                                         <TableCell
                                                             {...provided.dragHandleProps}
-                                                            sx={classes.dragHandleCell}
+                                                            sx={{
+                                                                textAlign: 'center',
+                                                                padding: '12px 8px',
+                                                                whiteSpace: 'nowrap',
+                                                                borderBottom: '1px solid #e0e0e0',
+                                                                position: 'sticky',
+                                                                left: `${scrollLeft}px`,
+                                                                zIndex: 999998,
+                                                                backgroundColor: '#fff',
+                                                                width: '50px',
+                                                                minWidth: '50px',
+                                                                maxWidth: '50px',
+                                                                transform: 'translateZ(0)',
+                                                                margin: 0,
+                                                            }}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
+                                                        <TableCell sx={{
+                                                            textAlign: 'center',
+                                                            padding: '12px 8px',
+                                                            whiteSpace: 'nowrap',
+                                                            borderBottom: '1px solid #e0e0e0',
+                                                            position: 'sticky',
+                                                            left: `${scrollLeft + 50}px`,
+                                                            zIndex: 999997,
+                                                            backgroundColor: '#fff',
+                                                            width: '150px',
+                                                            minWidth: '150px',
+                                                            maxWidth: '150px',
+                                                            boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            transform: 'translateZ(0)',
+                                                            margin: 0,
+                                                        }}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
                                                                 isEditable={false}
@@ -505,6 +605,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderPurchasePricingTable = () => (
         <Box sx={classes.childTableContainer}>
+            {/* Fixed Add Button - Moves with scroll - Aligned with columns */}
+
+
             {isLoadingPurchasePricing ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
@@ -523,18 +626,36 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell sx={classes.headerCell} ></TableCell>
-                                    <TableCell sx={classes.headerCell}>
-                                        <Box sx={classes.headerButtonContainer}>
-                                            Supplier Name
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                                sx={classes.addButton}
-                                            >
-                                                <AddIcon fontSize="small" />
-                                            </IconButton>
-                                        </Box>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        left: `${scrollLeft}px`,
+                                        zIndex: 999999,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '50px',
+                                        minWidth: '50px',
+                                        transform: 'translateZ(0)',
+                                    }} ></TableCell>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        left: `${scrollLeft + 50}px`,
+                                        zIndex: 999998,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '150px',
+                                        minWidth: '150px',
+                                        boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                        transform: 'translateZ(0)',
+                                    }}>
+                                        Supplier Name
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                                            sx={classes.addButton}
+                                        >
+                                            <AddIcon fontSize="small" />
+                                        </IconButton>
+
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         Purchase Price
@@ -569,11 +690,30 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         {/* Drag handle cell */}
                                                         <TableCell
                                                             {...provided.dragHandleProps}
-                                                            sx={classes.dragHandleCell}
+                                                            sx={{
+                                                                ...classes.bodyCell,
+                                                                position: 'sticky',
+                                                                left: `${scrollLeft}px`,
+                                                                zIndex: 999999,
+                                                                backgroundColor: '#fff',
+                                                                width: '50px',
+                                                                minWidth: '50px',
+                                                                transform: 'translateZ(0)',
+                                                            }}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
+                                                        <TableCell sx={{
+                                                            ...classes.bodyCell,
+                                                            position: 'sticky',
+                                                            left: `${scrollLeft + 50}px`,
+                                                            zIndex: 999998,
+                                                            backgroundColor: '#fff',
+                                                            width: '150px',
+                                                            minWidth: '150px',
+                                                            boxShadow: '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            transform: 'translateZ(0)',
+                                                        }}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
                                                                 isEditable={false}
@@ -738,6 +878,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             handleAddPurchasePricing(action);
         }
     };
+
 
     const handleFormChange = (field: string, value: any) => {
         setFormData(prev => ({
@@ -914,6 +1055,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         <Box sx={classes.mainContainer}>
             {openChildTable.tableType === 'inventory' && renderInventoryTable()}
             {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
+
 
             {/* Use existing AddSupplierModal */}
             <AddSupplierModal />

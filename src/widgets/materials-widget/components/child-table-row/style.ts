@@ -13,7 +13,36 @@ const useStyle = () => {
       // Container styles
       childTableContainer: {
         width: '100%',
-        // mt: 1
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        zIndex: 1000,
+      },
+      
+      // Split layout container
+      splitTableContainer: {
+        display: 'flex',
+        width: '100%',
+        position: 'relative',
+      },
+      
+      // Fixed columns container (always visible)
+      fixedColumnsContainer: {
+        position: 'sticky',
+        left: 0,
+        zIndex: 10000,
+        backgroundColor: '#fff',
+        borderRight: '2px solid #e0e0e0',
+        minWidth: '200px',
+        maxWidth: '200px',
+        flexShrink: 0,
+      },
+      
+      // Scrollable columns container
+      scrollableColumnsContainer: {
+        flex: 1,
+        overflowX: 'auto',
+        position: 'relative',
       },
       loadingContainer: {
         display: 'flex',
@@ -162,6 +191,15 @@ const useStyle = () => {
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingBottom: '8px',
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        zIndex: 2147483647, // Maximum z-index
+        backgroundColor: '#fff',
+        borderBottom: '1px solid #e0e0e0',
+        // Ensure it stays above everything
+        isolation: 'isolate',
+        transform: 'translateZ(0)',
       },
 
       // Table title text
