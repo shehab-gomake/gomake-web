@@ -3,7 +3,6 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { openChildTableState, openJobsModalState, openAddSupplierModalState } from "../../state";
 import { useTranslation } from "react-i18next";
-import { JobsModal } from "../jobs-modal/jobs-modal";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
@@ -39,28 +38,9 @@ const CombinedTable = ({
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
     const openChildTable = useRecoilValue(openChildTableState);
-    const jobsModal = useRecoilValue(openJobsModalState);
-    const setJobsModal = useSetRecoilState(openJobsModalState);
-    const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
 
     const [showScrollIndicator, setShowScrollIndicator] = useState(true);
     const tableContainerRef = useRef<HTMLDivElement>(null);
-
-    const handleOpenJobsModal = (supplierName: string, materialCode: string, materialName: string = "m1") => {
-        setJobsModal({
-            open: true,
-            supplierName,
-            materialCode,
-            materialName
-        });
-    };
-
-    const handleCloseJobsModal = () => {
-        setJobsModal({ open: false });
-    };
-
-
-
     const handleScroll = () => {
         if (tableContainerRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
@@ -211,15 +191,6 @@ const CombinedTable = ({
                     </Tooltip>
                 )}
             </Box>
-
-            {/* Jobs Modal */}
-            <JobsModal
-                open={jobsModal.open}
-                onClose={handleCloseJobsModal}
-                supplierName={jobsModal.supplierName}
-                materialCode={jobsModal.materialCode}
-                materialName={jobsModal.materialName}
-            />
         </>
     );
 };

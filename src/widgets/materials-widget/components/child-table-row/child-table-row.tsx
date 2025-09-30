@@ -55,7 +55,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
     const [scrollLeft, setScrollLeft] = useState(0);
-    console.log('scrollLeft', scrollLeft);
     const [formData, setFormData] = useState({
         supplierId: '',
         purchasePrice: '',
