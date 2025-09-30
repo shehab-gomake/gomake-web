@@ -47,7 +47,48 @@ export const mockTickets: Ticket[] = [
     createdAt: '2024-06-02T10:00:00Z',
     updatedAt: '2024-06-02T14:30:00Z',
     dueDate: undefined,
-    comments: [],
+    comments: [
+      // Initial request via web chat
+      {
+        id: 'c1-apps',
+        author: mockParticipants.john,
+        content: 'Hi team! We need to implement a new feature for managing user permissions. Can someone take a look at the requirements document I shared?',
+        createdAt: '2024-06-02T10:05:00Z',
+        isPrivate: false,
+        channel: 'web_chat',
+        direction: 'inbound',
+        status: 'read',
+      },
+      // Private internal note
+      {
+        id: 'c2-apps',
+        author: mockParticipants.allie,
+        content: 'Reviewed the requirements. This will need coordination with the backend team. Estimate: 2-3 days of work. @john can you provide the API specs?',
+        createdAt: '2024-06-02T10:30:00Z',
+        isPrivate: true,
+        channel: 'private_note',
+        direction: 'outbound',
+        status: 'sent',
+        channelMetadata: {
+          mentions: ['4'],
+          visibility: 'team',
+        },
+      },
+      // SMS notification sent
+      {
+        id: 'c3-apps',
+        author: mockParticipants.allie,
+        content: 'Hi John! Your feature request has been received. We have assigned it to the development team. You will receive updates via email.',
+        createdAt: '2024-06-02T11:00:00Z',
+        isPrivate: false,
+        channel: 'sms',
+        direction: 'outbound',
+        status: 'delivered',
+        channelMetadata: {
+          phoneNumber: '+1-555-0199',
+        },
+      },
+    ],
     attachments: [],
     tasks: [],
     linkedTickets: [],
@@ -73,12 +114,21 @@ export const mockTickets: Ticket[] = [
     updatedAt: '2024-06-02T10:00:00Z',
     dueDate: undefined,
     comments: [
+      // Initial email from customer
       {
         id: 'c1',
-        author: mockParticipants.allie,
+        author: mockParticipants.allison,
         content: 'Ex beatae aliquid mollitia. Enim doloremque molestiae voluptatem recusandae. Maxime beatae nostrum ut. Deserunt totam aut nihil quo beatae. Quas non delectus praesentium est illum vitae nemo iure.',
         createdAt: '2022-02-09T10:31:00Z',
         isPrivate: false,
+        channel: 'email',
+        direction: 'inbound',
+        status: 'read',
+        channelMetadata: {
+          from: 'awestervelt@email.com',
+          to: ['support@company.com'],
+          subject: 'Laudantium neque veritatis',
+        },
         attachments: [
           {
             id: 'a1',
@@ -87,25 +137,109 @@ export const mockTickets: Ticket[] = [
             size: 1024000,
             mimeType: 'image/png',
             uploadedAt: '2022-06-16T13:30:00Z',
-            uploadedBy: 'Allie Harmon',
+            uploadedBy: 'Allison Westervelt',
           },
           {
             id: 'a2',
-            name: 'Screen_shot.png',
+            name: 'error-log.txt',
             url: '#',
-            size: 1024000,
-            mimeType: 'image/png',
+            size: 45678,
+            mimeType: 'text/plain',
             uploadedAt: '2022-06-16T13:30:00Z',
-            uploadedBy: 'Allie Harmon',
+            uploadedBy: 'Allison Westervelt',
           },
         ],
       },
+      // Internal private note
       {
         id: 'c2',
         author: mockParticipants.allie,
-        content: 'Dolorem similique et aliquid illum dolor. Vel quo magnam.',
-        createdAt: '2022-02-09T10:31:00Z',
+        content: 'Customer is experiencing issues with the payment gateway. Need to check the API logs and investigate the error. This might be related to the recent deployment.',
+        createdAt: '2022-02-09T11:15:00Z',
+        isPrivate: true,
+        channel: 'private_note',
+        direction: 'outbound',
+        status: 'sent',
+        channelMetadata: {
+          mentions: ['4'], // John Smith
+          visibility: 'team',
+        },
+      },
+      // Email reply to customer
+      {
+        id: 'c3',
+        author: mockParticipants.allie,
+        content: 'Hi Allison,\n\nThank you for contacting us. I have received your screenshots and error log. Our team is investigating the issue with the payment gateway.\n\nWe will get back to you within 24 hours with an update.\n\nBest regards,\nAllie',
+        createdAt: '2022-02-09T12:00:00Z',
         isPrivate: false,
+        channel: 'email',
+        direction: 'outbound',
+        status: 'read',
+        channelMetadata: {
+          from: 'support@company.com',
+          to: ['awestervelt@email.com'],
+          subject: 'Re: Laudantium neque veritatis',
+        },
+      },
+      // WhatsApp follow-up
+      {
+        id: 'c4',
+        author: mockParticipants.allison,
+        content: 'Hi! Just wanted to check if you found anything? This is blocking our production deployment 😟',
+        createdAt: '2022-02-09T14:30:00Z',
+        isPrivate: false,
+        channel: 'whatsapp',
+        direction: 'inbound',
+        status: 'delivered',
+        channelMetadata: {
+          phoneNumber: '+1-555-0123',
+        },
+      },
+      // WhatsApp response
+      {
+        id: 'c5',
+        author: mockParticipants.allie,
+        content: 'Yes! We identified the issue. It was a configuration problem with the API keys. Fix is being deployed now. Should be resolved in 15 minutes. 👍',
+        createdAt: '2022-02-09T14:45:00Z',
+        isPrivate: false,
+        channel: 'whatsapp',
+        direction: 'outbound',
+        status: 'read',
+        channelMetadata: {
+          phoneNumber: '+1-555-0123',
+        },
+      },
+      // Phone call log
+      {
+        id: 'c6',
+        author: mockParticipants.john,
+        content: 'Phone call with customer to verify the fix is working. Customer confirmed payment gateway is now operational. Call duration: 5 minutes.',
+        createdAt: '2022-02-09T15:30:00Z',
+        isPrivate: false,
+        channel: 'phone',
+        direction: 'outbound',
+        status: 'sent',
+        channelMetadata: {
+          phoneNumber: '+1-555-0123',
+          duration: 300,
+          callType: 'outbound',
+        },
+      },
+      // Final email confirmation
+      {
+        id: 'c7',
+        author: mockParticipants.allie,
+        content: 'Hi Allison,\n\nJust following up on our conversation. As discussed, the payment gateway issue has been resolved. The problem was caused by an incorrect API key configuration during our recent deployment.\n\nWe have also implemented additional monitoring to prevent similar issues in the future.\n\nPlease let us know if you encounter any further problems.\n\nBest regards,\nAllie Harmon\nSupport Team',
+        createdAt: '2022-02-09T16:00:00Z',
+        isPrivate: false,
+        channel: 'email',
+        direction: 'outbound',
+        status: 'read',
+        channelMetadata: {
+          from: 'support@company.com',
+          to: ['awestervelt@email.com'],
+          subject: 'Re: Laudantium neque veritatis - RESOLVED',
+        },
       },
     ],
     attachments: [],

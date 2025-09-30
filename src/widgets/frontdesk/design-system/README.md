@@ -37,6 +37,10 @@ import {
   // Primitives
   Avatar,
   Badge,
+  PriorityBadge,
+  TicketTypeBadge,
+  ChannelBadge,
+  MessageStatusIndicator,
   Button,
   IconButton,
   Chip,
@@ -52,6 +56,8 @@ import {
   EmptyState,
   ConnectionStatusBanner,
   MessageViewHeader,
+  MessageCard,
+  AttachmentCard,
   ConversationSidebar,
   ConnectionErrorState,
   ConnectingState,
@@ -97,6 +103,15 @@ colorTokens.semantic.text.secondary    // #6B7280
 colorTokens.semantic.background.primary // #FFFFFF
 colorTokens.semantic.border.default    // #E5E7EB
 colorTokens.semantic.status.online     // #22C55E
+
+// Communication channel colors
+colorTokens.semantic.channels.email.main       // #2563EB (Blue)
+colorTokens.semantic.channels.whatsapp.main    // #25D366 (Green)
+colorTokens.semantic.channels.sms.main         // #7C3AED (Purple)
+colorTokens.semantic.channels.phone.main       // #0891B2 (Cyan)
+colorTokens.semantic.channels.private_note.main // #F59E0B (Amber)
+colorTokens.semantic.channels.internal.main    // #6B7280 (Gray)
+colorTokens.semantic.channels.web_chat.main    // #8B5CF6 (Purple)
 ```
 
 ### Spacing
@@ -176,6 +191,84 @@ Notification badges, unread counts, status indicators.
 >
   <NotificationIcon />
 </Badge>
+```
+
+### PriorityBadge
+
+Professional priority indicators for tickets (replaces emoji-based priorities).
+
+```tsx
+<PriorityBadge
+  priority="High"              // Urgent | High | Medium | Low
+  mode="both"                  // icon | label | both
+  size="sm"                    // xs | sm | md
+  showBackground={false}       // Show colored background
+/>
+
+// Colors:
+// Urgent/High: Red (●)
+// Medium: Amber (●)
+// Low: Green (●)
+```
+
+### TicketTypeBadge
+
+Visual indicators for ticket types with appropriate icons.
+
+```tsx
+<TicketTypeBadge
+  type="Bug"                   // Bug | Feature | Task | Support
+  size="sm"                    // xs | sm | md
+  showTooltip={true}
+/>
+
+// Icons:
+// Bug: 🐛 (Red)
+// Feature: ✨ (Blue)
+// Task: 🔧 (Gray)
+// Support: 📞 (Cyan)
+```
+
+### ChannelBadge
+
+Communication channel indicators for multi-channel ticket systems.
+
+```tsx
+<ChannelBadge
+  channel="email"              // email | whatsapp | sms | phone | private_note | internal | web_chat
+  direction="inbound"          // inbound | outbound
+  mode="both"                  // icon | label | both
+  size="sm"                    // xs | sm | md
+  showDirection={true}         // Show arrow indicators
+/>
+
+// Channels:
+// Email: 📧 (Blue)
+// WhatsApp: 💬 (Green)
+// SMS: 📱 (Purple)
+// Phone: 📞 (Cyan)
+// Private Note: 🔒 (Amber, highlighted background)
+// Internal: 💬 (Gray)
+// Web Chat: 💻 (Purple)
+```
+
+### MessageStatusIndicator
+
+Delivery and read status indicators for messages.
+
+```tsx
+<MessageStatusIndicator
+  status="delivered"           // pending | sent | delivered | read | failed
+  size="sm"                    // xs | sm | md
+  showLabel={false}
+/>
+
+// Status indicators:
+// Pending: ⏱️ (with spinner)
+// Sent: ✓ (Gray)
+// Delivered: ✓✓ (Gray)
+// Read: ✓✓ (Blue)
+// Failed: ❌ (Red)
 ```
 
 ### Button
@@ -264,7 +357,7 @@ Universal list item for conversations (Email, DM, WhatsApp, Tickets).
 
 ### TicketListItem
 
-Specialized list item for tickets/tasks.
+Specialized list item for tickets/tasks with professional priority and type indicators.
 
 ```tsx
 <TicketListItem
@@ -272,7 +365,8 @@ Specialized list item for tickets/tasks.
   ticketNumber="TICKET-1234"
   title="Fix login bug"
   status="In Progress"
-  priority="High"
+  priority="High"              // Uses PriorityBadge (colored dots)
+  type="Bug"                   // Uses TicketTypeBadge (🐛 icon)
   updatedAt="2 hours ago"
   isSelected={true}
   isChecked={false}
@@ -283,6 +377,13 @@ Specialized list item for tickets/tasks.
   onClick={() => selectTicket('TICKET-1234')}
   onCheck={(checked) => handleCheck('TICKET-1234', checked)}
 />
+
+// Improved layout:
+// ┌────────────────────────────────────┐
+// │ TICKET-1234 · 2h ago    [In Progress]│
+// │ 🐛 Fix login bug                   │
+// │ ● 👤 2h ago                  [●]  │
+// └────────────────────────────────────┘
 ```
 
 ### Panel Components
@@ -367,6 +468,71 @@ Header for message/conversation views with action buttons.
 >
   <ParticipantsList members={members} />
 </MessageViewHeader>
+```
+
+### MessageCard
+
+Unified message display for multi-channel ticket communication. Supports email, WhatsApp, SMS, phone, private notes, and internal messages with channel-specific styling.
+
+```tsx
+<MessageCard
+  id="msg-123"
+  channel="email"              // email | whatsapp | sms | phone | private_note | internal | web_chat
+  direction="inbound"          // inbound | outbound
+  status="read"                // pending | sent | delivered | read | failed
+  author={{
+    name: "Alice Smith",
+    email: "alice@example.com",
+    avatarUrl: "/alice.jpg"
+  }}
+  recipient={{
+    name: "Support Team",
+    email: "support@company.com"
+  }}
+  content="Hi, I'm experiencing issues with the payment gateway..."
+  timestamp="2024-02-09T10:31:00Z"
+  attachments={[
+    { id: "1", name: "screenshot.png", size: 1024000, mimeType: "image/png" }
+  ]}
+  isPrivate={false}
+  isEdited={false}
+  onReply={() => handleReply('msg-123')}
+  onMoreActions={() => showMenu('msg-123')}
+/>
+
+// Visual features:
+// - Channel badge with icon and color
+// - Colored left border (blue=email, green=whatsapp, yellow=private note)
+// - Status indicators (✓ sent, ✓✓ delivered/read)
+// - Private notes highlighted with yellow background
+// - Direction-based avatar placement
+```
+
+### AttachmentCard
+
+Professional file attachment display with previews, file type icons, and actions.
+
+```tsx
+<AttachmentCard
+  name="Screenshot.png"
+  size={1024000}               // in bytes
+  mimeType="image/png"
+  previewUrl="/preview.jpg"    // For image thumbnails
+  url="/download/file.png"
+  uploadedAt="2024-02-09T10:31:00Z"
+  onPreview={() => window.open('/preview', '_blank')}
+  onDownload={() => downloadFile('file.png')}
+  onRemove={() => removeFile('file-id')}
+  variant="default"            // default | compact
+/>
+
+// Features:
+// - File type icons (PDF, DOC, Image, Code, etc.)
+// - Image thumbnails for supported formats
+// - File size formatting (KB, MB)
+// - Date display
+// - Hover actions (preview, download, remove)
+// - Compact mode for inline display
 ```
 
 ### ConversationSidebar
@@ -637,6 +803,150 @@ The design system uses CSS-in-JS with emotion. Ensure you're not mixing styling 
 <Button style={{ marginTop: '16px' }}>Click</Button>
 ```
 
+## 💬 Multi-Channel Ticket Communication
+
+The design system includes a complete multi-channel communication system for tickets, allowing unified display of messages across email, WhatsApp, SMS, phone calls, and internal notes.
+
+### Building a Multi-Channel Timeline
+
+```tsx
+import { MessageCard } from '@/widgets/frontdesk/design-system';
+
+// Example: Ticket with mixed communication channels
+<Box sx={{ p: 3, backgroundColor: colorTokens.neutral[50] }}>
+  {/* Initial email from customer */}
+  <MessageCard
+    id="msg-1"
+    channel="email"
+    direction="inbound"
+    status="read"
+    author={{ name: "Customer", email: "customer@email.com" }}
+    content="I'm experiencing issues with the payment gateway..."
+    timestamp="2024-02-09T10:31:00Z"
+    attachments={[{ id: "1", name: "screenshot.png", size: 1024000 }]}
+  />
+
+  {/* Internal team note */}
+  <MessageCard
+    id="msg-2"
+    channel="private_note"
+    direction="outbound"
+    status="sent"
+    author={{ name: "Agent", email: "agent@company.com" }}
+    content="Investigating the API logs. Looks like a configuration issue."
+    timestamp="2024-02-09T11:15:00Z"
+    isPrivate={true}
+  />
+
+  {/* WhatsApp quick update */}
+  <MessageCard
+    id="msg-3"
+    channel="whatsapp"
+    direction="outbound"
+    status="read"
+    author={{ name: "Agent", email: "agent@company.com" }}
+    recipient={{ phoneNumber: "+1-555-0123" }}
+    content="Fix is being deployed now. Should be resolved in 15 minutes 👍"
+    timestamp="2024-02-09T14:45:00Z"
+  />
+
+  {/* Phone call log */}
+  <MessageCard
+    id="msg-4"
+    channel="phone"
+    direction="outbound"
+    status="sent"
+    author={{ name: "Agent", email: "agent@company.com" }}
+    content="Phone call to verify fix. Customer confirmed working. Duration: 5 min."
+    timestamp="2024-02-09T15:30:00Z"
+  />
+</Box>
+```
+
+### Visual Design Per Channel
+
+**Email** (Blue):
+- Left border: Blue (#2563EB)
+- Icon: 📧
+- Shows: From/To addresses
+- Status: Sent ✓, Delivered ✓✓, Read ✓✓ (blue)
+
+**WhatsApp** (Green):
+- Left border: Green (#25D366)
+- Icon: 💬
+- Shows: Phone number
+- Status: Real-time delivery/read receipts
+
+**SMS** (Purple):
+- Left border: Purple (#7C3AED)
+- Icon: 📱
+- Shows: Phone number
+- Status: Sent/Delivered
+
+**Phone** (Cyan):
+- Left border: Cyan (#0891B2)
+- Icon: 📞
+- Shows: Call duration, recording link
+- Layout: Call summary format
+
+**Private Note** (Yellow):
+- Background: Yellow (#FFFBEB)
+- Left border: Amber (#F59E0B)
+- Icon: 🔒
+- Highlighted to indicate internal-only visibility
+
+**Internal/System** (Gray):
+- Left border: Gray (#6B7280)
+- Icon: 💬
+- Shows: System events, status changes
+
+### Type System for Multi-Channel
+
+```tsx
+import { CommunicationChannel, MessageDirection, MessageStatus } from '@/widgets/frontdesk/providers/tickets/types/communication.types';
+
+// Channel types
+type CommunicationChannel =
+  | 'email'
+  | 'whatsapp'
+  | 'sms'
+  | 'phone'
+  | 'private_note'
+  | 'internal'
+  | 'web_chat';
+
+// Message direction
+type MessageDirection = 'inbound' | 'outbound';
+
+// Delivery status
+type MessageStatus = 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+
+// Extended TicketComment interface
+interface TicketComment {
+  id: string;
+  author: TicketParticipant;
+  content: string;
+  createdAt: string;
+  isPrivate: boolean;
+  attachments?: TicketAttachment[];
+
+  // Multi-channel fields
+  channel?: CommunicationChannel;
+  direction?: MessageDirection;
+  status?: MessageStatus;
+  channelMetadata?: Record<string, any>;
+}
+```
+
+### Benefits
+
+1. **Unified Timeline** - All customer interactions in one place
+2. **Context Preservation** - Understand conversation flow across channels
+3. **Professional Appearance** - Industry-standard design (Zendesk/Intercom level)
+4. **Clear Distinction** - Visual hierarchy separates public/private communications
+5. **Status Tracking** - Real-time delivery and read status
+6. **Type Safety** - Full TypeScript support for all channel types
+
 ## 🤝 Contributing
 
 When adding new components:
@@ -646,6 +956,7 @@ When adding new components:
 3. Include TypeScript types
 4. Add documentation with examples
 5. Ensure accessibility compliance
+6. For multi-channel features, extend `communication.types.ts`
 
 ## 📖 Resources
 

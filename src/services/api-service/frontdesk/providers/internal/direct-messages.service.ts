@@ -1,5 +1,4 @@
-import config from "@/config";
-import { getUserToken } from "@/services/storage-data";
+import { MessagingHubHttpClient } from "@/services/messaging-hub-http-client";
 import {
   Conversation,
   ConversationMember,
@@ -13,45 +12,10 @@ import {
   AddMembersRequest,
 } from "@/widgets/frontdesk/providers/internal/types/direct-messages.types";
 
-export class DirectMessagesService {
-  private baseUrl: string;
-
-  constructor() {
-    // Route DM REST to the same host as the WebSocket gateway
-    // so it hits the Messaging-Hub service (e.g., http://localhost:3000)
-    this.baseUrl = config.messaging_server;
-  }
-
-  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const token = getUserToken();
-    if (!token) {
-      throw new Error("No authentication token available");
-    }
-
-    const url = `${this.baseUrl}${endpoint}`;
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || errorData.error || `HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
-  }
-
+export class DirectMessagesService extends MessagingHubHttpClient {
   // Create or reopen conversation
   async createConversation(data: CreateConversationRequest): Promise<CreateConversationResponse> {
-    const conversation = await this.makeRequest<Conversation>("/dms", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const conversation = await this.post<Conversation>("/dms", data);
 
     // The backend returns the conversation directly,
     // but our interface expects it wrapped with members
@@ -77,7 +41,7 @@ export class DirectMessagesService {
     }
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    const rawResponse = await this.makeRequest<any[]>(`/dms${queryString}`);
+    const rawResponse = await this.get<any[]>(`/dms${queryString}`);
     console.log("Raw API response:", rawResponse);
 
     // Transform API response to match expected Conversation interface
@@ -115,7 +79,7 @@ export class DirectMessagesService {
 
   // Get conversation details
   async getConversation(conversationId: string): Promise<Conversation> {
-    return this.makeRequest<Conversation>(`/dms/${conversationId}`);
+    return this.get<Conversation>(`/dms/${conversationId}`);
   }
 
   // List messages (paginated)
@@ -133,7 +97,7 @@ export class DirectMessagesService {
     if (options.limit) params.append("limit", options.limit.toString());
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    const rawResponse = await this.makeRequest<any[]>(`/dms/${conversationId}/messages${queryString}`);
+    const rawResponse = await this.get<any[]>(`/dms/${conversationId}/messages${queryString}`);
 
     // Transform the raw array response to match our interface
     const messages: DMMessage[] = rawResponse.map((msg: any) => ({
@@ -166,73 +130,54 @@ export class DirectMessagesService {
 
   // Send message (REST)
   async sendMessage(conversationId: string, data: SendMessageRequest): Promise<DMMessage> {
-    return this.makeRequest<DMMessage>(`/dms/${conversationId}/messages`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return this.post<DMMessage>(`/dms/${conversationId}/messages`, data);
   }
 
   // Mark as read
   async markAsRead(conversationId: string, data: MarkAsReadRequest): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/read`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return this.post<void>(`/dms/${conversationId}/read`, data);
   }
 
   // Archive conversation
   async archiveConversation(conversationId: string): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/archive`, {
-      method: "POST",
-    });
+    return this.post<void>(`/dms/${conversationId}/archive`);
   }
 
   // Unarchive conversation
   async unarchiveConversation(conversationId: string): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/unarchive`, {
-      method: "POST",
-    });
+    return this.post<void>(`/dms/${conversationId}/unarchive`);
   }
 
   // Favorite conversation
   async favoriteConversation(conversationId: string): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/favorite`, {
-      method: "POST",
-    });
+    return this.post<void>(`/dms/${conversationId}/favorite`);
   }
 
   // Unfavorite conversation
   async unfavoriteConversation(conversationId: string): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/unfavorite`, {
-      method: "POST",
-    });
+    return this.post<void>(`/dms/${conversationId}/unfavorite`);
   }
 
   // Leave conversation (group only)
   async leaveConversation(conversationId: string): Promise<void> {
-    return this.makeRequest<void>(`/dms/${conversationId}/leave`, {
-      method: "POST",
-    });
+    return this.post<void>(`/dms/${conversationId}/leave`);
   }
 
   // Add members to conversation
   async addMembers(conversationId: string, data: AddMembersRequest): Promise<Conversation> {
-    return this.makeRequest<Conversation>(`/dms/${conversationId}/add-members`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return this.post<Conversation>(`/dms/${conversationId}/add-members`, data);
   }
 
   // Get conversation members
   async getConversationMembers(conversationId: string): Promise<ConversationMember[]> {
-    return this.makeRequest<ConversationMember[]>(`/dms/${conversationId}/members`);
+    return this.get<ConversationMember[]>(`/dms/${conversationId}/members`);
   }
 
   // Search conversations
   async searchConversations(query: string): Promise<Conversation[]> {
     const params = new URLSearchParams();
     params.append("q", query);
-    return this.makeRequest<Conversation[]>(`/dms/search?${params.toString()}`);
+    return this.get<Conversation[]>(`/dms/search?${params.toString()}`);
   }
 
   // Search messages globally across all conversations
@@ -289,7 +234,7 @@ export class DirectMessagesService {
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
 
-    const fetchSearch = async (endpoint: string) => this.makeRequest<any>(endpoint);
+    const fetchSearch = async (endpoint: string) => this.get<any>(endpoint);
 
     let response: any;
     try {
@@ -399,7 +344,7 @@ export class DirectMessagesService {
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
 
-    const fetchConversationSearch = async (endpoint: string) => this.makeRequest<any>(endpoint);
+    const fetchConversationSearch = async (endpoint: string) => this.get<any>(endpoint);
 
     let response: any;
     try {
@@ -520,7 +465,7 @@ export class DirectMessagesService {
     const queryString = params.toString() ? `?${params.toString()}` : "";
 
     // We don't know the exact response envelope; retrieve as unknown and map defensively
-    const raw: unknown = await this.makeRequest<unknown>(`/users/search${queryString}`);
+    const raw: unknown = await this.get<unknown>(`/users/search${queryString}`);
 
     const mapToMember = (u: any): ConversationMember => {
       const firstName = u.firstName || u.first_name || "";

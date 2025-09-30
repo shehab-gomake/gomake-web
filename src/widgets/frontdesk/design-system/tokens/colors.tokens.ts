@@ -144,6 +144,45 @@ export const colorTokens = {
       medium: '#F59E0B',
       low: '#22C55E',
     },
+
+    // Communication channel colors
+    channels: {
+      email: {
+        main: '#2563EB',
+        bg: '#EFF6FF',
+        border: '#BFDBFE',
+      },
+      whatsapp: {
+        main: '#25D366',
+        bg: '#F0FDF4',
+        border: '#BBF7D0',
+      },
+      sms: {
+        main: '#7C3AED',
+        bg: '#F5F3FF',
+        border: '#DDD6FE',
+      },
+      phone: {
+        main: '#0891B2',
+        bg: '#ECFEFF',
+        border: '#A5F3FC',
+      },
+      private_note: {
+        main: '#F59E0B',
+        bg: '#FFFBEB',
+        border: '#FDE68A',
+      },
+      internal: {
+        main: '#6B7280',
+        bg: '#F9FAFB',
+        border: '#E5E7EB',
+      },
+      web_chat: {
+        main: '#8B5CF6',
+        bg: '#FAF5FF',
+        border: '#E9D5FF',
+      },
+    },
   },
 } as const;
 

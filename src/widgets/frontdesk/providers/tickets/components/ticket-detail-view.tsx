@@ -42,6 +42,7 @@ import {
   PriorityBadge,
   TicketTypeBadge,
   AttachmentCard,
+  MessageCard,
   colorTokens
 } from '@/widgets/frontdesk/design-system';
 
@@ -228,62 +229,41 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           </Box>
         </Box>
 
-        {/* Comments/Thread */}
+        {/* Comments/Thread - Multi-Channel Timeline */}
         <Box
           sx={{
             flex: 1,
             overflow: 'auto',
-            p: 2,
-            backgroundColor: theme.palette.background.paper
+            p: 3,
+            backgroundColor: colorTokens.neutral[50]
           }}
         >
           {ticket.comments.map((comment) => (
-            <Box key={comment.id} sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Avatar sx={{ width: 32, height: 32 }}>{comment.author.name.charAt(0)}</Avatar>
-                <Box sx={{ flex: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {comment.author.name}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                      To {ticket.reporter.name} &lt;{ticket.reporter.email}&gt;
-                    </Typography>
-                    <IconButton size="small" sx={{ ml: 'auto' }}>
-                      <ExpandMoreIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-                  <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mb: 1 }}>
-                    {formatDateTime(comment.createdAt)}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
-                    {comment.content}
-                  </Typography>
-                  {comment.attachments && comment.attachments.length > 0 && (
-                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mt: 2 }}>
-                      {comment.attachments.map((attachment) => (
-                        <AttachmentCard
-                          key={attachment.id}
-                          name={attachment.name}
-                          size={attachment.size}
-                          mimeType={attachment.mimeType}
-                          url={attachment.url}
-                          uploadedAt={attachment.uploadedAt}
-                          onPreview={() => window.open(attachment.url, '_blank')}
-                          onDownload={() => window.open(attachment.url, '_blank')}
-                        />
-                      ))}
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            </Box>
+            <MessageCard
+              key={comment.id}
+              id={comment.id}
+              channel={(comment.channel || 'email') as any}
+              direction={(comment.direction || 'inbound') as any}
+              status={comment.status as any}
+              author={{
+                name: comment.author.name,
+                email: comment.author.email,
+                avatarUrl: comment.author.avatarUrl,
+              }}
+              content={comment.content}
+              timestamp={comment.createdAt}
+              attachments={comment.attachments}
+              isPrivate={comment.isPrivate}
+            />
           ))}
 
           {ticket.comments.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="body2" color="text.secondary">
-                No comments yet. Add a reply to start the conversation.
+            <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                No messages yet
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Add a reply to start the conversation
               </Typography>
             </Box>
           )}

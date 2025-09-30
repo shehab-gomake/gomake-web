@@ -26,6 +26,12 @@ export interface TicketComment {
   createdAt: string;
   isPrivate: boolean;
   attachments?: TicketAttachment[];
+
+  // Multi-channel support
+  channel?: 'email' | 'whatsapp' | 'sms' | 'phone' | 'private_note' | 'internal' | 'web_chat';
+  direction?: 'inbound' | 'outbound';
+  status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  channelMetadata?: Record<string, any>;
 }
 
 export interface TicketLink {
