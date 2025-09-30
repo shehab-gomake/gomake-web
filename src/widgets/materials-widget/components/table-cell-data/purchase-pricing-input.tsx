@@ -3,7 +3,9 @@ import { Box, Button } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { openChildTableState } from "../../state";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { GomakePrimaryButton } from "@/components/button/button";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IPurchasePricingInputProps {
     value?: string;
@@ -25,38 +27,37 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%'
-        }}>
-            <GomakePrimaryButton
-                onClick={toggleExpanded}
-                style={{
-                    minWidth: '60px',
-                    width: 'fit-content',
-                    height: '36px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        <Button
+            onClick={toggleExpanded}
+            startIcon={
+                isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+            }
+            sx={{
+                backgroundColor: "buttonColor",
+                color: '#000000',
+                height: "35px",
+                minWidth: "90px",
+                padding: "6px 12px",
+                width: "fit-content",
+                border: "1px solid #ccc",
+                margin: 0,
+                "&:hover": {
+                    opacity: 0.7,
                     backgroundColor: "transparent",
-                    color: "#000",
-                    border: `1px solid #ccc`,
-                    '&:hover': {
-                        backgroundColor: secondColor(600),
-                        transform: 'translateY(-1px)',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-                    },
-                    transition: 'all 0.2s ease-in-out'
-                }}
+                    color: '#000000',
+                },
 
-            >
+            }}
+        >
+            <div style={{
+                ...FONT_FAMILY.Lexend(500, 14),
+                display: 'flex',
+                alignItems: 'center',
+            }}>
                 {isExpanded ? "Hide" : "Open"}
-            </GomakePrimaryButton>
-        </Box>
+            </div>
+
+        </Button>
     );
 };
 

@@ -3,7 +3,10 @@ import { Box, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { openChildTableState } from "../../state";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IInventoryInputProps {
     value?: string;
@@ -16,7 +19,6 @@ interface IInventoryInputProps {
 
 const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInventory }: IInventoryInputProps) => {
     const { t } = useTranslation();
-    const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'inventory';
 
@@ -46,50 +48,40 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
     const buttonColor = getButtonColor();
 
     return (
-        <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%'
-        }}>
-            <Button
-                variant="contained"
-                onClick={toggleExpanded}
-                size="small"
-                sx={{
+
+        <Button
+            onClick={toggleExpanded}
+            startIcon={
+                isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+            }
+            sx={{
+                backgroundColor: buttonColor,
+                color: '#ffffff',
+                height: "35px",
+                minWidth: "90px",
+                padding: "6px 12px",
+                width: "fit-content",
+                margin: 0,
+                "&:hover": {
+                    opacity: 0.7,
                     backgroundColor: buttonColor,
                     color: '#ffffff',
-                    minWidth: '70px',
-                    width: 'auto',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    '&:hover': {
-                        backgroundColor: buttonColor,
-                        filter: 'brightness(0.9)',
-                        transform: 'translateY(-1px)',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-                    },
-                    transition: 'all 0.2s ease-in-out'
+                },
+
+            }}
+        >
+            <Box
+                component="span"
+                sx={{
+                    ...FONT_FAMILY.Lexend(500, 14),
+                    display: 'flex',
+                    alignItems: 'center',
                 }}
             >
                 {value || '0'}
-                <Box
-                    component="span"
-                    sx={{
-                        fontSize: '12px',
-                        marginLeft: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                    }}
-                >
-                    {isExpanded ? '▲' : '▼'}
-                </Box>
-            </Button>
-        </Box>
+
+            </Box>
+        </Button>
     );
 };
 
