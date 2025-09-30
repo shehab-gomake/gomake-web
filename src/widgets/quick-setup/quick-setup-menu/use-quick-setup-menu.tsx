@@ -87,10 +87,6 @@ const useSetupGuideMenu = ({
     (step) => step?.step === SetupStep.SETUP_YOUR_MACHINES
   )?.status;
 
-  const materialsSetupStatus = printHouseSetupSteps?.find(
-    (step) => step?.step === SetupStep.SETUP_YOUR_MATERIALS
-  )?.status;
-
   const resetPasswordStatus = printHouseSetupSteps?.find(
     (step) => step?.step === SetupStep.RESET_PASSWORD
   )?.status;
@@ -138,22 +134,13 @@ const useSetupGuideMenu = ({
       key: SetupStep.SETUP_YOUR_MACHINES,
       label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-          machinesSetupStatus !== StepStatus.DONE
+        machinesSetupStatus !== StepStatus.DONE
           ? () => {
               navigate("/onboarding-setup");
               collapseMenu();
             }
           : undefined,
       status: machinesSetupStatus,
-    },
-    {
-      key: SetupStep.SETUP_YOUR_MATERIALS,
-      label: t("quickSetup.steps.setUpYourMaterials"),
-      onClick:
-        materialsSetupStatus !== StepStatus.DONE
-          ? () => navigate("/materials-setup")
-          : undefined,
-      status: materialsSetupStatus,
     },
     {
       key: "company_profile",
@@ -585,7 +572,6 @@ const useSetupGuideMenu = ({
     isRtl,
     printHouseSetupSteps,
     machinesSetupStatus,
-    materialsSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,

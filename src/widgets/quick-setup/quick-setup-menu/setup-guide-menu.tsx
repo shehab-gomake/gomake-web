@@ -117,14 +117,12 @@ export const SetupGuideMenu = ({
             borderRadius: "8px",
             cursor:
               step.status === StepStatus.DONE &&
-              (step.key === SetupStep.SETUP_YOUR_MACHINES ||
-                step.key === SetupStep.SETUP_YOUR_MATERIALS)
+              step.key === SetupStep.SETUP_YOUR_MACHINES
                 ? "default"
                 : "pointer",
             pointerEvents:
               step.status === StepStatus.DONE &&
-              (step.key === SetupStep.SETUP_YOUR_MACHINES ||
-                step.key === SetupStep.SETUP_YOUR_MATERIALS)
+              step.key === SetupStep.SETUP_YOUR_MACHINES
                 ? "none"
                 : "auto",
             py: "2px",
