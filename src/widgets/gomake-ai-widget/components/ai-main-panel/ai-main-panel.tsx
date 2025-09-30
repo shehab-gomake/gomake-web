@@ -31,6 +31,7 @@ const jobCards = [
   },
 ];
 
+//!here main test
 interface AIMainPanelProps {
   onNewJobCreated: (job: any) => void;
   startSession: () => Promise<any>;
@@ -53,25 +54,27 @@ const AIMainPanel = ({
   const { classes } = useStyle();
   const [jobDescription, setJobDescription] = useState("");
 
+  //!here
   const handleSendMessage = async () => {
     if (!jobDescription.trim()) return;
 
     const currentDescription = jobDescription; // Store the current description
     setJobDescription(""); // Clear the input immediately
 
-    try {
-      // Add user message to chat
-      const newMessages = [
-        ...chatMessages,
-        {
-          id: Date.now().toString(),
-          type: "user",
-          message: currentDescription,
-          timestamp: new Date().toISOString(),
-        },
-      ];
-      onChatMessagesUpdate(newMessages);
+    // Add user message to chat (moved outside try block for catch block access)
+    const newMessages = [
+      ...chatMessages,
+      {
+        id: Date.now().toString(),
+        type: "user",
+        message: currentDescription,
+        timestamp: new Date().toISOString(),
+      },
+    ];
 
+    onChatMessagesUpdate(newMessages);
+
+    try {
       // If this is the first message and we have a session, create job entry
       if (chatMessages.length === 0 && sessionId) {
         const newJob = {
@@ -92,9 +95,9 @@ const AIMainPanel = ({
       // Note: AI response will come through socket.io, not here
     } catch (error) {
       console.error("Error sending message:", error);
-      // Add error message to chat
+      // Add error message to chat (don't replace existing messages)
       const errorMessages = [
-        ...chatMessages,
+        ...newMessages, // Use newMessages instead of chatMessages
         {
           id: (Date.now() + 1).toString(),
           type: "ai",
@@ -115,13 +118,59 @@ const AIMainPanel = ({
   };
 
   const handleJobCardClick = async (title: string, description: string) => {
-    // Set the job description to the title
-    setJobDescription(title);
+    // Clear the input immediately
+    setJobDescription("");
 
-    // Wait a moment for the state to update, then auto-send
-    setTimeout(async () => {
-      await handleSendMessage();
-    }, 500);
+    // Create the message directly without relying on state
+    const currentDescription = title;
+
+    // Add user message to chat
+    const newMessages = [
+      ...chatMessages,
+      {
+        id: Date.now().toString(),
+        type: "user",
+        message: currentDescription,
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    onChatMessagesUpdate(newMessages);
+
+    try {
+      // If this is the first message and we have a session, create job entry
+      if (chatMessages.length === 0 && sessionId) {
+        const newJob = {
+          id: sessionId,
+          title:
+            currentDescription.substring(0, 50) +
+            (currentDescription.length > 50 ? "..." : ""),
+          description: currentDescription,
+          createdAt: new Date().toISOString(),
+          status: "processing" as const,
+        };
+        onNewJobCreated(newJob);
+      }
+
+      // Send message to AI
+      await sendMessage(currentDescription);
+
+      // Note: AI response will come through socket.io, not here
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Add error message to chat (don't replace existing messages)
+      const errorMessages = [
+        ...newMessages,
+        {
+          id: (Date.now() + 1).toString(),
+          type: "ai",
+          message:
+            "Sorry, I encountered an error processing your message. Please try again.",
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      onChatMessagesUpdate(errorMessages);
+    }
   };
 
   return (

@@ -13,6 +13,7 @@ interface AIChatInterfaceProps {
   isProcessing: boolean;
 }
 
+//!here
 const AIChatInterface = ({ messages, isProcessing }: AIChatInterfaceProps) => {
   const { classes } = useStyle();
   const messagesEndRef = useRef<HTMLDivElement>(null);

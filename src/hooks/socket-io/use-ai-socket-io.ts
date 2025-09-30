@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import config from "@/config";
 import { useRecoilState } from "recoil";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 // State for AI job processing
 const aiJobProcessingState = {
@@ -21,6 +21,7 @@ const useAISocketIO = () => {
   const [jobResults, setJobResults] = useState<any[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { callApi } = useGomakeAxios();
+  const { alertFault } = useSnackBar();
 
   useEffect(() => {
     const socket = io(config.api_server);
@@ -54,15 +55,6 @@ const useAISocketIO = () => {
       setIsProcessing(false);
     });
 
-    // Join AI room for this user with sessionId
-    if (sessionId) {
-      socket.emit("joinAIRoom", {
-        sessionId: sessionId,
-        userId: localStorage.getItem("userId") || "anonymous",
-        timestamp: new Date().toISOString(),
-      });
-    }
-
     return () => {
       socket.disconnect();
     };
@@ -73,9 +65,20 @@ const useAISocketIO = () => {
       // setIsProcessing(true);
 
       // Start new AI session
-      const response = await callApi("POST", "/v1/ai/startSession", {
-        userId: localStorage.getItem("userId") || "anonymous",
-      });
+      const response = await callApi(
+        "POST",
+        "/v1/gomake-ai-service/start-session"
+      );
+
+      // Check HTTP status code
+      // if (response?.status && response.status !== 200) {
+      //   const errorMessage =
+      //     response?.message ||
+      //     response?.msg ||
+      //     `Request failed with status ${response.status}`;
+      //   alertFault(errorMessage);
+      //   throw new Error(errorMessage);
+      // }
 
       if (response?.success && response.data?.sessionId) {
         console.log("AI Session started successfully:", response.data);
@@ -83,7 +86,9 @@ const useAISocketIO = () => {
         // setIsProcessing(false);
         return response.data;
       } else {
-        throw new Error(response?.message || "Failed to start AI session");
+        const errorMessage = response?.message || "Failed to start AI session";
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error("Error starting AI session:", error);
@@ -99,10 +104,24 @@ const useAISocketIO = () => {
       }
 
       // Send message to AI
-      const response = await callApi("POST", "/v1/ai/sendMessage", {
-        sessionId: sessionId,
-        prompt: prompt,
-      });
+      const response = await callApi(
+        "POST",
+        "/v1/gomake-ai-service/send-message",
+        {
+          sessionId: sessionId,
+          prompt: prompt,
+        }
+      );
+
+      // Check HTTP status code
+      if (response?.status && response.status !== 200) {
+        const errorMessage =
+          response?.message ||
+          response?.msg ||
+          `Request failed with status ${response.status}`;
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
+      }
 
       // Response is empty, we get the actual response from socket.io
       console.log("Message sent successfully, waiting for socket response");
@@ -113,12 +132,84 @@ const useAISocketIO = () => {
     }
   };
 
+  const getConversationsHistory = async () => {
+    try {
+      const response = await callApi(
+        "GET",
+        "/v1/gomake-ai-service/get-conversations-history"
+      );
+
+      // Check HTTP status code
+      if (response?.status && response.status !== 200) {
+        const errorMessage =
+          response?.message ||
+          response?.msg ||
+          `Request failed with status ${response.status}`;
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      if (response?.success && response.data) {
+        console.log(
+          "Conversations history retrieved successfully:",
+          response.data
+        );
+        return response.data;
+      } else {
+        const errorMessage =
+          response?.message || "Failed to get conversations history";
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error getting conversations history:", error);
+      throw error;
+    }
+  };
+
+  const getConversation = async (sessionId: string) => {
+    try {
+      if (!sessionId) {
+        throw new Error("Session ID is required to get conversation");
+      }
+
+      const response = await callApi(
+        "GET",
+        `/v1/gomake-ai-service/get-conversation/${sessionId}`
+      );
+
+      // Check HTTP status code
+      if (response?.status && response.status !== 200) {
+        const errorMessage =
+          response?.message ||
+          response?.msg ||
+          `Request failed with status ${response.status}`;
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      if (response?.success && response.data) {
+        console.log("Conversation retrieved successfully:", response.data);
+        return response.data;
+      } else {
+        const errorMessage = response?.message || "Failed to get conversation";
+        alertFault(errorMessage);
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error getting conversation:", error);
+      throw error;
+    }
+  };
+
   return {
     isProcessing,
     jobResults,
     sessionId,
     startSession,
     sendMessage,
+    getConversationsHistory,
+    getConversation,
   };
 };
 

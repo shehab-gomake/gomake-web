@@ -1,4 +1,3 @@
-import { JobHistoryItem } from "../job-history-item/job-history-item";
 import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
@@ -7,11 +6,19 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 
 interface AISidebarProps {
   onNewJobClick: () => void;
-  jobHistory: any[];
+  conversationsHistory?: any[];
+  onConversationSelect?: (sessionId: string) => void;
+  onRefreshHistory?: () => void;
+  selectedConversation?: any;
 }
 
-//!HERE
-const AISidebar = ({ onNewJobClick, jobHistory }: AISidebarProps) => {
+const AISidebar = ({
+  onNewJobClick,
+  conversationsHistory = [],
+  onConversationSelect,
+  onRefreshHistory,
+  selectedConversation,
+}: AISidebarProps) => {
   const { classes } = useStyle();
 
   return (
@@ -46,29 +53,67 @@ const AISidebar = ({ onNewJobClick, jobHistory }: AISidebarProps) => {
 
       {/* Content Area */}
       <div style={classes.contentContainer}>
+        {/* Jobs History Section */}
         <div style={classes.jobHistorySection}>
           <div style={classes.sectionTitle}>
             <HistoryRoundedIcon style={classes.sectionIcon} />
-            Job History
+            Jobs History
+            {onRefreshHistory && (
+              <button
+                onClick={onRefreshHistory}
+                style={{
+                  marginLeft: "auto",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  color: "#666",
+                }}
+              >
+                🔄 Refresh
+              </button>
+            )}
           </div>
-          {jobHistory.length === 0 ? (
+          {conversationsHistory.length === 0 ? (
             <div className="ai-empty-state" style={classes.emptyState}>
-              <div style={classes.emptyStateIcon}>📋</div>
+              <div style={classes.emptyStateIcon}>💬</div>
               <div style={classes.emptyStateText}>No jobs yet</div>
               <div style={classes.emptyStateSubtext}>
-                Create your first AI job to see it here
+                Start chatting to see your job history
               </div>
             </div>
           ) : (
             <div style={classes.jobHistoryList}>
-              {jobHistory.map((job, index) => (
-                <JobHistoryItem
+              {conversationsHistory.map((conversation, index) => (
+                <div
                   key={index}
-                  job={job}
-                  onClick={() => {
-                    /* Handle job selection */
+                  onClick={() => onConversationSelect?.(conversation.sessionId)}
+                  style={{
+                    ...classes.navItem,
+                    backgroundColor:
+                      selectedConversation?.sessionId === conversation.sessionId
+                        ? "#E0E7FF"
+                        : "transparent",
+                    cursor: "pointer",
+                    marginBottom: "4px",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #E5E7EB",
                   }}
-                />
+                >
+                  <div style={{ fontSize: "14px", fontWeight: "500" }}>
+                    {conversation.conversationName || `Job ${index + 1}`}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#666",
+                      marginTop: "2px",
+                    }}
+                  >
+                    Session: {conversation.sessionId?.substring(0, 8)}...
+                  </div>
+                </div>
               ))}
             </div>
           )}
