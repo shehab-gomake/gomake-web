@@ -1,34 +1,56 @@
 import { useDirectMessages } from './use-direct-messages';
+
+// Extracted hooks available for gradual integration
 // import { useConnectionManager } from './use-connection-manager';
 // import { useParticipants } from './use-participants';
+// import { usePresence } from './use-presence';
+// import { useDrafts } from './use-drafts';
+// import { useConversations } from './use-conversations';
+// import { useMessages } from './use-messages';
+// import { useConversationSearch } from './use-conversation-search';
 
 /**
  * Main orchestrator hook for Internal/Direct Messages provider
  *
- * Phase 5 Part 1: Partial refactoring - Pattern demonstration
- * ✅ Extracted hooks created (not yet integrated):
+ * Phase 5 Part 2: Complete refactoring - Hooks extracted
+ * ✅ All hooks successfully extracted:
  * - use-connection-manager.ts (~110 lines)
  * - use-participants.ts (~90 lines)
- *
- * ⏳ Remaining hooks to extract:
  * - use-presence.ts (~350 lines)
  * - use-drafts.ts (~50 lines)
  * - use-conversations.ts (~400 lines)
  * - use-messages.ts (~350 lines)
  * - use-conversation-search.ts (~350 lines)
  *
- * Integration will happen in Phase 5 Part 2 when all hooks are extracted.
- * This ensures no breaking changes and allows incremental testing.
+ * Total: ~1700 lines broken into 7 focused hooks
+ *
+ * IMPORTANT: Currently still using monolithic use-direct-messages.ts to ensure
+ * zero breaking changes. The extracted hooks are ready for gradual integration
+ * and independent testing. Full integration will happen in a future phase after
+ * thorough testing of each extracted hook.
+ *
+ * Benefits of extracted hooks:
+ * - Each hook is ~50-400 lines (vs 1621 lines monolithic)
+ * - Single responsibility principle
+ * - Easier to test in isolation
+ * - Clearer dependencies and interfaces
+ * - Better code organization
  *
  * See: /src/widgets/frontdesk/HOOK_REFACTORING_PLAN.md for detailed breakdown
  */
 export function useInternalProvider() {
-  // Currently using monolithic hook
+  // Currently using monolithic hook to ensure no breaking changes
   const dmHook = useDirectMessages();
 
-  // Extracted hooks (commented out until full integration):
+  // Extracted hooks are available but not yet wired up
+  // They can be gradually integrated and tested independently
   // const connectionManager = useConnectionManager();
   // const participants = useParticipants();
+  // const presence = usePresence();
+  // const drafts = useDrafts();
+  // const conversations = useConversations({...});
+  // const messages = useMessages({...});
+  // const search = useConversationSearch({...});
 
   // Return a curated subset of the most commonly used values
   // This provides a cleaner interface than exposing all 78 values
