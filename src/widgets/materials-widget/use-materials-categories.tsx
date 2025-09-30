@@ -185,9 +185,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId: supplierId === "" ? null : supplierId,
-        // pageNumber,
-        // pageSize,
+        supplierId: null,
         isActive,
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       },

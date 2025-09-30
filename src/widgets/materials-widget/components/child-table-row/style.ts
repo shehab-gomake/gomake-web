@@ -13,12 +13,41 @@ const useStyle = () => {
       // Container styles
       childTableContainer: {
         width: '100%',
-        mt: 1
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        zIndex: 1000,
+      },
+      
+      // Split layout container
+      splitTableContainer: {
+        display: 'flex',
+        width: '100%',
+        position: 'relative',
+      },
+      
+      // Fixed columns container (always visible)
+      fixedColumnsContainer: {
+        position: 'sticky',
+        left: 0,
+        zIndex: 10000,
+        backgroundColor: '#fff',
+        borderRight: '2px solid #e0e0e0',
+        minWidth: '200px',
+        maxWidth: '200px',
+        flexShrink: 0,
+      },
+      
+      // Scrollable columns container
+      scrollableColumnsContainer: {
+        flex: 1,
+        overflowX: 'auto',
+        position: 'relative',
       },
       loadingContainer: {
         display: 'flex',
         justifyContent: 'center',
-        p: 3
+        // p: 3
       },
       noDataContainer: {
         display: 'flex',
@@ -156,6 +185,89 @@ const useStyle = () => {
         backgroundColor: '#fff'
       },
 
+      // Add button container above table
+      addButtonContainer: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingBottom: '8px',
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        zIndex: 2147483647, // Maximum z-index
+        backgroundColor: '#fff',
+        borderBottom: '1px solid #e0e0e0',
+        // Ensure it stays above everything
+        isolation: 'isolate',
+        transform: 'translateZ(0)',
+      },
+
+      // Table title text
+      tableTitle: {
+        fontSize: '14px',
+        fontWeight: 600,
+        color: '#374151',
+        margin: 0,
+      },
+
+      // Add inventory button
+      addInventoryButton: {
+        backgroundColor: '#fff',
+        color: primaryColor(600),
+        border: `1px solid ${primaryColor(200)}`,
+        padding: '6px 12px',
+        borderRadius: '6px',
+        fontWeight: 500,
+        fontSize: '12px',
+        textTransform: 'none',
+        minHeight: '28px',
+        minWidth: 'auto',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+        transition: 'all 0.2s ease',
+        width: 'fit-content',
+        height: '40px',
+        '&:hover': {
+          backgroundColor: primaryColor(50),
+          borderColor: primaryColor(400),
+          color: primaryColor(700),
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        },
+        '& .MuiButton-startIcon': {
+          marginRight: '6px',
+          '& svg': {
+            fontSize: '16px',
+          },
+        },
+      },
+
+      // Add purchase pricing button
+      addPurchasePricingButton: {
+        backgroundColor: '#fff',
+        color: secondColor(600),
+        border: `1px solid ${secondColor(200)}`,
+        padding: '6px 12px',
+        borderRadius: '6px',
+        fontWeight: 500,
+        fontSize: '12px',
+        textTransform: 'none',
+        minHeight: '28px',
+        minWidth: 'auto',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          backgroundColor: secondColor(50),
+          borderColor: secondColor(400),
+          color: secondColor(700),
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        },
+        '& .MuiButton-startIcon': {
+          marginRight: '6px',
+          '& svg': {
+            fontSize: '16px',
+          },
+        },
+      },
+
       // Header button container
       headerButtonContainer: {
         display: 'flex',
@@ -166,7 +278,7 @@ const useStyle = () => {
 
       // Action button styles
       addButton: {
-        color: primaryColor(500),
+        color: secondColor(500),
         '&:hover': {
           backgroundColor: primaryColor(50)
         }

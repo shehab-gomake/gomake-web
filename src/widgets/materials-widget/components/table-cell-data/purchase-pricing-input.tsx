@@ -3,6 +3,9 @@ import { Box, Button } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { openChildTableState } from "../../state";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IPurchasePricingInputProps {
     value?: string;
@@ -24,29 +27,37 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     };
 
     return (
-        <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%'
-        }}>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={toggleExpanded}
-                size="small"
-                sx={{
-                    backgroundColor: secondColor(500),
-                    minWidth: '60px',
-                    width: '60px',
-                    '&:hover': {
-                        backgroundColor: secondColor(600),
-                    }
-                }}
-            >
+        <Button
+            onClick={toggleExpanded}
+            startIcon={
+                isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+            }
+            sx={{
+                backgroundColor: "buttonColor",
+                color: '#000000',
+                height: "35px",
+                minWidth: "90px",
+                padding: "6px 12px",
+                width: "fit-content",
+                border: "1px solid #ccc",
+                margin: 0,
+                "&:hover": {
+                    opacity: 0.7,
+                    backgroundColor: "transparent",
+                    color: '#000000',
+                },
+
+            }}
+        >
+            <div style={{
+                ...FONT_FAMILY.Lexend(500, 14),
+                display: 'flex',
+                alignItems: 'center',
+            }}>
                 {isExpanded ? "Hide" : "Open"}
-            </Button>
-        </Box>
+            </div>
+
+        </Button>
     );
 };
 

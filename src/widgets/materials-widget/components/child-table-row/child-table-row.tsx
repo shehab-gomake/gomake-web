@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
@@ -6,9 +6,9 @@ import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingS
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
-import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal } from "@/components";
-import { useGomakeAxios } from "@/hooks";
-import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
 import { ModalType } from "@/enums";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
@@ -17,6 +17,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
 import { SortIcon } from "@/icons";
 import { JobsModal } from "../jobs-modal/jobs-modal";
+import { ExistingSupplierActionEnum } from "../../enums";
+import { useTranslation } from "react-i18next";
 
 
 interface IChildTableRowProps {
@@ -34,6 +36,10 @@ interface IChildTableRowProps {
 
 const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
+    const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
+    const { alertFaultAdded, alertFault } = useSnackBar();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
@@ -44,12 +50,15 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [isAddInventoryModalOpen, setIsAddInventoryModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRowForDelete, setSelectedRowForDelete] = useState<any>(null);
+    const [isExistingSupplierModalOpen, setIsExistingSupplierModalOpen] = useState(false);
+    const [pendingPurchasePricingData, setPendingPurchasePricingData] = useState<any>(null);
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    console.log('scrollLeft', scrollLeft);
     const [formData, setFormData] = useState({
         supplierId: '',
-        purchaseM2Price: '',
-        purchaseRollPrice: '',
+        purchasePrice: '',
         currency: 'ILS',
         quantityInPackage: '',
         supplementTime: '',
@@ -92,6 +101,36 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         }
     }, [isVisible, openChildTable.rowId, openChildTable.tableType, rowId]);
 
+    // Track main table scroll position
+    useEffect(() => {
+        const handleMainTableScroll = () => {
+            // Find the main table container
+            const mainTableContainer = document.querySelector('.MuiTableContainer-root');
+            if (mainTableContainer) {
+                const newScrollLeft = mainTableContainer.scrollLeft;
+                setScrollLeft(newScrollLeft);
+                console.log('Main table scroll position:', newScrollLeft);
+                console.log('Column positions will be:', {
+                    column1: `${isRTL ? 'right' : 'left'}: ${newScrollLeft}px`,
+                    column2: `${isRTL ? 'right' : 'left'}: ${newScrollLeft + 50}px`,
+                    isRTL: isRTL
+                });
+            }
+        };
+
+        // Listen for scroll events on main table
+        const mainTableContainer = document.querySelector('.MuiTableContainer-root');
+        if (mainTableContainer && isVisible && openChildTable.rowId === rowId) {
+            mainTableContainer.addEventListener('scroll', handleMainTableScroll);
+            // Initial position
+            handleMainTableScroll();
+
+            return () => {
+                mainTableContainer.removeEventListener('scroll', handleMainTableScroll);
+            };
+        }
+    }, [isVisible, openChildTable.rowId, rowId]);
+
     if (!isVisible || openChildTable.rowId !== rowId) {
         return null;
     }
@@ -129,7 +168,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Inventory reordered successfully');
                     // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder inventory:', res.message);
@@ -179,7 +217,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Purchase pricing reordered successfully');
                     // No need to refetch - local state already updated
                 } else {
                     console.error('Failed to reorder purchase pricing:', res.message);
@@ -240,6 +277,32 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
+            {/* Fixed Add Button - Moves with scroll - RTL Support */}
+            <Box sx={{
+                position: 'sticky',
+                [isRTL ? 'right' : 'left']: isRTL ? `${scrollLeft > 0 ? scrollLeft : 8}px` : `${-scrollLeft > 0 ? scrollLeft : 8}px`,
+                top: 0,
+                zIndex: 999999,
+                padding: '8px 0px',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                transform: 'translateZ(0)',
+                width: '200px', // Exact same as columns: 50px + 150px
+                minWidth: '200px',
+                maxWidth: '200px',
+                margin: 0,
+                boxSizing: 'border-box',
+            }}>
+                <GomakePrimaryButton
+                    onClick={() => setIsAddInventoryModalOpen(true)}
+                    style={classes.addInventoryButton}
+                    startIcon={<AddIcon />}
+                >
+                    Add New Inventory
+                </GomakePrimaryButton>
+            </Box>
+
             {isLoadingInventory ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
@@ -257,33 +320,54 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     </span>
                 </Box>
             ) : (
-                <TableContainer
-                    component={Paper}
-                    sx={classes.tableContainer}
-                >
+                <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative' }}>
                     <DragDropContext onDragEnd={handleInventoryDragEnd}>
-                        <Table sx={classes.table} stickyHeader>
+                        <Table sx={{ ...classes.table, position: 'relative' }} stickyHeader>
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell sx={classes.headerCell}></TableCell>
-                                    <TableCell sx={classes.headerCell}>Supplier Name
-
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setIsAddInventoryModalOpen(true)}
-                                            sx={classes.actionButton}
-                                        >
-                                            <AddIcon fontSize="small" />
-                                        </IconButton>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
+                                        zIndex: 999998,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '50px',
+                                        minWidth: '50px',
+                                        maxWidth: '50px',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                        padding: '4px',
+                                        margin: 0,
+                                        willChange: 'transform',
+                                    }}></TableCell>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
+                                        zIndex: 999997,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '150px',
+                                        minWidth: '150px',
+                                        maxWidth: '150px',
+                                        boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                        padding: '4px',
+                                        margin: 0,
+                                        // Force the browser to recalculate position
+                                        willChange: 'transform',
+                                    }}>Supplier Name
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price ({inventoryTableHeadingUnits.pricingUnit})
+                                        Purchase Price
+                                        <br />
+                                        {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Sale Cost ({inventoryTableHeadingUnits.pricingUnit})
+                                        Sale Cost
+                                        <br />
+                                        {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>
@@ -318,11 +402,37 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         {/* Drag handle cell */}
                                                         <TableCell
                                                             {...provided.dragHandleProps}
-                                                            sx={classes.dragHandleCell}
+                                                            sx={{
+                                                                textAlign: 'center',
+                                                                padding: '12px 8px',
+                                                                whiteSpace: 'nowrap',
+                                                                position: 'sticky',
+                                                                [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
+                                                                zIndex: 999998,
+                                                                backgroundColor: '#fff',
+                                                                width: '50px',
+                                                                minWidth: '50px',
+                                                                maxWidth: '50px',
+                                                                margin: 0,
+                                                            }}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
+                                                        <TableCell sx={{
+                                                            textAlign: 'center',
+                                                            padding: '12px 8px',
+                                                            whiteSpace: 'nowrap',
+                                                            position: 'sticky',
+                                                            [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
+                                                            zIndex: 999997,
+                                                            backgroundColor: '#fff',
+                                                            width: '150px',
+                                                            minWidth: '150px',
+                                                            maxWidth: '150px',
+                                                            boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            transform: 'translateZ(0)',
+                                                            margin: 0,
+                                                        }}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
                                                                 isEditable={false}
@@ -348,10 +458,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={[
-                                                                    row.purchasePrice?.perUnit?.toString() || '',
-                                                                    row.purchasePrice?.perTon?.toString() || ''
-                                                                ]}
+                                                                value={row.purchasePrice?.["price Unit / ton"]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -363,7 +470,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.currency?.toLowerCase()}
+                                                                value={row.purchasePrice?.currency?.value?.toLowerCase() || row.purchasePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -375,10 +482,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={[
-                                                                    row.salePrice?.perUnit?.toString() || '',
-                                                                    row.salePrice?.perTon?.toString() || ''
-                                                                ]}
+                                                                value={row.salePrice?.["price Unit / ton"]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -390,7 +494,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.currency?.toLowerCase()}
+                                                                value={row.salePrice?.currency?.value?.toLowerCase() || row.salePrice?.currency?.toLowerCase()}
                                                                 isEditable={true}
                                                                 type={5}
                                                                 id={row.id}
@@ -495,13 +599,16 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             </Droppable>
                         </Table>
                     </DragDropContext>
-                </TableContainer>
+                </Box>
             )}
         </Box>
     );
 
     const renderPurchasePricingTable = () => (
         <Box sx={classes.childTableContainer}>
+            {/* Fixed Add Button - Moves with scroll - Aligned with columns */}
+
+
             {isLoadingPurchasePricing ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
@@ -520,21 +627,48 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell sx={classes.headerCell} ></TableCell>
-                                    <TableCell sx={classes.headerCell}>
-                                        <Box sx={classes.headerButtonContainer}>
-                                            Supplier Name
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                                sx={classes.addButton}
-                                            >
-                                                <AddIcon fontSize="small" />
-                                            </IconButton>
-                                        </Box>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 8}px` : `${scrollLeft - 8}px`,
+                                        zIndex: 999998,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '50px',
+                                        minWidth: '50px',
+                                        maxWidth: '50px',
+                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                        padding: '4px',
+                                        margin: 0,
+                                        willChange: 'transform',
+                                    }} ></TableCell>
+                                    <TableCell sx={{
+                                        ...classes.headerCell,
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft + 44}px` : `${scrollLeft + 43}px`,
+                                        zIndex: 999997,
+                                        backgroundColor: '#D5D7FF',
+                                        width: '150px',
+                                        minWidth: '150px',
+                                        maxWidth: '150px',
+                                        boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
+                                        transform: 'translateZ(0)',
+                                        padding: '4px',
+                                        margin: 0,
+                                    }}>
+                                        Supplier Name
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                                            sx={classes.addButton}
+                                        >
+                                            <AddIcon fontSize="small" />
+                                        </IconButton>
+
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Purchase Price ({purchasePricingTableHeadingUnits.pricingUnit})
+                                        Purchase Price
+                                        <br />
+                                        {purchasePricingTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>Quantity in Package ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
@@ -564,11 +698,39 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         {/* Drag handle cell */}
                                                         <TableCell
                                                             {...provided.dragHandleProps}
-                                                            sx={classes.dragHandleCell}
+                                                            sx={{
+                                                                textAlign: 'center',
+                                                                padding: '12px 8px',
+                                                                whiteSpace: 'nowrap',
+                                                                position: 'sticky',
+                                                                [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 8}px` : `${scrollLeft - 8}px`,
+                                                                zIndex: 999998,
+                                                                backgroundColor: '#fff',
+                                                                width: '50px',
+                                                                minWidth: '50px',
+                                                                maxWidth: '50px',
+                                                                transform: `translateZ(0) translateX(0px)`, // Force re-render
+                                                                margin: 0,
+                                                                willChange: 'transform',
+                                                            }}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
+                                                        <TableCell sx={{
+                                                            textAlign: 'center',
+                                                            padding: '12px 8px',
+                                                            whiteSpace: 'nowrap',
+                                                            position: 'sticky',
+                                                            [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft + 44}px` : `${scrollLeft + 43}px`,
+                                                            zIndex: 999997,
+                                                            backgroundColor: '#fff',
+                                                            width: '150px',
+                                                            minWidth: '150px',
+                                                            maxWidth: '150px',
+                                                            boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
+                                                            transform: 'translateZ(0)',
+                                                            margin: 0,
+                                                        }}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
                                                                 isEditable={false}
@@ -674,8 +836,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         setSelectedClientsForPricing([]);
         setFormData({
             supplierId: '',
-            purchaseM2Price: '',
-            purchaseRollPrice: '',
+            purchasePrice: '',
             currency: 'ILS',
             quantityInPackage: '',
             supplementTime: '',
@@ -685,11 +846,56 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         });
     };
 
-    const handleAddPurchasePricing = () => {
-        // TODO: Implement add purchase pricing functionality
-        console.log('Add purchase pricing clicked with data:', formData);
-        handleCloseAddPurchasePricingModal();
+    const handleAddPurchasePricing = async (existingSupplierAction?: ExistingSupplierActionEnum) => {
+        try {
+            const requestBody = {
+                printHouseMaterialId: rowId,
+                supplierId: selectedSupplierForPricing?.id || formData.supplierId,
+                price: parseFloat(formData.purchasePrice) || 0,
+                currency: formData.currency,
+                isActive: formData.isActive,
+                stock: 0,
+                quantity: parseInt(formData.quantityInPackage) || 0,
+                supplementTime: parseInt(formData.supplementTime) || 0,
+                ...(existingSupplierAction >= 0 && { existingSupplierAction }),
+            };
+
+            const callBack = (res) => {
+                if (res.success) {
+                    // Refresh the purchase pricing data
+                    fetchPurchasePricingData(rowId);
+                    handleCloseAddPurchasePricingModal();
+                    setIsExistingSupplierModalOpen(false);
+                    setPendingPurchasePricingData(null);
+                } else {
+                    if (res?.data?.statusCode === 94) {
+                        // Existing supplier conflict - show options modal
+                        alertFault(`${res?.data?.ErrorMessage}`);
+
+                    }
+                    else if (res?.data?.statusCode === 103) {
+                        alertFault(`${res?.data?.ErrorMessage}`);
+                        setPendingPurchasePricingData(requestBody);
+                        setIsExistingSupplierModalOpen(true);
+                    }
+                    else {
+                        alertFaultAdded();
+                    }
+                }
+            };
+
+            await addPrintHouseMaterialSupplierApi(callApi, callBack, requestBody);
+        } catch (error) {
+            console.error('Error adding purchase pricing:', error);
+        }
     };
+
+    const handleExistingSupplierAction = (action: ExistingSupplierActionEnum) => {
+        if (pendingPurchasePricingData) {
+            handleAddPurchasePricing(action);
+        }
+    };
+
 
     const handleFormChange = (field: string, value: any) => {
         setFormData(prev => ({
@@ -782,10 +988,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             };
 
             const callBack = (res) => {
-                console.log("resresresresresresres", res);
                 if (res.success) {
-                    console.log('Inventory added successfully');
-
                     // Update Total Inventory in parent table
                     if (res.data?.totalInventory && typeof res.data?.totalInventory === 'number') {
                         updateTotalInventoryInParent(rowId, res.data?.totalInventory);
@@ -826,7 +1029,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         try {
             const callBack = (res) => {
                 if (res.success) {
-                    console.log('Purchase pricing deleted successfully');
                     // Update local state instead of refetching
                     removePurchasePricingDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
@@ -871,6 +1073,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             {openChildTable.tableType === 'inventory' && renderInventoryTable()}
             {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
 
+
             {/* Use existing AddSupplierModal */}
             <AddSupplierModal />
 
@@ -900,16 +1103,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             />
                         </Box>
                         <GomakeTextInput
-                            labelText="Purchase m² Price"
-                            value={formData.purchaseM2Price}
-                            onChange={(e) => handleFormChange('purchaseM2Price', e.target.value)}
-                            type="number"
-                            placeholder="Enter purchase m² price"
-                        />
-                        <GomakeTextInput
-                            labelText="Purchase Roll Price"
-                            value={formData.purchaseRollPrice}
-                            onChange={(e) => handleFormChange('purchaseRollPrice', e.target.value)}
+                            labelText="Purchase Price"
+                            value={formData.purchasePrice}
+                            onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
                             type="number"
                             placeholder="Enter purchase roll price"
                         />
@@ -950,7 +1146,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         Cancel
                     </GomakePrimaryButton>
                     <GomakePrimaryButton
-                        onClick={handleAddPurchasePricing}
+                        onClick={() => handleAddPurchasePricing(null)}
                         style={classes.modalSubmitButton}
                     >
                         Add Purchase Pricing
@@ -1049,6 +1245,23 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 openModal={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onClickDelete={openChildTable.tableType === 'inventory' ? handleDeleteInventory : handleDeletePurchasePricing}
+            />
+
+            {/* Existing Supplier Action Modal */}
+            <ThreeOptionsModal
+                modalType={ModalType.WARNING}
+                title="materials.modals.existingSupplierTitle"
+                subTitle="materials.modals.existingSupplierSubTitle"
+                yesBtn="materials.modals.activateOnly"
+                noBtn="materials.modals.activateAndOverride"
+                cancelBtn="modal.cancel"
+                openModal={isExistingSupplierModalOpen}
+                onClose={() => {
+                    setIsExistingSupplierModalOpen(false);
+                    setPendingPurchasePricingData(null);
+                }}
+                onClickYes={() => handleExistingSupplierAction(ExistingSupplierActionEnum.ActivateOnly)}
+                onClickNo={() => handleExistingSupplierAction(ExistingSupplierActionEnum.ActivateAndOverride)}
             />
 
             {/* Jobs Modal */}

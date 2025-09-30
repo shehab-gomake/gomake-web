@@ -84,7 +84,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const purchasePricingData = useRecoilValue(purchasePricingDataState);
   const currencies: any = useRecoilValue(currenciesState);
 
-  console.log("openChildTable", { openChildTable, inventoryData, purchasePricingData, currencies });
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
@@ -155,7 +154,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
           currency = purchaseRow?.currency ||
             purchaseRow?.purchasePrice?.currency ||
             purchaseRow?.rowData?.currency?.value;
-          console.log("Purchase pricing table - found currency:", currency, "for row:", myId, "full row:", purchaseRow);
         }
       } else if (action?.isInventoryTable) {
         // We're specifically in inventory table
@@ -167,7 +165,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
           } else {
             currency = inventoryRow?.purchasePrice?.currency;
           }
-          console.log("Inventory table - found currency:", currency, "for parameterKey:", action.parameterKey);
         } else if (inventoryRow) {
           // Fallback to purchase currency if no specific parameter key
           currency = inventoryRow?.purchasePrice?.currency || inventoryRow?.salePrice?.currency;
@@ -194,7 +191,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
         currency = selectedRow?.rowData?.currency?.value;
       }
 
-      console.log("Setting currentCurrency:", currency, "for parameterKey:", action?.parameterKey, "isInventoryTable:", action?.isInventoryTable, "isPurchasePricingTable:", action?.isPurchasePricingTable);
       setCurrentCurrency(currency);
     }
   }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action]);
@@ -319,19 +315,13 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
 
     // Check if we're updating currency in inventory or purchase table
-    console.log("updateMaterials - action:", action.action, "openChildTable:", openChildTable);
 
     if (action.action === EMaterialsActions.UpdateCurrency) {
       // Check if this is from inventory or purchase table based on action metadata
       const isFromInventoryTable = action.isInventoryTable;
       const isFromPurchaseTable = action.isPurchasePricingTable;
       const currencyParameterKey = action.parameterKey;
-
-      console.log("Currency update - isFromInventoryTable:", isFromInventoryTable, "isFromPurchaseTable:", isFromPurchaseTable, "parameterKey:", currencyParameterKey);
-
       if (isFromInventoryTable || isFromPurchaseTable) {
-        console.log("Using inventory/purchase specific endpoints");
-
         // For inventory/purchase tables, update individual rows using the specific endpoint
         const updatePromises = selectedMaterialsIds.map(async (rowId) => {
           const selectedCurrency = currencies?.find(c => c.value === updatedValue);
@@ -342,16 +332,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
           if (currencyParameterKey && (currencyParameterKey.includes('sale') || currencyParameterKey.toLowerCase().includes('sale'))) {
             pricingType = 2; // SalesPrice
           }
-
-          console.log("Currency update details:", {
-            rowId,
-            currencyParameterKey,
-            updatedValue,
-            exchangeRate,
-            pricingType,
-            currentPurchaseCurrency: inventoryData.find(r => r.id === rowId)?.purchasePrice?.currency,
-            currentSaleCurrency: inventoryData.find(r => r.id === rowId)?.salePrice?.currency
-          });
           if (isFromInventoryTable) {
             // Use inventory endpoint with correct pricing type
             return await updateSupplierInventoryApi(callApi, (res) => {
@@ -369,9 +349,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           else if (isFromPurchaseTable) {
             // Use purchase pricing endpoint
             return await updatePrintHouseMaterialSupplierApi(callApi, (res) => {
-              console.log("updatePrintHouseMaterialSupplierApi response:", res);
               if (res.success && res.data) {
-                // Use the existing updatePurchasePricingTableData function
                 updatePurchasePricingTableData(rowId, res.data);
               }
             }, {

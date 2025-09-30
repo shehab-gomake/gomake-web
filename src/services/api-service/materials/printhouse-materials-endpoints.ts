@@ -54,6 +54,7 @@ const ADD_SUPPLIER_INVENTORY_URL = "/v1/printhouse-materials/add-supplier-invent
 const UPDATE_PRINT_HOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/update-print-house-material-row";
 const UPDATE_PRINT_HOUSE_MATERIALS_ROWS_URL = "/v1/printhouse-materials/update-print-house-materials-rows";
 const UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/update-print-house-material-supplier";
+const ADD_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/add-print-house-material-supplier";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -490,6 +491,30 @@ const updatePrintHouseMaterialSupplierApi: ICallAndSetData = async (
     data
   );
 };
+
+const addPrintHouseMaterialSupplierApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    printHouseMaterialId: string;
+    supplierId: string;
+    price: number;
+    currency: string;
+    isActive: boolean;
+    stock: number;
+    quantity: number;
+    supplementTime: number;
+    existingSupplierAction: number;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_PRINT_HOUSE_MATERIAL_SUPPLIER_URL,
+    callBack,
+    data
+  );
+};
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -521,5 +546,6 @@ export {
   // New material row update APIs
   updatePrintHouseMaterialRowApi,
   updatePrintHouseMaterialsRowsApi,
-  updatePrintHouseMaterialSupplierApi
+  updatePrintHouseMaterialSupplierApi,
+  addPrintHouseMaterialSupplierApi
 };

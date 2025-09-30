@@ -44,6 +44,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
+  console.log("dir", dir);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -93,6 +94,21 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
+
+  useEffect(() => {
+    if (!subCategory) {
+      // Wait 2 seconds before opening sidebar if no category selected
+      const timer = setTimeout(() => {
+        setIsSidebarOpen(true);
+      }, 2000);
+
+      // Cleanup timer if component unmounts or subCategory changes
+      return () => clearTimeout(timer);
+    }
+    else {
+      setIsSidebarOpen(false);
+    }
+  }, [materialCategory, subCategory]);
 
   const { callApi } = useGomakeAxios();
   const [listClient, setListClient] = useState([]);
@@ -233,24 +249,24 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     </Stack>
   );
 
-  useEffect(() => {
-    if (materialType && materialCategories.length > 0) {
-      if (
-        !materialCategory ||
-        !materialCategories.some(
-          (category) => category.categoryKey === materialCategory
-        )
-      ) {
-        const defaultCategory = materialCategories[0].categoryKey;
+  // useEffect(() => {
+  //   if (materialType && materialCategories.length > 0) {
+  //     if (
+  //       !materialCategory ||
+  //       !materialCategories.some(
+  //         (category) => category.categoryKey === materialCategory
+  //       )
+  //     ) {
+  //       const defaultCategory = materialCategories[0].categoryKey;
 
-        replace({
-          pathname: materialType.toString(),
-          query: { materialCategory: defaultCategory },
-        });
-        setSelectedMaterialCategory(defaultCategory);
-      }
-    }
-  }, [materialCategories]);
+  //       replace({
+  //         pathname: materialType.toString(),
+  //         query: { materialCategory: defaultCategory },
+  //       });
+  //       setSelectedMaterialCategory(defaultCategory);
+  //     }
+  //   }
+  // }, [materialCategories]);
 
   useEffect(() => {
     getCurrenciesApi().then();
@@ -317,7 +333,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {t("materials.buttons.back")}
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader}>/ {subCategory}</h4>
+          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? "Choose Category"}</h4>
           <IconButton
             size="small"
             onClick={() => setIsSidebarOpen(true)}
@@ -339,18 +355,19 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           sx={{
             position: 'fixed',
             top: 120,
-            [dir === 'rtl' ? 'right' : 'left']: 140,
-            [dir === 'rtl' ? 'left' : 'right']: 0,
+            left: 0,
+            right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            zIndex: 1300,
-            display: 'flex',
-            flexDirection: dir === 'rtl' ? 'row-reverse' : 'row'
+            zIndex: 1300
           }}
           onClick={() => setIsSidebarOpen(false)}
         >
           <Box
             sx={{
+              position: 'absolute',
+              top: 0,
+              [dir === 'rtl' ? 'right' : 'left']: dir === 'rtl' ? '140px' : '140px',
               width: '380px',
               backgroundColor: '#fff',
               height: '100%',

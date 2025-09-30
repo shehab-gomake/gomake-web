@@ -34,6 +34,7 @@ const TableCellData = ({
   unit,
   isInventoryTable,
   isPurchasePricingTable,
+  rowData,
 }: IRowData) => {
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const machinesCategories = useRecoilValue(machineCategoriesState);
@@ -201,6 +202,9 @@ const TableCellData = ({
           value={value as string}
           isAdmin={isAdmin}
           id={id}
+          minStock={rowData?.minStock?.value ? parseInt(rowData.minStock.value) : undefined}
+          optimalStock={rowData?.optimalStock?.value ? parseInt(rowData.optimalStock.value) : undefined}
+          currentInventory={parseInt(value as string) || 0}
         />
       );
     case EDataTypeEnum.PURCHASE_PRICING:
