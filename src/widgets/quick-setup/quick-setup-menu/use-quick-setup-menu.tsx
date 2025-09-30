@@ -83,8 +83,8 @@ const useSetupGuideMenu = ({
   const progressValue =
     totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
-  const productsSetupStatus = printHouseSetupSteps?.find(
-    (step) => step?.step === SetupStep.PRODUCTS_SETUPS
+  const machinesSetupStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.SETUP_YOUR_MACHINES
   )?.status;
 
   const resetPasswordStatus = printHouseSetupSteps?.find(
@@ -131,16 +131,16 @@ const useSetupGuideMenu = ({
       status: resetPasswordStatus,
     },
     {
-      key: SetupStep.PRODUCTS_SETUPS,
+      key: SetupStep.SETUP_YOUR_MACHINES,
       label: t("quickSetup.steps.setUpYourMachines"),
       onClick:
-        productsSetupStatus !== StepStatus.DONE
+        machinesSetupStatus !== StepStatus.DONE
           ? () => {
               navigate("/onboarding-setup");
               collapseMenu();
             }
           : undefined,
-      status: productsSetupStatus,
+      status: machinesSetupStatus,
     },
     {
       key: "company_profile",
@@ -477,7 +477,7 @@ const useSetupGuideMenu = ({
     // Map step keys to their corresponding routes and tabs
     const stepRouteMap = {
       [SetupStep.RESET_PASSWORD]: { path: "/home", tab: null },
-      [SetupStep.PRODUCTS_SETUPS]: { path: "/onboarding-setup", tab: null },
+      [SetupStep.SETUP_YOUR_MACHINES]: { path: "/onboarding-setup", tab: null },
       [SetupStep.COMPANY_PROFILE_LOGO]: {
         path: "/settings/company-profile",
         tab: "company",
@@ -571,7 +571,7 @@ const useSetupGuideMenu = ({
     handleToggleVerifyBusiness,
     isRtl,
     printHouseSetupSteps,
-    productsSetupStatus,
+    machinesSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,

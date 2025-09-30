@@ -156,7 +156,7 @@ const QuickSetupFlow: React.FC = () => {
   // Mark products setup as in progress when component mounts
   useEffect(() => {
     updatePrintHouseSetupSteps(
-      SetupStep.PRODUCTS_SETUPS,
+      SetupStep.SETUP_YOUR_MACHINES,
       StepStatus.IN_PROGRESS
     );
   }, []);
@@ -805,7 +805,7 @@ const QuickSetupFlow: React.FC = () => {
         if (res.success) {
           // Update the products setup step to completed
           await updatePrintHouseSetupSteps(
-            SetupStep.PRODUCTS_SETUPS,
+            SetupStep.SETUP_YOUR_MACHINES,
             StepStatus.DONE
           );
 
