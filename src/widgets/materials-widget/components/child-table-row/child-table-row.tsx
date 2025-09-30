@@ -18,6 +18,7 @@ import { useStyle } from "./style";
 import { SortIcon } from "@/icons";
 import { JobsModal } from "../jobs-modal/jobs-modal";
 import { ExistingSupplierActionEnum } from "../../enums";
+import { useTranslation } from "react-i18next";
 
 
 interface IChildTableRowProps {
@@ -35,6 +36,7 @@ interface IChildTableRowProps {
 
 const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, renderOptionsCustomer, checkWhatRenderArrayCustomer, isFetchingCustomer, renderOptionsSupplier, checkWhatRenderArraySupplier, isFetchingSupplier }: IChildTableRowProps) => {
     const { classes } = useStyle();
+    const { t } = useTranslation();
     const { alertFaultAdded, alertFault } = useSnackBar();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
@@ -241,6 +243,16 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderInventoryTable = () => (
         <Box sx={classes.childTableContainer}>
+            <Box sx={classes.addButtonContainer}>
+                <GomakePrimaryButton
+                    onClick={() => setIsAddInventoryModalOpen(true)}
+                    style={classes.addInventoryButton}
+                    startIcon={<AddIcon />}
+                >
+                    Add New Inventory
+                </GomakePrimaryButton>
+            </Box>
+
             {isLoadingInventory ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
@@ -269,14 +281,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     {/* Add drag handle header */}
                                     <TableCell sx={classes.headerCell}></TableCell>
                                     <TableCell sx={classes.headerCell}>Supplier Name
-
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setIsAddInventoryModalOpen(true)}
-                                            sx={classes.actionButton}
-                                        >
-                                            <AddIcon fontSize="small" />
-                                        </IconButton>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Code</TableCell>
                                     <TableCell sx={classes.headerCell}>
@@ -286,7 +290,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Purchase Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        Sale Cost ({inventoryTableHeadingUnits.pricingUnit})
+                                        Sale Cost
+                                        <br />
+                                        {inventoryTableHeadingUnits.pricingUnit}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>Sale Currency</TableCell>
                                     <TableCell sx={classes.headerCell}>
