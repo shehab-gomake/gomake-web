@@ -18,7 +18,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import {
   agentsCategoriesState,
-  closeAsInvoiceState,
+  closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -241,8 +241,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, []);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
-  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] = useState<boolean>(false);
-  const [openScheduledReportsModal, setOpenScheduledReportsModal] = useState<boolean>(false);
+  const [openFilterConfirmationModal, setOpenFilterConfirmationModal] =
+    useState<boolean>(false);
+  const [openScheduledReportsModal, setOpenScheduledReportsModal] =
+    useState<boolean>(false);
 
   // Use the scheduled reports hook
   const {
@@ -3012,7 +3014,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           order: sortOrder,
         },
         ...filteredDataWithoutEmptyValues,
-      })
+      });
     }
   }, [
     quoteStatusId,
@@ -3158,6 +3160,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   //  opening the path in new tab when closing order as invoice/delivery note after opening package slip modal
+  //!here
   const openPathAfterPackageModal = () => {
     if (!triggeredFromMoveOrderToReady) return;
 
@@ -3779,14 +3782,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [router.query, agentsCategories, currencies]);
 
-  const closeAsInvoice = useRecoilValue(closeAsInvoiceState);
+  const closeOrderAsInvoiceOrDeliveryNote = useRecoilValue(
+    closeOrderAsInvoiceOrDeliveryNoteState
+  );
 
   const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
         if (isOrder) {
-          onOpenPackagesModal(selectedDocument, closeAsInvoice ? true : false);
+          onOpenPackagesModal(
+            selectedDocument,
+            closeOrderAsInvoiceOrDeliveryNote ? true : false
+          ); //!here
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {
