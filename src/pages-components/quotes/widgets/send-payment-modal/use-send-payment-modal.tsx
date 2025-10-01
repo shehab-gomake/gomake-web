@@ -162,8 +162,10 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
   const handleSendPaymentPage = async () => {
     const selectedContact =
       payState.documentContacts?.[payState.selectedContactIndex] || null;
+
     const contactPhone =
       selectedContact?.contactPhone || payState.contactPhone || "";
+
     const contactMail =
       selectedContact?.contactMail || payState.contactMail || "";
 
@@ -204,6 +206,16 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       alertFault(t("alerts.checkAtLeastOne"));
       return;
     }
+
+    // If only WhatsApp is selected, don't call the API
+    if (
+      payState.sendByWhatsapp &&
+      !payState.sendBySms &&
+      !payState.sendByMail
+    ) {
+      return true; // Return true to indicate WhatsApp should be sent
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         alertSuccess(t("alerts.sendSucceeded"));
@@ -211,10 +223,14 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
         alertFault(t("alerts.sendFailed"));
       }
     };
+
     await sendPrePaymentToClientApi(callApi, callBack, {
       documentType,
       data: dataToSend,
     });
+
+    // Return whether WhatsApp should be sent
+    return payState?.sendByWhatsapp;
   };
 
   return {
