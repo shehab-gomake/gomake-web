@@ -35,6 +35,10 @@ import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import SendIcon from '@mui/icons-material/Send';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Ticket, TicketComment } from '../types/ticket.types';
 import { format, parseISO } from 'date-fns';
 import {
@@ -61,6 +65,8 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
   const theme = useTheme();
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
+  const [activeView, setActiveView] = useState<'conversation' | 'objectives'>('conversation');
+  const [conversationMinimized, setConversationMinimized] = useState(false);
 
   const handleSendReply = (data: any) => {
     console.log('Sending reply:', data);
@@ -144,103 +150,420 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           </Box>
         </Box>
 
-        {/* Comments/Thread - Multi-Channel Timeline */}
+        {/* View Toggle Tabs */}
         <Box
           sx={{
-            flex: 1,
-            overflow: 'auto',
-            p: 3,
-            backgroundColor: colorTokens.neutral[50]
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            px: 2,
+            py: 1,
+            borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+            backgroundColor: theme.palette.background.paper,
           }}
         >
-          {/* System Event: Ticket Created */}
-          <SystemEventMessage
-            type="ticket.created"
-            timestamp={ticket.createdAt}
-            actor={{ name: ticket.reporter.name }}
-          />
-
-          {/* Render comments and system events */}
-          {ticket.comments.map((comment, index) => (
-            <React.Fragment key={comment.id}>
-              {/* Show assignment event if it's the first comment */}
-              {index === 0 && ticket.assignedTo && (
-                <SystemEventMessage
-                  type="ticket.assigned"
-                  timestamp={comment.createdAt}
-                  actor={{ name: ticket.assignedTo.name }}
-                />
-              )}
-
-              {/* Show priority change event (example) */}
-              {index === 1 && (
-                <SystemEventMessage
-                  type="ticket.priority.changed"
-                  timestamp={comment.createdAt}
-                  actor={{ name: ticket.assignedTo?.name || 'System' }}
-                  data={{
-                    oldPriority: 'Low',
-                    newPriority: ticket.priority as any,
-                  }}
-                />
-              )}
-
-              {/* Message Card */}
-              <MessageCard
-                id={comment.id}
-                channel={(comment.channel || 'email') as any}
-                direction={(comment.direction || 'inbound') as any}
-                status={comment.status as any}
-                author={{
-                  name: comment.author.name,
-                  email: comment.author.email,
-                  avatarUrl: comment.author.avatarUrl,
-                }}
-                content={comment.content}
-                timestamp={comment.createdAt}
-                attachments={comment.attachments}
-                isPrivate={comment.isPrivate}
-              />
-            </React.Fragment>
-          ))}
-
-          {ticket.comments.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                No messages yet
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Add a reply to start the conversation
-              </Typography>
-            </Box>
-          )}
+          <Button
+            size="small"
+            startIcon={<ChatBubbleOutlineIcon sx={{ fontSize: 18 }} />}
+            onClick={() => setActiveView('conversation')}
+            sx={{
+              textTransform: 'none',
+              px: 2,
+              py: 0.75,
+              fontWeight: activeView === 'conversation' ? 600 : 400,
+              color: activeView === 'conversation' ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+              backgroundColor: activeView === 'conversation' ? colorTokens.primary[50] : 'transparent',
+              borderRadius: '6px',
+              '&:hover': {
+                backgroundColor: activeView === 'conversation' ? colorTokens.primary[100] : colorTokens.neutral[100],
+              },
+            }}
+          >
+            Conversation
+          </Button>
+          <Button
+            size="small"
+            startIcon={<AssignmentOutlinedIcon sx={{ fontSize: 18 }} />}
+            onClick={() => setActiveView('objectives')}
+            sx={{
+              textTransform: 'none',
+              px: 2,
+              py: 0.75,
+              fontWeight: activeView === 'objectives' ? 600 : 400,
+              color: activeView === 'objectives' ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+              backgroundColor: activeView === 'objectives' ? colorTokens.primary[50] : 'transparent',
+              borderRadius: '6px',
+              '&:hover': {
+                backgroundColor: activeView === 'objectives' ? colorTokens.primary[100] : colorTokens.neutral[100],
+              },
+            }}
+          >
+            Objectives & Details
+          </Button>
         </Box>
 
-        {/* Message Composer at Bottom */}
-        <MessageComposer
-          placeholder="Hi, please check this article for more information"
-          availableChannels={['whatsapp', 'email', 'sms', 'phone']}
-          defaultChannel="whatsapp"
-          availableFrom={[
-            {
-              id: 'csfiki',
-              name: 'CSFikri',
-              identifier: 'support@company.com',
-            },
-            {
-              id: 'support',
-              name: 'Support Team',
-              identifier: 'team@company.com',
-            },
-          ]}
-          defaultFrom="csfiki"
-          showAIToggle={true}
-          aiEnabled={false}
-          onSend={handleSendReply}
-          onAIToggle={(enabled) => console.log('AI toggle:', enabled)}
-          onAttachFile={() => console.log('Attach file')}
-          onAttachImage={() => console.log('Attach image')}
-        />
+        {/* Comments/Thread - Multi-Channel Timeline */}
+        {activeView === 'conversation' && (
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'auto',
+              p: 3,
+              backgroundColor: colorTokens.neutral[50]
+            }}
+          >
+            {/* Collapsible Section Header */}
+            {conversationMinimized && (
+              <Box
+                onClick={() => setConversationMinimized(false)}
+                sx={{
+                  p: 2,
+                  mb: 2,
+                  backgroundColor: 'white',
+                  borderRadius: '8px',
+                  border: `1px solid ${colorTokens.semantic.border.default}`,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  '&:hover': {
+                    backgroundColor: colorTokens.neutral[50],
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <ChatBubbleOutlineIcon sx={{ fontSize: 20, color: colorTokens.semantic.text.secondary }} />
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    Conversation ({ticket.comments.length} messages)
+                  </Typography>
+                </Box>
+                <KeyboardArrowDownIcon sx={{ color: colorTokens.semantic.text.secondary }} />
+              </Box>
+            )}
+
+            {!conversationMinimized && (
+              <Box>
+                {/* Minimize Button */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 2,
+                    px: 1,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
+                    Conversation Timeline
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={() => setConversationMinimized(true)}
+                    title="Minimize conversation"
+                  >
+                    <KeyboardArrowUpIcon sx={{ fontSize: 20 }} />
+                  </IconButton>
+                </Box>
+
+                {/* System Event: Ticket Created */}
+                <SystemEventMessage
+                  type="ticket.created"
+                  timestamp={ticket.createdAt}
+                  actor={{ name: ticket.reporter.name }}
+                />
+
+                {/* Render comments and system events */}
+                {ticket.comments.map((comment, index) => (
+                  <React.Fragment key={comment.id}>
+                    {/* Show assignment event if it's the first comment */}
+                    {index === 0 && ticket.assignedTo && (
+                      <SystemEventMessage
+                        type="ticket.assigned"
+                        timestamp={comment.createdAt}
+                        actor={{ name: ticket.assignedTo.name }}
+                      />
+                    )}
+
+                    {/* Show priority change event (example) */}
+                    {index === 1 && (
+                      <SystemEventMessage
+                        type="ticket.priority.changed"
+                        timestamp={comment.createdAt}
+                        actor={{ name: ticket.assignedTo?.name || 'System' }}
+                        data={{
+                          oldPriority: 'Low',
+                          newPriority: ticket.priority as any,
+                        }}
+                      />
+                    )}
+
+                    {/* Message Card */}
+                    <MessageCard
+                      id={comment.id}
+                      channel={(comment.channel || 'email') as any}
+                      direction={(comment.direction || 'inbound') as any}
+                      status={comment.status as any}
+                      author={{
+                        name: comment.author.name,
+                        email: comment.author.email,
+                        avatarUrl: comment.author.avatarUrl,
+                      }}
+                      content={comment.content}
+                      timestamp={comment.createdAt}
+                      attachments={comment.attachments}
+                      isPrivate={comment.isPrivate}
+                    />
+                  </React.Fragment>
+                ))}
+
+                {ticket.comments.length === 0 && (
+                  <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      No messages yet
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Add a reply to start the conversation
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {/* Objectives & Details View */}
+        {activeView === 'objectives' && (
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'auto',
+              p: 3,
+              backgroundColor: colorTokens.neutral[50]
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                border: `1px solid ${colorTokens.semantic.border.default}`,
+                p: 3,
+              }}
+            >
+              {/* Ticket Description */}
+              <Box sx={{ mb: 4 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: 11,
+                    letterSpacing: '0.5px',
+                    mb: 1.5,
+                    display: 'block',
+                  }}
+                >
+                  Description
+                </Typography>
+                <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.7, color: colorTokens.semantic.text.primary }}>
+                  {ticket.description}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Customer Information */}
+              <Box sx={{ mb: 4 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: 11,
+                    letterSpacing: '0.5px',
+                    mb: 1.5,
+                    display: 'block',
+                  }}
+                >
+                  Customer
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ width: 40, height: 40 }}>
+                    {ticket.reporter.name.charAt(0)}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 14 }}>
+                      {ticket.reporter.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 12 }}>
+                      {ticket.reporter.email}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Objectives / Goals */}
+              <Box sx={{ mb: 4 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: 11,
+                    letterSpacing: '0.5px',
+                    mb: 1.5,
+                    display: 'block',
+                  }}
+                >
+                  Ticket Objectives
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1.5,
+                      p: 2,
+                      backgroundColor: colorTokens.neutral[50],
+                      borderRadius: '8px',
+                      border: `1px solid ${colorTokens.semantic.border.default}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        backgroundColor: colorTokens.primary[600],
+                        mt: 0.75,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
+                      Resolve the customer's technical issue related to {ticket.type.toLowerCase()}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1.5,
+                      p: 2,
+                      backgroundColor: colorTokens.neutral[50],
+                      borderRadius: '8px',
+                      border: `1px solid ${colorTokens.semantic.border.default}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        backgroundColor: colorTokens.primary[600],
+                        mt: 0.75,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
+                      Ensure customer satisfaction and provide follow-up documentation
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1.5,
+                      p: 2,
+                      backgroundColor: colorTokens.neutral[50],
+                      borderRadius: '8px',
+                      border: `1px solid ${colorTokens.semantic.border.default}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        backgroundColor: colorTokens.primary[600],
+                        mt: 0.75,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
+                      Close ticket within SLA timeframe ({ticket.priority} priority)
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Success Criteria */}
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: 11,
+                    letterSpacing: '0.5px',
+                    mb: 1.5,
+                    display: 'block',
+                  }}
+                >
+                  Success Criteria
+                </Typography>
+                <Box
+                  sx={{
+                    p: 2,
+                    backgroundColor: colorTokens.success[50],
+                    borderRadius: '8px',
+                    border: `1px solid ${colorTokens.success[200]}`,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontSize: 13, lineHeight: 1.6, color: colorTokens.success[900] }}>
+                    ✓ Customer confirms issue is resolved<br />
+                    ✓ All technical steps documented in knowledge base<br />
+                    ✓ Follow-up scheduled if necessary
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        )}
+
+        {/* Message Composer at Bottom - Only show in Conversation view */}
+        {activeView === 'conversation' && !conversationMinimized && (
+          <MessageComposer
+            placeholder="Hi, please check this article for more information"
+            availableChannels={['whatsapp', 'email', 'sms', 'phone']}
+            defaultChannel="whatsapp"
+            availableFrom={[
+              {
+                id: 'csfiki',
+                name: 'CSFikri',
+                identifier: 'support@company.com',
+              },
+              {
+                id: 'support',
+                name: 'Support Team',
+                identifier: 'team@company.com',
+              },
+            ]}
+            defaultFrom="csfiki"
+            showAIToggle={true}
+            aiEnabled={false}
+            onSend={handleSendReply}
+            onAIToggle={(enabled) => console.log('AI toggle:', enabled)}
+            onAttachFile={() => console.log('Attach file')}
+            onAttachImage={() => console.log('Attach image')}
+          />
+        )}
       </Box>
 
       {/* Right Sidebar - Metadata */}

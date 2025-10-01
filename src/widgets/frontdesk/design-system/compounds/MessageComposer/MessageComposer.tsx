@@ -134,9 +134,10 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
   return (
     <Box
       sx={{
-        backgroundColor: colorTokens.semantic.background.primary,
+        backgroundColor: '#FFFFFF',
         borderTop: `1px solid ${colorTokens.semantic.border.default}`,
-        p: 2,
+        p: 2.5,
+        boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.06)',
       }}
     >
       {/* Channel and From Selectors */}
@@ -145,7 +146,9 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
           display: 'flex',
           alignItems: 'center',
           gap: 2,
-          mb: 1.5,
+          mb: 2,
+          pb: 2,
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
         }}
       >
         {/* Channel Selector */}
@@ -273,11 +276,11 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyPress}
         sx={{
-          mb: 1.5,
+          mb: 2,
           '& .MuiOutlinedInput-root': {
-            backgroundColor: 'white',
+            backgroundColor: colorTokens.neutral[50],
             fontSize: 14,
-            borderRadius: radiusTokens.md,
+            borderRadius: '10px',
             '& fieldset': {
               borderColor: colorTokens.neutral[300],
             },
@@ -286,7 +289,11 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             },
             '&.Mui-focused fieldset': {
               borderColor: colorTokens.primary[500],
+              borderWidth: '2px',
             },
+          },
+          '& .MuiOutlinedInput-input': {
+            lineHeight: 1.6,
           },
         }}
       />
@@ -328,16 +335,23 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
         <Button
           variant="contained"
           size="medium"
-          endIcon={<SendIcon />}
+          endIcon={<SendIcon sx={{ fontSize: 18 }} />}
           onClick={handleSend}
           disabled={!message.trim()}
           sx={{
             textTransform: 'none',
             px: 3,
-            borderRadius: radiusTokens.md,
-            boxShadow: 'none',
+            py: 1,
+            fontSize: 14,
+            fontWeight: 600,
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
             '&:hover': {
-              boxShadow: 'none',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+            },
+            '&:disabled': {
+              backgroundColor: colorTokens.neutral[300],
+              color: colorTokens.neutral[500],
             },
           }}
         >
