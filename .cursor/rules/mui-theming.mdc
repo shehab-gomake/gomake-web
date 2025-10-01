@@ -1,0 +1,66 @@
+---
+description: Material-UI theming and component patterns
+globs:
+  - "src/widgets/frontdesk/**/*.tsx"
+  - "src/components/**/*.tsx"
+---
+
+# MUI Theming Standards
+
+## Core Primitives
+```typescript
+import { Stack, Box, Paper, Typography, IconButton } from '@mui/material';
+
+// Column layout with spacing
+<Stack sx={{ width: '100%', gap: 2, height: '100%' }}>
+
+// Conversation card shell
+<Paper
+  elevation={0}
+  sx={{
+    border: '1px solid #EAECF0',
+    borderRadius: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 400,
+  }}
+>
+
+// Message header
+<Typography variant="h6" color="text.primary">Inbox</Typography>
+
+// Icon action
+<IconButton size="small" edge="end" color="primary" />
+```
+
+## Theme Access
+```typescript
+import { styled } from '@mui/material/styles';
+import { useGomakeTheme } from '@/hooks/use-gomake-thme';
+
+const StyledList = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1.5),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.background.paper,
+}));
+
+const { primaryColor } = useGomakeTheme();
+
+<Box sx={{
+  bgcolor: primaryColor,
+  borderRadius: 1,
+  px: 2,
+  py: 1,
+}} />
+```
+
+## Layout Guidance
+- Prefer `Stack` for column/row layouts with `gap` instead of manual margins.
+- For fixed-width sidebars, wrap the content in a `Box`/`div` with fixed `width`/`minWidth`, then render the `Paper` within.
+- Constrain scrollable regions with `flex: 1` + `overflow: 'auto'` to match existing conversation threads.
+
+## FrontDesk Specific
+- Empty states should reuse `FrontdeskEmptyState` within a `Paper` bordered container.
+- Conversation lists use `Paper` elevation `0` with borders matching `#EAECF0` and spacing derived from `theme.spacing`.
+- Compose inline styles via the `sx` prop; avoid styled-components unless reuse demands it.
+- Keep typography variants consistent: `h6` for section titles, `body2` for helper text, `caption` for metadata.

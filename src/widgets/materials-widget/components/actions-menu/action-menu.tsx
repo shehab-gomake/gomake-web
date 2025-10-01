@@ -51,6 +51,8 @@ const ActionMenu = (props: IActionMenuProps) => {
     onClickCloseUpdatedTableRowModal,
     updatedTableRowModal
   } = useMaterialsActions(props.isAdmin);
+
+  console.log("action", action);
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);

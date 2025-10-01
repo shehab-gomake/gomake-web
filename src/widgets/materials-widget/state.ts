@@ -50,6 +50,7 @@ export const materialCategoriesState = atom<
     categoryKey: string;
     categoryName: string;
     isDeletable: boolean;
+    imageURL?: string | null;
     additionalAttributes?: any;
   }[]
 >({
@@ -178,5 +179,56 @@ export const selectedMaterialIdForUpdateState = atom<string>({
 
 export const materialTypeTableState = atom<any>({
   key: "materialTypeTableState",
+  default: {},
+});
+
+export const openChildTableState = atom<{ rowId: string; tableType: 'inventory' | 'purchasePricing' | null }>({
+  key: "openChildTableState",
+  default: { rowId: '', tableType: null },
+});
+
+export const inventoryDataState = atom<any[]>({
+  key: "inventoryDataState",
+  default: [],
+});
+
+export const purchasePricingDataState = atom<any[]>({
+  key: "purchasePricingDataState",
+  default: [],
+});
+
+export const isLoadingInventoryState = atom<boolean>({
+  key: "isLoadingInventoryState",
+  default: false,
+});
+
+export const isLoadingPurchasePricingState = atom<boolean>({
+  key: "isLoadingPurchasePricingState",
+  default: false,
+});
+
+export const openJobsModalState = atom<{ 
+  open: boolean; 
+  supplierName?: string; 
+  materialCode?: string; 
+  materialName?: string; 
+}>({
+  key: "openJobsModalState",
+  default: { open: false },
+});
+
+export const inventoryTableHeadingUnitsState = atom<{
+  inventoryUnit?: string;
+  pricingUnit?: string;
+}>({
+  key: "inventoryTableHeadingUnitsState",
+  default: {},
+});
+
+export const purchasePricingTableHeadingUnitsState = atom<{
+  inventoryUnit?: string;
+  pricingUnit?: string;
+}>({
+  key: "purchasePricingTableHeadingUnitsState",
   default: {},
 });

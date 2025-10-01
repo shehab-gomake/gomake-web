@@ -18,6 +18,8 @@ interface IProps {
   isAdmin: boolean;
   options: { label: string; value: string }[];
   placeHolder?: string;
+  isInventoryTable?: boolean;
+  isPurchasePricingTable?: boolean;
 }
 
 const MultiSelectClientsInput = ({
@@ -27,9 +29,11 @@ const MultiSelectClientsInput = ({
   isAdmin,
   options,
   placeHolder,
+  isInventoryTable = false,
+  isPurchasePricingTable = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const { updateCellData } = useTableCellData(isAdmin);
+  const { updateCellData } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const { renderOptions, checkWhatRenderArray } = useCustomerDropDownList({});
   const { t } = useTranslation();
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
@@ -52,14 +56,16 @@ const MultiSelectClientsInput = ({
 
   // Helper function to normalize values array to simple IDs
   const normalizeValues = (vals: any[]): string[] => {
+    if (!Array.isArray(vals)) return [];
+
     return vals
       .map((item) => {
         if (typeof item === "object" && item !== null) {
-          return item.ID || item.id;
+          return item.ID || item.id || item.key;
         }
         return item;
       })
-      .filter((id) => id !== undefined && id !== null);
+      .filter((id) => id !== undefined && id !== null && typeof id === 'string');
   };
 
   const normalizedValues = normalizeValues(values);
@@ -82,7 +88,7 @@ const MultiSelectClientsInput = ({
       (selectedId) =>
         reorderedOptions?.find((opt) => opt?.value === selectedId)?.label
     )
-    .filter((label) => label !== null && label !== undefined);
+    .filter((label) => label !== null && label !== undefined && typeof label === 'string');
 
   const handleSelectCheck = (
     parameterKey: string,
@@ -117,7 +123,7 @@ const MultiSelectClientsInput = ({
         onChangeTextField={
           parameterKey === "clients" ? checkWhatRenderArray : undefined
         }
-        value={selectedLabels}
+        value={selectedLabels || []}
         disableClearable={true}
         placeholder={placeHolder}
         options={reorderedOptions}

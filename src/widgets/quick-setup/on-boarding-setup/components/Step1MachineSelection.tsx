@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
@@ -26,6 +26,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  keyframes,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -35,6 +36,7 @@ import {
   Machine,
   SelectedMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
+import { pulseAnimation } from "@/widgets/quick-setup/on-boarding-setup/animations";
 
 interface Step1MachineSelectionProps {
   allMachines: Machine[];
@@ -66,21 +68,57 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   const [categorySearchTerm, setCategorySearchTerm] = useState("");
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [pendingMachineName, setPendingMachineName] = useState("");
+  const [machineSelectOpen, setMachineSelectOpen] = useState(false);
+  const [categorySelectOpen, setCategorySelectOpen] = useState(false);
+  const [modalCategorySelectOpen, setModalCategorySelectOpen] = useState(false);
+
+  // Refs for auto-focusing TextFields
+  const machineSearchRef = useRef<HTMLInputElement>(null);
+  const categorySearchRef = useRef<HTMLInputElement>(null);
+  const modalCategorySearchRef = useRef<HTMLInputElement>(null);
 
   // Filter machines based on search term
   useEffect(() => {
     if (machineSearchTerm) {
       const filtered = allMachines.filter((machine) => {
-        const machineName = machine.manufacturer && machine.model 
-          ? `${machine.manufacturer} - ${machine.model}` 
-          : machine.nickName || '';
-        return machineName.toLowerCase().includes(machineSearchTerm.toLowerCase());
+        const machineName =
+          machine.manufacturer && machine.model
+            ? `${machine.manufacturer} - ${machine.model}`
+            : machine.nickName || "";
+        return machineName
+          .toLowerCase()
+          .includes(machineSearchTerm.toLowerCase());
       });
       setMachines(filtered);
     } else {
       setMachines(allMachines);
     }
   }, [machineSearchTerm, allMachines]);
+
+  // Auto-focus TextFields when dropdowns open
+  useEffect(() => {
+    if (machineSelectOpen) {
+      setTimeout(() => {
+        machineSearchRef.current?.focus();
+      }, 100);
+    }
+  }, [machineSelectOpen]);
+
+  useEffect(() => {
+    if (categorySelectOpen) {
+      setTimeout(() => {
+        categorySearchRef.current?.focus();
+      }, 100);
+    }
+  }, [categorySelectOpen]);
+
+  useEffect(() => {
+    if (modalCategorySelectOpen) {
+      setTimeout(() => {
+        modalCategorySearchRef.current?.focus();
+      }, 100);
+    }
+  }, [modalCategorySelectOpen]);
 
   const handleMachineChange = (machineId: string) => {
     setSelectedMachine(machineId);
@@ -171,21 +209,27 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
             onChange={(e) => handleMachineChange(e.target.value)}
             label="search for your machine"
             input={<OutlinedInput label="search for your machine" />}
+            open={machineSelectOpen}
+            onOpen={() => setMachineSelectOpen(true)}
+            onClose={() => {
+              setMachineSelectOpen(false);
+              setMachineSearchTerm("");
+            }}
             sx={{
-              borderBottom: '2px solid #e0e0e0',
-              '&:hover': {
-                borderBottom: '2px solid #bdbdbd',
+              borderBottom: "2px solid #e0e0e0",
+              "&:hover": {
+                borderBottom: "2px solid #bdbdbd",
               },
-              '&.Mui-focused': {
-                borderBottom: '2px solid #1976d2',
+              "&.Mui-focused": {
+                borderBottom: "2px solid #1976d2",
               },
-              '& .MuiOutlinedInput-root': {
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+              "& .MuiOutlinedInput-root": {
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
               },
             }}
@@ -204,11 +248,37 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
               </InputAdornment>
             }
             MenuProps={{
-              PaperProps: { style: { maxHeight: 300 } },
+              PaperProps: {
+                style: {
+                  maxHeight: 300,
+                  padding: 0,
+                },
+                sx: {
+                  "& .MuiList-root": {
+                    paddingTop: 0,
+                  },
+                },
+              },
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+              transformOrigin: {
+                vertical: "top",
+                horizontal: "left",
+              },
             }}
           >
-            <MenuItem sx={{ p: 1 }}>
+            {/* Search TextField positioned above options */}
+            <Box
+              sx={{
+                p: 1,
+                borderBottom: "1px solid #e0e0e0",
+                backgroundColor: "#fafafa",
+              }}
+            >
               <TextField
+                inputRef={machineSearchRef}
                 placeholder="search for your machine"
                 value={machineSearchTerm}
                 onChange={(e) => setMachineSearchTerm(e.target.value)}
@@ -220,6 +290,18 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   "& .MuiInputBase-root": {
                     height: 40,
                     fontSize: "14px",
+                    backgroundColor: "white",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#e0e0e0",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#bdbdbd",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#1976d2",
+                    },
                   },
                 }}
                 InputProps={{
@@ -230,7 +312,8 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   ),
                 }}
               />
-            </MenuItem>
+            </Box>
+
             {machinesLoading ? (
               <MenuItem disabled sx={{ py: 1 }}>
                 <CircularProgress size={16} sx={{ mr: 1 }} />
@@ -243,9 +326,9 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   value={machine.id}
                   sx={{ py: 1, fontSize: "14px" }}
                 >
-                  {machine.manufacturer && machine.model 
-                    ? `${machine.manufacturer} - ${machine.model}` 
-                    : machine.nickName || 'Unknown Machine'}
+                  {machine.manufacturer && machine.model
+                    ? `${machine.manufacturer} - ${machine.model}`
+                    : machine.nickName || "Unknown Machine"}
                 </MenuItem>
               ))
             )}
@@ -280,21 +363,27 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
             onChange={(e) => setSelectedCategory(e.target.value)}
             label={t("machineAttributes.category")}
             input={<OutlinedInput label={t("machineAttributes.category")} />}
+            open={categorySelectOpen}
+            onOpen={() => setCategorySelectOpen(true)}
+            onClose={() => {
+              setCategorySelectOpen(false);
+              setCategorySearchTerm("");
+            }}
             sx={{
-              borderBottom: '2px solid #e0e0e0',
-              '&:hover': {
-                borderBottom: '2px solid #bdbdbd',
+              borderBottom: "2px solid #e0e0e0",
+              "&:hover": {
+                borderBottom: "2px solid #bdbdbd",
               },
-              '&.Mui-focused': {
-                borderBottom: '2px solid #1976d2',
+              "&.Mui-focused": {
+                borderBottom: "2px solid #1976d2",
               },
-              '& .MuiOutlinedInput-root': {
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+              "& .MuiOutlinedInput-root": {
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
               },
             }}
@@ -313,11 +402,37 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
               </InputAdornment>
             }
             MenuProps={{
-              PaperProps: { style: { maxHeight: 300 } },
+              PaperProps: {
+                style: {
+                  maxHeight: 300,
+                  padding: 0,
+                },
+                sx: {
+                  "& .MuiList-root": {
+                    paddingTop: 0,
+                  },
+                },
+              },
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+              transformOrigin: {
+                vertical: "top",
+                horizontal: "left",
+              },
             }}
           >
-            <MenuItem sx={{ p: 1 }}>
+            {/* Search TextField positioned above options */}
+            <Box
+              sx={{
+                p: 1,
+                borderBottom: "1px solid #e0e0e0",
+                backgroundColor: "#fafafa",
+              }}
+            >
               <TextField
+                inputRef={categorySearchRef}
                 placeholder="Search categories..."
                 value={categorySearchTerm}
                 onChange={(e) => setCategorySearchTerm(e.target.value)}
@@ -329,6 +444,18 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   "& .MuiInputBase-root": {
                     height: 40,
                     fontSize: "14px",
+                    backgroundColor: "white",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#e0e0e0",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#bdbdbd",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#1976d2",
+                    },
                   },
                 }}
                 InputProps={{
@@ -339,7 +466,8 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
                   ),
                 }}
               />
-            </MenuItem>
+            </Box>
+
             {filterCategories.map((category) => (
               <MenuItem
                 key={category.id}
@@ -355,11 +483,20 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           variant="contained"
           onClick={handleAddMachine}
           disabled={!selectedMachine || !selectedCategory}
+          // startIcon={<AddIcon />}
           sx={{
-            minWidth: 80,
+            minWidth: 120,
             height: 40,
             fontSize: "14px",
-            px: 2,
+            px: 3,
+            ...(selectedMachine &&
+              selectedCategory && {
+                animation: `${pulseAnimation} 1.5s infinite`,
+                backgroundColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              }),
           }}
         >
           {t("navigationButtons.add")}
@@ -369,8 +506,8 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
       {/* Help text for adding new machines */}
       {hasNoResults && (
         <Typography variant="body2" color="info.main" sx={{ mb: 2 }}>
-          💡 No machines found. Click the "Add new machine" option in the dropdown above to add "
-          {machineSearchTerm}"
+          💡 No machines found. Click the "Add new machine" option in the
+          dropdown above to add "{machineSearchTerm}"
         </Typography>
       )}
 
@@ -457,9 +594,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Select Category for "{pendingMachineName}"
-        </DialogTitle>
+        <DialogTitle>Select Category for "{pendingMachineName}"</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
             Please select a category for the new machine "{pendingMachineName}"
@@ -471,26 +606,98 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
               onChange={(e) => setSelectedCategory(e.target.value)}
               label={t("machineAttributes.category")}
               input={<OutlinedInput label={t("machineAttributes.category")} />}
+              open={modalCategorySelectOpen}
+              onOpen={() => setModalCategorySelectOpen(true)}
+              onClose={() => {
+                setModalCategorySelectOpen(false);
+                setCategorySearchTerm("");
+              }}
               sx={{
-                borderBottom: '2px solid #e0e0e0',
-                '&:hover': {
-                  borderBottom: '2px solid #bdbdbd',
+                borderBottom: "2px solid #e0e0e0",
+                "&:hover": {
+                  borderBottom: "2px solid #bdbdbd",
                 },
-                '&.Mui-focused': {
-                  borderBottom: '2px solid #1976d2',
+                "&.Mui-focused": {
+                  borderBottom: "2px solid #1976d2",
                 },
-                '& .MuiOutlinedInput-root': {
-                  borderBottom: '2px solid #e0e0e0',
-                  '&:hover': {
-                    borderBottom: '2px solid #bdbdbd',
+                "& .MuiOutlinedInput-root": {
+                  borderBottom: "2px solid #e0e0e0",
+                  "&:hover": {
+                    borderBottom: "2px solid #bdbdbd",
                   },
-                  '&.Mui-focused': {
-                    borderBottom: '2px solid #1976d2',
+                  "&.Mui-focused": {
+                    borderBottom: "2px solid #1976d2",
                   },
                 },
               }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                    padding: 0,
+                  },
+                  sx: {
+                    "& .MuiList-root": {
+                      paddingTop: 0,
+                    },
+                  },
+                },
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+              }}
             >
-              {categories.map((category) => (
+              {/* Search TextField positioned above options */}
+              <Box
+                sx={{
+                  p: 1,
+                  borderBottom: "1px solid #e0e0e0",
+                  backgroundColor: "#fafafa",
+                }}
+              >
+                <TextField
+                  inputRef={modalCategorySearchRef}
+                  placeholder="Search categories..."
+                  value={categorySearchTerm}
+                  onChange={(e) => setCategorySearchTerm(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  fullWidth
+                  size="small"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: 40,
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#e0e0e0",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#bdbdbd",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#1976d2",
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+
+              {filterCategories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {t(category.name)}
                 </MenuItem>

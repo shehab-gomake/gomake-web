@@ -262,7 +262,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         <></>
       )}
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
-        {props.isAdmin === false ? (
+        {/* {props.isAdmin === false ? (
           <button
             onClick={(e) => handleOpen(e)}
             style={{
@@ -288,9 +288,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           </button>
         ) : (
           <></>
-        )}
+        )} */}
         <ActionMenu isAdmin={props.isAdmin} />
-        <Menu
+        {/* <Menu
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={handleClose}
@@ -349,7 +349,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           >
             {t("materials.sheetPaper.chooseNewSupplier")}
           </Button>
-        </Menu>
+        </Menu> */}
       </Stack>
     </Stack>
   );

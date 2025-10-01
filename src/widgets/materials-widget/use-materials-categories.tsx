@@ -17,13 +17,14 @@ import {
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
+import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
+import { getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
@@ -106,7 +107,30 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       setIsLoadingMaterials(false);
       if (res.success) {
         setMaterialCategoryData(
-          res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
+          res.data?.result?.data?.map((row) => {
+            // Add mock data for new columns
+            const newRow = { ...row, checked: false };
+
+            // Handle SKU from API response (top level)
+            if (row.sku !== null && row.sku !== undefined && row.sku !== "") {
+              newRow.rowData.sku = {
+                value: row.sku,
+                isEditable: true,
+                type: 1 // NUMBER
+              };
+            }
+
+            // Handle isActive from API response (top level)
+            if (row.isActive !== null && row.isActive !== undefined) {
+              newRow.rowData.Active = {
+                value: row.isActive,
+                isEditable: true,
+                type: 2 // BOOLEAN
+              };
+            }
+
+            return newRow;
+          })
         );
         setPagesCount(Math.ceil(res.data?.result?.totalItems / pageSize));
         const filters = res.data?.filters;
@@ -158,12 +182,10 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       }).catch((e) => { });
     } else {
-      await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+      await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId: supplierId === "" ? null : supplierId,
-        pageNumber,
-        pageSize,
+        supplierId: null,
         isActive,
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       },
