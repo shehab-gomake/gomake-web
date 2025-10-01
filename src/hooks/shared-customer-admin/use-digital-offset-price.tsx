@@ -3600,7 +3600,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               display: "flex",
               flexDirection: "row",
               flexWrap: "wrap",
-              gap: 10,
+              // gap: 10,
             }}
           >
             <div
@@ -3952,8 +3952,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           size="small"
                           onClick={onIconClick}
                           sx={{
-                            ml: 0.75,
-                            p: 0.5,
+                            // ml: 0.75,
+                            // p: 0.5,
+                            gap: 0,
+                            padding: 0,
+                            margin: 0,
+                            marginLeft: "5px",
+                            marginRight: "5px",
                             color: secondColor(500),
                           }}
                           title={t("products.offsetPrice.admin.uploadToDetectColorLoad")}
