@@ -68,7 +68,8 @@ const AdvertisingProductNameParameterWidget = ({
     createNewTemplateWithCustomDimensions,
     openErrorModal,
     setOpenErrorModal,
-    errorMessage
+    errorMessage,
+    resetModalStates
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
@@ -331,7 +332,13 @@ const AdvertisingProductNameParameterWidget = ({
 
       <GoMakeModal
         open={openGenerateModal}
-        onClose={() => isView ? null : setOpenGenerateModal(false)}
+        onClose={() => {
+          if (!isView) {
+            setOpenGenerateModal(false);
+            // Reset all modal states when closing
+            resetModalStates();
+          }
+        }}
         insideStyle={{ width: 750, height: !isView ? "fit-content" : 500, padding: 20 }}
         withClose={isView ? false : true}
         modalTitle={
@@ -463,7 +470,7 @@ const AdvertisingProductNameParameterWidget = ({
                     sx={{
                       width: "fit-content",
                       height: 40,
-                      backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#663399"
+                      backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092"
                     }}
                     disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
                     onClick={createNewTemplateWithCustomDimensions}

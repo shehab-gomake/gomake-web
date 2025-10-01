@@ -361,7 +361,22 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
   }
 
+  const resetModalStates = () => {
+    setIsViewInfoAfterGenerate(false);
+    setIsView(false);
+    setPdfUrl(null);
+    setDxfUrl(null);
+    setCustomDimensions({
+      finalUnitWidth: "",
+      finalUnitLength: "",
+      finalUnitHeight: ""
+    });
+  };
+
   const createNewTemplate = () => {
+    // Reset modal states before opening new modal
+    resetModalStates();
+
     // For special templateId, skip custom modal and go directly to generate modal
     if (productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
       setOpenGenerateModal(true);
@@ -626,7 +641,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     createNewTemplateWithCustomDimensions,
     openErrorModal,
     setOpenErrorModal,
-    errorMessage
+    errorMessage,
+    resetModalStates
   };
 };
 
