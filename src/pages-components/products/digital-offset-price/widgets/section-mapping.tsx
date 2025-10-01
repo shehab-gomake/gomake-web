@@ -122,7 +122,7 @@ const SectionMappingWidget = ({
   };
   return (
     <>
-      <div key={index} style={clasess.subSectionContainer}>
+      <div key={index} style={index === 0 ? { ...clasess.subSectionContainer, marginTop: -10 } : clasess.subSectionContainer}>
         {!isAccordion && (
           <div style={clasess.subSectionTitleStyle}>{subSection.name}</div>
         )}

@@ -3600,7 +3600,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               display: "flex",
               flexDirection: "row",
               flexWrap: "wrap",
-              gap: 10,
+              // gap: 10,
             }}
           >
             <div
@@ -3952,8 +3952,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           size="small"
                           onClick={onIconClick}
                           sx={{
-                            ml: 0.75,
-                            p: 0.5,
+                            // ml: 0.75,
+                            // p: 0.5,
+                            gap: 0,
+                            padding: 0,
+                            margin: 0,
+                            marginLeft: "5px",
+                            marginRight: "5px",
                             color: secondColor(500),
                           }}
                           title={t("products.offsetPrice.admin.uploadToDetectColorLoad")}
@@ -3970,7 +3975,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "flex-end",
-                  gap: 15,
+                  // gap: 15,
                 }}
               >
                 <div
@@ -3989,7 +3994,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         : { ...clasess.parameterContainer, position: "relative" }
                     }
                   >
-                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, insetInlineStart: 0, height: 30 }}>
+                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -24, left: 0, }}>
                       {t("products.offsetPrice.admin.numberOfPapers")}
                     </div>
                     <div
@@ -4003,8 +4008,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           borderRadius: "4px",
                           backgroundColor: "#ddd",
                           color: "#666",
-                          minWidth: "220px",
-                          // textAlign: "center",
+                          minWidth: "200px",
                           height: 40,
                           ...FONT_FAMILY.Lexend(500, 16),
 
@@ -6597,7 +6601,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   let heightValue = getValue("unitLength") || getValue("dieUnitLength") || "";
 
                   // Directly process child parameters like the existing child parameters logic
-                  if (sizeParameter?.childsParameters) {
+                  if (sizeParameter?.childsParameters && productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
                     sizeParameter.childsParameters.forEach((childParam) => {
                       const childParameterDef = subSection.parameters.find(p => p.id === childParam.id);
 
