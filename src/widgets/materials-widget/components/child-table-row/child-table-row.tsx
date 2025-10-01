@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
-import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, materialCategorySuppliersState, openJobsModalState, materialCategoryDataState } from "../../state";
+import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openAddSupplierModalState, openJobsModalState, materialCategoryDataState, currenciesState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
 import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
-import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GomakeTextInput, GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal, GoMakeAutoComplate } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
@@ -54,6 +54,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const [pendingPurchasePricingData, setPendingPurchasePricingData] = useState<any>(null);
     const [jobsData, setJobsData] = useState<any[]>([]);
     const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+    const [currencies, setCurrencies] =
+        useRecoilState<{ label: string; value: string }[]>(currenciesState);
     const [scrollLeft, setScrollLeft] = useState(0);
     const [formData, setFormData] = useState({
         supplierId: '',
@@ -75,7 +77,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         isActive: true,
         purchasePrice: 0,
         salePrice: 0,
-        clients: []
+        clients: [],
+        purchaseCurrency: '',
+        saleCurrency: '',
     });
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
     const [selectedClients, setSelectedClients] = useState<any[]>([]);
@@ -282,7 +286,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 [isRTL ? 'right' : 'left']: isRTL ? `${scrollLeft > 0 ? scrollLeft : 8}px` : `${-scrollLeft > 0 ? scrollLeft : 8}px`,
                 top: 0,
                 zIndex: 999999,
-                padding: '8px 0px',
+                padding: '4px 0px',
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -325,36 +329,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
                                     {/* Add drag handle header */}
-                                    <TableCell sx={{
-                                        ...classes.headerCell,
-                                        position: 'sticky',
-                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
-                                        zIndex: 999998,
-                                        backgroundColor: '#D5D7FF',
-                                        width: '50px',
-                                        minWidth: '50px',
-                                        maxWidth: '50px',
-                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
-                                        padding: '4px',
-                                        margin: 0,
-                                        willChange: 'transform',
-                                    }}></TableCell>
-                                    <TableCell sx={{
-                                        ...classes.headerCell,
-                                        position: 'sticky',
-                                        [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
-                                        zIndex: 999997,
-                                        backgroundColor: '#D5D7FF',
-                                        width: '150px',
-                                        minWidth: '150px',
-                                        maxWidth: '150px',
-                                        boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
-                                        transform: `translateZ(0) translateX(0px)`, // Force re-render
-                                        padding: '4px',
-                                        margin: 0,
-                                        // Force the browser to recalculate position
-                                        willChange: 'transform',
-                                    }}>{t("materials.childTable.supplierName")}
+                                    <TableCell sx={classes.headerCell}></TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.supplierName")}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.code")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
@@ -378,7 +354,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.jobs")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.actions")}</TableCell>
+                                    <TableCell sx={classes.headerCell}>
+                                        {/* {t("materials.childTable.actions")} */}
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <Droppable droppableId="inventory-rows">
@@ -401,37 +379,11 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         {/* Drag handle cell */}
                                                         <TableCell
                                                             {...provided.dragHandleProps}
-                                                            sx={{
-                                                                textAlign: 'center',
-                                                                padding: '12px 8px',
-                                                                whiteSpace: 'nowrap',
-                                                                position: 'sticky',
-                                                                [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 100}px` : `${scrollLeft - 129}px`,
-                                                                zIndex: 999998,
-                                                                backgroundColor: '#fff',
-                                                                width: '50px',
-                                                                minWidth: '50px',
-                                                                maxWidth: '50px',
-                                                                margin: 0,
-                                                            }}
+                                                            sx={classes.bodyCell}
                                                         >
                                                             <SortIcon />
                                                         </TableCell>
-                                                        <TableCell sx={{
-                                                            textAlign: 'center',
-                                                            padding: '12px 8px',
-                                                            whiteSpace: 'nowrap',
-                                                            position: 'sticky',
-                                                            [isRTL ? 'right' : 'left']: isRTL ? `${-scrollLeft - 50}px` : `${scrollLeft - 82}px`,
-                                                            zIndex: 999997,
-                                                            backgroundColor: '#fff',
-                                                            width: '150px',
-                                                            minWidth: '150px',
-                                                            maxWidth: '150px',
-                                                            boxShadow: isRTL ? '2px 0 4px rgba(0,0,0,0.1)' : '-2px 0 4px rgba(0,0,0,0.1)',
-                                                            transform: 'translateZ(0)',
-                                                            margin: 0,
-                                                        }}>
+                                                        <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
                                                                 value={row.supplierName || ''}
                                                                 isEditable={false}
@@ -923,7 +875,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             isActive: true,
             purchasePrice: 0,
             salePrice: 0,
-            clients: []
+            clients: [],
+            purchaseCurrency: '',
+            saleCurrency: '',
         });
     };
 
@@ -1160,8 +1114,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>{t("materials.childTable.addNewInventory")}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={classes.dialogTitle}>{t("materials.childTable.addNewInventory")}</DialogTitle>
+                <DialogContent sx={classes.modalContent1}>
                     <Box sx={classes.modalContent}>
                         <Box>
                             <div style={classes.modalLabelText}>{t("materials.childTable.supplier")}</div>
@@ -1178,33 +1132,70 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                 getOptionLabel={(option: any) => `${option.name}`}
                             />
                         </Box>
-                        <GomakeTextInput
-                            labelText={t("materials.childTable.code")}
-                            value={inventoryFormData.code}
-                            onChange={(e) => handleInventoryFormChange('code', e.target.value)}
-                            placeholder={t("materials.childTable.enterCode")}
-                        />
-                        <GomakeTextInput
-                            labelText={t("materials.childTable.quantity")}
-                            value={inventoryFormData.quantity.toString()}
-                            onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
-                            type="number"
-                            placeholder={t("materials.childTable.enterQuantity")}
-                        />
-                        <GomakeTextInput
-                            labelText={t("materials.childTable.purchasePrice")}
-                            value={inventoryFormData.purchasePrice.toString()}
-                            onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
-                            type="number"
-                            placeholder={t("materials.childTable.enterPurchasePrice")}
-                        />
-                        <GomakeTextInput
-                            labelText={t("materials.childTable.salePrice")}
-                            value={inventoryFormData.salePrice.toString()}
-                            onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
-                            type="number"
-                            placeholder={t("materials.childTable.enterSalePrice")}
-                        />
+                        <div style={classes.modalInputContainer}>
+                            <div style={classes.modalInputContainerItem}>
+                                <GomakeTextInput
+                                    labelText={t("materials.childTable.code")}
+                                    value={inventoryFormData.code}
+                                    onChange={(e) => handleInventoryFormChange('code', e.target.value)}
+                                    placeholder={t("materials.childTable.enterCode")}
+                                />
+                            </div>
+                            <div style={classes.modalInputContainerItem}>
+                                <GomakeTextInput
+                                    labelText={t("materials.childTable.quantity")}
+                                    value={inventoryFormData.quantity.toString()}
+                                    onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
+                                    type="number"
+                                    placeholder={t("materials.childTable.enterQuantity")}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={classes.modalInputContainer}>
+                            <div style={classes.modalInputContainerItem}>
+                                <GomakeTextInput
+                                    labelText={t("materials.childTable.purchasePrice")}
+                                    value={inventoryFormData.purchasePrice.toString()}
+                                    onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
+                                    type="number"
+                                    placeholder={t("materials.childTable.enterPurchasePrice")}
+                                />
+                            </div>
+                            <div style={classes.modalInputContainerItem}>
+                                <GoMakeAutoComplate
+                                    value={inventoryFormData.purchaseCurrency}
+                                    onChange={(e) => handleInventoryFormChange('purchaseCurrency', e.target.value)}
+                                    options={currencies}
+                                    placeholder={t("materials.childTable.selectCurrency")}
+                                    labelText={t("materials.childTable.purchaseCurrency")}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={classes.modalInputContainer}>
+                            <div style={classes.modalInputContainerItem}>
+                                <GomakeTextInput
+                                    labelText={t("materials.childTable.saleCost")}
+                                    value={inventoryFormData.salePrice.toString()}
+                                    onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
+                                    type="number"
+                                    placeholder={t("materials.childTable.enterSalePrice")}
+                                />
+                            </div>
+                            <div style={classes.modalInputContainerItem}>
+                                <GoMakeAutoComplate
+                                    value={inventoryFormData.saleCurrency}
+                                    onChange={(e) => handleInventoryFormChange('saleCurrency', e.target.value)}
+                                    options={currencies}
+                                    placeholder={t("materials.childTable.selectCurrency")}
+                                    labelText={t("materials.childTable.saleCurrency")}
+                                />
+                            </div>
+                        </div>
+
+
+
                         <Box>
                             <div style={classes.modalLabelText}>{t("materials.childTable.clients")}</div>
                             <ClientAutocomplete
