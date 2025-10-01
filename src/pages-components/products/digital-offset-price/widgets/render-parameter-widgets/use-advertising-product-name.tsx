@@ -362,9 +362,9 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   }
 
   const createNewTemplate = () => {
-    // Check if this is the special templateId that needs custom dimensions
+    // For special templateId, skip custom modal and go directly to generate modal
     if (productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
-      setOpenCustomModal(true);
+      setOpenGenerateModal(true);
       return;
     }
 
@@ -387,7 +387,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const createNewTemplateWithCustomDimensions = async () => {
     setIsView(true)
     setOpenCustomModal(false)
-    setOpenGenerateModal(true)
+    // Keep generate modal open since we're already in it for special templateId
 
     const sheetWeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetWeight")?.values[0];
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];

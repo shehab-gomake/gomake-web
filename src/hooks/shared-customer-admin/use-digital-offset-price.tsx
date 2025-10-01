@@ -6597,7 +6597,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   let heightValue = getValue("unitLength") || getValue("dieUnitLength") || "";
 
                   // Directly process child parameters like the existing child parameters logic
-                  if (sizeParameter?.childsParameters) {
+                  if (sizeParameter?.childsParameters && productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
                     sizeParameter.childsParameters.forEach((childParam) => {
                       const childParameterDef = subSection.parameters.find(p => p.id === childParam.id);
 
