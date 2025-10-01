@@ -379,26 +379,99 @@ const AdvertisingProductNameParameterWidget = ({
           }
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
-          <div style={clasess.modalContentImage}>
-            {(image || categoryImage) && <img
-              src={categoryImage != "" ? categoryImage : image}
-              alt="parameter image"
-              style={clasess.modalContentImageItem2}
-            />
-            }
-            <div style={clasess.modalContentDataItem2}>
-              {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
-                return <div>{item}</div>
-              })}
-            </div>
-          </div>
-          <div style={clasess.modalContentButton2}>
-            <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
-            <div style={clasess.modalContentButtonItem2}>
-              <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
-            </div>
-          </div>
-
+          {/* Show custom dimension inputs for special templateId */}
+          {productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25" ? (
+            <>
+              <div style={clasess.modalContentImage}>
+                {(image || categoryImage) && <img
+                  src={categoryImage != "" ? categoryImage : image}
+                  alt="parameter image"
+                  style={clasess.modalContentImageItem2}
+                />
+                }
+                <div style={clasess.modalContentDataItem2}>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitWidth")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitWidth}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitLength")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitLength}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitLength")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitHeight")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitHeight}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div style={clasess.modalContentButton2}>
+                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                <div style={clasess.modalContentButtonItem2}>
+                  <GomakePrimaryButton
+                    sx={{
+                      width: "fit-content",
+                      height: 40,
+                      backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#663399"
+                    }}
+                    disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
+                    onClick={createNewTemplateWithCustomDimensions}
+                  >
+                    {t("products.offsetPrice.admin.generate")}
+                  </GomakePrimaryButton>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Show normal image and parameters for other templates */
+            <>
+              <div style={clasess.modalContentImage}>
+                {(image || categoryImage) && <img
+                  src={categoryImage != "" ? categoryImage : image}
+                  alt="parameter image"
+                  style={clasess.modalContentImageItem2}
+                />
+                }
+                <div style={clasess.modalContentDataItem2}>
+                  {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
+                    return <div>{item}</div>
+                  })}
+                </div>
+              </div>
+              <div style={clasess.modalContentButton2}>
+                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                <div style={clasess.modalContentButtonItem2}>
+                  <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
+                </div>
+              </div>
+            </>
+          )}
         </Stack>}
         {isView && !isViewInfoAfterGenerate && <div style={clasess.modalContentIcon}>
           <TestIcon />
@@ -575,75 +648,6 @@ const AdvertisingProductNameParameterWidget = ({
         </div>
       </GoMakeModal>
 
-      {/* Custom Dimensions Modal for specific templateId */}
-      <GoMakeModal
-        open={openCustomModal}
-        onClose={() => setOpenCustomModal(false)}
-        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
-        modalTitle={t("products.offsetPrice.admin.enterCustomDimensions")}
-      >
-        <Stack gap={3} justifyContent={'flex-start'} margin={'auto'} marginTop={"20px"}>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitWidth")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitWidth}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitLength")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitLength}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitLength")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitHeight")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitHeight}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <SecondaryButton
-              onClick={() => setOpenCustomModal(false)}
-              variant={'outlined'}
-              sx={{ width: 'fit-content' }}
-            >
-              {t("modal.cancel")}
-            </SecondaryButton>
-            <GomakePrimaryButton
-              onClick={() => {
-                if (customDimensions.finalUnitWidth && customDimensions.finalUnitLength && customDimensions.finalUnitHeight) {
-                  createNewTemplateWithCustomDimensions();
-                }
-              }}
-              sx={{ width: 'fit-content', height: 40, color: "#FFF", backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092" }}
-              disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
-            >
-              {t("products.offsetPrice.admin.generate")}
-            </GomakePrimaryButton>
-          </div>
-        </Stack>
-      </GoMakeModal>
 
       {/* Warning/Message Modal */}
       <GoMakeModal
