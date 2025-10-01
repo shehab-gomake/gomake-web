@@ -12,7 +12,7 @@ Use this primer to ground yourself before touching code. It condenses the author
 - Layout: `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx` (currently two columns—refactor toward real three-column per [Improvement Plan](../FRONTDESK_IMPROVEMENT_PLAN.md)).
 - Providers live under `src/widgets/frontdesk/providers/{internal,email,whatsapp,unified}/` with siblings `components/`, `hooks/`, and `controllers/`.
 - State: Recoil atoms/selectors per provider in `src/store/frontdesk/`.
-- APIs: REST services under `src/services/api-service/frontdesk/`, real-time via `src/services/websocket/messaging-service.ts`.
+- APIs: REST services under `src/services/frontdesk/api/`, real-time via `src/services/frontdesk/websocket/messaging-service.ts`.
 
 ## 3. Current Gaps to Watch
 - Layout fragmentation: each provider ships bespoke structure—standardize during new work.
@@ -36,13 +36,13 @@ src/widgets/frontdesk/
 └── providers/             # feature entry points per channel
 
 src/store/frontdesk/       # Recoil atoms/selectors
-src/services/api-service/frontdesk/  # HTTP clients per provider
+src/services/frontdesk/api/  # HTTP clients per provider
 ```
 
 ## 6. Data Flow Summary
 1. UI event triggers provider hook.
 2. Hook orchestrates Recoil updates + service calls.
-3. REST via axios client (`src/services/api-service/frontdesk/...`).
+3. REST via axios client (`src/services/frontdesk/api/...`).
 4. Real-time updates push through `messaging-service.ts` to Recoil.
 5. Components subscribe via `useRecoilValue` or selectors.
 

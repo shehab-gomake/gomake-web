@@ -340,10 +340,10 @@ messagingService.on('dm:newMessage', (message) => {
 
 ### REST API Services
 
-Located in `src/services/api-service/frontdesk/`, each provider has dedicated service classes:
+Located in `src/services/frontdesk/api/`, each provider has dedicated service classes:
 
 ```typescript
-// Example: Direct Messages API
+// Example: Direct Messages API (src/services/frontdesk/api/direct-messages.service.ts)
 class DirectMessagesService {
   async getConversations(): Promise<Conversation[]>
   async sendMessage(conversationId: string, content: string): Promise<Message>
@@ -351,12 +351,12 @@ class DirectMessagesService {
 }
 ```
 
-### WebSocket Service
+### WebSocket Services
 
-**Singleton Pattern**: `src/services/websocket/messaging-service.ts`
+Located in `src/services/frontdesk/websocket/`, consolidated WebSocket services:
 
 ```typescript
-import { messagingService } from '@/services/websocket/messaging-service';
+import { messagingService, ticketSocketService } from '@/services/frontdesk';
 
 // Connect
 await messagingService.connect(authToken);
@@ -434,24 +434,39 @@ export const myProviderDataAtom = atom<Data[]>({
 ```
 
 **5. Create API Service**
-Create `src/services/api-service/frontdesk/providers/{provider}`:
+Create `src/services/frontdesk/api/{provider}.service.ts`:
 ```typescript
 export class MyProviderService {
   async fetchData(): Promise<Data[]> { /* ... */ }
 }
+
+// Export in src/services/frontdesk/api/index.ts
+export * from './{provider}.service';
 ```
 
-**6. Register Provider**
+**6. (Optional) Create WebSocket Service**
+If real-time features are needed, create `src/services/frontdesk/websocket/{provider}-socket.service.ts`:
+```typescript
+export class MyProviderSocketService {
+  async connect(token: string): Promise<void> { /* ... */ }
+  on(event: string, handler: Function): void { /* ... */ }
+}
+
+// Export in src/services/frontdesk/websocket/index.ts
+export { myProviderSocketService } from './{provider}-socket.service';
+```
+
+**7. Register Provider**
 Update `src/widgets/frontdesk/frontdesk-widget.tsx`:
 ```typescript
 case 'my-provider':
   return <MyProviderView />;
 ```
 
-**7. Add Navigation Entry**
+**8. Add Navigation Entry**
 Update `NavigationSidebar` to include the new provider icon and route.
 
-**8. Update Documentation**
+**9. Update Documentation**
 - Add provider to this architecture doc
 - Create provider-specific guide if needed
 - Update `DEVELOPER_GUIDE.md`

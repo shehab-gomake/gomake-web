@@ -389,6 +389,12 @@ const downloadEmailAttachmentApi: ICallAndSetData = async (
   );
 };
 
+// ============================================
+// Tickets APIs
+// ============================================
+
+export * from './tickets.service';
+
 // Export all API functions
 export {
   // Gmail APIs

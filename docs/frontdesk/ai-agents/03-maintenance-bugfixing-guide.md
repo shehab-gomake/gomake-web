@@ -12,7 +12,7 @@ Use this flow when stabilizing existing FrontDesk functionality.
 |---------|--------------|-----------------|
 | UI rendering / layout drift | `src/widgets/frontdesk/providers/*` or `layouts/` | JSX structure, Material-UI props, responsive breakpoints |
 | Stale or missing data | Recoil atoms/selectors | Default values, selector dependencies, effects |
-| REST failures | `src/services/api-service/frontdesk/` | Endpoint path, payload shape, auth headers |
+| REST failures | `src/services/frontdesk/api/` | Endpoint path, payload shape, auth headers |
 | Real-time desync | `messaging-service.ts` & provider hooks | Socket subscriptions, cleanup, optimistic updates |
 
 ## 3. Debugging Toolkit

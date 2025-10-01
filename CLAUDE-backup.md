@@ -118,7 +118,7 @@ export function useProviderName() {
 ```
 
 ### Real-time Messaging (Direct Messages)
-- **Singleton WebSocket service**: `src/services/websocket/messaging-service.ts`
+- **Singleton WebSocket service**: `src/services/frontdesk/websocket/messaging-service.ts`
 - Connection management with auto-reconnect
 - Message lifecycle: `pending → sent → delivered → read`
 - Events: `dm:newMessage`, `dm:userTyping`, `dm:messageRead`, `dm:conversationUpdated`
@@ -142,13 +142,13 @@ import { emailAccountsAtom } from '@/store/frontdesk/atoms/email.atoms';
 
 **WebSocket Integration:**
 ```typescript
-import { messagingService } from '@/services/websocket/messaging-service';
+import { messagingService } from '@/services/frontdesk';
 // Service is a singleton - use existing instance
 ```
 
 **API Calls:**
 ```typescript
-// Services are in src/services/api-service/frontdesk/
+// Services are in src/services/frontdesk/api/
 // Check frontdesk-endpoints.ts for available endpoints
 ```
 

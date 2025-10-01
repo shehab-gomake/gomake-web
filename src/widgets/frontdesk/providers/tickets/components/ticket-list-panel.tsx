@@ -7,7 +7,8 @@ import {
   MenuItem,
   Divider,
   Chip,
-  Badge
+  Badge,
+  CircularProgress
 } from '@mui/material';
 import {
   Panel,
@@ -19,12 +20,12 @@ import {
 } from '@/widgets/frontdesk/design-system';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Ticket } from '../types/ticket.types';
+import { TicketWithDetails } from '../types/api.types';
 import { TicketListItem } from './ticket-list-item';
 
 interface TicketListPanelProps {
   viewTitle: string;
-  tickets: Ticket[];
+  tickets: TicketWithDetails[];
   selectedTicketId: string | null;
   selectedTicketIds: string[];
   searchQuery: string;
@@ -32,6 +33,8 @@ interface TicketListPanelProps {
   onTicketSelect: (ticketId: string) => void;
   onTicketCheck: (ticketId: string, checked: boolean) => void;
   onViewChange?: (view: string) => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 export const TicketListPanel: React.FC<TicketListPanelProps> = ({
@@ -43,7 +46,9 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
   onSearchChange,
   onTicketSelect,
   onTicketCheck,
-  onViewChange
+  onViewChange,
+  isLoading = false,
+  error = null
 }) => {
   const [viewMenuAnchor, setViewMenuAnchor] = useState<null | HTMLElement>(null);
 
@@ -60,7 +65,12 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
     handleViewMenuClose();
   };
 
-  const unreadCount = tickets.filter(t => t.isUnread).length;
+  // Count tickets with unread messages (check if lastMessageAt is recent and no response)
+  const unreadCount = tickets.filter(t =>
+    t.conversation.lastMessageAt &&
+    !t.firstResponseAt &&
+    t.status === 'OPEN'
+  ).length;
 
   return (
     <Box sx={{ width: 280, minWidth: 280, height: '100%' }}>
@@ -75,33 +85,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
       >
         {/* Header with PanelHeader component */}
         <PanelHeader
-          title={
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                cursor: 'pointer'
-              }}
-              onClick={handleViewMenuOpen}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1rem' }}>
-                {viewTitle}
-              </Typography>
-              {tickets.length > 0 && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: '0.75rem'
-                  }}
-                >
-                  ({tickets.length})
-                </Typography>
-              )}
-              <ArrowDropDownIcon fontSize="small" />
-            </Box>
-          }
+          title={`${viewTitle}${tickets.length > 0 ? ` (${tickets.length})` : ''}`}
           actions={
             <IconButton size="small" aria-label="Filter tickets">
               <Badge badgeContent={0} color="primary">
@@ -124,7 +108,16 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
 
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>
-          {tickets.length === 0 ? (
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+              <CircularProgress size={32} />
+            </Box>
+          ) : error ? (
+            <EmptyState
+              title="Error loading tickets"
+              description={error}
+            />
+          ) : tickets.length === 0 ? (
             <EmptyState
               title="No tickets found"
               description={searchQuery ? "Try adjusting your search" : "No tickets in this view"}

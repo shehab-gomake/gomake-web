@@ -295,7 +295,7 @@ POST /api/tickets/:ticketId/close
 ### Future API Service Structure
 
 ```typescript
-// src/services/api-service/frontdesk/tickets/tickets.service.ts
+// src/services/frontdesk/api/tickets.service.ts
 export class TicketsService {
   async getTickets(filters?: TicketFilters): Promise<Ticket[]> {
     // Implementation

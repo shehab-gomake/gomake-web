@@ -27,7 +27,7 @@ Follow this sequence whenever you add a capability (new provider view, shared co
    - Define atoms/selectors. Default state should be predictable and serializable.
    - Update provider hooks to orchestrate async work and state transitions.
 3. **Services**
-   - Extend existing API service classes under `src/services/api-service/frontdesk/`.
+   - Extend existing API service classes under `src/services/frontdesk/api/`.
    - Real-time? Subscribe via `messaging-service.ts` and ensure cleanup in `useEffect` teardown.
 4. **UI Components**
    - Reuse shared components when possible. If creating new ones, place them under `components/` with clear props and story-worthy defaults.

@@ -39,7 +39,8 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Ticket, TicketComment } from '../types/ticket.types';
+import { TicketWithDetails } from '../types/api.types';
+import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
 import {
   Chip,
@@ -53,15 +54,22 @@ import {
 } from '@/widgets/frontdesk/design-system';
 
 interface TicketDetailViewProps {
-  ticket: Ticket;
+  ticket: TicketWithDetails;
   onClose: () => void;
+  onReply?: (content: string) => void;
+  onStatusChange?: (status: string) => void;
 }
 
 const formatDateTime = (dateString: string) => {
   return format(parseISO(dateString), 'MMM d, yyyy h:mm a');
 };
 
-export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onClose }) => {
+export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
+  ticket,
+  onClose,
+  onReply,
+  onStatusChange
+}) => {
   const theme = useTheme();
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
@@ -69,8 +77,14 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
   const handleSendReply = (data: any) => {
-    console.log('Sending reply:', data);
+    if (onReply && data.content) {
+      onReply(data.content);
+    }
   };
+
+  // Convert UI status to backend status for display
+  const uiStatus = apiStatusToUi(ticket.status);
+  const uiPriority = apiPriorityToUi(ticket.priority);
 
   return (
     <Box
@@ -101,19 +115,48 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             <Box sx={{ flex: 1, minWidth: 0 }}>
               {/* Ticket meta info */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <TicketTypeBadge type={ticket.type as 'Bug' | 'Feature' | 'Task' | 'Support'} size="sm" />
+                <TicketTypeBadge type={'Support'} size="sm" />
                 <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontWeight: 600 }}>
-                  {ticket.ticketNumber}
+                  #{ticket.ticketNumber}
                 </Typography>
                 <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
                   · Created {formatDateTime(ticket.createdAt)}
                 </Typography>
+                {/* Show channel badges for multi-channel tickets */}
+                {ticket.conversation.messages.length > 0 && ticket.conversation.messages[0].channel && (
+                  <Chip
+                    label={ticket.conversation.messages[0].channel}
+                    size="small"
+                    sx={{
+                      height: 20,
+                      fontSize: 10,
+                      fontWeight: 600,
+                      backgroundColor: getChannelColor(ticket.conversation.messages[0].channel),
+                      color: 'white',
+                    }}
+                  />
+                )}
+                {/* SLA Warning */}
+                {ticket.sla?.breached && (
+                  <Chip
+                    label="SLA Breached"
+                    size="small"
+                    color="error"
+                    sx={{ height: 20, fontSize: 10, fontWeight: 600 }}
+                  />
+                )}
               </Box>
 
               {/* Title */}
               <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5, fontSize: '1.25rem' }}>
-                {ticket.title}
+                {ticket.conversation.name || `Ticket #${ticket.ticketNumber}`}
               </Typography>
+              {/* Customer info */}
+              {(ticket.customerName || ticket.customerEmail || ticket.customerPhone) && (
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary }}>
+                  {ticket.customerName || ticket.customerEmail || ticket.customerPhone}
+                </Typography>
+              )}
             </Box>
 
             {/* Right Actions */}
@@ -132,8 +175,8 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                 sx={{ cursor: 'pointer' }}
               >
                 <Chip
-                  label={ticket.status}
-                  color={ticket.status === 'To Do' ? 'primary' : ticket.status === 'In Progress' ? 'warning' : ticket.status === 'Done' ? 'success' : 'error'}
+                  label={uiStatus}
+                  color={uiStatus === 'To Do' ? 'primary' : uiStatus === 'In Progress' ? 'warning' : uiStatus === 'Done' ? 'success' : 'error'}
                   variant="soft"
                   size="small"
                   sx={{
@@ -234,7 +277,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <ChatBubbleOutlineIcon sx={{ fontSize: 20, color: colorTokens.semantic.text.secondary }} />
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Conversation ({ticket.comments.length} messages)
+                    Conversation ({ticket.conversation.messages.length} messages)
                   </Typography>
                 </Box>
                 <KeyboardArrowDownIcon sx={{ color: colorTokens.semantic.text.secondary }} />
@@ -269,18 +312,18 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                 <SystemEventMessage
                   type="ticket.created"
                   timestamp={ticket.createdAt}
-                  actor={{ name: ticket.reporter.name }}
+                  actor={{ name: ticket.customerName || ticket.customerEmail || 'Customer' }}
                 />
 
-                {/* Render comments and system events */}
-                {ticket.comments.map((comment, index) => (
-                  <React.Fragment key={comment.id}>
-                    {/* Show assignment event if it's the first comment */}
-                    {index === 0 && ticket.assignedTo && (
+                {/* Render messages and system events */}
+                {ticket.conversation.messages.map((message, index) => (
+                  <React.Fragment key={message.id}>
+                    {/* Show assignment event if it's the first message */}
+                    {index === 0 && ticket.assignee && (
                       <SystemEventMessage
                         type="ticket.assigned"
-                        timestamp={comment.createdAt}
-                        actor={{ name: ticket.assignedTo.name }}
+                        timestamp={message.createdAt}
+                        actor={{ name: ticket.assignee.name }}
                       />
                     )}
 
@@ -288,8 +331,8 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                     {index === 1 && (
                       <SystemEventMessage
                         type="ticket.priority.changed"
-                        timestamp={comment.createdAt}
-                        actor={{ name: ticket.assignedTo?.name || 'System' }}
+                        timestamp={message.createdAt}
+                        actor={{ name: ticket.assignee?.name || 'System' }}
                         data={{
                           oldPriority: 'Low',
                           newPriority: ticket.priority as any,
@@ -299,24 +342,28 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
 
                     {/* Message Card */}
                     <MessageCard
-                      id={comment.id}
-                      channel={(comment.channel || 'email') as any}
-                      direction={(comment.direction || 'inbound') as any}
-                      status={comment.status as any}
+                      id={message.id}
+                      channel={(message.channel || 'email') as any}
+                      direction={message.direction.toLowerCase() as any}
+                      status="delivered"
                       author={{
-                        name: comment.author.name,
-                        email: comment.author.email,
-                        avatarUrl: comment.author.avatarUrl,
+                        name: message.direction === 'INBOUND'
+                          ? (ticket.customerName || ticket.customerEmail || 'Customer')
+                          : (ticket.assignee?.name || 'Agent'),
+                        email: message.direction === 'INBOUND'
+                          ? (ticket.customerEmail || message.fromIdentifier || '')
+                          : (ticket.assignee?.email || ''),
+                        avatarUrl: undefined,
                       }}
-                      content={comment.content}
-                      timestamp={comment.createdAt}
-                      attachments={comment.attachments}
-                      isPrivate={comment.isPrivate}
+                      content={message.content}
+                      timestamp={message.createdAt}
+                      attachments={[]}
+                      isPrivate={false}
                     />
                   </React.Fragment>
                 ))}
 
-                {ticket.comments.length === 0 && (
+                {ticket.conversation.messages.length === 0 && (
                   <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       No messages yet
@@ -366,7 +413,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                   Description
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.7, color: colorTokens.semantic.text.primary }}>
-                  {ticket.description}
+                  {ticket.conversation.messages[0]?.content || 'No description available'}
                 </Typography>
               </Box>
 
@@ -390,14 +437,14 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar sx={{ width: 40, height: 40 }}>
-                    {ticket.reporter.name.charAt(0)}
+                    {(ticket.customerName || ticket.customerEmail || 'C').charAt(0)}
                   </Avatar>
                   <Box>
                     <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 14 }}>
-                      {ticket.reporter.name}
+                      {ticket.customerName || ticket.customerEmail || 'Unknown Customer'}
                     </Typography>
                     <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 12 }}>
-                      {ticket.reporter.email}
+                      {ticket.customerEmail || ticket.customerPhone || 'No contact info'}
                     </Typography>
                   </Box>
                 </Box>
@@ -444,7 +491,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                       }}
                     />
                     <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
-                      Resolve the customer's technical issue related to {ticket.type.toLowerCase()}
+                      Resolve the customer's issue via {ticket.conversation.messages[0]?.channel || 'email'}
                     </Typography>
                   </Box>
                   <Box
@@ -606,12 +653,12 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Assigned To
           </Typography>
-          {ticket.assignedTo ? (
+          {ticket.assignee ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
-              <Avatar sx={{ width: 32, height: 32 }}>{ticket.assignedTo.name.charAt(0)}</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>{ticket.assignee.name.charAt(0)}</Avatar>
               <Box sx={{ flex: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.assignedTo.name}</Typography>
-                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.assignedTo.email}</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.assignee.name}</Typography>
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.assignee.email}</Typography>
               </Box>
             </Box>
           ) : (
@@ -627,7 +674,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             Project
           </Typography>
           <FormControl fullWidth size="small">
-            <Select value={ticket.project}>
+            <Select value={ticket.category?.name || ''}>
               <MenuItem value="Administrative">Administrative</MenuItem>
               <MenuItem value="Engineering">Engineering</MenuItem>
               <MenuItem value="Documentation">Documentation</MenuItem>
@@ -641,7 +688,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             Ticket Type
           </Typography>
           <FormControl fullWidth size="small">
-            <Select value={ticket.type}>
+            <Select value={'Task'}>
               <MenuItem value="Task">Task</MenuItem>
               <MenuItem value="Bug">Bug</MenuItem>
               <MenuItem value="Feature">Feature</MenuItem>
@@ -655,7 +702,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
             Due Date
           </Typography>
-          <TextField fullWidth size="small" type="date" value={ticket.dueDate ? ticket.dueDate.split('T')[0] : ''} />
+          <TextField fullWidth size="small" type="date" value={ticket.sla?.resolutionDue ? ticket.sla.resolutionDue.split('T')[0] : ''} />
         </Box>
 
         {/* Reporter */}
@@ -664,10 +711,10 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             Reporter
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
-            <Avatar sx={{ width: 32, height: 32 }}>{ticket.reporter.name.charAt(0)}</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }}>{(ticket.customerName || ticket.customerEmail || 'C').charAt(0)}</Avatar>
             <Box>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.reporter.name}</Typography>
-              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.reporter.email}</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.customerName || ticket.customerEmail || 'Unknown'}</Typography>
+              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.customerEmail || ticket.customerPhone || 'No contact'}</Typography>
             </Box>
           </Box>
         </Box>
@@ -718,13 +765,13 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           </AccordionDetails>
         </Accordion>
 
-        <Accordion elevation={0} defaultExpanded={ticket.linkedTickets.length > 0} sx={{ '&:before': { display: 'none' } }}>
+        <Accordion elevation={0} defaultExpanded={0 > 0} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
                 LINKED TICKETS
               </Typography>
-              {ticket.linkedTickets.length > 0 && (
+              {0 > 0 && (
                 <Box
                   sx={{
                     backgroundColor: colorTokens.primary[100],
@@ -738,14 +785,14 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
                     textAlign: 'center',
                   }}
                 >
-                  {ticket.linkedTickets.length}
+                  {0}
                 </Box>
               )}
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            {ticket.linkedTickets.length > 0 ? (
-              ticket.linkedTickets.map((link) => (
+            {0 > 0 ? (
+              [].map((link) => (
                 <Box key={link.id} sx={{ mb: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
                   <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10, textTransform: 'uppercase', fontWeight: 600 }}>
                     {link.relationship}

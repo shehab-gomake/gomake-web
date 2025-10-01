@@ -84,13 +84,16 @@ export const myProviderDataAtom = atom<DataType[]>({
 ### Add API Service
 
 ```typescript
-// src/services/api-service/frontdesk/providers/myprovider/myprovider.service.ts
+// src/services/frontdesk/api/myprovider.service.ts
 export class MyProviderService {
   async fetchData(): Promise<Data[]> {
     const response = await apiClient.get('/api/frontdesk/myprovider/data');
     return response.data;
   }
 }
+
+// Export in src/services/frontdesk/api/index.ts
+export * from './myprovider.service';
 ```
 
 ---
@@ -132,9 +135,9 @@ const addAccount = (newAccount) => {
 
 ### Connect to Socket
 ```typescript
-import { messagingService } from '@/services/websocket/messaging-service';
+import { messagingService, ticketSocketService } from '@/services/frontdesk';
 
-// Connect
+// Connect to messaging
 await messagingService.connect(authToken);
 
 // Send message
@@ -143,6 +146,12 @@ messagingService.sendMessage(channelId, content);
 // Listen for messages
 messagingService.on('message:receive', (message) => {
   // Handle new message
+});
+
+// For tickets - connect and listen to events
+await ticketSocketService.connect(authToken, printHouseId);
+ticketSocketService.onTicketCreated((ticket) => {
+  // Handle new ticket
 });
 ```
 

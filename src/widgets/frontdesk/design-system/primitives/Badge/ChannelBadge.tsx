@@ -165,7 +165,7 @@ export const ChannelBadge: React.FC<ChannelBadgeProps> = ({
 
       {mode !== 'label' && <IconComponent sx={{ fontSize: styles.iconSize }} />}
 
-      {mode !== 'icon' && (
+      {mode === 'label' || mode === 'both' ? (
         <Typography
           component="span"
           sx={{
@@ -177,7 +177,7 @@ export const ChannelBadge: React.FC<ChannelBadgeProps> = ({
         >
           {config.label}
         </Typography>
-      )}
+      ) : null}
 
       {showDirection && direction === 'outbound' && (
         <ArrowForwardIcon sx={{ fontSize: styles.iconSize - 2 }} />

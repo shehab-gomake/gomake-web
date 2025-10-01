@@ -129,7 +129,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
           }}
         />
       )}
-      {mode !== 'icon' && (
+      {(mode === 'label' || mode === 'both') && (
         <Typography
           component="span"
           sx={{

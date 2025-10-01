@@ -84,7 +84,7 @@ src/services/
 1. `{provider}-provider-view.tsx`
 2. `use-{provider}-provider.ts` (state + actions)
 3. Provider components
-4. REST in `src/services/api-service/frontdesk/`
+4. REST in `src/services/frontdesk/api/`
 
 **Known Issues**
 
@@ -262,7 +262,7 @@ Persist a minimal, ordered tool plan:
 {"type":"tool_use","name":"create_text_file",
  "input":{"path":"src/store/frontdesk/atoms/new.atoms.ts","content":"/* atoms */"}}
 {"type":"tool_use","name":"create_text_file",
- "input":{"path":"src/services/api-service/frontdesk/new.service.ts","content":"/* REST */"}}
+ "input":{"path":"src/services/frontdesk/api/new.service.ts","content":"/* REST */"}}
 ```
 
 3. Wire route + shell, tests, run Phase 4.

@@ -1,13 +1,74 @@
 import { atom, selector } from 'recoil';
 import { Ticket } from '@/widgets/frontdesk/providers/tickets/types/ticket.types';
+import {
+  TicketWithDetails,
+  TicketFilters,
+  PaginationMetadata,
+  RelatedTicket,
+  TicketHistoryEntry,
+  transformApiTicketToUi,
+} from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
 
 /**
- * All tickets data
+ * All tickets data (backend format - TicketWithDetails[])
  */
-export const ticketsAtom = atom<Ticket[]>({
+export const ticketsAtom = atom<TicketWithDetails[]>({
   key: 'frontdesk.tickets.all',
-  default: mockTickets,
+  default: [],
+});
+
+/**
+ * Tickets loading state
+ */
+export const ticketsLoadingAtom = atom<boolean>({
+  key: 'frontdesk.tickets.loading',
+  default: false,
+});
+
+/**
+ * Tickets error state
+ */
+export const ticketsErrorAtom = atom<string | null>({
+  key: 'frontdesk.tickets.error',
+  default: null,
+});
+
+/**
+ * Pagination metadata
+ */
+export const ticketsPaginationAtom = atom<PaginationMetadata | null>({
+  key: 'frontdesk.tickets.pagination',
+  default: null,
+});
+
+/**
+ * Active filters for ticket list
+ */
+export const ticketFiltersAtom = atom<TicketFilters>({
+  key: 'frontdesk.tickets.filters',
+  default: {
+    page: 1,
+    limit: 20,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+  },
+});
+
+/**
+ * Related tickets for current ticket
+ */
+export const relatedTicketsAtom = atom<RelatedTicket[]>({
+  key: 'frontdesk.tickets.related',
+  default: [],
+});
+
+/**
+ * Ticket history for current ticket
+ */
+export const ticketHistoryAtom = atom<TicketHistoryEntry[]>({
+  key: 'frontdesk.tickets.history',
+  default: [],
 });
 
 /**
@@ -67,9 +128,9 @@ export const openTicketTabsAtom = atom<string[]>({
 });
 
 /**
- * Selector: Get currently selected ticket
+ * Selector: Get currently selected ticket (backend format)
  */
-export const selectedTicketSelector = selector<Ticket | null>({
+export const selectedTicketSelector = selector<TicketWithDetails | null>({
   key: 'frontdesk.tickets.selectedTicket',
   get: ({ get }) => {
     const tickets = get(ticketsAtom);
@@ -79,84 +140,54 @@ export const selectedTicketSelector = selector<Ticket | null>({
 });
 
 /**
- * Selector: Get filtered tickets based on current view
+ * Selector: Get currently selected ticket (UI format)
  */
-export const filteredTicketsSelector = selector<Ticket[]>({
-  key: 'frontdesk.tickets.filtered',
+export const selectedTicketUiSelector = selector<Ticket | null>({
+  key: 'frontdesk.tickets.selectedTicketUi',
   get: ({ get }) => {
-    const tickets = get(ticketsAtom);
-    const selectedView = get(selectedTicketViewAtom);
-    const searchQuery = get(ticketSearchQueryAtom).toLowerCase();
-    const currentUserId = get(currentUserIdAtom);
-    const sort = get(ticketSortAtom);
-
-    // Apply view filter
-    let filtered = tickets;
-
-    // If no view is selected, return empty array
-    if (!selectedView) {
-      return [];
-    }
-
-    switch (selectedView) {
-      case 'my-tickets':
-        filtered = tickets.filter(t => ticketViews.myTickets(t, currentUserId));
-        break;
-      case 'past-due':
-        filtered = tickets.filter(ticketViews.pastDue);
-        break;
-      case 'high-priority':
-        filtered = tickets.filter(ticketViews.highPriority);
-        break;
-      case 'unassigned':
-        filtered = tickets.filter(ticketViews.unassigned);
-        break;
-      case 'all-tickets':
-        filtered = tickets;
-        break;
-      default:
-        filtered = tickets;
-    }
-
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        t =>
-          t.title.toLowerCase().includes(searchQuery) ||
-          t.ticketNumber.toLowerCase().includes(searchQuery) ||
-          t.description.toLowerCase().includes(searchQuery)
-      );
-    }
-
-    // Apply sorting
-    const sorted = [...filtered].sort((a, b) => {
-      let comparison = 0;
-
-      switch (sort.by) {
-        case 'date':
-          comparison = new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-          break;
-        case 'priority':
-          const priorityOrder = { Urgent: 4, High: 3, Medium: 2, Low: 1 };
-          comparison = priorityOrder[b.priority] - priorityOrder[a.priority];
-          break;
-        case 'status':
-          comparison = a.status.localeCompare(b.status);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-      }
-
-      return sort.order === 'asc' ? -comparison : comparison;
-    });
-
-    return sorted;
+    const ticket = get(selectedTicketSelector);
+    return ticket ? transformApiTicketToUi(ticket) : null;
   },
 });
 
 /**
- * Selector: Get ticket counts for each view
+ * Selector: Get filtered tickets (backend format)
+ * Uses backend filters - selectors now reflect real API data
+ */
+export const filteredTicketsSelector = selector<TicketWithDetails[]>({
+  key: 'frontdesk.tickets.filtered',
+  get: ({ get }) => {
+    const tickets = get(ticketsAtom);
+    const searchQuery = get(ticketSearchQueryAtom).toLowerCase();
+
+    // Apply client-side search filter if needed
+    if (searchQuery) {
+      return tickets.filter(
+        t =>
+          t.conversation.name.toLowerCase().includes(searchQuery) ||
+          t.ticketNumber.toString().includes(searchQuery) ||
+          t.customerEmail?.toLowerCase().includes(searchQuery) ||
+          t.customerName?.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    return tickets;
+  },
+});
+
+/**
+ * Selector: Get filtered tickets (UI format) for compatibility
+ */
+export const filteredTicketsUiSelector = selector<Ticket[]>({
+  key: 'frontdesk.tickets.filteredUi',
+  get: ({ get }) => {
+    const tickets = get(filteredTicketsSelector);
+    return tickets.map(transformApiTicketToUi);
+  },
+});
+
+/**
+ * Selector: Get ticket counts for each view (backend-aware)
  */
 export const ticketCountsSelector = selector<Record<string, number>>({
   key: 'frontdesk.tickets.counts',
@@ -165,10 +196,10 @@ export const ticketCountsSelector = selector<Record<string, number>>({
     const currentUserId = get(currentUserIdAtom);
 
     return {
-      'my-tickets': tickets.filter(t => ticketViews.myTickets(t, currentUserId)).length,
-      'past-due': tickets.filter(ticketViews.pastDue).length,
-      'high-priority': tickets.filter(ticketViews.highPriority).length,
-      'unassigned': tickets.filter(ticketViews.unassigned).length,
+      'my-tickets': tickets.filter(t => t.assigneeId === currentUserId).length,
+      'past-due': tickets.filter(t => t.sla?.breached).length,
+      'high-priority': tickets.filter(t => t.priority === 'HIGH' || t.priority === 'URGENT').length,
+      'unassigned': tickets.filter(t => !t.assigneeId).length,
       'all-tickets': tickets.length,
     };
   },

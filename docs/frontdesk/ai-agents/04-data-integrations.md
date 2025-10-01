@@ -15,7 +15,7 @@ Keep this open to avoid breaking contracts. Cross-check details with the deeper 
 - Optimistic updates rely on `tempId`—must reconcile on `dm:messageConfirmed`.
 
 ### Email
-- REST services under `src/services/api-service/frontdesk/providers/email/`.
+- REST services under `src/services/frontdesk/api/providers/email/`.
 - OAuth state flows through `emailAccountsAtom` and selectors; never store tokens client-side beyond existing patterns.
 - Rendering: reuse `EmailSidebar`, `EmailThreadViewer` components where possible.
 

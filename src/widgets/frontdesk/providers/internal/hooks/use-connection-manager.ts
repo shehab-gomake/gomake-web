@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { directMessagesWebSocketService } from "@/services/websocket/direct-messages-websocket.service";
+import { directMessagesWebSocketService } from "@/services/frontdesk/websocket/direct-messages-websocket.service";
 import {
   dmConnectionState,
   dmConnectedState,

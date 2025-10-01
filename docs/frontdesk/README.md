@@ -30,11 +30,17 @@ Deep dives into each communication provider:
   - Typing indicators and presence
   - Conversation management
 
-- **[TICKETS_PROVIDER_GUIDE.md](TICKETS_PROVIDER_GUIDE.md)** - Tickets/Support provider
+- **[TICKETS_PROVIDER_GUIDE.md](TICKETS_PROVIDER_GUIDE.md)** - Tickets/Support provider overview
   - Ticket lifecycle management
   - Multi-channel ticket sources
   - Hook API and usage examples
   - State management
+
+- **[tickets/](tickets/)** - Complete Tickets Backend Integration Documentation
+  - [README.md](tickets/README.md) - Documentation index and quick navigation
+  - [INTEGRATION_SUMMARY.md](tickets/INTEGRATION_SUMMARY.md) - Project overview and completion status
+  - [TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) - Complete technical guide (600+ lines)
+  - [TICKETS_QUICK_REFERENCE.md](tickets/TICKETS_QUICK_REFERENCE.md) - Developer cheat sheet and code snippets
 
 ### API & Integration Guides
 
@@ -82,6 +88,7 @@ Located in [ai-agents/](ai-agents/) - Guides specifically for AI-assisted develo
 | API_REFERENCE.md | ✅ Current | 2024-01 | Backend & Frontend |
 | API_INTEGRATION_GUIDE.md | ✅ Current | 2024-01 | Frontend developers |
 | TICKETS_PROVIDER_GUIDE.md | ✅ Current | 2024-01 | Tickets feature developers |
+| tickets/* | ✅ Current | 2024-01 | Tickets backend integration |
 | SEARCH_API_FRONTEND_GUIDE.md | ✅ Current | 2024-01 | Search feature developers |
 | direct-messages-frontend.md | ✅ Current | 2024-01 | DM feature developers |
 | direct-messages-archiving-guide.md | ✅ Current | 2024-01 | DM feature developers |
@@ -102,7 +109,13 @@ docs/frontdesk/
 │
 ├── direct-messages-frontend.md          # DM provider guide
 ├── direct-messages-archiving-guide.md   # DM archiving feature
-├── TICKETS_PROVIDER_GUIDE.md            # Tickets provider guide
+├── TICKETS_PROVIDER_GUIDE.md            # Tickets provider overview
+│
+├── tickets/                             # Tickets backend integration docs
+│   ├── README.md                        # Tickets documentation index
+│   ├── INTEGRATION_SUMMARY.md           # Implementation overview
+│   ├── TICKETS_BACKEND_INTEGRATION.md   # Complete technical guide
+│   └── TICKETS_QUICK_REFERENCE.md       # Developer cheat sheet
 │
 └── ai-agents/                           # AI agent documentation
     ├── 00-readme.md
@@ -135,6 +148,12 @@ docs/frontdesk/
 1. Review [API_REFERENCE.md](API_REFERENCE.md) for endpoint documentation
 2. Follow [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md) for implementation patterns
 3. Check provider-specific guides for examples
+
+### If you're working on Tickets backend integration:
+1. Start with [tickets/INTEGRATION_SUMMARY.md](tickets/INTEGRATION_SUMMARY.md) for overview
+2. Follow [tickets/TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) for complete guide
+3. Use [tickets/TICKETS_QUICK_REFERENCE.md](tickets/TICKETS_QUICK_REFERENCE.md) as daily reference
+4. Consult backend docs at `/Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/`
 
 ## 🔄 Keeping Documentation Updated
 
@@ -175,12 +194,18 @@ Current archived items:
 - See [API_REFERENCE.md](API_REFERENCE.md) for backend contracts
 - See [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md) for frontend usage
 
+**For Tickets integration questions:**
+- See [tickets/README.md](tickets/README.md) for navigation
+- See [tickets/TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) for technical details
+- See backend docs: `/Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/`
+
 ## 🎯 Quick Links
 
 - **Main codebase**: `src/widgets/frontdesk/`
 - **State management**: `src/store/frontdesk/`
-- **API services**: `src/services/api-service/frontdesk/`
-- **WebSocket service**: `src/services/websocket/messaging-service.ts`
+- **Services**: `src/services/frontdesk/` (REST APIs + WebSocket)
+  - **API services**: `src/services/frontdesk/api/`
+  - **WebSocket services**: `src/services/frontdesk/websocket/`
 - **Root project guide**: `CLAUDE.md` (in project root)
 
 ## 📝 Document Conventions

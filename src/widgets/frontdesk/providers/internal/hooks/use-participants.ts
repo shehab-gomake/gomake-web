@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
+import { directMessagesService } from "@/services/frontdesk/api/direct-messages.service";
 import {
   dmUserSuggestionsState,
   dmIsLoadingSuggestionsState,

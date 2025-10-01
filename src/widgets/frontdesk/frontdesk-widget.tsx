@@ -32,8 +32,13 @@ import {
   selectedTicketIdsAtom,
   ticketCountsSelector,
   openTicketTabsAtom,
-  ticketsAtom
+  ticketsAtom,
+  ticketsLoadingAtom,
+  ticketsErrorAtom
 } from '@/store/frontdesk/atoms/tickets.atoms';
+
+// Ticket provider hook
+import { useTicketsProvider } from './providers/tickets/hooks/use-tickets-provider';
 
 const FrontdeskWidget: React.FC = () => {
   const router = useRouter();
@@ -91,16 +96,15 @@ const FrontdeskWidget: React.FC = () => {
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Ticket state
+  // Ticket state and provider hook
+  const ticketsProvider = useTicketsProvider();
   const [selectedTicketView, setSelectedTicketView] = useRecoilState(selectedTicketViewAtom);
-  const filteredTickets = useRecoilValue(filteredTicketsSelector);
   const [selectedTicketId, setSelectedTicketId] = useRecoilState(selectedTicketIdAtom);
-  const selectedTicket = useRecoilValue(selectedTicketSelector);
-  const [ticketSearchQuery, setTicketSearchQuery] = useRecoilState(ticketSearchQueryAtom);
   const [selectedTicketIds, setSelectedTicketIds] = useRecoilState(selectedTicketIdsAtom);
-  const ticketCounts = useRecoilValue(ticketCountsSelector);
   const [openTicketTabs, setOpenTicketTabs] = useRecoilState(openTicketTabsAtom);
   const allTickets = useRecoilValue(ticketsAtom);
+  const ticketsLoading = useRecoilValue(ticketsLoadingAtom);
+  const ticketsError = useRecoilValue(ticketsErrorAtom);
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
@@ -384,21 +388,23 @@ const FrontdeskWidget: React.FC = () => {
           onSectionSelect={handleSectionChange}
           onTicketViewSelect={handleTicketViewChange}
           channelBadges={channelBadges}
-          ticketCounts={ticketCounts}
+          ticketCounts={ticketsProvider.ticketCounts}
         />
       }
       listContent={
         isTicketView ? (
           <TicketListPanel
             viewTitle={getTicketViewTitle(selectedTicketView as TicketView)}
-            tickets={filteredTickets}
-            selectedTicketId={selectedTicketId}
-            selectedTicketIds={selectedTicketIds}
-            searchQuery={ticketSearchQuery}
-            onSearchChange={setTicketSearchQuery}
+            tickets={ticketsProvider.filteredTickets}
+            selectedTicketId={ticketsProvider.selectedTicketId}
+            selectedTicketIds={ticketsProvider.selectedTicketIds}
+            searchQuery={ticketsProvider.searchQuery}
+            onSearchChange={ticketsProvider.setSearchQuery}
             onTicketSelect={handleTicketSelect}
             onTicketCheck={handleTicketCheck}
             onViewChange={(view) => handleTicketViewChange(view as TicketView)}
+            isLoading={ticketsLoading}
+            error={ticketsError}
           />
         ) : currentSection === 'inbox' ? (
           <DynamicListPanel
@@ -515,7 +521,7 @@ const FrontdeskWidget: React.FC = () => {
                               flex: 1
                             }}
                           >
-                            {tabTicket.title}
+                            {tabTicket.conversation.name || `Ticket #${tabTicket.ticketNumber}`}
                           </Typography>
                         </Box>
                         <IconButton
@@ -549,8 +555,21 @@ const FrontdeskWidget: React.FC = () => {
               )}
 
               {/* Ticket Content */}
-              {selectedTicket ? (
-                <TicketDetailView ticket={selectedTicket} onClose={handleTicketClose} />
+              {ticketsProvider.selectedTicket ? (
+                <TicketDetailView
+                  ticket={ticketsProvider.selectedTicket}
+                  onClose={handleTicketClose}
+                  onReply={async (content) => {
+                    if (ticketsProvider.selectedTicket) {
+                      await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content);
+                    }
+                  }}
+                  onStatusChange={async (status) => {
+                    if (ticketsProvider.selectedTicket) {
+                      await ticketsProvider.updateTicketStatus(ticketsProvider.selectedTicket.id, status as any);
+                    }
+                  }}
+                />
               ) : (
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                   <Typography variant="h6" color="text.secondary">

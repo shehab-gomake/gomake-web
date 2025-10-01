@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { directMessagesWebSocketService } from '@/services/websocket/direct-messages-websocket.service';
+import { directMessagesWebSocketService } from '@/services/frontdesk/websocket/direct-messages-websocket.service';
 import { parsePresenceResponse, parseStatusChangeEvent, isValidUserId } from '@/widgets/frontdesk/providers/internal/utils/presence-helpers';
 import {
   dmCurrentUserState,

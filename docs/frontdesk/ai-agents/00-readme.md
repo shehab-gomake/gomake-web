@@ -24,7 +24,7 @@ Welcome, AI engineer. This folder equips you to plan, implement, and validate Fr
 - Framework: Next.js (Pages Router) + TypeScript
 - State: Recoil atoms/selectors under `src/store/frontdesk/`
 - UI: Material-UI first; check shared components in `src/widgets/frontdesk/components/`
-- Real-time: Socket.IO client via `src/services/websocket/messaging-service.ts`
+- Real-time: Socket.IO client via `src/services/frontdesk/websocket/messaging-service.ts`
 
 ## Suggested Commands
 Use the project workflow in `docs/frontdesk` and the wider repo memories:
