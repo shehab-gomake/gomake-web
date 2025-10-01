@@ -140,7 +140,15 @@ const useQuoteNew = ({
   const { primaryColor } = useGomakeTheme();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
-  const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
+
+  // Alert VAT Mismatch Modal state
+  const [openVatMismatchModal, setOpenVatMismatchModal] = useState(false);
+
+  const { getQuote, getAllClientContacts } = useQuoteGetData(
+    docType,
+    systemVAT,
+    setOpenVatMismatchModal
+  );
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
@@ -860,6 +868,14 @@ const useQuoteNew = ({
   const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
     useState(false);
 
+  const onCloseVatMismatchModal = () => {
+    setOpenVatMismatchModal(false);
+  };
+
+  const onConfirmVatMismatchModal = () => {
+    setOpenVatMismatchModal(false);
+  };
+
   const onChangeSelectBusiness = async (
     item: any,
     clientChangeSource: ClientChangeSource = ClientChangeSource.REGULAR_CHANGE,
@@ -923,6 +939,7 @@ const useQuoteNew = ({
             : {}),
         }
       );
+
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
 
@@ -961,6 +978,16 @@ const useQuoteNew = ({
           });
         } else {
           setQuoteItemValue(_data);
+        }
+
+        // Check if the client vat Exempt and show modal if needed
+        const isNewCreation = router?.query?.isNewCreation === "true";
+        const isCorrectPage =
+          router.pathname === "/invoice" || router.pathname === "/deliveryNote";
+        const isVATMismatch = Math.abs(systemVAT - _data?.vat) > 0.001;
+
+        if (isNewCreation && isCorrectPage && isVATMismatch) {
+          setOpenVatMismatchModal(true);
         }
         setIsUpdateBusinessName(null);
       } else {
@@ -2852,6 +2879,9 @@ const useQuoteNew = ({
     onClickCloseChangeStatusModal,
     updateQuoteStatus,
     CheckPreferenceValue,
+    openVatMismatchModal,
+    onCloseVatMismatchModal,
+    onConfirmVatMismatchModal,
   };
 };
 
