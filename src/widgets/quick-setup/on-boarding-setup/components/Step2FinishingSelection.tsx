@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -24,6 +24,7 @@ import {
   FinishingCategory,
   SelectedFinishingMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
+import { pulseAnimation } from "@/widgets/quick-setup/on-boarding-setup/animations";
 
 interface Step2FinishingSelectionProps {
   finishingCategories: FinishingCategory[];
@@ -52,6 +53,25 @@ export const Step2FinishingSelection: React.FC<
   const [searchTerms, setSearchTerms] = useState<{
     [categoryId: string]: string;
   }>({});
+  const [dropdownOpenStates, setDropdownOpenStates] = useState<{
+    [categoryId: string]: boolean;
+  }>({});
+
+  // Refs for auto-focusing TextFields
+  const searchRefs = useRef<{ [categoryId: string]: HTMLInputElement | null }>(
+    {}
+  );
+
+  // Auto-focus TextFields when dropdowns open
+  useEffect(() => {
+    Object.entries(dropdownOpenStates).forEach(([categoryId, isOpen]) => {
+      if (isOpen) {
+        setTimeout(() => {
+          searchRefs.current[categoryId]?.focus();
+        }, 100);
+      }
+    });
+  }, [dropdownOpenStates]);
 
   const clearCategorySelection = (categoryId: string) => {
     onCategoryMachineChange(categoryId, "");
@@ -132,21 +152,38 @@ export const Step2FinishingSelection: React.FC<
                       }
                       label="search for your machine"
                       input={<OutlinedInput label="search for your machine" />}
+                      open={dropdownOpenStates[category.id] || false}
+                      onOpen={() =>
+                        setDropdownOpenStates((prev) => ({
+                          ...prev,
+                          [category.id]: true,
+                        }))
+                      }
+                      onClose={() => {
+                        setDropdownOpenStates((prev) => ({
+                          ...prev,
+                          [category.id]: false,
+                        }));
+                        setSearchTerms((prev) => ({
+                          ...prev,
+                          [category.id]: "",
+                        }));
+                      }}
                       sx={{
-                        borderBottom: '2px solid #e0e0e0',
-                        '&:hover': {
-                          borderBottom: '2px solid #bdbdbd',
+                        borderBottom: "2px solid #e0e0e0",
+                        "&:hover": {
+                          borderBottom: "2px solid #bdbdbd",
                         },
-                        '&.Mui-focused': {
-                          borderBottom: '2px solid #1976d2',
+                        "&.Mui-focused": {
+                          borderBottom: "2px solid #1976d2",
                         },
-                        '& .MuiOutlinedInput-root': {
-                          borderBottom: '2px solid #e0e0e0',
-                          '&:hover': {
-                            borderBottom: '2px solid #bdbdbd',
+                        "& .MuiOutlinedInput-root": {
+                          borderBottom: "2px solid #e0e0e0",
+                          "&:hover": {
+                            borderBottom: "2px solid #bdbdbd",
                           },
-                          '&.Mui-focused': {
-                            borderBottom: '2px solid #1976d2',
+                          "&.Mui-focused": {
+                            borderBottom: "2px solid #1976d2",
                           },
                         },
                       }}
@@ -167,11 +204,39 @@ export const Step2FinishingSelection: React.FC<
                         </InputAdornment>
                       }
                       MenuProps={{
-                        PaperProps: { style: { maxHeight: 300 } },
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            padding: 0,
+                          },
+                          sx: {
+                            "& .MuiList-root": {
+                              paddingTop: 0,
+                            },
+                          },
+                        },
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        },
+                        transformOrigin: {
+                          vertical: "top",
+                          horizontal: "left",
+                        },
                       }}
                     >
-                      <MenuItem sx={{ p: 1 }}>
+                      {/* Search TextField positioned above options */}
+                      <Box
+                        sx={{
+                          p: 1,
+                          borderBottom: "1px solid #e0e0e0",
+                          backgroundColor: "#fafafa",
+                        }}
+                      >
                         <TextField
+                          inputRef={(el) =>
+                            (searchRefs.current[category.id] = el)
+                          }
                           placeholder="search for your machine"
                           value={searchTerms[category.id] || ""}
                           onChange={(e) =>
@@ -185,6 +250,18 @@ export const Step2FinishingSelection: React.FC<
                             "& .MuiInputBase-root": {
                               height: 40,
                               fontSize: "14px",
+                              backgroundColor: "white",
+                            },
+                            "& .MuiOutlinedInput-root": {
+                              "& fieldset": {
+                                borderColor: "#e0e0e0",
+                              },
+                              "&:hover fieldset": {
+                                borderColor: "#bdbdbd",
+                              },
+                              "&.Mui-focused fieldset": {
+                                borderColor: "#1976d2",
+                              },
                             },
                           }}
                           InputProps={{
@@ -195,7 +272,7 @@ export const Step2FinishingSelection: React.FC<
                             ),
                           }}
                         />
-                      </MenuItem>
+                      </Box>
 
                       {filteredMachines.map((machine) => (
                         <MenuItem
@@ -233,7 +310,19 @@ export const Step2FinishingSelection: React.FC<
                     variant="contained"
                     onClick={() => onAddFinishingMachine(category.id)}
                     disabled={!selectedCategoryMachines[category.id]}
-                    sx={{ minWidth: 100 }}
+                    sx={{
+                      minWidth: 160,
+                      height: 40,
+                      fontSize: "14px",
+                      px: 3,
+                      ...(selectedCategoryMachines[category.id] && {
+                        animation: `${pulseAnimation} 1.5s infinite`,
+                        backgroundColor: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "primary.dark",
+                        },
+                      }),
+                    }}
                   >
                     Add
                   </Button>
