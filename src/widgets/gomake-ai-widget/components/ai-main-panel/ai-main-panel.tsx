@@ -33,8 +33,6 @@ const jobCards = [
 
 //!here main test
 interface AIMainPanelProps {
-  onNewJobCreated: (job: any) => void;
-  startSession: () => Promise<any>;
   sendMessage: (prompt: string) => Promise<any>;
   isProcessing: boolean;
   sessionId: string | null;
@@ -43,8 +41,6 @@ interface AIMainPanelProps {
 }
 
 const AIMainPanel = ({
-  onNewJobCreated,
-  startSession,
   sendMessage,
   isProcessing,
   sessionId,
@@ -86,7 +82,6 @@ const AIMainPanel = ({
           createdAt: new Date().toISOString(),
           status: "processing" as const,
         };
-        onNewJobCreated(newJob);
       }
 
       // Send message to AI
@@ -149,7 +144,6 @@ const AIMainPanel = ({
           createdAt: new Date().toISOString(),
           status: "processing" as const,
         };
-        onNewJobCreated(newJob);
       }
 
       // Send message to AI

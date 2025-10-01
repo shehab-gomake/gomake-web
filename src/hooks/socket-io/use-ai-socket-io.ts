@@ -1,57 +1,33 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import config from "@/config";
-import { useRecoilState } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-// State for AI job processing
-const aiJobProcessingState = {
-  key: "aiJobProcessingState",
-  default: false,
-};
-
-const aiJobResultsState = {
-  key: "aiJobResultsState",
-  default: [],
-};
-
 //!here socket
-const useAISocketIO = () => {
+const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [jobResults, setJobResults] = useState<any[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { callApi } = useGomakeAxios();
   const { alertFault } = useSnackBar();
 
   useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
     const socket = io(config.api_server);
+    socket.on(sessionId, (message: any) => {
+      debugger;
+      if (onMessageReceived) {
+        onMessageReceived(message);
+      }
 
-    // Listen for AI job status updates
-    socket.on("AIJobStatusUpdate", (data) => {
-      console.log("AI Job Status Update:", data);
-      setIsProcessing(data.isProcessing);
-
-      if (data.result) {
-        setJobResults((prev) => [data.result, ...prev]);
+      // Update processing state based on message type
+      if (message.type === "ai") {
+        setIsProcessing(false);
       }
     });
 
-    // Listen for AI chat messages
-    socket.on("AIChatMessage", (message) => {
-      console.log("AI Chat Message:", message);
-      // Handle real-time AI responses
-    });
-
-    // Listen for AI job completion
-    socket.on("AIJobCompleted", (jobData) => {
-      console.log("AI Job Completed:", jobData);
-      setIsProcessing(false);
-      setJobResults((prev) => [jobData, ...prev]);
-    });
-
-    // Listen for AI job errors
-    socket.on("AIJobError", (error) => {
-      console.error("AI Job Error:", error);
+    socket.on("error", (error: any) => {
       setIsProcessing(false);
     });
 
@@ -62,29 +38,17 @@ const useAISocketIO = () => {
 
   const startSession = async () => {
     try {
-      // setIsProcessing(true);
-
       // Start new AI session
       const response = await callApi(
         "POST",
         "/v1/gomake-ai-service/start-session"
       );
 
-      // Check HTTP status code
-      // if (response?.status && response.status !== 200) {
-      //   const errorMessage =
-      //     response?.message ||
-      //     response?.msg ||
-      //     `Request failed with status ${response.status}`;
-      //   alertFault(errorMessage);
-      //   throw new Error(errorMessage);
-      // }
+      const responseData = response.data?.data?.data?.sessionId;
 
-      if (response?.success && response.data?.sessionId) {
-        console.log("AI Session started successfully:", response.data);
-        setSessionId(response.data.sessionId);
-        // setIsProcessing(false);
-        return response.data;
+      if (response?.success && responseData) {
+        setSessionId(responseData);
+        return response.data?.data?.data;
       } else {
         const errorMessage = response?.message || "Failed to start AI session";
         alertFault(errorMessage);
@@ -92,7 +56,6 @@ const useAISocketIO = () => {
       }
     } catch (error) {
       console.error("Error starting AI session:", error);
-      // setIsProcessing(false);
       throw error;
     }
   };
@@ -102,6 +65,9 @@ const useAISocketIO = () => {
       if (!sessionId) {
         throw new Error("No active session. Please start a new job first.");
       }
+
+      // Set processing state when sending message
+      setIsProcessing(true);
 
       // Send message to AI
       const response = await callApi(
@@ -114,12 +80,14 @@ const useAISocketIO = () => {
       );
 
       // Check HTTP status code
+      debugger;
       if (response?.status && response.status !== 200) {
         const errorMessage =
           response?.message ||
           response?.msg ||
           `Request failed with status ${response.status}`;
         alertFault(errorMessage);
+        setIsProcessing(false);
         throw new Error(errorMessage);
       }
 
@@ -128,6 +96,7 @@ const useAISocketIO = () => {
       return { success: true };
     } catch (error) {
       console.error("Error sending message:", error);
+      setIsProcessing(false);
       throw error;
     }
   };
@@ -149,12 +118,9 @@ const useAISocketIO = () => {
         throw new Error(errorMessage);
       }
 
-      if (response?.success && response.data) {
-        console.log(
-          "Conversations history retrieved successfully:",
-          response.data
-        );
-        return response.data;
+      const responseData = response.data?.data?.data;
+      if (response?.success && responseData) {
+        return responseData;
       } else {
         const errorMessage =
           response?.message || "Failed to get conversations history";
@@ -173,6 +139,9 @@ const useAISocketIO = () => {
         throw new Error("Session ID is required to get conversation");
       }
 
+      // Reset processing state when loading a conversation
+      setIsProcessing(false);
+
       const response = await callApi(
         "GET",
         `/v1/gomake-ai-service/get-conversation/${sessionId}`
@@ -188,9 +157,9 @@ const useAISocketIO = () => {
         throw new Error(errorMessage);
       }
 
-      if (response?.success && response.data) {
-        console.log("Conversation retrieved successfully:", response.data);
-        return response.data;
+      const responseData = response.data?.data?.data;
+      if (response?.success && responseData) {
+        return responseData;
       } else {
         const errorMessage = response?.message || "Failed to get conversation";
         alertFault(errorMessage);
@@ -202,14 +171,19 @@ const useAISocketIO = () => {
     }
   };
 
+  // Function to manually set session ID (for continuing conversations)
+  const setSessionIdManually = (newSessionId: string) => {
+    setSessionId(newSessionId);
+  };
+
   return {
     isProcessing,
-    jobResults,
     sessionId,
     startSession,
     sendMessage,
     getConversationsHistory,
     getConversation,
+    setSessionIdManually,
   };
 };
 

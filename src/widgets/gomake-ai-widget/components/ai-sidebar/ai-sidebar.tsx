@@ -83,7 +83,12 @@ const AISidebar = ({
               </div>
             </div>
           ) : (
-            <div style={classes.jobHistoryList}>
+            <div
+              style={{
+                ...classes.jobHistoryList,
+                ...classes.scrollableList,
+              }}
+            >
               {conversationsHistory.map((conversation, index) => (
                 <div
                   key={index}
@@ -96,22 +101,13 @@ const AISidebar = ({
                         : "transparent",
                     cursor: "pointer",
                     marginBottom: "4px",
-                    padding: "8px 12px",
+                    padding: "12px",
                     borderRadius: "6px",
                     border: "1px solid #E5E7EB",
                   }}
                 >
                   <div style={{ fontSize: "14px", fontWeight: "500" }}>
                     {conversation.conversationName || `Job ${index + 1}`}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#666",
-                      marginTop: "2px",
-                    }}
-                  >
-                    Session: {conversation.sessionId?.substring(0, 8)}...
                   </div>
                 </div>
               ))}

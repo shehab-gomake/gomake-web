@@ -156,6 +156,30 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: 8,
       },
+      scrollableList: {
+        // maxHeight: "400px", //!here
+        maxHeight: "50vh",
+        overflowY: "auto" as "auto",
+        overflowX: "hidden" as "hidden",
+        paddingRight: "4px",
+        scrollbarWidth: "thin" as "thin",
+        scrollbarColor: "#CBD5E0 #F7FAFC",
+        // Webkit scrollbar styles
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "#F7FAFC",
+          borderRadius: "3px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#CBD5E0",
+          borderRadius: "3px",
+          "&:hover": {
+            background: "#A0AEC0",
+          },
+        },
+      },
       emptyState: {
         display: "flex",
         flexDirection: "column" as "column",
