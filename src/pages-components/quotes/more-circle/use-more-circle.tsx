@@ -625,7 +625,7 @@ const useMoreCircle = () => {
           ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
           : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
-
+      // !here
       {
         condition:
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
