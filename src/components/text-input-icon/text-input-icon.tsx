@@ -16,7 +16,7 @@ const StyledTextField = styled(InputBase)((props: any) => ({
     paddingLeft: props?.style?.paddingInputLeft || "40px",
     paddingRight: props?.style?.paddingInputRight || "40px",
     color: props?.error ? "red" : "#000",
-    ...props.style
+    ...props.style,
   },
   "& .MuiOutlinedInput-root": {
     "&:hover fieldset": {
@@ -57,7 +57,8 @@ const GoMakeTextInputIcon = ({
   startAdornment,
   placeholder,
   bgColor,
-  inputRef
+  inputRef,
+  sx,
 }: {
   labelText?: string;
   placeholder?: any;
@@ -70,6 +71,7 @@ const GoMakeTextInputIcon = ({
   startAdornment?: any;
   bgColor?: any;
   inputRef?: any;
+  sx?: any;
 }) => {
   return (
     <StyledTextField
@@ -84,6 +86,7 @@ const GoMakeTextInputIcon = ({
       color={bgColor}
       inputRef={inputRef}
       id={"searchInput"}
+      sx={sx}
     />
   );
 };
