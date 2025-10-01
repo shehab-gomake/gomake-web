@@ -42,6 +42,11 @@ const SendPaymentModal = ({
   showAlertModal,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
+  const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
+  const { callApi } = useGomakeAxios();
+  const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
+  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+
   const {
     t,
     payState,
@@ -50,10 +55,6 @@ const SendPaymentModal = ({
     onChangePaymentInputs,
     handleSendPaymentPage,
   } = useSendPaymentModal({ openPaymentModal, documentType });
-  const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
-  const { callApi } = useGomakeAxios();
-  const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
-  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     getWhatsAppMessageApi(
@@ -82,6 +83,7 @@ const SendPaymentModal = ({
     isSendOrderReadyToClient = false,
     sendWithInvoices = false
   ) => {
+    debugger;
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
@@ -332,6 +334,7 @@ const SendPaymentModal = ({
             />
             {t("sales.quote.email")}
           </div>
+          {/* !here */}
           <div style={classes.inputLbl}>
             <SecondaryCheckBox
               sx={{ padding: "2px" }}
@@ -356,7 +359,12 @@ const SendPaymentModal = ({
               onClick={
                 isSendToClient
                   ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
-                  : handleSendPaymentPage
+                  : async () => {
+                      const shouldSendWhatsApp = await handleSendPaymentPage();
+                      if (shouldSendWhatsApp) {
+                        handleSendUsingWhatsAppWeb(false);
+                      }
+                    }
               }
               style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
             >
@@ -374,7 +382,13 @@ const SendPaymentModal = ({
                   isSendToClient
                     ? () =>
                         onClickSendQuoteToClient(isSendOrderReadyToClient, true)
-                    : handleSendPaymentPage
+                    : async () => {
+                        const shouldSendWhatsApp =
+                          await handleSendPaymentPage();
+                        if (shouldSendWhatsApp) {
+                          handleSendUsingWhatsAppWeb(true);
+                        }
+                      }
                 }
                 style={{
                   width: "50%",
@@ -389,7 +403,13 @@ const SendPaymentModal = ({
                 onClick={
                   isSendToClient
                     ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
-                    : handleSendPaymentPage
+                    : async () => {
+                        const shouldSendWhatsApp =
+                          await handleSendPaymentPage();
+                        if (shouldSendWhatsApp) {
+                          handleSendUsingWhatsAppWeb(false);
+                        }
+                      }
                 }
                 style={{
                   width: "50%",
