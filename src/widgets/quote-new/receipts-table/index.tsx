@@ -48,6 +48,7 @@ const ReceiptsTable = () => {
     setRemainingTotal,
     allocatedSums,
     setAllocatedSums,
+    isOutgoingPayments,
   } = usePaymentsTable();
 
   const setTotalAllocatedDocuments = useSetRecoilState<number>(
@@ -148,9 +149,16 @@ const ReceiptsTable = () => {
           handleAllocationChange(index, !checkedItems[index], item?.sumApplied);
         }}
         setAllocatedSum={setAllocatedSum}
+        isOutgoingPayments={isOutgoingPayments}
       />
     ));
-  }, [allocatedSums, checkedItems, tableRows, remainingTotal]);
+  }, [
+    allocatedSums,
+    checkedItems,
+    tableRows,
+    remainingTotal,
+    isOutgoingPayments,
+  ]);
 
   // const handleAllocationChange = (index, isChecked, sumApplied) => {
   //   setAllocatedSums((prev) => {
