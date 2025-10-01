@@ -31,7 +31,7 @@ FrontDesk uses a modular, provider-based architecture with a consistent layout s
 
 ### Main Application Layout
 
-The layout is defined in `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx` and implements a **flexible three-column layout**:
+The main widget (`frontdesk-widget.tsx`) uses `ThreeColumnLayout` to provide a **flexible three-column layout**:
 
 ```
 ┌─────────────┬──────────────┬────────────────────┐
@@ -42,16 +42,24 @@ The layout is defined in `src/widgets/frontdesk/layouts/three-column/ThreeColumn
 ├─────────────┼──────────────┼────────────────────┤
 │ • Providers │ • Threads    │ • Message view     │
 │ • Settings  │ • Emails     │ • Composer         │
-│ • Search    │ • Contacts   │ • Details          │
+│ • Tickets   │ • Contacts   │ • Details          │
 └─────────────┴──────────────┴────────────────────┘
 ```
 
-**Key Features:**
+**ThreeColumnLayout Features:**
 - Column 1: Navigation sidebar (fixed width, responsive)
-- Column 2: List panel (optional, can be hidden)
+- Column 2: List panel (optional, can be hidden via `hideMiddleColumn`)
 - Column 3: Main content area (flexible width)
 - Responsive design with mobile breakpoints
 - Smooth transitions between states
+
+**Current Implementation:**
+- `frontdesk-widget.tsx` uses `ThreeColumnLayout` directly
+- Provider views (DM, Email, WhatsApp) render their own **custom layouts** inside the main content area
+- Tickets provider integrates directly into the widget (no separate provider view)
+- Each provider implements its own internal layout structure using Material-UI `Stack` components
+
+**Note:** The original architectural goal was for all providers to use `ThreeColumnLayout` directly, but currently only the main widget uses it. Individual providers create their own layouts. This is documented in "Known Limitations" below.
 
 ---
 
@@ -124,9 +132,20 @@ src/widgets/frontdesk/
 │   └── search/                         # Search components
 │
 ├── design-system/                       # Design system components
-│   ├── Panel.tsx                       # Reusable panel component
-│   ├── EmptyState.tsx                  # Empty state displays
-│   └── ...                             # Other design system components
+│   ├── primitives/                     # Basic UI elements
+│   │   ├── Avatar/                     # Avatar components
+│   │   ├── Badge/                      # Badges (status, priority, channel, etc.)
+│   │   ├── Button/                     # Button variations
+│   │   └── Input/                      # Input components
+│   ├── compounds/                      # Composite components
+│   │   ├── Panel/                      # Panel, PanelContent, PanelHeader
+│   │   ├── EmptyState/                 # Empty state component
+│   │   ├── ListItem/                   # ConversationListItem, TicketListItem
+│   │   ├── MessageCard/                # Message card component
+│   │   ├── ConnectionStates/           # Connection state components
+│   │   └── ...                         # Other compound components
+│   └── layouts/                        # Layout components
+│       └── ThreeColumnLayout/          # Three-column layout system
 │
 ├── hooks/                               # Custom React hooks
 │   ├── use-fab-positioning.ts
@@ -202,9 +221,11 @@ src/services/
 
 ## Providers
 
-### Provider Architecture Pattern
+### Provider Architecture Patterns
 
-Each provider follows a consistent architecture:
+#### Standard Provider Pattern (DM, Email, WhatsApp)
+
+Most providers follow this structure:
 
 ```typescript
 Provider/
@@ -213,12 +234,35 @@ Provider/
 ├── hooks/
 │   └── use-{provider}-provider.ts  # Main provider hook
 ├── types/                          # TypeScript type definitions
-└── utils/                          # Provider-specific utilities
+└── utils/                          # Provider-specific utilities (optional)
 ```
+
+**Actual Hook Names:**
+- Direct Messages: `useDirectMessages` (from `hooks/use-direct-messages.ts`)
+- Email: `useEmailProvider` (from `hooks/use-email-provider.ts`)
+- WhatsApp: `useWhatsAppProvider` (from `hooks/use-whatsapp-provider.ts`)
+
+#### Tickets Provider Pattern (Exception)
+
+The Tickets provider follows a **different pattern**:
+
+```typescript
+tickets/
+├── components/                      # UI components
+│   ├── ticket-list-panel.tsx       # Main list component
+│   ├── ticket-list-item.tsx        # List item
+│   └── ticket-detail-view.tsx      # Detail view
+├── hooks/
+│   └── use-tickets-provider.ts     # State management hook
+├── types/                          # Type definitions
+└── mock-data/                      # Mock data
+```
+
+**Key Difference:** No `-provider-view.tsx` file. Tickets are integrated directly into `frontdesk-widget.tsx` rather than having a separate provider view component.
 
 ### Provider Hooks Pattern
 
-Each provider exports a custom hook that encapsulates all logic:
+Provider hooks encapsulate all state and logic:
 
 ```typescript
 export function useProviderName() {
