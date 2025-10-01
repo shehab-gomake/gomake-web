@@ -828,7 +828,7 @@ const QuickSetupFlow: React.FC = () => {
   return (
     <Box sx={{ p: "0px 24px 24px 24px" }}>
       {/* Welcome Section */}
-      <Box sx={{ mb: 4 }}>
+      <Box>
         <Box
           sx={{
             display: "flex",
@@ -869,7 +869,7 @@ const QuickSetupFlow: React.FC = () => {
               {t("Welcome to Quick Machines Setup")}
             </Typography>
             <Typography
-              variant="body1"
+              variant="body2"
               sx={{ color: "text.secondary", lineHeight: 1.6, mb: 1 }}
             >
               {t(
@@ -910,7 +910,7 @@ const QuickSetupFlow: React.FC = () => {
       </Box>
 
       {/* Stepper */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: 2, mb: 2 }}>
         <Stepper
           activeStep={dynamicSteps.findIndex((step) => step.id === currentStep)}
           alternativeLabel
@@ -924,14 +924,15 @@ const QuickSetupFlow: React.FC = () => {
       </Paper>
 
       {/* Step Content */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: 2, mb: 2 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           {t(dynamicSteps.find((step) => step.id === currentStep)?.title || "")}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 3, color: "text.secondary" }}>
+        {/* !here hide description */}
+        {/* <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
           {dynamicSteps.find((step) => step.id === currentStep)?.description ||
             ""}
-        </Typography>
+        </Typography> */}
 
         {/* Step 1: All Machines Selection */}
         {currentStep === 0 && (
@@ -1169,7 +1170,7 @@ const QuickSetupFlow: React.FC = () => {
       </Box>
       {/* Summary - Show all selected machines */}
       {selectedMachines.length > 0 && (
-        <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
+        <Paper sx={{ p: 2, mt: 1, backgroundColor: "#e8f5e8" }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Total Selected Machines: {selectedMachines.length}
           </Typography>
