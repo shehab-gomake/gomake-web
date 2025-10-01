@@ -18,6 +18,7 @@ const RowMappingWidget = ({
   isChecked,
   allocatedSum,
   setAllocatedSum,
+  isOutgoingPayments,
 }) => {
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
@@ -109,9 +110,21 @@ const RowMappingWidget = ({
         )}
       </PrimaryTableCell>
 
+      {isOutgoingPayments && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[4],
+            ...classes.cellContainerStyle,
+            color: "#000000",
+          }}
+        >
+          {item.purchaseInvoiceNumber || "-"}
+        </PrimaryTableCell>
+      )}
+
       <PrimaryTableCell
         style={{
-          width: columnWidths[4],
+          width: columnWidths[isOutgoingPayments ? 5 : 4],
           ...classes.cellContainerStyle,
         }}
       >
@@ -119,7 +132,7 @@ const RowMappingWidget = ({
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
-          width: columnWidths[5],
+          width: columnWidths[isOutgoingPayments ? 6 : 5],
           ...classes.cellContainerStyle,
         }}
       >
@@ -129,7 +142,7 @@ const RowMappingWidget = ({
       {!router?.query?.isNewCreation ? (
         <PrimaryTableCell
           style={{
-            width: columnWidths[5],
+            width: columnWidths[isOutgoingPayments ? 6 : 5],
             ...classes.cellContainerStyle,
           }}
         >
