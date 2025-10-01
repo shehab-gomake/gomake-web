@@ -20,6 +20,7 @@ import {
   Button,
   Chip,
   IconButton,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -35,6 +36,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BoltIcon from "@mui/icons-material/Bolt";
 import RestoreIcon from "@mui/icons-material/Restore";
 import EventIcon from "@mui/icons-material/Event";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { TimeFrameTabs } from "./state";
 import {
   adaptLeft,
@@ -132,6 +134,12 @@ const TimelineWidget = () => {
   const getGroupStats = (groupId: string) => {
     // Get all items in this group AND its children
     const groupItems = items.filter((item) => {
+      // Exclude items that have group equal to root group IDs
+      const isRootGroup = groups.find(
+        (group) => group.isRoot && group.id === item.group
+      );
+      if (isRootGroup) return false;
+
       // Include items directly in this group
       if (item.group === groupId) return true;
 
@@ -223,9 +231,24 @@ const TimelineWidget = () => {
                     backgroundColor: getGroupColor(group.title),
                   }}
                 />
-                <Typography variant="body2" fontWeight={600}>
-                  {group.title}
-                </Typography>
+                <Tooltip
+                  title={group.title}
+                  arrow
+                  disableHoverListener={group.title.length <= 10}
+                >
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    sx={{
+                      maxWidth: "90px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {group.title}
+                  </Typography>
+                </Tooltip>
                 <Chip
                   label={groups.filter((g) => g.parent === group.id).length}
                   size="small"
@@ -238,6 +261,7 @@ const TimelineWidget = () => {
                   }}
                 />
               </Stack>
+
               <Stack
                 direction="row"
                 alignItems="center"
@@ -278,7 +302,7 @@ const TimelineWidget = () => {
               justifyContent="space-between"
               sx={{
                 padding: "8px 12px 8px 32px",
-                height: "50px", //!here new to hide or not
+                height: "50px",
                 backgroundColor: "#FFF",
                 borderBottom: "1px solid #F1F3F4",
                 ...FONT_FAMILY.Inter(500, 13),
@@ -289,9 +313,24 @@ const TimelineWidget = () => {
                 transition: "background-color 0.2s ease",
               }}
             >
-              <Typography variant="body2" fontWeight={600}>
-                {group.title}
-              </Typography>
+              <Tooltip
+                title={group.title}
+                arrow
+                disableHoverListener={group.title.length <= 15}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  sx={{
+                    maxWidth: "150px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {group.title}
+                </Typography>
+              </Tooltip>
               <Chip
                 label={getStationStats(group.id)}
                 size="small"
@@ -477,6 +516,37 @@ const TimelineWidget = () => {
               {isRecovering
                 ? "Recovering..."
                 : t("productionFloor.recoverOverdue")}
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              disabled={!hasLocalChanges()}
+              onClick={() => {
+                clearAllLocalChanges();
+                getData(currentMonth.clone().month());
+              }}
+              sx={{
+                borderColor: "#6C757D",
+                color: "#6C757D",
+                "&:hover": {
+                  borderColor: "#495057",
+                  backgroundColor: "#F8F9FA",
+                  color: "#495057",
+                },
+                "&:disabled": {
+                  borderColor: "#ccc",
+                  color: "#ccc",
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: isRTL ? 0 : "8px",
+                  marginLeft: isRTL ? "8px" : 0,
+                },
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              {t("productionFloor.resetChanges")}
             </Button>
           </Stack>
         </Stack>
