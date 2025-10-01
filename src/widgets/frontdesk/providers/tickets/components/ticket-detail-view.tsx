@@ -122,19 +122,32 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
                   · Created {formatDateTime(ticket.createdAt)}
                 </Typography>
-                {/* Show channel badges for multi-channel tickets */}
-                {ticket.conversation.messages.length > 0 && ticket.conversation.messages[0].channel && (
-                  <Chip
-                    label={ticket.conversation.messages[0].channel}
-                    size="small"
-                    sx={{
-                      height: 20,
-                      fontSize: 10,
-                      fontWeight: 600,
-                      backgroundColor: getChannelColor(ticket.conversation.messages[0].channel),
-                      color: 'white',
-                    }}
-                  />
+                {/* Origin Provider Channel Badge */}
+                {ticket.originProviderChannel && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography
+                      component="span"
+                      sx={{ fontSize: 16 }}
+                      role="img"
+                      aria-label={ticket.originProviderChannel.type}
+                    >
+                      {getChannelIcon(ticket.originProviderChannel.type)}
+                    </Typography>
+                    <Chip
+                      label={`${ticket.originProviderChannel.type}`}
+                      size="small"
+                      sx={{
+                        height: 20,
+                        fontSize: 10,
+                        fontWeight: 600,
+                        backgroundColor: getChannelColor(ticket.originProviderChannel.type),
+                        color: 'white',
+                      }}
+                    />
+                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary, ml: 0.5 }}>
+                      via {ticket.originProviderChannel.identifier}
+                    </Typography>
+                  </Box>
                 )}
                 {/* SLA Warning */}
                 {ticket.sla?.breached && (

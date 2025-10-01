@@ -45,7 +45,21 @@ export class MessagingHubHttpClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || errorData.error || `HTTP error! status: ${response.status}`);
+      const errorMessage =
+        errorData.message ||
+        errorData.error ||
+        (typeof errorData === 'string' ? errorData : null) ||
+        `HTTP error! status: ${response.status}`;
+
+      console.error('API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url,
+        errorData,
+        errorMessage
+      });
+
+      throw new Error(errorMessage);
     }
 
     // Handle binary responses (like file downloads)

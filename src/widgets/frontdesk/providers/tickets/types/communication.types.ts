@@ -46,6 +46,7 @@ export interface EmailMetadata {
   messageId?: string;
   inReplyTo?: string;
   threadId?: string;
+  providerMessageId?: string; // Gmail/Outlook provider message ID
 }
 
 export interface WhatsAppMetadata {
@@ -102,6 +103,11 @@ export interface ChannelMessage {
   createdAt: string;
   updatedAt?: string;
   editedAt?: string;
+
+  // Delivery tracking
+  sentAt?: string;
+  deliveredAt?: string;
+  errorMessage?: string;
 
   // Channel-specific data
   channelMetadata?: ChannelMetadata;

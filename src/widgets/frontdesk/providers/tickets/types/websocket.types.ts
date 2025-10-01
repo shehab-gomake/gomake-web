@@ -160,6 +160,31 @@ export interface WebhookMessageProcessedPayload {
   error?: string;
 }
 
+/**
+ * Event: message.delivered 
+ * When: Outbound message sent successfully or failed
+ */
+export interface MessageDeliveredPayload {
+  messageId: string;
+  ticketId?: string;
+  channel: ChannelType;
+  status: 'SENT' | 'FAILED';
+  printHouseId: string;
+  providerMessageId?: string;
+  error?: string;
+}
+
+/**
+ * Event: message.delivery.failed 
+ * When: Message send failed after all retries
+ */
+export interface MessageDeliveryFailedPayload {
+  messageId: string;
+  ticketId?: string;
+  error: string;
+  printHouseId: string;
+}
+
 // ============================================
 // Event Handler Types
 // ============================================
@@ -176,10 +201,29 @@ export type TicketCustomerUpdatedHandler = (payload: TicketCustomerUpdatedPayloa
 export type SLABreachedHandler = (payload: SLABreachedPayload) => void;
 export type TicketAutoResponseHandler = (payload: TicketAutoResponsePayload) => void;
 export type WebhookMessageProcessedHandler = (payload: WebhookMessageProcessedPayload) => void;
+export type MessageDeliveredHandler = (payload: MessageDeliveredPayload) => void;
+export type MessageDeliveryFailedHandler = (payload: MessageDeliveryFailedPayload) => void;
 
 // ============================================
 // Event Names (constants for type safety)
 // ============================================
+
+/**
+ * Event: conversation.needs.review 
+ * When: Message received but no ticket exists
+ */
+export interface ConversationNeedsReviewPayload {
+  channel: ChannelType;
+  identifier: string; // email or phone
+  subject?: string;
+  content: string;
+  preview: string; // First 100 chars
+  metadata: Record<string, any>;
+  printHouseId: string;
+  timestamp: string;
+}
+
+export type ConversationNeedsReviewHandler = (payload: ConversationNeedsReviewPayload) => void;
 
 export const TICKET_EVENTS = {
   CREATED: 'ticket.created',
@@ -194,6 +238,11 @@ export const TICKET_EVENTS = {
   SLA_BREACHED: 'sla.breached',
   AUTO_RESPONSE: 'ticket.autoResponse',
   WEBHOOK_PROCESSED: 'webhook.message.processed',
+  // Message Delivery Events
+  MESSAGE_DELIVERED: 'message.delivered',
+  MESSAGE_DELIVERY_FAILED: 'message.delivery.failed',
+  // Review Queue Event
+  CONVERSATION_NEEDS_REVIEW: 'conversation.needs.review',
 } as const;
 
 export type TicketEventName = typeof TICKET_EVENTS[keyof typeof TICKET_EVENTS];

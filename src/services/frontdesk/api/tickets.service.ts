@@ -27,9 +27,15 @@ import {
   TicketHistoryEntry,
   AgentWorkload,
   GenericSuccessResponse,
+  Provider,
+  ProvidersResponse,
+  ProviderChannel,
+  ProviderChannelsResponse,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
-const TICKETS_BASE_URL = '/api/tickets';
+const TICKETS_BASE_URL = '/tickets';
+const PROVIDERS_URL = '/providers';
+const PROVIDER_CHANNELS_URL = '/provider-channels';
 
 export class TicketsService extends MessagingHubHttpClient {
   // ============================================
@@ -94,7 +100,7 @@ export class TicketsService extends MessagingHubHttpClient {
    * PATCH /api/tickets/:id/status
    */
   async updateTicketStatus(ticketId: string, status: string): Promise<GenericSuccessResponse> {
-    return await this.put<GenericSuccessResponse>(
+    return await this.patch<GenericSuccessResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/status`,
       { status }
     );
@@ -115,7 +121,7 @@ export class TicketsService extends MessagingHubHttpClient {
    * PATCH /api/tickets/:id/priority
    */
   async updateTicketPriority(ticketId: string, priority: string): Promise<GenericSuccessResponse> {
-    return await this.put<GenericSuccessResponse>(
+    return await this.patch<GenericSuccessResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/priority`,
       { priority }
     );
@@ -211,6 +217,86 @@ export class TicketsService extends MessagingHubHttpClient {
   async getCustomerTicketHistory(identifier: string): Promise<TicketWithDetails[]> {
     return await this.get<TicketWithDetails[]>(
       `${TICKETS_BASE_URL}/customer/${encodeURIComponent(identifier)}`
+    );
+  }
+
+  // ============================================
+  // Providers (Simplified API)
+  // ============================================
+
+  /**
+   * Get All Providers for Organization
+   * GET /api/providers
+   * Returns all communication providers (Gmail accounts, WhatsApp numbers, SMS, etc.)
+   */
+  async getProviders(): Promise<Provider[]> {
+    const response = await this.get<ProvidersResponse | Provider[]>(PROVIDERS_URL);
+
+    // Handle both response formats:
+    // 1. Wrapped: { data: [...] }
+    // 2. Direct array: [...]
+    if (Array.isArray(response)) {
+      console.log('[TicketsService] Providers returned as direct array');
+      return response;
+    }
+
+    if (response && typeof response === 'object' && 'data' in response) {
+      console.log('[TicketsService] Providers returned wrapped in {data: [...]}');
+      return response.data || [];
+    }
+
+    console.warn('[TicketsService] ⚠️ Unexpected response format from /providers:', response);
+    return [];
+  }
+
+  /**
+   * Get Single Provider by ID
+   * GET /api/providers/:id
+   */
+  async getProviderById(providerId: string): Promise<Provider> {
+    return await this.get<Provider>(
+      `${PROVIDERS_URL}/${encodeURIComponent(providerId)}`
+    );
+  }
+
+  // ============================================
+  // Provider Channels (Legacy - Deprecated)
+  // ============================================
+
+  /**
+   * Get All Provider Channels for Organization
+   * GET /api/provider-channels
+   * Returns all communication channels (email accounts, WhatsApp numbers, etc.)
+   * @deprecated Use getProviders() instead
+   */
+  async getProviderChannels(): Promise<ProviderChannel[]> {
+    const response = await this.get<ProviderChannelsResponse | ProviderChannel[]>(PROVIDER_CHANNELS_URL);
+
+    // Handle both response formats:
+    // 1. Wrapped: { data: [...] }
+    // 2. Direct array: [...]
+    if (Array.isArray(response)) {
+      console.log('[TicketsService] Provider channels returned as direct array');
+      return response;
+    }
+
+    if (response && typeof response === 'object' && 'data' in response) {
+      console.log('[TicketsService] Provider channels returned wrapped in {data: [...]}');
+      return response.data || [];
+    }
+
+    console.warn('[TicketsService] ⚠️ Unexpected response format from /provider-channels:', response);
+    return [];
+  }
+
+  /**
+   * Get Single Provider Channel by ID
+   * GET /api/provider-channels/:id
+   * @deprecated Use getProviderById() instead
+   */
+  async getProviderChannelById(channelId: string): Promise<ProviderChannel> {
+    return await this.get<ProviderChannel>(
+      `${PROVIDER_CHANNELS_URL}/${encodeURIComponent(channelId)}`
     );
   }
 }

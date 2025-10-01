@@ -10,6 +10,8 @@ export interface EmailAccount {
   displayName: string;
   isActive: boolean;
   isPrimary: boolean;
+  // Provider Channel ID for unified ticketing
+  providerChannelId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,7 +21,7 @@ export interface EmailMessage {
   messageId?: string;
   threadId: string;
   subject: string;
-  from: EmailRecipient;
+  from: EmailRecipient[]; // Changed to array to match backend
   to: EmailRecipient[];
   cc?: EmailRecipient[];
   bcc?: EmailRecipient[];
@@ -115,8 +117,8 @@ export interface EmailConversation {
   lastMessage: {
     id: string;
     threadId: string;
-    from: string;
-    to: string[];
+    from: EmailRecipient[]; // Changed to array to match backend
+    to: EmailRecipient[]; // Changed to EmailRecipient[] to match backend
     subject: string;
     date: string;
     isRead: boolean;

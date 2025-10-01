@@ -48,6 +48,8 @@ export interface Ticket {
   reopenedAt?: string | null;
   reopenCount: number;
   mergedIntoId?: string | null;
+  // Origin tracking
+  originProviderChannelId: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -72,6 +74,13 @@ export interface TicketWithDetails extends Ticket {
     name: string;
     priority: TicketPriority;
   } | null;
+  // Origin provider channel details
+  originProviderChannel: {
+    id: string;
+    type: ChannelType;
+    identifier: string; // email address or phone number
+    name: string;
+  };
   conversation: {
     id: string;
     name: string;
@@ -84,10 +93,19 @@ export interface TicketWithDetails extends Ticket {
       direction: MessageDirection;
       channel?: ChannelType;
       fromIdentifier?: string;
+      // Delivery tracking fields
+      status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+      sentAt?: string;
+      deliveredAt?: string;
+      errorMessage?: string;
       metadata?: {
         subject?: string; // email only
         messageType?: string; // WhatsApp media type
         hasHtml?: boolean;
+      };
+      channelMetadata?: {
+        providerMessageId?: string;
+        [key: string]: any;
       };
     }>;
   };
@@ -142,10 +160,15 @@ export interface TicketFilters {
 // Request DTOs
 // ============================================
 
+/**
+ * Create Ticket From Conversation (Multi-Provider)
+ */
 export interface CreateFromConversationDto {
-  conversationId: string;
+  providerId: string; // Provider ID from backend (from GET /providers)
+  externalConversationId: string; // Gmail threadId, WhatsApp chatId, SMS conversationSid, etc.
   priority?: TicketPriority; // default MEDIUM
   categoryId?: string;
+  assigneeId?: string; // Optional: Auto-assign to agent
 }
 
 export interface ReplyTicketDto {
@@ -262,6 +285,81 @@ export interface AgentWorkload {
   openTickets: number; // OPEN, IN_PROGRESS, PENDING
   totalTickets: number; // all tickets assigned to agent
   avgResponseTimeHours: number | null; // placeholder, always null currently
+}
+
+// ============================================
+// Providers (Simplified API)
+// ============================================
+
+/**
+ * Provider - Represents a communication provider (Gmail, WhatsApp, SMS)
+ */
+export interface Provider {
+  id: string;
+  type: 'EMAIL' | 'WHATSAPP' | 'SMS' | 'PUSH';
+  name: string;
+  metadata: {
+    email?: string;
+    phone?: string;
+    displayName?: string;
+    [key: string]: any;
+  };
+}
+
+/**
+ * Response from GET /providers
+ */
+export interface ProvidersResponse {
+  data: Provider[];
+}
+
+// ============================================
+// Provider Channels (Legacy)
+// ============================================
+
+/**
+ * Provider Channel - Represents a communication channel (email account, WhatsApp number, etc.)
+ * @deprecated Use Provider instead
+ */
+export interface ProviderChannel {
+  id: string;
+  type: ChannelType;
+  identifier: string; // support@company.com, +1234567890, etc.
+  name: string;
+  providerId: string;
+  provider: {
+    id: string;
+    type: 'EMAIL' | 'WHATSAPP' | 'SMS';
+    name: string;
+  };
+  isActive: boolean;
+}
+
+/**
+ * Response from GET /provider-channels
+ * @deprecated Use ProvidersResponse instead
+ */
+export interface ProviderChannelsResponse {
+  data: ProviderChannel[];
+}
+
+// ============================================
+// Review Queue (Conversations Without Tickets)
+// ============================================
+
+/**
+ * Event: conversation.needs.review
+ * When: Message received but no ticket exists
+ */
+export interface ConversationNeedsReviewPayload {
+  channel: ChannelType;
+  identifier: string; // email or phone
+  subject?: string;
+  content: string;
+  preview: string; // First 100 chars
+  metadata: Record<string, any>;
+  printHouseId: string;
+  timestamp: string;
 }
 
 // ============================================

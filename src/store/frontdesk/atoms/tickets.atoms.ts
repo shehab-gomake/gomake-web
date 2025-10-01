@@ -6,6 +6,7 @@ import {
   PaginationMetadata,
   RelatedTicket,
   TicketHistoryEntry,
+  ConversationNeedsReviewPayload,
   transformApiTicketToUi,
 } from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
@@ -32,6 +33,30 @@ export const ticketsLoadingAtom = atom<boolean>({
 export const ticketsErrorAtom = atom<string | null>({
   key: 'frontdesk.tickets.error',
   default: null,
+});
+
+/**
+ * WebSocket connection state
+ */
+export const ticketSocketConnectedAtom = atom<boolean>({
+  key: 'frontdesk.tickets.socketConnected',
+  default: false,
+});
+
+/**
+ * WebSocket connection error
+ */
+export const ticketSocketErrorAtom = atom<string | null>({
+  key: 'frontdesk.tickets.socketError',
+  default: null,
+});
+
+/**
+ * Review Queue - Conversations awaiting ticket creation
+ */
+export const reviewQueueConversationsAtom = atom<ConversationNeedsReviewPayload[]>({
+  key: 'frontdesk.tickets.reviewQueue',
+  default: [],
 });
 
 /**

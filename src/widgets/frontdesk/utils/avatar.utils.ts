@@ -30,7 +30,7 @@ const AVATAR_COLORS = [
  * @returns Hex color string
  */
 export function getAvatarColor(identifier: string, colors: string[] = AVATAR_COLORS): string {
-  if (!identifier) return AVATAR_COLORS[0];
+  if (!identifier || typeof identifier !== 'string') return AVATAR_COLORS[0];
 
   // Simple hash function
   const hash = identifier.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -46,7 +46,7 @@ export function getAvatarColor(identifier: string, colors: string[] = AVATAR_COL
  * @returns Two-character initials in uppercase
  */
 export function getEmailInitials(email: string): string {
-  if (!email) return "??";
+  if (!email || typeof email !== 'string') return "??";
 
   const localPart = email.split("@")[0];
   return localPart.substring(0, 2).toUpperCase();
@@ -61,7 +61,7 @@ export function getEmailInitials(email: string): string {
  * @returns Up to two-character initials in uppercase
  */
 export function getDisplayNameInitials(displayName: string): string {
-  if (!displayName) return "??";
+  if (!displayName || typeof displayName !== 'string') return "??";
 
   const words = displayName.trim().split(/\s+/);
 

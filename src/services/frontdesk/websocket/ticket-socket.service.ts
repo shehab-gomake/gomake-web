@@ -23,6 +23,9 @@ import {
   SLABreachedPayload,
   TicketAutoResponsePayload,
   WebhookMessageProcessedPayload,
+  MessageDeliveredPayload,
+  MessageDeliveryFailedPayload,
+  ConversationNeedsReviewPayload,
   TicketCreatedHandler,
   TicketAssignedHandler,
   TicketStatusChangedHandler,
@@ -35,28 +38,29 @@ import {
   SLABreachedHandler,
   TicketAutoResponseHandler,
   WebhookMessageProcessedHandler,
+  MessageDeliveredHandler,
+  MessageDeliveryFailedHandler,
+  ConversationNeedsReviewHandler,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
 class TicketSocketService {
   private socket: Socket | null = null;
-  private currentPrintHouseId: string | null = null;
   private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();
 
   /**
    * Initialize socket connection and subscribe to ticket events
-   * @param printHouseId - Current organization/tenant ID for filtering events
+   * Backend extracts printHouseId from JWT token automatically
    */
-  async connect(authToken: string, printHouseId: string): Promise<void> {
+  async connect(authToken: string): Promise<void> {
     // Use existing messaging service connection
     await messagingService.connect(authToken);
     this.socket = messagingService.getSocket();
-    this.currentPrintHouseId = printHouseId;
 
     if (!this.socket) {
       throw new Error('Failed to connect to messaging service');
     }
 
-    console.log('[TicketSocket] Connected to /messaging namespace for tenant:', printHouseId);
+    console.log('[TicketSocket] Connected to /messaging namespace (backend extracts printHouseId from JWT)');
     this.registerAllEvents();
   }
 
@@ -67,7 +71,6 @@ class TicketSocketService {
     if (this.socket) {
       this.removeAllTicketListeners();
       this.socket = null;
-      this.currentPrintHouseId = null;
       this.eventHandlers.clear();
     }
   }
@@ -80,7 +83,7 @@ class TicketSocketService {
   }
 
   // ============================================
-  // Event Registration (12 Ticket Events)
+  // Event Registration (14 Ticket Events )
   // ============================================
 
   private registerAllEvents(): void {
@@ -100,7 +103,14 @@ class TicketSocketService {
     this.socket.on(TICKET_EVENTS.AUTO_RESPONSE, this.handleTicketAutoResponse.bind(this));
     this.socket.on(TICKET_EVENTS.WEBHOOK_PROCESSED, this.handleWebhookMessageProcessed.bind(this));
 
-    console.log('[TicketSocket] Registered all 12 ticket event listeners');
+    // Message delivery events
+    this.socket.on(TICKET_EVENTS.MESSAGE_DELIVERED, this.handleMessageDelivered.bind(this));
+    this.socket.on(TICKET_EVENTS.MESSAGE_DELIVERY_FAILED, this.handleMessageDeliveryFailed.bind(this));
+
+    // Review queue event
+    this.socket.on(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, this.handleConversationNeedsReview.bind(this));
+
+    console.log('[TicketSocket] Registered all 15 ticket event listeners ');
   }
 
   private removeAllTicketListeners(): void {
@@ -114,102 +124,86 @@ class TicketSocketService {
   }
 
   // ============================================
-  // Event Filters (Multi-tenancy)
-  // ============================================
-
-  /**
-   * Filter events by printHouseId to ensure tenant isolation
-   */
-  private shouldProcessEvent(payload: { printHouseId?: string }): boolean {
-    if (!payload.printHouseId || !this.currentPrintHouseId) {
-      console.warn('[TicketSocket] Event missing printHouseId, dropping event');
-      return false;
-    }
-
-    if (payload.printHouseId !== this.currentPrintHouseId) {
-      console.warn(
-        `[TicketSocket] Event from different tenant (${payload.printHouseId}), expected ${this.currentPrintHouseId}`
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-  // ============================================
   // Event Handlers (Internal)
   // ============================================
+  // Note: Backend handles tenant isolation via Socket.IO rooms (org:${printHouseId})
+  // No need to filter events on frontend - we only receive events for our organization
 
   private handleTicketCreated(payload: TicketCreatedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.created:', payload);
     this.emit(TICKET_EVENTS.CREATED, payload);
   }
 
   private handleTicketAssigned(payload: TicketAssignedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.assigned:', payload);
     this.emit(TICKET_EVENTS.ASSIGNED, payload);
   }
 
   private handleTicketStatusChanged(payload: TicketStatusChangedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.status.changed:', payload);
     this.emit(TICKET_EVENTS.STATUS_CHANGED, payload);
   }
 
   private handleTicketReplySent(payload: TicketReplySentPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.reply.sent:', payload);
     this.emit(TICKET_EVENTS.REPLY_SENT, payload);
   }
 
   private handleTicketReopened(payload: TicketReopenedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.reopened:', payload);
     this.emit(TICKET_EVENTS.REOPENED, payload);
   }
 
   private handleTicketMerged(payload: TicketMergedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.merged:', payload);
     this.emit(TICKET_EVENTS.MERGED, payload);
   }
 
   private handleTicketsBulkAssigned(payload: TicketsBulkAssignedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] tickets.bulkAssigned:', payload);
     this.emit(TICKET_EVENTS.BULK_ASSIGNED, payload);
   }
 
   private handleTicketMessageReceived(payload: TicketMessageReceivedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.message.received:', payload);
     this.emit(TICKET_EVENTS.MESSAGE_RECEIVED, payload);
   }
 
   private handleTicketCustomerUpdated(payload: TicketCustomerUpdatedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.customer.updated:', payload);
     this.emit(TICKET_EVENTS.CUSTOMER_UPDATED, payload);
   }
 
   private handleSLABreached(payload: SLABreachedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.warn('[TicketSocket] sla.breached:', payload);
     this.emit(TICKET_EVENTS.SLA_BREACHED, payload);
   }
 
   private handleTicketAutoResponse(payload: TicketAutoResponsePayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] ticket.autoResponse:', payload);
     this.emit(TICKET_EVENTS.AUTO_RESPONSE, payload);
   }
 
   private handleWebhookMessageProcessed(payload: WebhookMessageProcessedPayload): void {
-    if (!this.shouldProcessEvent(payload)) return;
     console.log('[TicketSocket] webhook.message.processed:', payload);
     this.emit(TICKET_EVENTS.WEBHOOK_PROCESSED, payload);
+  }
+
+  // Message delivery handlers
+  private handleMessageDelivered(payload: MessageDeliveredPayload): void {
+    console.log('[TicketSocket] message.delivered:', payload);
+    this.emit(TICKET_EVENTS.MESSAGE_DELIVERED, payload);
+  }
+
+  private handleMessageDeliveryFailed(payload: MessageDeliveryFailedPayload): void {
+    console.error('[TicketSocket] message.delivery.failed:', payload);
+    this.emit(TICKET_EVENTS.MESSAGE_DELIVERY_FAILED, payload);
+  }
+
+  // Review queue handler
+  private handleConversationNeedsReview(payload: ConversationNeedsReviewPayload): void {
+    console.log('[TicketSocket] conversation.needs.review:', payload);
+    this.emit(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, payload);
   }
 
   // ============================================
@@ -298,6 +292,28 @@ class TicketSocketService {
    */
   onWebhookMessageProcessed(handler: WebhookMessageProcessedHandler): void {
     this.on(TICKET_EVENTS.WEBHOOK_PROCESSED, handler);
+  }
+
+  /**
+   * Subscribe to message.delivered event
+   */
+  onMessageDelivered(handler: MessageDeliveredHandler): void {
+    this.on(TICKET_EVENTS.MESSAGE_DELIVERED, handler);
+  }
+
+  /**
+   * Subscribe to message.delivery.failed event
+   */
+  onMessageDeliveryFailed(handler: MessageDeliveryFailedHandler): void {
+    this.on(TICKET_EVENTS.MESSAGE_DELIVERY_FAILED, handler);
+  }
+
+  /**
+   * Subscribe to conversation.needs.review event
+   * Fires when a message is received but no ticket exists
+   */
+  onConversationNeedsReview(handler: ConversationNeedsReviewHandler): void {
+    this.on(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, handler);
   }
 
   // ============================================

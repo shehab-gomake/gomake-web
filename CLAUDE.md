@@ -15,10 +15,18 @@ docs/frontdesk/                  # FrontDesk documentation
 ```
 
 ### 📖 Backend Documentation (ALWAYS CONSULT)
+**Main Backend Docs Index:** `/Users/omarsabbah/Desktop/Messaging-Hub/docs/README.md`
+- Start here to understand all backend features and navigate to specific guides
+
 **Tickets Backend Docs:** `/Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/`
 - `api-reference.md` - REST endpoints, DTOs (MUST match exactly)
 - `realtime-and-webhooks.md` - 12 WebSocket events (MUST implement all)
 - `ui-implementation.md` - Screen layouts, component patterns
+
+**Other Backend Feature Docs:** (from README.md)
+- Direct Messages: `developer/features/direct-messages-frontend-guide.md`
+- Email Integration: `developer/features/email.md`
+- General API: `developer/api-reference.md`
 
 ### ❌ FORBIDDEN: Never Modify
 - `src/widgets/*` (except `frontdesk/`)

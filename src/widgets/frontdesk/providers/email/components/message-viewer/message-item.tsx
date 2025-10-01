@@ -18,15 +18,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, accountId, is
   const { primaryColor, neutralColor } = useGomakeTheme();
   const isOwn = false; // TODO: Check if message is from current user
 
-  let senderName: string;
-  let senderEmail: string | undefined;
+  // message.from is now an array of EmailRecipient objects
+  // Take the first sender (should always have at least one)
+  const sender = message.from?.[0] || { email: "unknown@example.com", name: undefined };
+  const senderEmail = sender.email || "unknown@example.com";
+  const senderName = sender.name || senderEmail;
 
-  // message.from is always an EmailRecipient object based on the type definition
-  senderName = message.from.name || message.from.email;
-  senderEmail = message.from.email;
-
-  const avatarColor = getAvatarColor(senderEmail || senderName);
-  const initials = getEmailInitials(senderEmail || senderName);
+  const avatarColor = getAvatarColor(senderEmail);
+  const initials = getEmailInitials(senderEmail);
 
   return (
     <Box

@@ -61,6 +61,7 @@ export const EmailProviderView: React.FC = () => {
     handleReplyWithComposer,
     searchQuery,
     onSearch,
+    createTicket,
   } = useEmailProvider();
 
   const fabPositioning = useFabPositioning({
@@ -82,12 +83,10 @@ export const EmailProviderView: React.FC = () => {
     if (!selectedConversation) return false;
 
     // Create a simple reply draft
+    // lastMessage.from is now an array, take first sender
     const replyDraft = {
-      to: [{ email: selectedConversation.lastMessage?.from || "", name: "" }],
-      cc:
-        replyAll && selectedConversation.lastMessage?.to
-          ? selectedConversation.lastMessage.to.map((email) => ({ email, name: "" }))
-          : [],
+      to: selectedConversation.lastMessage?.from || [],
+      cc: replyAll && selectedConversation.lastMessage?.to ? selectedConversation.lastMessage.to : [],
       bcc: [],
       subject: `Re: ${selectedConversation.subject.replace(/^Re:\s*/i, "")}`,
       text: text,
@@ -266,6 +265,7 @@ export const EmailProviderView: React.FC = () => {
               onStar={starConversation}
               onPrint={handlePrint}
               onAddLabel={handleAddLabel}
+              onCreateTicket={createTicket}
               onSendReply={handleInlineReply}
               isSending={isSending}
             />

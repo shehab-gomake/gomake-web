@@ -289,13 +289,19 @@ export function useProviderName() {
 
 ### Current Provider Status
 
-| Provider | Status | Real API | WebSocket | OAuth |
-|----------|--------|----------|-----------|-------|
-| Internal (DMs) | ✅ Complete | ✅ | ✅ | N/A |
-| Email | ✅ Complete | ✅ | ❌ | ✅ |
-| WhatsApp | 🟡 Partial | ❌ Mock | ❌ | ❌ |
-| Tickets | ✅ Complete | 🟡 Mock | ❌ | N/A |
-| Unified | 🟡 Partial | N/A | N/A | N/A |
+| Provider | Status | Real API | WebSocket | OAuth | V2 Support |
+|----------|--------|----------|-----------|-------|------------|
+| Internal (DMs) | ✅ Complete | ✅ | ✅ | N/A | N/A |
+| Email | ✅ Complete | ✅ | ❌ | ✅ | ✅ Threading |
+| WhatsApp | 🟡 Partial | ❌ Mock | ❌ | ❌ | ❌ |
+| Tickets | ✅ Complete | 🟡 Mock | ✅ 14 Events | N/A | ✅ V2 Delivery |
+| Unified | 🟡 Partial | N/A | N/A | N/A | N/A |
+
+**V2 Updates (2025-10-01):**
+- ✅ Tickets provider now supports V2 message delivery events (14 total events, up from 12)
+- ✅ Real-time message delivery status tracking (PENDING → SENT → FAILED)
+- ✅ Email threading metadata support for Gmail/Outlook
+- ✅ Multi-account email routing (automatic backend)
 
 ---
 
@@ -333,6 +339,29 @@ messagingService.on('dm:newMessage', (message) => {
   setMessages((prev) => [...prev, message]);
 });
 ```
+
+**V2: Tickets Provider WebSocket Events (14 Total)**
+
+The Tickets provider now supports 14 real-time events, including 2 new V2 message delivery events:
+
+```typescript
+// V2 Message Delivery Events
+ticketSocketService.onMessageDelivered((payload) => {
+  // Update message status: PENDING → SENT/FAILED
+  console.log('Message delivered:', payload.status);
+});
+
+ticketSocketService.onMessageDeliveryFailed((payload) => {
+  // Show error notification and retry option
+  console.error('Delivery failed:', payload.error);
+});
+```
+
+**Event Categories:**
+- **Ticket Lifecycle**: created, assigned, status.changed, reopened, merged (6 events)
+- **Messages**: message.received, reply.sent, message.delivered, message.delivery.failed (4 events)
+- **Management**: bulkAssigned, customer.updated, sla.breached, autoResponse (4 events)
+- **Monitoring**: webhook.message.processed (1 event)
 
 ---
 

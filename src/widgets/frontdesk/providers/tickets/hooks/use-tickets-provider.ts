@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ticketsService } from '@/services/frontdesk/api/tickets.service';
 import { getUserToken } from '@/services/storage-data';
@@ -18,6 +18,9 @@ import {
   ticketSearchQueryAtom,
   ticketCountsSelector,
   openTicketTabsAtom,
+  ticketSocketConnectedAtom,
+  ticketSocketErrorAtom,
+  reviewQueueConversationsAtom,
 } from '@/store/frontdesk/atoms/tickets.atoms';
 import { ticketSocketService } from '@/services/frontdesk';
 import {
@@ -35,6 +38,8 @@ import {
 export interface UseTicketsProviderResult {
   // Connection state
   isConnected: boolean;
+  socketConnected: boolean;
+  socketError: string | null;
   isLoading: boolean;
   error: string | null;
 
@@ -74,6 +79,10 @@ export interface UseTicketsProviderResult {
   // Related data
   relatedTickets: any[];
   ticketHistory: any[];
+
+  // Review Queue
+  reviewQueueConversations: any[];
+  setReviewQueueConversations: (conversations: any[]) => void;
 
   // Actions - Core
   fetchTickets: (filters?: TicketFilters) => Promise<void>;
@@ -128,10 +137,20 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const [searchQuery, setSearchQuery] = useRecoilState(ticketSearchQueryAtom);
   const [openTabs, setOpenTabs] = useRecoilState(openTicketTabsAtom);
 
+  // WebSocket connection state
+  const [socketConnected, setSocketConnected] = useRecoilState(ticketSocketConnectedAtom);
+  const [socketError, setSocketError] = useRecoilState(ticketSocketErrorAtom);
+
+  // Review Queue
+  const [reviewQueueConversations, setReviewQueueConversations] = useRecoilState(reviewQueueConversationsAtom);
+
   // Selectors
   const filteredTickets = useRecoilValue(filteredTicketsSelector);
   const selectedTicket = useRecoilValue(selectedTicketSelector);
   const ticketCounts = useRecoilValue(ticketCountsSelector);
+
+  // Track if event handlers have been set up
+  const eventHandlersSetupRef = useRef(false);
 
   // ============================================
   // WebSocket Connection
@@ -141,34 +160,50 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     const token = getUserToken();
     if (!token) {
       console.warn('[TicketsProvider] No auth token, skipping WebSocket connection');
+      setSocketError('No authentication token available');
+      setSocketConnected(false);
       return;
     }
 
-    // TODO: Get printHouseId from user context/JWT
-    const printHouseId = 'default-printhouse'; // Replace with actual printHouseId
+    console.log('[TicketsProvider] Connecting WebSocket (backend extracts printHouseId from token)');
 
     const connectSocket = async () => {
       try {
-        await ticketSocketService.connect(token, printHouseId);
-        console.log('[TicketsProvider] WebSocket connected');
-        setupEventHandlers();
-      } catch (error) {
+        // Backend extracts printHouseId from JWT token automatically
+        await ticketSocketService.connect(token);
+        console.log('[TicketsProvider] WebSocket connected successfully');
+        setSocketConnected(true);
+        setSocketError(null);
+      } catch (error: any) {
         console.error('[TicketsProvider] WebSocket connection failed:', error);
+        setSocketError(`WebSocket connection failed: ${error.message}`);
+        setSocketConnected(false);
       }
     };
 
     connectSocket();
 
     return () => {
+      console.log('[TicketsProvider] Disconnecting WebSocket');
       ticketSocketService.disconnect();
+      setSocketConnected(false);
+      eventHandlersSetupRef.current = false;
     };
-  }, []);
+  }, [setSocketError, setSocketConnected]);
 
   // ============================================
-  // WebSocket Event Handlers (12 Events)
+  // WebSocket Event Handlers (14 Events )
   // ============================================
 
-  const setupEventHandlers = useCallback(() => {
+  // Set up event handlers when socket is connected
+  useEffect(() => {
+    if (!ticketSocketService.isConnected() || eventHandlersSetupRef.current) {
+      return;
+    }
+
+    console.log('[TicketsProvider] Setting up WebSocket event handlers');
+    eventHandlersSetupRef.current = true;
+
     // 1. ticket.created - Inject ticket into list
     ticketSocketService.onTicketCreated((payload) => {
       console.log('[TicketsProvider] New ticket created:', payload.ticket.ticketNumber);
@@ -305,6 +340,97 @@ export function useTicketsProvider(): UseTicketsProviderResult {
         console.error('[TicketsProvider] Webhook error:', payload.error);
       }
     });
+
+    // 13. message.delivered - Update message delivery status
+    ticketSocketService.onMessageDelivered((payload) => {
+      console.log('[TicketsProvider] Message delivered:', payload.messageId, payload.status);
+
+      // Update message status in ticket
+      if (selectedTicketId === payload.ticketId) {
+        setTickets((prev) =>
+          prev.map((t) => {
+            if (t.id === payload.ticketId && t.conversation?.messages) {
+              return {
+                ...t,
+                conversation: {
+                  ...t.conversation,
+                  messages: t.conversation.messages.map((msg) => {
+                    if (msg.id === payload.messageId) {
+                      return {
+                        ...msg,
+                        status: payload.status === 'SENT' ? 'sent' : 'failed',
+                        sentAt: payload.status === 'SENT' ? new Date().toISOString() : msg.sentAt,
+                        errorMessage: payload.error,
+                        channelMetadata: {
+                          ...msg.channelMetadata,
+                          providerMessageId: payload.providerMessageId,
+                        },
+                      };
+                    }
+                    return msg;
+                  }),
+                },
+              };
+            }
+            return t;
+          })
+        );
+      }
+    });
+
+    // 14. message.delivery.failed - Show error notification
+    ticketSocketService.onMessageDeliveryFailed((payload) => {
+      console.error('[TicketsProvider] Message delivery failed:', payload.messageId, payload.error);
+
+      // Update message status to failed
+      if (selectedTicketId === payload.ticketId) {
+        setTickets((prev) =>
+          prev.map((t) => {
+            if (t.id === payload.ticketId && t.conversation?.messages) {
+              return {
+                ...t,
+                conversation: {
+                  ...t.conversation,
+                  messages: t.conversation.messages.map((msg) => {
+                    if (msg.id === payload.messageId) {
+                      return {
+                        ...msg,
+                        status: 'failed',
+                        errorMessage: payload.error,
+                      };
+                    }
+                    return msg;
+                  }),
+                },
+              };
+            }
+            return t;
+          })
+        );
+      }
+
+      // TODO: Show toast notification or UI feedback
+      // toast.error(`Failed to send message: ${payload.error}`);
+    });
+
+    // 15. conversation.needs.review - Add to review queue
+    ticketSocketService.onConversationNeedsReview((payload) => {
+      console.log('[TicketsProvider] Conversation needs review:', payload.identifier, payload.channel);
+
+      // Add to review queue (prepend to show newest first)
+      setReviewQueueConversations((prev) => [payload, ...prev]);
+
+      // TODO: Show notification
+      // toast.info(`New ${payload.channel} message from ${payload.identifier}`);
+    });
+
+    console.log('[TicketsProvider] All 15 WebSocket event handlers registered ');
+
+    // Cleanup function
+    return () => {
+      console.log('[TicketsProvider] Cleaning up WebSocket event handlers');
+      // Note: ticketSocketService handles cleanup internally
+    };
   }, [selectedTicketId, setTickets]);
 
   // ============================================
@@ -316,12 +442,19 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     setError(null);
 
     try {
+      console.log('[TicketsProvider] Fetching tickets with filters:', customFilters || filters);
       const response = await ticketsService.listTickets(customFilters || filters);
-      setTickets(response.tickets);
-      setPagination(response.pagination);
+      console.log('[TicketsProvider] Tickets fetched successfully:', response?.tickets?.length || 0, 'tickets');
+      setTickets(response?.tickets || []);
+      setPagination(response?.pagination || null);
     } catch (err: any) {
       console.error('[TicketsProvider] Fetch tickets error:', err);
-      setError(err.message || 'Failed to fetch tickets');
+      console.error('[TicketsProvider] Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+      });
+      setError(err.response?.data?.message || err.message || 'Failed to fetch tickets');
     } finally {
       setIsLoading(false);
     }
@@ -532,8 +665,9 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // ============================================
 
   useEffect(() => {
+    console.log('[TicketsProvider] Fetching tickets due to filter change or mount');
     fetchTickets();
-  }, [filters.status, filters.priority, filters.assigneeId, filters.page]);
+  }, [fetchTickets, filters.status, filters.priority, filters.assigneeId, filters.page]);
 
   // Fetch related data when ticket is selected
   useEffect(() => {
@@ -546,6 +680,8 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   return {
     // Connection
     isConnected: ticketSocketService.isConnected(),
+    socketConnected,
+    socketError,
     isLoading,
     error,
 
@@ -585,6 +721,10 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     // Related data
     relatedTickets,
     ticketHistory,
+
+    // Review Queue
+    reviewQueueConversations,
+    setReviewQueueConversations,
 
     // Actions - Core
     fetchTickets,

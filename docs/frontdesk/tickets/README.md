@@ -56,6 +56,20 @@ This folder contains all documentation related to the Tickets backend integratio
 
 ---
 
+### 4. [FRONTEND_MIGRATION_GUIDE_V2.md](./FRONTEND_MIGRATION_GUIDE_V2.md)
+**V2 Migration guide** for unified multi-provider ticketing.
+
+- 🔄 Breaking changes in V2 API
+- 📧 Multi-provider support (Email, WhatsApp, SMS)
+- 🎯 Migration checklist
+- 🆕 New features (Review Queue, Origin Tracking)
+- 📝 Updated DTOs and types
+- ✅ Backward compatibility notes
+
+**Best for:** Migrating from V1 to V2, understanding breaking changes
+
+---
+
 ## 🗂️ Folder Structure
 
 ```
@@ -63,7 +77,8 @@ docs/frontdesk/tickets/
 ├── README.md                           ← You are here
 ├── INTEGRATION_SUMMARY.md              ← Project overview
 ├── TICKETS_BACKEND_INTEGRATION.md      ← Complete guide
-└── TICKETS_QUICK_REFERENCE.md          ← Quick reference
+├── TICKETS_QUICK_REFERENCE.md          ← Quick reference
+└── FRONTEND_MIGRATION_GUIDE_V2.md      ← V2 Migration guide
 ```
 
 ---
@@ -73,7 +88,8 @@ docs/frontdesk/tickets/
 ### For New Developers
 1. Read [INTEGRATION_SUMMARY.md](./INTEGRATION_SUMMARY.md) for overview
 2. Review [TICKETS_BACKEND_INTEGRATION.md](./TICKETS_BACKEND_INTEGRATION.md) for details
-3. Bookmark [TICKETS_QUICK_REFERENCE.md](./TICKETS_QUICK_REFERENCE.md) for daily use
+3. Check [FRONTEND_MIGRATION_GUIDE_V2.md](./FRONTEND_MIGRATION_GUIDE_V2.md) for V2 features
+4. Bookmark [TICKETS_QUICK_REFERENCE.md](./TICKETS_QUICK_REFERENCE.md) for daily use
 
 ### For Existing Developers
 - Need a code snippet? → [TICKETS_QUICK_REFERENCE.md](./TICKETS_QUICK_REFERENCE.md)

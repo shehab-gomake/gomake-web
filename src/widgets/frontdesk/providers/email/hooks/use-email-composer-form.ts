@@ -9,9 +9,12 @@ interface UseEmailComposerFormProps {
 }
 
 export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmailComposerFormProps) => {
+  // replyToMessage.from is now an array, take first sender
+  const replyToSender = replyToMessage?.from?.[0];
+
   const [to, setTo] = useState(
-    replyToMessage
-      ? formatEmailDisplay(replyToMessage.from.email, replyToMessage.from.name)
+    replyToSender
+      ? formatEmailDisplay(replyToSender.email, replyToSender.name)
       : draft?.to?.map((r) => r.email).join(", ") || ""
   );
   const [cc, setCc] = useState(draft?.cc?.map((r) => r.email).join(", ") || "");

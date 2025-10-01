@@ -3,10 +3,10 @@ import { Box, Typography } from '@mui/material';
 import { colorTokens, radiusTokens, semanticTypography } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
-export type PriorityLevel = 'Urgent' | 'High' | 'Medium' | 'Low';
+export type PriorityLevel = 'Urgent' | 'High' | 'Medium' | 'Low' | 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface PriorityBadgeProps {
-  /** Priority level */
+  /** Priority level (accepts both capitalized and uppercase formats) */
   priority: PriorityLevel;
   /** Display mode */
   mode?: 'icon' | 'label' | 'both';
@@ -74,13 +74,23 @@ const sizeStyles = {
  * Displays ticket priority with professional visual indicators.
  * Replaces emoji-based priority icons with standard design patterns.
  */
+/**
+ * Normalize priority to capitalized format
+ * Accepts both 'MEDIUM' and 'Medium' formats
+ */
+const normalizePriority = (priority: PriorityLevel): 'Urgent' | 'High' | 'Medium' | 'Low' => {
+  const normalized = priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase();
+  return normalized as 'Urgent' | 'High' | 'Medium' | 'Low';
+};
+
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   priority,
   mode = 'both',
   size = 'sm',
   showBackground = false,
 }) => {
-  const config = priorityConfig[priority];
+  const normalizedPriority = normalizePriority(priority);
+  const config = priorityConfig[normalizedPriority];
   const styles = sizeStyles[size];
 
   if (mode === 'icon') {
