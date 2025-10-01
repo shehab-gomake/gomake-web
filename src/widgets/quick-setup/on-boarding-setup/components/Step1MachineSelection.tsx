@@ -195,11 +195,7 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
   const canAddNewMachine = hasNoResults && onAddNewMachine;
 
   return (
-    <Paper sx={{ p: 2, mb: 1 }}>
-      {/* <Typography variant="h6" sx={{ mb: 2 }}>
-        {t("quickSetup.addYourMachines")}
-      </Typography> */}
-
+    <Box>
       <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "flex-end" }}>
         {/* Machine Selection */}
         <FormControl fullWidth>
@@ -718,6 +714,6 @@ export const Step1MachineSelection: React.FC<Step1MachineSelectionProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </Box>
   );
 };

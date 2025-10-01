@@ -1129,7 +1129,19 @@ const QuickSetupFlow: React.FC = () => {
       </Paper>
 
       {/* Navigation Buttons */}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          position: "sticky",
+          bottom: 0,
+          backgroundColor: "background.paper",
+          p: 2,
+          borderTop: 1,
+          borderColor: "divider",
+          zIndex: 1000,
+        }}
+      >
         <Button
           variant="outlined"
           onClick={handleBack}
@@ -1170,7 +1182,7 @@ const QuickSetupFlow: React.FC = () => {
       </Box>
       {/* Summary - Show all selected machines */}
       {selectedMachines.length > 0 && (
-        <Paper sx={{ p: 2, mt: 1, backgroundColor: "#e8f5e8" }}>
+        <Paper sx={{ p: 2, mt: 2, backgroundColor: "#e8f5e8" }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Total Selected Machines: {selectedMachines.length}
           </Typography>
