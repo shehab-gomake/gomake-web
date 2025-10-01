@@ -100,12 +100,15 @@ export const MessageCard: React.FC<MessageCardProps> = ({
   const isOutbound = direction === 'outbound';
   const isPrivateNote = channel === 'private_note';
 
+  // Determine if this is an AI/automated response
+  const isAIResponse = author.name.toLowerCase().includes('ai') || author.name.toLowerCase().includes('bot');
+
   return (
     <Box
       sx={{
         display: 'flex',
-        gap: 2,
-        mb: 3,
+        gap: 1.5,
+        mb: 2.5,
         flexDirection: isOutbound ? 'row-reverse' : 'row',
       }}
     >
@@ -113,94 +116,74 @@ export const MessageCard: React.FC<MessageCardProps> = ({
       <Avatar
         src={author.avatarUrl}
         sx={{
-          width: 36,
-          height: 36,
-          fontSize: 14,
+          width: 32,
+          height: 32,
+          fontSize: 13,
           flexShrink: 0,
+          bgcolor: isOutbound ? colorTokens.primary[600] : colorTokens.neutral[400],
         }}
       >
         {author.name.charAt(0).toUpperCase()}
       </Avatar>
 
       {/* Message Content */}
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mb: 0.75,
-            gap: 2,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            <ChannelBadge channel={channel} direction={direction} mode="both" size="sm" />
-
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 13 }}>
-              {author.name}
-            </Typography>
-
-            {author.email && (
+      <Box sx={{ flex: 1, minWidth: 0, maxWidth: isOutbound ? '75%' : '85%' }}>
+        {/* AI Response Badge */}
+        {isAIResponse && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                px: 1,
+                py: 0.25,
+                backgroundColor: colorTokens.primary[50],
+                borderRadius: '4px',
+                border: `1px solid ${colorTokens.primary[200]}`,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M6 1L7.5 4.5L11 6L7.5 7.5L6 11L4.5 7.5L1 6L4.5 4.5L6 1Z"
+                  fill={colorTokens.primary[600]}
+                />
+              </svg>
               <Typography
                 variant="caption"
-                sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: colorTokens.primary[700],
+                }}
               >
-                {author.email}
+                Reply by {author.name}
               </Typography>
-            )}
-
-            {recipient && (
-              <>
-                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
-                  →
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}
-                >
-                  {recipient.name || recipient.email || recipient.phoneNumber}
-                </Typography>
-              </>
-            )}
-
-            {status && <MessageStatusIndicator status={status} size="sm" />}
+            </Box>
           </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography
-              variant="caption"
-              sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11, whiteSpace: 'nowrap' }}
-            >
-              {formatTimestamp(timestamp)}
-              {isEdited && ' (edited)'}
-            </Typography>
-
-            {onReply && (
-              <IconButton size="small" onClick={onReply} sx={{ width: 24, height: 24 }}>
-                <ReplyIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            )}
-
-            {onMoreActions && (
-              <IconButton size="small" onClick={onMoreActions} sx={{ width: 24, height: 24 }}>
-                <MoreVertIcon sx={{ fontSize: 16 }}/>
-              </IconButton>
-            )}
-          </Box>
-        </Box>
+        )}
 
         {/* Message Body */}
         <Box
           sx={{
             p: 2,
-            backgroundColor: isPrivateNote ? channelColors.bg : colorTokens.semantic.background.primary,
-            border: `1px solid ${channelColors.border}`,
-            borderLeftWidth: isPrivateNote ? '4px' : '3px',
-            borderLeftColor: channelColors.main,
-            borderRadius: radiusTokens.md,
+            backgroundColor: isPrivateNote
+              ? channelColors.bg
+              : isOutbound
+              ? colorTokens.primary[50]
+              : colorTokens.semantic.background.primary,
+            border: `1px solid ${
+              isPrivateNote
+                ? channelColors.border
+                : isOutbound
+                ? colorTokens.primary[200]
+                : colorTokens.neutral[200]
+            }`,
+            borderRadius: '12px',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
             ...(isPrivateNote && {
-              boxShadow: `0 0 0 1px ${channelColors.border}`,
+              borderLeftWidth: '4px',
+              borderLeftColor: channelColors.main,
             }),
           }}
         >
@@ -234,6 +217,51 @@ export const MessageCard: React.FC<MessageCardProps> = ({
                 />
               ))}
             </Box>
+          )}
+        </Box>
+
+        {/* Footer - Timestamp and Channel */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            mt: 0.5,
+            px: 0.5,
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{
+              color: colorTokens.semantic.text.tertiary,
+              fontSize: 11,
+            }}
+          >
+            {format(parseISO(timestamp), 'hh:mm a')}
+          </Typography>
+
+          <Typography
+            variant="caption"
+            sx={{
+              color: colorTokens.semantic.text.tertiary,
+              fontSize: 11,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+            }}
+          >
+            • Via{' '}
+            {channel === 'whatsapp' && '💬 Whatsapp'}
+            {channel === 'email' && '📧 Email'}
+            {channel === 'sms' && '📱 SMS'}
+            {channel === 'phone' && '📞 Phone'}
+            {channel === 'private_note' && '🔒 Private Note'}
+            {channel === 'internal' && '💬 Internal'}
+            {channel === 'web_chat' && '💻 Web Chat'}
+          </Typography>
+
+          {status && (
+            <MessageStatusIndicator status={status} size="xs" showLabel={false} />
           )}
         </Box>
       </Box>

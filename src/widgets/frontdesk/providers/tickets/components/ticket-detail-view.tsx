@@ -43,6 +43,8 @@ import {
   TicketTypeBadge,
   AttachmentCard,
   MessageCard,
+  SystemEventMessage,
+  MessageComposer,
   colorTokens
 } from '@/widgets/frontdesk/design-system';
 
@@ -57,20 +59,11 @@ const formatDateTime = (dateString: string) => {
 
 export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onClose }) => {
   const theme = useTheme();
-  const [activeTab, setActiveTab] = useState(0);
-  const [replyText, setReplyText] = useState('');
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
-
-  const handleSendReply = () => {
-    if (replyText.trim()) {
-      console.log('Sending reply:', replyText);
-      setReplyText('');
-    }
+  const handleSendReply = (data: any) => {
+    console.log('Sending reply:', data);
   };
 
   return (
@@ -151,84 +144,6 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
           </Box>
         </Box>
 
-        {/* Reply Tabs */}
-        <Box sx={{ borderBottom: `1px solid ${theme.palette.divider}`, backgroundColor: theme.palette.background.paper }}>
-          <Tabs value={activeTab} onChange={handleTabChange}>
-            <Tab label="Public Reply" />
-            <Tab label="Private Comment" />
-          </Tabs>
-        </Box>
-
-        {/* Reply Composer */}
-        <Box
-          sx={{
-            p: 2,
-            borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
-            backgroundColor: theme.palette.background.paper
-          }}
-        >
-          {/* Text Editor */}
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            placeholder={activeTab === 0 ? "Write a public reply..." : "Add a private comment..."}
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            sx={{
-              mb: 1.5,
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white',
-                fontSize: 14,
-              }
-            }}
-          />
-
-          {/* Toolbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <IconButton size="small">
-                <FormatBoldIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <FormatItalicIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <FormatUnderlinedIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <InsertLinkIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <AttachFileIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <InsertPhotoIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <CodeIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small">
-                <FormatQuoteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <Button variant="text" size="small">
-                Add to KB
-              </Button>
-              <Button
-                variant="contained"
-                size="small"
-                endIcon={<SendIcon />}
-                onClick={handleSendReply}
-                disabled={!replyText.trim()}
-              >
-                Send
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-
         {/* Comments/Thread - Multi-Channel Timeline */}
         <Box
           sx={{
@@ -238,23 +153,55 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             backgroundColor: colorTokens.neutral[50]
           }}
         >
-          {ticket.comments.map((comment) => (
-            <MessageCard
-              key={comment.id}
-              id={comment.id}
-              channel={(comment.channel || 'email') as any}
-              direction={(comment.direction || 'inbound') as any}
-              status={comment.status as any}
-              author={{
-                name: comment.author.name,
-                email: comment.author.email,
-                avatarUrl: comment.author.avatarUrl,
-              }}
-              content={comment.content}
-              timestamp={comment.createdAt}
-              attachments={comment.attachments}
-              isPrivate={comment.isPrivate}
-            />
+          {/* System Event: Ticket Created */}
+          <SystemEventMessage
+            type="ticket.created"
+            timestamp={ticket.createdAt}
+            actor={{ name: ticket.reporter.name }}
+          />
+
+          {/* Render comments and system events */}
+          {ticket.comments.map((comment, index) => (
+            <React.Fragment key={comment.id}>
+              {/* Show assignment event if it's the first comment */}
+              {index === 0 && ticket.assignedTo && (
+                <SystemEventMessage
+                  type="ticket.assigned"
+                  timestamp={comment.createdAt}
+                  actor={{ name: ticket.assignedTo.name }}
+                />
+              )}
+
+              {/* Show priority change event (example) */}
+              {index === 1 && (
+                <SystemEventMessage
+                  type="ticket.priority.changed"
+                  timestamp={comment.createdAt}
+                  actor={{ name: ticket.assignedTo?.name || 'System' }}
+                  data={{
+                    oldPriority: 'Low',
+                    newPriority: ticket.priority as any,
+                  }}
+                />
+              )}
+
+              {/* Message Card */}
+              <MessageCard
+                id={comment.id}
+                channel={(comment.channel || 'email') as any}
+                direction={(comment.direction || 'inbound') as any}
+                status={comment.status as any}
+                author={{
+                  name: comment.author.name,
+                  email: comment.author.email,
+                  avatarUrl: comment.author.avatarUrl,
+                }}
+                content={comment.content}
+                timestamp={comment.createdAt}
+                attachments={comment.attachments}
+                isPrivate={comment.isPrivate}
+              />
+            </React.Fragment>
           ))}
 
           {ticket.comments.length === 0 && (
@@ -268,6 +215,32 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, onCl
             </Box>
           )}
         </Box>
+
+        {/* Message Composer at Bottom */}
+        <MessageComposer
+          placeholder="Hi, please check this article for more information"
+          availableChannels={['whatsapp', 'email', 'sms', 'phone']}
+          defaultChannel="whatsapp"
+          availableFrom={[
+            {
+              id: 'csfiki',
+              name: 'CSFikri',
+              identifier: 'support@company.com',
+            },
+            {
+              id: 'support',
+              name: 'Support Team',
+              identifier: 'team@company.com',
+            },
+          ]}
+          defaultFrom="csfiki"
+          showAIToggle={true}
+          aiEnabled={false}
+          onSend={handleSendReply}
+          onAIToggle={(enabled) => console.log('AI toggle:', enabled)}
+          onAttachFile={() => console.log('Attach file')}
+          onAttachImage={() => console.log('Attach image')}
+        />
       </Box>
 
       {/* Right Sidebar - Metadata */}

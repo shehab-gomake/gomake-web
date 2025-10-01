@@ -13,3 +13,5 @@ export * from './ConversationSidebar';
 export * from './ConnectionStates';
 export * from './AttachmentCard';
 export * from './MessageCard';
+export * from './SystemEventMessage';
+export * from './MessageComposer';
