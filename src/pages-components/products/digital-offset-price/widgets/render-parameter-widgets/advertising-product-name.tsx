@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { AddNewIcon, AdvertisingIcon, WarnIcon, WarningModalIcon } from "@/icons";
-import { IconButton, Stack, Tooltip } from "@mui/material";
+import { IconButton, Stack, Tooltip, Paper, Divider } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
@@ -91,32 +91,109 @@ const AdvertisingProductNameParameterWidget = ({
 
   const unit = getUnitFromTemplate();
 
-  const DieCutTypeOptions = [
-    { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
-    ...parameter?.valuesConfigs?.filter(value => {
-      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-        === null && value?.materialValueIds[0]?.valueId === null);
-    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-  ]
+  // Regular options (scrollable)
+  const regularDieCutTypeOptions = parameter?.valuesConfigs?.filter(value => {
+    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+      === null && value?.materialValueIds[0]?.valueId === null);
+  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName) || [];
+
+  const regularDieCutterOptions = searchResult?.filter(value => {
+    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName) || [];
+
+  // Fixed bottom options
+  const fixedDieCutTypeOptions = [
+    { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true, isFixed: true }
+  ];
+
+  const fixedDieCutterOptions = [
+    { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true, isFixed: true },
+    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true, isFixed: true }
+  ];
+
+  // Combined options (for backward compatibility with existing logic)
+  const DieCutTypeOptions = [...regularDieCutTypeOptions, ...fixedDieCutTypeOptions];
 
   const options = parameter?.valuesConfigs?.filter(value => {
     return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
   })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
 
-  const DieCutterOptions = [
-    { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true },
-    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true },
-    ...searchResult?.filter(value => {
-      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-  ]
+  const DieCutterOptions = [...regularDieCutterOptions, ...fixedDieCutterOptions];
 
+
+  // Custom PaperComponent with fixed bottom options
+  const CustomPaperComponent = (props: any) => {
+    const fixedOptions = parameter?.code === "DiecutType"
+      ? fixedDieCutTypeOptions
+      : parameter?.code === "DieCutter"
+        ? fixedDieCutterOptions
+        : [];
+
+    return (
+      <Paper {...props} style={{ ...props.style, display: 'flex', flexDirection: 'column', maxHeight: '300px' }}>
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: 'auto', maxHeight: '240px' }}>
+          {props.children}
+        </div>
+
+        {/* Fixed bottom options */}
+        {fixedOptions.length > 0 && (
+          <>
+            <Divider />
+            <div style={{ backgroundColor: '#f5f5f5', padding: '4px 0' }}>
+              {fixedOptions.map((option) => (
+                <Tooltip key={option.id} title={option.updateName} placement="top">
+                  <div
+                    onClick={() => {
+                      if (parameter.code === "DiecutType" && option.id === "new") {
+                        setOpenModal(true);
+                      } else if (parameter.code === "DieCutter") {
+                        if (option.id === "add_new") {
+                          window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
+                        } else if (option.id === "generate_new") {
+                          createNewTemplate();
+                        }
+                      }
+                    }}
+                    style={{
+                      backgroundColor: option.id === "add_new" ? '#2E3092' : option.id === "generate_new" ? '#FF69B4' : '#2E3092',
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      padding: "4px 8px",
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                      height: "40px",
+                    }}
+                  >
+                    <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                      <AddNewIcon color="white" />
+                    </div>
+                    <div style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      flex: 1
+                    }}>
+                      {option.updateName}
+                    </div>
+                  </div>
+                </Tooltip>
+              ))}
+            </div>
+          </>
+        )}
+      </Paper>
+    );
+  };
 
   const getOptions = useCallback(() => {
+    // Return only regular (scrollable) options, excluding fixed bottom options
     const MyOptions = parameter?.code === "DiecutType"
-      ? DieCutTypeOptions
+      ? regularDieCutTypeOptions
       : parameter?.code === "DieCutter"
-        ? DieCutterOptions
+        ? regularDieCutterOptions
         : options;
 
     // Add validation check
@@ -126,7 +203,7 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
+  }, [parameter?.code, regularDieCutTypeOptions, regularDieCutterOptions, options]);
 
 
   const [selectedValue, setSelectedValue] = useState(
@@ -153,6 +230,7 @@ const AdvertisingProductNameParameterWidget = ({
                 : undefined}
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
           placeholder={parameter?.name}
+          PaperComponent={CustomPaperComponent}
           onChange={(e: any, value: any) => {
             if (parameter?.code === "DiecutType") {
               setIsRenderData(true)
@@ -184,60 +262,7 @@ const AdvertisingProductNameParameterWidget = ({
               (attr) => attr.valueId === 'categoryImage'
             )?.value;
 
-            // Special handling for DiecutType's first item
-            if (parameter.code === "DiecutType" && option.id === "new") {
-              return (
-                <li {...props}
-                  onClick={() => setOpenModal(true)}
-                  style={{
-                    backgroundColor: '#2E3092',
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start"
-                  }}>
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start"
-                    }}>
-                    <AddNewIcon color="white" />
-                  </div>
-                  {option.updateName}
-                </li>
-              );
-            }
-
-            // Special handling for DieCutter's new options
-            if (parameter.code === "DieCutter" && (option.id === "add_new" || option.id === "generate_new")) {
-              return (
-                <li {...props}
-                  onClick={() => {
-                    if (option.id === "add_new") {
-                      window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
-                    } else {
-                      createNewTemplate()
-                    }
-                  }}
-                  style={{
-                    backgroundColor: option.id === "add_new" ? '#2E3092' : '#FF69B4',
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start"
-                  }}>
-                  <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-                    <AddNewIcon color="white" />
-                  </div>
-                  {option.updateName}
-                </li>
-              );
-            }
-
-            // Regular rendering for other items
+            // Regular rendering for all items (fixed options are now handled in CustomPaperComponent)
             return (
               <li {...props}>
                 {
