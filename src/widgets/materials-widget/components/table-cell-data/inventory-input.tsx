@@ -57,13 +57,11 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
                 flexDirection: 'row-reverse',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: 1,
                 backgroundColor: buttonColor,
                 color: '#ffffff',
                 height: "35px",
                 minWidth: "90px",
                 padding: "0px 4px",
-                margin: 0,
                 width: "100%",
                 cursor: "pointer",
                 "&:hover": {
@@ -81,6 +79,8 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
                 component="span"
                 sx={{
                     ...FONT_FAMILY.Lexend(500, 14),
+                    textAlign: 'center',
+                    width: '100%',
                 }}
             >
                 {value || '0'}

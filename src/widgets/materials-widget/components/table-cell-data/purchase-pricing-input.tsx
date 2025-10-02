@@ -39,13 +39,11 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
                 flexDirection: 'row-reverse',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: 1,
                 color: '#000000',
                 height: "35px",
                 minWidth: "90px",
                 padding: "0px 4px",
                 border: "1px solid #ccc",
-                margin: 0,
                 width: "100%",
                 cursor: "pointer",
                 "&:hover": {
@@ -62,6 +60,8 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
             </>
             <div style={{
                 ...FONT_FAMILY.Lexend(500, 14),
+                textAlign: 'center',
+                width: '100%',
             }}>
                 {isExpanded ? t("sales.quote.hide") : t("sales.quote.open")}
             </div>
