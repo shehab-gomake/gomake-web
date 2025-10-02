@@ -10,7 +10,7 @@ import { GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/com
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
@@ -21,6 +21,8 @@ import { useTranslation } from "react-i18next";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { AddPurchasePricingModal } from "../add-purchase-pricing-modal/add-purchase-pricing-modal";
 import { AddInventoryModal } from "../add-inventory-modal/add-inventory-modal";
+import { userState } from "@/store/user";
+import { convertTitleUnits } from "@/utils/helpers";
 
 
 interface IChildTableRowProps {
@@ -91,13 +93,32 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         purchaseCurrency: { value: '', label: '' },
         saleCurrency: { value: '', label: '' },
     });
-    console.log('inventoryFormData', inventoryFormData);
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
     const [selectedClients, setSelectedClients] = useState<any[]>([]);
     const [selectedClientsForPricing, setSelectedClientsForPricing] = useState<any[]>([]);
 
     const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData, updateInventoryDataOrder, removeInventoryDataItem, updateInventoryDataItem } = useInventoryData();
     const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData, updatePurchasePricingDataOrder, removePurchasePricingDataItem, updatePurchasePricingDataItem } = usePurchasePricingData();
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0;
+    const convertedPricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.pricingUnit)
+            : inventoryTableHeadingUnits.pricingUnit;
+    const convertedInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.inventoryUnit)
+            : inventoryTableHeadingUnits.inventoryUnit;
+    const convertedPurchasePricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.pricingUnit)
+            : purchasePricingTableHeadingUnits.pricingUnit;
+
+    const convertedPurchasePricingInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.inventoryUnit)
+            : purchasePricingTableHeadingUnits.inventoryUnit;
+
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
@@ -322,17 +343,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     <CircularProgress />
                 </Box>
             ) : inventoryData.length === 0 ? (
-                <Box sx={classes.noDataContainer}>
-                    <span style={classes.noDataText}>
-                        {t("materials.childTable.noInventoryData")}
-                    </span>
-                    <span
-                        onClick={() => setIsAddInventoryModalOpen(true)}
-                        style={classes.noDataLink}
-                    >
-                        {t("materials.childTable.addNew")}
-                    </span>
-                </Box>
+                <></>
             ) : (
                 <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative' }}>
                     <DragDropContext onDragEnd={handleInventoryDragEnd}>
@@ -347,20 +358,20 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {inventoryTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.saleCost")}
                                         <br />
-                                        {inventoryTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.inventory")} ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.inventory")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.quantity")} ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.quantity")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
@@ -570,12 +581,36 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderPurchasePricingTable = () => (
         <Box sx={classes.childTableContainer}>
+            <Box sx={{
+                position: 'sticky',
+                [isRTL ? 'right' : 'left']: isRTL ? `${scrollLeft > 0 ? scrollLeft : 8}px` : `${-scrollLeft > 0 ? scrollLeft : 8}px`,
+                top: 0,
+                zIndex: 999999,
+                padding: '4px 0px',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                transform: 'translateZ(0)',
+                width: '200px', // Exact same as columns: 50px + 150px
+                minWidth: '200px',
+                maxWidth: '200px',
+                margin: 0,
+                boxSizing: 'border-box',
+            }}>
+                <GomakePrimaryButton
+                    onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                    style={classes.addInventoryButton}
+                    startIcon={<AddIcon />}
+                >
+                    {t("materials.sheetPaper.addNewSupplier")}
+                </GomakePrimaryButton>
+            </Box>
             {isLoadingPurchasePricing ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
                 </Box>
             ) : purchasePricingData.length === 0 ? (
-                <Alert severity="info">{t("materials.childTable.noPurchasePricingData")}</Alert>
+                <></>
             ) : (
                 <TableContainer
                     component={Paper}
@@ -587,19 +622,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         <Table sx={classes.table} stickyHeader>
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
-                                    <TableCell sx={classes.headerCell} >
-                                        <Tooltip
-                                            title={t("materials.sheetPaper.addNewSupplier")}
-                                        >
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                                sx={classes.addButton}
-                                            >
-                                                <AddIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell} ></TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.supplierName")}
 
@@ -608,10 +631,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {purchasePricingTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPurchasePricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")} ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}></TableCell>
@@ -896,7 +919,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 isActive: inventoryFormData.isActive,
                 purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
                 salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
-                clients: inventoryFormData.clients
+                clients: inventoryFormData.clients,
+                saleCurrency: inventoryFormData.saleCurrency.value,
+                purchaseCurrency: inventoryFormData.purchaseCurrency.value,
             };
 
             const callBack = (res) => {
@@ -970,13 +995,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     removeInventoryDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
-                    console.error('Failed to delete inventory:', res.message);
+                    alertFault(`${res.message}`);
                 }
             };
 
             await deleteSupplierInventoryApi(callApi, callBack, selectedRowForDelete.id);
         } catch (error) {
-            console.error('Error deleting inventory:', error);
+            alertFault(`${error}`);
         }
     };
 

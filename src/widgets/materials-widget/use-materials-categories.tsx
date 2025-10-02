@@ -15,6 +15,7 @@ import {
   materialsTablePageState,
   materialTableFiltersState,
   selectedSupplierIdState,
+  selectedSuppliersIdsState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
@@ -36,6 +37,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     materialTableFiltersState
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
+  const suppliersIds = useRecoilValue(selectedSuppliersIdsState);
 
   const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
@@ -186,6 +188,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         materialKey: materialType,
         categoryKey: materialCategory,
         supplierId: null,
+        suppliersIds: suppliersIds,
         isActive,
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       },

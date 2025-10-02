@@ -5,9 +5,12 @@ import { GomakeTextInput, GomakePrimaryButton, GoMakeAutoComplate, } from "@/com
 
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE, } from "@/pages/customers/enums";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { currenciesState } from "../../state";
 import { Add as AddIcon } from "@mui/icons-material";
+import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits } from "@/utils/helpers";
+import { userState } from "@/store";
 
 
 
@@ -30,7 +33,18 @@ const AddPurchasePricingModal = ({
     setOpenSupplierModal,
 }) => {
     const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0;
 
+    const convertedPurchasePricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.pricingUnit)
+            : purchasePricingTableHeadingUnits.pricingUnit;
+
+    const convertedPurchasePricingInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.inventoryUnit)
+            : purchasePricingTableHeadingUnits.inventoryUnit;
 
     return (
         <Dialog
@@ -68,7 +82,7 @@ const AddPurchasePricingModal = ({
                         <div style={classes.modalInputContainerItem}>
 
                             <GomakeTextInput
-                                labelText={`${t("materials.childTable.purchasePrice")} ${purchasePricingTableHeadingUnits.pricingUnit ? `( ${purchasePricingTableHeadingUnits.pricingUnit.split(' / ')[0]} )` : ''}`}
+                                labelText={`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
                                 value={formData?.purchasePrice}
                                 onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
                                 type="number"
@@ -96,7 +110,7 @@ const AddPurchasePricingModal = ({
                     <div style={classes.modalInputContainer}>
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
-                                labelText={`${t("materials.childTable.quantityInPackage")} ${purchasePricingTableHeadingUnits.inventoryUnit ? `(${purchasePricingTableHeadingUnits.inventoryUnit})` : ''}`}
+                                labelText={`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
                                 value={formData.quantityInPackage}
                                 onChange={(e) => handleFormChange('quantityInPackage', e.target.value)}
                                 type="number"
@@ -127,18 +141,20 @@ const AddPurchasePricingModal = ({
                 </Box>
             </DialogContent>
             <DialogActions sx={classes.modalActions}>
-                <GomakePrimaryButton
-                    onClick={handleCloseAddPurchasePricingModal}
-                    style={classes.modalCancelButton}
-                >
-                    {t("materials.childTable.cancel")}
-                </GomakePrimaryButton>
-                <GomakePrimaryButton
-                    onClick={() => handleAddPurchasePricing(null)}
-                    style={classes.modalSubmitButton}
-                >
-                    {t("materials.childTable.addPurchasePricing")}
-                </GomakePrimaryButton>
+                <div style={classes.modalActionsContainer}>
+                    <GomakePrimaryButton
+                        onClick={handleCloseAddPurchasePricingModal}
+                        style={classes.modalCancelButton}
+                    >
+                        {t("materials.childTable.cancel")}
+                    </GomakePrimaryButton>
+                    <GomakePrimaryButton
+                        onClick={() => handleAddPurchasePricing(null)}
+                        style={classes.modalSubmitButton}
+                    >
+                        {t("materials.childTable.addPurchasePricing")}
+                    </GomakePrimaryButton>
+                </div>
             </DialogActions>
         </Dialog>
     );

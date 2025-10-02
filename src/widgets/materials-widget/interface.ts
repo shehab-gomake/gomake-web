@@ -33,6 +33,7 @@ export interface IMaterialsTableFilter {
   key: string;
   values: string[];
   unit?: string;
+  name?: string;
 }
 export interface IMaterialTableFilteringValue {
   key: string;

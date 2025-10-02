@@ -347,7 +347,6 @@ const useStyle = () => {
       modalCancelButton: {
         backgroundColor: '#f5f5f5',
         color: '#666',
-        marginRight: '8px',
         width: 'auto',
         padding: '8px 16px',
         height: '40px'
@@ -392,6 +391,14 @@ const useStyle = () => {
         backgroundColor: primaryColor(50),
         borderTop: `2px solid ${primaryColor(500)}`,
       },
+      modalActionsContainer:{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        gap: 10,
+        width: '100%',
+        marginTop: 5
+      }
     };
   }, [theme, primaryColor, secondColor, isRTL, dir]);
   

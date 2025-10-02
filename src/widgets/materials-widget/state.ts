@@ -99,6 +99,11 @@ export const selectedSupplierIdState = atom<string>({
   default: "",
 });
 
+export const selectedSuppliersIdsState = atom<string[]>({
+  key: "selectedSuppliersIdsState",
+  default: [],
+});
+
 export const activeFilterState = atom<EMaterialActiveFilter>({
   key: "activeFilterState",
   default: EMaterialActiveFilter.ACTIVE,
