@@ -1139,6 +1139,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     value={inventoryFormData.code}
                                     onChange={(e) => handleInventoryFormChange('code', e.target.value)}
                                     placeholder={t("materials.childTable.enterCode")}
+                                    style={{
+                                        borderBottom: '2px solid #EC038D',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                             <div style={classes.modalInputContainerItem}>
@@ -1148,6 +1152,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
                                     type="number"
                                     placeholder={t("materials.childTable.enterQuantity")}
+                                    style={{
+                                        borderBottom: '2px solid #EC038D',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                         </div>
@@ -1160,6 +1168,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
                                     type="number"
                                     placeholder={t("materials.childTable.enterPurchasePrice")}
+                                    style={{
+                                        borderBottom: '2px solid #EC038D',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                             <div style={classes.modalInputContainerItem}>
@@ -1169,6 +1181,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     options={currencies}
                                     placeholder={t("materials.childTable.selectCurrency")}
                                     labelText={t("materials.childTable.purchaseCurrency")}
+                                    style={{
+                                        borderBottom: inventoryFormData.purchaseCurrency != '' ? '2px solid #EC038D' : 'none',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                         </div>
@@ -1181,6 +1197,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
                                     type="number"
                                     placeholder={t("materials.childTable.enterSalePrice")}
+                                    style={{
+                                        borderBottom: inventoryFormData.salePrice <= 0 ? '2px solid #EC038D' : 'none',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                             <div style={classes.modalInputContainerItem}>
@@ -1190,6 +1210,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     options={currencies}
                                     placeholder={t("materials.childTable.selectCurrency")}
                                     labelText={t("materials.childTable.saleCurrency")}
+                                    style={{
+                                        borderBottom: inventoryFormData.saleCurrency != '' ? '2px solid #EC038D' : 'none',
+                                        borderRadius: '4px',
+                                    }}
                                 />
                             </div>
                         </div>
