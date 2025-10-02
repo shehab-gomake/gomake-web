@@ -10,7 +10,7 @@ import { GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/com
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
@@ -21,6 +21,8 @@ import { useTranslation } from "react-i18next";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { AddPurchasePricingModal } from "../add-purchase-pricing-modal/add-purchase-pricing-modal";
 import { AddInventoryModal } from "../add-inventory-modal/add-inventory-modal";
+import { userState } from "@/store/user";
+import { convertTitleUnits } from "@/utils/helpers";
 
 
 interface IChildTableRowProps {
@@ -91,13 +93,32 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         purchaseCurrency: { value: '', label: '' },
         saleCurrency: { value: '', label: '' },
     });
-    console.log('inventoryFormData', inventoryFormData);
     const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
     const [selectedClients, setSelectedClients] = useState<any[]>([]);
     const [selectedClientsForPricing, setSelectedClientsForPricing] = useState<any[]>([]);
 
     const { inventoryData, inventoryTableHeadingUnits, fetchInventoryData, clearInventoryData, updateInventoryDataOrder, removeInventoryDataItem, updateInventoryDataItem } = useInventoryData();
     const { purchasePricingData, purchasePricingTableHeadingUnits, fetchPurchasePricingData, clearPurchasePricingData, updatePurchasePricingDataOrder, removePurchasePricingDataItem, updatePurchasePricingDataItem } = usePurchasePricingData();
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0;
+    const convertedPricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.pricingUnit)
+            : inventoryTableHeadingUnits.pricingUnit;
+    const convertedInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.inventoryUnit)
+            : inventoryTableHeadingUnits.inventoryUnit;
+    const convertedPurchasePricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.pricingUnit)
+            : purchasePricingTableHeadingUnits.pricingUnit;
+
+    const convertedPurchasePricingInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(purchasePricingTableHeadingUnits.inventoryUnit)
+            : purchasePricingTableHeadingUnits.inventoryUnit;
+
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
@@ -347,20 +368,20 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {inventoryTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.saleCost")}
                                         <br />
-                                        {inventoryTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.inventory")} ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.inventory")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.quantity")} ({inventoryTableHeadingUnits.inventoryUnit})
+                                        {t("materials.childTable.quantity")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
@@ -608,10 +629,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {purchasePricingTableHeadingUnits.pricingUnit}
+                                        {t(`measurementUnits.${convertedPurchasePricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")} ({purchasePricingTableHeadingUnits.inventoryUnit})</TableCell>
+                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}></TableCell>
