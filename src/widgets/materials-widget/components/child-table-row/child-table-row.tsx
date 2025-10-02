@@ -919,7 +919,9 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 isActive: inventoryFormData.isActive,
                 purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
                 salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
-                clients: inventoryFormData.clients
+                clients: inventoryFormData.clients,
+                saleCurrency: inventoryFormData.saleCurrency.value,
+                purchaseCurrency: inventoryFormData.purchaseCurrency.value,
             };
 
             const callBack = (res) => {
@@ -993,13 +995,13 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     removeInventoryDataItem(selectedRowForDelete.id);
                     handleCloseDeleteModal();
                 } else {
-                    console.error('Failed to delete inventory:', res.message);
+                    alertFault(`${res.message}`);
                 }
             };
 
             await deleteSupplierInventoryApi(callApi, callBack, selectedRowForDelete.id);
         } catch (error) {
-            console.error('Error deleting inventory:', error);
+            alertFault(`${error}`);
         }
     };
 
