@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -24,6 +24,7 @@ import {
   FinishingCategory,
   SelectedFinishingMachine,
 } from "@/widgets/quick-setup/on-boarding-setup/types";
+import { pulseAnimation } from "@/widgets/quick-setup/on-boarding-setup/animations";
 
 interface Step4RollFlexoFinishingSelectionProps {
   rollFlexoFinishingCategories: FinishingCategory[];
@@ -53,6 +54,25 @@ export const Step4RollFlexoFinishingSelection: React.FC<
   const [searchTerms, setSearchTerms] = useState<{
     [categoryId: string]: string;
   }>({});
+  const [dropdownOpenStates, setDropdownOpenStates] = useState<{
+    [categoryId: string]: boolean;
+  }>({});
+
+  // Refs for auto-focusing TextFields
+  const searchRefs = useRef<{ [categoryId: string]: HTMLInputElement | null }>(
+    {}
+  );
+
+  // Auto-focus TextFields when dropdowns open
+  useEffect(() => {
+    Object.entries(dropdownOpenStates).forEach(([categoryId, isOpen]) => {
+      if (isOpen) {
+        setTimeout(() => {
+          searchRefs.current[categoryId]?.focus();
+        }, 100);
+      }
+    });
+  }, [dropdownOpenStates]);
 
   const clearCategorySelection = (categoryId: string) => {
     onRollFlexoFinishingCategoryMachineChange(categoryId, "");
@@ -90,229 +110,289 @@ export const Step4RollFlexoFinishingSelection: React.FC<
 
   return (
     <Box>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Roll/Flexo Finishing Categories
-          </Typography>
-
-          {rollFlexoFinishingCategories.map((category) => {
-            const filteredMachines = getFilteredMachines(category);
-            const searchTerm = searchTerms[category.id] || "";
-            const hasSearchTerm = searchTerm.length > 0;
-            const hasNoResults = hasSearchTerm && filteredMachines.length === 0;
-
-            return (
-              <Paper
-                key={category.id}
-                sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
+      <Box>
+        {rollFlexoFinishingCategories.map((category) => {
+          const filteredMachines = getFilteredMachines(category);
+          const searchTerm = searchTerms[category.id] || "";
+          const hasSearchTerm = searchTerm.length > 0;
+          const hasNoResults = hasSearchTerm && filteredMachines.length === 0;
+          return (
+            <Paper
+              key={category.id}
+              sx={{ px: 2, pb: 0, pt: 1, mb: 2, border: "1px solid #e0e0e0" }}
+            >
+              <Typography variant="h6" sx={{ mb: 1, color: "primary.main" }}>
+                {t(category.name)}
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  mb: 1,
+                  alignItems: "flex-end",
+                }}
               >
-                <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
-                  {t(category.name)}
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    mb: 2,
-                    alignItems: "flex-end",
-                  }}
-                >
-                  <FormControl fullWidth>
-                    <InputLabel>search for your machine</InputLabel>
-                    <Select
-                      value={
-                        selectedRollFlexoFinishingCategoryMachines[
+                <FormControl fullWidth>
+                  <InputLabel>search for your machine</InputLabel>
+                  <Select
+                    value={
+                      selectedRollFlexoFinishingCategoryMachines[category.id] ||
+                      ""
+                    }
+                    onChange={(e) =>
+                      onRollFlexoFinishingCategoryMachineChange(
+                        category.id,
+                        e.target.value
+                      )
+                    }
+                    label="search for your machine"
+                    input={<OutlinedInput label="search for your machine" />}
+                    open={dropdownOpenStates[category.id] || false}
+                    onOpen={() =>
+                      setDropdownOpenStates((prev) => ({
+                        ...prev,
+                        [category.id]: true,
+                      }))
+                    }
+                    onClose={() => {
+                      setDropdownOpenStates((prev) => ({
+                        ...prev,
+                        [category.id]: false,
+                      }));
+                      setSearchTerms((prev) => ({
+                        ...prev,
+                        [category.id]: "",
+                      }));
+                    }}
+                    sx={{
+                      borderBottom: "2px solid #e0e0e0",
+                      "&:hover": {
+                        borderBottom: "2px solid #bdbdbd",
+                      },
+                      "&.Mui-focused": {
+                        borderBottom: "2px solid #1976d2",
+                      },
+                      "& .MuiOutlinedInput-root": {
+                        borderBottom: "2px solid #e0e0e0",
+                        "&:hover": {
+                          borderBottom: "2px solid #bdbdbd",
+                        },
+                        "&.Mui-focused": {
+                          borderBottom: "2px solid #1976d2",
+                        },
+                      },
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        {selectedRollFlexoFinishingCategoryMachines[
                           category.id
-                        ] || ""
-                      }
-                      onChange={(e) =>
-                        onRollFlexoFinishingCategoryMachineChange(
-                          category.id,
-                          e.target.value
-                        )
-                      }
-                      label="search for your machine"
-                      input={<OutlinedInput label="search for your machine" />}
+                        ] && (
+                          <IconButton
+                            onClick={() => clearCategorySelection(category.id)}
+                            edge="end"
+                            size="small"
+                            sx={{ mr: 3 }}
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                        )}
+                      </InputAdornment>
+                    }
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          padding: 0,
+                        },
+                        sx: {
+                          "& .MuiList-root": {
+                            paddingTop: 0,
+                          },
+                        },
+                      },
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                    }}
+                  >
+                    {/* Search TextField positioned above options */}
+                    <Box
                       sx={{
-                        borderBottom: '2px solid #e0e0e0',
-                        '&:hover': {
-                          borderBottom: '2px solid #bdbdbd',
-                        },
-                        '&.Mui-focused': {
-                          borderBottom: '2px solid #1976d2',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                          borderBottom: '2px solid #e0e0e0',
-                          '&:hover': {
-                            borderBottom: '2px solid #bdbdbd',
-                          },
-                          '&.Mui-focused': {
-                            borderBottom: '2px solid #1976d2',
-                          },
-                        },
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          {selectedRollFlexoFinishingCategoryMachines[
-                            category.id
-                          ] && (
-                            <IconButton
-                              onClick={() =>
-                                clearCategorySelection(category.id)
-                              }
-                              edge="end"
-                              size="small"
-                              sx={{ mr: 3 }}
-                            >
-                              <ClearIcon />
-                            </IconButton>
-                          )}
-                        </InputAdornment>
-                      }
-                      MenuProps={{
-                        PaperProps: { style: { maxHeight: 300 } },
+                        p: 1,
+                        borderBottom: "1px solid #e0e0e0",
+                        backgroundColor: "#fafafa",
                       }}
                     >
-                      <MenuItem sx={{ p: 1 }}>
-                        <TextField
-                          placeholder="search for your machine"
-                          value={searchTerms[category.id] || ""}
-                          onChange={(e) =>
-                            handleSearchChange(category.id, e.target.value)
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          fullWidth
-                          size="small"
-                          sx={{
-                            "& .MuiInputBase-root": {
-                              height: 40,
-                              fontSize: "14px",
+                      <TextField
+                        inputRef={(el) =>
+                          (searchRefs.current[category.id] = el)
+                        }
+                        placeholder="search for your machine"
+                        value={searchTerms[category.id] || ""}
+                        onChange={(e) =>
+                          handleSearchChange(category.id, e.target.value)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        fullWidth
+                        size="small"
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            height: 40,
+                            fontSize: "14px",
+                            backgroundColor: "white",
+                          },
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: "#e0e0e0",
                             },
-                          }}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon fontSize="small" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
+                            "&:hover fieldset": {
+                              borderColor: "#bdbdbd",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#1976d2",
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon fontSize="small" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
+
+                    {filteredMachines.map((machine) => (
+                      <MenuItem
+                        key={machine.id}
+                        value={machine.model}
+                        sx={{ py: 1, fontSize: "14px" }}
+                      >
+                        {machine.manufacturer} - {machine.model}
                       </MenuItem>
+                    ))}
 
-                      {filteredMachines.map((machine) => (
+                    {hasNoResults && onAddNewMachine && (
+                      <>
+                        <Divider sx={{ my: 1 }} />
                         <MenuItem
-                          key={machine.id}
-                          value={machine.model}
-                          sx={{ py: 1, fontSize: "14px" }}
-                        >
-                          {machine.manufacturer} - {machine.model}
-                        </MenuItem>
-                      ))}
-
-                      {hasNoResults && onAddNewMachine && (
-                        <>
-                          <Divider sx={{ my: 1 }} />
-                          <MenuItem
-                            onClick={() => handleAddNewMachine(category.id)}
-                            sx={{
-                              py: 1,
-                              fontSize: "14px",
-                              color: "primary.main",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <AddIcon fontSize="small" />
-                            Add new machine "{searchTerm}"
-                          </MenuItem>
-                        </>
-                      )}
-                    </Select>
-                  </FormControl>
-
-                  <Button
-                    variant="contained"
-                    onClick={() => onAddRollFlexoFinishingMachine(category.id)}
-                    disabled={
-                      !selectedRollFlexoFinishingCategoryMachines[category.id]
-                    }
-                    sx={{ minWidth: 100 }}
-                  >
-                    Add
-                  </Button>
-                </Box>
-
-                {/* Selected machines list */}
-                {selectedRollFlexoFinishingMachines.filter(
-                  (machine) => machine.categoryId === category.id
-                ).length > 0 && (
-                  <Box>
-                    {selectedRollFlexoFinishingMachines
-                      .filter((machine) => machine.categoryId === category.id)
-                      .map((machine) => (
-                        <Paper
-                          key={machine.id}
+                          onClick={() => handleAddNewMachine(category.id)}
                           sx={{
-                            p: 2,
-                            mb: 1,
-                            backgroundColor: "#f8f9fa",
-                            border: "1px solid #dee2e6",
-                            borderRadius: 1,
+                            py: 1,
+                            fontSize: "14px",
+                            color: "primary.main",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
                           }}
                         >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography variant="body1">
-                              {machine.name}
-                            </Typography>
-                            <IconButton
-                              onClick={() =>
-                                onDeleteRollFlexoFinishingMachine(machine.id)
-                              }
-                              color="error"
-                              size="small"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Paper>
-                      ))}
-                  </Box>
-                )}
-              </Paper>
-            );
-          })}
-        </Box>
+                          <AddIcon fontSize="small" />
+                          Add new machine "{searchTerm}"
+                        </MenuItem>
+                      </>
+                    )}
+                  </Select>
+                </FormControl>
 
-        {selectedRollFlexoFinishingMachines.length > 0 && (
-          <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Selected Roll/Flexo Finishing Machines (
-              {selectedRollFlexoFinishingMachines.length}):
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {selectedRollFlexoFinishingMachines.map((machine) => (
-                <Chip
-                  key={machine.id}
-                  label={`${machine.name} (${machine.categoryName})`}
-                  size="small"
-                  color="success"
-                  variant="outlined"
-                />
-              ))}
-            </Box>
-          </Paper>
-        )}
-      </Paper>
+                <Button
+                  variant="contained"
+                  onClick={() => onAddRollFlexoFinishingMachine(category.id)}
+                  disabled={
+                    !selectedRollFlexoFinishingCategoryMachines[category.id]
+                  }
+                  sx={{
+                    minWidth: 160,
+                    height: 40,
+                    fontSize: "14px",
+                    px: 3,
+                    ...(selectedRollFlexoFinishingCategoryMachines[
+                      category.id
+                    ] && {
+                      animation: `${pulseAnimation} 1.5s infinite`,
+                      backgroundColor: "primary.main",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                      },
+                    }),
+                  }}
+                >
+                  Add
+                </Button>
+              </Box>
+
+              {/* Selected machines list */}
+              {selectedRollFlexoFinishingMachines.filter(
+                (machine) => machine.categoryId === category.id
+              ).length > 0 && (
+                <Box>
+                  {selectedRollFlexoFinishingMachines
+                    .filter((machine) => machine.categoryId === category.id)
+                    .map((machine) => (
+                      <Paper
+                        key={machine.id}
+                        sx={{
+                          p: 2,
+                          mb: 1,
+                          backgroundColor: "#f8f9fa",
+                          border: "1px solid #dee2e6",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="body1">
+                            {machine.name}
+                          </Typography>
+                          <IconButton
+                            onClick={() =>
+                              onDeleteRollFlexoFinishingMachine(machine.id)
+                            }
+                            color="error"
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Paper>
+                    ))}
+                </Box>
+              )}
+            </Paper>
+          );
+        })}
+      </Box>
+
+      {selectedRollFlexoFinishingMachines.length > 0 && (
+        <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Selected Roll/Flexo Finishing Machines (
+            {selectedRollFlexoFinishingMachines.length}):
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {selectedRollFlexoFinishingMachines.map((machine) => (
+              <Chip
+                key={machine.id}
+                label={`${machine.name} (${machine.categoryName})`}
+                size="small"
+                color="success"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        </Paper>
+      )}
     </Box>
   );
 };

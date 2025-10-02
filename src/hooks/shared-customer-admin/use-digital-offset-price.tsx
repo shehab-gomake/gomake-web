@@ -3600,7 +3600,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               display: "flex",
               flexDirection: "row",
               flexWrap: "wrap",
-              gap: 10,
+              // gap: 10,
             }}
           >
             <div
@@ -3952,8 +3952,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           size="small"
                           onClick={onIconClick}
                           sx={{
-                            ml: 0.75,
-                            p: 0.5,
+                            // ml: 0.75,
+                            // p: 0.5,
+                            gap: 0,
+                            padding: 0,
+                            margin: 0,
+                            marginLeft: "5px",
+                            marginRight: "5px",
                             color: secondColor(500),
                           }}
                           title={t("products.offsetPrice.admin.uploadToDetectColorLoad")}
@@ -3989,7 +3994,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         : { ...clasess.parameterContainer, position: "relative" }
                     }
                   >
-                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, left: 0, height: 30 }}>
+                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, insetInlineStart: 0, height: 30 }}>
                       {t("products.offsetPrice.admin.numberOfPapers")}
                     </div>
                     <div
@@ -6597,7 +6602,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   let heightValue = getValue("unitLength") || getValue("dieUnitLength") || "";
 
                   // Directly process child parameters like the existing child parameters logic
-                  if (sizeParameter?.childsParameters) {
+                  if (sizeParameter?.childsParameters && productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
                     sizeParameter.childsParameters.forEach((childParam) => {
                       const childParameterDef = subSection.parameters.find(p => p.id === childParam.id);
 
@@ -7847,16 +7852,69 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             matchingTemplateParam = subSection.parameters.find(
               (templateParam) =>
                 templateParam.id === param.parameterId &&
-                templateParam.actionIndex === param.actionIndex &&
-                !templateParam?.isHiddenInSetting
+                templateParam.actionIndex === param.actionIndex
             );
           }
         }
+
+        // If no matching template parameter found, include the parameter
+        if (!matchingTemplateParam) {
+          return true;
+        }
+
+        // Special case for parameterType 12
         if (matchingTemplateParam?.parameterType === 12) {
           return true;
         }
-        // Check if the parameter is not hidden (isHidden = false)
-        return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
+
+        // Check if the parameter is a setting parameter controlled by another parameter
+        const isSettingParameter = matchingTemplateParam.settingParameters?.some(
+          (sp) => sp.id === param.parameterId
+        );
+
+        if (isSettingParameter) {
+          // Find the parent parameter that controls this setting parameter
+          const parentParameter = section.subSections
+            ?.find((x) => x.id === param.subSectionId)
+            ?.parameters?.find((parentParam) =>
+              parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+            );
+
+          if (parentParameter) {
+            // Check if the parent parameter is hidden
+            if (parentParameter.isHidden) {
+              // If parent is hidden, hide this setting parameter
+              return false;
+            } else {
+              // If parent is not hidden, show this setting parameter
+              return true;
+            }
+          }
+        }
+
+        // For regular parameters, check if they should be hidden
+        if (matchingTemplateParam.isHidden) {
+          // If isHiddenInSetting is true, check if this parameter has any visibility conditions
+          if (matchingTemplateParam.isHiddenInSetting) {
+            // Check if this parameter has any conditions to be visible
+            const hasRelatedParameters = matchingTemplateParam.relatedParameters?.length > 0;
+            const hasSettingParameters = matchingTemplateParam.settingParameters?.length > 0;
+            const isControlledByOtherParameter = section.subSections
+              ?.find((x) => x.id === param.subSectionId)
+              ?.parameters?.some((parentParam) =>
+                parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+              );
+
+            // Only include if it has some condition to be visible
+            return hasRelatedParameters || hasSettingParameters || isControlledByOtherParameter;
+          } else {
+            // If isHiddenInSetting is false or null, hide the parameter
+            return false;
+          }
+        } else {
+          // If not hidden, include the parameter
+          return true;
+        }
       });
 
       // Return the updated subProduct with filtered parameters
@@ -7886,52 +7944,69 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           matchingTemplateParam = subSection.parameters.find(
             (templateParam) =>
               templateParam.id === param.parameterId &&
-              templateParam.actionIndex === param.actionIndex &&
-              !templateParam?.isHiddenInSetting
+              templateParam.actionIndex === param.actionIndex
           );
         }
       }
 
-      // Check if the parameter should be removed
-      if (
-        matchingTemplateParam &&
-        matchingTemplateParam.settingParameters?.length > 0 &&
-        matchingTemplateParam.isHidden
-      ) {
-        // Skip this parameter and its related settingParameters
+      // If no matching template parameter found, include the parameter
+      if (!matchingTemplateParam) {
+        updatedParameters.push(param);
         continue;
       }
 
-      // Check if the parameter is related to a hidden settingParameter
-      const isRelatedToHiddenSetting = parameters.some((p) => {
-        const section = productTemplate.sections.find(
-          (x) => x.id === p.sectionId
-        );
-        if (section && section.subSections) {
-          const subSection = section.subSections.find(
-            (x) => x.id === p.subSectionId
+      // Check if the parameter is a setting parameter controlled by another parameter
+      const isSettingParameter = matchingTemplateParam.settingParameters?.some(
+        (sp) => sp.id === param.parameterId
+      );
+
+      if (isSettingParameter) {
+        // Find the parent parameter that controls this setting parameter
+        const parentParameter = section.subSections
+          ?.find((x) => x.id === param.subSectionId)
+          ?.parameters?.find((parentParam) =>
+            parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
           );
-          if (subSection && subSection.parameters) {
-            const templateParam = subSection.parameters.find(
-              (templateParam) =>
-                templateParam.id === p.parameterId &&
-                templateParam.actionIndex === p.actionIndex &&
-                !templateParam?.isHiddenInSetting
-            );
-            return (
-              templateParam &&
-              templateParam.isHidden &&
-              templateParam.settingParameters?.some(
-                (sp) => sp.id === param.parameterId
-              )
-            );
+
+        if (parentParameter) {
+          // Check if the parent parameter is hidden
+          if (parentParameter.isHidden) {
+            // If parent is hidden, hide this setting parameter
+            continue;
+          } else {
+            // If parent is not hidden, show this setting parameter
+            updatedParameters.push(param);
+            continue;
           }
         }
-        return false;
-      });
+      }
 
-      // If the parameter is not hidden and not related to a hidden settingParameter, include it
-      if (!isRelatedToHiddenSetting) {
+      // For regular parameters, check if they should be hidden
+      if (matchingTemplateParam.isHidden) {
+        // If isHiddenInSetting is true, check if this parameter has any visibility conditions
+        if (matchingTemplateParam.isHiddenInSetting) {
+          // Check if this parameter has any conditions to be visible
+          const hasRelatedParameters = matchingTemplateParam.relatedParameters?.length > 0;
+          const hasSettingParameters = matchingTemplateParam.settingParameters?.length > 0;
+          const isControlledByOtherParameter = section.subSections
+            ?.find((x) => x.id === param.subSectionId)
+            ?.parameters?.some((parentParam) =>
+              parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+            );
+
+          // Only include if it has some condition to be visible
+          if (hasRelatedParameters || hasSettingParameters || isControlledByOtherParameter) {
+            updatedParameters.push(param);
+          } else {
+            // No visibility conditions, hide the parameter
+            continue;
+          }
+        } else {
+          // If isHiddenInSetting is false or null, hide the parameter
+          continue;
+        }
+      } else {
+        // If not hidden, include the parameter
         updatedParameters.push(param);
       }
     }

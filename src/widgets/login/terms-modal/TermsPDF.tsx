@@ -6,8 +6,8 @@ import { useStyle } from "./style";
 import { GomakeLoaderWidget } from "@/widgets/loading";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "../../../../node_modules/pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
+    "../../../../node_modules/pdfjs-dist/build/pdf.worker.min.js",
+    import.meta.url
 ).toString();
 
 export default function TermsPDF() {

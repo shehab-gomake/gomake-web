@@ -156,7 +156,7 @@ const QuickSetupFlow: React.FC = () => {
   // Mark products setup as in progress when component mounts
   useEffect(() => {
     updatePrintHouseSetupSteps(
-      SetupStep.PRODUCTS_SETUPS,
+      SetupStep.SETUP_YOUR_MACHINES,
       StepStatus.IN_PROGRESS
     );
   }, []);
@@ -805,12 +805,14 @@ const QuickSetupFlow: React.FC = () => {
         if (res.success) {
           // Update the products setup step to completed
           await updatePrintHouseSetupSteps(
-            SetupStep.PRODUCTS_SETUPS,
+            SetupStep.SETUP_YOUR_MACHINES,
             StepStatus.DONE
           );
 
+          // Navigate to the next setup step (Company Profile Logo)
           alertSuccessAdded();
-          navigate("/");
+          // navigate("/");
+          navigate("/settings/company-profile?tab=company");
         } else {
           alertFaultAdded();
         }
@@ -826,7 +828,7 @@ const QuickSetupFlow: React.FC = () => {
   return (
     <Box sx={{ p: "0px 24px 24px 24px" }}>
       {/* Welcome Section */}
-      <Box sx={{ mb: 4 }}>
+      <Box>
         <Box
           sx={{
             display: "flex",
@@ -867,7 +869,7 @@ const QuickSetupFlow: React.FC = () => {
               {t("Welcome to Quick Machines Setup")}
             </Typography>
             <Typography
-              variant="body1"
+              variant="body2"
               sx={{ color: "text.secondary", lineHeight: 1.6, mb: 1 }}
             >
               {t(
@@ -908,7 +910,7 @@ const QuickSetupFlow: React.FC = () => {
       </Box>
 
       {/* Stepper */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: 2, mb: 2 }}>
         <Stepper
           activeStep={dynamicSteps.findIndex((step) => step.id === currentStep)}
           alternativeLabel
@@ -922,11 +924,12 @@ const QuickSetupFlow: React.FC = () => {
       </Paper>
 
       {/* Step Content */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6" sx={{ mb: 1 }}>
           {t(dynamicSteps.find((step) => step.id === currentStep)?.title || "")}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 3, color: "text.secondary" }}>
+        {/* !here hide description */}
+        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
           {dynamicSteps.find((step) => step.id === currentStep)?.description ||
             ""}
         </Typography>
@@ -1126,7 +1129,19 @@ const QuickSetupFlow: React.FC = () => {
       </Paper>
 
       {/* Navigation Buttons */}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          position: "sticky",
+          bottom: 0,
+          backgroundColor: "background.paper",
+          p: 2,
+          borderTop: 1,
+          borderColor: "divider",
+          zIndex: 1000,
+        }}
+      >
         <Button
           variant="outlined"
           onClick={handleBack}
@@ -1167,7 +1182,7 @@ const QuickSetupFlow: React.FC = () => {
       </Box>
       {/* Summary - Show all selected machines */}
       {selectedMachines.length > 0 && (
-        <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
+        <Paper sx={{ p: 2, mt: 2, backgroundColor: "#e8f5e8" }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Total Selected Machines: {selectedMachines.length}
           </Typography>

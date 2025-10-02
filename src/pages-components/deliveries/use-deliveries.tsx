@@ -12,7 +12,6 @@ import { useIsMobile } from "@/hooks/use-responsive";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getDeliveriesTableApi } from "@/services/api-service/document-deliveries/get-deliveries-table";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { useDebounce } from "@/utils/use-debounce";
 import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-io";
@@ -26,6 +25,7 @@ interface Query {
   agentId?: string;
   pageNumber?: number;
   shipmentTypeId?: string;
+  finalPatternSearch?: string;
 }
 
 const useDeliveries = () => {
@@ -53,9 +53,8 @@ const useDeliveries = () => {
     setPageSize(event.target.value);
   };
   const [patternSearch, setPatternSearch] = useState<any>(
-    router.query.finalPatternSearch || null
+    router.query.finalPatternSearch || ""
   );
-  const [finalPatternSearch, setFinalPatternSearch] = useState<any>("");
   const searchInputRef = useRef(null);
   const open = Boolean(anchorEl);
 
@@ -118,7 +117,6 @@ const useDeliveries = () => {
     setAgent(null);
     setDeliveryTypeValue(null);
     setPatternSearch("");
-    setFinalPatternSearch("");
 
     const query = {};
     router.push({
@@ -145,6 +143,13 @@ const useDeliveries = () => {
     if (deliveryTypeValue?.value)
       query.shipmentTypeId = deliveryTypeValue?.value;
     else delete query.shipmentTypeId;
+
+    // Include search pattern in the query
+    if (patternSearch && patternSearch.trim()) {
+      query.finalPatternSearch = patternSearch.trim();
+    } else {
+      delete query.finalPatternSearch;
+    }
 
     handleClose();
     setPage(1);
@@ -254,12 +259,7 @@ const useDeliveries = () => {
                   shipmentTypeId:
                     currentShipmentTypeId || deliveryTypeValue?.value,
                 }),
-            searchPattern:
-              finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
+            searchPattern: currentFinalPatternSearch,
           }
     );
   };
@@ -348,41 +348,7 @@ const useDeliveries = () => {
     );
   }, [rawDeliveriesData, isMobile, t, formatCustomDateTime]);
 
-  const debouncePatternSearch = useDebounce(patternSearch, 1000);
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (debouncePatternSearch == null) return;
-
-    const trimmedSearch = debouncePatternSearch.trim();
-    setFinalPatternSearch(trimmedSearch);
-
-    // Create a new query object
-    const newQuery = { ...router.query };
-
-    if (trimmedSearch) {
-      newQuery.finalPatternSearch = trimmedSearch;
-      newQuery.pageNumber = "1";
-    } else {
-      delete newQuery.finalPatternSearch; // Remove the parameter if empty
-      newQuery.pageNumber = "1";
-    }
-
-    // Only push if the query is actually changing
-    const hasQueryChanged =
-      JSON.stringify(newQuery) !== JSON.stringify(router.query);
-
-    if (hasQueryChanged) {
-      router.push(
-        {
-          pathname: router.pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow: true } // Optional: prevents full page reload
-      );
-    }
-  }, [debouncePatternSearch]);
 
   useEffect(() => {
     const {
@@ -416,7 +382,6 @@ const useDeliveries = () => {
         )
       ) {
         setPatternSearch(finalPatternSearch);
-        setFinalPatternSearch(finalPatternSearch);
       }
     }
     if (shipmentTypeId) {
@@ -476,7 +441,6 @@ const useDeliveries = () => {
     agent,
     setAgent,
     patternSearch,
-    setPatternSearch,
     onChangeDocumentSearch,
     onClickClearFilter,
     searchInputRef,

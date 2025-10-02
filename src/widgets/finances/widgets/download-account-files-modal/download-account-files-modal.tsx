@@ -19,6 +19,8 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { classes } = useStyle();
   const {
     resetDatePicker,
@@ -47,6 +49,8 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({
                 <DateRangePicker
                   onChange={onSelectDeliveryTimeDates}
                   ranges={predefinedRanges}
+                  placement={isRTL ? "bottomEnd" : "bottomStart"}
+                  style={{ direction: dir }}
                 />
               </div>
             </div>

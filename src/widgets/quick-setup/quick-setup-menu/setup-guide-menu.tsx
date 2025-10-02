@@ -117,12 +117,12 @@ export const SetupGuideMenu = ({
             borderRadius: "8px",
             cursor:
               step.status === StepStatus.DONE &&
-              step.key === SetupStep.PRODUCTS_SETUPS
+              step.key === SetupStep.SETUP_YOUR_MACHINES
                 ? "default"
                 : "pointer",
             pointerEvents:
               step.status === StepStatus.DONE &&
-              step.key === SetupStep.PRODUCTS_SETUPS
+              step.key === SetupStep.SETUP_YOUR_MACHINES
                 ? "none"
                 : "auto",
             py: "2px",
@@ -197,7 +197,13 @@ export const SetupGuideMenu = ({
             variant="contained"
             fullWidth
             sx={classes.btnStyle}
-            onClick={() => nextStep?.onClick ? nextStep.onClick() : setShowGuideMenu(false)}
+            onClick={() => {
+              if (nextStep?.onClick) {
+                nextStep.onClick();
+              } else {
+                setShowGuideMenu(false);
+              }
+            }}
           >
             {nextStep
               ? `${t("quickSetup.next")} : ${nextStep.label}`

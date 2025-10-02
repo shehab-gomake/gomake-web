@@ -136,7 +136,9 @@ const BoardMissionsStationActionItem = ({
   }, [supplierId, suppliers, suppliersState]);
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   const setIsPrintNodeModalOpen = useSetRecoilState(isPrintNodeModalOpenState);
-  const [openPackagingModal, setOpenPackagingModal] = useRecoilState(isPackagingModalOpenState);
+  const [openPackagingModal, setOpenPackagingModal] = useRecoilState(
+    isPackagingModalOpenState
+  );
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
@@ -338,9 +340,10 @@ const BoardMissionsStationActionItem = ({
 
   // ===== Done scope selection (All jobs vs product type only) =====
   const [openDoneScopeModal, setOpenDoneScopeModal] = useState<boolean>(false);
-  const [pendingDoneData, setPendingDoneData] = useState<
-    { updatedState: any; sendMSg?: boolean } | null
-  >(null);
+  const [pendingDoneData, setPendingDoneData] = useState<{
+    updatedState: any;
+    sendMSg?: boolean;
+  } | null>(null);
 
   const performDoneWithMaterials = async (
     updatedStateArg: any,
@@ -427,7 +430,6 @@ const BoardMissionsStationActionItem = ({
 
   // Modify the modal close handler
 
-
   return (
     <>
       {isHaveSubACtions ? (
@@ -441,7 +443,9 @@ const BoardMissionsStationActionItem = ({
               justifyContent={"space-between"}
               style={{
                 ...classes.actionContainer,
-                border: selected ? classes.actionContainerBorder : "1px solid #D0D5DD",
+                border: selected
+                  ? classes.actionContainerBorder
+                  : "1px solid #D0D5DD",
               }}
             >
               <Stack
@@ -579,7 +583,6 @@ const BoardMissionsStationActionItem = ({
                     </div>
                   )}
                 </PermissionCheck>
-
               </Stack>
             </Stack>
           </Fade>
@@ -688,7 +691,8 @@ const BoardMissionsStationActionItem = ({
                         {getSupplierId()}
                       </span>
                     ) : (
-                      isNeedMachine && (
+                      isNeedMachine &&
+                      source != EWorkSource.OUT && (
                         <>
                           {!chooseMachine ? (
                             <Button
@@ -789,7 +793,7 @@ const BoardMissionsStationActionItem = ({
                         </>
                       )
                     )}
-                    {isNeedEmployee && (
+                    {isNeedEmployee && source != EWorkSource.OUT && (
                       <>
                         {!chooseEmployee ? (
                           <Button
@@ -1072,16 +1076,23 @@ const BoardMissionsStationActionItem = ({
         }}
         onClickYes={() => {
           if (pendingDoneData) {
-            performDoneWithMaterials(pendingDoneData.updatedState, "", pendingDoneData.sendMSg);
+            performDoneWithMaterials(
+              pendingDoneData.updatedState,
+              "",
+              pendingDoneData.sendMSg
+            );
           }
         }}
         onClickNo={() => {
           if (pendingDoneData) {
-            performDoneWithMaterials(pendingDoneData.updatedState, productType, pendingDoneData.sendMSg);
+            performDoneWithMaterials(
+              pendingDoneData.updatedState,
+              productType,
+              pendingDoneData.sendMSg
+            );
           }
         }}
       />
-
     </>
   );
 };
