@@ -264,8 +264,8 @@ const useMaterials = (isAdmin: boolean) => {
   const translateHeaderValue = (key: string, originalValue: string) => {
     const convertedUnit =
       unitType === UNIT_TYPE.IMPERIAL
-        ? convertTitleUnits(originalValue)
-        : originalValue;
+        ? convertTitleUnits(key)
+        : key;
     // Special case for "price Unit / ton"
     if (key === "price Unit / ton") {
       return <div>

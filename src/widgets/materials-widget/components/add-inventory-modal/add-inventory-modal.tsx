@@ -7,7 +7,10 @@ import { GomakeTextInput, GomakePrimaryButton, GoMakeAutoComplate, } from "@/com
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE, } from "@/pages/customers/enums";
 import { currenciesState } from "../../state";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userState } from "@/store/user";
+import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits } from "@/utils/helpers";
 
 const AddInventoryModal = ({
     isAddInventoryModalOpen,
@@ -31,6 +34,16 @@ const AddInventoryModal = ({
     isFetchingCustomer,
 }) => {
     const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0;
+    const convertedPricingUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.pricingUnit)
+            : inventoryTableHeadingUnits.pricingUnit;
+    const convertedInventoryUnit =
+        unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(inventoryTableHeadingUnits.inventoryUnit)
+            : inventoryTableHeadingUnits.inventoryUnit;
 
     return (
         <Dialog
@@ -78,7 +91,7 @@ const AddInventoryModal = ({
                         </div>
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
-                                labelText={`${t("materials.childTable.quantity")} ${inventoryTableHeadingUnits.inventoryUnit ? `(${inventoryTableHeadingUnits.inventoryUnit})` : ''}`}
+                                labelText={`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${t(`measurementUnits.${convertedInventoryUnit}`)})` : ''}`}
                                 value={inventoryFormData.quantity.toString()}
                                 onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
                                 type="number"
@@ -94,7 +107,7 @@ const AddInventoryModal = ({
                     <div style={classes.modalInputContainer}>
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
-                                labelText={`${t("materials.childTable.purchasePrice")} ${inventoryTableHeadingUnits.pricingUnit ? `(${inventoryTableHeadingUnits.pricingUnit.split(' / ')[0]})` : ''}`}
+                                labelText={`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
                                 value={inventoryFormData.purchasePrice.toString()}
                                 onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
                                 type="number"
@@ -123,7 +136,7 @@ const AddInventoryModal = ({
                     <div style={classes.modalInputContainer}>
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
-                                labelText={`${t("materials.childTable.saleCost")} ${inventoryTableHeadingUnits.pricingUnit ? `(${inventoryTableHeadingUnits.pricingUnit.split(' / ')[0]})` : ''}`}
+                                labelText={`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
                                 value={inventoryFormData.salePrice.toString()}
                                 onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
                                 type="number"
