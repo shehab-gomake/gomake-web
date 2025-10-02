@@ -13,6 +13,7 @@ import {
   openAddCategoryModalState,
   openAddRowModalState,
   selectedSupplierIdState,
+  selectedSuppliersIdsState,
 } from "@/widgets/materials-widget/state";
 import { navStatusState } from "@/store/nav-status";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
@@ -59,6 +60,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     isDuplicateCategoryModalState
   );
   const supplierId = useRecoilValue(selectedSupplierIdState);
+  const suppliersIds = useRecoilValue(selectedSuppliersIdsState);
   const flag = useRecoilValue(flagState);
   const {
     materialCategory,
@@ -311,6 +313,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialType,
     materialCategory,
     supplierId,
+    suppliersIds,
     activeFilter,
     materialFilter,
   ]);
@@ -350,7 +353,15 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {/* <EditIcon fontSize="small" /> */}
           </IconButton>
         </div>
-        <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
+        <FiltersActionsBar
+          isAdmin={props.isAdmin}
+          subCategory={subCategory}
+          isFetchingSupplier={isFetchingSupplier}
+          renderOptionsSupplier={listSupplier}
+          checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+
+
+        />
       </div>
       {/* Absolute positioned sidebar overlay */}
       {isSidebarOpen && (

@@ -172,7 +172,7 @@ const GoMakeAutoComplate = ({
   const isRTL = dir === "rtl";
 
   useEffect(() => {
-    if (value) {
+    if ((Array.isArray(value) && value.length > 0) || !Array.isArray(value)) {
       setSelectedOption(value);
     } else {
       setSelectedOption(null);
