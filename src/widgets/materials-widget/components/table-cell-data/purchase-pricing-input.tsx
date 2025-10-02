@@ -6,6 +6,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 interface IPurchasePricingInputProps {
     value?: string;
@@ -17,7 +18,9 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     const { secondColor } = useGomakeTheme();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'purchasePricing';
-
+    const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     const toggleExpanded = () => {
         if (isExpanded) {
             setOpenChildTable({ rowId: '', tableType: null });
@@ -27,20 +30,53 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     };
 
     return (
-        <Button
+        // <Button
+        //     onClick={toggleExpanded}
+        //     startIcon={
+        //         isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+        //     }
+        //     sx={{
+        //         backgroundColor: "buttonColor",
+        //         color: '#000000',
+        //         height: "35px",
+        //         minWidth: "90px",
+        //         padding: "6px 12px",
+        //         width: "fit-content",
+        //         border: "1px solid #ccc",
+        //         margin: 0,
+        //         "&:hover": {
+        //             opacity: 0.7,
+        //             backgroundColor: "transparent",
+        //             color: '#000000',
+        //         },
+
+        //     }}
+        // >
+        //     <div style={{
+        //         ...FONT_FAMILY.Lexend(500, 14),
+        //         display: 'flex',
+        //         alignItems: 'center',
+        //     }}>
+        //         {isExpanded ? "Hide" : "Open"}
+        //     </div>
+
+        // </Button>
+
+        <Box
             onClick={toggleExpanded}
-            startIcon={
-                isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
-            }
             sx={{
-                backgroundColor: "buttonColor",
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 1,
                 color: '#000000',
                 height: "35px",
                 minWidth: "90px",
-                padding: "6px 12px",
-                width: "fit-content",
+                padding: "0px 4px",
                 border: "1px solid #ccc",
                 margin: 0,
+                width: "100%",
                 "&:hover": {
                     opacity: 0.7,
                     backgroundColor: "transparent",
@@ -49,6 +85,12 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
 
             }}
         >
+            {
+                isRTL &&
+                <>
+                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+                </>
+            }
             <div style={{
                 ...FONT_FAMILY.Lexend(500, 14),
                 display: 'flex',
@@ -56,8 +98,13 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
             }}>
                 {isExpanded ? "Hide" : "Open"}
             </div>
-
-        </Button>
+            {
+                !isRTL &&
+                <>
+                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+                </>
+            }
+        </Box>
     );
 };
 
