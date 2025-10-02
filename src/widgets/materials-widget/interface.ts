@@ -21,7 +21,9 @@ export interface IRowData {
   unit?: string;
   isInventoryTable?: boolean;
   isPurchasePricingTable?: boolean;
-  rowData?: Record<string, any>;
+  rowData?: Record<string, any>;  
+  listClient?: any;
+  checkWhatRenderArrayCustomer?: any;
 }
 
 export interface IDynamicRowData {

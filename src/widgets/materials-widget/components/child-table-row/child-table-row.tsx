@@ -514,6 +514,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
+                                                                listClient={renderOptionsCustomer}
+                                                                checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
                                                             />
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
@@ -982,10 +984,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         <Box sx={classes.mainContainer}>
             {openChildTable.tableType === 'inventory' && renderInventoryTable()}
             {openChildTable.tableType === 'purchasePricing' && renderPurchasePricingTable()}
-
-
-            {/* Use existing AddSupplierModal */}
-            <AddSupplierModal />
 
             {/* Add Purchase Pricing Modal */}
             <AddPurchasePricingModal

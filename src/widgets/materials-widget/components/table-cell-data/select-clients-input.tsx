@@ -1,11 +1,14 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { useCustomerDropDownList } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { ModalType } from "@/enums";
+import { useDebouncedCallback } from "use-debounce";
+import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
     parameterKey: string;
@@ -17,6 +20,8 @@ interface IProps {
     placeHolder?: string;
     isInventoryTable?: boolean;
     isPurchasePricingTable?: boolean;
+    listClient?: any[];
+    checkWhatRenderArrayCustomer?: (e: any) => void;
 }
 
 const SelectClientsInput = ({
@@ -29,11 +34,54 @@ const SelectClientsInput = ({
     placeHolder,
     isInventoryTable = false,
     isPurchasePricingTable = false,
+    listClient,
+    checkWhatRenderArrayCustomer
 }: IProps) => {
-
-    console.log("value", value);
+    console.log("listClient", listClient);
     const { updateCellData } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
-    const { renderOptions, checkWhatRenderArray } = useCustomerDropDownList({});
+    const { callApi } = useGomakeAxios();
+
+    // const [listClient, setListClient] = useState([]);
+    // const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
+    // const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    //     getAllClients(value);
+    // }, 1200);
+
+    // const getAllClients = useCallback(
+    //     async (SearchTerm?: string) => {
+    //         if (SearchTerm) {
+    //             setIsFetchingCustomer(true);
+    //         }
+    //         await getAndSetAllCustomers(callApi, setListClient, {
+    //             clientType: CLIENT_TYPE.CUSTOMER,
+    //             searchTerm: SearchTerm as string,
+    //         });
+    //         setIsFetchingCustomer(false);
+    //     },
+    //     []
+    // );
+
+
+    // const checkWhatRenderArrayCustomer = (e: any) => {
+    //     const value = e.target.value.trim();
+    //     if (value === "") {
+    //         debouncedGetAllClients.cancel();
+    //         getRecentClients();
+    //     } else {
+    //         debouncedGetAllClients(value);
+    //     }
+    // };
+
+    // const getRecentClients = useCallback(async () => {
+    //     await getAndSetRecentCustomers(callApi, setListClient, {
+    //         ClientType: CLIENT_TYPE.CUSTOMER,
+    //     });
+    // }, []);
+
+    // useEffect(() => {
+    //     getRecentClients();
+    // }, []);
+
     const { t } = useTranslation();
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
@@ -48,7 +96,7 @@ const SelectClientsInput = ({
         setOpenDeleteTableRowModal(true);
     };
 
-    const clientsOptions = renderOptions().map((client) => ({
+    const clientsOptions = listClient?.map((client) => ({
         value: client.id,
         label: `${client.name} - ${client.code || ''}`,
     }));
@@ -76,8 +124,6 @@ const SelectClientsInput = ({
     };
 
     const currentClientId = getCurrentClientId();
-
-    console.log("currentClientId", currentClientId);
 
     const onSelectChange = async (event: SyntheticEvent, selectedOption: any) => {
         setSelectedValue(selectedOption);
@@ -107,7 +153,7 @@ const SelectClientsInput = ({
             <GoMakeAutoComplate
                 key={clientsOptions.find((x) => x.value === currentClientId)?.label || `${parameterKey}_${currentClientId}`}
                 onChange={onSelectChange}
-                onChangeTextField={parameterKey === "clients" ? checkWhatRenderArray : undefined}
+                onChangeTextField={parameterKey === "clients" ? checkWhatRenderArrayCustomer : undefined}
                 placeholder={
                     currentClientId ? clientsOptions.find((x) => x.value === currentClientId)?.label : placeHolder || t("materials.selectClient", "Select a client")
                 }

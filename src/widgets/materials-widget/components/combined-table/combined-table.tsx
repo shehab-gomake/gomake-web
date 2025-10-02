@@ -27,11 +27,11 @@ const CombinedTable = ({
     materialType,
     materialCategory,
     renderOptionsCustomer,
-    checkWhatRenderArrayCustomer,
     isFetchingCustomer,
     renderOptionsSupplier,
     checkWhatRenderArraySupplier,
     isFetchingSupplier,
+    checkWhatRenderArrayCustomer,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
