@@ -110,69 +110,72 @@ export const Step5WideFormatFinishingSelection: React.FC<
 
   return (
     <Box>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Wide Format Finishing Categories
-          </Typography>
+      <Box>
+        {wideFormatFinishingCategories.map((category) => {
+          const filteredMachines = getFilteredMachines(category);
+          const searchTerm = searchTerms[category.id] || "";
+          const hasSearchTerm = searchTerm.length > 0;
+          const hasNoResults = hasSearchTerm && filteredMachines.length === 0;
 
-          {wideFormatFinishingCategories.map((category) => {
-            const filteredMachines = getFilteredMachines(category);
-            const searchTerm = searchTerms[category.id] || "";
-            const hasSearchTerm = searchTerm.length > 0;
-            const hasNoResults = hasSearchTerm && filteredMachines.length === 0;
+          return (
+            <Paper
+              key={category.id}
+              sx={{ px: 2, pb: 0, pt: 1, mb: 2, border: "1px solid #e0e0e0" }}
+            >
+              <Typography variant="h6" sx={{ mb: 1, color: "primary.main" }}>
+                {t(category.name)}
+              </Typography>
 
-            return (
-              <Paper
-                key={category.id}
-                sx={{ p: 3, mb: 3, border: "1px solid #e0e0e0" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  mb: 1,
+                  alignItems: "flex-end",
+                }}
               >
-                <Typography variant="h6" sx={{ mb: 2, color: "primary.main" }}>
-                  {t(category.name)}
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    mb: 2,
-                    alignItems: "flex-end",
-                  }}
-                >
-                  <FormControl fullWidth>
-                    <InputLabel>search for your machine</InputLabel>
-                    <Select
-                      value={
-                        selectedWideFormatFinishingCategoryMachines[
-                          category.id
-                        ] || ""
-                      }
-                      onChange={(e) =>
-                        onWideFormatFinishingCategoryMachineChange(
-                          category.id,
-                          e.target.value
-                        )
-                      }
-                      label="search for your machine"
-                      input={<OutlinedInput label="search for your machine" />}
-                      open={dropdownOpenStates[category.id] || false}
-                      onOpen={() =>
-                        setDropdownOpenStates((prev) => ({
-                          ...prev,
-                          [category.id]: true,
-                        }))
-                      }
-                      onClose={() => {
-                        setDropdownOpenStates((prev) => ({
-                          ...prev,
-                          [category.id]: false,
-                        }));
-                        setSearchTerms((prev) => ({
-                          ...prev,
-                          [category.id]: "",
-                        }));
-                      }}
-                      sx={{
+                <FormControl fullWidth>
+                  <InputLabel>search for your machine</InputLabel>
+                  <Select
+                    value={
+                      selectedWideFormatFinishingCategoryMachines[
+                        category.id
+                      ] || ""
+                    }
+                    onChange={(e) =>
+                      onWideFormatFinishingCategoryMachineChange(
+                        category.id,
+                        e.target.value
+                      )
+                    }
+                    label="search for your machine"
+                    input={<OutlinedInput label="search for your machine" />}
+                    open={dropdownOpenStates[category.id] || false}
+                    onOpen={() =>
+                      setDropdownOpenStates((prev) => ({
+                        ...prev,
+                        [category.id]: true,
+                      }))
+                    }
+                    onClose={() => {
+                      setDropdownOpenStates((prev) => ({
+                        ...prev,
+                        [category.id]: false,
+                      }));
+                      setSearchTerms((prev) => ({
+                        ...prev,
+                        [category.id]: "",
+                      }));
+                    }}
+                    sx={{
+                      borderBottom: "2px solid #e0e0e0",
+                      "&:hover": {
+                        borderBottom: "2px solid #bdbdbd",
+                      },
+                      "&.Mui-focused": {
+                        borderBottom: "2px solid #1976d2",
+                      },
+                      "& .MuiOutlinedInput-root": {
                         borderBottom: "2px solid #e0e0e0",
                         "&:hover": {
                           borderBottom: "2px solid #bdbdbd",
@@ -180,230 +183,219 @@ export const Step5WideFormatFinishingSelection: React.FC<
                         "&.Mui-focused": {
                           borderBottom: "2px solid #1976d2",
                         },
-                        "& .MuiOutlinedInput-root": {
-                          borderBottom: "2px solid #e0e0e0",
-                          "&:hover": {
-                            borderBottom: "2px solid #bdbdbd",
-                          },
-                          "&.Mui-focused": {
-                            borderBottom: "2px solid #1976d2",
-                          },
-                        },
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          {selectedWideFormatFinishingCategoryMachines[
-                            category.id
-                          ] && (
-                            <IconButton
-                              onClick={() =>
-                                clearCategorySelection(category.id)
-                              }
-                              edge="end"
-                              size="small"
-                              sx={{ mr: 3 }}
-                            >
-                              <ClearIcon />
-                            </IconButton>
-                          )}
-                        </InputAdornment>
-                      }
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300,
-                            padding: 0,
-                          },
-                          sx: {
-                            "& .MuiList-root": {
-                              paddingTop: 0,
-                            },
-                          },
-                        },
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        },
-                        transformOrigin: {
-                          vertical: "top",
-                          horizontal: "left",
-                        },
-                      }}
-                    >
-                      {/* Search TextField positioned above options */}
-                      <Box
-                        sx={{
-                          p: 1,
-                          borderBottom: "1px solid #e0e0e0",
-                          backgroundColor: "#fafafa",
-                        }}
-                      >
-                        <TextField
-                          inputRef={(el) =>
-                            (searchRefs.current[category.id] = el)
-                          }
-                          placeholder="search for your machine"
-                          value={searchTerms[category.id] || ""}
-                          onChange={(e) =>
-                            handleSearchChange(category.id, e.target.value)
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          fullWidth
-                          size="small"
-                          sx={{
-                            "& .MuiInputBase-root": {
-                              height: 40,
-                              fontSize: "14px",
-                              backgroundColor: "white",
-                            },
-                            "& .MuiOutlinedInput-root": {
-                              "& fieldset": {
-                                borderColor: "#e0e0e0",
-                              },
-                              "&:hover fieldset": {
-                                borderColor: "#bdbdbd",
-                              },
-                              "&.Mui-focused fieldset": {
-                                borderColor: "#1976d2",
-                              },
-                            },
-                          }}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon fontSize="small" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Box>
-
-                      {filteredMachines.map((machine) => (
-                        <MenuItem
-                          key={machine.id}
-                          value={machine.model}
-                          sx={{ py: 1, fontSize: "14px" }}
-                        >
-                          {machine.manufacturer} - {machine.model}
-                        </MenuItem>
-                      ))}
-
-                      {hasNoResults && onAddNewMachine && (
-                        <>
-                          <Divider sx={{ my: 1 }} />
-                          <MenuItem
-                            onClick={() => handleAddNewMachine(category.id)}
-                            sx={{
-                              py: 1,
-                              fontSize: "14px",
-                              color: "primary.main",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
+                      },
+                    }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        {selectedWideFormatFinishingCategoryMachines[
+                          category.id
+                        ] && (
+                          <IconButton
+                            onClick={() => clearCategorySelection(category.id)}
+                            edge="end"
+                            size="small"
+                            sx={{ mr: 3 }}
                           >
-                            <AddIcon fontSize="small" />
-                            Add new machine "{searchTerm}"
-                          </MenuItem>
-                        </>
-                      )}
-                    </Select>
-                  </FormControl>
-
-                  <Button
-                    variant="contained"
-                    onClick={() => onAddWideFormatFinishingMachine(category.id)}
-                    disabled={
-                      !selectedWideFormatFinishingCategoryMachines[category.id]
+                            <ClearIcon />
+                          </IconButton>
+                        )}
+                      </InputAdornment>
                     }
-                    sx={{
-                      minWidth: 160,
-                      height: 40,
-                      fontSize: "14px",
-                      px: 3,
-                      ...(selectedWideFormatFinishingCategoryMachines[
-                        category.id
-                      ] && {
-                        animation: `${pulseAnimation} 1.5s infinite`,
-                        backgroundColor: "primary.main",
-                        "&:hover": {
-                          backgroundColor: "primary.dark",
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          padding: 0,
                         },
-                      }),
+                        sx: {
+                          "& .MuiList-root": {
+                            paddingTop: 0,
+                          },
+                        },
+                      },
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
                     }}
                   >
-                    Add
-                  </Button>
-                </Box>
+                    {/* Search TextField positioned above options */}
+                    <Box
+                      sx={{
+                        p: 1,
+                        borderBottom: "1px solid #e0e0e0",
+                        backgroundColor: "#fafafa",
+                      }}
+                    >
+                      <TextField
+                        inputRef={(el) =>
+                          (searchRefs.current[category.id] = el)
+                        }
+                        placeholder="search for your machine"
+                        value={searchTerms[category.id] || ""}
+                        onChange={(e) =>
+                          handleSearchChange(category.id, e.target.value)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        fullWidth
+                        size="small"
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            height: 40,
+                            fontSize: "14px",
+                            backgroundColor: "white",
+                          },
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: "#e0e0e0",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "#bdbdbd",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#1976d2",
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon fontSize="small" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
 
-                {/* Selected machines list */}
-                {selectedWideFormatFinishingMachines.filter(
-                  (machine) => machine.categoryId === category.id
-                ).length > 0 && (
-                  <Box>
-                    {selectedWideFormatFinishingMachines
-                      .filter((machine) => machine.categoryId === category.id)
-                      .map((machine) => (
-                        <Paper
-                          key={machine.id}
+                    {filteredMachines.map((machine) => (
+                      <MenuItem
+                        key={machine.id}
+                        value={machine.model}
+                        sx={{ py: 1, fontSize: "14px" }}
+                      >
+                        {machine.manufacturer} - {machine.model}
+                      </MenuItem>
+                    ))}
+
+                    {hasNoResults && onAddNewMachine && (
+                      <>
+                        <Divider sx={{ my: 1 }} />
+                        <MenuItem
+                          onClick={() => handleAddNewMachine(category.id)}
                           sx={{
-                            p: 2,
-                            mb: 1,
-                            backgroundColor: "#f8f9fa",
-                            border: "1px solid #dee2e6",
-                            borderRadius: 1,
+                            py: 1,
+                            fontSize: "14px",
+                            color: "primary.main",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
                           }}
                         >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography variant="body1">
-                              {machine.name}
-                            </Typography>
-                            <IconButton
-                              onClick={() =>
-                                onDeleteWideFormatFinishingMachine(machine.id)
-                              }
-                              color="error"
-                              size="small"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Paper>
-                      ))}
-                  </Box>
-                )}
-              </Paper>
-            );
-          })}
-        </Box>
+                          <AddIcon fontSize="small" />
+                          Add new machine "{searchTerm}"
+                        </MenuItem>
+                      </>
+                    )}
+                  </Select>
+                </FormControl>
 
-        {selectedWideFormatFinishingMachines.length > 0 && (
-          <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Selected Wide Format Finishing Machines (
-              {selectedWideFormatFinishingMachines.length}):
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {selectedWideFormatFinishingMachines.map((machine) => (
-                <Chip
-                  key={machine.id}
-                  label={`${machine.name} (${machine.categoryName})`}
-                  size="small"
-                  color="success"
-                  variant="outlined"
-                />
-              ))}
-            </Box>
-          </Paper>
-        )}
-      </Paper>
+                <Button
+                  variant="contained"
+                  onClick={() => onAddWideFormatFinishingMachine(category.id)}
+                  disabled={
+                    !selectedWideFormatFinishingCategoryMachines[category.id]
+                  }
+                  sx={{
+                    minWidth: 160,
+                    height: 40,
+                    fontSize: "14px",
+                    px: 3,
+                    ...(selectedWideFormatFinishingCategoryMachines[
+                      category.id
+                    ] && {
+                      animation: `${pulseAnimation} 1.5s infinite`,
+                      backgroundColor: "primary.main",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                      },
+                    }),
+                  }}
+                >
+                  Add
+                </Button>
+              </Box>
+
+              {/* Selected machines list */}
+              {selectedWideFormatFinishingMachines.filter(
+                (machine) => machine.categoryId === category.id
+              ).length > 0 && (
+                <Box>
+                  {selectedWideFormatFinishingMachines
+                    .filter((machine) => machine.categoryId === category.id)
+                    .map((machine) => (
+                      <Paper
+                        key={machine.id}
+                        sx={{
+                          p: 2,
+                          mb: 1,
+                          backgroundColor: "#f8f9fa",
+                          border: "1px solid #dee2e6",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="body1">
+                            {machine.name}
+                          </Typography>
+                          <IconButton
+                            onClick={() =>
+                              onDeleteWideFormatFinishingMachine(machine.id)
+                            }
+                            color="error"
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Paper>
+                    ))}
+                </Box>
+              )}
+            </Paper>
+          );
+        })}
+      </Box>
+
+      {selectedWideFormatFinishingMachines.length > 0 && (
+        <Paper sx={{ p: 2, mt: 3, backgroundColor: "#e8f5e8" }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Selected Wide Format Finishing Machines (
+            {selectedWideFormatFinishingMachines.length}):
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {selectedWideFormatFinishingMachines.map((machine) => (
+              <Chip
+                key={machine.id}
+                label={`${machine.name} (${machine.categoryName})`}
+                size="small"
+                color="success"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        </Paper>
+      )}
     </Box>
   );
 };
