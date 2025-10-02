@@ -94,7 +94,7 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
                 display: 'flex',
                 alignItems: 'center',
             }}>
-                {isExpanded ? "Hide" : "Open"}
+                {isExpanded ? t("sales.quote.hide") : t("sales.quote.open")}
             </div>
 
         </Box>
