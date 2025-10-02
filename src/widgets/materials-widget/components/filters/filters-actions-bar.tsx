@@ -163,7 +163,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
-        materialTableFilters.map(({ key, values, unit }) => {
+        materialTableFilters.map(({ key, values, unit, name }) => {
+          console.log('name', { name, values });
           const convertedUnitText =
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
           const convertedValues = unit
@@ -229,7 +230,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 })}
                 style={{ width: "300px", height: 40, overflow: "scroll" }}
                 options={options}
-                placeholder={key}
+                placeholder={name}
                 multiple={true}
               />
             );
@@ -243,8 +244,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 options={convertedUnit}
                 placeholder={
                   convertedUnitText
-                    ? key + " " + "(" + convertedUnitText + ")"
-                    : key
+                    ? name + " " + "(" + convertedUnitText + ")"
+                    : name
                 }
               />
             );

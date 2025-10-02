@@ -343,17 +343,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     <CircularProgress />
                 </Box>
             ) : inventoryData.length === 0 ? (
-                <Box sx={classes.noDataContainer}>
-                    <span style={classes.noDataText}>
-                        {t("materials.childTable.noInventoryData")}
-                    </span>
-                    <span
-                        onClick={() => setIsAddInventoryModalOpen(true)}
-                        style={classes.noDataLink}
-                    >
-                        {t("materials.childTable.addNew")}
-                    </span>
-                </Box>
+                <></>
             ) : (
                 <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative' }}>
                     <DragDropContext onDragEnd={handleInventoryDragEnd}>
@@ -591,12 +581,36 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const renderPurchasePricingTable = () => (
         <Box sx={classes.childTableContainer}>
+            <Box sx={{
+                position: 'sticky',
+                [isRTL ? 'right' : 'left']: isRTL ? `${scrollLeft > 0 ? scrollLeft : 8}px` : `${-scrollLeft > 0 ? scrollLeft : 8}px`,
+                top: 0,
+                zIndex: 999999,
+                padding: '4px 0px',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                transform: 'translateZ(0)',
+                width: '200px', // Exact same as columns: 50px + 150px
+                minWidth: '200px',
+                maxWidth: '200px',
+                margin: 0,
+                boxSizing: 'border-box',
+            }}>
+                <GomakePrimaryButton
+                    onClick={() => setIsAddPurchasePricingModalOpen(true)}
+                    style={classes.addInventoryButton}
+                    startIcon={<AddIcon />}
+                >
+                    {t("materials.sheetPaper.addNewSupplier")}
+                </GomakePrimaryButton>
+            </Box>
             {isLoadingPurchasePricing ? (
                 <Box sx={classes.loadingContainer}>
                     <CircularProgress />
                 </Box>
             ) : purchasePricingData.length === 0 ? (
-                <Alert severity="info">{t("materials.childTable.noPurchasePricingData")}</Alert>
+                <></>
             ) : (
                 <TableContainer
                     component={Paper}
@@ -608,19 +622,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                         <Table sx={classes.table} stickyHeader>
                             <TableHead>
                                 <TableRow sx={classes.headerRow}>
-                                    <TableCell sx={classes.headerCell} >
-                                        <Tooltip
-                                            title={t("materials.sheetPaper.addNewSupplier")}
-                                        >
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setIsAddPurchasePricingModalOpen(true)}
-                                                sx={classes.addButton}
-                                            >
-                                                <AddIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
+                                    <TableCell sx={classes.headerCell} ></TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.supplierName")}
 
