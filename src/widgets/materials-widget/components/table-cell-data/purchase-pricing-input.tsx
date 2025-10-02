@@ -66,7 +66,7 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
             onClick={toggleExpanded}
             sx={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: 'row-reverse',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: 1,
@@ -85,12 +85,10 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
 
             }}
         >
-            {
-                isRTL &&
-                <>
-                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                </>
-            }
+
+            <>
+                {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+            </>
             <div style={{
                 ...FONT_FAMILY.Lexend(500, 14),
                 display: 'flex',
@@ -98,12 +96,7 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
             }}>
                 {isExpanded ? "Hide" : "Open"}
             </div>
-            {
-                !isRTL &&
-                <>
-                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                </>
-            }
+
         </Box>
     );
 };

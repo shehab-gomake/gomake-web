@@ -23,6 +23,7 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'inventory';
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
+    console.log("isRTL", isRTL);
     const toggleExpanded = () => {
         if (isExpanded) {
             setOpenChildTable({ rowId: '', tableType: null });
@@ -53,7 +54,7 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
             onClick={toggleExpanded}
             sx={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: 'row-reverse',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: 1,
@@ -72,30 +73,19 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
 
             }}
         >
-            {
-                isRTL &&
-                <>
-                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                </>
-            }
+            <>
+                {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+            </>
             <Box
                 component="span"
                 sx={{
                     ...FONT_FAMILY.Lexend(500, 14),
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: "100%",
                 }}
             >
                 {value || '0'}
 
             </Box>
-            {
-                !isRTL &&
-                <>
-                    {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                </>
-            }
+
         </Box>
     );
 };
