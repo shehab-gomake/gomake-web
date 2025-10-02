@@ -117,8 +117,9 @@ const useStyle = () => {
         padding: '4px',
         backgroundColor: '#EBECFF',
          width: 'fit-content',
-        minWidth: 'fit-content',
+        minWidth: 'fit-content',  
       },
+      
       headerCellText:{
         color:"#2E3092"
 
@@ -301,13 +302,15 @@ const useStyle = () => {
       },
       dialogTitle:{
        padding:"8px 16px",
+       paddingBottom:"0px",
       },
       // Modal styles
       modalContent: {
         mt: 1,
         display: 'flex',
         flexDirection: 'column',
-        gap: 3
+        gap:"15px",
+
       },
       modalContent1:{
         padding:"8px 16px",
