@@ -182,18 +182,20 @@ const AddInventoryModal = ({
                 </Box>
             </DialogContent>
             <DialogActions sx={classes.modalActions}>
-                <GomakePrimaryButton
-                    onClick={handleCloseAddInventoryModal}
-                    style={classes.modalCancelButton}
-                >
-                    {t("materials.childTable.cancel")}
-                </GomakePrimaryButton>
-                <GomakePrimaryButton
-                    onClick={handleAddInventory}
-                    style={classes.modalSubmitButton}
-                >
-                    {t("materials.childTable.addInventory")}
-                </GomakePrimaryButton>
+                <div style={classes.modalActionsContainer}>
+                    <GomakePrimaryButton
+                        onClick={handleCloseAddInventoryModal}
+                        style={classes.modalCancelButton}
+                    >
+                        {t("materials.childTable.cancel")}
+                    </GomakePrimaryButton>
+                    <GomakePrimaryButton
+                        onClick={handleAddInventory}
+                        style={classes.modalSubmitButton}
+                    >
+                        {t("materials.childTable.addInventory")}
+                    </GomakePrimaryButton>
+                </div>
             </DialogActions>
         </Dialog>
     );

@@ -141,18 +141,20 @@ const AddPurchasePricingModal = ({
                 </Box>
             </DialogContent>
             <DialogActions sx={classes.modalActions}>
-                <GomakePrimaryButton
-                    onClick={handleCloseAddPurchasePricingModal}
-                    style={classes.modalCancelButton}
-                >
-                    {t("materials.childTable.cancel")}
-                </GomakePrimaryButton>
-                <GomakePrimaryButton
-                    onClick={() => handleAddPurchasePricing(null)}
-                    style={classes.modalSubmitButton}
-                >
-                    {t("materials.childTable.addPurchasePricing")}
-                </GomakePrimaryButton>
+                <div style={classes.modalActionsContainer}>
+                    <GomakePrimaryButton
+                        onClick={handleCloseAddPurchasePricingModal}
+                        style={classes.modalCancelButton}
+                    >
+                        {t("materials.childTable.cancel")}
+                    </GomakePrimaryButton>
+                    <GomakePrimaryButton
+                        onClick={() => handleAddPurchasePricing(null)}
+                        style={classes.modalSubmitButton}
+                    >
+                        {t("materials.childTable.addPurchasePricing")}
+                    </GomakePrimaryButton>
+                </div>
             </DialogActions>
         </Dialog>
     );
