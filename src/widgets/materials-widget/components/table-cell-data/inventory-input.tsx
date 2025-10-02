@@ -21,7 +21,9 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
     const { t } = useTranslation();
     const [openChildTable, setOpenChildTable] = useRecoilState(openChildTableState);
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'inventory';
-
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
+    console.log("isRTL", isRTL);
     const toggleExpanded = () => {
         if (isExpanded) {
             setOpenChildTable({ rowId: '', tableType: null });
@@ -48,20 +50,21 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
     const buttonColor = getButtonColor();
 
     return (
-
-        <Button
+        <Box
             onClick={toggleExpanded}
-            startIcon={
-                isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
-            }
             sx={{
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 1,
                 backgroundColor: buttonColor,
                 color: '#ffffff',
                 height: "35px",
                 minWidth: "90px",
-                padding: "6px 12px",
-                width: "fit-content",
+                padding: "0px 4px",
                 margin: 0,
+                width: "100%",
                 "&:hover": {
                     opacity: 0.7,
                     backgroundColor: buttonColor,
@@ -70,18 +73,20 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
 
             }}
         >
+            <>
+                {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+            </>
             <Box
                 component="span"
                 sx={{
                     ...FONT_FAMILY.Lexend(500, 14),
-                    display: 'flex',
-                    alignItems: 'center',
                 }}
             >
                 {value || '0'}
 
             </Box>
-        </Button>
+
+        </Box>
     );
 };
 

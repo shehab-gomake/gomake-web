@@ -19,6 +19,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
@@ -32,7 +33,6 @@ import { ModalType } from "@/enums";
 import { isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
 import { CombinedTable } from "./components/combined-table/combined-table";
-import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -344,7 +344,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
               }
             }}
           >
-            <EditIcon fontSize="small" />
+            <KeyboardArrowDownIcon fontSize="medium" sx={{ color: '#5759A8', marginTop: "3px" }} />
+            {/* <EditIcon fontSize="small" /> */}
           </IconButton>
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />

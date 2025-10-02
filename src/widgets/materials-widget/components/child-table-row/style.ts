@@ -1,6 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
@@ -105,7 +104,7 @@ const useStyle = () => {
         fontWeight: 'bold',
         whiteSpace: 'nowrap',
         padding: '4px',
-        backgroundColor: '#EBECFF',
+        backgroundColor: '#FFF',
          width: 'fit-content',
         minWidth: 'fit-content'
       },
@@ -118,7 +117,12 @@ const useStyle = () => {
         padding: '4px',
         backgroundColor: '#EBECFF',
          width: 'fit-content',
-        minWidth: 'fit-content'
+        minWidth: 'fit-content',  
+      },
+      
+      headerCellText:{
+        color:"#2E3092"
+
       },
       headerCellSticky: {
         textAlign: 'center',
@@ -147,12 +151,14 @@ const useStyle = () => {
 
       // Body row styles
       bodyRow: {
-        '&:hover': {
-          backgroundColor: '#f8f9fa',
-          '& .MuiTableCell-root.fixed-column': {
-            backgroundColor: '#f5f5f5'
-          }
-        }
+        // '&:hover': {
+        //   backgroundColor: '#f8f9fa',
+        //   zIndex: 1000,
+        //   '& .MuiTableCell-root.fixed-column': {
+        //     backgroundColor: '#f5f5f5',
+        //     zIndex: 1000,
+        //   }
+        // }
       },
 
       // Body cell styles
@@ -160,7 +166,10 @@ const useStyle = () => {
         textAlign: 'center',
         padding: '12px 8px',
         whiteSpace: 'nowrap',
-        borderBottom: '1px solid #e0e0e0'
+        borderBottom: '1px solid #e0e0e0',
+        color:"#2E3092",
+        backgroundColor: '#fff',
+
       },
       bodyCellSticky: {
         textAlign: 'center',
@@ -171,6 +180,7 @@ const useStyle = () => {
         [isRTL ? 'left' : 'right']: '123px',
         zIndex: 5,
         backgroundColor: '#fff',
+        
       },
       bodyCellStickyLast: {
         textAlign: 'center',
@@ -215,7 +225,6 @@ const useStyle = () => {
         backgroundColor: '#fff',
         color: primaryColor(600),
         border: `1px solid ${primaryColor(200)}`,
-        padding: '6px 12px',
         borderRadius: '6px',
         fontWeight: 500,
         fontSize: '12px',
@@ -232,12 +241,7 @@ const useStyle = () => {
           color: primaryColor(700),
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
-        '& .MuiButton-startIcon': {
-          marginRight: '6px',
-          '& svg': {
-            fontSize: '16px',
-          },
-        },
+        
       },
 
       // Add purchase pricing button
@@ -296,13 +300,20 @@ const useStyle = () => {
           backgroundColor: primaryColor(50)
         }
       },
-
+      dialogTitle:{
+       padding:"8px 16px",
+       paddingBottom:"0px",
+      },
       // Modal styles
       modalContent: {
-        mt: 2,
+        mt: 1,
         display: 'flex',
         flexDirection: 'column',
-        gap: 3
+        gap:"15px",
+
+      },
+      modalContent1:{
+        padding:"8px 16px",
       },
       modalLabelText: {
         marginBottom: '8px',
@@ -310,17 +321,28 @@ const useStyle = () => {
         fontWeight: 600,
         color: '#000'
       },
+      modalInputContainer:{
+        display: 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 10,
+        width: '100%'
+     },
+     modalInputContainerItem:{
+        width: '50%'
+     },
       modalSelect: {
         width: '100%',
         height: '37px',
-        padding: '0 12px',
+        padding: '0px 12px',
         border: '1px solid #ccc',
         borderRadius: '4px',
         fontSize: '14px',
         backgroundColor: '#fff'
       },
       modalActions: {
-        padding: '16px 24px'
+        padding: '8px 16px'
       },
       modalCancelButton: {
         backgroundColor: '#f5f5f5',
