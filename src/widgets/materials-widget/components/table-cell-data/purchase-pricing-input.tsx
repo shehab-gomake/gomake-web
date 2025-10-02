@@ -30,37 +30,7 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
     };
 
     return (
-        // <Button
-        //     onClick={toggleExpanded}
-        //     startIcon={
-        //         isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
-        //     }
-        //     sx={{
-        //         backgroundColor: "buttonColor",
-        //         color: '#000000',
-        //         height: "35px",
-        //         minWidth: "90px",
-        //         padding: "6px 12px",
-        //         width: "fit-content",
-        //         border: "1px solid #ccc",
-        //         margin: 0,
-        //         "&:hover": {
-        //             opacity: 0.7,
-        //             backgroundColor: "transparent",
-        //             color: '#000000',
-        //         },
 
-        //     }}
-        // >
-        //     <div style={{
-        //         ...FONT_FAMILY.Lexend(500, 14),
-        //         display: 'flex',
-        //         alignItems: 'center',
-        //     }}>
-        //         {isExpanded ? "Hide" : "Open"}
-        //     </div>
-
-        // </Button>
 
         <Box
             onClick={toggleExpanded}
@@ -77,6 +47,7 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
                 border: "1px solid #ccc",
                 margin: 0,
                 width: "100%",
+                cursor: "pointer",
                 "&:hover": {
                     opacity: 0.7,
                     backgroundColor: "transparent",
@@ -91,8 +62,6 @@ const PurchasePricingInput = ({ value, isAdmin, id }: IPurchasePricingInputProps
             </>
             <div style={{
                 ...FONT_FAMILY.Lexend(500, 14),
-                display: 'flex',
-                alignItems: 'center',
             }}>
                 {isExpanded ? t("sales.quote.hide") : t("sales.quote.open")}
             </div>

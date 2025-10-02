@@ -35,6 +35,8 @@ const TableCellData = ({
   isInventoryTable,
   isPurchasePricingTable,
   rowData,
+  listClient,
+  checkWhatRenderArrayCustomer,
 }: IRowData) => {
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const machinesCategories = useRecoilValue(machineCategoriesState);
@@ -245,6 +247,8 @@ const TableCellData = ({
           placeHolder={t("materials.inputs.selectClient")}
           isInventoryTable={isInventoryTable}
           isPurchasePricingTable={isPurchasePricingTable}
+          listClient={listClient}
+          checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
         />
       );
     default:

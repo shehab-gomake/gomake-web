@@ -65,6 +65,7 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
                 padding: "0px 4px",
                 margin: 0,
                 width: "100%",
+                cursor: "pointer",
                 "&:hover": {
                     opacity: 0.7,
                     backgroundColor: buttonColor,

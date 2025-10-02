@@ -14,6 +14,7 @@ import {
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
+import { navStatusState } from "@/store/nav-status";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -44,10 +45,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  console.log("dir", dir);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
+  const navStatus = useRecoilValue(navStatusState);
+  const sidebarOffset = navStatus.isClosed ? 140 : 280;
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(
@@ -356,8 +358,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           sx={{
             position: 'fixed',
             top: 120,
-            left: 0,
-            right: 0,
+            [dir === 'rtl' ? 'right' : 'left']: sidebarOffset,
+            [dir !== 'rtl' ? 'right' : 'left']: 0,
+            // left: 140,
+            // right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
             zIndex: 1300
@@ -368,7 +372,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             sx={{
               position: 'absolute',
               top: 0,
-              [dir === 'rtl' ? 'right' : 'left']: dir === 'rtl' ? '140px' : '140px',
+              [dir === 'rtl' ? 'right' : 'left']: "0px",
               width: '380px',
               backgroundColor: '#fff',
               height: '100%',
