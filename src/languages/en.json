@@ -281,7 +281,14 @@
       "speralSize": "Speral size",
       "noData": "No Data",
       "addCategory": "add category",
-      "unitPrice": "Unit Price"
+      "unitPrice": "Unit Price",
+      "chooseCurrency": "Choose Currency",
+      "enterPrice": "Enter Price",
+      "updatePrices": "Update Prices",
+      "errorCurrencyMsg": "All selected materials must have the same currency"
+    },
+    "errors": {
+      "pleaseSelectSupplier": "Please select a supplier"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -347,7 +354,8 @@
       "enterSalePrice": "Enter sale price",
       "enterPurchaseRollPrice": "Enter purchase roll price",
       "enterSupplementTime": "Enter supplement time",
-      "scrollToSeeMoreColumns": "Scroll to see more columns"
+      "scrollToSeeMoreColumns": "Scroll to see more columns",
+      "price": "Price"
     },
     "tableHeaders": {
       "sku": "SKU",
@@ -2304,7 +2312,12 @@
     "UpdatePricePerTon": "Update price per ton",
     "UpdateUnitPrice": "Update price per unit",
     "AddPercentToPricePerTon": "Update price per ton percents",
-    "AddPercentToUnitPrice": "Update price per unit percents"
+    "AddPercentToUnitPrice": "Update price per unit percents",
+    "submenu": {
+      "updateDefaultSaleCost": "Update Default Sale Cost",
+      "updateInventorySaleCost": "Update Inventory Sale Cost",
+      "updateSupplierPurchasePrice": "Update Supplier Purchase Price"
+    }
   },
   "materialsStatus": {
     "all": "All",

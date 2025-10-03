@@ -1,6 +1,6 @@
 import { Checkbox, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EMaterialsActions } from "@/widgets/materials-widget/enums";
 import { useMaterialsActions } from "@/widgets/materials-widget/components/actions-menu/use-materials-actions";
@@ -14,6 +14,10 @@ import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { ModalType } from "@/enums";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { SubmenuActionModal } from "../submenu-action-modal/submenu-action-modal";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 interface IActionMenuProps {
   isAdmin: boolean;
 }
@@ -49,8 +53,33 @@ const ActionMenu = (props: IActionMenuProps) => {
     updateModalCurrency,
     openUpdatedTableRowModal,
     onClickCloseUpdatedTableRowModal,
-    updatedTableRowModal
+    updatedTableRowModal,
+    // Submenu handlers
+    handleSubmenuAction,
+    isSubmenuModalOpen,
+    submenuModalAction,
+    handleCloseSubmenuModal,
+    selectedSupplier,
+    setSelectedSupplier,
+    renderOptionsSupplier,
+    checkWhatRenderArraySupplier,
+    isFetchingSupplier,
+    setOpenSupplierModal,
+    openSupplierModal,
   } = useMaterialsActions(props.isAdmin);
+
+  const [submenuAnchorEl, setSubmenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [currentSubmenuAction, setCurrentSubmenuAction] = useState<any>(null);
+  const [supplier, setSupplier] = useState<any>([]);
+
+  const onSupplierAdd = (supplier) => {
+    setOpenSupplierModal(false);
+  };
+
+
+  const onCloseSupplierModal = () => {
+    setOpenSupplierModal(false);
+  };
 
   console.log("action", action);
   const getMaterialActions = () => {
@@ -69,7 +98,37 @@ const ActionMenu = (props: IActionMenuProps) => {
       return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
     }*/
 
-  }
+  };
+
+  const handleMenuItemClick = (action: any, event: React.MouseEvent<HTMLLIElement>) => {
+    if (action.isShowSubMenu) {
+      setSubmenuAnchorEl(event.currentTarget);
+      setCurrentSubmenuAction(action);
+    } else {
+      onChooseAction(action);
+      handleCloseMenu();
+    }
+  };
+
+  const handleSubmenuClose = () => {
+    setSubmenuAnchorEl(null);
+    setCurrentSubmenuAction(null);
+  };
+
+  const handleSubmenuItemClick = (submenuOption: number) => {
+    if (currentSubmenuAction) {
+      if (submenuOption === 0) {
+        // Update Default Sale Cost - works as before
+        onChooseAction(currentSubmenuAction);
+      } else {
+        // Options 1 & 2 need supplier selection - will be handled by modal
+        onChooseAction({ ...currentSubmenuAction, submenuOption });
+      }
+    }
+    handleSubmenuClose();
+    handleCloseMenu();
+  };
+
   return (
     <>
       <IconButton data-tour={'materialsActions'} onClick={handleMoreOptionIconClick}>
@@ -95,28 +154,47 @@ const ActionMenu = (props: IActionMenuProps) => {
         onClose={handleCloseMenu}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-        onClick={handleCloseMenu}
       >
-        {getMaterialActions()?.map((action) => {
-
+        {getMaterialActions()?.map((actionItem) => {
           return (
-            <>
+            <React.Fragment key={actionItem.action}>
               <MenuItem
                 style={clasess.menuItemContainer}
-                key={action.action}
-                onClick={() => onChooseAction(action)}
+                onClick={(e) => handleMenuItemClick(actionItem, e)}
               >
                 <div style={clasess.actionIconStyle}>
-                  {_renderIcons(action.icon)}
+                  {_renderIcons(actionItem.icon)}
                 </div>
                 <div style={clasess.rowTextStyle}>
-                  {t("materialsActions." + action.text)}
+                  {t("materialsActions." + actionItem.text)}
                 </div>
+                {actionItem.isShowSubMenu && (
+                  <ChevronRightIcon sx={{ ml: "auto" }} />
+                )}
               </MenuItem>
-              {action?.isUnderLine && <Divider />}
-            </>
-          )
+              {actionItem?.isUnderLine && <Divider />}
+            </React.Fragment>
+          );
         })}
+      </Menu>
+
+      {/* Submenu */}
+      <Menu
+        open={Boolean(submenuAnchorEl)}
+        anchorEl={submenuAnchorEl}
+        onClose={handleSubmenuClose}
+        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        transformOrigin={{ horizontal: "left", vertical: "top" }}
+      >
+        <MenuItem onClick={() => handleSubmenuItemClick(0)}>
+          {t("materialsActions.submenu.updateDefaultSaleCost")}
+        </MenuItem>
+        <MenuItem onClick={() => handleSubmenuItemClick(1)}>
+          {t("materialsActions.submenu.updateInventorySaleCost")}
+        </MenuItem>
+        <MenuItem onClick={() => handleSubmenuItemClick(2)}>
+          {t("materialsActions.submenu.updateSupplierPurchasePrice")}
+        </MenuItem>
       </Menu>
       {action?.action === EMaterialsActions.Delete ?
         <GoMakeDeleteModal
@@ -297,6 +375,36 @@ const ActionMenu = (props: IActionMenuProps) => {
         title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={updatedTableRowModal}
+      />
+
+      {/* Submenu Action Modal */}
+      {isSubmenuModalOpen && submenuModalAction && (
+        <SubmenuActionModal
+          isOpen={isSubmenuModalOpen}
+          onClose={handleCloseSubmenuModal}
+          onSubmit={handleSubmenuAction}
+          t={t}
+          actionText={submenuModalAction.text}
+          actionType={submenuModalAction.action}
+          submenuOption={submenuModalAction.submenuOption || 0}
+          selectedSupplier={selectedSupplier}
+          setSelectedSupplier={setSelectedSupplier}
+          renderOptionsSupplier={renderOptionsSupplier}
+          checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+          isFetchingSupplier={isFetchingSupplier}
+          setOpenSupplierModal={setOpenSupplierModal}
+        />
+      )}
+
+      {/* Supplier Add Modal */}
+      <CustomerCardWidget
+        customerAction={CUSTOMER_ACTIONS.Add}
+        typeClient={CLIENT_TYPE.SUPPLIER}
+        onCustomerAdd={onSupplierAdd}
+        openModal={openSupplierModal}
+        onClose={onCloseSupplierModal}
+        customer={supplier}
+        setCustomer={setSupplier}
       />
     </>
   );

@@ -40,6 +40,7 @@ export const materialActionState = atom<
     action: EMaterialsActions;
     icon: string;
     isUnderLine: boolean;
+    isShowSubMenu?: boolean;
   }[]
 >({
   key: "materialActionState",
