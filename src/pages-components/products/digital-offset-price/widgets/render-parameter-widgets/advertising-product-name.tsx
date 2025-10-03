@@ -144,7 +144,10 @@ const AdvertisingProductNameParameterWidget = ({
               {fixedOptions.map((option) => (
                 <Tooltip key={option.id} title={option.updateName} placement="top">
                   <div
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
                       if (parameter.code === "DiecutType" && option.id === "new") {
                         setOpenModal(true);
                       } else if (parameter.code === "DieCutter") {
@@ -154,6 +157,17 @@ const AdvertisingProductNameParameterWidget = ({
                           createNewTemplate();
                         }
                       }
+
+                      // Close the dropdown after action
+                      const backdrop = document.querySelector('.MuiAutocomplete-popper');
+                      if (backdrop) {
+                        const closeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                        document.dispatchEvent(closeEvent);
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                     }}
                     style={{
                       backgroundColor: option.id === "add_new" ? '#2E3092' : option.id === "generate_new" ? '#FF69B4' : '#2E3092',
@@ -165,6 +179,7 @@ const AdvertisingProductNameParameterWidget = ({
                       cursor: "pointer",
                       borderRadius: "4px",
                       height: "40px",
+                      margin: "4px 8px",
                     }}
                   >
                     <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
