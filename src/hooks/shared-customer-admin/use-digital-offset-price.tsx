@@ -3975,7 +3975,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "flex-end",
-                  gap: 15,
+                  // gap: 15,
                 }}
               >
                 <div
@@ -3994,7 +3994,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         : { ...clasess.parameterContainer, position: "relative" }
                     }
                   >
-                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -40, insetInlineStart: 0, height: 30 }}>
+                    <div style={{ ...FONT_FAMILY.Lexend(500, 14), position: "absolute", top: -24, left: 0, }}>
                       {t("products.offsetPrice.admin.numberOfPapers")}
                     </div>
                     <div
@@ -4008,8 +4008,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           borderRadius: "4px",
                           backgroundColor: "#ddd",
                           color: "#666",
-                          minWidth: "220px",
-                          // textAlign: "center",
+                          minWidth: "200px",
                           height: 40,
                           ...FONT_FAMILY.Lexend(500, 16),
 

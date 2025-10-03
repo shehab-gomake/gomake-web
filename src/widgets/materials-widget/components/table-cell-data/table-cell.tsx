@@ -14,8 +14,13 @@ import { MultiSelectList } from "./multi-select-list";
 import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
+import { InventoryInput } from "./inventory-input";
+import { PurchasePricingInput } from "./purchase-pricing-input";
+import { LongTextInput } from "./long-text-input";
 import { useState } from "react";
 import { ModalType } from "@/enums";
+import { SelectInputWithAddValue } from "./select-input-with-add-value";
+import { SelectClientsInput } from "./select-clients-input";
 
 const TableCellData = ({
   value,
@@ -27,8 +32,13 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
   unit,
+  isInventoryTable,
+  isPurchasePricingTable,
+  rowData,
+  listClient,
+  checkWhatRenderArrayCustomer,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
+  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
@@ -51,7 +61,6 @@ const TableCellData = ({
 
     }
   };
-
   switch (type) {
 
     case EDataTypeEnum.BOOLEAN:
@@ -78,8 +87,11 @@ const TableCellData = ({
           value={value as string}
           id={id}
           key={parameterKey}
+          parameterKey={parameterKey}
           isAdmin={isAdmin}
           onChangeRowCheckBox={onChangeRowCheckBox}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.ARRAY_INPUT:
@@ -91,6 +103,8 @@ const TableCellData = ({
           parameterKey={parameterKey}
           id={id}
           isAdmin={isAdmin}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.IMAGE:
@@ -132,6 +146,8 @@ const TableCellData = ({
           isAdmin={isAdmin}
           options={clientsOptions}
           placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
     case EDataTypeEnum.PRODUCTS_LIST:
@@ -182,6 +198,59 @@ const TableCellData = ({
           placeHolder={t("materials.inputs.selectNotebookType")}
         />
       );
+    case EDataTypeEnum.INVENTORY:
+      return (
+        <InventoryInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+          minStock={rowData?.minStock?.value ? parseInt(rowData.minStock.value) : undefined}
+          optimalStock={rowData?.optimalStock?.value ? parseInt(rowData.optimalStock.value) : undefined}
+          currentInventory={parseInt(value as string) || 0}
+        />
+      );
+    case EDataTypeEnum.PURCHASE_PRICING:
+      return (
+        <PurchasePricingInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.LONG_TEXT:
+      return (
+        <LongTextInput
+          value={value as string}
+          isAdmin={isAdmin}
+          id={id}
+        />
+      );
+    case EDataTypeEnum.SELECT_FIXED_VALUES_ADD_NEW:
+      return (
+        <SelectInputWithAddValue
+          values={values}
+          parameterKey={parameterKey}
+          id={id}
+          value={value as string}
+          isAdmin={isAdmin}
+        />
+      );
+    case EDataTypeEnum.CLIENT_LIST:
+      return (
+        <SelectClientsInput
+          values={values}
+          parameterKey={parameterKey}
+          id={id}
+          value={value}
+          isAdmin={isAdmin}
+          options={clientsOptions}
+          placeHolder={t("materials.inputs.selectClient")}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
+          listClient={listClient}
+          checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+        />
+      );
     default:
       return (
         <NumberStringInput
@@ -192,6 +261,8 @@ const TableCellData = ({
           value={value}
           isAdmin={isAdmin}
           unit={unit}
+          isInventoryTable={isInventoryTable}
+          isPurchasePricingTable={isPurchasePricingTable}
         />
       );
   }

@@ -133,6 +133,48 @@ const rowInputs = (
             isValid: true,
             unit: header?.unit,
           };
+        case "SUPPLIERS":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "text",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Fares, mohand, Aous",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+          };
+        case "INVENTORY":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "button",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Open",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+          };
+        case "PURCHASE_PRICING":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "button",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Open",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+          };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else

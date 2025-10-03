@@ -17,15 +17,21 @@ import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 interface ICurrencyInputProps {
   value: string;
   id: string;
+  parameterKey: string;
   isAdmin: boolean;
   onChangeRowCheckBox?: any;
+  isInventoryTable?: boolean;
+  isPurchasePricingTable?: boolean;
 }
 
 const CurrencyInput = ({
   value,
   id,
+  parameterKey,
   isAdmin,
   onChangeRowCheckBox,
+  isInventoryTable,
+  isPurchasePricingTable,
 }: ICurrencyInputProps) => {
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -39,18 +45,24 @@ const CurrencyInput = ({
 
   const currencyName = useCallback(() => {
     return currencies?.find(
-      (c) => c.value.toLowerCase() === value.toLowerCase()
+      (c) => c?.value?.toLowerCase() === value?.toLowerCase()
     )?.label;
   }, [value, currencies]);
 
-  const [action, setAction] = useRecoilState<{ action: EMaterialsActions; key: string } | null>(actionMenuState);
+  const [action, setAction] = useRecoilState<any>(actionMenuState);
   const onClickActionModal = () => {
     setIsAllMaterialsChecked(false)
     setMaterialCategoryData(materialCategoryData.map(x => { return { ...x, checked: false } }))
     setSelectedMaterialIdForUpdate(id)
     setAction({
       key: "UpdateCurrency",
+      isUnderLine: true,
+      text: "UpdateCurrency",
+      icon: "currencyUpdate",
       action: EMaterialsActions.UpdateCurrency,
+      parameterKey: parameterKey, // Include parameterKey to know which currency column
+      isInventoryTable: isInventoryTable,
+      isPurchasePricingTable: isPurchasePricingTable,
     });
   };
   return (

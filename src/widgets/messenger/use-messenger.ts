@@ -149,7 +149,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await sendMessage(message as QBChatNewMessage, false)
+            await sendMessage(message as unknown as QBChatNewMessage, false)
         } catch (e) {
             alertFaultUpdate();
         }
@@ -193,7 +193,7 @@ const useMessenger = () => {
             // await sendMessengerNotificationApi(callApi, () => {
             // }, selectedDialog.occupants_ids.map(a => a.toString()))
             // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
-            await sendMessage(message as QBChatNewMessage, true);
+            await sendMessage(message as unknown as QBChatNewMessage, true);
         } catch (e) {
             alertFaultUpdate();
         }
@@ -234,7 +234,7 @@ const useMessenger = () => {
             // await sendMessengerNotificationApi(callApi, () => {
             // }, selectedDialog.occupants_ids.map(a => a.toString()))
             // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
-            await sendMessage(message as QBChatNewMessage, false)
+            await sendMessage(message as unknown as QBChatNewMessage, false)
         } catch (e) {
             alertFaultUpdate();
         }

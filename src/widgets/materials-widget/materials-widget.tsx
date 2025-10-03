@@ -1,12 +1,10 @@
-import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { SideList } from "@/components/containers/side-container/side-list/side-list";
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -15,26 +13,32 @@ import {
   openAddCategoryModalState,
   openAddRowModalState,
   selectedSupplierIdState,
+  selectedSuppliersIdsState,
 } from "@/widgets/materials-widget/state";
+import { navStatusState } from "@/store/nav-status";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import EditIcon from "@mui/icons-material/Edit";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
-import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Skeleton, Stack } from "@mui/material";
-import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { Skeleton, Stack, Box, IconButton } from "@mui/material";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
-import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
-import { isLoadgingState, isLoadingMaterialsState } from "@/store";
+import { isLoadingMaterialsState } from "@/store";
 import { EMaterialActiveFilter } from "./enums";
+import { CombinedTable } from "./components/combined-table/combined-table";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useDebouncedCallback } from "use-debounce";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -42,16 +46,12 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
-    useMaterialsCategories(props.isAdmin);
-  const pageSize = 14;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
+  const navStatus = useRecoilValue(navStatusState);
+  const sidebarOffset = navStatus.isClosed ? 140 : 280;
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
-  const {
-    openPriceModal,
-    onClickClosePriceModal,
-    updateProfitProfileProductHidden,
-  } = useTableCellData(props.isAdmin);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(
     isEditCategoryModalState
@@ -60,6 +60,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     isDuplicateCategoryModalState
   );
   const supplierId = useRecoilValue(selectedSupplierIdState);
+  const suppliersIds = useRecoilValue(selectedSuppliersIdsState);
   const flag = useRecoilValue(flagState);
   const {
     materialCategory,
@@ -90,7 +91,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     selectedTableRow,
     materialName,
     toggleIsActive,
-    selectedMaterialCategory,
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
@@ -98,6 +98,100 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
+
+  useEffect(() => {
+    if (!subCategory) {
+      // Wait 2 seconds before opening sidebar if no category selected
+      const timer = setTimeout(() => {
+        setIsSidebarOpen(true);
+      }, 2000);
+
+      // Cleanup timer if component unmounts or subCategory changes
+      return () => clearTimeout(timer);
+    }
+    else {
+      setIsSidebarOpen(false);
+    }
+  }, [materialCategory, subCategory]);
+
+  const { callApi } = useGomakeAxios();
+  const [listClient, setListClient] = useState([]);
+  const [listSupplier, setListSupplier] = useState([])
+  const [isFetchingSupplier, setIsFetchingSupplier] = useState(false);
+
+  const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
+  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    getAllClients(value);
+  }, 1200);
+
+  const debouncedGetAllSuppliers = useDebouncedCallback((value: string) => {
+    getAllSuppliers(value);
+  }, 1200);
+
+  const getAllClients = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingCustomer(true);
+      }
+      await getAndSetAllCustomers(callApi, setListClient, {
+        clientType: CLIENT_TYPE.CUSTOMER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingCustomer(false);
+    },
+    []
+  );
+
+  const getAllSuppliers = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingSupplier(true);
+      }
+      await getAndSetAllCustomers(callApi, setListSupplier, {
+        clientType: CLIENT_TYPE.SUPPLIER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingSupplier(false);
+    },
+    []
+  );
+
+  const checkWhatRenderArrayCustomer = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllClients.cancel();
+      getRecentClients();
+    } else {
+      debouncedGetAllClients(value);
+    }
+  };
+
+  const checkWhatRenderArraySupplier = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllSuppliers.cancel();
+      getRecentSuppliers();
+    } else {
+      debouncedGetAllSuppliers(value);
+    }
+  };
+
+  const getRecentClients = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListClient, {
+      ClientType: CLIENT_TYPE.CUSTOMER,
+    });
+  }, []);
+
+  const getRecentSuppliers = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListSupplier, {
+      ClientType: CLIENT_TYPE.SUPPLIER,
+    });
+  }, []);
+
+  useEffect(() => {
+    getRecentClients();
+    getRecentSuppliers();
+  }, []);
 
   const materialsSteps: StepType[] = [
     {
@@ -126,16 +220,22 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     },
   ];
 
+
   const { } = useGoMakeTour(materialsSteps, []);
+
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
         data-tour={"materialsCategories"}
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
-        onSelect={onSelectCategory}
+        onSelect={(categoryId) => {
+          onSelectCategory(categoryId);
+          setIsSidebarOpen(false);
+        }}
         title={t("materials.chooseCategory")}
         isHaveDeleteIcon={true}
+        onClickCloseSidebar={() => setIsSidebarOpen(false)}
       >
         <Stack style={classes.buttonsContainerStyle}>
           <PrimaryButton
@@ -153,32 +253,30 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     </Stack>
   );
 
-  useEffect(() => {
-    if (materialType && materialCategories.length > 0) {
-      if (
-        !materialCategory ||
-        !materialCategories.some(
-          (category) => category.categoryKey === materialCategory
-        )
-      ) {
-        const defaultCategory = materialCategories[0].categoryKey;
+  // useEffect(() => {
+  //   if (materialType && materialCategories.length > 0) {
+  //     if (
+  //       !materialCategory ||
+  //       !materialCategories.some(
+  //         (category) => category.categoryKey === materialCategory
+  //       )
+  //     ) {
+  //       const defaultCategory = materialCategories[0].categoryKey;
 
-        replace({
-          pathname: materialType.toString(),
-          query: { materialCategory: defaultCategory },
-        });
-
-        setSelectedMaterialCategory(defaultCategory);
-        // onSelectCategory(defaultCategory); //  is setSelectedMaterialCategory sufficient to update or need onSelectCategory
-      }
-    }
-  }, [materialCategories]);
+  //       replace({
+  //         pathname: materialType.toString(),
+  //         query: { materialCategory: defaultCategory },
+  //       });
+  //       setSelectedMaterialCategory(defaultCategory);
+  //     }
+  //   }
+  // }, [materialCategories]);
 
   useEffect(() => {
     getCurrenciesApi().then();
     getMachinesMaterials();
     getClientsMaterials();
-  }, [pageNumber]);
+  }, []);
 
   useEffect(() => {
     getMaterialCategories(materialType).then();
@@ -199,8 +297,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           materialCategory?.toString(),
           materialFilter,
           supplierId,
-          pageNumber,
-          pageSize
         ).then();
       } else {
         if (supplierId) {
@@ -209,8 +305,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             materialCategory?.toString(),
             materialFilter,
             supplierId,
-            pageNumber,
-            pageSize
           ).then();
         }
       }
@@ -219,8 +313,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialType,
     materialCategory,
     supplierId,
-    pageNumber,
-    pageSize,
+    suppliersIds,
     activeFilter,
     materialFilter,
   ]);
@@ -245,22 +338,72 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {t("materials.buttons.back")}
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader}>/ {subCategory}</h4>
+          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? "Choose Category"}</h4>
+          <IconButton
+            size="small"
+            onClick={() => setIsSidebarOpen(true)}
+            sx={{
+              color: '#1976d2',
+              '&:hover': {
+                backgroundColor: '#e3f2fd'
+              }
+            }}
+          >
+            <KeyboardArrowDownIcon fontSize="medium" sx={{ color: '#5759A8', marginTop: "3px" }} />
+            {/* <EditIcon fontSize="small" /> */}
+          </IconButton>
         </div>
-        <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
+        <FiltersActionsBar
+          isAdmin={props.isAdmin}
+          subCategory={subCategory}
+          isFetchingSupplier={isFetchingSupplier}
+          renderOptionsSupplier={listSupplier}
+          checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+
+
+        />
       </div>
-      <SideBarContainer
-        sideDataTour={"materialsCategories"}
-        bodyDataTour={"materialsTableData"}
-        side={Side()}
-        subHeader={""}
-      >
+      {/* Absolute positioned sidebar overlay */}
+      {isSidebarOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 120,
+            [dir === 'rtl' ? 'right' : 'left']: sidebarOffset,
+            [dir !== 'rtl' ? 'right' : 'left']: 0,
+            // left: 140,
+            // right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            zIndex: 1300
+          }}
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              [dir === 'rtl' ? 'right' : 'left']: "0px",
+              width: '380px',
+              backgroundColor: '#fff',
+              height: '100%',
+              overflow: 'auto',
+              boxShadow: dir === 'rtl' ? '-2px 0 8px rgba(0,0,0,0.1)' : '2px 0 8px rgba(0,0,0,0.1)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {Side()}
+          </Box>
+        </Box>
+      )}
+
+      {/* Full width content */}
+      <div style={{ width: '100%', padding: '10px 20px' }}>
         {
           isLoadingMaterials ?
-            <>
-              <Skeleton variant="rectangular" height={700} />
-
-            </> : <>
+            <div style={{ height: 795, width: "100%" }}>
+              <Skeleton variant="rectangular" height={795} width="100%" />
+            </div> : <>
               {materialCategory && (
                 <Stack
                   justifyContent={"space-between"}
@@ -270,22 +413,34 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                 >
                   <div>
                     {materialCategoryData.length > 0 ? (
-                      <Stack display={"grid"}>
-                        <PrimaryTable
-                          rows={tableRowsNew}
-                          headers={tableHeadersNew()}
-                        />
-                      </Stack>
+                      <CombinedTable
+                        headers={tableHeadersNew()}
+                        rows={tableRowsNew}
+                        materialType={materialType?.toString()}
+                        materialCategory={materialCategory?.toString()}
+                        renderOptionsCustomer={listClient}
+                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                        isFetchingCustomer={isFetchingCustomer}
+                        renderOptionsSupplier={listSupplier}
+                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                        isFetchingSupplier={isFetchingSupplier}
+                      />
                     ) : flag &&
                       materialCategories.find(
                         (category) => category.categoryKey === materialCategory
                       ).isDeletable ? (
-                      <Stack display={"grid"}>
-                        <PrimaryTable
-                          rows={tableRowsNew}
-                          headers={tableHeadersNew()}
-                        />
-                      </Stack>
+                      <CombinedTable
+                        headers={tableHeadersNew()}
+                        rows={tableRowsNew}
+                        materialType={materialType?.toString()}
+                        materialCategory={materialCategory?.toString()}
+                        renderOptionsCustomer={listClient}
+                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                        isFetchingCustomer={isFetchingCustomer}
+                        renderOptionsSupplier={listSupplier}
+                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                        isFetchingSupplier={isFetchingSupplier}
+                      />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>
                         {
@@ -316,22 +471,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       <></>
                     )}
                   </div>
-
-                  <div style={{ marginBottom: "5px" }}>
-                    <Pagination
-                      count={pagesCount}
-                      variant="outlined"
-                      color="primary"
-                      page={pageNumber}
-                      onChange={(event, value) => setPageNumber(value)}
-                    />
-                  </div>
                 </Stack>
               )}
             </>
         }
-
-      </SideBarContainer>
+      </div>
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
@@ -369,22 +513,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           )
         }
       />
-      {/* <GoMakeDeleteModal
-        openModal={openPriceModal}
-        onClose={onClickClosePriceModal}
-        hideIcon
-        modalType={ModalType.EDIT}
-        title={t("materials.modals.editPriceModalTitle")}
-        subTitle={t("materials.modals.editPriceModalSubTitle")}
-        yesBtn={t("materials.modals.editPriceModalYesBtn")}
-        cancelBtn={t("materials.modals.editPriceModalCancelBtn")}
-        onClickDelete={async () => {
-          updateProfitProfileProductHidden(true)
-        }}
-        onClickCancel={async () => {
-          updateProfitProfileProductHidden(false)
-        }}
-      /> */}
       <input
         ref={elementRef}
         onChange={uploadExcelFile}
@@ -392,7 +520,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         accept=".xlsx"
         hidden={true}
       />
-    </div>
+    </div >
   );
 };
 
