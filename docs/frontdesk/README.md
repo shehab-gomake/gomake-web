@@ -1,123 +1,121 @@
-# FrontDesk Documentation
+# FrontDesk Hub Documentation
 
 Welcome to the FrontDesk documentation. This folder contains comprehensive guides for understanding, developing, and maintaining the FrontDesk unified messaging hub.
 
-## 📚 Documentation Index
+This README serves as the central index and starting point for all developers working on the FrontDesk feature.
 
-### Getting Started
+## 🏗️ Codebase Structure
 
-Start here if you're new to FrontDesk:
+The core FrontDesk implementation is located in `src/widgets/frontdesk/`. Here is a map of the key directories that align with this documentation:
 
-1. **[FRONTDESK_ARCHITECTURE.md](FRONTDESK_ARCHITECTURE.md)** - Complete architecture overview
-   - System architecture and file structure
-   - Provider status and capabilities
-   - State management patterns
-   - API integration overview
+```
+src/
+├── widgets/frontdesk/
+│   ├── frontdesk-widget.tsx      # Entry point, routing, and main layout
+│   ├── providers/                # Logic for each communication channel
+│   │   ├── internal/             # Direct Messages (DMs) via WebSocket
+│   │   ├── email/                # Gmail provider (OAuth)
+│   │   ├── whatsapp/             # WhatsApp provider
+│   │   └── unified/              # Unified inbox view
+│   ├── components/               # Shared React components (e.g., message bubbles, conversation list)
+│   ├── hooks/                    # Custom React hooks for provider logic
+│   └── controllers/              # Business logic, navigation, and actions
+│
+├── store/frontdesk/
+│   ├── atoms/                    # Recoil state atoms, scoped per provider
+│   └── selectors/                # Recoil selectors for derived state (e.g., message aggregation)
+│
+└── services/
+    ├── api-service/frontdesk/     # REST API calls
+    └── websocket/                # WebSocket service for real-time communication
+```
 
-2. **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Quick reference guide
-   - Common development tasks
-   - Code examples and patterns
-   - Debugging tips
-   - Quick commands
+## 📚 Documentation Guide
 
-### Provider-Specific Guides
+### 1. Core Concepts
 
-Deep dives into each communication provider:
+Start here if you're new to FrontDesk. These documents provide a high-level overview of the architecture and development practices.
 
-- **[direct-messages-frontend.md](direct-messages-frontend.md)** - Direct Messages (Internal) provider
-  - WebSocket integration
-  - Real-time messaging patterns
-  - Typing indicators and presence
-  - Conversation management
+- **[FRONTDESK_ARCHITECTURE.md](00-core/FRONTDESK_ARCHITECTURE.md)**: The complete architecture, including system diagrams, state management patterns, and provider models.
+- **[DEVELOPER_GUIDE.md](00-core/DEVELOPER_GUIDE.md)**: A quick reference for common development tasks, code patterns, and debugging tips.
 
-- **[TICKETS_PROVIDER_GUIDE.md](TICKETS_PROVIDER_GUIDE.md)** - Tickets/Support provider overview
-  - Ticket lifecycle management
-  - Multi-channel ticket sources
-  - Hook API and usage examples
-  - State management
+### 2. Provider Guides
 
-- **[tickets/](tickets/)** - Complete Tickets Backend Integration Documentation
-  - [README.md](tickets/README.md) - Documentation index and quick navigation
-  - [INTEGRATION_SUMMARY.md](tickets/INTEGRATION_SUMMARY.md) - Project overview and completion status
-  - [TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) - Complete technical guide (600+ lines)
-  - [TICKETS_QUICK_REFERENCE.md](tickets/TICKETS_QUICK_REFERENCE.md) - Developer cheat sheet and code snippets
+Deep dives into each communication provider located in `src/widgets/frontdesk/providers/`.
 
-### API & Integration Guides
+- **Internal (Direct Messages):**
+  - **[direct-messages-frontend.md](01-providers/direct-messages/direct-messages-frontend.md)**: Covers WebSocket integration, real-time messaging, and conversation management.
+  - **[direct-messages-archiving-guide.md](01-providers/direct-messages/direct-messages-archiving-guide.md)**: Guide to the conversation archiving feature.
 
-Backend integration and API documentation:
+- **Email (Gmail):**
+  - `[EMAIL_PROVIDER_GUIDE.md]` - *(Documentation to be created)*: Will cover OAuth flow and email-specific logic.
 
-- **[API_REFERENCE.md](API_REFERENCE.md)** - Complete API reference
-  - REST API endpoints for all providers
-  - WebSocket events and payloads
-  - Request/response schemas
-  - Authentication methods
+- **WhatsApp:**
+  - `[WHATSAPP_PROVIDER_GUIDE.md]` - *(Documentation to be created)*: Will cover WhatsApp integration details.
 
-- **[API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md)** - Frontend API integration guide
-  - How to integrate with REST APIs
-  - WebSocket connection setup
-  - OAuth flows (Email provider)
-  - Error handling patterns
+- **Unified Inbox:**
+  - `[UNIFIED_INBOX_GUIDE.md]` - *(Documentation to be created)*: Will explain message aggregation and the unified view logic.
 
-- **[SEARCH_API_FRONTEND_GUIDE.md](SEARCH_API_FRONTEND_GUIDE.md)** - Search implementation guide
-  - Global search across conversations
-  - In-conversation search
-  - Highlighting and navigation
-  - Performance optimization
+### 3. API and Services
 
-### Specialized Guides
+Documentation for backend APIs and frontend services.
 
-- **[direct-messages-archiving-guide.md](direct-messages-archiving-guide.md)** - Archiving conversations in DMs
+- **[API_REFERENCE.md](03-api/API_REFERENCE.md)**: Complete reference for REST API endpoints and WebSocket events.
+- **[API_INTEGRATION_GUIDE.md](03-api/API_INTEGRATION_GUIDE.md)**: Frontend-focused guide on how to connect to and use the APIs.
 
-### AI Agent Documentation
+### 4. Feature Guides
 
-Located in [ai-agents/](ai-agents/) - Guides specifically for AI-assisted development:
+In-depth documentation for specific, complex features.
 
-- **[00-readme.md](ai-agents/00-readme.md)** - AI agent hub overview
-- **[01-orientation.md](ai-agents/01-orientation.md)** - System orientation for agents
-- **[02-feature-development-playbook.md](ai-agents/02-feature-development-playbook.md)** - Feature development workflow
-- **[03-maintenance-bugfixing-guide.md](ai-agents/03-maintenance-bugfixing-guide.md)** - Maintenance and bug fixing
-- **[04-data-integrations.md](ai-agents/04-data-integrations.md)** - Data integration patterns
-- **[05-verification-checklists.md](ai-agents/05-verification-checklists.md)** - Quality assurance checklists
+- **Search:**
+  - **[SEARCH_API_FRONTEND_GUIDE.md](02-features/search/SEARCH_API_FRONTEND_GUIDE.md)**: A guide to implementing global and in-conversation search.
 
-## 🗂️ Document Status
+- **Tickets/Support:**
+  - **[TICKETS_PROVIDER_GUIDE.md](01-providers/tickets/TICKETS_PROVIDER_GUIDE.md)**: An overview of the ticket lifecycle and multi-channel support.
+  - **[tickets/](01-providers/tickets/)**: In-depth documentation for the Tickets feature, including:
+    - **[README.md](01-providers/tickets/README.md)**: Index of the tickets documentation.
+    - **[INTEGRATION_SUMMARY.md](01-providers/tickets/INTEGRATION_SUMMARY.md)**: Summary of the backend integration project.
+    - **[TICKETS_BACKEND_INTEGRATION.md](01-providers/tickets/TICKETS_BACKEND_INTEGRATION.md)**: The complete technical guide for the backend integration.
+    - **[TICKETS_QUICK_REFERENCE.md](01-providers/tickets/TICKETS_QUICK_REFERENCE.md)**: A developer cheat sheet.
+    - **[FRONTEND_MIGRATION_GUIDE_V2.md](01-providers/tickets/FRONTEND_MIGRATION_GUIDE_V2.md)**: Guide for migrating to the V2 ticketing system.
 
-| Document | Status | Last Updated | Audience |
-|----------|--------|--------------|----------|
-| FRONTDESK_ARCHITECTURE.md | ✅ Current | 2024-01 | All developers |
-| DEVELOPER_GUIDE.md | ✅ Current | 2024-01 | All developers |
-| API_REFERENCE.md | ✅ Current | 2024-01 | Backend & Frontend |
-| API_INTEGRATION_GUIDE.md | ✅ Current | 2024-01 | Frontend developers |
-| TICKETS_PROVIDER_GUIDE.md | ✅ Current | 2024-01 | Tickets feature developers |
-| tickets/* | ✅ Current | 2024-01 | Tickets backend integration |
-| SEARCH_API_FRONTEND_GUIDE.md | ✅ Current | 2024-01 | Search feature developers |
-| direct-messages-frontend.md | ✅ Current | 2024-01 | DM feature developers |
-| direct-messages-archiving-guide.md | ✅ Current | 2024-01 | DM feature developers |
-| ai-agents/* | ✅ Current | 2024-01 | AI-assisted development |
+### 5. AI Agent Playbooks
 
-## 🏗️ Project Structure
+Guides for AI-assisted development, located in [04-ai-agents/](04-ai-agents/).
+
+- **[00-readme.md](04-ai-agents/00-readme.md)**: Hub for AI-assisted development.
+- **[01-orientation.md](04-ai-agents/01-orientation.md)**: System orientation for agents.
+- **[02-feature-development-playbook.md](04-ai-agents/02-feature-development-playbook.md)**: Workflow for new features.
+- **[03-maintenance-bugfixing-guide.md](04-ai-agents/03-maintenance-bugfixing-guide.md)**: Guide for maintenance and bug fixing.
+- **[04-data-integrations.md](04-ai-agents/04-data-integrations.md)**: Data integration patterns and contracts.
+- **[05-verification-checklists.md](04-ai-agents/05-verification-checklists.md)**: Quality assurance checklists.
+
+## 🗂️ Documentation File Structure
 
 ```
 docs/frontdesk/
-├── README.md                            # This file - documentation index
-│
-├── FRONTDESK_ARCHITECTURE.md            # Complete system architecture
-├── DEVELOPER_GUIDE.md                   # Quick developer reference
-│
-├── API_REFERENCE.md                     # Backend API documentation
-├── API_INTEGRATION_GUIDE.md             # Frontend API integration
-├── SEARCH_API_FRONTEND_GUIDE.md         # Search feature guide
-│
-├── direct-messages-frontend.md          # DM provider guide
-├── direct-messages-archiving-guide.md   # DM archiving feature
-├── TICKETS_PROVIDER_GUIDE.md            # Tickets provider overview
-│
-├── tickets/                             # Tickets backend integration docs
-│   ├── README.md                        # Tickets documentation index
-│   ├── INTEGRATION_SUMMARY.md           # Implementation overview
-│   ├── TICKETS_BACKEND_INTEGRATION.md   # Complete technical guide
-│   └── TICKETS_QUICK_REFERENCE.md       # Developer cheat sheet
-│
-└── ai-agents/                           # AI agent documentation
+├── README.md
+├── 00-core/
+│   ├── FRONTDESK_ARCHITECTURE.md
+│   └── DEVELOPER_GUIDE.md
+├── 01-providers/
+│   ├── direct-messages/
+│   │   ├── direct-messages-frontend.md
+│   │   └── direct-messages-archiving-guide.md
+│   └── tickets/
+│       ├── TICKETS_PROVIDER_GUIDE.md
+│       ├── README.md
+│       ├── INTEGRATION_SUMMARY.md
+│       ├── TICKETS_BACKEND_INTEGRATION.md
+│       ├── TICKETS_QUICK_REFERENCE.md
+│       └── FRONTEND_MIGRATION_GUIDE_V2.md
+├── 02-features/
+│   └── search/
+│       └── SEARCH_API_FRONTEND_GUIDE.md
+├── 03-api/
+│   ├── API_REFERENCE.md
+│   └── API_INTEGRATION_GUIDE.md
+└── 04-ai-agents/
     ├── 00-readme.md
     ├── 01-orientation.md
     ├── 02-feature-development-playbook.md
@@ -128,99 +126,18 @@ docs/frontdesk/
 
 ## 📖 How to Use This Documentation
 
-### If you're new to FrontDesk:
-1. Start with [FRONTDESK_ARCHITECTURE.md](FRONTDESK_ARCHITECTURE.md) to understand the system
-2. Review [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) for quick reference
-3. Dive into provider-specific guides as needed
-
-### If you're adding a new feature:
-1. Check [FRONTDESK_ARCHITECTURE.md](FRONTDESK_ARCHITECTURE.md) for patterns to follow
-2. Review the relevant provider guide
-3. Refer to [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md) for API integration
-4. Use [ai-agents/02-feature-development-playbook.md](ai-agents/02-feature-development-playbook.md) for workflow
-
-### If you're fixing a bug:
-1. Check [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) for debugging tips
-2. Review relevant provider documentation
-3. Use [ai-agents/03-maintenance-bugfixing-guide.md](ai-agents/03-maintenance-bugfixing-guide.md) for systematic approach
-
-### If you're integrating with APIs:
-1. Review [API_REFERENCE.md](API_REFERENCE.md) for endpoint documentation
-2. Follow [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md) for implementation patterns
-3. Check provider-specific guides for examples
-
-### If you're working on Tickets backend integration:
-1. Start with [tickets/INTEGRATION_SUMMARY.md](tickets/INTEGRATION_SUMMARY.md) for overview
-2. Follow [tickets/TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) for complete guide
-3. Use [tickets/TICKETS_QUICK_REFERENCE.md](tickets/TICKETS_QUICK_REFERENCE.md) as daily reference
-4. Consult backend docs at `/Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/`
-
-## 🔄 Keeping Documentation Updated
-
-Documentation should be updated when:
-- New providers are added
-- API endpoints change
-- Architecture patterns evolve
-- New features are implemented
-- Known issues are resolved
-
-**Update Process:**
-1. Edit the relevant markdown file(s)
-2. Update the "Last Updated" date in this README
-3. If adding new docs, add them to the index above
-4. Commit with descriptive message: `docs: update FrontDesk [topic] documentation`
-
-## 📦 Archived Documentation
-
-Outdated or superseded documentation is moved to `docs/archive/frontdesk docs/` to maintain history without cluttering active documentation.
-
-Current archived items:
-- Legacy improvement plans and task documents
-- Old frontend guides superseded by current docs
-
-## 🆘 Getting Help
-
-**For development questions:**
-- Check relevant documentation first
-- Review code examples in the guides
-- Look at existing provider implementations
-- Check the codebase's CLAUDE.md file
-
-**For architecture questions:**
-- See [FRONTDESK_ARCHITECTURE.md](FRONTDESK_ARCHITECTURE.md)
-- Review provider patterns and state management sections
-
-**For API questions:**
-- See [API_REFERENCE.md](API_REFERENCE.md) for backend contracts
-- See [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md) for frontend usage
-
-**For Tickets integration questions:**
-- See [tickets/README.md](tickets/README.md) for navigation
-- See [tickets/TICKETS_BACKEND_INTEGRATION.md](tickets/TICKETS_BACKEND_INTEGRATION.md) for technical details
-- See backend docs: `/Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/`
+- **New to FrontDesk?** Start with `Core Concepts` and then explore the `Codebase Structure`.
+- **Adding a feature?** Review the `Architecture` and relevant `Provider Guides`.
+- **Fixing a bug?** Check the `Developer Guide` and the specific `Provider Guide`.
+- **Working with APIs?** Refer to the `API and Services` section.
 
 ## 🎯 Quick Links
 
 - **Main codebase**: `src/widgets/frontdesk/`
 - **State management**: `src/store/frontdesk/`
-- **Services**: `src/services/frontdesk/` (REST APIs + WebSocket)
-  - **API services**: `src/services/frontdesk/api/`
-  - **WebSocket services**: `src/services/frontdesk/websocket/`
+- **Services**: `src/services/frontdesk/`
 - **Root project guide**: `CLAUDE.md` (in project root)
 
-## 📝 Document Conventions
-
-All FrontDesk documentation follows these conventions:
-
-- Use markdown for all documentation
-- Include table of contents for documents > 100 lines
-- Use code blocks with language identifiers
-- Include practical examples where applicable
-- Keep file names descriptive and consistent
-- Use kebab-case for filenames (e.g., `feature-guide.md`)
-- Update this README when adding/removing docs
-
 ---
-
-*Last updated: January 2024*
-*For the latest code and implementation details, always refer to the source code in `src/widgets/frontdesk/`*
+*Last updated: October 2025*
+*This documentation is actively maintained. For implementation details, always refer to the source code.*

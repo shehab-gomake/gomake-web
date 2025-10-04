@@ -18,7 +18,22 @@ export class MessagingHubHttpClient {
   protected baseUrl: string;
 
   constructor() {
-    this.baseUrl = config.messaging_server.replace(/\/$/, "");
+    const fallbackOrigin =
+      typeof window !== 'undefined' ? window.location.origin : undefined;
+
+    const rawBaseUrl = [
+      config.messaging_server,
+      config.api_server,
+      fallbackOrigin,
+    ].find((value): value is string => Boolean(value && value.length));
+
+    if (!rawBaseUrl) {
+      throw new Error(
+        'MessagingHubHttpClient: missing messaging_server/api_server configuration',
+      );
+    }
+
+    this.baseUrl = rawBaseUrl.replace(/\/$/, '');
   }
 
   /**
@@ -30,15 +45,18 @@ export class MessagingHubHttpClient {
   protected async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = getUserToken();
     if (!token) {
-      throw new Error("No authentication token available");
+      throw new Error('No authentication token available');
     }
 
-    const url = `${this.baseUrl}${endpoint}`;
+    const normalizedEndpoint = endpoint.startsWith('/')
+      ? endpoint
+      : `/${endpoint}`;
+    const url = `${this.baseUrl}${normalizedEndpoint}`;
     const response = await fetch(url, {
       ...options,
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...options.headers,
       },
     });
@@ -56,18 +74,20 @@ export class MessagingHubHttpClient {
         statusText: response.statusText,
         url: response.url,
         errorData,
-        errorMessage
+        errorMessage,
       });
 
       throw new Error(errorMessage);
     }
 
     // Handle binary responses (like file downloads)
-    const contentType = response.headers.get("content-type") || "";
-    if (contentType.includes("application/octet-stream") ||
-        contentType.includes("application/pdf") ||
-        contentType.includes("image/") ||
-        !contentType.includes("application/json")) {
+    const contentType = response.headers.get('content-type') || '';
+    if (
+      contentType.includes('application/octet-stream') ||
+      contentType.includes('application/pdf') ||
+      contentType.includes('image/') ||
+      !contentType.includes('application/json')
+    ) {
       return response.blob() as Promise<T>;
     }
 
@@ -86,7 +106,7 @@ export class MessagingHubHttpClient {
    * GET request helper
    */
   protected async get<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: "GET" });
+    return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
   /**
@@ -95,7 +115,7 @@ export class MessagingHubHttpClient {
   protected async post<T>(endpoint: string, body?: any, options: RequestInit = {}): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: "POST",
+      method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
@@ -106,7 +126,7 @@ export class MessagingHubHttpClient {
   protected async put<T>(endpoint: string, body?: any, options: RequestInit = {}): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: "PUT",
+      method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
@@ -117,7 +137,7 @@ export class MessagingHubHttpClient {
   protected async patch<T>(endpoint: string, body?: any, options: RequestInit = {}): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
-      method: "PATCH",
+      method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
@@ -126,6 +146,6 @@ export class MessagingHubHttpClient {
    * DELETE request helper
    */
   protected async delete<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: "DELETE" });
+    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 }
