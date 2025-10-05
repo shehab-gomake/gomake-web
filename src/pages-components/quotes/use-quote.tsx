@@ -3914,6 +3914,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     },
     [DOCUMENT_TYPE.order]: {
       creationDate: OrdersTableColumns.CreationDate,
+      deliveryDate: OrdersTableColumns.DeliveryDate,
       orderNumber: OrdersTableColumns.Number,
       client: OrdersTableColumns.ClientName,
       purchaseNumber: OrdersTableColumns.PurchaseNumber,

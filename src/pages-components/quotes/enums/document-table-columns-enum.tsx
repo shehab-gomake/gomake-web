@@ -16,6 +16,7 @@ export enum QuotesTableColumns {
 
 export enum OrdersTableColumns {
   CreationDate,
+  DeliveryDate,
   Number,
   ClientName,
   PurchaseNumber,
