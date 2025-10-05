@@ -133,7 +133,7 @@ const useStyle = () => {
       scrollIndicatorButton: {
         position: 'absolute',
         top: '50%',
-        [isRTL ? 'left' : 'right']: `${4 * (isRTL ? 102 : 108)}px`, // Position at the start of fixed columns (4 columns)
+        [isRTL ? 'left' : 'right']: `${4 * (102)}px`, // Position at the start of fixed columns (4 columns)
         transform: 'translateY(-50%)',
         backgroundColor: primaryColor(500),
         color: '#fff',
@@ -175,6 +175,7 @@ const useStyle = () => {
     backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF',
     minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     ...(isFirstColumn && {
       position: "sticky",
       [isRTL ? 'right' : 'left']: 0,
@@ -182,7 +183,7 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      [isRTL ? 'left' : 'right']: isLastColumn ? 0 : isLastSecondColumn ? 57 : isLastThirdColumn ? 180 : isLastFourthColumn ? isRTL ? 303 : 328 : 0,
+      [isRTL ? 'left' : 'right']: isLastColumn ? 0 : isLastSecondColumn ? "57px" : isLastThirdColumn ? "180px" : isLastFourthColumn ? "303px" : "0px",
       zIndex: 105,
       boxShadow: index === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
       [isRTL ? 'borderRight' : 'borderLeft']: index === headersLength - 4 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
@@ -197,6 +198,7 @@ const useStyle = () => {
     position: 'relative',
     minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     ...(isFirstColumn && {
       position: 'sticky',
       [isRTL ? 'right' : 'left']: 0,
@@ -205,7 +207,7 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      [isRTL ? 'left' : 'right']: isLastColumn ? 0 : isLastSecondColumn ? 57 : isLastThirdColumn ? 180 : isLastFourthColumn ? isRTL ? 303 : 328 : 0,
+      [isRTL ? 'left' : 'right']: isLastColumn ? "0px" : isLastSecondColumn ? "57px" : isLastThirdColumn ? "180px" : isLastFourthColumn ? "303px" : "0px",
       zIndex: 5,
       backgroundColor: '#fff',
       boxShadow: cellIndex === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
