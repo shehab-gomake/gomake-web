@@ -2,7 +2,12 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { cancelDepositApi, getAllDepositsApi, showDepositApi, getDepositPdfApi } from "@/services/api-service/generic-doc/deposits-api";
+import {
+  cancelDepositApi,
+  getAllDepositsApi,
+  showDepositApi,
+  getDepositPdfApi,
+} from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import {
@@ -23,11 +28,14 @@ const useDeposits = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } = useSnackBar();
+  const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } =
+    useSnackBar();
   const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [page, setPage] = useRecoilState<number>(depositsPageState);
   const resetPage = useResetRecoilState(depositsPageState);
-  const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
+  const [pagesCount, setPagesCount] = useRecoilState<number>(
+    depositsPageCountState
+  );
   const [pageSize, setPageSize] = useRecoilState<number>(depositsPageSizeState);
   const { initialPageSize } = useListPagination();
 
@@ -42,13 +50,16 @@ const useDeposits = () => {
   const [toDate, setToDate] = useRecoilState<Date>(depositsToDateState);
   const [allDeposits, setAllDeposits] = useRecoilState<any>(allDepositsState);
   const setDeposit = useSetRecoilState<any>(depositState);
-  const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
+  const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(
+    depositPaymentTypeSate
+  );
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [depositLogTitle, setDepositLogTitle] = useState<string>();
   const [employeeId, setEmployeeId] = useState<any>();
-  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
+  const [resetLogsDatePicker, setResetLogsDatePicker] =
+    useState<boolean>(false);
   const [fromLogsDate, setFromLogsDate] = useState<Date>(new Date());
   const [toLogsDate, setToLogsDate] = useState<Date>(new Date());
   const debounce = useDebounce(patternSearch, 500);
@@ -64,8 +75,15 @@ const useDeposits = () => {
 
   const onSelectDateRange = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+
+    // Ensure fromDate is always the earlier date and toDate is always the later date
+    if (fromDate <= toDate) {
+      setFromDate(fromDate);
+      setToDate(toDate);
+    } else {
+      setFromDate(toDate);
+      setToDate(fromDate);
+    }
   };
 
   const tableHeaders = [
@@ -84,7 +102,11 @@ const useDeposits = () => {
     { label: t("payment.creditCard"), value: PAYMENT_TYPE.CreditCard },
   ];
 
-  const logsTableHeaders = [t("sales.quote.actionDate"), t("sales.quote.employeeName"), t("sales.quote.actionDescription")];
+  const logsTableHeaders = [
+    t("sales.quote.actionDate"),
+    t("sales.quote.employeeName"),
+    t("sales.quote.actionDescription"),
+  ];
 
   const getDepositTypeText = (typeNum: number) => {
     switch (typeNum) {
@@ -107,7 +129,9 @@ const useDeposits = () => {
   };
 
   const onClickDocumentLogs = async (deposit: any) => {
-    setDepositLogTitle(`${t("deposits.LogsForDepositNumber")} - ${deposit?.number}`);
+    setDepositLogTitle(
+      `${t("deposits.LogsForDepositNumber")} - ${deposit?.number}`
+    );
     setOpenLogsModal(true);
   };
 
@@ -266,8 +290,16 @@ const useDeposits = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
-      setFromDate(value[0]);
-      setToDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDate(firstDate);
+        setToDate(secondDate);
+      } else {
+        setFromDate(secondDate);
+        setToDate(firstDate);
+      }
     } else {
       setFromDate(null);
       setToDate(null);

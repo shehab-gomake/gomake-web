@@ -65,11 +65,22 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
   };
   const handleDateRangeChange = (dates) => {
     if (dates && dates.length === 2) {
-      setFormData({
-        ...formData,
-        fromDate: new Date(dates[0]), // Save as new Date
-        toDate: new Date(dates[1]),
-      });
+      const [firstDate, secondDate] = dates;
+
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (firstDate <= secondDate) {
+        setFormData({
+          ...formData,
+          fromDate: new Date(firstDate),
+          toDate: new Date(secondDate),
+        });
+      } else {
+        setFormData({
+          ...formData,
+          fromDate: new Date(secondDate),
+          toDate: new Date(firstDate),
+        });
+      }
     }
   };
 

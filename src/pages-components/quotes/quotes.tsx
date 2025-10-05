@@ -348,8 +348,15 @@ const QuotesListPageWidget = ({
     if (!fromDate) {
       setFromDate(date);
     } else if (!toDate) {
-      setToDate(date);
-      onSelectDeliveryTimeDates([fromDate, date]);
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (fromDate <= date) {
+        setToDate(date);
+        onSelectDeliveryTimeDates([fromDate, date]);
+      } else {
+        setToDate(fromDate);
+        setFromDate(date);
+        onSelectDeliveryTimeDates([date, fromDate]);
+      }
       pickerRef.current.close();
     }
   };

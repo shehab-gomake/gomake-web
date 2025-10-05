@@ -323,7 +323,6 @@ const JobsFiltersSection = ({
       component: (
         <div>
           <DateRangePicker
-            //  ref={pickerRef}
             onChange={onSelectDeliveryTimeDates}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
