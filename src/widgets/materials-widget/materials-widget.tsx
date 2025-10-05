@@ -318,7 +318,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialFilter,
   ]);
   return (
-    <div>
+    <div style={{ overflow: "hidden" }}>
       <div style={classes.headerStyle}>
         <div
           style={{
