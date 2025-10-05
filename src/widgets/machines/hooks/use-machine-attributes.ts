@@ -102,7 +102,8 @@ const useMachineAttributes = () => {
         machineState?.attributes?.lifeExpectancyYears,
         machineState?.attributes?.monthlyMaintenanceCost,
         machineState?.attributes?.monthlyCostOfSpace,
-        machineState?.attributes?.electricityCostPerWorkingHour
+        machineState?.attributes?.electricityCostPerWorkingHour,
+        machineState?.attributes?.workingDaysAmountInWeek
     ]);
     // Track initial direct machineHourCost value (if provided explicitly)
     useEffect(() => {
