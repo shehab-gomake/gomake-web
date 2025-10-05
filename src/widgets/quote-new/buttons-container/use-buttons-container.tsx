@@ -41,7 +41,7 @@ import {
   checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi,
   getGroupJobsUsingOrderIdApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { directMessagesService } from "@/services/api-service/frontdesk/providers/internal/direct-messages.service";
+import { directMessagesService } from "@/services/frontdesk/api/direct-messages.service";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();

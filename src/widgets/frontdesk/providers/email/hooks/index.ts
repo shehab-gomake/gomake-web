@@ -11,3 +11,4 @@ export { useEmailLabels } from "./use-email-labels";
 export { useEmailProvider } from "./use-email-provider";
 export { useEmailSend } from "./use-email-send";
 export { useEmailConversationManager } from "./use-email-conversation-manager";
+export { useProviders } from "./use-providers";

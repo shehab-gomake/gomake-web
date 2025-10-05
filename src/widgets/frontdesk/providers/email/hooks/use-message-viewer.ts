@@ -26,13 +26,14 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
         } catch (error) {
           console.error("Failed to fetch conversation details:", error);
           // Fallback to single message display
+          // lastMessage.from is now an array
           setMessages([
             {
               id: conversation.lastMessage.id,
               threadId: conversation.lastMessage.threadId,
               subject: conversation.subject,
-              from: { email: conversation.lastMessage.from, name: "" },
-              to: [{ email: "", name: "" }],
+              from: conversation.lastMessage.from || [],
+              to: conversation.lastMessage.to || [],
               date: conversation.lastMessage.date,
               text: conversation.lastMessage.snippet,
               snippet: conversation.lastMessage.snippet,

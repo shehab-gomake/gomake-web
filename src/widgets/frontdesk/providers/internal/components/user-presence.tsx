@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Paper,
@@ -10,8 +9,10 @@ import {
   Avatar,
   Chip,
   Stack,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import { Circle as OnlineIcon, Person as PersonIcon } from "@mui/icons-material";
+import { Circle as OnlineIcon, Person as PersonIcon, Close as CloseIcon } from "@mui/icons-material";
 import { DMPresenceData as PresenceData } from "../types";
 
 interface UserPresenceProps {
@@ -19,6 +20,7 @@ interface UserPresenceProps {
   userPresence: Record<string, PresenceData>;
   currentUserId?: string;
   onUserClick?: (userId: string) => void;
+  onToggleVisibility?: () => void;
 }
 
 const StatusChip: React.FC<{ status: "online" | "away" | "busy" | "offline" }> = ({ status }) => {
@@ -61,7 +63,13 @@ const StatusChip: React.FC<{ status: "online" | "away" | "busy" | "offline" }> =
   );
 };
 
-export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPresence, currentUserId, onUserClick }) => {
+export const UserPresence: React.FC<UserPresenceProps> = ({
+  onlineUsers,
+  userPresence,
+  currentUserId,
+  onUserClick,
+  onToggleVisibility,
+}) => {
   const getDisplayName = (presence: PresenceData) => {
     // Prefer explicit name field when provided
     if (presence.name && presence.name.trim()) return presence.name.trim();
@@ -116,16 +124,25 @@ export const UserPresence: React.FC<UserPresenceProps> = ({ onlineUsers, userPre
           <Typography variant="h6" sx={{ fontWeight: 600, color: "#101828" }}>
             Team
           </Typography>
-          <Chip
-            label={`${totalOnline} online`}
-            size="small"
-            sx={{
-              backgroundColor: "#ECFDF5",
-              color: "#065F46",
-              fontWeight: 500,
-              fontSize: "0.75rem",
-            }}
-          />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip
+              label={`${totalOnline} online`}
+              size="small"
+              sx={{
+                backgroundColor: "#ECFDF5",
+                color: "#065F46",
+                fontWeight: 500,
+                fontSize: "0.75rem",
+              }}
+            />
+            {onToggleVisibility && (
+              <Tooltip title="Hide Team Panel">
+                <IconButton size="small" onClick={onToggleVisibility}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
         </Stack>
         <Typography variant="body2" sx={{ color: "#6B7280", mt: 0.5 }}>
           {totalOnline} active now

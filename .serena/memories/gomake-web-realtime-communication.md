@@ -7,7 +7,7 @@
 
 ## Socket.IO Implementation
 ### Service Architecture
-- **MessagingService**: Centralized Socket.IO management (`src/services/websocket/messaging-service.ts`)
+- **MessagingService**: Centralized Socket.IO management (`src/services/frontdesk/websocket/messaging-service.ts`)
 - **Connection Management**: Enhanced with session IDs, authentication, error handling
 - **Event Handling**: Comprehensive event system for messaging, presence, typing indicators
 

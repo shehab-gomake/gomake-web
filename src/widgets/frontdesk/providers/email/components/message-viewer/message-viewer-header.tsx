@@ -12,16 +12,18 @@ import {
   ReplyAll as ReplyAllIcon,
   Forward as ForwardIcon,
   MoreVert as MoreIcon,
+  ConfirmationNumber as TicketIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { alpha } from "@mui/material";
 import { EmailConversation } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { safeFormatDate } from "../../utils/date-utils";
+import { safeFormatDate } from "@/widgets/frontdesk/utils";
 import { EmailActionButton } from "../ui/email-action-button";
 
 interface MessageViewerHeaderProps {
   conversation: EmailConversation;
+  emailAccountId?: string;
   onBack: () => void;
   onStar: (conversationId: string, starred: boolean) => void;
   onPrint: (conversation: EmailConversation) => void;
@@ -30,11 +32,13 @@ interface MessageViewerHeaderProps {
   onReply: () => void;
   onReplyAll: () => void;
   onForward: (conversation: EmailConversation) => void;
+  onCreateTicket?: (conversationId: string, emailAccountId?: string) => void;
   showInlineReply: boolean;
 }
 
 export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
   conversation,
+  emailAccountId,
   onBack,
   onStar,
   onPrint,
@@ -43,6 +47,7 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
   onReply,
   onReplyAll,
   onForward,
+  onCreateTicket,
   showInlineReply,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
@@ -51,6 +56,14 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
 
   const handleMoreActionsClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreActionsButtonClick = () => {
+    // Get the button element that was clicked
+    const buttonElement = document.activeElement as HTMLElement;
+    if (buttonElement) {
+      setAnchorEl(buttonElement);
+    }
   };
 
   const handleMoreActionsClose = () => {
@@ -140,7 +153,7 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
               <EmailActionButton
                 icon={<MoreIcon sx={{ fontSize: 20 }} />}
                 tooltip="More actions"
-                onClick={() => handleMoreActionsClick({} as React.MouseEvent<HTMLElement>)}
+                onClick={handleMoreActionsButtonClick}
               />
             </Stack>
           </Stack>
@@ -168,6 +181,15 @@ export const MessageViewerHeader: React.FC<MessageViewerHeaderProps> = ({
           },
         }}
       >
+        {onCreateTicket && (
+          <MenuItem onClick={() => handleMenuAction(() => onCreateTicket(conversation.id, emailAccountId))}>
+            <ListItemIcon>
+              <TicketIcon sx={{ fontSize: 20 }} />
+            </ListItemIcon>
+            <ListItemText>Create Ticket</ListItemText>
+          </MenuItem>
+        )}
+
         <MenuItem onClick={() => handleMenuAction(() => onPrint(conversation))}>
           <ListItemIcon>
             <PrintIcon sx={{ fontSize: 20 }} />

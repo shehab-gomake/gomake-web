@@ -84,7 +84,7 @@ src/services/
 1. `{provider}-provider-view.tsx`
 2. `use-{provider}-provider.ts` (state + actions)
 3. Provider components
-4. REST in `src/services/api-service/frontdesk/`
+4. REST in `src/services/frontdesk/api/`
 
 **Known Issues**
 
@@ -262,7 +262,7 @@ Persist a minimal, ordered tool plan:
 {"type":"tool_use","name":"create_text_file",
  "input":{"path":"src/store/frontdesk/atoms/new.atoms.ts","content":"/* atoms */"}}
 {"type":"tool_use","name":"create_text_file",
- "input":{"path":"src/services/api-service/frontdesk/new.service.ts","content":"/* REST */"}}
+ "input":{"path":"src/services/frontdesk/api/new.service.ts","content":"/* REST */"}}
 ```
 
 3. Wire route + shell, tests, run Phase 4.
@@ -308,28 +308,5 @@ Persist a minimal, ordered tool plan:
 - [ ] No hardcoded secrets; types strict; logs redacted
 
 ---
-
-## Minimal PR Template
-
-```
-Title: <type(scope): summary>
-
-Why:
-What changed:
-State model impact (atoms/selectors):
-WS/API impact:
-UX decisions:
-
-Risk & Rollback:
-Flags/Config:
-
-Tests:
-- Unit:
-- Integration/UI:
-
-Checklist:
-[ ] Lint/Build [ ] Tests Green
-[ ] Docs/Memories Updated
-```
 
 **End of protocol.**

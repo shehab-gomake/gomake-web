@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { EmailDraft, EmailMessage } from "../types/email.types";
+import { EmailDraft, EmailMessage, EmailAttachment } from "../types/email.types";
 import { parseEmails, formatReplySubject, formatEmailDisplay } from "../utils/email-utils";
 
 interface UseEmailComposerFormProps {
@@ -9,15 +9,19 @@ interface UseEmailComposerFormProps {
 }
 
 export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmailComposerFormProps) => {
+  // replyToMessage.from is now an array, take first sender
+  const replyToSender = replyToMessage?.from?.[0];
+
   const [to, setTo] = useState(
-    replyToMessage
-      ? formatEmailDisplay(replyToMessage.from.email, replyToMessage.from.name)
+    replyToSender
+      ? formatEmailDisplay(replyToSender.email, replyToSender.name)
       : draft?.to?.map((r) => r.email).join(", ") || ""
   );
   const [cc, setCc] = useState(draft?.cc?.map((r) => r.email).join(", ") || "");
   const [bcc, setBcc] = useState(draft?.bcc?.map((r) => r.email).join(", ") || "");
   const [subject, setSubject] = useState(replyToMessage ? formatReplySubject(replyToMessage.subject) : draft?.subject || "");
   const [message, setMessage] = useState(draft?.text || "");
+  const [attachments, setAttachments] = useState<EmailAttachment[]>(draft?.attachments || []);
 
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
@@ -34,10 +38,11 @@ export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmail
       html: message.trim(),
       replyToMessageId: replyToMessage?.id || draft?.replyToMessageId,
       threadId: replyToMessage?.threadId || draft?.threadId,
+      attachments: attachments.length > 0 ? attachments : undefined,
     };
 
     return await onSend(emailDraft);
-  }, [to, cc, bcc, subject, message, replyToMessage, draft, onSend]);
+  }, [to, cc, bcc, subject, message, attachments, replyToMessage, draft, onSend]);
 
   const formatText = useCallback((command: string) => {
     document.execCommand(command, false);
@@ -52,6 +57,7 @@ export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmail
     bcc,
     subject,
     message,
+    attachments,
     showCc,
     showBcc,
 
@@ -61,6 +67,7 @@ export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmail
     setBcc,
     setSubject,
     setMessage,
+    setAttachments,
     setShowCc,
     setShowBcc,
 

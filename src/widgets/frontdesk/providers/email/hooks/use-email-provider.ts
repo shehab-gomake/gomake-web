@@ -1,13 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { useEmailAccounts } from "./use-email-accounts";
 import { useEmailAuth } from "./use-email-auth";
 import { useEmailLabels } from "./use-email-labels";
 import { useEmailConversations } from "./use-email-conversations";
 import { useEmailConversationManager } from "./use-email-conversation-manager";
 import { useEmailComposer } from "./use-email-composer";
+import { useProviders } from "./use-providers";
 import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
+import { useCreateTicketModal } from "../../tickets/hooks/use-create-ticket-modal";
 
 export const useEmailProvider = () => {
+  const router = useRouter();
+
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -15,6 +20,9 @@ export const useEmailProvider = () => {
   const emailAccounts = useEmailAccounts();
   const emailAuth = useEmailAuth();
   const emailLabels = useEmailLabels(emailAccounts.selectedAccountId || undefined);
+
+  // Providers for unified ticketing (simplified API)
+  const providers = useProviders();
 
   // Combine label query with search query
   const labelQuery = emailLabels.selectedLabelId
@@ -84,6 +92,89 @@ export const useEmailProvider = () => {
     [emailAccounts.selectAccount]
   );
 
+  // State to store provider ID and conversation ID for modal
+  const [pendingTicketData, setPendingTicketData] = useState<{ providerId: string; conversationId: string } | null>(null);
+
+  // Initialize create ticket modal
+  const createTicketModal = useCreateTicketModal({
+    providerId: pendingTicketData?.providerId,
+    externalConversationId: pendingTicketData?.conversationId,
+    onSuccess: (ticket) => {
+      console.log("✅ Ticket created successfully:", ticket.ticketNumber);
+      setPendingTicketData(null);
+
+      // Navigate to the newly created ticket
+      router.push(`/frontdesk/tickets?provider=${ticket.id}`);
+    },
+    onError: (error) => {
+      console.error("❌ Failed to create ticket:", error);
+      setPendingTicketData(null);
+    },
+  });
+
+  // Create ticket from email conversation - opens modal
+  const handleCreateTicket = useCallback(
+    async (conversationId: string) => {
+      try {
+        // Check if providers are still loading
+        if (providers.isLoading) {
+          throw new Error("Providers are still loading. Please wait a moment and try again.");
+        }
+
+        // Check if providers have been loaded
+        if (providers.providers.length === 0 && !providers.error) {
+          console.warn("[Email] ⚠️ No providers loaded, attempting to fetch...");
+          await providers.fetchProviders();
+        }
+
+        // Get selected account
+        const account = emailAccounts.accounts.find((acc) => acc.id === emailAccounts.selectedAccountId);
+
+        console.log("[Email] Selected account for ticket creation:", {
+          accountId: account?.id,
+          email: account?.email,
+          availableProviders: providers.providers.length,
+        });
+
+        if (!account) {
+          throw new Error("No email account selected. Please select an account first.");
+        }
+
+        // Find EMAIL provider that matches the selected account
+        console.log("[Email] 🔍 Looking for EMAIL provider for account:", account.email);
+
+        const emailProvider = providers.providers.find(
+          (provider) => provider.type === "EMAIL" && provider.metadata?.email?.toLowerCase() === account.email.toLowerCase()
+        );
+
+        if (!emailProvider) {
+          console.error("[Email] ❌ No EMAIL provider found for:", account.email);
+          throw new Error(
+            `No EMAIL provider found for ${account.email}.\n\n` +
+              `The backend GET /providers must return an EMAIL provider with metadata.email="${account.email}".`
+          );
+        }
+
+        const providerId = emailProvider.id;
+        console.log("[Email] ✅ Found provider ID:", providerId, "for account:", account.email);
+
+        // Set pending data and open modal
+        setPendingTicketData({
+          providerId,
+          conversationId,
+        });
+
+        // Open the modal
+        createTicketModal.openModal();
+      } catch (error) {
+        console.error("❌ Failed to prepare ticket creation:", error);
+        alert(`Failed to open ticket modal: ${error instanceof Error ? error.message : "Unknown error"}`);
+        throw error;
+      }
+    },
+    [emailAccounts.accounts, emailAccounts.selectedAccountId, providers, createTicketModal]
+  );
+
   return {
     // Connection state
     isConnected,
@@ -123,6 +214,9 @@ export const useEmailProvider = () => {
     starConversation: emailConversations.starConversation,
     deleteConversation: emailConversations.deleteConversation,
     archiveConversation: emailConversations.archiveConversation,
+    markAsRead: emailConversations.markAsRead,
+    markAsUnread: emailConversations.markAsUnread,
+    trashConversation: emailConversations.trashConversation,
 
     // Conversation management
     selectedConversation: conversationManager.selectedConversation,
@@ -142,5 +236,11 @@ export const useEmailProvider = () => {
     // Search
     searchQuery,
     onSearch: handleSearch,
+
+    // Ticket creation
+    createTicket: handleCreateTicket,
+
+    // Ticket modal
+    ticketModal: createTicketModal,
   };
 };

@@ -1,30 +1,27 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { 
-  UnifiedConversation, 
-  UnifiedFilters, 
-  UnifiedSortOptions, 
-  AggregationResult 
+import {
+  UnifiedConversation,
+  UnifiedFilters,
+  UnifiedSortOptions,
+  AggregationResult
 } from '../types/unified.types';
 import { aggregateConversations } from '../utils/conversation-aggregator';
 import {
+  currentEmailConversationsSelector,
+  currentWhatsAppConversationsSelector,
   allInternalConversationsSelector
 } from '@/store/frontdesk/selectors/aggregation.selectors';
-
-// Mock atoms for email and whatsapp (will be replaced with real ones)
-const emailConversationsAtom = { key: 'mockEmail', default: [] };
-const whatsappConversationsAtom = { key: 'mockWhatsApp', default: [] };
 
 export const useAggregatedConversations = (
   filters?: UnifiedFilters,
   sortOptions?: UnifiedSortOptions
 ) => {
-  // Get conversations from each provider
-  // Note: These will be replaced with actual provider atoms/hooks
-  const emailConversations = []; // useRecoilValue(emailConversationsAtom);
-  const whatsappConversations = []; // useRecoilValue(whatsappConversationsAtom);
+  // Get conversations from each provider using real selectors
+  const emailConversations = useRecoilValue(currentEmailConversationsSelector);
+  const whatsappConversations = useRecoilValue(currentWhatsAppConversationsSelector);
   const internalConversations = useRecoilValue(allInternalConversationsSelector);
-  
+
   // Aggregate conversations
   const aggregationResult = useMemo(() => {
     return aggregateConversations(
@@ -35,13 +32,13 @@ export const useAggregatedConversations = (
       sortOptions
     );
   }, [
-    emailConversations, 
-    whatsappConversations, 
+    emailConversations,
+    whatsappConversations,
     internalConversations,
     filters,
     sortOptions
   ]);
-  
+
   return aggregationResult;
 };
 

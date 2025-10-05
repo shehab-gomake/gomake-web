@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { messagingService } from "@/services/websocket/messaging-service";
+import { messagingService } from "@/services/frontdesk";
 import {
   messagingConnectionState,
   messagingConnectedState,

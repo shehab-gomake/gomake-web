@@ -4,28 +4,28 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { alpha } from "@mui/material";
 import { EmailMessage } from "../../types/email.types";
 import { safeDecodeHtml } from "../../utils/html-decode";
-import { formatMessageDate } from "../../utils/date-utils";
-import { getAvatarColor, getEmailInitials } from "../../utils/avatar-utils";
+import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
+import { EmailAttachmentList } from "./email-attachment-list";
 
 interface MessageItemProps {
   message: EmailMessage;
+  accountId?: string;
   isLast?: boolean;
   showInlineReply: boolean;
 }
 
-export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = false, showInlineReply }) => {
+export const MessageItem: React.FC<MessageItemProps> = ({ message, accountId, isLast = false, showInlineReply }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const isOwn = false; // TODO: Check if message is from current user
 
-  let senderName: string;
-  let senderEmail: string | undefined;
+  // message.from is now an array of EmailRecipient objects
+  // Take the first sender (should always have at least one)
+  const sender = message.from?.[0] || { email: "unknown@example.com", name: undefined };
+  const senderEmail = sender.email || "unknown@example.com";
+  const senderName = sender.name || senderEmail;
 
-  // message.from is always an EmailRecipient object based on the type definition
-  senderName = message.from.name || message.from.email;
-  senderEmail = message.from.email;
-
-  const avatarColor = getAvatarColor(senderName, primaryColor);
-  const initials = getEmailInitials(senderName);
+  const avatarColor = getAvatarColor(senderEmail);
+  const initials = getEmailInitials(senderEmail);
 
   return (
     <Box
@@ -94,6 +94,17 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLast = fals
             __html: message.html || safeDecodeHtml(message.text || message.snippet || ""),
           }}
         />
+
+        {/* Attachments */}
+        {message.attachments && message.attachments.length > 0 && accountId && (
+          <Box sx={{ pl: "56px" }}>
+            <EmailAttachmentList
+              attachments={message.attachments}
+              accountId={accountId}
+              messageId={message.id}
+            />
+          </Box>
+        )}
       </Stack>
     </Box>
   );

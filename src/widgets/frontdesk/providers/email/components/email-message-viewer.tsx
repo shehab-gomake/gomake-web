@@ -20,6 +20,7 @@ interface EmailMessageViewerProps {
   onStar: (conversationId: string, starred: boolean) => void;
   onPrint: (conversation: EmailConversation) => void;
   onAddLabel: (conversationId: string, label: string) => void;
+  onCreateTicket?: (conversationId: string, emailAccountId?: string) => void;
   onSendReply?: (text: string, replyAll?: boolean) => Promise<boolean>;
   isSending?: boolean;
 }
@@ -36,6 +37,7 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
   onStar,
   onPrint,
   onAddLabel,
+  onCreateTicket,
   onSendReply,
   isSending = false,
 }) => {
@@ -73,6 +75,7 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
     >
       <MessageViewerHeader
         conversation={conversation}
+        emailAccountId={accountId}
         onBack={onBack}
         onStar={onStar}
         onPrint={onPrint}
@@ -81,6 +84,7 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
         onReply={handleReply}
         onReplyAll={handleReplyAll}
         onForward={onForward}
+        onCreateTicket={onCreateTicket}
         showInlineReply={showInlineReply}
       />
 
@@ -103,6 +107,7 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
             <MessageItem
               key={message.id}
               message={message}
+              accountId={accountId}
               isLast={index === messages.length - 1}
               showInlineReply={showInlineReply}
             />

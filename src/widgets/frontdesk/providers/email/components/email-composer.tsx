@@ -2,9 +2,10 @@ import React, { useState, useCallback } from "react";
 import { Box, Paper, Collapse, Fade, InputBase } from "@mui/material";
 import { EmailDraft, EmailMessage } from "../types/email.types";
 import { useEmailComposerForm } from "../hooks/use-email-composer-form";
-//import { EmailComposerHeader } from "./composer/email-composer-header";
-//import { EmailRecipientsSection } from "./composer/email-recipients-section";
-//import { EmailComposerToolbar } from "./composer/email-composer-toolbar";
+import { EmailComposerHeader } from "./composer/email-composer-header";
+import { EmailRecipientsSection } from "./composer/email-recipients-section";
+import { EmailComposerToolbar } from "./composer/email-composer-toolbar";
+import { EmailAttachmentPicker } from "./composer/email-attachment-picker";
 
 interface EmailComposerProps {
   open: boolean;
@@ -33,6 +34,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
     message,
     showCc,
     showBcc,
+    attachments,
     setTo,
     setCc,
     setBcc,
@@ -40,6 +42,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
     setMessage,
     setShowCc,
     setShowBcc,
+    setAttachments,
     handleSend,
     formatText,
     canSend,
@@ -79,14 +82,12 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
             boxShadow: "0 -2px 10px 0 rgba(0,0,0,0.2)",
           }}
         >
-          {/*          <EmailComposerHeader subject={subject} isMinimized={isMinimized} onMinimize={handleMinimize} onClose={onClose} />
-*/}
+          <EmailComposerHeader subject={subject} isMinimized={isMinimized} onMinimize={handleMinimize} onClose={onClose} />
+
           {/* Content */}
           <Collapse in={!isMinimized}>
             <Box sx={{ backgroundColor: "#fff" }}>
-              {
-                /*
-                <EmailRecipientsSection
+              <EmailRecipientsSection
                 to={to}
                 cc={cc}
                 bcc={bcc}
@@ -100,8 +101,6 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
                 onShowCc={setShowCc}
                 onShowBcc={setShowBcc}
               />
-                 */
-              }
 
               {/* Message Body */}
               <Box sx={{ px: 2 }}>
@@ -131,15 +130,21 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
                 />
               </Box>
 
-              {
-                /*<EmailComposerToolbar
+              {/* Attachments */}
+              <Box sx={{ px: 2, pb: 1 }}>
+                <EmailAttachmentPicker
+                  attachments={attachments}
+                  onAttachmentsChange={setAttachments}
+                />
+              </Box>
+
+              <EmailComposerToolbar
                 onSend={handleSendAndClose}
                 onClose={onClose}
                 onFormatText={formatText}
                 canSend={canSend}
                 isSending={isSending}
-              />*/
-              }
+              />
             </Box>
           </Collapse>
         </Paper>

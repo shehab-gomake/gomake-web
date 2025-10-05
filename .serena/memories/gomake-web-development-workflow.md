@@ -14,7 +14,7 @@
 - **Feature Widgets**: `src/widgets/` (business logic + UI composition)
 - **Global State**: `src/store/` (Recoil atoms/selectors)
 - **API Services**: `src/services/api-service/` (endpoint definitions)
-- **Real-time Services**: `src/services/websocket/` (Socket.IO, SignalR)
+- **Real-time Services**: `src/services/frontdesk/websocket/` (Socket.IO, SignalR)
 - **Business Logic**: `src/lib/` (pure domain logic)
 - **Utilities**: `src/utils/` (small generic helpers)
 - **Types**: `src/interfaces/` (shared TypeScript interfaces)
@@ -28,7 +28,7 @@
 ### Service Implementation
 ```typescript
 // Always use MessagingService for Socket.IO connections
-import { messagingService } from '@/services/websocket/messaging-service';
+import { messagingService } from '@/services/frontdesk';
 
 // Connection with authentication
 await messagingService.connect(authToken);

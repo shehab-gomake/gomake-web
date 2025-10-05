@@ -231,7 +231,9 @@ export interface MessageListProps {
 export interface MessageInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSend: (content: string) => void;
+  onSend: (content: string) => Promise<void> | void;
+  onTypingStart?: () => void;
+  onTypingStop?: () => void;
   placeholder?: string;
   disabled?: boolean;
   isSending?: boolean;

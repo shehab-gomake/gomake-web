@@ -1,4 +1,4 @@
-import { getUserToken } from "@/services/storage-data";
+import { MessagingHubHttpClient } from "@/services/messaging-hub-http-client";
 import {
   EmailAccount,
   EmailListResponse,
@@ -8,89 +8,30 @@ import {
   ConversationDetailResponse,
   EmailLabelsResponse,
 } from "../types/email.types";
-import config from "@/config";
 
-const getBaseUrl = () => {
-  const url = config.messaging_server;
-  return url.replace(/\/$/, "");
-};
-
-const getHeaders = (): Record<string, string> => {
-  const userToken = getUserToken();
-  return {
-    "Content-Type": "application/json",
-    ...(userToken && { Authorization: `Bearer ${userToken}` }),
-  };
-};
-
-class EmailApiClient {
-  private baseUrl: string;
-
-  constructor() {
-    this.baseUrl = getBaseUrl();
-  }
-
+class EmailApiClient extends MessagingHubHttpClient {
   // Account Management
   async getAccounts(): Promise<EmailAccount[]> {
-    const response = await fetch(`${this.baseUrl}/email/accounts`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch accounts: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.get<EmailAccount[]>("/email/accounts");
   }
 
   async getAuthUrl(provider: string = "gmail"): Promise<{ url: string; state: string; provider: string }> {
     // Updated to new OAuth endpoint path
-    const response = await fetch(`${this.baseUrl}/auth/oauth/${provider === "gmail" ? "google" : provider}`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to get auth URL: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.get<{ url: string; state: string; provider: string }>(
+      `/auth/oauth/${provider === "gmail" ? "google" : provider}`
+    );
   }
 
   async disconnectAccount(accountId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}`, {
-      method: "DELETE",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to disconnect account: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.delete<{ success: boolean; message: string }>(`/email/accounts/${accountId}`);
   }
 
   async getAccountLabels(accountId: string, params?: { limit?: number }): Promise<EmailLabelsResponse> {
     const queryParams = new URLSearchParams();
     if (params?.limit) queryParams.append("limit", params.limit.toString());
 
-    const url = `${this.baseUrl}/email/accounts/${accountId}/labels${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch account labels: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+    return this.get<EmailLabelsResponse>(`/email/accounts/${accountId}/labels${queryString}`);
   }
 
   // Conversations
@@ -107,21 +48,8 @@ class EmailApiClient {
     if (params?.pageToken) queryParams.append("pageToken", params.pageToken);
     if (params?.query) queryParams.append("query", params.query);
 
-    const url = `${this.baseUrl}/email/accounts/${accountId}/messages${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch conversations: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+    return this.get<ConversationListResponse>(`/email/accounts/${accountId}/messages${queryString}`);
   }
 
   // Messages
@@ -138,99 +66,53 @@ class EmailApiClient {
     if (params?.pageToken) queryParams.append("pageToken", params.pageToken);
     if (params?.query) queryParams.append("query", params.query);
 
-    const url = `${this.baseUrl}/email/accounts/${accountId}/messages${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch messages: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+    return this.get<EmailListResponse>(`/email/accounts/${accountId}/messages${queryString}`);
   }
 
   async updateMessage(accountId: string, messageId: string, update: { starred?: boolean; read?: boolean }): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}`, {
-      method: "PATCH",
-      headers: getHeaders(),
-      body: JSON.stringify(update),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update message: ${response.status}`);
-    }
+    return this.patch<void>(`/email/accounts/${accountId}/messages/${messageId}`, update);
   }
 
   async deleteMessage(accountId: string, messageId: string): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}`, {
-      method: "DELETE",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to delete message: ${response.status}`);
-    }
+    return this.delete<void>(`/email/accounts/${accountId}/messages/${messageId}`);
   }
 
   async archiveMessage(accountId: string, messageId: string): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/messages/${messageId}/archive`, {
-      method: "POST",
-      headers: getHeaders(),
-    });
+    return this.post<void>(`/email/accounts/${accountId}/messages/${messageId}/archive`);
+  }
 
-    if (!response.ok) {
-      throw new Error(`Failed to archive message: ${response.status}`);
-    }
+  async markAsRead(accountId: string, messageId: string): Promise<void> {
+    return this.post<void>(`/email/accounts/${accountId}/messages/${messageId}/read`);
+  }
+
+  async markAsUnread(accountId: string, messageId: string): Promise<void> {
+    return this.post<void>(`/email/accounts/${accountId}/messages/${messageId}/unread`);
+  }
+
+  async trashMessage(accountId: string, messageId: string): Promise<void> {
+    return this.post<void>(`/email/accounts/${accountId}/messages/${messageId}/trash`);
+  }
+
+  async deleteMessagePermanently(accountId: string, messageId: string): Promise<void> {
+    return this.delete<void>(`/email/accounts/${accountId}/messages/${messageId}`);
+  }
+
+  async downloadAttachment(accountId: string, messageId: string, attachmentId: string): Promise<Blob> {
+    return this.get<Blob>(`/email/accounts/${accountId}/messages/${messageId}/attachments/${attachmentId}`);
   }
 
   async getThread(accountId: string, threadId: string): Promise<EmailThread> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/threads/${threadId}`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch thread: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.get<EmailThread>(`/email/accounts/${accountId}/threads/${threadId}`);
   }
 
   async getConversationDetail(accountId: string, conversationId: string): Promise<ConversationDetailResponse> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/conversations/${conversationId}`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch conversation detail: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.get<ConversationDetailResponse>(`/email/accounts/${accountId}/conversations/${conversationId}`);
   }
 
   // Send Email
   async sendEmail(accountId: string, email: EmailSendRequest): Promise<{ success: boolean; messageId?: string }> {
-    const response = await fetch(`${this.baseUrl}/email/accounts/${accountId}/send`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(email),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to send email: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return this.post<{ success: boolean; messageId?: string }>(`/email/accounts/${accountId}/send`, email);
   }
 
   // Utility methods for retry logic

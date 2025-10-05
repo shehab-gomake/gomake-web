@@ -4,23 +4,22 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 export interface ThreeColumnLayoutProps {
-  navigationContent: React.ReactNode;  // Column 1 - Navigation
-  listContent: React.ReactNode;        // Column 2 - Dynamic List (kept for compatibility but not used)
-  mainContent: React.ReactNode;        // Column 3 - Main Content (now Column 2)
-  navigationWidth?: number;            // Default: 100px
-  listWidth?: number;                   // Default: 380px (kept for compatibility but not used)
-  hideMiddleColumn?: boolean;          // Kept for compatibility but not used
+  navigationContent: React.ReactNode;  // Column 1 - Navigation sidebar
+  listContent?: React.ReactNode;       // Column 2 - List panel (optional for backward compatibility)
+  mainContent: React.ReactNode;        // Column 3 - Main content area
+  navigationWidth?: number;            // Default: 220px
+  listWidth?: number;                  // Default: 280px
+  hideMiddleColumn?: boolean;          // Hide list column for certain views
   className?: string;
 }
 
-// Now actually a two-column layout, but keeping the name for compatibility
 export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   navigationContent,
-  listContent, // Accepting but not using
+  listContent,
   mainContent,
-  navigationWidth = 100,
-  listWidth = 380, // Accepting but not using
-  hideMiddleColumn = false, // Accepting but not using
+  navigationWidth = 220,
+  listWidth = 280,
+  hideMiddleColumn = false,
   className
 }) => {
   const theme = useTheme();
@@ -28,6 +27,10 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
 
   // Responsive width adjustments
   const finalNavWidth = isMobile ? 60 : navigationWidth;
+  const finalListWidth = isMobile ? 200 : listWidth;
+
+  // Determine if we should show the list column
+  const showListColumn = !hideMiddleColumn && listContent;
 
   return (
     <Box
@@ -38,7 +41,6 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         width: '100%',
         overflow: 'hidden',
         backgroundColor: theme.palette.background.default,
-        // Add smooth transitions for layout changes
         '& > *': {
           transition: 'all 0.2s ease-in-out'
         }
@@ -61,7 +63,25 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         {navigationContent}
       </Box>
 
-      {/* Column 2: Main Content Area (previously Column 3) */}
+      {/* Column 2: List Panel (conditionally rendered) */}
+      {showListColumn && (
+        <Box
+          sx={{
+            width: finalListWidth,
+            minWidth: finalListWidth,
+            height: '100%',
+            borderRight: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {listContent}
+        </Box>
+      )}
+
+      {/* Column 3: Main Content Area */}
       <Box
         sx={{
           flex: 1,
