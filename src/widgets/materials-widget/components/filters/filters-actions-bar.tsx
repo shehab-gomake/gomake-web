@@ -3,10 +3,11 @@ import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/a
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   materialsClientsState,
   materialsMachinesState,
+  showMoreFiltersState,
 } from "@/widgets/materials-widget/state";
 import { Stack, Box } from "@mui/material";
 import { productsForDropDownList, userState } from "@/store";
@@ -37,7 +38,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
 
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 

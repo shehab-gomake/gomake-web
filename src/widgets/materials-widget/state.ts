@@ -238,3 +238,8 @@ export const purchasePricingTableHeadingUnitsState = atom<{
   key: "purchasePricingTableHeadingUnitsState",
   default: {},
 });
+
+export const showMoreFiltersState = atom<boolean>({
+  key: "showMoreFiltersState",
+  default: false,
+});

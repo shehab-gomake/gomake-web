@@ -18,7 +18,7 @@ const useStyle = () => {
 
       // Table container styles
       tableContainer: {
-        maxHeight: 800,
+        maxHeight: "calc(100vh - 200px)",
         width: '100%',
         overflowX: 'auto',
         overflowY: 'auto',

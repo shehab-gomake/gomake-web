@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
-import { useRecoilValue } from "recoil";
-import { openChildTableState } from "../../state";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { openChildTableState, showMoreFiltersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
@@ -95,6 +95,7 @@ const CombinedTable = ({
         }
     }, [rows]); // Re-check when rows change
 
+    const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
 
     return (
@@ -103,7 +104,7 @@ const CombinedTable = ({
                 <TableContainer
                     ref={tableContainerRef}
                     component={Paper}
-                    sx={classes.tableContainer}
+                    sx={{ ...classes.tableContainer, maxHeight: showMore ? "calc(100vh - 213px)" : "calc(100vh - 150px)" }}
                 >
                     <Table sx={classes.table} stickyHeader>
                         <TableHead>
