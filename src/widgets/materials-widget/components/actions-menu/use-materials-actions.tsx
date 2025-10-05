@@ -105,6 +105,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     parameterKey?: string;
     isInventoryTable?: boolean;
     isPurchasePricingTable?: boolean;
+    submenuOption?: number;
   } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   useEffect(() => {
@@ -116,6 +117,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
+  console.log("currentCurrency", currentCurrency);
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
   const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
@@ -159,8 +161,30 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const myId = selectedMaterialsIds[0];
       let currency = null;
 
+      // For submenu options, determine the correct currency source
+      if (action?.submenuOption === 1) {
+        // Option 1: Update Inventory Sale Cost - get currency from inventory data
+        // Need to match both material ID and supplier ID
+        const inventoryRow = inventoryData?.find((row) =>
+          row.supplierId === selectedSupplier?.id
+        );
+        if (inventoryRow) {
+          currency = inventoryRow?.salePrice?.currency || inventoryRow?.purchasePrice?.currency;
+        }
+      } else if (action?.submenuOption === 2) {
+        // Option 2: Update Supplier Purchase Price - get currency from purchase pricing data
+        // Need to match printHouseMaterialId (material ID) and supplierId
+        const purchaseRow = purchasePricingData?.find((row) =>
+          row.supplierId === selectedSupplier?.id
+        );
+        if (purchaseRow) {
+          currency = purchaseRow?.currency ||
+            purchaseRow?.purchasePrice?.currency ||
+            purchaseRow?.rowData?.currency?.value;
+        }
+      }
       // Use action metadata to determine which table we're in
-      if (action?.isPurchasePricingTable) {
+      else if (action?.isPurchasePricingTable) {
         // We're specifically in purchase pricing table
         const purchaseRow = purchasePricingData?.find((row) => row.id === myId);
         if (purchaseRow) {
@@ -207,18 +231,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
       setCurrentCurrency(currency);
     }
-  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action]);
+  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action, selectedSupplier]);
 
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string; submenuOption?: number } | null
   ) => {
-    // Check if this is a submenu action (options 1 or 2 require modal)
-    if (action && action.submenuOption !== undefined && action.submenuOption > 0) {
-      setSubmenuModalAction(action);
-      setIsSubmenuModalOpen(true);
-      return;
-    }
-
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -255,6 +272,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       return;
     }
 
+    // Check if materials are selected for actions that require selection
     if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
@@ -263,6 +281,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
       });
       return;
     }
+
+    // For submenu actions, set the action directly to open GoMakeModal
+    // The submenuOption will be used to determine what to show in the modal
     if (
       action?.action === EMaterialsActions.UpdateIsActive ||
       action?.action === EMaterialsActions.UpdateIsInActive
@@ -436,6 +457,17 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const onUpdate = async () => {
     if (action !== null) {
+      // Handle submenu actions (options 0, 1, 2)
+      if (action.submenuOption !== undefined) {
+        await handleSubmenuAction({
+          submenuOption: action.submenuOption,
+          priceValue: updatedValue,
+          supplier: selectedSupplier,
+          currency: null,
+        }, action);
+        return;
+      }
+
       if (isAdmin) {
         if (action.key === "Duplicate") {
           duplicateMaterials();
@@ -541,7 +573,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
       }
       setAction(null);
       setIsAllMaterialsChecked(false);
-
+      setSelectedSupplier(null);
+      setUpdatedValue("");
     }
     else {
       alertFaultUpdate();
@@ -987,6 +1020,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setProperty(null);
     setUpdatedValue(null);
     setProperties([initialProperties]);
+    setSelectedSupplier(null);
   };
 
   // Supplier fetching functions
@@ -1028,6 +1062,14 @@ const useMaterialsActions = (isAdmin: boolean) => {
     priceValue?: string;
     supplier?: any;
     currency?: any;
+  }, currentAction: {
+    action: EMaterialsActions;
+    key: string;
+    text?: string;
+    parameterKey?: string;
+    isInventoryTable?: boolean;
+    isPurchasePricingTable?: boolean;
+    submenuOption?: number;
   }) => {
     if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
@@ -1039,17 +1081,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
 
     const { submenuOption, priceValue, supplier, currency } = data;
-    const isCurrencyAction = submenuModalAction?.action === EMaterialsActions.UpdateCurrency;
+    const isCurrencyAction = currentAction?.action === EMaterialsActions.UpdateCurrency;
+
+    // For currency actions, the value is already in updatedValue (set by updateModalCurrency)
+    // For price actions, we use the priceValue parameter
+    const finalUpdatedValue = isCurrencyAction ? updatedValue : priceValue;
 
     // Build request body based on submenu option
     const requestBody: any = {
       materialTypeKey: materialType?.toString(),
       categoryKey: materialCategory?.toString(),
       ids: selectedMaterialsIds,
-      action: submenuModalAction?.action,
-      key: submenuModalAction?.key,
+      action: currentAction?.action,
+      key: currentAction?.key,
       priceIndex: 0,
-      updatedValue: isCurrencyAction ? (currency?.value || "") : (priceValue || ""),
+      updatedValue: finalUpdatedValue,
       isUpdatePrices: checkedPrice,
       exchangeRate: rate,
       package: 0,
@@ -1101,7 +1147,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
           [],
           supplierId
         ).then();
-        handleCloseSubmenuModal();
+        // Close the GoMakeModal
+        handleCloseModal();
       } else {
         alertFaultUpdate();
       }

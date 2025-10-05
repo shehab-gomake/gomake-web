@@ -7,6 +7,7 @@ import { useMaterialsActions } from "@/widgets/materials-widget/components/actio
 import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { useStyle } from "./style";
 import { AddPlusIcon, CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { DeleteMenuIcon } from "@/pages/admin/products/parameters/widget/more-circle/icons/delete-menu";
@@ -16,7 +17,6 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { ModalType } from "@/enums";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { SubmenuActionModal } from "../submenu-action-modal/submenu-action-modal";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 interface IActionMenuProps {
@@ -120,13 +120,8 @@ const ActionMenu = (props: IActionMenuProps) => {
 
   const handleSubmenuItemClick = (submenuOption: number) => {
     if (currentSubmenuAction) {
-      if (submenuOption === 0) {
-        // Update Default Sale Cost - works as before
-        onChooseAction(currentSubmenuAction);
-      } else {
-        // Options 1 & 2 need supplier selection - will be handled by modal
-        onChooseAction({ ...currentSubmenuAction, submenuOption });
-      }
+      // All submenu options should go through the same flow with submenuOption
+      onChooseAction({ ...currentSubmenuAction, submenuOption });
     }
     handleSubmenuClose();
     handleCloseMenu();
@@ -231,16 +226,46 @@ const ActionMenu = (props: IActionMenuProps) => {
           >
             {action?.action === EMaterialsActions.UpdateCurrency ? (
               <div style={clasess.UpdateCurrencyView}>
-                <GoMakeAutoComplate
-                  style={{ width: "100%" }}
-                  value={updatedValue}
-                  options={currencies}
-                  onChange={(e, value) => {
-                    updateModalCurrency(value?.value)
-                  }}
-                  disableClearable
-                  placeholder={t("materials.inputs.chooseCurrency")}
-                />
+                {/* Supplier Selection - Show for submenu options 1 and 2 */}
+                {(action?.submenuOption === 1 || action?.submenuOption === 2) && (
+                  <div style={{ width: "100%" }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
+                      {t("materials.childTable.supplier")}
+                      <IconButton onClick={() => setOpenSupplierModal(true)} size="small">
+                        <AddPlusIcon />
+                      </IconButton>
+                    </div>
+                    <ClientAutocomplete
+                      key={selectedSupplier?.id}
+                      clientType={CLIENT_TYPE.SUPPLIER}
+                      onChange={(e: any, supplier: any) => setSelectedSupplier(supplier)}
+                      options={renderOptionsSupplier || []}
+                      placeholder={t("materials.childTable.selectSupplier")}
+                      style={{ width: "100%" }}
+                      value={selectedSupplier}
+                      onChangeTextField={checkWhatRenderArraySupplier}
+                      loading={isFetchingSupplier}
+                      getOptionLabel={(option: any) => `${option.name}`}
+                    />
+                  </div>
+                )}
+
+                <div style={{ width: "100%" }}>
+                  <div style={{ marginBottom: 8, fontWeight: 500 }}>
+                    {t("materials.childTable.currency")}
+                  </div>
+                  <GoMakeAutoComplate
+                    style={{ width: "100%" }}
+                    value={updatedValue}
+                    options={currencies}
+                    onChange={(e, value) => {
+                      updateModalCurrency(value?.value)
+                    }}
+                    disableClearable
+                    placeholder={t("materials.inputs.chooseCurrency")}
+                  />
+                </div>
+
                 <div style={clasess.priceCheckedContainer}>
                   <Checkbox
                     icon={<CheckboxIcon />}
@@ -352,21 +377,54 @@ const ActionMenu = (props: IActionMenuProps) => {
             ) : (
               <div style={{
                 display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start",
-                alignContent: "flex-start", width: "100%",
+                alignContent: "flex-start", width: "100%", gap: 15,
               }}>
                 {action?.action === EMaterialsActions.CreatePurchaseOrder && <div style={{ marginBottom: 10, marginTop: 15 }}>{t("boardMissions.package")}</div>}
-                <GomakeTextInput
-                  onChange={(e) => onTextInputChange(e.target.value)}
-                  value={updatedValue}
-                  type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
-                  style={{
-                    height: "100%",
-                    borderBottom: !updatedValue ? "1px solid red" : "1px solid blue",
-                    boxShadow: "none",
-                    WebkitBoxShadow: "none",
 
-                  }}
-                />
+                {/* Supplier Selection - Show for submenu options 1 and 2 */}
+                {(action?.submenuOption === 1 || action?.submenuOption === 2) && (
+                  <div style={{ width: "100%" }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
+                      {t("materials.childTable.supplier")}
+                      <IconButton onClick={() => setOpenSupplierModal(true)} size="small">
+                        <AddPlusIcon />
+                      </IconButton>
+                    </div>
+                    <ClientAutocomplete
+                      key={selectedSupplier?.id}
+                      clientType={CLIENT_TYPE.SUPPLIER}
+                      onChange={(e: any, supplier: any) => setSelectedSupplier(supplier)}
+                      options={renderOptionsSupplier || []}
+                      placeholder={t("materials.childTable.selectSupplier")}
+                      style={{ width: "100%" }}
+                      value={selectedSupplier}
+                      onChangeTextField={checkWhatRenderArraySupplier}
+                      loading={isFetchingSupplier}
+                      getOptionLabel={(option: any) => `${option.name}`}
+                    />
+                  </div>
+                )}
+
+                <div style={{ width: "100%" }}>
+                  {action?.submenuOption !== undefined && (
+                    <div style={{ marginBottom: 8, fontWeight: 500 }}>
+                      {t("materials.childTable.price")}
+                    </div>
+                  )}
+                  <GomakeTextInput
+                    onChange={(e) => onTextInputChange(e.target.value)}
+                    value={updatedValue}
+                    type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : action?.submenuOption !== undefined ? "number" : undefined}
+                    placeholder={action?.submenuOption !== undefined ? t("reports.enterPrice") : undefined}
+                    style={{
+                      height: 40,
+                      borderBottom: !updatedValue ? "1px solid red" : "1px solid blue",
+                      boxShadow: "none",
+                      WebkitBoxShadow: "none",
+                      width: "100%",
+                    }}
+                  />
+                </div>
               </div>
 
             )}
@@ -374,6 +432,10 @@ const ActionMenu = (props: IActionMenuProps) => {
               onClick={onUpdate}
               sx={{ width: "100%" }}
               variant={"contained"}
+              disabled={
+                !updatedValue ||
+                ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
+              }
             >
               {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
             </SecondaryButton>
@@ -389,25 +451,6 @@ const ActionMenu = (props: IActionMenuProps) => {
         yesBtn={t("documentingSettings.update")}
         onClickDelete={updatedTableRowModal}
       />
-
-      {/* Submenu Action Modal */}
-      {isSubmenuModalOpen && submenuModalAction && (
-        <SubmenuActionModal
-          isOpen={isSubmenuModalOpen}
-          onClose={handleCloseSubmenuModal}
-          onSubmit={handleSubmenuAction}
-          t={t}
-          actionText={submenuModalAction.text}
-          actionType={submenuModalAction.action}
-          submenuOption={submenuModalAction.submenuOption || 0}
-          selectedSupplier={selectedSupplier}
-          setSelectedSupplier={setSelectedSupplier}
-          renderOptionsSupplier={renderOptionsSupplier}
-          checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
-          isFetchingSupplier={isFetchingSupplier}
-          setOpenSupplierModal={setOpenSupplierModal}
-        />
-      )}
 
       {/* Supplier Add Modal */}
       <CustomerCardWidget
