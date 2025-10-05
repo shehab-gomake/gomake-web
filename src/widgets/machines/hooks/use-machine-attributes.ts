@@ -66,12 +66,11 @@ const useMachineAttributes = () => {
             machineState.attributes?.lifeExpectancyYears !==0 && 
             machineState.attributes?.monthlyMaintenanceCost !==0 && 
             machineState.attributes?.monthlyCostOfSpace !==0 && 
-            machineState.attributes?.electricityCostPerWorkingHour !==0 &&
-            machineState.attributes?.workingDaysAmountInWeek !==0) {
+            machineState.attributes?.electricityCostPerWorkingHour !==0) {
             return machineState?.price?.price /
-                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * (4.35 * +machineState.attributes?.workingDaysAmountInWeek) * 12) +
-                +machineState.attributes?.monthlyMaintenanceCost / ((4.35 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours) +
-                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / ((4.35 * +machineState.attributes?.workingDaysAmountInWeek) * +machineState.attributes?.dailyProductivityInHours);
+                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * (4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * 12) +
+                +machineState.attributes?.monthlyMaintenanceCost / ((4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * +machineState.attributes?.dailyProductivityInHours) +
+                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / ((4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * +machineState.attributes?.dailyProductivityInHours);
         }
         return 0
     };
