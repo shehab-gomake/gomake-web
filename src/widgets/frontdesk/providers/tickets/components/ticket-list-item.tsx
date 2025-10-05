@@ -47,8 +47,14 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
     ticket.status === 'OPEN'
   );
 
-  // Get participants from assignee and manager
+  // Get participants from creator, assignee and manager
   const participants = [
+    ticket.creator && {
+      userId: ticket.creator.id,
+      name: ticket.creator.name,
+      email: ticket.creator.email,
+      avatarUrl: undefined,
+    },
     ticket.assignee && {
       userId: ticket.assignee.id,
       name: ticket.assignee.name,
@@ -76,6 +82,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       isChecked={checked}
       isUnread={isUnread}
       participants={participants}
+      tags={ticket.tags || []} // Display tags
       onClick={handleClick}
       onCheck={onCheck ? handleCheck : undefined}
     />

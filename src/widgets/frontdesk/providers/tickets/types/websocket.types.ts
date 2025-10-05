@@ -209,19 +209,11 @@ export type MessageDeliveryFailedHandler = (payload: MessageDeliveryFailedPayloa
 // ============================================
 
 /**
- * Event: conversation.needs.review 
+ * Event: conversation.needs.review
  * When: Message received but no ticket exists
+ * NOTE: ConversationNeedsReviewPayload is exported from api.types.ts
  */
-export interface ConversationNeedsReviewPayload {
-  channel: ChannelType;
-  identifier: string; // email or phone
-  subject?: string;
-  content: string;
-  preview: string; // First 100 chars
-  metadata: Record<string, any>;
-  printHouseId: string;
-  timestamp: string;
-}
+import type { ConversationNeedsReviewPayload } from './api.types';
 
 export type ConversationNeedsReviewHandler = (payload: ConversationNeedsReviewPayload) => void;
 

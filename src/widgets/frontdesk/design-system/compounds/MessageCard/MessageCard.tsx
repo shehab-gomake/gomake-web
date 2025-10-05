@@ -1,11 +1,14 @@
-import React from 'react';
-import { Box, Avatar, Typography, IconButton, Stack } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Avatar, Typography, IconButton, Stack, Collapse } from '@mui/material';
 import { colorTokens, radiusTokens, semanticShadows } from '../../tokens';
 import { ChannelBadge, CommunicationChannel, MessageDirection } from '../../primitives/Badge/ChannelBadge';
 import { MessageStatusIndicator, MessageStatus } from '../../primitives/Badge/MessageStatusIndicator';
 import { AttachmentCard } from '../AttachmentCard';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ReplyIcon from '@mui/icons-material/Reply';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import CodeIcon from '@mui/icons-material/Code';
 import { format, parseISO } from 'date-fns';
 
 export interface MessageCardProps {
@@ -37,6 +40,9 @@ export interface MessageCardProps {
 
   /** Message content */
   content: string;
+
+  /** Content type - if provided, overrides auto-detection */
+  contentType?: 'text' | 'html' | 'markdown';
 
   /** Timestamp */
   timestamp: string;
@@ -75,6 +81,37 @@ const getChannelColors = (channel: CommunicationChannel) => {
 };
 
 /**
+ * Detects if content is HTML
+ */
+const isHtmlContent = (content: string): boolean => {
+  // Check for common HTML tags
+  const htmlPattern = /<\/?[a-z][\s\S]*>/i;
+  return htmlPattern.test(content);
+};
+
+/**
+ * Decodes HTML entities in a string (reusing email logic)
+ */
+const decodeHtmlEntities = (text: string): string => {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+};
+
+/**
+ * Safely decodes HTML entities
+ */
+const safeDecodeHtml = (text?: string): string => {
+  if (!text) return '';
+  try {
+    return decodeHtmlEntities(text);
+  } catch (error) {
+    console.warn('Failed to decode HTML entities:', error);
+    return text;
+  }
+};
+
+/**
  * MessageCard Component
  *
  * Unified message display for multi-channel ticket communication.
@@ -89,6 +126,7 @@ export const MessageCard: React.FC<MessageCardProps> = ({
   author,
   recipient,
   content,
+  contentType,
   timestamp,
   attachments,
   isPrivate = false,
@@ -99,6 +137,18 @@ export const MessageCard: React.FC<MessageCardProps> = ({
   const channelColors = getChannelColors(channel);
   const isOutbound = direction === 'outbound';
   const isPrivateNote = channel === 'private_note';
+
+  // Collapse state for HTML email content - start expanded so content shows
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  // Determine if content is HTML - prefer explicit contentType, fallback to detection
+  const isHtml = contentType === 'html' || (contentType === undefined && isHtmlContent(content));
+  const isEmail = channel === 'email';
+
+  // Show collapse toggle for HTML emails with content
+  const hasContent = content && content.trim().length > 0;
+  // Disable collapse for consistent display across all channels in tickets
+  const shouldShowCollapseToggle = false;
 
   // Determine if this is an AI/automated response
   const isAIResponse = author.name.toLowerCase().includes('ai') || author.name.toLowerCase().includes('bot');
@@ -189,18 +239,141 @@ export const MessageCard: React.FC<MessageCardProps> = ({
             }),
           }}
         >
-          <Typography
-            variant="body2"
-            sx={{
-              fontSize: 14,
-              color: colorTokens.semantic.text.primary,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              lineHeight: 1.6,
-            }}
-          >
-            {content}
-          </Typography>
+          {/* Message Content */}
+          {hasContent ? (
+            shouldShowCollapseToggle ? (
+              <Collapse in={isExpanded} collapsedSize={80}>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    '& p': {
+                      margin: 0,
+                      marginBottom: 1,
+                      '&:last-child': {
+                        marginBottom: 0,
+                      },
+                    },
+                    '& a': {
+                      color: colorTokens.primary[600],
+                      textDecoration: 'none',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    },
+                    fontSize: 14,
+                    color: colorTokens.semantic.text.primary,
+                    lineHeight: 1.6,
+                    whiteSpace: isHtml ? 'normal' : 'pre-wrap',
+                    wordBreak: 'break-word',
+                    ...(!isExpanded && {
+                      overflow: 'hidden',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '40px',
+                        background: `linear-gradient(to bottom, transparent, ${isOutbound ? colorTokens.primary[50] : '#FFFFFF'})`,
+                      },
+                    }),
+                  }}
+                  dangerouslySetInnerHTML={isHtml ? {
+                    __html: content,
+                  } : undefined}
+                >
+                  {!isHtml && content}
+                </Box>
+              </Collapse>
+            ) : (
+              <Box
+                sx={{
+                  '& p': {
+                    margin: 0,
+                    marginBottom: 1,
+                    '&:last-child': {
+                      marginBottom: 0,
+                    },
+                  },
+                  '& a': {
+                    color: colorTokens.primary[600],
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  },
+                  fontSize: 14,
+                  color: colorTokens.semantic.text.primary,
+                  lineHeight: 1.6,
+                  whiteSpace: isHtml ? 'normal' : 'pre-wrap',
+                  wordBreak: 'break-word',
+                }}
+                dangerouslySetInnerHTML={isHtml ? {
+                  __html: content,
+                } : undefined}
+              >
+                {!isHtml && content}
+              </Box>
+            )
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: 13,
+                color: colorTokens.semantic.text.tertiary,
+                fontStyle: 'italic',
+              }}
+            >
+              (No message content)
+            </Typography>
+          )}
+
+          {/* Show More/Less Button for HTML Email */}
+          {shouldShowCollapseToggle && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mt: 1.5,
+                pt: 1.5,
+                borderTop: `1px solid ${colorTokens.neutral[200]}`,
+              }}
+            >
+              <Box
+                onClick={() => setIsExpanded(!isExpanded)}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.75,
+                  cursor: 'pointer',
+                  px: 2,
+                  py: 0.75,
+                  borderRadius: '6px',
+                  transition: 'background-color 0.2s',
+                  '&:hover': {
+                    backgroundColor: colorTokens.neutral[100],
+                  },
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: colorTokens.primary[700],
+                  }}
+                >
+                  {isExpanded ? 'Show Less' : 'Show Full Email'}
+                </Typography>
+                {isExpanded ? (
+                  <ExpandLessIcon sx={{ fontSize: 16, color: colorTokens.primary[700] }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ fontSize: 16, color: colorTokens.primary[700] }} />
+                )}
+              </Box>
+            </Box>
+          )}
 
           {/* Attachments */}
           {attachments && attachments.length > 0 && (

@@ -42,6 +42,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { TicketWithDetails } from '../types/api.types';
 import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
+import { isApproachingSLA, isOverdueSLA } from '../utils/sla-helpers';
 import {
   Chip,
   PriorityBadge,
@@ -50,14 +51,22 @@ import {
   MessageCard,
   SystemEventMessage,
   MessageComposer,
-  colorTokens
+  colorTokens,
+  TagInput,
+  TagList,
+  PopularTags,
 } from '@/widgets/frontdesk/design-system';
+import { Alert } from '@mui/material';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
   onClose: () => void;
   onReply?: (content: string) => void;
   onStatusChange?: (status: string) => void;
+  onAddTags?: (tags: string[]) => void;
+  onRemoveTag?: (tagId: string) => void;
+  onSuggestTags?: (query: string) => Promise<any[]>;
+  popularTags?: any[];
 }
 
 const formatDateTime = (dateString: string) => {
@@ -68,7 +77,11 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   ticket,
   onClose,
   onReply,
-  onStatusChange
+  onStatusChange,
+  onAddTags,
+  onRemoveTag,
+  onSuggestTags,
+  popularTags = [],
 }) => {
   const theme = useTheme();
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
@@ -369,6 +382,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                         avatarUrl: undefined,
                       }}
                       content={message.content}
+                      contentType={message.metadata?.hasHtml ? 'html' : undefined}
                       timestamp={message.createdAt}
                       attachments={[]}
                       isPrivate={false}
@@ -637,6 +651,26 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           p: 2
         }}
       >
+        {/* Created By */}
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
+            Created By
+          </Typography>
+          {ticket.creator ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+              <Avatar sx={{ width: 32, height: 32 }}>{ticket.creator.name.charAt(0)}</Avatar>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.creator.name}</Typography>
+                <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.creator.email}</Typography>
+              </Box>
+            </Box>
+          ) : (
+            <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary }}>
+              Unknown
+            </Typography>
+          )}
+        </Box>
+
         {/* Priority */}
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
@@ -672,6 +706,22 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.assignee.name}</Typography>
                 <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.assignee.email}</Typography>
+
+                {/* Self-assigned badge */}
+                {ticket.assigneeId === ticket.createdBy && (
+                  <Chip
+                    label="Self-assigned"
+                    size="small"
+                    sx={{
+                      height: 18,
+                      fontSize: 10,
+                      mt: 0.5,
+                      backgroundColor: colorTokens.primary[100],
+                      color: colorTokens.primary[700],
+                      fontWeight: 600
+                    }}
+                  />
+                )}
               </Box>
             </Box>
           ) : (
@@ -716,6 +766,27 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             Due Date
           </Typography>
           <TextField fullWidth size="small" type="date" value={ticket.sla?.resolutionDue ? ticket.sla.resolutionDue.split('T')[0] : ''} />
+
+          {/* SLA breach warning */}
+          {ticket.sla?.breached && (
+            <Alert severity="error" sx={{ mt: 1, py: 0.5 }}>
+              SLA Breached {ticket.sla.breachedAt && `at ${format(parseISO(ticket.sla.breachedAt), 'MMM d, h:mm a')}`}
+            </Alert>
+          )}
+
+          {/* SLA approaching warning (within 1 hour) */}
+          {!ticket.sla?.breached && ticket.sla?.resolutionDue && isApproachingSLA(ticket.sla.resolutionDue) && (
+            <Alert severity="warning" sx={{ mt: 1, py: 0.5 }}>
+              Due soon
+            </Alert>
+          )}
+
+          {/* SLA overdue but not marked breached */}
+          {!ticket.sla?.breached && ticket.sla?.resolutionDue && isOverdueSLA(ticket.sla.resolutionDue) && (
+            <Alert severity="error" sx={{ mt: 1, py: 0.5 }}>
+              Overdue
+            </Alert>
+          )}
         </Box>
 
         {/* Reporter */}
@@ -724,22 +795,66 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             Reporter
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
-            <Avatar sx={{ width: 32, height: 32 }}>{(ticket.customerName || ticket.customerEmail || 'C').charAt(0)}</Avatar>
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>{ticket.customerName || ticket.customerEmail || 'Unknown'}</Typography>
-              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>{ticket.customerEmail || ticket.customerPhone || 'No contact'}</Typography>
+            <Avatar sx={{ width: 32, height: 32 }}>{(ticket.customerName || ticket.customerEmail?.split('@')[0] || 'C').charAt(0).toUpperCase()}</Avatar>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {ticket.customerName || ticket.customerEmail?.split('@')[0] || 'Unknown'}
+              </Typography>
+              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
+                {ticket.customerEmail || ticket.customerPhone || 'No contact'}
+              </Typography>
             </Box>
           </Box>
         </Box>
 
         {/* Tags */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Tags
           </Typography>
-          <Button size="small" startIcon={<AddIcon />} sx={{ textTransform: 'none' }}>
-            Add Tag
-          </Button>
+
+          {/* Popular Tags Quick-Add */}
+          {onAddTags && popularTags && popularTags.length > 0 && (
+            <PopularTags
+              tags={popularTags}
+              selectedTags={ticket.tags || []}
+              onTagClick={(tagName) => {
+                if (onAddTags) {
+                  onAddTags([tagName]);
+                }
+              }}
+              maxDisplay={6}
+              showTitle={true}
+            />
+          )}
+
+          {/* Show existing tags */}
+          {ticket.tags && ticket.tags.length > 0 && (
+            <Box sx={{ mb: 1.5 }}>
+              <TagList
+                tags={ticket.tags}
+                onRemoveTag={onRemoveTag}
+                size="small"
+                variant="filled"
+              />
+            </Box>
+          )}
+
+          {/* Always-Visible Tag Input */}
+          {onAddTags && onSuggestTags && (
+            <TagInput
+              tags={ticket.tags || []}
+              onSuggest={onSuggestTags}
+              onAdd={(tagNames) => {
+                onAddTags(tagNames);
+              }}
+              onRemove={(tagId) => {
+                if (onRemoveTag) onRemoveTag(tagId);
+              }}
+              popularTags={popularTags}
+              maxTags={10}
+            />
+          )}
         </Box>
 
         <Divider sx={{ my: 3 }} />

@@ -7,6 +7,7 @@ import { PriorityBadge, PriorityLevel } from '../../primitives/Badge/PriorityBad
 import { TicketTypeBadge, TicketType } from '../../primitives/Badge/TicketTypeBadge';
 import { colorTokens, semanticSpacing } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { TagList } from '../../components/TagChip';
 
 export interface TicketListItemProps {
   /** Ticket ID */
@@ -31,6 +32,8 @@ export interface TicketListItemProps {
   isUnread?: boolean;
   /** Participants */
   participants?: Array<{ userId: string; name: string; avatarUrl?: string }>;
+  /** Tags */
+  tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
   /** Check handler */
@@ -70,6 +73,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   isChecked = false,
   isUnread = false,
   participants = [],
+  tags = [],
   onClick,
   onCheck,
 }) => {
@@ -157,7 +161,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
           </Typography>
         </Stack>
 
-        {/* Footer Row - Priority + Participants + Unread */}
+        {/* Footer Row - Priority + Participants + Tags + Unread */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
           <Stack direction="row" alignItems="center" gap={1}>
             {/* Priority Badge */}
@@ -166,6 +170,16 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
             {/* Participants - Show only if present */}
             {participants.length > 0 && (
               <AvatarGroup users={participants} size="xs" max={2} />
+            )}
+
+            {/* Tags - Show max 2 */}
+            {tags && tags.length > 0 && (
+              <TagList
+                tags={tags as any}
+                size="small"
+                variant="outlined"
+                maxDisplay={2}
+              />
             )}
           </Stack>
 

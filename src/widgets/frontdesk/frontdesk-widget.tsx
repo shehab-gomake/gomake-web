@@ -108,6 +108,14 @@ const FrontdeskWidget: React.FC = () => {
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
+  // Load popular tags when tickets view is shown
+  useEffect(() => {
+    if (frontdeskRoute === 'tickets' && ticketsProvider.popularTags.length === 0) {
+      ticketsProvider.fetchPopularTags({ limit: 10 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frontdeskRoute]);
+
   // Only sync with route on initial load
   useEffect(() => {
     if (!isInitialized) {
@@ -569,6 +577,21 @@ const FrontdeskWidget: React.FC = () => {
                       await ticketsProvider.updateTicketStatus(ticketsProvider.selectedTicket.id, status as any);
                     }
                   }}
+                  onAddTags={async (tagNames) => {
+                    if (ticketsProvider.selectedTicket) {
+                      await ticketsProvider.addTagsToTicket(ticketsProvider.selectedTicket.id, tagNames);
+                    }
+                  }}
+                  onRemoveTag={async (tagId) => {
+                    if (ticketsProvider.selectedTicket) {
+                      await ticketsProvider.removeTagFromTicket(ticketsProvider.selectedTicket.id, tagId);
+                    }
+                  }}
+                  onSuggestTags={async (query) => {
+                    await ticketsProvider.suggestTags(query, 10);
+                    return ticketsProvider.tagSuggestions;
+                  }}
+                  popularTags={ticketsProvider.popularTags}
                 />
               ) : (
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>

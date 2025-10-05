@@ -39,6 +39,9 @@ export * from './primitives';
 // Compounds
 export * from './compounds';
 
+// Components (specialized)
+export * from './components';
+
 // Layouts
 export * from './layouts';
 

@@ -130,8 +130,8 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
               borderRadius: 1,
               backgroundColor: theme.palette.background.paper,
               '&:hover': {
-                backgroundColor: colorTokens.semantic.background.surface.hover,
-                borderColor: colorTokens.semantic.border.hover,
+                backgroundColor: colorTokens.semantic.background.secondary,
+                borderColor: colorTokens.semantic.border.focus,
               },
             }}
           >

@@ -23,6 +23,33 @@ export type ChannelType = 'EMAIL' | 'WHATSAPP' | 'SMS' | 'PUSH';
 
 export type MessageDirection = 'INBOUND' | 'OUTBOUND';
 
+export type TagCategory =
+  | 'GENERAL'
+  | 'PRIORITY'
+  | 'DEPARTMENT'
+  | 'STATUS'
+  | 'CUSTOMER'
+  | 'PRODUCT';
+
+// ============================================
+// Tag System
+// ============================================
+
+export interface Tag {
+  id: string;
+  printHouseId: string;
+  name: string; // normalized (lowercase)
+  displayName: string; // preserves original case
+  color?: string | null; // hex color (#FF5733)
+  category: TagCategory;
+  description?: string | null;
+  usageCount: number;
+  isSystem: boolean;
+  createdBy?: string | null;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
 // ============================================
 // Core Ticket Model
 // ============================================
@@ -41,7 +68,7 @@ export interface Ticket {
   assigneeId?: string | null;
   managerId?: string | null;
   categoryId?: string | null;
-  tags: string[];
+  tags: Tag[]; // Full tag objects with metadata
   firstResponseAt?: string | null;
   resolvedAt?: string | null;
   closedAt?: string | null;
@@ -50,6 +77,10 @@ export interface Ticket {
   mergedIntoId?: string | null;
   // Origin tracking
   originProviderChannelId: string;
+  // Creator and assignment tracking
+  createdBy: string; // User ID who created the ticket
+  assignedBy?: string | null; // User ID who assigned the ticket
+  assignedAt?: string | null; // When the ticket was assigned
   createdAt: string;
   updatedAt: string;
 }
@@ -59,6 +90,12 @@ export interface Ticket {
 // ============================================
 
 export interface TicketWithDetails extends Ticket {
+  // Creator details (populated from createdBy)
+  creator?: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
   assignee?: {
     id: string;
     name: string;
@@ -147,6 +184,7 @@ export interface TicketFilters {
   assigneeId?: string;
   managerId?: string;
   categoryId?: string;
+  createdBy?: string; // Filter by ticket creator
   customerEmail?: string;
   customerPhone?: string;
   tags?: string[];
@@ -169,6 +207,7 @@ export interface CreateFromConversationDto {
   priority?: TicketPriority; // default MEDIUM
   categoryId?: string;
   assigneeId?: string; // Optional: Auto-assign to agent
+  customerId?: string; // Optional: GoMake customer ID
 }
 
 export interface ReplyTicketDto {
@@ -371,4 +410,85 @@ export interface ApiErrorResponse {
   error: string;
   message?: string;
   statusCode?: number;
+}
+
+// ============================================
+// Tag Management DTOs
+// ============================================
+
+/**
+ * Add tags to a ticket (auto-creates if needed)
+ * POST /api/tickets/:id/tags
+ */
+export interface AddTagsDto {
+  tags: string[]; // Array of tag names (1-10)
+}
+
+/**
+ * Create a tag manually (admin/manager)
+ * POST /api/tickets/tags
+ */
+export interface CreateTagDto {
+  name: string;
+  displayName?: string;
+  color?: string; // hex color
+  category?: TagCategory;
+  description?: string;
+}
+
+/**
+ * Update tag properties (admin/manager)
+ * PATCH /api/tickets/tags/:tagId
+ */
+export interface UpdateTagDto {
+  displayName?: string;
+  color?: string;
+  category?: TagCategory;
+  description?: string;
+}
+
+/**
+ * Remove tag from ticket
+ * DELETE /api/tickets/:id/tags/:tagId
+ */
+export interface RemoveTagDto {
+  tagId: string;
+}
+
+/**
+ * Autocomplete suggestions
+ * GET /api/tickets/tags/suggest?query=...
+ */
+export interface SuggestTagsQueryDto {
+  query: string;
+  limit?: number; // default 10
+  category?: TagCategory;
+}
+
+/**
+ * List tags with filters
+ * GET /api/tickets/tags?category=...
+ */
+export interface ListTagsQueryDto {
+  category?: TagCategory;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * Get popular tags
+ * GET /api/tickets/tags/popular
+ */
+export interface GetPopularTagsQueryDto {
+  category?: TagCategory;
+  limit?: number; // default 10
+}
+
+/**
+ * Tag list response
+ */
+export interface TagsListResponse {
+  tags: Tag[];
+  pagination?: PaginationMetadata;
 }

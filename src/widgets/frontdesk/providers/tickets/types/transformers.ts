@@ -167,7 +167,7 @@ export function transformApiTicketToUi(apiTicket: ApiTicket): UiTicket {
 
     // Organization
     project: apiTicket.printHouseId,
-    tags: apiTicket.tags,
+    tags: apiTicket.tags as any,
 
     // Dates
     createdAt: apiTicket.createdAt,

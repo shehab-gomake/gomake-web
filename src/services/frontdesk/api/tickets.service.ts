@@ -31,6 +31,13 @@ import {
   ProvidersResponse,
   ProviderChannel,
   ProviderChannelsResponse,
+  Tag,
+  AddTagsDto,
+  CreateTagDto,
+  UpdateTagDto,
+  ListTagsQueryDto,
+  GetPopularTagsQueryDto,
+  TagsListResponse,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
 const TICKETS_BASE_URL = '/tickets';
@@ -54,6 +61,7 @@ export class TicketsService extends MessagingHubHttpClient {
     if (filters?.assigneeId) params.append('assigneeId', filters.assigneeId);
     if (filters?.managerId) params.append('managerId', filters.managerId);
     if (filters?.categoryId) params.append('categoryId', filters.categoryId);
+    if (filters?.createdBy) params.append('createdBy', filters.createdBy);
     if (filters?.customerEmail) params.append('customerEmail', filters.customerEmail);
     if (filters?.customerPhone) params.append('customerPhone', filters.customerPhone);
     if (filters?.tags && filters.tags.length > 0) {
@@ -297,6 +305,119 @@ export class TicketsService extends MessagingHubHttpClient {
   async getProviderChannelById(channelId: string): Promise<ProviderChannel> {
     return await this.get<ProviderChannel>(
       `${PROVIDER_CHANNELS_URL}/${encodeURIComponent(channelId)}`
+    );
+  }
+
+  // ============================================
+  // Tag Management
+  // ============================================
+
+  /**
+   * List All Tags (with optional filters)
+   * GET /api/tickets/tags?category=PRIORITY&search=urgent
+   */
+  async listTags(query?: ListTagsQueryDto): Promise<Tag[]> {
+    const params = new URLSearchParams();
+
+    if (query?.category) params.append('category', query.category);
+    if (query?.search) params.append('search', query.search);
+    if (query?.page) params.append('page', query.page.toString());
+    if (query?.limit) params.append('limit', query.limit.toString());
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const response = await this.get<TagsListResponse | Tag[]>(`${TICKETS_BASE_URL}/tags${queryString}`);
+
+    // Handle both response formats
+    if (Array.isArray(response)) {
+      return response;
+    }
+    return response.tags || [];
+  }
+
+  /**
+   * Get Popular Tags
+   * GET /api/tickets/tags/popular?limit=10
+   */
+  async getPopularTags(query?: GetPopularTagsQueryDto): Promise<Tag[]> {
+    const params = new URLSearchParams();
+
+    if (query?.category) params.append('category', query.category);
+    if (query?.limit) params.append('limit', query.limit.toString());
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return await this.get<Tag[]>(`${TICKETS_BASE_URL}/tags/popular${queryString}`);
+  }
+
+  /**
+   * Suggest Tags (Autocomplete)
+   * GET /api/tickets/tags/suggest?query=bu&limit=5
+   */
+  async suggestTags(query: string, limit?: number, category?: string): Promise<Tag[]> {
+    const params = new URLSearchParams();
+    params.append('query', query);
+    if (limit) params.append('limit', limit.toString());
+    if (category) params.append('category', category);
+
+    return await this.get<Tag[]>(`${TICKETS_BASE_URL}/tags/suggest?${params.toString()}`);
+  }
+
+  /**
+   * Create Tag (Admin/Manager)
+   * POST /api/tickets/tags
+   */
+  async createTag(data: CreateTagDto): Promise<Tag> {
+    return await this.post<Tag>(`${TICKETS_BASE_URL}/tags`, data);
+  }
+
+  /**
+   * Update Tag (Admin/Manager)
+   * PATCH /api/tickets/tags/:tagId
+   */
+  async updateTag(tagId: string, data: UpdateTagDto): Promise<Tag> {
+    return await this.patch<Tag>(
+      `${TICKETS_BASE_URL}/tags/${encodeURIComponent(tagId)}`,
+      data
+    );
+  }
+
+  /**
+   * Delete Tag (Admin/Manager)
+   * DELETE /api/tickets/tags/:tagId
+   */
+  async deleteTag(tagId: string): Promise<GenericSuccessResponse> {
+    return await this.delete<GenericSuccessResponse>(
+      `${TICKETS_BASE_URL}/tags/${encodeURIComponent(tagId)}`
+    );
+  }
+
+  /**
+   * Get Tags for a Ticket
+   * GET /api/tickets/:id/tags
+   */
+  async getTicketTags(ticketId: string): Promise<Tag[]> {
+    return await this.get<Tag[]>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/tags`
+    );
+  }
+
+  /**
+   * Add Tags to Ticket (auto-creates if needed)
+   * POST /api/tickets/:id/tags
+   */
+  async addTagsToTicket(ticketId: string, tags: string[]): Promise<Tag[]> {
+    return await this.post<Tag[]>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/tags`,
+      { tags }
+    );
+  }
+
+  /**
+   * Remove Tag from Ticket
+   * DELETE /api/tickets/:id/tags/:tagId
+   */
+  async removeTagFromTicket(ticketId: string, tagId: string): Promise<GenericSuccessResponse> {
+    return await this.delete<GenericSuccessResponse>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/tags/${encodeURIComponent(tagId)}`
     );
   }
 }

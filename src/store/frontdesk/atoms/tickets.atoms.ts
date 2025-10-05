@@ -8,6 +8,7 @@ import {
   TicketHistoryEntry,
   ConversationNeedsReviewPayload,
   transformApiTicketToUi,
+  Tag,
 } from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
 
@@ -94,6 +95,38 @@ export const relatedTicketsAtom = atom<RelatedTicket[]>({
 export const ticketHistoryAtom = atom<TicketHistoryEntry[]>({
   key: 'frontdesk.tickets.history',
   default: [],
+});
+
+/**
+ * All available tags
+ */
+export const tagsAtom = atom<Tag[]>({
+  key: 'frontdesk.tickets.tags',
+  default: [],
+});
+
+/**
+ * Popular/frequently used tags
+ */
+export const popularTagsAtom = atom<Tag[]>({
+  key: 'frontdesk.tickets.popularTags',
+  default: [],
+});
+
+/**
+ * Tag autocomplete suggestions
+ */
+export const tagSuggestionsAtom = atom<Tag[]>({
+  key: 'frontdesk.tickets.tagSuggestions',
+  default: [],
+});
+
+/**
+ * Tag loading state
+ */
+export const tagsLoadingAtom = atom<boolean>({
+  key: 'frontdesk.tickets.tagsLoading',
+  default: false,
 });
 
 /**
@@ -227,5 +260,28 @@ export const ticketCountsSelector = selector<Record<string, number>>({
       'unassigned': tickets.filter(t => !t.assigneeId).length,
       'all-tickets': tickets.length,
     };
+  },
+});
+
+/**
+ * Selector: Get tickets created by current user
+ */
+export const myCreatedTicketsSelector = selector<TicketWithDetails[]>({
+  key: 'frontdesk.tickets.myCreated',
+  get: ({ get }) => {
+    const tickets = get(ticketsAtom);
+    const currentUserId = get(currentUserIdAtom);
+    return tickets.filter(t => t.createdBy === currentUserId);
+  },
+});
+
+/**
+ * Selector: Get self-assigned tickets (where assignee is the creator)
+ */
+export const selfAssignedTicketsSelector = selector<TicketWithDetails[]>({
+  key: 'frontdesk.tickets.selfAssigned',
+  get: ({ get }) => {
+    const tickets = get(ticketsAtom);
+    return tickets.filter(t => t.assigneeId && t.assigneeId === t.createdBy);
   },
 });
