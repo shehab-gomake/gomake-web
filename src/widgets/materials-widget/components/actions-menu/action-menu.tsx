@@ -14,6 +14,7 @@ import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { ModalType } from "@/enums";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { SubmenuActionModal } from "../submenu-action-modal/submenu-action-modal";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -24,6 +25,8 @@ interface IActionMenuProps {
 const ActionMenu = (props: IActionMenuProps) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const {
     onChooseAction,
     action,
@@ -152,7 +155,7 @@ const ActionMenu = (props: IActionMenuProps) => {
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleCloseMenu}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        transformOrigin={{ horizontal: isRTL ? "left" : "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
       >
         {getMaterialActions()?.map((actionItem) => {
@@ -162,15 +165,25 @@ const ActionMenu = (props: IActionMenuProps) => {
                 style={clasess.menuItemContainer}
                 onClick={(e) => handleMenuItemClick(actionItem, e)}
               >
-                <div style={clasess.actionIconStyle}>
-                  {_renderIcons(actionItem.icon)}
+                <div style={clasess.menuItemContainer1}>
+                  {actionItem.isShowSubMenu ? (
+                    <>
+                      {
+                        isRTL ? <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} /> : <ChevronLeftIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
+                      }
+                    </>
+
+                  ) : <div style={{ width: 24, height: 24 }} />}
+                  <div style={clasess.actionIconStyle}>
+                    {_renderIcons(actionItem.icon)}
+                  </div>
+                  <div style={clasess.rowTextStyle}>
+                    {t("materialsActions." + actionItem.text)}
+                  </div>
+                  {/* {isRTL && actionItem.isShowSubMenu && (
+                    <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
+                  )} */}
                 </div>
-                <div style={clasess.rowTextStyle}>
-                  {t("materialsActions." + actionItem.text)}
-                </div>
-                {actionItem.isShowSubMenu && (
-                  <ChevronRightIcon sx={{ ml: "auto" }} />
-                )}
               </MenuItem>
               {actionItem?.isUnderLine && <Divider />}
             </React.Fragment>
@@ -183,17 +196,17 @@ const ActionMenu = (props: IActionMenuProps) => {
         open={Boolean(submenuAnchorEl)}
         anchorEl={submenuAnchorEl}
         onClose={handleSubmenuClose}
-        anchorOrigin={{ horizontal: "right", vertical: "top" }}
-        transformOrigin={{ horizontal: "left", vertical: "top" }}
+        anchorOrigin={{ horizontal: isRTL ? "right" : "left", vertical: "top" }}
+        transformOrigin={{ horizontal: isRTL ? "left" : "right", vertical: "top" }}
       >
-        <MenuItem onClick={() => handleSubmenuItemClick(0)}>
-          {t("materialsActions.submenu.updateDefaultSaleCost")}
+        <MenuItem onClick={() => handleSubmenuItemClick(0)} style={clasess.rowTextStyle}>
+          {t("materialsActions.updateDefaultSaleCost")}
         </MenuItem>
-        <MenuItem onClick={() => handleSubmenuItemClick(1)}>
-          {t("materialsActions.submenu.updateInventorySaleCost")}
+        <MenuItem onClick={() => handleSubmenuItemClick(1)} style={clasess.rowTextStyle}>
+          {t("materialsActions.updateInventorySaleCost")}
         </MenuItem>
-        <MenuItem onClick={() => handleSubmenuItemClick(2)}>
-          {t("materialsActions.submenu.updateSupplierPurchasePrice")}
+        <MenuItem onClick={() => handleSubmenuItemClick(2)} style={clasess.rowTextStyle}>
+          {t("materialsActions.updateSupplierPurchasePrice")}
         </MenuItem>
       </Menu>
       {action?.action === EMaterialsActions.Delete ?

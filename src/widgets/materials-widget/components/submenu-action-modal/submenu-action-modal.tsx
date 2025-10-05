@@ -97,11 +97,11 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
     const getSubmenuOptionLabel = () => {
         switch (submenuOption) {
             case 0:
-                return t("materialsActions.submenu.updateDefaultSaleCost");
+                return t("materialsActions.updateDefaultSaleCost");
             case 1:
-                return t("materialsActions.submenu.updateInventorySaleCost");
+                return t("materialsActions.updateInventorySaleCost");
             case 2:
-                return t("materialsActions.submenu.updateSupplierPurchasePrice");
+                return t("materialsActions.updateSupplierPurchasePrice");
             default:
                 return "";
         }
@@ -109,21 +109,9 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
 
     return (
         <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle>{t("materialsActions." + actionText)}</DialogTitle>
+            <DialogTitle>{getSubmenuOptionLabel() || t("materialsActions." + actionText)}</DialogTitle>
             <DialogContent>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
-                    {/* Display selected submenu option */}
-                    <Box sx={{
-                        padding: 2,
-                        backgroundColor: "#f5f5f5",
-                        borderRadius: 1,
-                        border: "1px solid #e0e0e0"
-                    }}>
-                        <div style={{ fontWeight: 600, fontSize: "14px", color: "#333" }}>
-                            {getSubmenuOptionLabel()}
-                        </div>
-                    </Box>
-
                     {/* Supplier Selection - Only show for options 1 and 2 */}
                     {(submenuOption === 1 || submenuOption === 2) && (
                         <Box>
@@ -160,7 +148,7 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
                                 onChange={(e) => setPriceValue(e.target.value)}
                                 value={priceValue}
                                 type="number"
-                                placeholder={t("materials.inputs.enterPrice")}
+                                placeholder={t("reports.enterPrice")}
                                 style={{
                                     width: "100%",
                                     height: 40,
