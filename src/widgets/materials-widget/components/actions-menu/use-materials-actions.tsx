@@ -26,7 +26,6 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import {
   getPrintHouseMaterialExcelFileApi,
-  updatePrintHouseMaterialsPropApi,
   updatePrintHouseMaterialsRowsApi,
   uploadPrintHouseMaterialExcelFileApi,
   updateSupplierInventoryApi,
@@ -1150,7 +1149,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
         // Close the GoMakeModal
         handleCloseModal();
       } else {
-        alertFaultUpdate();
+        if (res.message)
+          alertFault(res.message);
+        else {
+          alertFaultUpdate();
+        }
+
       }
     };
 
