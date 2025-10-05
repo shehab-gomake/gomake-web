@@ -273,7 +273,7 @@ const useBoardMissions = () => {
     setBoardsMissions(boards);
   }, []);
 
-  const getFilteredBoardsMissions = useCallback(() => {
+  const getFilteredBoardsMissionsOld = useCallback(() => {
     let boards = boardsMissions;
     if (machinesProgress && boardsMissions) {
       boards = addCurrentMachineName(boards);
@@ -284,6 +284,32 @@ const useBoardMissions = () => {
     return boards?.filter((boardMissions: IBoardMissions) => {
       return getCheckedMachines().some((m) =>
         Object.keys(boardMissions.machinesStatuses).includes(m.id)
+      );
+    });
+  }, [boardsMissions, machinesProgress, machines]);
+
+  const getFilteredBoardsMissions = useCallback(() => {
+    let boards = boardsMissions;
+    if (machinesProgress && boardsMissions) {
+      boards = addCurrentMachineName(boards);
+      boards = sortBoardMissionsByUrgent(boards);
+      boards = sortBoardMissionsByReady(boards);
+      boards = sortBoardMissionsByIsLate(boards);
+    }
+
+    return boards?.filter((boardMissions: IBoardMissions) => {
+      const mergedStatuses = {
+        ...(boardMissions.machinesStatuses ?? {}),
+        ...Object.assign(
+          {},
+          ...(boardMissions.splittedBoards ?? []).map(
+            (sb) => sb.machinesStatuses ?? {}
+          )
+        ),
+      };
+
+      return getCheckedMachines().some((m) =>
+        Object.keys(mergedStatuses).includes(m.id)
       );
     });
   }, [boardsMissions, machinesProgress, machines]);
