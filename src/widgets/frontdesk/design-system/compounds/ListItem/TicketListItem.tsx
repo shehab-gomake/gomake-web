@@ -142,24 +142,21 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
           <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
         </Stack>
 
-        {/* Title Row with Type Icon */}
-        <Stack direction="row" alignItems="center" gap={0.75}>
-          {type && <TicketTypeBadge type={type} size="xs" />}
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: isUnread ? 600 : 500,
-              color: colorTokens.semantic.text.primary,
-              fontSize: 13,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              flex: 1,
-            }}
-          >
-            {title}
-          </Typography>
-        </Stack>
+        {/* Title Row */}
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: isUnread ? 600 : 500,
+            color: colorTokens.semantic.text.primary,
+            fontSize: 13,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flex: 1,
+          }}
+        >
+          {title}
+        </Typography>
 
         {/* Footer Row - Priority + Participants + Tags + Unread */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>

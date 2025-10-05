@@ -67,7 +67,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
 
   // Count tickets with unread messages (check if lastMessageAt is recent and no response)
   const unreadCount = tickets.filter(t =>
-    t.conversation.lastMessageAt &&
+    t.conversation?.lastMessageAt &&
     !t.firstResponseAt &&
     t.status === 'OPEN'
   ).length;

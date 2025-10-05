@@ -57,16 +57,22 @@ import {
   PopularTags,
 } from '@/widgets/frontdesk/design-system';
 import { Alert } from '@mui/material';
+import { TicketTimeline } from './ticket-timeline';
+import { RelatedTickets } from './related-tickets';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
   onClose: () => void;
   onReply?: (content: string) => void;
   onStatusChange?: (status: string) => void;
+  onPriorityChange?: (priority: string) => void;
   onAddTags?: (tags: string[]) => void;
   onRemoveTag?: (tagId: string) => void;
   onSuggestTags?: (query: string) => Promise<any[]>;
   popularTags?: any[];
+  ticketHistory?: any[];
+  relatedTickets?: any[];
+  onSelectRelatedTicket?: (ticketId: string) => void;
 }
 
 const formatDateTime = (dateString: string) => {
@@ -78,14 +84,19 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   onClose,
   onReply,
   onStatusChange,
+  onPriorityChange,
   onAddTags,
   onRemoveTag,
   onSuggestTags,
   popularTags = [],
+  ticketHistory = [],
+  relatedTickets = [],
+  onSelectRelatedTicket,
 }) => {
   const theme = useTheme();
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
+  const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
@@ -175,7 +186,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
               {/* Title */}
               <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5, fontSize: '1.25rem' }}>
-                {ticket.conversation.name || `Ticket #${ticket.ticketNumber}`}
+                {ticket.conversation?.name || `Ticket #${ticket.ticketNumber}`}
               </Typography>
               {/* Customer info */}
               {(ticket.customerName || ticket.customerEmail || ticket.customerPhone) && (
@@ -194,23 +205,6 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
               <IconButton size="small" onClick={(e) => setMoreMenuAnchor(e.currentTarget)}>
                 <MoreVertIcon fontSize="small" />
               </IconButton>
-
-              {/* Status Chip */}
-              <Box
-                onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
-                sx={{ cursor: 'pointer' }}
-              >
-                <Chip
-                  label={uiStatus}
-                  color={uiStatus === 'To Do' ? 'primary' : uiStatus === 'In Progress' ? 'warning' : uiStatus === 'Done' ? 'success' : 'error'}
-                  variant="soft"
-                  size="small"
-                  sx={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                />
-              </Box>
 
               <IconButton size="small" onClick={onClose}>
                 <CloseIcon fontSize="small" />
@@ -303,7 +297,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <ChatBubbleOutlineIcon sx={{ fontSize: 20, color: colorTokens.semantic.text.secondary }} />
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Conversation ({ticket.conversation.messages.length} messages)
+                    Conversation ({ticket.conversation?.messages?.length || 0} messages)
                   </Typography>
                 </Box>
                 <KeyboardArrowDownIcon sx={{ color: colorTokens.semantic.text.secondary }} />
@@ -342,7 +336,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 />
 
                 {/* Render messages and system events */}
-                {ticket.conversation.messages.map((message, index) => (
+                {ticket.conversation?.messages?.map((message, index) => (
                   <React.Fragment key={message.id}>
                     {/* Show assignment event if it's the first message */}
                     {index === 0 && ticket.assignee && (
@@ -390,7 +384,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   </React.Fragment>
                 ))}
 
-                {ticket.conversation.messages.length === 0 && (
+                {(!ticket.conversation?.messages || ticket.conversation.messages.length === 0) && (
                   <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       No messages yet
@@ -440,7 +434,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   Description
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.7, color: colorTokens.semantic.text.primary }}>
-                  {ticket.conversation.messages[0]?.content || 'No description available'}
+                  {ticket.conversation?.messages?.[0]?.content || 'No description available'}
                 </Typography>
               </Box>
 
@@ -518,7 +512,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                       }}
                     />
                     <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
-                      Resolve the customer's issue via {ticket.conversation.messages[0]?.channel || 'email'}
+                      Resolve the customer's issue via {ticket.conversation?.messages?.[0]?.channel || 'email'}
                     </Typography>
                   </Box>
                   <Box
@@ -671,12 +665,13 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           )}
         </Box>
 
-        {/* Priority */}
+        {/* Status */}
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
-            Priority
+            Status
           </Typography>
           <Box
+            onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -691,7 +686,41 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
               }
             }}
           >
-            <PriorityBadge priority={ticket.priority as 'Urgent' | 'High' | 'Medium' | 'Low'} mode="both" size="sm" showBackground={false} />
+            <Chip
+              label={uiStatus}
+              color={uiStatus === 'To Do' ? 'primary' : uiStatus === 'In Progress' ? 'warning' : uiStatus === 'Done' ? 'success' : 'error'}
+              variant="soft"
+              size="small"
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+              }}
+            />
+          </Box>
+        </Box>
+
+        {/* Priority */}
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
+            Priority
+          </Typography>
+          <Box
+            onClick={(e) => setPriorityMenuAnchor(e.currentTarget)}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              p: 1.5,
+              backgroundColor: colorTokens.neutral[50],
+              borderRadius: '6px',
+              border: `1px solid ${colorTokens.semantic.border.default}`,
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: colorTokens.neutral[100],
+              }
+            }}
+          >
+            <PriorityBadge priority={uiPriority as 'Urgent' | 'High' | 'Medium' | 'Low'} mode="both" size="sm" showBackground={false} />
           </Box>
         </Box>
 
@@ -893,6 +922,41 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </AccordionDetails>
         </Accordion>
 
+        {/* Customer History - Show Previous Tickets */}
+        <Accordion elevation={0} defaultExpanded={relatedTickets.length > 0} sx={{ '&:before': { display: 'none' } }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                CUSTOMER HISTORY
+              </Typography>
+              {relatedTickets.length > 0 && (
+                <Box
+                  sx={{
+                    backgroundColor: colorTokens.primary[100],
+                    color: colorTokens.primary[800],
+                    borderRadius: '10px',
+                    px: 0.75,
+                    py: 0.25,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    minWidth: 18,
+                    textAlign: 'center',
+                  }}
+                >
+                  {relatedTickets.length}
+                </Box>
+              )}
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RelatedTickets
+              relatedTickets={relatedTickets}
+              onTicketClick={onSelectRelatedTicket}
+              maxDisplay={5}
+            />
+          </AccordionDetails>
+        </Accordion>
+
         <Accordion elevation={0} defaultExpanded={0 > 0} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -941,18 +1005,34 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </AccordionDetails>
         </Accordion>
 
-        <Accordion elevation={0} defaultExpanded={false} sx={{ '&:before': { display: 'none' } }}>
+        {/* Activity History Timeline */}
+        <Accordion elevation={0} defaultExpanded={ticketHistory.length > 0} sx={{ '&:before': { display: 'none' } }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-              HISTORY
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                ACTIVITY HISTORY
+              </Typography>
+              {ticketHistory.length > 0 && (
+                <Box
+                  sx={{
+                    backgroundColor: colorTokens.primary[100],
+                    color: colorTokens.primary[800],
+                    borderRadius: '10px',
+                    px: 0.75,
+                    py: 0.25,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    minWidth: 18,
+                    textAlign: 'center',
+                  }}
+                >
+                  {ticketHistory.length}
+                </Box>
+              )}
+            </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
-                No activity yet
-              </Typography>
-            </Box>
+            <TicketTimeline history={ticketHistory} />
           </AccordionDetails>
         </Accordion>
       </Box>
@@ -974,10 +1054,104 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
         open={Boolean(statusMenuAnchor)}
         onClose={() => setStatusMenuAnchor(null)}
       >
-        <MenuItem>To Do</MenuItem>
-        <MenuItem>In Progress</MenuItem>
-        <MenuItem>Done</MenuItem>
-        <MenuItem>Blocked</MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onStatusChange) {
+              onStatusChange('OPEN');
+            }
+            setStatusMenuAnchor(null);
+          }}
+        >
+          To Do (Open)
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onStatusChange) {
+              onStatusChange('IN_PROGRESS');
+            }
+            setStatusMenuAnchor(null);
+          }}
+        >
+          In Progress
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onStatusChange) {
+              onStatusChange('PENDING');
+            }
+            setStatusMenuAnchor(null);
+          }}
+        >
+          Pending
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onStatusChange) {
+              onStatusChange('RESOLVED');
+            }
+            setStatusMenuAnchor(null);
+          }}
+        >
+          Done (Resolved)
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onStatusChange) {
+              onStatusChange('CLOSED');
+            }
+            setStatusMenuAnchor(null);
+          }}
+        >
+          Closed
+        </MenuItem>
+      </Menu>
+
+      {/* Priority Menu */}
+      <Menu
+        anchorEl={priorityMenuAnchor}
+        open={Boolean(priorityMenuAnchor)}
+        onClose={() => setPriorityMenuAnchor(null)}
+      >
+        <MenuItem
+          onClick={() => {
+            if (onPriorityChange) {
+              onPriorityChange('LOW');
+            }
+            setPriorityMenuAnchor(null);
+          }}
+        >
+          🟢 Low
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onPriorityChange) {
+              onPriorityChange('MEDIUM');
+            }
+            setPriorityMenuAnchor(null);
+          }}
+        >
+          🟡 Medium
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onPriorityChange) {
+              onPriorityChange('HIGH');
+            }
+            setPriorityMenuAnchor(null);
+          }}
+        >
+          🟠 High
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (onPriorityChange) {
+              onPriorityChange('URGENT');
+            }
+            setPriorityMenuAnchor(null);
+          }}
+        >
+          🔴 Urgent
+        </MenuItem>
       </Menu>
     </Box>
   );

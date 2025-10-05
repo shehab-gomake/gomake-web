@@ -222,7 +222,7 @@ export const filteredTicketsSelector = selector<TicketWithDetails[]>({
     if (searchQuery) {
       return tickets.filter(
         t =>
-          t.conversation.name.toLowerCase().includes(searchQuery) ||
+          t.conversation?.name?.toLowerCase().includes(searchQuery) ||
           t.ticketNumber.toString().includes(searchQuery) ||
           t.customerEmail?.toLowerCase().includes(searchQuery) ||
           t.customerName?.toLowerCase().includes(searchQuery)

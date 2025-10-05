@@ -220,7 +220,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   }, [setSocketError, setSocketConnected]);
 
   // ============================================
-  // WebSocket Event Handlers (14 Events )
+  // WebSocket Event Handlers (19 Events)
   // ============================================
 
   // Set up event handlers when socket is connected
@@ -446,14 +446,84 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       // toast.info(`New ${payload.channel} message from ${payload.identifier}`);
     });
 
-    console.log("[TicketsProvider] All 15 WebSocket event handlers registered ");
+    // 16. ticket.tags.added - Fetch updated ticket to get tags
+    ticketSocketService.onTicketTagsAdded((payload) => {
+      console.log("[TicketsProvider] Tags added to ticket:", payload.ticketId, payload.tagIds);
+
+      // Fetch updated ticket to get full tag objects
+      fetchTicketById(payload.ticketId);
+    });
+
+    // 17. ticket.tag.removed - Remove tag from ticket
+    ticketSocketService.onTicketTagRemoved((payload) => {
+      console.log("[TicketsProvider] Tag removed from ticket:", payload.ticketId, payload.tagId);
+
+      // Remove tag from ticket in state
+      setTickets((prev) =>
+        prev.map((t) => {
+          if (t.id === payload.ticketId) {
+            return {
+              ...t,
+              tags: t.tags.filter((tag) => tag.id !== payload.tagId),
+            };
+          }
+          return t;
+        })
+      );
+    });
+
+    // 18. tag.created - Add new tag to global tags list
+    ticketSocketService.onTagCreated((payload) => {
+      console.log("[TicketsProvider] New tag created:", payload.tag.name);
+
+      // Add to global tags list
+      setTags((prev) => {
+        // Avoid duplicates
+        if (prev.some((t) => t.id === payload.tag.id)) {
+          return prev;
+        }
+        return [...prev, payload.tag];
+      });
+
+      // Also add to popular tags if it doesn't exist
+      setPopularTags((prev) => {
+        if (prev.some((t) => t.id === payload.tag.id)) {
+          return prev;
+        }
+        return [...prev, payload.tag];
+      });
+    });
+
+    // 19. tag.deleted - Remove tag from global list and all tickets
+    ticketSocketService.onTagDeleted((payload) => {
+      console.log("[TicketsProvider] Tag deleted:", payload.tagId);
+
+      // Remove from global tags list
+      setTags((prev) => prev.filter((t) => t.id !== payload.tagId));
+
+      // Remove from popular tags
+      setPopularTags((prev) => prev.filter((t) => t.id !== payload.tagId));
+
+      // Remove from tag suggestions
+      setTagSuggestions((prev) => prev.filter((t) => t.id !== payload.tagId));
+
+      // Remove from all tickets that have this tag
+      setTickets((prev) =>
+        prev.map((ticket) => ({
+          ...ticket,
+          tags: ticket.tags.filter((tag) => tag.id !== payload.tagId),
+        }))
+      );
+    });
+
+    console.log("[TicketsProvider] All 19 WebSocket event handlers registered");
 
     // Cleanup function
     return () => {
       console.log("[TicketsProvider] Cleaning up WebSocket event handlers");
       // Note: ticketSocketService handles cleanup internally
     };
-  }, [selectedTicketId, setTickets]);
+  }, [selectedTicketId, setTickets, setTags, setPopularTags, setTagSuggestions, setReviewQueueConversations]);
 
   // ============================================
   // API Actions - Core
@@ -542,14 +612,15 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       try {
         await ticketsService.updateTicketStatus(ticketId, status);
         console.log("[TicketsProvider] Status updated successfully");
-        // Status will be updated via WebSocket event
+        // Refresh tickets to get updated data
+        await refreshTickets();
       } catch (err: any) {
         console.error("[TicketsProvider] Update status error:", err);
         setError(err.message || "Failed to update status");
-        throw err;
+        // Don't throw - let error be handled gracefully
       }
     },
-    [setError]
+    [setError, refreshTickets]
   );
 
   const updateTicketPriority = useCallback(
@@ -557,11 +628,12 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       try {
         await ticketsService.updateTicketPriority(ticketId, priority);
         console.log("[TicketsProvider] Priority updated successfully");
+        // Refresh tickets to get updated data
         await refreshTickets();
       } catch (err: any) {
         console.error("[TicketsProvider] Update priority error:", err);
         setError(err.message || "Failed to update priority");
-        throw err;
+        // Don't throw - let error be handled gracefully
       }
     },
     [setError, refreshTickets]

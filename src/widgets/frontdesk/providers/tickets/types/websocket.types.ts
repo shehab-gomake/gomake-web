@@ -2,14 +2,14 @@
  * WebSocket Event Types for Tickets System
  * Source: /Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/realtime-and-webhooks.md
  *
- * All 12 real-time events for ticketing system.
+ * All 19 real-time events for ticketing system (15 core + 4 tag events).
  * Events are broadcast to organization room: `org:${printHouseId}`
  */
 
-import { TicketWithDetails, ChannelType } from './api.types';
+import { TicketWithDetails, ChannelType, Tag } from './api.types';
 
 // ============================================
-// WebSocket Event Payloads (12 Events)
+// WebSocket Event Payloads (19 Events)
 // ============================================
 
 /**
@@ -175,13 +175,54 @@ export interface MessageDeliveredPayload {
 }
 
 /**
- * Event: message.delivery.failed 
+ * Event: message.delivery.failed
  * When: Message send failed after all retries
  */
 export interface MessageDeliveryFailedPayload {
   messageId: string;
   ticketId?: string;
   error: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.tags.added
+ * When: Tags added to a ticket
+ */
+export interface TicketTagsAddedPayload {
+  ticketId: string;
+  tagIds: string[];
+  userId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.tag.removed
+ * When: Tag removed from a ticket
+ */
+export interface TicketTagRemovedPayload {
+  ticketId: string;
+  tagId: string;
+  userId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: tag.created
+ * When: New tag created
+ */
+export interface TagCreatedPayload {
+  tag: Tag;
+  printHouseId: string;
+  userId: string;
+}
+
+/**
+ * Event: tag.deleted
+ * When: Tag deleted
+ */
+export interface TagDeletedPayload {
+  tagId: string;
   printHouseId: string;
 }
 
@@ -203,6 +244,10 @@ export type TicketAutoResponseHandler = (payload: TicketAutoResponsePayload) => 
 export type WebhookMessageProcessedHandler = (payload: WebhookMessageProcessedPayload) => void;
 export type MessageDeliveredHandler = (payload: MessageDeliveredPayload) => void;
 export type MessageDeliveryFailedHandler = (payload: MessageDeliveryFailedPayload) => void;
+export type TicketTagsAddedHandler = (payload: TicketTagsAddedPayload) => void;
+export type TicketTagRemovedHandler = (payload: TicketTagRemovedPayload) => void;
+export type TagCreatedHandler = (payload: TagCreatedPayload) => void;
+export type TagDeletedHandler = (payload: TagDeletedPayload) => void;
 
 // ============================================
 // Event Names (constants for type safety)
@@ -235,6 +280,11 @@ export const TICKET_EVENTS = {
   MESSAGE_DELIVERY_FAILED: 'message.delivery.failed',
   // Review Queue Event
   CONVERSATION_NEEDS_REVIEW: 'conversation.needs.review',
+  // Tag Events
+  TAGS_ADDED: 'ticket.tags.added',
+  TAG_REMOVED: 'ticket.tag.removed',
+  TAG_CREATED: 'tag.created',
+  TAG_DELETED: 'tag.deleted',
 } as const;
 
 export type TicketEventName = typeof TICKET_EVENTS[keyof typeof TICKET_EVENTS];

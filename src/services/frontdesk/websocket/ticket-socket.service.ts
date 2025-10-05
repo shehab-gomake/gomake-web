@@ -26,6 +26,10 @@ import {
   MessageDeliveredPayload,
   MessageDeliveryFailedPayload,
   ConversationNeedsReviewPayload,
+  TicketTagsAddedPayload,
+  TicketTagRemovedPayload,
+  TagCreatedPayload,
+  TagDeletedPayload,
   TicketCreatedHandler,
   TicketAssignedHandler,
   TicketStatusChangedHandler,
@@ -41,6 +45,10 @@ import {
   MessageDeliveredHandler,
   MessageDeliveryFailedHandler,
   ConversationNeedsReviewHandler,
+  TicketTagsAddedHandler,
+  TicketTagRemovedHandler,
+  TagCreatedHandler,
+  TagDeletedHandler,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
 class TicketSocketService {
@@ -83,13 +91,13 @@ class TicketSocketService {
   }
 
   // ============================================
-  // Event Registration (14 Ticket Events )
+  // Event Registration (19 Ticket Events)
   // ============================================
 
   private registerAllEvents(): void {
     if (!this.socket) return;
 
-    // Register all 12 ticket events
+    // Register all 12 core ticket events
     this.socket.on(TICKET_EVENTS.CREATED, this.handleTicketCreated.bind(this));
     this.socket.on(TICKET_EVENTS.ASSIGNED, this.handleTicketAssigned.bind(this));
     this.socket.on(TICKET_EVENTS.STATUS_CHANGED, this.handleTicketStatusChanged.bind(this));
@@ -110,7 +118,13 @@ class TicketSocketService {
     // Review queue event
     this.socket.on(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, this.handleConversationNeedsReview.bind(this));
 
-    console.log('[TicketSocket] Registered all 15 ticket event listeners ');
+    // Tag events
+    this.socket.on(TICKET_EVENTS.TAGS_ADDED, this.handleTicketTagsAdded.bind(this));
+    this.socket.on(TICKET_EVENTS.TAG_REMOVED, this.handleTicketTagRemoved.bind(this));
+    this.socket.on(TICKET_EVENTS.TAG_CREATED, this.handleTagCreated.bind(this));
+    this.socket.on(TICKET_EVENTS.TAG_DELETED, this.handleTagDeleted.bind(this));
+
+    console.log('[TicketSocket] Registered all 19 ticket event listeners');
   }
 
   private removeAllTicketListeners(): void {
@@ -204,6 +218,27 @@ class TicketSocketService {
   private handleConversationNeedsReview(payload: ConversationNeedsReviewPayload): void {
     console.log('[TicketSocket] conversation.needs.review:', payload);
     this.emit(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, payload);
+  }
+
+  // Tag event handlers
+  private handleTicketTagsAdded(payload: TicketTagsAddedPayload): void {
+    console.log('[TicketSocket] ticket.tags.added:', payload);
+    this.emit(TICKET_EVENTS.TAGS_ADDED, payload);
+  }
+
+  private handleTicketTagRemoved(payload: TicketTagRemovedPayload): void {
+    console.log('[TicketSocket] ticket.tag.removed:', payload);
+    this.emit(TICKET_EVENTS.TAG_REMOVED, payload);
+  }
+
+  private handleTagCreated(payload: TagCreatedPayload): void {
+    console.log('[TicketSocket] tag.created:', payload);
+    this.emit(TICKET_EVENTS.TAG_CREATED, payload);
+  }
+
+  private handleTagDeleted(payload: TagDeletedPayload): void {
+    console.log('[TicketSocket] tag.deleted:', payload);
+    this.emit(TICKET_EVENTS.TAG_DELETED, payload);
   }
 
   // ============================================
@@ -314,6 +349,34 @@ class TicketSocketService {
    */
   onConversationNeedsReview(handler: ConversationNeedsReviewHandler): void {
     this.on(TICKET_EVENTS.CONVERSATION_NEEDS_REVIEW, handler);
+  }
+
+  /**
+   * Subscribe to ticket.tags.added event
+   */
+  onTicketTagsAdded(handler: TicketTagsAddedHandler): void {
+    this.on(TICKET_EVENTS.TAGS_ADDED, handler);
+  }
+
+  /**
+   * Subscribe to ticket.tag.removed event
+   */
+  onTicketTagRemoved(handler: TicketTagRemovedHandler): void {
+    this.on(TICKET_EVENTS.TAG_REMOVED, handler);
+  }
+
+  /**
+   * Subscribe to tag.created event
+   */
+  onTagCreated(handler: TagCreatedHandler): void {
+    this.on(TICKET_EVENTS.TAG_CREATED, handler);
+  }
+
+  /**
+   * Subscribe to tag.deleted event
+   */
+  onTagDeleted(handler: TagDeletedHandler): void {
+    this.on(TICKET_EVENTS.TAG_DELETED, handler);
   }
 
   // ============================================

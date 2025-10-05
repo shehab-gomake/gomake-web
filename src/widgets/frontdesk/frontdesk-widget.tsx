@@ -529,7 +529,7 @@ const FrontdeskWidget: React.FC = () => {
                               flex: 1
                             }}
                           >
-                            {tabTicket.conversation.name || `Ticket #${tabTicket.ticketNumber}`}
+                            {tabTicket.conversation?.name || `Ticket #${tabTicket.ticketNumber}`}
                           </Typography>
                         </Box>
                         <IconButton
@@ -577,6 +577,11 @@ const FrontdeskWidget: React.FC = () => {
                       await ticketsProvider.updateTicketStatus(ticketsProvider.selectedTicket.id, status as any);
                     }
                   }}
+                  onPriorityChange={async (priority) => {
+                    if (ticketsProvider.selectedTicket) {
+                      await ticketsProvider.updateTicketPriority(ticketsProvider.selectedTicket.id, priority as any);
+                    }
+                  }}
                   onAddTags={async (tagNames) => {
                     if (ticketsProvider.selectedTicket) {
                       await ticketsProvider.addTagsToTicket(ticketsProvider.selectedTicket.id, tagNames);
@@ -592,6 +597,11 @@ const FrontdeskWidget: React.FC = () => {
                     return ticketsProvider.tagSuggestions;
                   }}
                   popularTags={ticketsProvider.popularTags}
+                  ticketHistory={ticketsProvider.ticketHistory}
+                  relatedTickets={ticketsProvider.relatedTickets}
+                  onSelectRelatedTicket={(ticketId) => {
+                    ticketsProvider.setSelectedTicketId(ticketId);
+                  }}
                 />
               ) : (
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
