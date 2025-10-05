@@ -3,12 +3,13 @@ import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/a
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   materialsClientsState,
   materialsMachinesState,
+  showMoreFiltersState,
 } from "@/widgets/materials-widget/state";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { productsForDropDownList, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertTitleUnits, convertValueToImperial } from "@/utils/helpers";
@@ -37,8 +38,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
 
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-
-
+  const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
@@ -64,10 +64,17 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   }));
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+
+  const INITIAL_FILTERS_COUNT = 1;
+  const displayedFilters = showMore
+    ? materialTableFilters
+    : materialTableFilters?.slice(0, INITIAL_FILTERS_COUNT);
+  const hasMoreFilters = materialTableFilters && materialTableFilters.length > INITIAL_FILTERS_COUNT;
+
   return (
-    <Stack direction={"row"} gap={2} alignItems={"center"}>
-      {materialTableFilters &&
-        materialTableFilters.map(({ key, values, unit, name }) => {
+    <Stack direction={"row"} gap={2} alignItems={"center"} flexWrap={"wrap"}>
+      {displayedFilters &&
+        displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
           const convertedValues = unit
@@ -193,8 +200,56 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       ) : (
         <></>
       )}
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
 
+      {hasMoreFilters && (
+        <Box
+          onClick={() => setShowMore(!showMore)}
+          sx={{
+            padding: "6px 12px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "12px",
+            color: "#374151",
+            fontWeight: 500,
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            minHeight: "32px",
+            whiteSpace: "nowrap",
+            "&:hover": {
+              backgroundColor: "#e9ecef",
+            },
+          }}
+        >
+          {showMore ? (
+            <>
+              <span>{t("sales.quote.showLess")}</span>
+              <span style={{ fontSize: 10 }}>▲</span>
+            </>
+          ) : (
+            <>
+              <span>{t("sales.quote.showMore")}</span>
+              <span
+                style={{
+                  fontSize: 10,
+                  backgroundColor: "#d1d5db",
+                  color: "#6b7280",
+                  padding: "1px 4px",
+                  borderRadius: 3,
+                  fontWeight: 500,
+                }}
+              >
+                +{materialTableFilters.length - INITIAL_FILTERS_COUNT}
+              </span>
+              <span style={{ fontSize: 10 }}>▼</span>
+            </>
+          )}
+        </Box>
+      )}
+
+      <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {materialTableFilters && materialTableFilters?.length > 0 && <ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>

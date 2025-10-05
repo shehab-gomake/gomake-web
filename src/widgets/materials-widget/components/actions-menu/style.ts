@@ -28,12 +28,14 @@ const useStyle = () => {
       },
       insideStyle: { width: "85%" },
       menuItemContainer: {
+      
+      },
+      menuItemContainer1: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
-        paddingLeft: 15,
       },
       iconColor: primaryColor(300),
       menuTitleStyle: {

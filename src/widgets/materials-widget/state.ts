@@ -40,6 +40,7 @@ export const materialActionState = atom<
     action: EMaterialsActions;
     icon: string;
     isUnderLine: boolean;
+    isShowSubMenu?: boolean;
   }[]
 >({
   key: "materialActionState",
@@ -236,4 +237,9 @@ export const purchasePricingTableHeadingUnitsState = atom<{
 }>({
   key: "purchasePricingTableHeadingUnitsState",
   default: {},
+});
+
+export const showMoreFiltersState = atom<boolean>({
+  key: "showMoreFiltersState",
+  default: false,
 });

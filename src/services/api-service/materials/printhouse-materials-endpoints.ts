@@ -55,6 +55,8 @@ const UPDATE_PRINT_HOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/update-pri
 const UPDATE_PRINT_HOUSE_MATERIALS_ROWS_URL = "/v1/printhouse-materials/update-print-house-materials-rows";
 const UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/update-print-house-material-supplier";
 const ADD_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/add-print-house-material-supplier";
+const UPDATE_SUPPLIER_INVENTORIES_ACTION_URL = "/v1/printhouse-materials/update-supplier-inventories-action";
+const UPDATE_PRINTHOUSE_MATERIAL_SUPPLIERS_ACTION_URL = "/v1/printhouse-materials/update-printhouse-material-suppliers-action";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -515,6 +517,35 @@ const addPrintHouseMaterialSupplierApi: ICallAndSetData = async (
     data
   );
 };
+
+const updateSupplierInventoriesActionApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SUPPLIER_INVENTORIES_ACTION_URL,
+    callBack,
+    data
+  );
+};
+
+const updatePrintHouseMaterialSuppliersActionApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_PRINTHOUSE_MATERIAL_SUPPLIERS_ACTION_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -547,5 +578,8 @@ export {
   updatePrintHouseMaterialRowApi,
   updatePrintHouseMaterialsRowsApi,
   updatePrintHouseMaterialSupplierApi,
-  addPrintHouseMaterialSupplierApi
+  addPrintHouseMaterialSupplierApi,
+  // New supplier action APIs
+  updateSupplierInventoriesActionApi,
+  updatePrintHouseMaterialSuppliersActionApi
 };

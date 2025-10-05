@@ -18,7 +18,7 @@ const useStyle = () => {
 
       // Table container styles
       tableContainer: {
-        maxHeight: 800,
+        maxHeight: "calc(100vh - 200px)",
         width: '100%',
         overflowX: 'auto',
         overflowY: 'auto',
@@ -133,7 +133,7 @@ const useStyle = () => {
       scrollIndicatorButton: {
         position: 'absolute',
         top: '50%',
-        [isRTL ? 'left' : 'right']: `${3 * 96}px`, // Position at the start of fixed columns
+        [isRTL ? 'left' : 'right']: `${4 * (102)}px`, // Position at the start of fixed columns (4 columns)
         transform: 'translateY(-50%)',
         backgroundColor: primaryColor(500),
         color: '#fff',
@@ -167,14 +167,15 @@ const useStyle = () => {
   }, [theme, primaryColor, secondColor, isRTL, dir]);
 
   // Utility functions for dynamic styles
-  const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean) => ({
+  const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean, isLastFourthColumn: boolean) => ({
     textAlign: 'center',
     fontWeight: 'bold',
     whiteSpace: 'nowrap',
     padding: '4px',
     backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
+    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     ...(isFirstColumn && {
       position: "sticky",
       [isRTL ? 'right' : 'left']: 0,
@@ -182,21 +183,22 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      [isRTL ? 'left' : 'right']:  isLastSecondColumn?0?(headersLength-3):57: isLastColumn?0:180,
+      [isRTL ? 'left' : 'right']: isLastColumn ? 0 : isLastSecondColumn ? "57px" : isLastThirdColumn ? "180px" : isLastFourthColumn ? "303px" : "0px",
       zIndex: 105,
       boxShadow: index === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
-      [isRTL ? 'borderRight' : 'borderLeft']: index === headersLength - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
+      [isRTL ? 'borderRight' : 'borderLeft']: index === headersLength - 4 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
     })
   });
 
-  const getBodyCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, cellIndex: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean) => ({
+  const getBodyCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, cellIndex: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean, isLastFourthColumn: boolean) => ({
     textAlign: 'center',
     padding: '12px 8px',
     whiteSpace: 'nowrap',
     borderBottom: '1px solid #e0e0e0',
     position: 'relative',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ?isLastColumn?"auto": '123px' : 'auto',
+    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
+    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '123px' : 'auto',
     ...(isFirstColumn && {
       position: 'sticky',
       [isRTL ? 'right' : 'left']: 0,
@@ -205,11 +207,11 @@ const useStyle = () => {
     }),
     ...(isLastFixedColumn && {
       position: 'sticky',
-      [isRTL ? 'left' : 'right']: isLastSecondColumn?0?(headersLength-2):57: isLastColumn?0:180,
+      [isRTL ? 'left' : 'right']: isLastColumn ? "0px" : isLastSecondColumn ? "57px" : isLastThirdColumn ? "180px" : isLastFourthColumn ? "303px" : "0px",
       zIndex: 5,
       backgroundColor: '#fff',
       boxShadow: cellIndex === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
-      [isRTL ? 'borderRight' : 'borderLeft']: cellIndex === headersLength - 3 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
+      [isRTL ? 'borderRight' : 'borderLeft']: cellIndex === headersLength - 4 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
     })
   });
   

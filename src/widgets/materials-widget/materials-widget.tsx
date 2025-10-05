@@ -318,7 +318,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialFilter,
   ]);
   return (
-    <div>
+    <div style={{ overflow: "hidden" }}>
       <div style={classes.headerStyle}>
         <div
           style={{
@@ -327,6 +327,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             justifyContent: "flex-start",
             alignItems: "center",
             gap: 5,
+            width: "40%",
           }}
         >
           <PrimaryButton
@@ -353,15 +354,20 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {/* <EditIcon fontSize="small" /> */}
           </IconButton>
         </div>
-        <FiltersActionsBar
-          isAdmin={props.isAdmin}
-          subCategory={subCategory}
-          isFetchingSupplier={isFetchingSupplier}
-          renderOptionsSupplier={listSupplier}
-          checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
-
-
-        />
+        <div style={{
+          width: "60%",
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}>
+          <FiltersActionsBar
+            isAdmin={props.isAdmin}
+            subCategory={subCategory}
+            isFetchingSupplier={isFetchingSupplier}
+            renderOptionsSupplier={listSupplier}
+            checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+          />
+        </div>
       </div>
       {/* Absolute positioned sidebar overlay */}
       {isSidebarOpen && (

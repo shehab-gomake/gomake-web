@@ -26,11 +26,12 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import {
   getPrintHouseMaterialExcelFileApi,
-  updatePrintHouseMaterialsPropApi,
   updatePrintHouseMaterialsRowsApi,
   uploadPrintHouseMaterialExcelFileApi,
   updateSupplierInventoryApi,
-  updatePrintHouseMaterialSupplierApi
+  updatePrintHouseMaterialSupplierApi,
+  updateSupplierInventoriesActionApi,
+  updatePrintHouseMaterialSuppliersActionApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { filterNullFromArrays } from "@/utils/helpers";
 import {
@@ -62,6 +63,9 @@ import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import { CreateOrder } from "@/icons/material-tabs/create-order";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { useTableCellData } from "../table-cell-data/use-table-cell-data";
+import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useDebouncedCallback } from "use-debounce";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -72,6 +76,14 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // Submenu action states
+  const [isSubmenuModalOpen, setIsSubmenuModalOpen] = useState(false);
+  const [submenuModalAction, setSubmenuModalAction] = useState<any>(null);
+  const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+  const [listSupplier, setListSupplier] = useState([]);
+  const [isFetchingSupplier, setIsFetchingSupplier] = useState(false);
+  const [openSupplierModal, setOpenSupplierModal] = useState(false);
 
   // Get the table cell data functions for inventory updates
   const { updateInventoryTableData, updateMainTableData, updatePurchasePricingTableData } = useTableCellData(isAdmin, true, true);
@@ -92,6 +104,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     parameterKey?: string;
     isInventoryTable?: boolean;
     isPurchasePricingTable?: boolean;
+    submenuOption?: number;
   } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   useEffect(() => {
@@ -103,6 +116,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
+  console.log("currentCurrency", currentCurrency);
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
   const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
@@ -146,8 +160,30 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const myId = selectedMaterialsIds[0];
       let currency = null;
 
+      // For submenu options, determine the correct currency source
+      if (action?.submenuOption === 1) {
+        // Option 1: Update Inventory Sale Cost - get currency from inventory data
+        // Need to match both material ID and supplier ID
+        const inventoryRow = inventoryData?.find((row) =>
+          row.supplierId === selectedSupplier?.id
+        );
+        if (inventoryRow) {
+          currency = inventoryRow?.salePrice?.currency || inventoryRow?.purchasePrice?.currency;
+        }
+      } else if (action?.submenuOption === 2) {
+        // Option 2: Update Supplier Purchase Price - get currency from purchase pricing data
+        // Need to match printHouseMaterialId (material ID) and supplierId
+        const purchaseRow = purchasePricingData?.find((row) =>
+          row.supplierId === selectedSupplier?.id
+        );
+        if (purchaseRow) {
+          currency = purchaseRow?.currency ||
+            purchaseRow?.purchasePrice?.currency ||
+            purchaseRow?.rowData?.currency?.value;
+        }
+      }
       // Use action metadata to determine which table we're in
-      if (action?.isPurchasePricingTable) {
+      else if (action?.isPurchasePricingTable) {
         // We're specifically in purchase pricing table
         const purchaseRow = purchasePricingData?.find((row) => row.id === myId);
         if (purchaseRow) {
@@ -194,12 +230,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
       setCurrentCurrency(currency);
     }
-  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action]);
+  }, [selectedMaterialsIds, materialCategoryData, openChildTable, inventoryData, purchasePricingData, action, selectedSupplier]);
 
   const onChooseAction = async (
-    action: { action: EMaterialsActions; key: string } | null
+    action: { action: EMaterialsActions; key: string; submenuOption?: number } | null
   ) => {
-
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -236,6 +271,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       return;
     }
 
+    // Check if materials are selected for actions that require selection
     if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
@@ -244,6 +280,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
       });
       return;
     }
+
+    // For submenu actions, set the action directly to open GoMakeModal
+    // The submenuOption will be used to determine what to show in the modal
     if (
       action?.action === EMaterialsActions.UpdateIsActive ||
       action?.action === EMaterialsActions.UpdateIsInActive
@@ -417,6 +456,17 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const onUpdate = async () => {
     if (action !== null) {
+      // Handle submenu actions (options 0, 1, 2)
+      if (action.submenuOption !== undefined) {
+        await handleSubmenuAction({
+          submenuOption: action.submenuOption,
+          priceValue: updatedValue,
+          supplier: selectedSupplier,
+          currency: null,
+        }, action);
+        return;
+      }
+
       if (isAdmin) {
         if (action.key === "Duplicate") {
           duplicateMaterials();
@@ -522,7 +572,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
       }
       setAction(null);
       setIsAllMaterialsChecked(false);
-
+      setSelectedSupplier(null);
+      setUpdatedValue("");
     }
     else {
       alertFaultUpdate();
@@ -968,7 +1019,154 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setProperty(null);
     setUpdatedValue(null);
     setProperties([initialProperties]);
+    setSelectedSupplier(null);
   };
+
+  // Supplier fetching functions
+  const debouncedGetAllSuppliers = useDebouncedCallback((value: string) => {
+    getAllSuppliers(value);
+  }, 1200);
+
+  const getAllSuppliers = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetchingSupplier(true);
+      }
+      await getAndSetAllCustomers(callApi, setListSupplier, {
+        clientType: CLIENT_TYPE.SUPPLIER,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetchingSupplier(false);
+    },
+    []
+  );
+
+  const checkWhatRenderArraySupplier = (e: any) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      debouncedGetAllSuppliers.cancel();
+    } else {
+      debouncedGetAllSuppliers(value);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch suppliers when component mounts
+    getAllSuppliers();
+  }, []);
+
+  // Submenu action handlers
+  const handleSubmenuAction = async (data: {
+    submenuOption: number;
+    priceValue?: string;
+    supplier?: any;
+    currency?: any;
+  }, currentAction: {
+    action: EMaterialsActions;
+    key: string;
+    text?: string;
+    parameterKey?: string;
+    isInventoryTable?: boolean;
+    isPurchasePricingTable?: boolean;
+    submenuOption?: number;
+  }) => {
+    if (selectedMaterialsIds.length === 0) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.noMaterialsSelected"),
+        type: "error",
+      });
+      return;
+    }
+
+    const { submenuOption, priceValue, supplier, currency } = data;
+    const isCurrencyAction = currentAction?.action === EMaterialsActions.UpdateCurrency;
+
+    // For currency actions, the value is already in updatedValue (set by updateModalCurrency)
+    // For price actions, we use the priceValue parameter
+    const finalUpdatedValue = isCurrencyAction ? updatedValue : priceValue;
+
+    // Build request body based on submenu option
+    const requestBody: any = {
+      materialTypeKey: materialType?.toString(),
+      categoryKey: materialCategory?.toString(),
+      ids: selectedMaterialsIds,
+      action: currentAction?.action,
+      key: currentAction?.key,
+      priceIndex: 0,
+      updatedValue: finalUpdatedValue,
+      isUpdatePrices: checkedPrice,
+      exchangeRate: rate,
+      package: 0,
+      isDeleted: false,
+      uncheckedMaterials: [],
+      tableFilters: {
+        materialKey: materialType?.toString(),
+        categoryKey: materialCategory?.toString(),
+        supplierId: supplierId,
+        pageNumber: 0,
+        pageSize: 100,
+        isActive: activeFilter === EMaterialActiveFilter.ALL
+          ? null
+          : activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : false,
+        customFiltersKeyValueList: materialFilter,
+      },
+    };
+
+    let apiCall;
+    if (submenuOption === 0) {
+      // Update Default Sale Cost - existing behavior
+      apiCall = updatePrintHouseMaterialsRowsApi;
+    } else if (submenuOption === 1) {
+      // Update Inventory Sale Cost
+      if (!supplier) {
+        alertFault(t("materials.errors.pleaseSelectSupplier"));
+        return;
+      }
+      requestBody.supplierId = supplier.id;
+      apiCall = updateSupplierInventoriesActionApi;
+    } else if (submenuOption === 2) {
+      // Update Supplier Purchase Price
+      if (!supplier) {
+        alertFault(t("materials.errors.pleaseSelectSupplier"));
+        return;
+      }
+      requestBody.supplierId = supplier.id;
+      apiCall = updatePrintHouseMaterialSuppliersActionApi;
+    }
+
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          [],
+          supplierId
+        ).then();
+        // Close the GoMakeModal
+        handleCloseModal();
+      } else {
+        if (res.message)
+          alertFault(res.message);
+        else {
+          alertFaultUpdate();
+        }
+
+      }
+    };
+
+    await apiCall(callApi, callBack, requestBody);
+  };
+
+  const handleCloseSubmenuModal = () => {
+    setIsSubmenuModalOpen(false);
+    setSubmenuModalAction(null);
+    setSelectedSupplier(null);
+  };
+
   return {
     selectedMaterialsIds,
     onChooseAction,
@@ -1001,7 +1199,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
     CreatePurchaseOrder,
     openUpdatedTableRowModal,
     onClickCloseUpdatedTableRowModal,
-    updatedTableRowModal
+    updatedTableRowModal,
+    // Submenu handlers
+    handleSubmenuAction,
+    isSubmenuModalOpen,
+    submenuModalAction,
+    handleCloseSubmenuModal,
+    selectedSupplier,
+    setSelectedSupplier,
+    renderOptionsSupplier: listSupplier,
+    checkWhatRenderArraySupplier,
+    isFetchingSupplier,
+    setOpenSupplierModal,
+    openSupplierModal,
   };
 };
 
