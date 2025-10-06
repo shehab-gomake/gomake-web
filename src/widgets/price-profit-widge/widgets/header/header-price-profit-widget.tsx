@@ -9,6 +9,11 @@ import { predefinedRanges } from "@/utils/dateRanges";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { ExcelMenu } from "../excel-menu/excel-menu";
 import { ExceptionType } from "../../use-price-profit";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store/user";
+import { currencyUnitState } from "@/store/currency-units";
+import { Box } from "@mui/material";
+import { TotalCardComponent } from "@/pages-components/quotes/widgets/statistics-section/total-card";
 
 const PriceProfitHeaderWidget = ({
   actionList,
@@ -26,10 +31,22 @@ const PriceProfitHeaderWidget = ({
   handleRollback,
   isFixed,
   onClickDownloadExcel,
+  summaryData,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const pickerRef = useRef(null);
+  const currenciesUnits = useRecoilValue<any[]>(currencyUnitState);
+
+  // Currency formatting utilities
+  const numberFormatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const formatNumber = (value: number) => numberFormatter.format(value);
 
   const handleSelect = (date) => {
     if (!fromDate) {
@@ -49,6 +66,7 @@ const PriceProfitHeaderWidget = ({
           ? ` - ${action.label}`
           : ` - ${t("priceProfit.allActions")}`}
       </div>
+
       <div style={classes.buttonContainer}>
         <PrimaryButton
           variant={"outlined"}
@@ -95,6 +113,8 @@ const PriceProfitHeaderWidget = ({
             onSelect={handleSelect}
             value={fromDate && toDate ? [fromDate, toDate] : null}
             ranges={predefinedRanges}
+            placement={isRTL ? "bottomEnd" : "bottomStart"}
+            style={{ direction: dir }}
           />
         </div>
         <GoMakeAutoComplate
@@ -115,6 +135,7 @@ const PriceProfitHeaderWidget = ({
           profitsPricingTables &&
           profitsPricingTables.length > 0 && (
             <GoMakeAutoComplate
+              key={`${selectedPricingTable?.value}-selectedPricingTable`}
               options={(profitsPricingTables ?? [])
                 .filter(
                   (table) =>

@@ -19,8 +19,8 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 // Helper function to handle long text labels and apply tooltips
 const getLabelWithTooltip = (label: string) => {
-  if (label && label.length > 25) {
-    let shortLabel = label.substring(0, 28);
+  if (label && label.length > 17) {
+    let shortLabel = label.substring(0, 17);
     let lastSpace = shortLabel.lastIndexOf(" ");
     shortLabel = shortLabel.substring(0, lastSpace) + "...";
     return (
@@ -118,7 +118,7 @@ const DropDownListParameterWidget = ({
       data-tour={parameter?.id}
       style={
         parameter?.setSettingIcon && inModal
-          ? { ...clasess.dropDownListWithSettingIcon, minWidth: "250px" }
+          ? { ...clasess.dropDownListWithSettingIcon, }
           : clasess.dropDownListWithSettingIcon
       }
     >

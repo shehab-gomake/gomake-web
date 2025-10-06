@@ -26,6 +26,7 @@ export enum Permissions {
   ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
   CAN_SELECT_CLIENT_IN_HOME_PAGE = "CanSelectClientInHomePage",
   IS_CAN_CREATE_NEW_TEMPLATE = "IsCanCreateNewTemplate",
+  SHOW_URGENT_ORDER_CHECKBOX = "ShowUrgentOrderCheckBox",
 
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",

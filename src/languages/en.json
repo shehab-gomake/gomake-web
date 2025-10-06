@@ -1069,7 +1069,7 @@
     "electricityCostPerWorkingHour": "Electricity cost per working hour",
     "dailyProductivityInHours": "Daily productivity in hours",
     "lifeExpectancyYears": "Life expectancy years",
-    "printLife": "Print life",
+    "workingDaysAmountInWeek": "Working days amount in week",
     "minManpowerOperation": "Min manpower operation",
     "setupTimeMin": "Setup time",
     "resolution": "Resolution",

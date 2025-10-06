@@ -164,6 +164,7 @@ const StatusTableComponent = ({
     currentStationOrderingState
   );
 
+  const dropRef = useRef<HTMLDivElement>(null);
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -209,6 +210,10 @@ const StatusTableComponent = ({
     }),
     [status, boards]
   );
+
+  useEffect(() => {
+    drop(dropRef.current);
+  }, [drop]);
 
   // Optimized board filtering with memoization
   const getBoards = useCallback(() => {
@@ -301,7 +306,9 @@ const StatusTableComponent = ({
       Table: (props: any) => (
         <Table {...props} stickyHeader sx={{ tableLayout: "fixed" }} />
       ),
-      TableHead: TableHead,
+      TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+        <TableHead {...props} ref={ref} />
+      )),
       // IMPORTANT: do not override TableRow here; let Virtuoso manage rows
       TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
         <TableBody {...props} ref={ref} />
@@ -445,7 +452,7 @@ const StatusTableComponent = ({
   };
 
   return (
-    <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
+    <Stack ref={dropRef} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
       <Stack
         direction="row"
         alignItems="center"

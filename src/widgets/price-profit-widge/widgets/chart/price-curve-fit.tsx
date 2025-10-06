@@ -8,6 +8,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+// import zoomPlugin from "chartjs-plugin-zoom";
+
 ChartJS.register(
   PointElement,
   CategoryScale,
@@ -15,9 +17,12 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend
+  // zoomPlugin
 );
 
 import { useTranslation } from "react-i18next";
+import { Button, Box } from "@mui/material";
+import { useEffect, useRef } from "react";
 
 const PriceCurveFit = ({
   calculatedProfitsCosts = [],
@@ -32,8 +37,18 @@ const PriceCurveFit = ({
   pointsY = [],
   abnormalPointsX = [],
   abnormalPointsY = [],
+  isSummaryVisible = false,
 }) => {
   const { t } = useTranslation();
+  const chartRef =
+    useRef<ChartJS<"scatter", { x: any; y: any }[], unknown>>(null);
+
+  // ✅ Register zoom plugin only on client side
+  useEffect(() => {
+    import("chartjs-plugin-zoom").then((zoom) => {
+      ChartJS.register(zoom.default);
+    });
+  }, []);
 
   // Check if at least one fixed price is not zero
   const hasNonZerofixedProfits = fixedProfits.some(
@@ -84,19 +99,7 @@ const PriceCurveFit = ({
           },
         ]
       : []),
-    // 4) Cost vs Cost (diagonal helper) — optional
-    {
-      label: t("products.profits.cost"),
-      data: costLineX.map((x, i) => ({ x, y: costLineY[i] })),
-      borderColor: "rgba(153,102,255,1)",
-      backgroundColor: "rgba(153,102,255,0.2)",
-      fill: false,
-      borderWidth: 1,
-      tension: 0,
-      showLine: true,
-      pointRadius: 0,
-    },
-    // scatter points (if you add regression later)
+
     ...(pointsX.length
       ? [
           {
@@ -130,6 +133,31 @@ const PriceCurveFit = ({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: "xy" as const,
+        },
+        pan: {
+          enabled: true,
+          mode: "xy" as const,
+        },
+        limits: {
+          x: { min: 0 },
+          y: { min: 0 },
+        },
+      },
+    },
     scales: {
       x: {
         title: { display: true, text: t("pricingWidget.cost") },
@@ -146,7 +174,30 @@ const PriceCurveFit = ({
     },
   };
 
-  return <Scatter data={data} options={options} />;
+  // Dynamic height based on summary card visibility
+  const chartHeight = isSummaryVisible ? "57vh" : "70vh";
+
+  const resetZoom = () => {
+    if (chartRef.current) {
+      chartRef.current.resetZoom();
+    }
+  };
+
+  return (
+    <div style={{ width: "100%", height: chartHeight, position: "relative" }}>
+      <Box sx={{ display: "flex", padding: "0px 16px" }}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={resetZoom}
+          sx={{ fontSize: "0.75rem" }}
+        >
+          {t("pricingWidget.resetZoom")}
+        </Button>
+      </Box>
+      <Scatter ref={chartRef} data={data} options={options} />
+    </div>
+  );
 };
 
 export default PriceCurveFit;

@@ -11,7 +11,7 @@ export interface IDigitalPrintingMachine extends IMachine{
     dailyProductivityInHours: number;
     monthlyCostOfSpace: number
     lifeExpectancyYears: number;
-    printLife: number;
+    workingDaysAmountInWeek: number;
     minManpowerOperation: number;
     setupTimeMin: number;
     resolution: string;

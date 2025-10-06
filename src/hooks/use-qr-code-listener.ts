@@ -72,6 +72,9 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
               if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
                 const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
                 router.push(url);
+              } else if(res?.data?.qrCodeAction === QrCodeAction.OrderToReady){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
               }
            
             }
@@ -83,6 +86,9 @@ const useQrCodeListener = ({ qrCodeListenerFrom }: UseQrCodeListenerProps) => {
             }
             else {
               if(res?.data?.qrCodeAction === QrCodeAction.DELIVERY){
+                const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
+                router.push(url);
+              } else if(res?.data?.qrCodeAction === QrCodeAction.OrderToReady){
                 const url = `/orders?orderId=${res?.data?.orderId}&clientId=${res?.data?.clientId}&orderNumber=${res?.data?.orderNumber}&isComeFromQR=true`;
                 router.push(url);
               }

@@ -92,41 +92,21 @@ const SettingsFileApiWidget = () => {
                     lineHeight: "1.1",
                   }}
                 >
-                  <span>Download API</span>
+                  <span> {t("fileApiSettings.downloadFileServer")}</span>
                   <span
                     style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px" }}
                   >
-                    for Windows only
+                    {t("fileApiSettings.forWindowsOnly")}
                   </span>
                 </div>
               </PrimaryButton>
-
-              {/* Service Status Display */}
-              <div
-                style={{
-                  ...classes.statusDisplay,
-                  backgroundColor: statusDisplay.bgColor,
-                  color: statusDisplay.color,
-                  border: `1px solid ${statusDisplay.color}20`,
-                }}
-              >
-                <span>
-                  {t("fileApiSettings.fileServiceStatus")}: {statusDisplay.text}
-                  <div
-                    style={{
-                      ...classes.statusDot,
-                      backgroundColor: statusDisplay.dotColor,
-                    }}
-                  />
-                </span>
-              </div>
             </div>
           )}
         </div>
 
         <div className="custom-scrollbar" style={classes.scrollableContent}>
           <div style={classes.contentContainer}>
-            {/* Authorization Key Display - Moved to top */}
+            {/* Authorization Key Display */}
             {authorizationKey && (
               <div style={classes.authKeyContainer}>
                 <div style={classes.authKeyHeader}>

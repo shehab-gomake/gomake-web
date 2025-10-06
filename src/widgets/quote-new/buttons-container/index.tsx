@@ -470,7 +470,7 @@ const ButtonsContainer = ({
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
         )}
-        {isQuote && !isNewCreation && hasFilesInEachDocument && (
+        {isQuote && !isNewCreation  && (
           <SecondaryButton
             variant="outlined"
             startIcon={<AttachIcon />}

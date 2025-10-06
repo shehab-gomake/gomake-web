@@ -11,7 +11,7 @@ const useStyle = (isRtl: boolean) => {
     return {
       mainContainer: {
         position: "fixed",
-        bottom: 24,
+        top: 60,
         [isRtl ? "left" : "right"]: 24,
         width: 280,
         borderRadius: "16px",

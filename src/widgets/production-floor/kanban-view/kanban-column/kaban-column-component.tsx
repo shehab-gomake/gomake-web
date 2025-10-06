@@ -6,7 +6,7 @@ import { IProductionStatus } from "@/widgets/production-floor/interfaces/product
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
-import { useCallback } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useStyle } from "../kanban-card/style";
 import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
@@ -44,6 +44,7 @@ function KanbanColumnComponent({
     setStuckReason,
     onUpdateStuckReason,
   } = useSimpleApproveModal(updateStatus);
+  const dropRef = useRef<HTMLDivElement>(null);
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -78,6 +79,10 @@ function KanbanColumnComponent({
     [status, boardsMissions, stationId]
   );
 
+  useEffect(() => {
+    drop(dropRef.current);
+  }, [drop]);
+
   const getBoards = useCallback(() => {
     const filteredBoards = !!search
       ? boardsMissions?.filter(
@@ -101,7 +106,7 @@ function KanbanColumnComponent({
 
   return (
     <Stack
-      ref={drop}
+      ref={dropRef}
       gap={"10px"}
       minHeight={"100%"}
       maxHeight={"fit-content"}

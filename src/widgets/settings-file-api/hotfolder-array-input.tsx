@@ -65,6 +65,12 @@ const HotfolderArrayInput = ({
 
   const handleRemoveRow = (index: number) => {
     const newArray: any[] = [...value];
+
+    // Don't allow removing the last hotfolder if it's the only one
+    if (newArray.length === 1) {
+      return;
+    }
+
     newArray.splice(index, 1);
     updateState(parameterKey, newArray);
   };
@@ -124,9 +130,11 @@ const HotfolderArrayInput = ({
                           }}
                         />
                       ))}
-                      <RemoveSecondaryBtn
-                        onClick={() => handleRemoveRow(index)}
-                      />
+                      {value.length > 1 && (
+                        <RemoveSecondaryBtn
+                          onClick={() => handleRemoveRow(index)}
+                        />
+                      )}
                     </div>
                   </div>
                 </Collapse>

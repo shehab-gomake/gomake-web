@@ -24,7 +24,7 @@ const useUploadFiles = (
   productType?: string,
   isOpenPrintingModal?: any
 ) => {
-  const CHUNK_SIZE = 20 * 1024 * 1024; // 5MB
+  const CHUNK_SIZE = 10 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -183,7 +183,7 @@ const useUploadFiles = (
                   ...fg,
                   filesInfo: fg.filesInfo.map(fileInfo =>
                     fileInfo.uploadId === uploadId
-                      ? { ...fileInfo, fileStatus: EUploadingFileStatus.Uploaded,downloadFilePath:response.source }
+                      ? { ...fileInfo, fileStatus: response.isUploadedToGoogleCloud ? EUploadingFileStatus.UploadedToGoogleCloud : EUploadingFileStatus.Uploaded,downloadFilePath:response.source ,bucketKey:response.bucketKey}
                       : fileInfo
                   ),
                 }
@@ -198,9 +198,10 @@ const useUploadFiles = (
           screenShot: response.screenShot,
           productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
-          status: EUploadingFileStatus.Uploaded,
+          status: response.isUploadedToGoogleCloud ? EUploadingFileStatus.UploadedToGoogleCloud : EUploadingFileStatus.Uploaded,
           fileType,
-          fileId: fileId
+          fileId: fileId,
+          bucketKey: response.bucketKey,
         });
         if(response.jdfFileUrl){
           await setOrderItemFileStatus({

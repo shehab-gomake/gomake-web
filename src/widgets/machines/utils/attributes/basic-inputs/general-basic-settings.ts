@@ -64,18 +64,16 @@ const generalBasicSettings = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.lifeExpectancyYears,
         },
         {
-            name: "printLife",
-            label: "machineAttributes.printLife",
+            name: "workingDaysAmountInWeek",
+            label: "machineAttributes.workingDaysAmountInWeek",
             type: "text",
-            placeholder: "machineAttributes.printLife",
+            placeholder: "machineAttributes.workingDaysAmountInWeek",
             required: true,
-            parameterKey: "printLife",
+            parameterKey: "workingDaysAmountInWeek",
             options: [],
-            value: state.attributes?.printLife ? state.attributes?.printLife : '',
+            value: state.attributes?.workingDaysAmountInWeek ? state.attributes?.workingDaysAmountInWeek : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.printLife,
-            unit: EMeasurementUnits.METER
-
+            isValid: !!state?.attributes?.workingDaysAmountInWeek,
         },
         {
             name: "machineAttributes",
