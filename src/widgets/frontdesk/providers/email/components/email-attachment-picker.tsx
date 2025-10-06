@@ -13,7 +13,7 @@ import {
   Close as CloseIcon,
   InsertDriveFile as FileIcon,
 } from "@mui/icons-material";
-import { EmailAttachment } from "../../types/email.types";
+import { EmailAttachment } from "../types/email.types";
 
 interface EmailAttachmentPickerProps {
   attachments: EmailAttachment[];
