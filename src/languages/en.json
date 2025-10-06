@@ -468,7 +468,12 @@
 			"enterSupplementTime": "Enter supplement time",
 			"scrollToSeeMoreColumns": "Scroll to see more columns",
 			"priceUnitPerTon": "Default Sale Cost"
-		}
+		},
+		"extraParameters": {
+			"title": "Extra Parameters Details",
+			"noData": "No extra parameters available for this material"
+		},
+		"showDetails": "Show Details"
 	},
 	"machineAttributes": {
 		"acceptedSets": "Accepted sets",

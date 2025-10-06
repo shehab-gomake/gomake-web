@@ -39,6 +39,7 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
+import { ExtraParametersModal } from "./components/extra-parameters-modal/extra-parameters-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -516,6 +517,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <AddRowModal isAdmin={props.isAdmin} />
       <UpdatedNumburingModal isAdmin={props.isAdmin} />
       <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
+      <ExtraParametersModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}

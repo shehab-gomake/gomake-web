@@ -28,6 +28,8 @@ export const materialHeadersState = atom<
     inputType: number;
     values: [];
     isHideInDuplicate?: boolean;
+    isShowInExtraParameters?: boolean;
+    isForAdmin?: boolean;
   }[]
 >({
   key: "materialHeadersState",
@@ -257,4 +259,13 @@ export const isLoadingMoreState = atom<boolean>({
 export const totalItemsCountState = atom<number>({
   key: "totalItemsCountState",
   default: 0,
+});
+
+export const openExtraParametersModalState = atom<{
+  open: boolean;
+  rowData?: any;
+  rowId?: string;
+}>({
+  key: "openExtraParametersModalState",
+  default: { open: false },
 });

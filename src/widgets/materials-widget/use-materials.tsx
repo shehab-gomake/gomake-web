@@ -64,7 +64,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<
-      { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
+      { key: string; value: string; unit?: string; isShowInExtraParameters?: boolean; isForAdmin?: boolean }[]
     >(materialHeadersState);
 
   const [materialCategories, setMaterialCategories] = useRecoilState<
@@ -379,8 +379,8 @@ const useMaterials = (isAdmin: boolean) => {
         checked={isAllSelected()}
       />,
       ...(isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin)
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters)
       ).map((header) => {
         const convertedUnit =
           unitType === UNIT_TYPE.IMPERIAL
@@ -444,8 +444,8 @@ const useMaterials = (isAdmin: boolean) => {
 
     materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin);
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters);
 
       // Main row
       rows.push({
