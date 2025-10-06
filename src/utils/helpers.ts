@@ -92,12 +92,19 @@ export const isValidCustomer = (
   filteredContacts,
   filteredAddresses,
   filteredUsers,
-  CheckPreferenceValue
+  CheckPreferenceValue,
+  isSupplier = false
 ): { isValid: boolean; missingFields: string[] } => {
   const missingFields: string[] = [];
 
   if (!customer?.name) missingFields.push("customers.modal.name");
-  if (!customer?.clientTypeId) missingFields.push("customers.modal.clientType");
+  if (!customer?.clientTypeId) {
+    if (isSupplier) {
+      missingFields.push("suppliers.supplierType");
+    } else {
+      missingFields.push("customers.modal.clientType");
+    }
+  }
 
   if (
     CheckPreferenceValue(
@@ -170,12 +177,14 @@ export const isAtLeastOneSelected = (items) => {
       if (item.isSelected === true) {
         return true;
       }
-      
+
       // Check if any child items are selected
       if (item.childsDocumentItems && item.childsDocumentItems.length > 0) {
-        return item.childsDocumentItems.some((child) => child.isSelected === true);
+        return item.childsDocumentItems.some(
+          (child) => child.isSelected === true
+        );
       }
-      
+
       return false;
     });
   }
