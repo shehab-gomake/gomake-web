@@ -112,6 +112,41 @@ const AIMainPanel = ({
     }
   };
 
+  //!here new
+  const handleOptionClick = async (option: string) => {
+    // Add user message to chat
+    const newMessages = [
+      ...chatMessages,
+      {
+        id: Date.now().toString(),
+        type: "user",
+        message: option,
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    onChatMessagesUpdate(newMessages);
+
+    try {
+      // Send the selected option as a message to AI
+      await sendMessage(option);
+    } catch (error) {
+      console.error("Error sending option message:", error);
+      // Add error message to chat
+      const errorMessages = [
+        ...newMessages,
+        {
+          id: (Date.now() + 1).toString(),
+          type: "ai",
+          message:
+            "Sorry, I encountered an error processing your selection. Please try again.",
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      onChatMessagesUpdate(errorMessages);
+    }
+  };
+
   const handleJobCardClick = async (title: string, description: string) => {
     // Clear the input immediately
     setJobDescription("");
@@ -209,6 +244,7 @@ const AIMainPanel = ({
           <AIChatInterface
             messages={chatMessages}
             isProcessing={isProcessing}
+            onOptionClick={handleOptionClick}
           />
         </div>
 

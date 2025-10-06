@@ -119,6 +119,30 @@ const useStyle = () => {
         color: "#6B7280",
         fontStyle: "italic",
       },
+      optionsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 8,
+        marginTop: 12,
+      },
+      optionButton: {
+        ...FONT_FAMILY.Inter(400, 14),
+        color: "#3B82F6",
+        backgroundColor: "#F8FAFC",
+        border: "1px solid #E2E8F0",
+        borderRadius: 8,
+        padding: "8px 12px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        textAlign: "left" as "left",
+        "&:hover": {
+          backgroundColor: "#EFF6FF",
+          borderColor: "#3B82F6",
+        },
+        "&:active": {
+          backgroundColor: "#DBEAFE",
+        },
+      },
     };
   }, []);
 
