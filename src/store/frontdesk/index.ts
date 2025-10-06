@@ -55,6 +55,7 @@ export {
   internalChannelsAtom,
   internalDirectMessagesAtom,
   internalSelectedConversationAtom,
+  internalSelectedDMConversationAtom,
   internalMessagesAtom,
   internalConnectionStateAtom,
   internalLoadingStatesAtom,
