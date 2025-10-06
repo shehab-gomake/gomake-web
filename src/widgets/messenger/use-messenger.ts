@@ -193,7 +193,7 @@ const useMessenger = () => {
             // await sendMessengerNotificationApi(callApi, () => {
             // }, selectedDialog.occupants_ids.map(a => a.toString()))
             // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
-            await sendMessage(message as QBChatNewMessage, true);
+            //await sendMessage(message as QBChatNewMessage, true);
         } catch (e) {
             alertFaultUpdate();
         }
