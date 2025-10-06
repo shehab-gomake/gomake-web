@@ -101,7 +101,6 @@ const usePriceProfit = () => {
     }
   }, [action, callApi]);
 
-  //!here check
   const getProfitsPricingTables = useCallback(async () => {
     if (action?.actionId) {
       // Store the current selected pricing table ID before refreshing
@@ -128,7 +127,6 @@ const usePriceProfit = () => {
     }
   }, [action, callApi]);
 
-  //!here
   const getDataForAutoPricingActionsChart = async (
     fromDate?: string,
     toDate?: string,
