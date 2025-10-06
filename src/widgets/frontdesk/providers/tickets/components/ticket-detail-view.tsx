@@ -39,6 +39,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import HistoryIcon from '@mui/icons-material/History';
 import { TicketWithDetails } from '../types/api.types';
 import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
@@ -97,7 +98,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
-  const [activeView, setActiveView] = useState<'conversation' | 'objectives'>('conversation');
+  const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
   const handleSendReply = (data: any) => {
@@ -262,6 +263,25 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             }}
           >
             Objectives & Details
+          </Button>
+          <Button
+            size="small"
+            startIcon={<HistoryIcon sx={{ fontSize: 18 }} />}
+            onClick={() => setActiveView('activity')}
+            sx={{
+              textTransform: 'none',
+              px: 2,
+              py: 0.75,
+              fontWeight: activeView === 'activity' ? 600 : 400,
+              color: activeView === 'activity' ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+              backgroundColor: activeView === 'activity' ? colorTokens.primary[50] : 'transparent',
+              borderRadius: '6px',
+              '&:hover': {
+                backgroundColor: activeView === 'activity' ? colorTokens.primary[100] : colorTokens.neutral[100],
+              },
+            }}
+          >
+            Activity History
           </Button>
         </Box>
 
@@ -601,6 +621,80 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   </Typography>
                 </Box>
               </Box>
+            </Box>
+          </Box>
+        )}
+
+        {/* Activity History View */}
+        {activeView === 'activity' && (
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'auto',
+              p: 3,
+              backgroundColor: colorTokens.neutral[50]
+            }}
+          >
+            {/* Header Section */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 3,
+                px: 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '12px',
+                    backgroundColor: colorTokens.primary[50],
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <HistoryIcon sx={{ fontSize: 24, color: colorTokens.primary[600] }} />
+                </Box>
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: 18,
+                      color: colorTokens.semantic.text.primary,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    Activity History
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 13,
+                    }}
+                  >
+                    {ticketHistory.length} {ticketHistory.length === 1 ? 'event' : 'events'} recorded
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Timeline Content */}
+            <Box
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                border: `1px solid ${colorTokens.semantic.border.default}`,
+                p: 4,
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+              }}
+            >
+              <TicketTimeline history={ticketHistory} />
             </Box>
           </Box>
         )}
@@ -1005,36 +1099,6 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </AccordionDetails>
         </Accordion>
 
-        {/* Activity History Timeline */}
-        <Accordion elevation={0} defaultExpanded={ticketHistory.length > 0} sx={{ '&:before': { display: 'none' } }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                ACTIVITY HISTORY
-              </Typography>
-              {ticketHistory.length > 0 && (
-                <Box
-                  sx={{
-                    backgroundColor: colorTokens.primary[100],
-                    color: colorTokens.primary[800],
-                    borderRadius: '10px',
-                    px: 0.75,
-                    py: 0.25,
-                    fontSize: 10,
-                    fontWeight: 600,
-                    minWidth: 18,
-                    textAlign: 'center',
-                  }}
-                >
-                  {ticketHistory.length}
-                </Box>
-              )}
-            </Box>
-          </AccordionSummary>
-          <AccordionDetails>
-            <TicketTimeline history={ticketHistory} />
-          </AccordionDetails>
-        </Accordion>
       </Box>
 
       {/* More Menu */}
