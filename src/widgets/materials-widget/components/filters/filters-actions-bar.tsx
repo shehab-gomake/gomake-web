@@ -65,7 +65,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
 
-  const INITIAL_FILTERS_COUNT = 1;
+  const INITIAL_FILTERS_COUNT = 2;
   const displayedFilters = showMore
     ? materialTableFilters
     : materialTableFilters?.slice(0, INITIAL_FILTERS_COUNT);
@@ -249,7 +249,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
+      <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "auto" }}>
         {materialTableFilters && materialTableFilters?.length > 0 && <ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>

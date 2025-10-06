@@ -327,7 +327,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             justifyContent: "flex-start",
             alignItems: "center",
             gap: 5,
-            width: "40%",
+            width: "30%",
           }}
         >
           <PrimaryButton
@@ -355,7 +355,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           </IconButton>
         </div>
         <div style={{
-          width: "60%",
+          width: "70%",
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
