@@ -91,7 +91,7 @@ const PriceProfitWidget = () => {
         <Divider style={classes.divider} />
       </div>
       <div style={classes.contentSection}>
-        <SummaryWidget summaryData={summaryData} isFixed={isFixed} />
+        <SummaryWidget summaryData={summaryData} />
         <PriceCurveFit
           {...chartData}
           isSummaryVisible={isFixed && !!summaryData}
