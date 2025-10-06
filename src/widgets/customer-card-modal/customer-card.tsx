@@ -34,7 +34,7 @@ import { ClientTypeModal } from "../client-types/components/add-edit-client-type
 import { PlusIcon } from "@/icons";
 
 // OPTIONAL: Uncomment these imports if you have 100+ contacts and want virtualization
-import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'; // npm install react-virtuoso
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso"; // npm install react-virtuoso
 
 interface IProps {
   customerAction: CUSTOMER_ACTIONS;
@@ -81,7 +81,6 @@ const CustomerCardWidget = ({
   const showAddButton = customerAction === CUSTOMER_ACTIONS.Add;
   const contactListRef = useRef<HTMLDivElement>(null);
   const virtuosoRef = useRef<VirtuosoHandle>(null);
-
 
   const {
     customerTableHeaders,
@@ -147,7 +146,7 @@ const CustomerCardWidget = ({
     isgetAllCustomers,
     isFromCartPage,
     onChangeSelectBusiness,
-    openModal
+    openModal,
   });
 
   const [inputValue, setInputValue] = useState("");
@@ -208,12 +207,13 @@ const CustomerCardWidget = ({
 
     // Auto-scroll to the last item after adding
     setTimeout(() => {
-      const filteredContacts = contacts?.filter((contact) => !contact.isMainContact) || [];
+      const filteredContacts =
+        contacts?.filter((contact) => !contact.isMainContact) || [];
       if (virtuosoRef.current && filteredContacts.length > 0) {
         virtuosoRef.current.scrollToIndex({
           index: filteredContacts.length - 1,
-          behavior: 'smooth',
-          align: 'end'
+          behavior: "smooth",
+          align: "end",
         });
       }
     }, 100);
@@ -279,8 +279,11 @@ const CustomerCardWidget = ({
     {
       title: t("customers.modal.contacts"),
       component: (
-        <Stack direction={"column"} gap={"15px"} style={{ height: '100%' }}>
-          {renderAddButton(handleAddEmptyContact, "customers.buttons.addContact")}
+        <Stack direction={"column"} gap={"15px"} style={{ height: "100%" }}>
+          {renderAddButton(
+            handleAddEmptyContact,
+            "customers.buttons.addContact"
+          )}
 
           {/* OPTIONAL: Virtualized solution for 100+ contacts */}
           {/* Uncomment this section and comment out the above div if you have many contacts */}
@@ -288,13 +291,13 @@ const CustomerCardWidget = ({
           <Virtuoso
             ref={virtuosoRef}
             style={{
-              height: '400px',
+              height: "400px",
               border: "1px solid #e0e0e0",
               borderRadius: "4px",
             }}
             data={contacts?.filter((contact) => !contact.isMainContact) || []}
             itemContent={(index, contact) => (
-              <div style={{ padding: '10px' }}>
+              <div style={{ padding: "10px" }}>
                 <ContactForm
                   key={`contact-${contact.index}-${contact.id || index}`}
                   contact={contact}
@@ -311,17 +314,18 @@ const CustomerCardWidget = ({
             // followOutput="smooth"
             components={{
               EmptyPlaceholder: () => (
-                <div style={{
-                  textAlign: 'center',
-                  padding: '40px',
-                  color: '#999'
-                }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#999",
+                  }}
+                >
                   {t("customers.noContactsAdded")}
                 </div>
               ),
             }}
           />
-
         </Stack>
       ),
     },
@@ -446,17 +450,17 @@ const CustomerCardWidget = ({
         .contact-list-container::-webkit-scrollbar {
           width: 8px;
         }
-        
+
         .contact-list-container::-webkit-scrollbar-track {
           background: #f1f1f1;
           border-radius: 4px;
         }
-        
+
         .contact-list-container::-webkit-scrollbar-thumb {
           background: #888;
           border-radius: 4px;
         }
-        
+
         .contact-list-container::-webkit-scrollbar-thumb:hover {
           background: #555;
         }
@@ -489,7 +493,10 @@ const CustomerCardWidget = ({
             <div style={classes.customerInfoStyle}>
               {customerInputs(typeClient, customer, showUpdateButton).map(
                 (item, index) => (
-                  <div key={`customer-input-${index}`} style={{ marginBottom: 10 }}>
+                  <div
+                    key={`customer-input-${index}`}
+                    style={{ marginBottom: 10 }}
+                  >
                     <FormInput
                       input={item as IInput}
                       changeState={onChangeInputs}
@@ -520,6 +527,7 @@ const CustomerCardWidget = ({
                     <PlusIcon />
                   </IconButton>
                 </div>
+                {/* !here */}
                 <div style={{ width: "180px" }}>
                   <GoMakeAutoComplate
                     key={customer?.clientTypeId || "default"}
@@ -563,12 +571,12 @@ const CustomerCardWidget = ({
                         ) || inputValue === ""
                           ? clientGroupList
                           : [
-                            {
-                              groupName: `Add "${inputValue}" as a new group`,
-                              id: "new",
-                            },
-                            ...clientGroupList,
-                          ]
+                              {
+                                groupName: `Add "${inputValue}" as a new group`,
+                                id: "new",
+                              },
+                              ...clientGroupList,
+                            ]
                       }
                       placeholder={t("products.profits.exceptions.groupBy")}
                       style={classes.dropDownListStyle}

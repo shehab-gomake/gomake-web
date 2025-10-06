@@ -18,6 +18,8 @@ import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
 import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
 import { useEffect } from "react";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -52,6 +54,17 @@ export const SetupGuideMenu = ({
     getAllGroupKeys,
     findNextStepLabel,
     findNextStep,
+    // Customer/Supplier modal states and handlers
+    openCustomerModal,
+    openSupplierModal,
+    customer,
+    supplier,
+    setCustomer,
+    setSupplier,
+    handleCloseCustomerModal,
+    handleCloseSupplierModal,
+    onCustomerAdd,
+    onSupplierAdd,
   } = useSetupGuideMenu({
     handleOpenModal,
     handleOpenResetPassword,
@@ -141,100 +154,128 @@ export const SetupGuideMenu = ({
 
   if (!isOpen) return null;
 
-  return showGuideMenuState ? (
-    <Card
-      sx={{
-        ...classes.mainContainer,
-        fontFamily: "Inter, Roboto, sans-serif",
-        WebkitFontSmoothing: "antialiased",
-        MozOsxFontSmoothing: "grayscale",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 1,
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          fontWeight="600"
-          sx={{ color: "#000", fontSize: "14px" }}
+  return (
+    <>
+      {showGuideMenuState ? (
+        <Card
+          sx={{
+            ...classes.mainContainer,
+            fontFamily: "Inter, Roboto, sans-serif",
+            WebkitFontSmoothing: "antialiased",
+            MozOsxFontSmoothing: "grayscale",
+          }}
         >
-          {t("quickSetup.setupGuide")}
-        </Typography>
-        <Box gap={1}>
-          <IconButton onClick={toggleExpand} sx={{ p: 0.5, color: "#999" }}>
-            {isExpanded ? <ShrinkMenu /> : <ExpandMenu />}
-          </IconButton>
-          <IconButton
-            onClick={() => setShowGuideMenu(false)}
-            sx={{ p: 0.5, color: "#999" }}
-          >
-            <CloseMenu />
-          </IconButton>
-        </Box>
-      </Box>
-      <Box mb={2}>
-        <LinearProgress
-          variant="determinate"
-          value={progressValue}
-          sx={classes.linearProgress}
-        />
-      </Box>
-      {isExpanded ? (
-        <>
-          <List dense disablePadding>
-            {renderSteps(steps)}
-          </List>
-          <Divider sx={{ my: 2 }} />
-          {/* <Button variant="contained" fullWidth sx={classes.btnStyle}>
-            {t("quickSetup.ready")}
-          </Button> */}
-          <Button
-            variant="contained"
-            fullWidth
-            sx={classes.btnStyle}
-            onClick={() => {
-              if (nextStep?.onClick) {
-                nextStep.onClick();
-              } else {
-                setShowGuideMenu(false);
-              }
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 1,
             }}
           >
-            {nextStep
-              ? `${t("quickSetup.next")} : ${nextStep.label}`
-              : t("quickSetup.ready")}
-          </Button>
-        </>
+            <Typography
+              variant="subtitle1"
+              fontWeight="600"
+              sx={{ color: "#000", fontSize: "14px" }}
+            >
+              {t("quickSetup.setupGuide")}
+            </Typography>
+            <Box gap={1}>
+              <IconButton onClick={toggleExpand} sx={{ p: 0.5, color: "#999" }}>
+                {isExpanded ? <ShrinkMenu /> : <ExpandMenu />}
+              </IconButton>
+              <IconButton
+                onClick={() => setShowGuideMenu(false)}
+                sx={{ p: 0.5, color: "#999" }}
+              >
+                <CloseMenu />
+              </IconButton>
+            </Box>
+          </Box>
+          <Box mb={2}>
+            <LinearProgress
+              variant="determinate"
+              value={progressValue}
+              sx={classes.linearProgress}
+            />
+          </Box>
+          {isExpanded ? (
+            <>
+              <List dense disablePadding>
+                {renderSteps(steps)}
+              </List>
+              <Divider sx={{ my: 2 }} />
+              {/* <Button variant="contained" fullWidth sx={classes.btnStyle}>
+            {t("quickSetup.ready")}
+          </Button> */}
+              <Button
+                variant="contained"
+                fullWidth
+                sx={classes.btnStyle}
+                onClick={() => {
+                  if (nextStep?.onClick) {
+                    nextStep.onClick();
+                  } else {
+                    setShowGuideMenu(false);
+                  }
+                }}
+              >
+                {nextStep
+                  ? `${t("quickSetup.next")} : ${nextStep.label}`
+                  : t("quickSetup.ready")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="body2"
+                sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
+              >
+                {`${t("sales.documentDeliveries.next")} : ${
+                  findNextStepLabel(steps) || "-"
+                }`}
+              </Typography>
+            </>
+          )}
+        </Card>
       ) : (
-        <>
-          <Typography
-            variant="body2"
-            sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
-          >
-            {`${t("sales.documentDeliveries.next")} : ${
-              findNextStepLabel(steps) || "-"
-            }`}
+        <Box sx={classes.secondGuide} onClick={() => setShowGuideMenu(true)}>
+          <Typography sx={{ fontSize: "14px", fontWeight: 500 }}>
+            {t("quickSetup.setupGuide")}
           </Typography>
-        </>
+          <CircularProgress
+            variant="determinate"
+            value={progressValue}
+            size={20}
+            thickness={7}
+            sx={classes.circularProgress}
+          />
+        </Box>
       )}
-    </Card>
-  ) : (
-    <Box sx={classes.secondGuide} onClick={() => setShowGuideMenu(true)}>
-      <Typography sx={{ fontSize: "14px", fontWeight: 500 }}>
-        {t("quickSetup.setupGuide")}
-      </Typography>
-      <CircularProgress
-        variant="determinate"
-        value={progressValue}
-        size={20}
-        thickness={7}
-        sx={classes.circularProgress}
+
+      {/* Customer Modal */}
+      <CustomerCardWidget
+        customerAction={CUSTOMER_ACTIONS.Add}
+        codeFlag={false}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        onCustomerAdd={onCustomerAdd}
+        openModal={openCustomerModal}
+        onClose={handleCloseCustomerModal}
+        customer={customer}
+        setCustomer={setCustomer}
       />
-    </Box>
+
+      {/* Supplier Modal */}
+      <CustomerCardWidget
+        customerAction={CUSTOMER_ACTIONS.Add}
+        codeFlag={false}
+        typeClient={CLIENT_TYPE.SUPPLIER}
+        onCustomerAdd={onSupplierAdd}
+        openModal={openSupplierModal}
+        onClose={handleCloseSupplierModal}
+        customer={supplier}
+        setCustomer={setSupplier}
+      />
+    </>
   );
 };
