@@ -183,6 +183,11 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     setSessionId(newSessionId);
   };
 
+  // Function to reset processing state (for new jobs)
+  const resetProcessingState = () => {
+    setIsProcessing(false);
+  };
+
   return {
     isProcessing,
     sessionId,
@@ -191,6 +196,7 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     getConversationsHistory,
     getConversation,
     setSessionIdManually,
+    resetProcessingState,
   };
 };
 
