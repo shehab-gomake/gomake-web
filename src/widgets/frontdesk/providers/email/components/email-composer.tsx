@@ -2,12 +2,10 @@ import React, { useState, useCallback } from "react";
 import { Box, Paper, Collapse, Fade, InputBase } from "@mui/material";
 import { EmailDraft, EmailMessage } from "../types/email.types";
 import { useEmailComposerForm } from "../hooks/use-email-composer-form";
-import { 
-  EmailComposerHeader,
-  EmailRecipientsSection,
-  EmailComposerToolbar,
-  EmailAttachmentPicker
-} from "./composer";
+import { EmailComposerHeader } from "./email-composer-header";
+import { EmailRecipientsSection } from "./email-recipients-section";
+import { EmailComposerToolbar } from "./email-composer-toolbar";
+import { EmailAttachmentPicker } from "./email-attachment-picker";
 
 interface EmailComposerProps {
   open: boolean;
