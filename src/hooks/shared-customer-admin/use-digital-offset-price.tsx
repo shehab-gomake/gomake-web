@@ -3939,7 +3939,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     return (
                       <>
                         <input
-                          ref={(el) => (uploadInputEl = el)}
+                          ref={(el) => { uploadInputEl = el; }}
                           type="file"
                           accept="image/*,application/pdf"
                           style={{ display: "none" }}
