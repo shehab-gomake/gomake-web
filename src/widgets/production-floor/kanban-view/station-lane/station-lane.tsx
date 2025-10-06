@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Stack, Typography, Box } from "@mui/material";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { IStation } from "../types/kanban-types";
@@ -150,6 +150,7 @@ const StationLane: React.FC<IProps> = ({
   const totalProductionTime = getTotalProductionTime();
 
   // Drop functionality for station header
+  const headerRef = useRef<HTMLDivElement>(null);
   const [{ isOver: isHeaderOver, canDrop: canHeaderDrop }, headerDrop] =
     useDrop(
       () => ({
@@ -177,6 +178,10 @@ const StationLane: React.FC<IProps> = ({
       }),
       [station.id, stationInfo, categoryName]
     );
+
+  useEffect(() => {
+    headerDrop(headerRef.current);
+  }, [headerDrop]);
 
   // Helper function to update station (machine or employee)
   const updateStation = async (
@@ -224,7 +229,7 @@ const StationLane: React.FC<IProps> = ({
     >
       {/* Station Header */}
       <Box
-        ref={headerDrop}
+        ref={headerRef}
         sx={{
           width: isMobile ? "120px" : "200px",
           minWidth: isMobile ? "120px" : "200px",
@@ -321,6 +326,7 @@ const StationLane: React.FC<IProps> = ({
         });
 
         // Drop functionality for each status column
+        const dropRef = useRef<HTMLDivElement>(null);
         const [{ isOver, canDrop }, drop] = useDrop(
           () => ({
             accept: "task",
@@ -371,9 +377,13 @@ const StationLane: React.FC<IProps> = ({
           ]
         );
 
+        useEffect(() => {
+          drop(dropRef.current);
+        }, [drop]);
+
         return (
           <Box
-            ref={drop}
+            ref={dropRef}
             key={status.name}
             sx={{
               flex: 1,
