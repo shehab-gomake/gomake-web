@@ -60,6 +60,7 @@ import {
 import { Alert } from '@mui/material';
 import { TicketTimeline } from './ticket-timeline';
 import { RelatedTickets } from './related-tickets';
+import { CustomerProfileSection } from './customer-profile-section';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
@@ -100,6 +101,11 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
+
+  // Add defensive logging
+  console.log('[TicketDetailView] Rendering ticket:', ticket.id, ticket.ticketNumber);
+  console.log('[TicketDetailView] Conversation:', ticket.conversation ? 'exists' : 'MISSING');
+  console.log('[TicketDetailView] Messages count:', ticket.conversation?.messages?.length || 0);
 
   const handleSendReply = (data: any) => {
     if (onReply && data.content) {
@@ -356,53 +362,63 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 />
 
                 {/* Render messages and system events */}
-                {ticket.conversation?.messages?.map((message, index) => (
-                  <React.Fragment key={message.id}>
-                    {/* Show assignment event if it's the first message */}
-                    {index === 0 && ticket.assignee && (
-                      <SystemEventMessage
-                        type="ticket.assigned"
-                        timestamp={message.createdAt}
-                        actor={{ name: ticket.assignee.name }}
-                      />
-                    )}
+                {ticket.conversation?.messages && Array.isArray(ticket.conversation.messages) && ticket.conversation.messages.length > 0 ? (
+                  ticket.conversation.messages.map((message, index) => {
+                    // Defensive null checks for message
+                    if (!message || !message.id) {
+                      console.warn('[TicketDetailView] Skipping invalid message:', message);
+                      return null;
+                    }
 
-                    {/* Show priority change event (example) */}
-                    {index === 1 && (
-                      <SystemEventMessage
-                        type="ticket.priority.changed"
-                        timestamp={message.createdAt}
-                        actor={{ name: ticket.assignee?.name || 'System' }}
-                        data={{
-                          oldPriority: 'Low',
-                          newPriority: ticket.priority as any,
-                        }}
-                      />
-                    )}
+                    return (
+                      <React.Fragment key={message.id}>
+                        {/* Show assignment event if it's the first message */}
+                        {index === 0 && ticket.assignee && (
+                          <SystemEventMessage
+                            type="ticket.assigned"
+                            timestamp={message.createdAt}
+                            actor={{ name: ticket.assignee.name }}
+                          />
+                        )}
 
-                    {/* Message Card */}
-                    <MessageCard
-                      id={message.id}
-                      channel={(message.channel || 'email') as any}
-                      direction={message.direction.toLowerCase() as any}
-                      status="delivered"
-                      author={{
-                        name: message.direction === 'INBOUND'
-                          ? (ticket.customerName || ticket.customerEmail || 'Customer')
-                          : (ticket.assignee?.name || 'Agent'),
-                        email: message.direction === 'INBOUND'
-                          ? (ticket.customerEmail || message.fromIdentifier || '')
-                          : (ticket.assignee?.email || ''),
-                        avatarUrl: undefined,
-                      }}
-                      content={message.content}
-                      contentType={message.metadata?.hasHtml ? 'html' : undefined}
-                      timestamp={message.createdAt}
-                      attachments={[]}
-                      isPrivate={false}
-                    />
-                  </React.Fragment>
-                ))}
+                        {/* Show priority change event (example) */}
+                        {index === 1 && (
+                          <SystemEventMessage
+                            type="ticket.priority.changed"
+                            timestamp={message.createdAt}
+                            actor={{ name: ticket.assignee?.name || 'System' }}
+                            data={{
+                              oldPriority: 'Low',
+                              newPriority: ticket.priority as any,
+                            }}
+                          />
+                        )}
+
+                        {/* Message Card */}
+                        <MessageCard
+                          id={message.id}
+                          channel={(message.channel || 'email') as any}
+                          direction={(message.direction || 'INBOUND').toLowerCase() as any}
+                          status="delivered"
+                          author={{
+                            name: message.direction === 'INBOUND'
+                              ? (ticket.customerName || ticket.customerEmail || 'Customer')
+                              : (ticket.assignee?.name || 'Agent'),
+                            email: message.direction === 'INBOUND'
+                              ? (ticket.customerEmail || message.fromIdentifier || '')
+                              : (ticket.assignee?.email || ''),
+                            avatarUrl: undefined,
+                          }}
+                          content={message.content || ''}
+                          contentType={message.metadata?.hasHtml ? 'html' : undefined}
+                          timestamp={message.createdAt}
+                          attachments={[]}
+                          isPrivate={false}
+                        />
+                      </React.Fragment>
+                    );
+                  })
+                ) : null}
 
                 {(!ticket.conversation?.messages || ticket.conversation.messages.length === 0) && (
                   <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
@@ -739,6 +755,18 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           p: 2
         }}
       >
+        {/* Customer Profile Section */}
+        <CustomerProfileSection
+          customerId={ticket.customerId}
+          customerName={ticket.customerName}
+          customerEmail={ticket.customerEmail}
+          customerPhone={ticket.customerPhone}
+          onCustomerLinked={(customerId) => {
+            // TODO: Update ticket with linked customer ID
+            console.log('Customer linked:', customerId);
+          }}
+        />
+
         {/* Created By */}
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
@@ -854,130 +882,58 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           )}
         </Box>
 
-        {/* Project */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
-            Project
-          </Typography>
-          <FormControl fullWidth size="small">
-            <Select value={ticket.category?.name || ''}>
-              <MenuItem value="Administrative">Administrative</MenuItem>
-              <MenuItem value="Engineering">Engineering</MenuItem>
-              <MenuItem value="Documentation">Documentation</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        {/* Ticket Type */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
-            Ticket Type
-          </Typography>
-          <FormControl fullWidth size="small">
-            <Select value={'Task'}>
-              <MenuItem value="Task">Task</MenuItem>
-              <MenuItem value="Bug">Bug</MenuItem>
-              <MenuItem value="Feature">Feature</MenuItem>
-              <MenuItem value="Support">Support</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        {/* Due Date */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 0.5, display: 'block' }}>
-            Due Date
-          </Typography>
-          <TextField fullWidth size="small" type="date" value={ticket.sla?.resolutionDue ? ticket.sla.resolutionDue.split('T')[0] : ''} />
-
-          {/* SLA breach warning */}
-          {ticket.sla?.breached && (
-            <Alert severity="error" sx={{ mt: 1, py: 0.5 }}>
-              SLA Breached {ticket.sla.breachedAt && `at ${format(parseISO(ticket.sla.breachedAt), 'MMM d, h:mm a')}`}
-            </Alert>
-          )}
-
-          {/* SLA approaching warning (within 1 hour) */}
-          {!ticket.sla?.breached && ticket.sla?.resolutionDue && isApproachingSLA(ticket.sla.resolutionDue) && (
-            <Alert severity="warning" sx={{ mt: 1, py: 0.5 }}>
-              Due soon
-            </Alert>
-          )}
-
-          {/* SLA overdue but not marked breached */}
-          {!ticket.sla?.breached && ticket.sla?.resolutionDue && isOverdueSLA(ticket.sla.resolutionDue) && (
-            <Alert severity="error" sx={{ mt: 1, py: 0.5 }}>
-              Overdue
-            </Alert>
-          )}
-        </Box>
-
-        {/* Reporter */}
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
-            Reporter
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
-            <Avatar sx={{ width: 32, height: 32 }}>{(ticket.customerName || ticket.customerEmail?.split('@')[0] || 'C').charAt(0).toUpperCase()}</Avatar>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {ticket.customerName || ticket.customerEmail?.split('@')[0] || 'Unknown'}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
-                {ticket.customerEmail || ticket.customerPhone || 'No contact'}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-
         {/* Tags */}
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, mb: 1, display: 'block', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>
             Tags
           </Typography>
 
-          {/* Popular Tags Quick-Add */}
-          {onAddTags && popularTags && popularTags.length > 0 && (
-            <PopularTags
-              tags={popularTags}
-              selectedTags={ticket.tags || []}
-              onTagClick={(tagName) => {
-                if (onAddTags) {
-                  onAddTags([tagName]);
-                }
-              }}
-              maxDisplay={6}
-              showTitle={true}
-            />
-          )}
+          <Box sx={{ p: 1.5, backgroundColor: colorTokens.neutral[50], borderRadius: '6px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
+            {/* Popular Tags Quick-Add */}
+            {onAddTags && popularTags && Array.isArray(popularTags) && popularTags.length > 0 && (
+              <Box sx={{ mb: 1.5 }}>
+                <PopularTags
+                  tags={popularTags}
+                  selectedTags={Array.isArray(ticket.tags) ? ticket.tags : []}
+                  onTagClick={(tagName) => {
+                    if (onAddTags) {
+                      onAddTags([tagName]);
+                    }
+                  }}
+                  maxDisplay={6}
+                  showTitle={true}
+                />
+              </Box>
+            )}
 
-          {/* Show existing tags */}
-          {ticket.tags && ticket.tags.length > 0 && (
-            <Box sx={{ mb: 1.5 }}>
-              <TagList
-                tags={ticket.tags}
-                onRemoveTag={onRemoveTag}
-                size="small"
-                variant="filled"
+            {/* Show existing tags */}
+            {ticket.tags && Array.isArray(ticket.tags) && ticket.tags.length > 0 && (
+              <Box sx={{ mb: 1.5 }}>
+                <TagList
+                  tags={ticket.tags}
+                  onRemoveTag={onRemoveTag}
+                  size="small"
+                  variant="filled"
+                />
+              </Box>
+            )}
+
+            {/* Always-Visible Tag Input */}
+            {onAddTags && onSuggestTags && (
+              <TagInput
+                tags={Array.isArray(ticket.tags) ? ticket.tags : []}
+                onSuggest={onSuggestTags}
+                onAdd={(tagNames) => {
+                  onAddTags(tagNames);
+                }}
+                onRemove={(tagId) => {
+                  if (onRemoveTag) onRemoveTag(tagId);
+                }}
+                popularTags={popularTags}
+                maxTags={10}
               />
-            </Box>
-          )}
-
-          {/* Always-Visible Tag Input */}
-          {onAddTags && onSuggestTags && (
-            <TagInput
-              tags={ticket.tags || []}
-              onSuggest={onSuggestTags}
-              onAdd={(tagNames) => {
-                onAddTags(tagNames);
-              }}
-              onRemove={(tagId) => {
-                if (onRemoveTag) onRemoveTag(tagId);
-              }}
-              popularTags={popularTags}
-              maxTags={10}
-            />
-          )}
+            )}
+          </Box>
         </Box>
 
         <Divider sx={{ my: 3 }} />
@@ -997,21 +953,6 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
               <Button size="small" startIcon={<AddIcon />} sx={{ textTransform: 'none' }}>
                 Add Task
               </Button>
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion elevation={0} defaultExpanded={false} sx={{ '&:before': { display: 'none' } }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-              COLLECTED FIELDS
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
-                No custom fields
-              </Typography>
             </Box>
           </AccordionDetails>
         </Accordion>

@@ -33,6 +33,7 @@ import {
   CreateFromConversationDto,
   UpdateTicketStatusDto,
   UpdateTicketPriorityDto,
+  UpdateTicketDto,
   AssignTicketDto,
   BulkAssignTicketsDto,
   MergeTicketDto,
@@ -98,6 +99,7 @@ export interface UseTicketsProviderResult {
   refreshTickets: () => Promise<void>;
   createTicketFromConversation: (data: CreateFromConversationDto) => Promise<TicketWithDetails>;
   replyToTicket: (ticketId: string, content: string) => Promise<void>;
+  updateTicket: (ticketId: string, updates: UpdateTicketDto) => Promise<void>;
   updateTicketStatus: (ticketId: string, status: UpdateTicketStatusDto["status"]) => Promise<void>;
   updateTicketPriority: (ticketId: string, priority: UpdateTicketPriorityDto["priority"]) => Promise<void>;
 
@@ -238,7 +240,22 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       setTickets((prev) => [payload.ticket, ...prev]);
     });
 
-    // 2. ticket.assigned - Update assignee
+    // 2. ticket.updated - Primary update handler for all field changes
+    ticketSocketService.onTicketUpdated((payload) => {
+      console.log("[TicketsProvider] Ticket updated:", payload.ticketId);
+      console.log("[TicketsProvider] Changes made:", payload.changes.map(c => c.action).join(", "));
+
+      // Update ticket in state with full details
+      setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
+
+      // Optional: Show toast notification for significant changes
+      // For now, we'll just log the changes
+      payload.changes.forEach((change) => {
+        console.log(`  - ${change.comment}`);
+      });
+    });
+
+    // 3. ticket.assigned - Update assignee (fallback - also covered by ticket.updated)
     ticketSocketService.onTicketAssigned((payload) => {
       console.log("[TicketsProvider] Ticket assigned:", payload.ticketId);
       setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
@@ -295,7 +312,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       // Update ticket in list (lastMessageAt)
       setTickets((prev) =>
         prev.map((t) => {
-          if (t.id === payload.ticketId) {
+          if (t.id === payload.ticketId && t.conversation) {
             return {
               ...t,
               conversation: {
@@ -371,7 +388,8 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       if (selectedTicketId === payload.ticketId) {
         setTickets((prev) =>
           prev.map((t) => {
-            if (t.id === payload.ticketId && t.conversation?.messages) {
+            // Ensure conversation and messages exist before updating
+            if (t.id === payload.ticketId && t.conversation && Array.isArray(t.conversation.messages)) {
               return {
                 ...t,
                 conversation: {
@@ -408,7 +426,8 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       if (selectedTicketId === payload.ticketId) {
         setTickets((prev) =>
           prev.map((t) => {
-            if (t.id === payload.ticketId && t.conversation?.messages) {
+            // Ensure conversation and messages exist before updating
+            if (t.id === payload.ticketId && t.conversation && Array.isArray(t.conversation.messages)) {
               return {
                 ...t,
                 conversation: {
@@ -562,10 +581,41 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const fetchTicketById = useCallback(
     async (ticketId: string) => {
       try {
+        console.log("[TicketsProvider] Fetching ticket by ID:", ticketId);
         const ticket = await ticketsService.getTicketById(ticketId);
+        console.log("[TicketsProvider] Ticket fetched successfully:", {
+          id: ticket.id,
+          ticketNumber: ticket.ticketNumber,
+          hasConversation: !!ticket.conversation,
+          messagesCount: ticket.conversation?.messages?.length || 0,
+          hasTags: Array.isArray(ticket.tags),
+          tagsCount: ticket.tags?.length || 0,
+        });
 
-        // Update ticket in list
-        setTickets((prev) => prev.map((t) => (t.id === ticketId ? ticket : t)));
+        // Validate ticket structure
+        if (!ticket.conversation) {
+          console.error("[TicketsProvider] ⚠️ Ticket missing conversation object:", ticket.id);
+          setError(`Ticket #${ticket.ticketNumber} is missing conversation data`);
+          return;
+        }
+
+        if (!Array.isArray(ticket.conversation.messages)) {
+          console.error("[TicketsProvider] ⚠️ Ticket conversation.messages is not an array:", ticket.id);
+          setError(`Ticket #${ticket.ticketNumber} has invalid messages data`);
+          return;
+        }
+
+        // Update or add ticket to list
+        setTickets((prev) => {
+          const existingIndex = prev.findIndex(t => t.id === ticketId);
+          if (existingIndex >= 0) {
+            // Update existing ticket
+            return prev.map((t) => (t.id === ticketId ? ticket : t));
+          } else {
+            // Add new ticket to the beginning of the list
+            return [ticket, ...prev];
+          }
+        });
 
         // Extract and set related data if included in response
         if (ticket.relatedTickets) {
@@ -579,9 +629,15 @@ export function useTicketsProvider(): UseTicketsProviderResult {
         }
       } catch (err: any) {
         console.error("[TicketsProvider] Fetch ticket by ID error:", err);
+        console.error("[TicketsProvider] Error details:", {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status,
+        });
+        setError(err.response?.data?.message || err.message || `Failed to load ticket ${ticketId}`);
       }
     },
-    [setTickets, setRelatedTickets, setTicketHistory]
+    [setTickets, setRelatedTickets, setTicketHistory, setError]
   );
 
   const createTicketFromConversation = useCallback(
@@ -619,36 +675,50 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     [setError]
   );
 
-  const updateTicketStatus = useCallback(
-    async (ticketId: string, status: string) => {
+  /**
+   * Update Ticket (General Purpose)
+   * Updates one or more ticket fields in a single request
+   * Real-time update via WebSocket (ticket.updated event)
+   */
+  const updateTicket = useCallback(
+    async (ticketId: string, updates: UpdateTicketDto) => {
       try {
-        await ticketsService.updateTicketStatus(ticketId, status);
-        console.log("[TicketsProvider] Status updated successfully");
-        // Refresh tickets to get updated data
-        await refreshTickets();
+        console.log("[TicketsProvider] Updating ticket:", ticketId, updates);
+
+        // Send to backend
+        const response = await ticketsService.updateTicket(ticketId, updates);
+        console.log("[TicketsProvider] Ticket updated successfully");
+        console.log("[TicketsProvider] Changes:", response.changes.map((c) => c.comment).join(", "));
+
+        // WebSocket will send ticket.updated event with full ticket details
+        // The WebSocket handler will update the state with complete data
       } catch (err: any) {
-        console.error("[TicketsProvider] Update status error:", err);
-        setError(err.message || "Failed to update status");
-        // Don't throw - let error be handled gracefully
+        console.error("[TicketsProvider] Update ticket error:", err);
+        setError(err.message || "Failed to update ticket");
+        throw err;
       }
     },
-    [setError, refreshTickets]
+    [setError]
   );
 
+  /**
+   * @deprecated Use updateTicket({ status }) instead
+   */
+  const updateTicketStatus = useCallback(
+    async (ticketId: string, status: string) => {
+      return updateTicket(ticketId, { status: status as UpdateTicketStatusDto["status"] });
+    },
+    [updateTicket]
+  );
+
+  /**
+   * @deprecated Use updateTicket({ priority }) instead
+   */
   const updateTicketPriority = useCallback(
     async (ticketId: string, priority: string) => {
-      try {
-        await ticketsService.updateTicketPriority(ticketId, priority);
-        console.log("[TicketsProvider] Priority updated successfully");
-        // Refresh tickets to get updated data
-        await refreshTickets();
-      } catch (err: any) {
-        console.error("[TicketsProvider] Update priority error:", err);
-        setError(err.message || "Failed to update priority");
-        // Don't throw - let error be handled gracefully
-      }
+      return updateTicket(ticketId, { priority: priority as UpdateTicketPriorityDto["priority"] });
     },
-    [setError, refreshTickets]
+    [updateTicket]
   );
 
   // ============================================
@@ -1025,6 +1095,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     refreshTickets,
     createTicketFromConversation,
     replyToTicket,
+    updateTicket,
     updateTicketStatus,
     updateTicketPriority,
 

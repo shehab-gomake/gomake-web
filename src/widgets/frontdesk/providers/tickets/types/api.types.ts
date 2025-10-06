@@ -217,12 +217,34 @@ export interface ReplyTicketDto {
   content: string;
 }
 
+/**
+ * @deprecated Use UpdateTicketDto instead
+ */
 export interface UpdateTicketStatusDto {
   status: TicketStatus;
 }
 
+/**
+ * @deprecated Use UpdateTicketDto instead
+ */
 export interface UpdateTicketPriorityDto {
   priority: TicketPriority;
+}
+
+/**
+ * General-Purpose Ticket Update DTO
+ * PATCH /api/tickets/:id
+ * All fields are optional - only include fields you want to update
+ */
+export interface UpdateTicketDto {
+  status?: TicketStatus;
+  priority?: TicketPriority;
+  assigneeId?: string;
+  categoryId?: string;
+  customerId?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  customerName?: string;
 }
 
 export interface MergeTicketDto {
@@ -271,6 +293,31 @@ export interface GenericSuccessResponse {
   success: true;
   message: string;
   ticket?: Ticket;
+}
+
+/**
+ * Ticket Change Entry - Tracks individual field changes
+ */
+export interface TicketChangeEntry {
+  action:
+    | 'status_changed'
+    | 'priority_changed'
+    | 'assignee_changed'
+    | 'category_changed'
+    | 'customer_updated';
+  oldValue: Record<string, any>;
+  newValue: Record<string, any>;
+  comment: string;
+}
+
+/**
+ * Response from PATCH /api/tickets/:id
+ */
+export interface TicketUpdatedResponse {
+  success: true;
+  message: string;
+  ticket: TicketWithDetails;
+  changes: TicketChangeEntry[];
 }
 
 // ============================================
