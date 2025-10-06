@@ -881,19 +881,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const duplicatePrintHouseMaterials = useCallback(async () => {
     // Filter out empty properties (where key is empty or undefined)
     const validProperties = properties.filter(item => item?.key?.key);
-
+    console.log("validProperties", validProperties);
     // Check if any property has empty values
     const hasEmptyValues = validProperties.some(item =>
       !item.values ||
       item.values.length === 0 ||
       item.values.every(value => !value || value.trim() === '')
     );
-
+    console.log("hasEmptyValues", hasEmptyValues);
     if (hasEmptyValues) {
       alertFault(t("materials.inputs.errorEmptyPropertyValue"));
       return;
     }
-
+    console.log("validProperties", validProperties);
     const transformedArray = validProperties.map((item) => {
       const convertedValues = item.values.map(value =>
         unitType === UNIT_TYPE.IMPERIAL ?
@@ -933,7 +933,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     };
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/printhouse-materials/duplicate-print-house-materials`,
+      `/v1/printhouse-materials/duplicate-print-house-materials-rows`,
       requestBody
     );
 

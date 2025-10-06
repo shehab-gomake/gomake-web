@@ -433,7 +433,6 @@ const ActionMenu = (props: IActionMenuProps) => {
               sx={{ width: "100%" }}
               variant={"contained"}
               disabled={
-                !updatedValue ||
                 ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
               }
             >
