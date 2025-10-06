@@ -7838,6 +7838,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }
 
   function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
+    // Collect ALL parameters from ALL subProducts + generalParameters first
+    const allParams = [];
+    subProducts.forEach((sp) => {
+      if (sp.parameters) {
+        allParams.push(...sp.parameters);
+      }
+    });
+
     return subProducts.map((subProduct) => {
       const filteredParameters = subProduct?.parameters?.filter((param) => {
         let matchingTemplateParam = null;
@@ -7893,24 +7901,75 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
 
         // For regular parameters, check if they should be hidden
-        if (matchingTemplateParam.isHidden) {
-          // If isHiddenInSetting is true, check if this parameter has any visibility conditions
-          if (matchingTemplateParam.isHiddenInSetting) {
-            // Check if this parameter has any conditions to be visible
-            const hasRelatedParameters = matchingTemplateParam.relatedParameters?.length > 0;
-            const hasSettingParameters = matchingTemplateParam.settingParameters?.length > 0;
-            const isControlledByOtherParameter = section.subSections
-              ?.find((x) => x.id === param.subSectionId)
-              ?.parameters?.some((parentParam) =>
-                parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+        if (matchingTemplateParam.isHidden && matchingTemplateParam.isHiddenInSetting) {
+          // Check if this parameter is controlled by relatedParameters (value-specific visibility)
+          const controllingParameters = [];
+
+          // Find all parameters that have this parameter in their relatedParameters
+          section.subSections?.forEach(subSec => {
+            subSec.parameters?.forEach(parentParam => {
+              if (parentParam.relatedParameters?.length > 0) {
+                parentParam.relatedParameters.forEach(relatedParam => {
+                  if (relatedParam.id === matchingTemplateParam.id || relatedParam.parameterId === matchingTemplateParam.id) {
+                    controllingParameters.push({
+                      parentParameter: parentParam,
+                      relatedConfig: relatedParam
+                    });
+                  }
+                });
+              }
+            });
+          });
+
+          // If has controlling parameters, check value-specific visibility
+          if (controllingParameters.length > 0) {
+            for (const controller of controllingParameters) {
+              const { parentParameter, relatedConfig } = controller;
+
+              // Find parent's selection in allParams
+              const parentSelection = allParams.find(
+                p => p.parameterId === parentParameter.id &&
+                  p.actionIndex === parentParameter.actionIndex
               );
 
-            // Only include if it has some condition to be visible
-            return hasRelatedParameters || hasSettingParameters || isControlledByOtherParameter;
-          } else {
-            // If isHiddenInSetting is false or null, hide the parameter
-            return false;
+              // If parent not selected, hide this parameter
+              if (!parentSelection || (!parentSelection.valueIds?.length && !parentSelection.values?.length && !parentSelection.value)) {
+                return false;
+              }
+
+              // Check if parent has the CORRECT value
+              if (!relatedConfig.activateByAllValues) {
+                const parentValueIds = parentSelection.valueIds || parentSelection.values || [parentSelection.value];
+                const hasMatchingValue = parentValueIds.some(selectedValueId =>
+                  relatedConfig.selectedValueIds?.includes(selectedValueId)
+                );
+
+                if (!hasMatchingValue) {
+                  return false;
+                }
+              }
+            }
+            // All controlling parameters have correct values
+            return true;
           }
+
+          // No controlling parameters - check if this is a PARENT parameter or has default value
+          // If this parameter has relatedParameters, it's a parent parameter and should be shown
+          if (matchingTemplateParam.relatedParameters?.length > 0) {
+            return true;
+          }
+
+          // Check if has default value
+          if (matchingTemplateParam.defaultValue ||
+            (matchingTemplateParam.defaultValueArray?.length > 0)) {
+            return true;
+          }
+
+          // Has no visibility conditions and is not a parent parameter
+          return false;
+        } else if (matchingTemplateParam.isHidden) {
+          // If isHidden=true but isHiddenInSetting is false/null, hide the parameter
+          return false;
         } else {
           // If not hidden, include the parameter
           return true;
@@ -7982,29 +8041,77 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
 
       // For regular parameters, check if they should be hidden
-      if (matchingTemplateParam.isHidden) {
-        // If isHiddenInSetting is true, check if this parameter has any visibility conditions
-        if (matchingTemplateParam.isHiddenInSetting) {
-          // Check if this parameter has any conditions to be visible
-          const hasRelatedParameters = matchingTemplateParam.relatedParameters?.length > 0;
-          const hasSettingParameters = matchingTemplateParam.settingParameters?.length > 0;
-          const isControlledByOtherParameter = section.subSections
-            ?.find((x) => x.id === param.subSectionId)
-            ?.parameters?.some((parentParam) =>
-              parentParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+      if (matchingTemplateParam.isHidden && matchingTemplateParam.isHiddenInSetting) {
+        // Check if this parameter is controlled by relatedParameters (value-specific visibility)
+        const controllingParameters = [];
+
+        // Find all parameters that have this parameter in their relatedParameters
+        section.subSections?.forEach(subSec => {
+          subSec.parameters?.forEach(parentParam => {
+            if (parentParam.relatedParameters?.length > 0) {
+              parentParam.relatedParameters.forEach(relatedParam => {
+                if (relatedParam.id === matchingTemplateParam.id || relatedParam.parameterId === matchingTemplateParam.id) {
+                  controllingParameters.push({
+                    parentParameter: parentParam,
+                    relatedConfig: relatedParam
+                  });
+                }
+              });
+            }
+          });
+        });
+
+        // If has controlling parameters, check value-specific visibility
+        if (controllingParameters.length > 0) {
+          let shouldShow = true;
+
+          for (const controller of controllingParameters) {
+            const { parentParameter, relatedConfig } = controller;
+
+            // Find parent's selection in parameters list
+            const parentSelection = parameters.find(
+              p => p.parameterId === parentParameter.id &&
+                p.actionIndex === parentParameter.actionIndex
             );
 
-          // Only include if it has some condition to be visible
-          if (hasRelatedParameters || hasSettingParameters || isControlledByOtherParameter) {
-            updatedParameters.push(param);
-          } else {
-            // No visibility conditions, hide the parameter
-            continue;
+            // If parent not selected, hide this parameter
+            if (!parentSelection || (!parentSelection.valueIds?.length && !parentSelection.values?.length && !parentSelection.value)) {
+              shouldShow = false;
+              break;
+            }
+
+            // Check if parent has the CORRECT value
+            if (!relatedConfig.activateByAllValues) {
+              const parentValueIds = parentSelection.valueIds || parentSelection.values || [parentSelection.value];
+              const hasMatchingValue = parentValueIds.some(selectedValueId =>
+                relatedConfig.selectedValueIds?.includes(selectedValueId)
+              );
+
+              if (!hasMatchingValue) {
+                shouldShow = false;
+                break;
+              }
+            }
           }
-        } else {
-          // If isHiddenInSetting is false or null, hide the parameter
+
+          if (shouldShow) {
+            updatedParameters.push(param);
+          }
           continue;
         }
+
+        // No controlling parameters - check if this is a PARENT parameter or has default value
+        // If this parameter has relatedParameters, it's a parent parameter and should be shown
+        if (matchingTemplateParam.relatedParameters?.length > 0) {
+          updatedParameters.push(param);
+        } else if (matchingTemplateParam.defaultValue ||
+          (matchingTemplateParam.defaultValueArray?.length > 0)) {
+          updatedParameters.push(param);
+        }
+        // Otherwise hide it (continue)
+      } else if (matchingTemplateParam.isHidden) {
+        // If isHidden=true but isHiddenInSetting is false/null, hide the parameter
+        continue;
       } else {
         // If not hidden, include the parameter
         updatedParameters.push(param);
