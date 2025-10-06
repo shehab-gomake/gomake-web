@@ -41,7 +41,9 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
       // Start new AI session
       const response = await callApi(
         "POST",
-        "/v1/gomake-ai-service/start-session"
+        "/v1/gomake-ai-service/start-session",
+        {},
+        false
       );
 
       const responseData = response.data?.data?.data?.sessionId;
@@ -76,7 +78,8 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
         {
           sessionId: sessionId,
           prompt: prompt,
-        }
+        },
+        false
       );
 
       // Check HTTP status code
@@ -105,7 +108,9 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     try {
       const response = await callApi(
         "GET",
-        "/v1/gomake-ai-service/get-conversations-history"
+        "/v1/gomake-ai-service/get-conversations-history",
+        {},
+        false
       );
 
       // Check HTTP status code
@@ -144,7 +149,9 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
 
       const response = await callApi(
         "GET",
-        `/v1/gomake-ai-service/get-conversation/${sessionId}`
+        `/v1/gomake-ai-service/get-conversation/${sessionId}`,
+        {},
+        false
       );
 
       // Check HTTP status code
@@ -176,6 +183,11 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     setSessionId(newSessionId);
   };
 
+  // Function to reset processing state (for new jobs)
+  const resetProcessingState = () => {
+    setIsProcessing(false);
+  };
+
   return {
     isProcessing,
     sessionId,
@@ -184,6 +196,7 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     getConversationsHistory,
     getConversation,
     setSessionIdManually,
+    resetProcessingState,
   };
 };
 

@@ -101,7 +101,7 @@ const useStyle = () => {
       headerIcon: {
         fontSize: 32,
         textAlign: "center" as "center",
-        marginBottom: 16,
+        marginBottom: 8,
         color: "#3B82F6",
       },
       headerTitle: {

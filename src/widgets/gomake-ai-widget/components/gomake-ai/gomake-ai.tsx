@@ -35,6 +35,7 @@ const GoMakeAIComponent = () => {
     getConversationsHistory,
     getConversation,
     setSessionIdManually,
+    resetProcessingState,
   } = useAISocketIO(handleRealTimeMessage);
 
   // Load conversations history when component mounts
@@ -107,6 +108,7 @@ const GoMakeAIComponent = () => {
   const handleNewJobClick = async () => {
     setChatMessages([]); // Clear chat messages for fresh start
     setSelectedConversation(null); // Clear selected conversation
+    resetProcessingState(); // Reset AI thinking indicator immediately
 
     // Start a new session when clicking + New Job
     try {

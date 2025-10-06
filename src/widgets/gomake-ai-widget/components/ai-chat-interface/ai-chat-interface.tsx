@@ -9,12 +9,19 @@ interface AIChatInterfaceProps {
     type: "user" | "ai";
     message: string;
     timestamp: string;
+    messageType?: "text" | "list";
+    options?: string[];
   }>;
-  isProcessing: boolean;
+  isProcessing?: boolean;
+  onOptionClick?: (option: string) => void;
 }
 
 //!here
-const AIChatInterface = ({ messages, isProcessing }: AIChatInterfaceProps) => {
+const AIChatInterface = ({
+  messages,
+  isProcessing,
+  onOptionClick,
+}: AIChatInterfaceProps) => {
   const { classes } = useStyle();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +67,26 @@ const AIChatInterface = ({ messages, isProcessing }: AIChatInterfaceProps) => {
                 </div>
               </div>
             </div>
-            <div style={classes.messageContent}>{message.message}</div>
+            {/* <div style={classes.messageContent}>{message.message}</div> */}
+            {/* here new */}
+            <div style={classes.messageContent}>
+              {message.message}
+              {message.messageType === "list" &&
+                message.options &&
+                message.options.length > 0 && (
+                  <div style={classes.optionsContainer}>
+                    {message.options.map((option, index) => (
+                      <button
+                        key={index}
+                        style={classes.optionButton}
+                        onClick={() => onOptionClick?.(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                )}
+            </div>
           </div>
         ))}
 

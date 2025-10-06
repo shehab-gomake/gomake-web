@@ -80,3 +80,4 @@ export * from "./arrow-up-with-circle";
 export * from "./arrow-down-with-circle";
 export * from "./go-to-materials";
 export * from "./outlook-icon";
+export * from "./gomake-ai";

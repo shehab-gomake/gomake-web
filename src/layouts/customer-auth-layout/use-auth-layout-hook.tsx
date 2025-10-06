@@ -21,7 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
-import ReviewsOutlinedIcon from "@mui/icons-material/ReviewsOutlined";
+import { AIIcon } from "@/icons/side-list-icons/ai";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -65,7 +65,7 @@ const useAuthLayoutHook = (
         path: "/gomake-ai",
         isList: false,
         icon: () => {
-          return <ReviewsOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <AIIcon />;
         },
         isProduction: true,
         tourData: "menu-go-ai",
