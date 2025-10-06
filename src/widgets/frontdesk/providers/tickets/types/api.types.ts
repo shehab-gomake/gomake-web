@@ -154,6 +154,9 @@ export interface TicketWithDetails extends Ticket {
     breached: boolean;
     breachedAt?: string | null;
   } | null;
+  // Optional: Related data (included when fetching single ticket by ID)
+  relatedTickets?: RelatedTicket[];
+  history?: TicketHistoryEntry[];
 }
 
 // ============================================

@@ -563,13 +563,25 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     async (ticketId: string) => {
       try {
         const ticket = await ticketsService.getTicketById(ticketId);
+
         // Update ticket in list
         setTickets((prev) => prev.map((t) => (t.id === ticketId ? ticket : t)));
+
+        // Extract and set related data if included in response
+        if (ticket.relatedTickets) {
+          console.log("[TicketsProvider] Related tickets included in response:", ticket.relatedTickets.length);
+          setRelatedTickets(ticket.relatedTickets);
+        }
+
+        if (ticket.history) {
+          console.log("[TicketsProvider] History included in response:", ticket.history.length);
+          setTicketHistory(ticket.history);
+        }
       } catch (err: any) {
         console.error("[TicketsProvider] Fetch ticket by ID error:", err);
       }
     },
-    [setTickets]
+    [setTickets, setRelatedTickets, setTicketHistory]
   );
 
   const createTicketFromConversation = useCallback(
@@ -948,13 +960,16 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     fetchTickets();
   }, [fetchTickets, filters.status, filters.priority, filters.assigneeId, filters.page]);
 
-  // Fetch related data when ticket is selected
+  // Fetch ticket details when selected (includes relatedTickets and history in response)
   useEffect(() => {
     if (selectedTicketId) {
-      fetchRelatedTickets(selectedTicketId);
-      fetchTicketHistory(selectedTicketId);
+      console.log("[TicketsProvider] Ticket selected, fetching details:", selectedTicketId);
+
+      // Fetch full ticket details - backend includes relatedTickets and history
+      // This optimizes from 3 API calls down to 1 call
+      fetchTicketById(selectedTicketId);
     }
-  }, [selectedTicketId, fetchRelatedTickets, fetchTicketHistory]);
+  }, [selectedTicketId, fetchTicketById]);
 
   return {
     // Connection
