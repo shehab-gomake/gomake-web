@@ -12,6 +12,7 @@ import { messagingService } from './messaging-socket.service';
 import {
   TICKET_EVENTS,
   TicketCreatedPayload,
+  TicketUpdatedPayload,
   TicketAssignedPayload,
   TicketStatusChangedPayload,
   TicketReplySentPayload,
@@ -31,6 +32,7 @@ import {
   TagCreatedPayload,
   TagDeletedPayload,
   TicketCreatedHandler,
+  TicketUpdatedHandler,
   TicketAssignedHandler,
   TicketStatusChangedHandler,
   TicketReplySentHandler,
@@ -91,14 +93,15 @@ class TicketSocketService {
   }
 
   // ============================================
-  // Event Registration (19 Ticket Events)
+  // Event Registration (20 Ticket Events)
   // ============================================
 
   private registerAllEvents(): void {
     if (!this.socket) return;
 
-    // Register all 12 core ticket events
+    // Register all core ticket events
     this.socket.on(TICKET_EVENTS.CREATED, this.handleTicketCreated.bind(this));
+    this.socket.on(TICKET_EVENTS.UPDATED, this.handleTicketUpdated.bind(this)); // New general update event
     this.socket.on(TICKET_EVENTS.ASSIGNED, this.handleTicketAssigned.bind(this));
     this.socket.on(TICKET_EVENTS.STATUS_CHANGED, this.handleTicketStatusChanged.bind(this));
     this.socket.on(TICKET_EVENTS.REPLY_SENT, this.handleTicketReplySent.bind(this));
@@ -124,7 +127,7 @@ class TicketSocketService {
     this.socket.on(TICKET_EVENTS.TAG_CREATED, this.handleTagCreated.bind(this));
     this.socket.on(TICKET_EVENTS.TAG_DELETED, this.handleTagDeleted.bind(this));
 
-    console.log('[TicketSocket] Registered all 19 ticket event listeners');
+    console.log('[TicketSocket] Registered all 20 ticket event listeners');
   }
 
   private removeAllTicketListeners(): void {
@@ -146,6 +149,12 @@ class TicketSocketService {
   private handleTicketCreated(payload: TicketCreatedPayload): void {
     console.log('[TicketSocket] ticket.created:', payload);
     this.emit(TICKET_EVENTS.CREATED, payload);
+  }
+
+  private handleTicketUpdated(payload: TicketUpdatedPayload): void {
+    console.log('[TicketSocket] ticket.updated:', payload);
+    console.log('[TicketSocket] Changes:', payload.changes);
+    this.emit(TICKET_EVENTS.UPDATED, payload);
   }
 
   private handleTicketAssigned(payload: TicketAssignedPayload): void {
@@ -250,6 +259,14 @@ class TicketSocketService {
    */
   onTicketCreated(handler: TicketCreatedHandler): void {
     this.on(TICKET_EVENTS.CREATED, handler);
+  }
+
+  /**
+   * Subscribe to ticket.updated event
+   * This is the primary event for tracking all ticket field updates
+   */
+  onTicketUpdated(handler: TicketUpdatedHandler): void {
+    this.on(TICKET_EVENTS.UPDATED, handler);
   }
 
   /**

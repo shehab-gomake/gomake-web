@@ -2,14 +2,14 @@
  * WebSocket Event Types for Tickets System
  * Source: /Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/realtime-and-webhooks.md
  *
- * All 19 real-time events for ticketing system (15 core + 4 tag events).
+ * All 20 real-time events for ticketing system (16 core + 4 tag events).
  * Events are broadcast to organization room: `org:${printHouseId}`
  */
 
-import { TicketWithDetails, ChannelType, Tag } from './api.types';
+import { TicketWithDetails, ChannelType, Tag, TicketChangeEntry } from './api.types';
 
 // ============================================
-// WebSocket Event Payloads (19 Events)
+// WebSocket Event Payloads (20 Events)
 // ============================================
 
 /**
@@ -22,6 +22,19 @@ export interface TicketCreatedPayload {
   channel?: ChannelType;
   customerIdentifier?: string;
   printHouseId: string;
+}
+
+/**
+ * Event: ticket.updated
+ * When: Any ticket field is updated via PATCH /tickets/:id
+ * This is the primary update event emitted by the new general-purpose endpoint
+ */
+export interface TicketUpdatedPayload {
+  ticketId: string;
+  ticket: TicketWithDetails;
+  userId: string;
+  printHouseId: string;
+  changes: TicketChangeEntry[];
 }
 
 /**
@@ -231,6 +244,7 @@ export interface TagDeletedPayload {
 // ============================================
 
 export type TicketCreatedHandler = (payload: TicketCreatedPayload) => void;
+export type TicketUpdatedHandler = (payload: TicketUpdatedPayload) => void;
 export type TicketAssignedHandler = (payload: TicketAssignedPayload) => void;
 export type TicketStatusChangedHandler = (payload: TicketStatusChangedPayload) => void;
 export type TicketReplySentHandler = (payload: TicketReplySentPayload) => void;
@@ -264,6 +278,7 @@ export type ConversationNeedsReviewHandler = (payload: ConversationNeedsReviewPa
 
 export const TICKET_EVENTS = {
   CREATED: 'ticket.created',
+  UPDATED: 'ticket.updated', // New general-purpose update event
   ASSIGNED: 'ticket.assigned',
   STATUS_CHANGED: 'ticket.status.changed',
   REPLY_SENT: 'ticket.reply.sent',

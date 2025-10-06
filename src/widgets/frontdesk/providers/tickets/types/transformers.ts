@@ -119,8 +119,9 @@ export function getDirectionIcon(direction: MessageDirection): string {
 // ============================================
 
 export function transformApiTicketToUi(apiTicket: ApiTicket): UiTicket {
-  // Transform messages to comments
-  const comments: TicketComment[] = apiTicket.conversation.messages.map((msg) => ({
+  // Transform messages to comments (with null-safety)
+  const messages = apiTicket.conversation?.messages || [];
+  const comments: TicketComment[] = messages.map((msg) => ({
     id: msg.id,
     author: {
       userId: msg.direction === 'INBOUND' ? apiTicket.customerId || 'customer' : apiTicket.assigneeId || 'agent',
@@ -142,7 +143,7 @@ export function transformApiTicketToUi(apiTicket: ApiTicket): UiTicket {
     id: apiTicket.id,
     ticketNumber: `#${apiTicket.ticketNumber}`,
     title: apiTicket.conversation.name || `Ticket #${apiTicket.ticketNumber}`,
-    description: apiTicket.conversation.messages[0]?.content || '',
+    description: messages[0]?.content || '',
     status: apiStatusToUi(apiTicket.status),
     priority: apiPriorityToUi(apiTicket.priority),
     type: 'Support', // Default type for tickets from backend

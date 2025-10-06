@@ -17,6 +17,8 @@ import {
   ReplyTicketResponse,
   UpdateTicketStatusDto,
   UpdateTicketPriorityDto,
+  UpdateTicketDto,
+  TicketUpdatedResponse,
   AssignTicketDto,
   AssignTicketResponse,
   BulkAssignTicketsDto,
@@ -104,8 +106,22 @@ export class TicketsService extends MessagingHubHttpClient {
   }
 
   /**
+   * Update Ticket (General Purpose)
+   * PATCH /api/tickets/:id
+   * Update one or more ticket fields in a single request
+   * All fields are optional - only include what you want to update
+   */
+  async updateTicket(ticketId: string, data: UpdateTicketDto): Promise<TicketUpdatedResponse> {
+    return await this.patch<TicketUpdatedResponse>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}`,
+      data
+    );
+  }
+
+  /**
    * Update Ticket Status
    * PATCH /api/tickets/:id/status
+   * @deprecated Use updateTicket() instead
    */
   async updateTicketStatus(ticketId: string, status: string): Promise<GenericSuccessResponse> {
     return await this.patch<GenericSuccessResponse>(
@@ -127,6 +143,7 @@ export class TicketsService extends MessagingHubHttpClient {
   /**
    * Update Ticket Priority (Manager/Admin)
    * PATCH /api/tickets/:id/priority
+   * @deprecated Use updateTicket() instead
    */
   async updateTicketPriority(ticketId: string, priority: string): Promise<GenericSuccessResponse> {
     return await this.patch<GenericSuccessResponse>(
