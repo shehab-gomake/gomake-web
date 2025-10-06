@@ -95,9 +95,24 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     uploadExcelFile,
     elementRef,
   } = useMaterials(props.isAdmin);
+
+  const { loadMoreData, hasMoreData, isLoadingMore, setPageNumber: resetPageNumber } = useMaterialsCategories(props.isAdmin);
+
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
+
+  const handleLoadMore = useCallback(() => {
+    if (materialType && materialCategory && !isLoadingMore && hasMoreData) {
+      loadMoreData(
+        materialType.toString(),
+        materialCategory.toString(),
+        materialFilter,
+        supplierId,
+        20 // pageSize
+      );
+    }
+  }, [materialType, materialCategory, materialFilter, supplierId, isLoadingMore, hasMoreData, loadMoreData]);
 
   useEffect(() => {
     if (!subCategory) {
@@ -289,14 +304,20 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     ).then();
   }, [materialCategory]);
   const isLoadingMaterials = useRecoilValue(isLoadingMaterialsState);
+
   useEffect(() => {
     if (!!materialType && !!materialCategory) {
+      // Reset to page 1 when filters change
+      resetPageNumber(1);
+
       if (props.isAdmin) {
         getMaterialCategoryData(
           materialType?.toString(),
           materialCategory?.toString(),
           materialFilter,
           supplierId,
+          1, // pageNumber
+          20 // pageSize
         ).then();
       } else {
         if (supplierId) {
@@ -305,6 +326,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             materialCategory?.toString(),
             materialFilter,
             supplierId,
+            1, // pageNumber
+            20 // pageSize
           ).then();
         }
       }
@@ -430,6 +453,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         renderOptionsSupplier={listSupplier}
                         checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
                         isFetchingSupplier={isFetchingSupplier}
+                        onLoadMore={handleLoadMore}
+                        hasMoreData={hasMoreData}
+                        isLoadingMore={isLoadingMore}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -446,6 +472,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         renderOptionsSupplier={listSupplier}
                         checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
                         isFetchingSupplier={isFetchingSupplier}
+                        onLoadMore={handleLoadMore}
+                        hasMoreData={hasMoreData}
+                        isLoadingMore={isLoadingMore}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>

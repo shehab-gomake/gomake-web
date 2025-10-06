@@ -243,3 +243,18 @@ export const showMoreFiltersState = atom<boolean>({
   key: "showMoreFiltersState",
   default: false,
 });
+
+export const hasMoreDataState = atom<boolean>({
+  key: "hasMoreDataState",
+  default: true,
+});
+
+export const isLoadingMoreState = atom<boolean>({
+  key: "isLoadingMoreState",
+  default: false,
+});
+
+export const totalItemsCountState = atom<number>({
+  key: "totalItemsCountState",
+  default: 0,
+});

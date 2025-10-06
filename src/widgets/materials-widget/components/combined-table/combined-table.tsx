@@ -19,6 +19,9 @@ interface ICombinedTableProps {
     renderOptionsSupplier?: any;
     checkWhatRenderArraySupplier?: any;
     isFetchingSupplier?: boolean;
+    onLoadMore?: () => void;
+    hasMoreData?: boolean;
+    isLoadingMore?: boolean;
 }
 
 const CombinedTable = ({
@@ -32,6 +35,9 @@ const CombinedTable = ({
     checkWhatRenderArraySupplier,
     isFetchingSupplier,
     checkWhatRenderArrayCustomer,
+    onLoadMore,
+    hasMoreData = false,
+    isLoadingMore = false,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
@@ -41,9 +47,32 @@ const CombinedTable = ({
 
     const [showScrollIndicator, setShowScrollIndicator] = useState(true);
     const tableContainerRef = useRef<HTMLDivElement>(null);
+    const isLoadingRef = useRef(false);
+    const loadMoreTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     const handleScroll = () => {
         if (tableContainerRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
+            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = tableContainerRef.current;
+
+            // Check vertical scroll for infinite loading
+            const scrolledToBottom = scrollHeight - scrollTop - clientHeight;
+            // Trigger load more when user is 200px from the bottom (or has scrolled ~75% of visible area)
+            const threshold = Math.min(200, clientHeight * 0.75);
+
+            if (scrolledToBottom < threshold && hasMoreData && !isLoadingMore && !isLoadingRef.current && onLoadMore) {
+                // Clear any pending timeout
+                if (loadMoreTimeoutRef.current) {
+                    clearTimeout(loadMoreTimeoutRef.current);
+                }
+
+                // Set loading flag immediately to prevent duplicate calls
+                isLoadingRef.current = true;
+
+                // Debounce the actual call
+                loadMoreTimeoutRef.current = setTimeout(() => {
+                    onLoadMore();
+                }, 100);
+            }
 
             let isAtEnd;
             if (isRTL) {
@@ -79,6 +108,13 @@ const CombinedTable = ({
         }
     };
 
+    // Reset loading ref when loading completes
+    useEffect(() => {
+        if (!isLoadingMore) {
+            isLoadingRef.current = false;
+        }
+    }, [isLoadingMore]);
+
     useEffect(() => {
         const container = tableContainerRef.current;
         if (container) {
@@ -91,9 +127,12 @@ const CombinedTable = ({
             // Cleanup
             return () => {
                 container.removeEventListener('scroll', handleScroll);
+                if (loadMoreTimeoutRef.current) {
+                    clearTimeout(loadMoreTimeoutRef.current);
+                }
             };
         }
-    }, [rows]); // Re-check when rows change
+    }, [rows, hasMoreData, isLoadingMore]); // Re-check when rows change
 
     const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
@@ -180,6 +219,33 @@ const CombinedTable = ({
                             ))}
                         </TableBody>
                     </Table>
+                    {/* Loading indicator for infinite scroll */}
+                    {isLoadingMore && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '20px',
+                                backgroundColor: '#f5f5f5',
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: '24px',
+                                    height: '24px',
+                                    border: '3px solid #e0e0e0',
+                                    borderTop: '3px solid #1976d2',
+                                    borderRadius: '50%',
+                                    animation: 'spin 1s linear infinite',
+                                    '@keyframes spin': {
+                                        '0%': { transform: 'rotate(0deg)' },
+                                        '100%': { transform: 'rotate(360deg)' },
+                                    },
+                                }}
+                            />
+                        </Box>
+                    )}
                 </TableContainer>
 
                 {/* Scroll Indicator Button - positioned at first fixed column */}
