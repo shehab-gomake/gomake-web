@@ -116,7 +116,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
-  console.log("currentCurrency", currentCurrency);
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
   const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
@@ -881,26 +880,23 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const duplicatePrintHouseMaterials = useCallback(async () => {
     // Filter out empty properties (where key is empty or undefined)
     const validProperties = properties.filter(item => item?.key?.key);
-    console.log("validProperties", validProperties);
     // Check if any property has empty values
     const hasEmptyValues = validProperties.some(item =>
       !item.values ||
       item.values.length === 0 ||
       item.values.every(value => !value || value.trim() === '')
     );
-    console.log("hasEmptyValues", hasEmptyValues);
     if (hasEmptyValues) {
       alertFault(t("materials.inputs.errorEmptyPropertyValue"));
       return;
     }
-    console.log("validProperties", validProperties);
     const transformedArray = validProperties.map((item) => {
       const convertedValues = item.values.map(value =>
         unitType === UNIT_TYPE.IMPERIAL ?
           convertValueToOriginalUnit(item?.key?.unit, value) :
           value
       );
-      const key = item?.key?.key?.toLowerCase();
+      const key = item?.key?.key;
       const value = convertedValues[convertedValues.length - 1];
       const uniqueValues = Array.from(new Set(convertedValues));
 
