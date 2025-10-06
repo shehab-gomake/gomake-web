@@ -109,7 +109,6 @@ const usePriceProfit = () => {
     }
   }, [action, callApi]);
 
-  //!here check
   const getProfitsPricingTables = useCallback(async () => {
     if (action?.actionId) {
       // Store the current selected pricing table ID before refreshing
@@ -179,7 +178,25 @@ const usePriceProfit = () => {
         setChartData(next);
         setIsFixed(false);
         setExcelReportLink(null); // Clear the excel report link when getting new data
-        setSummaryData(null); // Clear the summary data when getting new data
+
+        // Set summary data from the response if available
+        if (res?.data?.[0]) {
+          setSummaryData({
+            diffAfterOptimization: res.data[0].diffAfterOptimization || 0,
+            diffBeforeOptimization: res.data[0].diffBeforeOptimization || 0,
+            accuracyBeforeOptimization:
+              res.data[0].accuracyBeforeOptimization || 0,
+            accuracyAfterOptimization:
+              res.data[0].accuracyAfterOptimization || 0,
+            totalPoints: null,
+            totalAbnormalPoints: null,
+            totalCalculatedPrice: res.data[0].totalCalculatedPrice || 0,
+            totalUserInputPrice: res.data[0].totalUserInputPrice || 0,
+            totalFixedPrice: res.data[0].totalFixedPrice || 0,
+          });
+        } else {
+          setSummaryData(null); // Clear the summary data if no data available
+        }
       }
     };
     await getDataForAutoPricingActionsChartApi(callApi, callBack, {

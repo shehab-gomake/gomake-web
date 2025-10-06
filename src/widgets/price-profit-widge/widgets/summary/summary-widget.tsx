@@ -19,7 +19,6 @@ interface SummaryData {
 
 interface SummaryWidgetProps {
   summaryData: SummaryData | null;
-  isFixed: boolean;
 }
 
 // Utilities outside component (avoids re-creation on each render)
@@ -31,13 +30,19 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 const formatNumber = (value: number) => numberFormatter.format(value);
 const formatPercentage = (value: number) => `${formatNumber(value)}%`;
 
-const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
+const SummaryWidget = ({ summaryData }: SummaryWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currenciesUnits = useRecoilValue<any[]>(currencyUnitState);
 
-  if (!isFixed || !summaryData) return null;
+  // Don't show summary if no data or if totalFixedPrice is zero/null
+  if (
+    !summaryData ||
+    summaryData.totalFixedPrice === 0 ||
+    summaryData.totalFixedPrice === null
+  )
+    return null;
 
   const getCurrencyUnitText = (currency: string) =>
     currenciesUnits.find((c) => c.value === currency)?.text || "";
