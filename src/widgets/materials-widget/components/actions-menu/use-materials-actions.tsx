@@ -546,6 +546,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
   const onUpdateCallBack = (res) => {
     if (res.success) {
+      console.log("resqqqqqqqqqqqqqqqq", res);
       if (action?.action === EMaterialsActions.Delete) {
         setMaterialCategoryData(
           materialCategoryData.filter((material) => !material.checked)
@@ -1165,8 +1166,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const handleRefreshMaterialData = () => {
-    // Refresh materials data
-    getMaterialCategories(materialType).then();
+    getMaterialCategoryData(
+      materialType?.toString(),
+      materialCategory?.toString(),
+      [],
+      supplierId
+    ).then();
   };
 
   const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
@@ -1260,7 +1265,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
     handleRefreshMaterialData,
-    materialHeaders,
   };
 };
 

@@ -611,16 +611,22 @@ const useMaterials = (isAdmin: boolean) => {
   };
 
   const handleRefreshMaterialData = () => {
-    // Refresh materials data
-    getMaterialCategories(materialType).then();
-    getMaterialCategoryData(
-      materialType?.toString(),
-      materialCategory?.toString(),
-      materialFilter,
-      supplierId,
-      1,
-      20
-    ).then();
+    console.log("handleRefreshMaterialData", { materialType, materialCategory });
+
+    // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
+    if (materialType && materialCategory) {
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        materialFilter,
+        supplierId,
+        1, // pageNumber
+        20, // pageSize
+        false // appendMode
+      ).then(() => {
+        console.log('Materials data refreshed');
+      });
+    }
   };
 
   const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {

@@ -27,7 +27,6 @@ import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
-import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
 import { getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
