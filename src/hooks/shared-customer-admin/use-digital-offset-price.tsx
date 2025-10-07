@@ -526,10 +526,9 @@ const useDigitalOffsetPrice = ({
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${
       productId || (router?.query?.productId ?? productItemCalculationException)
-    }
-      }&ignoreCalculatedWorkflows=${
+    }&ignoreCalculatedWorkflows=${
         ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
-      }`;
+    }`;
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
         IsNeedPriceUpdate ? false : priceRecovery
