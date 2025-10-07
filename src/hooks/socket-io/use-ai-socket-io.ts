@@ -3,8 +3,10 @@ import io from "socket.io-client";
 import config from "@/config";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-//!here socket
-const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
+const useAISocketIO = (
+  onMessageReceived?: (message: any) => void,
+  onProductIdReceived?: (productId: string) => void
+) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { callApi } = useGomakeAxios();
@@ -31,7 +33,15 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
       setIsProcessing(false);
     });
 
+    // Listen for productId result
+    socket.on(`${sessionId}-productId-result`, (data: any) => {
+      if (data?.productId && onProductIdReceived) {
+        onProductIdReceived(data.productId);
+      }
+    });
+
     return () => {
+      socket.off(`${sessionId}-productId-result`);
       socket.disconnect();
     };
   }, [sessionId]);
@@ -165,6 +175,7 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
       }
 
       const responseData = response.data?.data?.data;
+      //!here should use onProductIdReceived if the responseData has productId
       if (response?.success && responseData) {
         return responseData;
       } else {

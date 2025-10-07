@@ -182,7 +182,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         ...FONT_FAMILY.Lexend(600, 16),
         color: secondColor(500),
         marginBottom: 5,
-        marginTop:5,
+        marginTop: 5,
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -223,7 +223,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "flex-start",
         width: "100%",
         // gap: 8,
-         padding: 0,
+        padding: 0,
       },
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -921,7 +921,6 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         // borderBottom: "1px solid red",
         width: "100%",
         border: "none",
-
       },
       advertisingProductCategorySearch: {
         position: "absolute" as "absolute",
@@ -1106,25 +1105,66 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         height: 65,
         backgroundColor: "#FFF",
       },
+      aiButtonsContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        position: "relative" as "relative",
+        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+        height: 60,
+        backgroundColor: "#FFF",
+      },
       advertisingProductNameAutoComplete: {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-end",
-        width: "100%"
+        width: "100%",
       },
-      modalStyle: { 
-        width: 400, 
-        height: "fit-content", 
-        padding: 20 
+      modalStyle: {
+        width: 400,
+        height: "fit-content",
+        padding: 20,
       },
-     
-      modalContent: { display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 },
-      modalContentImage:{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", height: "100%", gap: 50 },
-      modalContentImageItem: { width: "55%"},
-      modalContentDataItem:{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 },
-      modalContentButton: { display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: 15 },
-      modalContentButtonItem: { width: "fit-content", height: 40, minWidth: 150 },
+
+      modalContent: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: 10,
+      },
+      modalContentImage: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        width: "100%",
+        height: "100%",
+        gap: 50,
+      },
+      modalContentImageItem: { width: "55%" },
+      modalContentDataItem: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: 10,
+      },
+      modalContentButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        gap: 15,
+      },
+      modalContentButtonItem: {
+        width: "fit-content",
+        height: 40,
+        minWidth: 150,
+      },
       modalContentImageItem2: { width: 280, height: 280, objectFit: "contain" },
       modalContentDataItem2: {
         display: "flex",
@@ -1132,10 +1172,18 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "flex-start",
         justifyContent: "flex-start",
         marginTop: 22,
-        gap: 20
+        gap: 20,
       },
-      modalContentButton2: { display: "flex", alignItems: "center", justifyContent: "space-between" },
-      modalContentButtonItem2:{ display: "flex", alignItems: "center", justifyContent: "flex-end" },
+      modalContentButton2: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      },
+      modalContentButtonItem2: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+      },
       modalContentIcon: {
         position: "absolute",
         top: 0,
