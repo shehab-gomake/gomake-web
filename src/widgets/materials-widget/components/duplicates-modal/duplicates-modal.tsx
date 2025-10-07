@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Box, Stack, Typography, Checkbox, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, Stack, Typography, Checkbox, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
 import { GoMakeModal } from "@/components/modal/modal";
 import { GomakePrimaryButton } from "@/components/button";
 import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
 
 interface IDuplicatesModalProps {
@@ -20,8 +21,11 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
     onDelete,
 }) => {
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     const { classes } = useStyle();
     const [selectedMaterials, setSelectedMaterials] = useState<Set<string>>(new Set());
+    const [showScrollIndicators, setShowScrollIndicators] = useState<{ [key: string]: boolean }>({});
 
     const handleToggleSelection = (materialId: string) => {
         const newSelection = new Set(selectedMaterials);
@@ -92,185 +96,287 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
         }));
     };
 
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>, tableId: string) => {
+        const container = e.currentTarget;
+        const { scrollLeft, scrollWidth, clientWidth } = container;
+
+        let isAtEnd;
+        if (isRTL) {
+            const maxScrollLeft = scrollWidth - clientWidth;
+            isAtEnd = Math.abs(scrollLeft) >= maxScrollLeft - 5;
+        } else {
+            isAtEnd = scrollLeft + clientWidth >= scrollWidth - 5;
+        }
+
+        setShowScrollIndicators(prev => ({
+            ...prev,
+            [tableId]: !isAtEnd
+        }));
+    };
+
+    const scrollToRight = (tableId: string) => {
+        const container = document.getElementById(tableId);
+        if (container) {
+            if (isRTL) {
+                const maxScrollLeft = container.scrollWidth - container.clientWidth;
+                container.scrollTo({
+                    left: -maxScrollLeft,
+                    behavior: 'smooth'
+                });
+            } else {
+                container.scrollTo({
+                    left: container.scrollWidth,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    };
+
+    useEffect(() => {
+        // Check initial scroll state for all tables
+        if (data && data.length > 0) {
+            data.forEach((category, index) => {
+                if (category.printHouseMaterialDuplicated?.length > 0) {
+                    const tableId = `duplicated-table-${index}`;
+                    const container = document.getElementById(tableId);
+                    if (container) {
+                        const { scrollWidth, clientWidth } = container;
+                        setShowScrollIndicators(prev => ({
+                            ...prev,
+                            [tableId]: scrollWidth > clientWidth
+                        }));
+                    }
+                }
+                if (category.printHouseMaterialDeleted?.length > 0) {
+                    const tableId = `deleted-table-${index}`;
+                    const container = document.getElementById(tableId);
+                    if (container) {
+                        const { scrollWidth, clientWidth } = container;
+                        setShowScrollIndicators(prev => ({
+                            ...prev,
+                            [tableId]: scrollWidth > clientWidth
+                        }));
+                    }
+                }
+            });
+        }
+    }, [data]);
+
     return (
         <GoMakeModal
             openModal={openModal}
             onClose={handleCancel}
             modalTitle={t("materials.childTable.duplicatesModal.title")}
-            insideStyle={{ width: "90%", maxWidth: "1400px", height: "auto", maxHeight: "90vh" }}
+            insideStyle={{ width: "90%", maxWidth: "1400px", height: "80vh", display: "flex", flexDirection: "column", padding: 10 }}
         >
-            <Box sx={classes.container}>
-                <Stack gap={2}>
-                    {data && data.length > 0 ? (
-                        data.map((category, index) => (
-                            <Accordion key={index} defaultExpanded={index === 0}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    sx={classes.accordionSummary}
-                                >
-                                    <Typography variant="h6" sx={classes.categoryTitle}>
-                                        {t("materials.childTable.duplicatesModal.category")}: {category.categoryKey}
-                                    </Typography>
-                                    <Box sx={classes.badgeContainer}>
-                                        {category.printHouseMaterialDuplicated && category.printHouseMaterialDuplicated.length > 0 && (
-                                            <Box sx={classes.badge}>
-                                                {t("materials.childTable.duplicatesModal.duplicated")}: {category.printHouseMaterialDuplicated.length}
-                                            </Box>
-                                        )}
-                                        {category.printHouseMaterialDeleted && category.printHouseMaterialDeleted.length > 0 && (
-                                            <Box sx={{ ...classes.badge, ...classes.deletedBadge }}>
-                                                {t("materials.childTable.duplicatesModal.deleted")}: {category.printHouseMaterialDeleted.length}
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Stack gap={3}>
-                                        {/* Duplicated Materials Table */}
-                                        {category.printHouseMaterialDuplicated && category.printHouseMaterialDuplicated.length > 0 && (
-                                            <Box>
-                                                <Box sx={classes.deletedHeader}>
-                                                    <Typography variant="subtitle1" sx={classes.sectionTitle}>
-                                                        {t("materials.childTable.duplicatesModal.duplicatedMaterials")}
-                                                    </Typography>
-                                                    <Box sx={classes.selectAllContainer}>
-                                                        <Checkbox
-                                                            checked={category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))}
-                                                            indeterminate={
-                                                                category.printHouseMaterialDuplicated.some((m: any) => selectedMaterials.has(m.id)) &&
-                                                                !category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))
-                                                            }
-                                                            onChange={() => handleSelectAllInCategory(category.printHouseMaterialDuplicated)}
-                                                        />
-                                                        <Typography variant="body2">
-                                                            {t("materials.childTable.duplicatesModal.selectAll")}
-                                                        </Typography>
-                                                    </Box>
+            <Box sx={classes.modalContent}>
+                <Box sx={classes.container}>
+                    <Stack gap={2}>
+                        {data && data.length > 0 ? (
+                            data.map((category, index) => (
+                                <Accordion key={index} defaultExpanded={index === 0}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        sx={classes.accordionSummary}
+                                    >
+                                        <Typography variant="h6" sx={classes.categoryTitle}>
+                                            {t("materials.childTable.duplicatesModal.category")}: {category.categoryKey}
+                                        </Typography>
+                                        <Box sx={classes.badgeContainer}>
+                                            {category.printHouseMaterialDuplicated && category.printHouseMaterialDuplicated.length > 0 && (
+                                                <Box sx={classes.badge}>
+                                                    {t("materials.childTable.duplicatesModal.duplicated")}: {category.printHouseMaterialDuplicated.length}
                                                 </Box>
-                                                <TableContainer component={Paper} sx={classes.tableContainer}>
-                                                    <Table stickyHeader>
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell sx={classes.headerCell}>
-                                                                    {t("materials.childTable.duplicatesModal.select")}
-                                                                </TableCell>
-                                                                {getTableHeaders(category.printHouseMaterialDuplicated).map((header) => (
-                                                                    <TableCell key={header.key} sx={classes.headerCell}>
-                                                                        {header.label}
-                                                                    </TableCell>
-                                                                ))}
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {category.printHouseMaterialDuplicated.map((material: any) => {
-                                                                const cells = renderMaterialRow(material);
-                                                                const isSelected = selectedMaterials.has(material.id);
-                                                                return (
-                                                                    <TableRow
-                                                                        key={material.id}
-                                                                        sx={{
-                                                                            ...classes.tableRow,
-                                                                            ...(isSelected && classes.selectedRow)
-                                                                        }}
-                                                                    >
-                                                                        <TableCell sx={classes.tableCell}>
-                                                                            <Checkbox
-                                                                                checked={isSelected}
-                                                                                onChange={() => handleToggleSelection(material.id)}
-                                                                            />
+                                            )}
+                                            {category.printHouseMaterialDeleted && category.printHouseMaterialDeleted.length > 0 && (
+                                                <Box sx={{ ...classes.badge, ...classes.deletedBadge }}>
+                                                    {t("materials.childTable.duplicatesModal.deleted")}: {category.printHouseMaterialDeleted.length}
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Stack gap={3}>
+                                            {/* Duplicated Materials Table */}
+                                            {category.printHouseMaterialDuplicated && category.printHouseMaterialDuplicated.length > 0 && (
+                                                <Box>
+                                                    <Box sx={classes.deletedHeader}>
+                                                        <Typography variant="subtitle1" sx={classes.sectionTitle}>
+                                                            {t("materials.childTable.duplicatesModal.duplicatedMaterials")}
+                                                        </Typography>
+                                                        <Box sx={classes.selectAllContainer}>
+                                                            <Checkbox
+                                                                checked={category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))}
+                                                                indeterminate={
+                                                                    category.printHouseMaterialDuplicated.some((m: any) => selectedMaterials.has(m.id)) &&
+                                                                    !category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))
+                                                                }
+                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDuplicated)}
+                                                            />
+                                                            <Typography variant="body2">
+                                                                {t("materials.childTable.duplicatesModal.selectAll")}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                    <Box sx={classes.tableContainerWrapper}>
+                                                        <TableContainer
+                                                            id={`duplicated-table-${index}`}
+                                                            component={Paper}
+                                                            sx={classes.tableContainer}
+                                                            onScroll={(e) => handleScroll(e, `duplicated-table-${index}`)}
+                                                        >
+                                                            <Table stickyHeader>
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell sx={classes.headerCell}>
+                                                                            {t("materials.childTable.duplicatesModal.select")}
                                                                         </TableCell>
-                                                                        {cells.map((cell, cellIndex) => (
-                                                                            <TableCell key={`${material.id}-${cellIndex}`} sx={classes.tableCell}>
-                                                                                {cell.value}
+                                                                        {getTableHeaders(category.printHouseMaterialDuplicated).map((header) => (
+                                                                            <TableCell key={header.key} sx={classes.headerCell}>
+                                                                                {header.label}
                                                                             </TableCell>
                                                                         ))}
                                                                     </TableRow>
-                                                                );
-                                                            })}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </Box>
-                                        )}
-
-                                        {/* Deleted Materials Table */}
-                                        {category.printHouseMaterialDeleted && category.printHouseMaterialDeleted.length > 0 && (
-                                            <Box>
-                                                <Box sx={classes.deletedHeader}>
-                                                    <Typography variant="subtitle1" sx={classes.sectionTitle}>
-                                                        {t("materials.childTable.duplicatesModal.deletedMaterials")}
-                                                    </Typography>
-                                                    <Box sx={classes.selectAllContainer}>
-                                                        <Checkbox
-                                                            checked={category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))}
-                                                            indeterminate={
-                                                                category.printHouseMaterialDeleted.some((m: any) => selectedMaterials.has(m.id)) &&
-                                                                !category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))
-                                                            }
-                                                            onChange={() => handleSelectAllInCategory(category.printHouseMaterialDeleted)}
-                                                        />
-                                                        <Typography variant="body2">
-                                                            {t("materials.childTable.duplicatesModal.selectAll")}
-                                                        </Typography>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {category.printHouseMaterialDuplicated.map((material: any) => {
+                                                                        const cells = renderMaterialRow(material);
+                                                                        const isSelected = selectedMaterials.has(material.id);
+                                                                        return (
+                                                                            <TableRow
+                                                                                key={material.id}
+                                                                                sx={{
+                                                                                    ...classes.tableRow,
+                                                                                    ...(isSelected && classes.selectedRow)
+                                                                                }}
+                                                                            >
+                                                                                <TableCell sx={classes.tableCell}>
+                                                                                    <Checkbox
+                                                                                        checked={isSelected}
+                                                                                        onChange={() => handleToggleSelection(material.id)}
+                                                                                    />
+                                                                                </TableCell>
+                                                                                {cells.map((cell, cellIndex) => (
+                                                                                    <TableCell key={`${material.id}-${cellIndex}`} sx={classes.tableCell}>
+                                                                                        {cell.value}
+                                                                                    </TableCell>
+                                                                                ))}
+                                                                            </TableRow>
+                                                                        );
+                                                                    })}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                        {showScrollIndicators[`duplicated-table-${index}`] && (
+                                                            <Tooltip title={t("materials.childTable.scrollToSeeMoreColumns")} arrow>
+                                                                <IconButton
+                                                                    onClick={() => scrollToRight(`duplicated-table-${index}`)}
+                                                                    sx={classes.scrollIndicatorButton}
+                                                                >
+                                                                    {isRTL ? <ChevronLeft /> : <ChevronRight />}
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
                                                     </Box>
                                                 </Box>
-                                                <TableContainer component={Paper} sx={classes.tableContainer}>
-                                                    <Table stickyHeader>
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell sx={classes.headerCell}>
-                                                                    {t("materials.childTable.duplicatesModal.select")}
-                                                                </TableCell>
-                                                                {getTableHeaders(category.printHouseMaterialDeleted).map((header) => (
-                                                                    <TableCell key={header.key} sx={classes.headerCell}>
-                                                                        {header.label}
-                                                                    </TableCell>
-                                                                ))}
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {category.printHouseMaterialDeleted.map((material: any) => {
-                                                                const cells = renderMaterialRow(material);
-                                                                const isSelected = selectedMaterials.has(material.id);
-                                                                return (
-                                                                    <TableRow
-                                                                        key={material.id}
-                                                                        sx={{
-                                                                            ...classes.tableRow,
-                                                                            ...(isSelected && classes.selectedRow)
-                                                                        }}
-                                                                    >
-                                                                        <TableCell sx={classes.tableCell}>
-                                                                            <Checkbox
-                                                                                checked={isSelected}
-                                                                                onChange={() => handleToggleSelection(material.id)}
-                                                                            />
+                                            )}
+
+                                            {/* Deleted Materials Table */}
+                                            {category.printHouseMaterialDeleted && category.printHouseMaterialDeleted.length > 0 && (
+                                                <Box>
+                                                    <Box sx={classes.deletedHeader}>
+                                                        <Typography variant="subtitle1" sx={classes.sectionTitle}>
+                                                            {t("materials.childTable.duplicatesModal.deletedMaterials")}
+                                                        </Typography>
+                                                        <Box sx={classes.selectAllContainer}>
+                                                            <Checkbox
+                                                                checked={category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))}
+                                                                indeterminate={
+                                                                    category.printHouseMaterialDeleted.some((m: any) => selectedMaterials.has(m.id)) &&
+                                                                    !category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))
+                                                                }
+                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDeleted)}
+                                                            />
+                                                            <Typography variant="body2">
+                                                                {t("materials.childTable.duplicatesModal.selectAll")}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                    <Box sx={classes.tableContainerWrapper}>
+                                                        <TableContainer
+                                                            id={`deleted-table-${index}`}
+                                                            component={Paper}
+                                                            sx={classes.tableContainer}
+                                                            onScroll={(e) => handleScroll(e, `deleted-table-${index}`)}
+                                                        >
+                                                            <Table stickyHeader>
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell sx={classes.headerCell}>
+                                                                            {t("materials.childTable.duplicatesModal.select")}
                                                                         </TableCell>
-                                                                        {cells.map((cell, cellIndex) => (
-                                                                            <TableCell key={`${material.id}-${cellIndex}`} sx={classes.tableCell}>
-                                                                                {cell.value}
+                                                                        {getTableHeaders(category.printHouseMaterialDeleted).map((header) => (
+                                                                            <TableCell key={header.key} sx={classes.headerCell}>
+                                                                                {header.label}
                                                                             </TableCell>
                                                                         ))}
                                                                     </TableRow>
-                                                                );
-                                                            })}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </Box>
-                                        )}
-                                    </Stack>
-                                </AccordionDetails>
-                            </Accordion>
-                        ))
-                    ) : (
-                        <Typography variant="body1" sx={classes.emptyState}>
-                            {t("materials.childTable.duplicatesModal.noData")}
-                        </Typography>
-                    )}
-                </Stack>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {category.printHouseMaterialDeleted.map((material: any) => {
+                                                                        const cells = renderMaterialRow(material);
+                                                                        const isSelected = selectedMaterials.has(material.id);
+                                                                        return (
+                                                                            <TableRow
+                                                                                key={material.id}
+                                                                                sx={{
+                                                                                    ...classes.tableRow,
+                                                                                    ...(isSelected && classes.selectedRow)
+                                                                                }}
+                                                                            >
+                                                                                <TableCell sx={classes.tableCell}>
+                                                                                    <Checkbox
+                                                                                        checked={isSelected}
+                                                                                        onChange={() => handleToggleSelection(material.id)}
+                                                                                    />
+                                                                                </TableCell>
+                                                                                {cells.map((cell, cellIndex) => (
+                                                                                    <TableCell key={`${material.id}-${cellIndex}`} sx={classes.tableCell}>
+                                                                                        {cell.value}
+                                                                                    </TableCell>
+                                                                                ))}
+                                                                            </TableRow>
+                                                                        );
+                                                                    })}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                        {showScrollIndicators[`deleted-table-${index}`] && (
+                                                            <Tooltip title={t("materials.childTable.scrollToSeeMoreColumns")} arrow>
+                                                                <IconButton
+                                                                    onClick={() => scrollToRight(`deleted-table-${index}`)}
+                                                                    sx={classes.scrollIndicatorButton}
+                                                                >
+                                                                    {isRTL ? <ChevronLeft /> : <ChevronRight />}
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+                                                    </Box>
+                                                </Box>
+                                            )}
+                                        </Stack>
+                                    </AccordionDetails>
+                                </Accordion>
+                            ))
+                        ) : (
+                            <Typography variant="body1" sx={classes.emptyState}>
+                                {t("materials.childTable.duplicatesModal.noData")}
+                            </Typography>
+                        )}
+                    </Stack>
+                </Box>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - Fixed Footer */}
                 <Box sx={classes.buttonsContainer}>
                     <GomakePrimaryButton
                         style={classes.cancelButton}
@@ -285,7 +391,6 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                     >
                         {t("materials.childTable.duplicatesModal.deleteSelected")} ({selectedMaterials.size})
                     </GomakePrimaryButton>
-
                 </Box>
             </Box>
         </GoMakeModal>
@@ -293,4 +398,3 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
 };
 
 export { DuplicatesModal };
-

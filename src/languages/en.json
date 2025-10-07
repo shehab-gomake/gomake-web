@@ -467,24 +467,24 @@
 			"enterPurchaseRollPrice": "Enter purchase roll price",
 			"enterSupplementTime": "Enter supplement time",
 			"scrollToSeeMoreColumns": "Scroll to see more columns",
-			"priceUnitPerTon": "Default Sale Cost"
+			"priceUnitPerTon": "Default Sale Cost",
+			"duplicatesModal": {
+				"title": "Material Upload Results",
+				"category": "Category",
+				"duplicated": "Duplicated",
+				"deleted": "Deleted",
+				"duplicatedMaterials": "Duplicated Materials",
+				"deletedMaterials": "Deleted Materials",
+				"select": "Select",
+				"selectAll": "Select All",
+				"deleteSelected": "Delete Selected",
+				"cancel": "Cancel",
+				"noData": "No duplicated or deleted materials found"
+			}
 		},
 		"extraParameters": {
 			"title": "Extra Parameters Details",
 			"noData": "No extra parameters available for this material"
-		},
-		"duplicatesModal": {
-			"title": "Material Upload Results",
-			"category": "Category",
-			"duplicated": "Duplicated",
-			"deleted": "Deleted",
-			"duplicatedMaterials": "Duplicated Materials",
-			"deletedMaterials": "Deleted Materials",
-			"select": "Select",
-			"selectAll": "Select All",
-			"deleteSelected": "Delete Selected",
-			"cancel": "Cancel",
-			"noData": "No duplicated or deleted materials found"
 		},
 		"showDetails": "Show Details"
 	},
