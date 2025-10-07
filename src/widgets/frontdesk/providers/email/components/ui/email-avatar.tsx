@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, Badge, alpha } from "@mui/material";
 import { Circle as CircleIcon } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { getAvatarColor, getAccountInitials } from "../../utils/avatar-utils";
+import { getAvatarColor, getAccountInitials } from "@/widgets/frontdesk/utils";
 import { getAvatarStyles } from "../../utils/styling-utils";
 
 interface EmailAvatarProps {
@@ -24,7 +24,7 @@ export const EmailAvatar: React.FC<EmailAvatarProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
-  const avatarColor = getAvatarColor(email, primaryColor);
+  const avatarColor = getAvatarColor(email);
   const initials = getAccountInitials(email, displayName);
   const avatarStyles = getAvatarStyles(size);
 

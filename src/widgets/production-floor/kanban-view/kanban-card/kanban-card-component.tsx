@@ -9,7 +9,7 @@ import { toRgba } from "@/utils/helpers";
 import { ChangeColorMenu } from "./change-color-menu";
 import { useKanbanCard } from "./use-kanban-card";
 import { SketchPicker } from "react-color";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
 import { DateFormatter } from "@/utils/date-formatters";
 
@@ -27,6 +27,7 @@ const KanbanCardComponent = ({ board, stationId }: IProp) => {
   const { classes } = useStyle();
   const { CheckPermission } = useUserPermission();
   const colorPickerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLDivElement>(null);
   const {
     t,
     dir,
@@ -58,6 +59,12 @@ const KanbanCardComponent = ({ board, stationId }: IProp) => {
     [canDrag, stationId]
   );
 
+  useEffect(() => {
+    if (canDrag) {
+      drag(dragRef.current);
+    }
+  }, [drag, canDrag]);
+
   return (
     <Stack
       direction={"column"}
@@ -66,7 +73,7 @@ const KanbanCardComponent = ({ board, stationId }: IProp) => {
       borderRadius={"12px"}
       width={"100%"}
       maxHeight={"fit-content"}
-      ref={canDrag ? drag : null}
+      ref={dragRef}
       style={{
         opacity: isDragging ? 0.8 : 1,
         cursor: isDragging ? "grabbing" : "pointer",

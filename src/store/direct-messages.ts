@@ -29,6 +29,11 @@ export const dmConversationsState = atom<Conversation[]>({
   default: []
 });
 
+export const dmConversationsFilterState = atom<'active' | 'archived'>({
+  key: 'dmConversationsFilterState',
+  default: 'active'
+});
+
 export const dmActiveConversationIdState = atom<string | null>({
   key: 'dmActiveConversationIdState',
   default: null
@@ -236,14 +241,14 @@ export const dmFilteredConversationsSelector = selector({
   get: ({ get }) => {
     const conversations = get(dmSortedConversationsSelector);
     const searchQuery = get(dmSearchQueryState);
-    
+
     if (!searchQuery.trim()) return conversations;
-    
+
     const query = searchQuery.toLowerCase();
-    return conversations.filter(conv => 
+    return conversations.filter(conv =>
       conv && conv.id && (
         conv.name?.toLowerCase().includes(query) ||
-        conv.members?.some(member => 
+        conv.members?.some(member =>
           member && member.name && member.email &&
           (member.name.toLowerCase().includes(query) ||
            member.email.toLowerCase().includes(query))
@@ -251,6 +256,102 @@ export const dmFilteredConversationsSelector = selector({
       )
     );
   }
+});
+
+// Message search states
+export interface SearchHighlight {
+  start: number;
+  end: number;
+  text: string;
+}
+
+export interface SearchMessagePosition {
+  messageIndex: number;
+  totalMessages: number;
+  previousMessageId?: string;
+  nextMessageId?: string;
+}
+
+export interface MessageSearchResult {
+  id: string;                    // Message UUID for jump target
+  conversationId: string;        // Conversation ID for loading
+  content: string;               // Full message content
+  contentSnippet: string;        // Highlighted snippet from backend
+  createdAt: string;
+  userId: string;
+  isSystem: boolean;
+  rank?: number;                 // Relevance score from full-text search
+  highlights?: SearchHighlight[];
+  messagePosition?: SearchMessagePosition;
+  user?: {
+    name: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  };
+  conversation?: {
+    id: string;
+    name: string | null;
+    type: 'DM' | 'GROUP_DM' | 'direct' | 'group';
+    participantCount: number;
+  };
+}
+
+export interface ConversationSearchResult {
+  id: string;                    // Message UUID for jump target
+  content: string;               // Full message content
+  contentSnippet: string;        // Highlighted snippet from backend
+  createdAt: string;
+  userId: string;
+  isSystem: boolean;
+  rank?: number;                 // Relevance score from full-text search
+  highlights?: SearchHighlight[];
+  messagePosition?: SearchMessagePosition;
+  index: number;                 // Position in search results
+}
+
+export const dmSearchModeState = atom<'global' | 'conversation' | null>({
+  key: 'dmSearchModeState',
+  default: null,
+});
+
+export const dmGlobalSearchResultsState = atom<MessageSearchResult[]>({
+  key: 'dmGlobalSearchResultsState',
+  default: [],
+});
+
+export const dmConversationSearchResultsState = atom<ConversationSearchResult[]>({
+  key: 'dmConversationSearchResultsState',
+  default: [],
+});
+
+export const dmCurrentSearchIndexState = atom<number>({
+  key: 'dmCurrentSearchIndexState',
+  default: 0,
+});
+
+export const dmConversationSearchQueryState = atom<string>({
+  key: 'dmConversationSearchQueryState',
+  default: '',
+});
+
+export const dmHighlightedMessageIdState = atom<string | null>({
+  key: 'dmHighlightedMessageIdState',
+  default: null,
+});
+
+export const dmSearchLoadingState = atom<boolean>({
+  key: 'dmSearchLoadingState',
+  default: false,
+});
+
+export const dmGlobalSearchOpenState = atom<boolean>({
+  key: 'dmGlobalSearchOpenState',
+  default: false,
+});
+
+export const dmConversationSearchOpenState = atom<boolean>({
+  key: 'dmConversationSearchOpenState',
+  default: false,
 });
 
 // User suggestions for new conversations

@@ -12,8 +12,14 @@ export { DisconnectAccountDialog } from "./disconnect-account-dialog";
 // Re-export UI components
 export * from "./ui";
 
+// Email composer components
+export { EmailComposer } from "./email-composer";
+export { EmailComposerHeader } from "./email-composer-header";
+export { EmailRecipientsSection } from "./email-recipients-section";
+export { EmailComposerToolbar } from "./email-composer-toolbar";
+export { EmailAttachmentPicker } from "./email-attachment-picker";
+
 // Re-export sub-components
-//export * from "./composer";
 export * from "./conversation";
 export * from "./message-viewer";
 export * from "./sidebar";

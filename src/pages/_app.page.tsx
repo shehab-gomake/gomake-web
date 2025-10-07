@@ -1,5 +1,6 @@
 import "react-calendar-timeline/lib/Timeline.css"; // Global timeline styles
 import "@/styles/globals.css";
+import "@/styles/ai-animations.css";
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";
@@ -18,7 +19,8 @@ import "rsuite/dist/rsuite-no-reset.min.css";
 import { FileUploaderProvider } from "@/providers/signalr-provider/file-uploader-provider";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import {MailTestProvider} from "@/providers/signalr-provider/mail-test-provider";
+import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
+import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
 
 i18n
   .use(Backend)
@@ -50,16 +52,17 @@ export default function App({ Component, pageProps }: AppProps) {
                   adapterLocale="en-gb"
                 >
                   <style jsx global>{`
-                  html {
-                    direction: ${t("direction")};
-                  }
-                `}</style>
+                    html {
+                      direction: ${t("direction")};
+                    }
+                  `}</style>
                   <GoMakeTourProvider>
                     <Component {...pageProps} />
                   </GoMakeTourProvider>
                   <GoMakeSnackBar />
                   <GomakeLoading />
                   <GomakeLoadingWithShadow />
+                  <GoSupportChatWidget />
                 </LocalizationProvider>
               </EnhancedErrorBoundary>
             </UpdatePathWrapper>

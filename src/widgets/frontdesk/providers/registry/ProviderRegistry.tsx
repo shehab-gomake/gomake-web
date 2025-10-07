@@ -62,7 +62,7 @@ export const ProviderWrapper: React.FC<ProviderWrapperProps> = ({ channel, ...pr
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
         <h2>Provider Not Found</h2>
-        <p>The selected provider "{channel}" is not available.</p>
+        <p>The selected provider &quot;{channel}&quot; is not available.</p>
       </Box>
     );
   }

@@ -65,12 +65,12 @@ export const useMaterialsSetupFlow = () => {
   };
 
   // Mark materials setup as in progress when component mounts
-  useEffect(() => {
-    updatePrintHouseSetupSteps(
-      SetupStep.SETUP_YOUR_MATERIALS,
-      StepStatus.IN_PROGRESS
-    );
-  }, []);
+  // useEffect(() => {
+  //   updatePrintHouseSetupSteps(
+  //     SetupStep.SETUP_YOUR_MATERIALS,
+  //     StepStatus.IN_PROGRESS
+  //   );
+  // }, []);
 
   // Get machines on component mount
   useEffect(() => {
@@ -152,10 +152,10 @@ export const useMaterialsSetupFlow = () => {
     }
   };
 
-  // Complete setup function
+  //Complete setup function
   const handleCompleteSetupMaterials = async () => {
     try {
-      const callBack = async (res: any) => {
+      /*const callBack = async (res: any) => {
         if (res.success) {
           await updatePrintHouseSetupSteps(
             SetupStep.SETUP_YOUR_MATERIALS,
@@ -168,7 +168,7 @@ export const useMaterialsSetupFlow = () => {
         }
       };
 
-      await quickSetupAddMaterials(callApi, callBack, selectedMaterials);
+      await quickSetupAddMaterials(callApi, callBack, selectedMaterials);*/
     } catch (error) {
       console.error("Error completing setup:", error);
       alertFaultAdded();

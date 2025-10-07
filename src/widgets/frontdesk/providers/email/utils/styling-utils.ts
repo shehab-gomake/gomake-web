@@ -42,17 +42,18 @@ export const getConversationListItemStyles = (
   neutralColor: (shade: number) => string
 ) => ({
   borderRadius: 1,
-  mb: 0.5,
-  mx: 1,
+  transition: "background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
   "&.Mui-selected": {
-    backgroundColor: alpha(primaryColor(100), 0.8),
-    borderLeft: `3px solid ${primaryColor(500)}`,
+    backgroundColor: primaryColor(100),
+    boxShadow: `0 4px 12px 0 ${alpha(primaryColor(200), 0.5)}`,
     "&:hover": {
       backgroundColor: alpha(primaryColor(100), 0.9),
+      boxShadow: `0 6px 16px 0 ${alpha(primaryColor(200), 0.6)}`,
     },
   },
   "&:hover": {
-    backgroundColor: alpha(neutralColor(100), 0.5),
+    backgroundColor: neutralColor(100),
+    boxShadow: `0 2px 8px 0 ${alpha(neutralColor(200), 0.4)}`,
   },
 });
 

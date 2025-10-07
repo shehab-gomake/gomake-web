@@ -10,7 +10,6 @@ import { homeReportsState } from "@/pages-components/quote-new/store/quote";
 import { StepType } from "@reactour/tour";
 import Stack from "@mui/material/Stack";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
@@ -87,7 +86,6 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
   return (
     <div style={classes.mainContainer}>
       <div style={classes.firstRowContainer}>
-        <ChatBotComponent />
         <div
           style={
             isMobileScreen

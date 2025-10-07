@@ -123,7 +123,7 @@ export abstract class BaseProvider implements IProvider {
   }
   
   async editMessage(messageId: string, newContent: string): Promise<void> {
-    const message = this.messages.find(msg => msg.messageId === messageId);
+    const message = this.messages.find(msg => msg.id === messageId);
     if (message) {
       message.content = newContent;
       // Add edited timestamp/flag
@@ -139,7 +139,7 @@ export abstract class BaseProvider implements IProvider {
   }
   
   async deleteMessage(messageId: string): Promise<void> {
-    this.messages = this.messages.filter(msg => msg.messageId !== messageId);
+    this.messages = this.messages.filter(msg => msg.id !== messageId);
     
     // Trigger delete event
     if (this.onMessageDelete) {
@@ -165,7 +165,7 @@ export abstract class BaseProvider implements IProvider {
       // Fallback to client-side search
       const lowerQuery = query.toLowerCase();
       const messages = conversationId 
-        ? this.messages.filter(msg => msg.channelId === conversationId)
+        ? this.messages.filter(msg => msg.conversationId === conversationId)
         : this.messages;
       
       return messages.filter(msg => 

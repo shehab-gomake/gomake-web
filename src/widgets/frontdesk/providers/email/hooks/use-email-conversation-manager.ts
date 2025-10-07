@@ -29,12 +29,16 @@ export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: Us
       // Use the last message from the conversation for reply
       const lastMessage = conversation.lastMessage;
 
+      // lastMessage.from is now an array of EmailRecipient
+      const fromSender = lastMessage.from?.[0];
+      const senderDisplay = fromSender?.name || fromSender?.email || "Unknown";
+
       const draft: EmailDraft = {
-        to: [{ email: lastMessage.from, name: "" }],
+        to: lastMessage.from || [],
         cc: [],
         bcc: [],
         subject: `Re: ${safeDecodeHtml(conversation.subject)}`,
-        text: `\n\n---\nOn ${conversation.lastMessage.date}, ${conversation.lastMessage.from} wrote:\n${safeDecodeHtml(
+        text: `\n\n---\nOn ${conversation.lastMessage.date}, ${senderDisplay} wrote:\n${safeDecodeHtml(
           conversation.lastMessage.snippet
         )}`,
         html: "",
@@ -55,8 +59,11 @@ export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: Us
         // Use the last message from the conversation for reply
         const lastMessage = selectedConversation.lastMessage;
 
+        // Convert from array to string array for API (backend expects string[])
+        const toEmails = lastMessage.from?.map(recipient => recipient.email) || [];
+
         const response = await emailApiClient.sendEmail(selectedAccountId, {
-          to: [lastMessage.from],
+          to: toEmails,
           cc: [],
           bcc: [],
           subject: `Re: ${selectedConversation.subject}`,

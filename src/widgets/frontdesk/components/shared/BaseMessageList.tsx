@@ -12,6 +12,7 @@ export interface BaseMessage {
   isOwn?: boolean;
   isRead?: boolean;
   isStarred?: boolean;
+  isHighlighted?: boolean;
 }
 
 interface BaseMessageListProps {
@@ -24,6 +25,8 @@ interface BaseMessageListProps {
   themLabel?: string;
   lastReadMessageId?: string;
   onScrollToUnread?: () => void;
+  highlightedMessageId?: string | null;
+  searchQuery?: string;
 }
 
 interface MessageBubbleProps {
@@ -35,17 +38,19 @@ interface MessageBubbleProps {
   isUnread?: boolean;
   isFirstUnread?: boolean;
   unreadRef?: React.RefObject<HTMLDivElement>;
+  searchQuery?: string;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ 
-  message, 
-  isOwn, 
-  showAvatar, 
-  userPresence, 
+const MessageBubble: React.FC<MessageBubbleProps> = ({
+  message,
+  isOwn,
+  showAvatar,
+  userPresence,
   themLabel = "Them",
   isUnread = false,
   isFirstUnread = false,
-  unreadRef
+  unreadRef,
+  searchQuery
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
@@ -84,6 +89,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     // Try to construct name from userPresence
     const user = userPresence[message.userId];
     if (user) {
+      // Prefer full name field if present
+      if (user.name && typeof user.name === "string" && user.name.trim()) {
+        return user.name.trim();
+      }
       const firstName = user.firstName || "";
       const lastName = user.lastName || "";
       const fullName = `${firstName} ${lastName}`.trim();
@@ -109,24 +118,62 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     );
   };
 
+  const highlightSearchTerms = (text: string, query?: string) => {
+    if (!query || !query.trim()) {
+      return text;
+    }
+
+    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${safeQuery})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => (
+      index % 2 === 1 ? (
+        <Box
+          component="mark"
+          key={index}
+          sx={{
+            backgroundColor: "yellow",
+            color: "black",
+            fontWeight: "bold",
+            borderRadius: "2px",
+            px: 0.25,
+          }}
+        >
+          {part}
+        </Box>
+      ) : (
+        <React.Fragment key={index}>{part}</React.Fragment>
+      )
+    ));
+  };
+
   const getMessageBubbleStyles = () => ({
-    bgcolor: isUnread 
-      ? (isOwn ? alpha(primaryColor(200), 0.8) : alpha(primaryColor(100), 0.6))
-      : (isOwn ? primaryColor(100) : neutralColor(50)),
+    bgcolor: message.isHighlighted
+      ? alpha(theme.palette.warning.light, 0.3)
+      : isUnread
+        ? (isOwn ? alpha(primaryColor(200), 0.8) : alpha(primaryColor(100), 0.6))
+        : (isOwn ? primaryColor(100) : neutralColor(50)),
     color: isOwn ? primaryColor(900) : neutralColor(800),
-    border: `1px solid ${isOwn ? primaryColor(200) : neutralColor(200)}`,
+    border: message.isHighlighted
+      ? `2px solid ${theme.palette.warning.main}`
+      : `1px solid ${isOwn ? primaryColor(200) : neutralColor(200)}`,
     borderRadius: isOwn ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
     px: 2,
     py: 1.5,
     position: "relative",
-    boxShadow: isUnread 
-      ? `0 2px 8px ${alpha(primaryColor(300), 0.3)}`
-      : `0 1px 3px ${alpha(theme.palette.common.black, 0.1)}`,
-    transition: theme.transitions.create(["box-shadow", "transform", "background-color"], {
+    boxShadow: message.isHighlighted
+      ? `0 0 12px ${alpha(theme.palette.warning.main, 0.4)}`
+      : isUnread
+        ? `0 2px 8px ${alpha(primaryColor(300), 0.3)}`
+        : `0 1px 3px ${alpha(theme.palette.common.black, 0.1)}`,
+    transition: theme.transitions.create(["box-shadow", "transform", "background-color", "border-color"], {
       duration: theme.transitions.duration.short,
     }),
     "&:hover": {
-      boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.15)}`,
+      boxShadow: message.isHighlighted
+        ? `0 0 16px ${alpha(theme.palette.warning.main, 0.5)}`
+        : `0 2px 8px ${alpha(theme.palette.common.black, 0.15)}`,
       transform: "translateY(-1px)",
     },
     // Add a subtle animation for unread messages
@@ -170,6 +217,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           pl: 1,
         }),
       }}
+      data-message-id={message.id}
     >
       {!isOwn && <Avatar sx={getAvatarStyles()}>{showAvatar ? getInitials() : ""}</Avatar>}
 
@@ -198,7 +246,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               wordBreak: "break-word",
             }}
           >
-            {message.content}
+            {highlightSearchTerms(message.content, searchQuery)}
           </Typography>
         </Paper>
 
@@ -263,6 +311,8 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
   themLabel = "Them",
   lastReadMessageId,
   onScrollToUnread,
+  highlightedMessageId,
+  searchQuery,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -288,6 +338,16 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, typingUsers, lastReadMessageId]);
+
+  // Scroll highlighted message into view when navigating search results
+  useEffect(() => {
+    if (!highlightedMessageId || !containerRef.current) {
+      return;
+    }
+
+    const target = containerRef.current.querySelector<HTMLElement>(`[data-message-id="${highlightedMessageId}"]`);
+    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedMessageId]);
 
   // Group messages by same user within 5 minutes
   const groupedMessages = messages.reduce((groups: { message: BaseMessage; showAvatar: boolean }[], message, index) => {
@@ -372,6 +432,7 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
             message={{
               ...message,
               isOwn,
+              isHighlighted: message.id === highlightedMessageId,
             }}
             isOwn={isOwn}
             showAvatar={showAvatar}
@@ -380,6 +441,7 @@ export const BaseMessageList: React.FC<BaseMessageListProps> = ({
             isUnread={isUnread}
             isFirstUnread={isFirstUnread}
             unreadRef={unreadMessageRef}
+            searchQuery={searchQuery}
           />
         );
       })}

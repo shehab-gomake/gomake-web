@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Stack, Paper, Box, Typography, Fab, Tooltip } from "@mui/material";
 import { Edit as ComposeIcon } from "@mui/icons-material";
-import { FrontdeskEmptyState } from "@/widgets/frontdesk/components/empty-state";
+import {
+  EmptyState,
+  Panel,
+  PanelContent,
+} from "@/widgets/frontdesk/design-system";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailAuthModal } from "./components/email-auth-modal";
 import { EmailSidebar } from "./components/email-sidebar";
@@ -9,6 +13,7 @@ import { EmailConversationList } from "./components/email-conversation-list";
 import { EmailMessageViewer } from "./components/email-message-viewer";
 import { useEmailProvider } from "./hooks/use-email-provider";
 import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning";
+import { CreateTicketModal } from "../tickets/components/create-ticket-modal";
 
 export const EmailProviderView: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -56,6 +61,8 @@ export const EmailProviderView: React.FC = () => {
     handleReplyWithComposer,
     searchQuery,
     onSearch,
+    createTicket,
+    ticketModal,
   } = useEmailProvider();
 
   const fabPositioning = useFabPositioning({
@@ -77,12 +84,10 @@ export const EmailProviderView: React.FC = () => {
     if (!selectedConversation) return false;
 
     // Create a simple reply draft
+    // lastMessage.from is now an array, take first sender
     const replyDraft = {
-      to: [{ email: selectedConversation.lastMessage?.from || "", name: "" }],
-      cc:
-        replyAll && selectedConversation.lastMessage?.to
-          ? selectedConversation.lastMessage.to.map((email) => ({ email, name: "" }))
-          : [],
+      to: selectedConversation.lastMessage?.from || [],
+      cc: replyAll && selectedConversation.lastMessage?.to ? selectedConversation.lastMessage.to : [],
       bcc: [],
       subject: `Re: ${selectedConversation.subject.replace(/^Re:\s*/i, "")}`,
       text: text,
@@ -106,17 +111,14 @@ export const EmailProviderView: React.FC = () => {
 
   const handleForward = (conversation: any) => {
     // TODO: Implement forward functionality
-    console.log("Forward:", conversation);
   };
 
   const handlePrint = (conversation: any) => {
     // TODO: Implement print functionality
-    console.log("Print:", conversation);
   };
 
   const handleAddLabel = (conversationId: string, label: string) => {
     // TODO: Implement add label functionality
-    console.log("Add label:", conversationId, label);
   };
 
   // Render empty state when not connected
@@ -145,35 +147,22 @@ export const EmailProviderView: React.FC = () => {
 
           {/* Empty state for conversations */}
           <div style={{ width: 320, minWidth: 320, height: "100%" }}>
-            <Paper
-              elevation={0}
-              sx={{
-                height: "100%",
-                border: "1px solid #EAECF0",
-                borderRadius: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Stack alignItems="center" spacing={2}>
-                <Typography variant="h6" sx={{ color: "#6B7280" }}>
-                  Connect an account
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Add an email account to view conversations
-                </Typography>
-              </Stack>
-            </Paper>
+            <Panel elevation={0} border="default">
+              <PanelContent padding="lg">
+                <EmptyState
+                  title="Connect an account"
+                  description="Add an email account to view conversations"
+                />
+              </PanelContent>
+            </Panel>
           </div>
 
           {/* Empty state for message viewer */}
-          <Paper
+          <Panel
             elevation={0}
+            border="default"
             sx={{
               flex: 1,
-              border: "1px solid #EAECF0",
-              borderRadius: 2,
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
@@ -181,13 +170,13 @@ export const EmailProviderView: React.FC = () => {
               height: "100%",
             }}
           >
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <FrontdeskEmptyState
+            <PanelContent padding="lg">
+              <EmptyState
                 title="No email account connected"
-                subtitle="Connect your email account to start managing messages"
+                description="Connect your email account to start managing messages"
               />
-            </Box>
-          </Paper>
+            </PanelContent>
+          </Panel>
         </Stack>
 
         <EmailAuthModal
@@ -240,36 +229,23 @@ export const EmailProviderView: React.FC = () => {
               searchDisabled={conversationsLoading}
             />
           ) : (
-            <Paper
-              elevation={0}
-              sx={{
-                height: "100%",
-                border: "1px solid #EAECF0",
-                borderRadius: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Stack alignItems="center" spacing={2}>
-                <Typography variant="h6" sx={{ color: "#6B7280" }}>
-                  Select an account
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#9CA3AF", textAlign: "center" }}>
-                  Choose an email account to view conversations
-                </Typography>
-              </Stack>
-            </Paper>
+            <Panel elevation={0} border="default" sx={{ height: "100%" }}>
+              <PanelContent padding="lg">
+                <EmptyState
+                  title="Select an account"
+                  description="Choose an email account to view conversations"
+                />
+              </PanelContent>
+            </Panel>
           )}
         </div>
 
         {/* Message Viewer */}
-        <Paper
+        <Panel
           elevation={0}
+          border="default"
           sx={{
             flex: 1,
-            border: "1px solid #EAECF0",
-            borderRadius: 2,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -290,18 +266,19 @@ export const EmailProviderView: React.FC = () => {
               onStar={starConversation}
               onPrint={handlePrint}
               onAddLabel={handleAddLabel}
+              onCreateTicket={createTicket}
               onSendReply={handleInlineReply}
               isSending={isSending}
             />
           ) : (
-            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <FrontdeskEmptyState
+            <PanelContent padding="lg">
+              <EmptyState
                 title="No conversation selected"
-                subtitle="Choose a conversation from the list to start viewing messages"
+                description="Choose a conversation from the list to start viewing messages"
               />
-            </Box>
+            </PanelContent>
           )}
-        </Paper>
+        </Panel>
       </Stack>
 
       {/* Compose Button - Floating Action Button */}
@@ -337,6 +314,21 @@ export const EmailProviderView: React.FC = () => {
         onClose={() => setShowAuthModal(false)}
         onAuthenticate={handleAuthenticate}
         error={authError}
+      />
+
+      {/* Create Ticket Modal */}
+      <CreateTicketModal
+        open={ticketModal.isOpen}
+        onClose={ticketModal.closeModal}
+        onSubmit={ticketModal.handleSubmit}
+        clients={ticketModal.clients}
+        onClientSearch={ticketModal.handleClientSearch}
+        clientsLoading={ticketModal.clientsLoading}
+        assignees={ticketModal.assignees}
+        onAssigneeSearch={ticketModal.handleAssigneeSearch}
+        assigneesLoading={ticketModal.assigneesLoading}
+        isSubmitting={ticketModal.isSubmitting}
+        error={ticketModal.error}
       />
     </Stack>
   );

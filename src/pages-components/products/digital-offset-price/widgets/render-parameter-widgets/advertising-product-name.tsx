@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { AddNewIcon, AdvertisingIcon, WarnIcon, WarningModalIcon } from "@/icons";
-import { IconButton, Stack, Tooltip } from "@mui/material";
+import { IconButton, Stack, Tooltip, Paper, Divider } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
@@ -68,7 +68,8 @@ const AdvertisingProductNameParameterWidget = ({
     createNewTemplateWithCustomDimensions,
     openErrorModal,
     setOpenErrorModal,
-    errorMessage
+    errorMessage,
+    resetModalStates
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
@@ -90,32 +91,124 @@ const AdvertisingProductNameParameterWidget = ({
 
   const unit = getUnitFromTemplate();
 
-  const DieCutTypeOptions = [
-    { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
-    ...parameter?.valuesConfigs?.filter(value => {
-      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-        === null && value?.materialValueIds[0]?.valueId === null);
-    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-  ]
+  // Regular options (scrollable)
+  const regularDieCutTypeOptions = parameter?.valuesConfigs?.filter(value => {
+    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+      === null && value?.materialValueIds[0]?.valueId === null);
+  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName) || [];
+
+  const regularDieCutterOptions = searchResult?.filter(value => {
+    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName) || [];
+
+  // Fixed bottom options
+  const fixedDieCutTypeOptions = [
+    { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true, isFixed: true }
+  ];
+
+  const fixedDieCutterOptions = [
+    { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true, isFixed: true },
+    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true, isFixed: true }
+  ];
+
+  // Combined options (for backward compatibility with existing logic)
+  const DieCutTypeOptions = [...regularDieCutTypeOptions, ...fixedDieCutTypeOptions];
 
   const options = parameter?.valuesConfigs?.filter(value => {
     return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
   })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
 
-  const DieCutterOptions = [
-    { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true },
-    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true },
-    ...searchResult?.filter(value => {
-      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-  ]
+  const DieCutterOptions = [...regularDieCutterOptions, ...fixedDieCutterOptions];
 
+
+  // Custom PaperComponent with fixed bottom options
+  const CustomPaperComponent = (props: any) => {
+    const fixedOptions = parameter?.code === "DiecutType"
+      ? fixedDieCutTypeOptions
+      : parameter?.code === "DieCutter"
+        ? fixedDieCutterOptions
+        : [];
+
+    return (
+      <Paper {...props} style={{ ...props.style, display: 'flex', flexDirection: 'column', maxHeight: '300px' }}>
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: 'auto', maxHeight: '240px' }}>
+          {props.children}
+        </div>
+
+        {/* Fixed bottom options */}
+        {fixedOptions.length > 0 && (
+          <>
+            <Divider />
+            <div style={{ backgroundColor: '#f5f5f5', padding: '4px 0' }}>
+              {fixedOptions.map((option) => (
+                <Tooltip key={option.id} title={option.updateName} placement="top">
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      if (parameter.code === "DiecutType" && option.id === "new") {
+                        setOpenModal(true);
+                      } else if (parameter.code === "DieCutter") {
+                        if (option.id === "add_new") {
+                          window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
+                        } else if (option.id === "generate_new") {
+                          createNewTemplate();
+                        }
+                      }
+
+                      // Close the dropdown after action
+                      const backdrop = document.querySelector('.MuiAutocomplete-popper');
+                      if (backdrop) {
+                        const closeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                        document.dispatchEvent(closeEvent);
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    style={{
+                      backgroundColor: option.id === "add_new" ? '#2E3092' : option.id === "generate_new" ? '#FF69B4' : '#2E3092',
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      padding: "4px 8px",
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                      height: "40px",
+                      margin: "4px 8px",
+                    }}
+                  >
+                    <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                      <AddNewIcon color="white" />
+                    </div>
+                    <div style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      flex: 1
+                    }}>
+                      {option.updateName}
+                    </div>
+                  </div>
+                </Tooltip>
+              ))}
+            </div>
+          </>
+        )}
+      </Paper>
+    );
+  };
 
   const getOptions = useCallback(() => {
+    // Return only regular (scrollable) options, excluding fixed bottom options
     const MyOptions = parameter?.code === "DiecutType"
-      ? DieCutTypeOptions
+      ? regularDieCutTypeOptions
       : parameter?.code === "DieCutter"
-        ? DieCutterOptions
+        ? regularDieCutterOptions
         : options;
 
     // Add validation check
@@ -125,7 +218,7 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
+  }, [parameter?.code, regularDieCutTypeOptions, regularDieCutterOptions, options]);
 
 
   const [selectedValue, setSelectedValue] = useState(
@@ -152,6 +245,7 @@ const AdvertisingProductNameParameterWidget = ({
                 : undefined}
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
           placeholder={parameter?.name}
+          PaperComponent={CustomPaperComponent}
           onChange={(e: any, value: any) => {
             if (parameter?.code === "DiecutType") {
               setIsRenderData(true)
@@ -183,60 +277,7 @@ const AdvertisingProductNameParameterWidget = ({
               (attr) => attr.valueId === 'categoryImage'
             )?.value;
 
-            // Special handling for DiecutType's first item
-            if (parameter.code === "DiecutType" && option.id === "new") {
-              return (
-                <li {...props}
-                  onClick={() => setOpenModal(true)}
-                  style={{
-                    backgroundColor: '#2E3092',
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start"
-                  }}>
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start"
-                    }}>
-                    <AddNewIcon color="white" />
-                  </div>
-                  {option.updateName}
-                </li>
-              );
-            }
-
-            // Special handling for DieCutter's new options
-            if (parameter.code === "DieCutter" && (option.id === "add_new" || option.id === "generate_new")) {
-              return (
-                <li {...props}
-                  onClick={() => {
-                    if (option.id === "add_new") {
-                      window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
-                    } else {
-                      createNewTemplate()
-                    }
-                  }}
-                  style={{
-                    backgroundColor: option.id === "add_new" ? '#2E3092' : '#FF69B4',
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start"
-                  }}>
-                  <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-                    <AddNewIcon color="white" />
-                  </div>
-                  {option.updateName}
-                </li>
-              );
-            }
-
-            // Regular rendering for other items
+            // Regular rendering for all items (fixed options are now handled in CustomPaperComponent)
             return (
               <li {...props}>
                 {
@@ -306,7 +347,13 @@ const AdvertisingProductNameParameterWidget = ({
 
       <GoMakeModal
         open={openGenerateModal}
-        onClose={() => isView ? null : setOpenGenerateModal(false)}
+        onClose={() => {
+          if (!isView) {
+            setOpenGenerateModal(false);
+            // Reset all modal states when closing
+            resetModalStates();
+          }
+        }}
         insideStyle={{ width: 750, height: !isView ? "fit-content" : 500, padding: 20 }}
         withClose={isView ? false : true}
         modalTitle={
@@ -379,26 +426,99 @@ const AdvertisingProductNameParameterWidget = ({
           }
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
-          <div style={clasess.modalContentImage}>
-            {(image || categoryImage) && <img
-              src={categoryImage != "" ? categoryImage : image}
-              alt="parameter image"
-              style={clasess.modalContentImageItem2}
-            />
-            }
-            <div style={clasess.modalContentDataItem2}>
-              {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
-                return <div>{item}</div>
-              })}
-            </div>
-          </div>
-          <div style={clasess.modalContentButton2}>
-            <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
-            <div style={clasess.modalContentButtonItem2}>
-              <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
-            </div>
-          </div>
-
+          {/* Show custom dimension inputs for special templateId */}
+          {productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25" ? (
+            <>
+              <div style={clasess.modalContentImage}>
+                {(image || categoryImage) && <img
+                  src={categoryImage != "" ? categoryImage : image}
+                  alt="parameter image"
+                  style={clasess.modalContentImageItem2}
+                />
+                }
+                <div style={clasess.modalContentDataItem2}>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitWidth")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitWidth}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitLength")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitLength}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitLength")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 15 }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                      {t("products.offsetPrice.admin.finalUnitHeight")}: {unit && <small>({unit})</small>}
+                      <span style={{ color: 'red' }}> *</span>
+                    </div>
+                    <GomakeTextInput
+                      value={customDimensions.finalUnitHeight}
+                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
+                      placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
+                      style={{ width: '100%', height: "35px" }}
+                      type="number"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div style={clasess.modalContentButton2}>
+                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                <div style={clasess.modalContentButtonItem2}>
+                  <GomakePrimaryButton
+                    sx={{
+                      width: "fit-content",
+                      height: 40,
+                      backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092"
+                    }}
+                    disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
+                    onClick={createNewTemplateWithCustomDimensions}
+                  >
+                    {t("products.offsetPrice.admin.generate")}
+                  </GomakePrimaryButton>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Show normal image and parameters for other templates */
+            <>
+              <div style={clasess.modalContentImage}>
+                {(image || categoryImage) && <img
+                  src={categoryImage != "" ? categoryImage : image}
+                  alt="parameter image"
+                  style={clasess.modalContentImageItem2}
+                />
+                }
+                <div style={clasess.modalContentDataItem2}>
+                  {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
+                    return <div>{item}</div>
+                  })}
+                </div>
+              </div>
+              <div style={clasess.modalContentButton2}>
+                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                <div style={clasess.modalContentButtonItem2}>
+                  <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
+                </div>
+              </div>
+            </>
+          )}
         </Stack>}
         {isView && !isViewInfoAfterGenerate && <div style={clasess.modalContentIcon}>
           <TestIcon />
@@ -575,75 +695,6 @@ const AdvertisingProductNameParameterWidget = ({
         </div>
       </GoMakeModal>
 
-      {/* Custom Dimensions Modal for specific templateId */}
-      <GoMakeModal
-        open={openCustomModal}
-        onClose={() => setOpenCustomModal(false)}
-        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
-        modalTitle={t("products.offsetPrice.admin.enterCustomDimensions")}
-      >
-        <Stack gap={3} justifyContent={'flex-start'} margin={'auto'} marginTop={"20px"}>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitWidth")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitWidth}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitLength")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitLength}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitLength")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-              {t("products.offsetPrice.admin.finalUnitHeight")} {unit && <small>({unit})</small>}
-              <span style={{ color: 'red' }}> *</span>
-            </div>
-            <GomakeTextInput
-              value={customDimensions.finalUnitHeight}
-              onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
-              placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
-              style={{ width: '100%', height: "40px" }}
-              type="number"
-            />
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <SecondaryButton
-              onClick={() => setOpenCustomModal(false)}
-              variant={'outlined'}
-              sx={{ width: 'fit-content' }}
-            >
-              {t("modal.cancel")}
-            </SecondaryButton>
-            <GomakePrimaryButton
-              onClick={() => {
-                if (customDimensions.finalUnitWidth && customDimensions.finalUnitLength && customDimensions.finalUnitHeight) {
-                  createNewTemplateWithCustomDimensions();
-                }
-              }}
-              sx={{ width: 'fit-content', height: 40, color: "#FFF", backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092" }}
-              disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
-            >
-              {t("products.offsetPrice.admin.generate")}
-            </GomakePrimaryButton>
-          </div>
-        </Stack>
-      </GoMakeModal>
 
       {/* Warning/Message Modal */}
       <GoMakeModal

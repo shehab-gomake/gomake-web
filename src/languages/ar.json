@@ -1063,7 +1063,7 @@
     "electricityCostPerWorkingHour": "تكلفة الكهرباء للساعة العمل",
     "dailyProductivityInHours": "الإنتاجية اليومية بالساعات",
     "lifeExpectancyYears": "سنوات العمر المتوقعة",
-    "printLife": "حياة الطباعة (متر)",
+    "workingDaysAmountInWeek": "عدد أيام العمل في الأسبوع",
     "minManpowerOperation": "الحد الأدنى للعمل البشري",
     "setupTimeMin": "وقت الإعداد (دقيقة)",
     "resolution": "الدقة",

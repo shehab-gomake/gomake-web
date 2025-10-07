@@ -61,11 +61,16 @@ const useMachineAttributes = () => {
         }));
     };
     const machineHourCost = () => {
-        if (machineState?.price?.price !==0 && machineState.attributes?.dailyProductivityInHours !==0 && machineState.attributes?.lifeExpectancyYears !==0 && machineState.attributes?.monthlyMaintenanceCost !==0 && machineState.attributes?.monthlyCostOfSpace !==0 && machineState.attributes?.electricityCostPerWorkingHour !==0) {
+        if (machineState?.price?.price !==0 && 
+            machineState.attributes?.dailyProductivityInHours !==0 && 
+            machineState.attributes?.lifeExpectancyYears !==0 && 
+            machineState.attributes?.monthlyMaintenanceCost !==0 && 
+            machineState.attributes?.monthlyCostOfSpace !==0 && 
+            machineState.attributes?.electricityCostPerWorkingHour !==0) {
             return machineState?.price?.price /
-                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * 22 * 12) +
-                +machineState.attributes?.monthlyMaintenanceCost / (22 * 8) +
-                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / (22 * 8);
+                (+machineState.attributes?.dailyProductivityInHours * +machineState.attributes?.lifeExpectancyYears * (4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * 12) +
+                +machineState.attributes?.monthlyMaintenanceCost / ((4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * +machineState.attributes?.dailyProductivityInHours) +
+                +machineState.attributes?.electricityCostPerWorkingHour + +machineState.attributes?.monthlyCostOfSpace / ((4.35 * (machineState.attributes?.workingDaysAmountInWeek ? +machineState.attributes?.workingDaysAmountInWeek : 5)) * +machineState.attributes?.dailyProductivityInHours);
         }
         return 0
     };
@@ -96,7 +101,8 @@ const useMachineAttributes = () => {
         machineState?.attributes?.lifeExpectancyYears,
         machineState?.attributes?.monthlyMaintenanceCost,
         machineState?.attributes?.monthlyCostOfSpace,
-        machineState?.attributes?.electricityCostPerWorkingHour
+        machineState?.attributes?.electricityCostPerWorkingHour,
+        machineState?.attributes?.workingDaysAmountInWeek
     ]);
     // Track initial direct machineHourCost value (if provided explicitly)
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { messagingService } from "@/services/websocket/messaging-service";
+import { messagingService } from "@/services/frontdesk";
 import {
   messagingConnectionState,
   messagingConnectedState,
@@ -20,14 +20,38 @@ import {
   messagingIsLoadingHistoryState,
 } from "@/store/messaging";
 import {
-  Message,
-  Channel,
-  User,
-  PresenceData,
-  TypingIndicator,
-  SendMessageData,
-  MessageConfirmedData,
+  DMMessage as Message,
+  Conversation as Channel,
+  ConversationMember as User,
+  DMPresenceData as PresenceData,
 } from "@/widgets/frontdesk/providers/internal/types";
+
+// Define missing types that were removed
+interface TypingIndicator {
+  userId: string;
+  userEmail: string;
+  userName: string;
+  conversationId: string;
+  isTyping: boolean;
+}
+
+interface SendMessageData {
+  conversationId: string;
+  content: string;
+  recipientId?: string;
+  tempId?: string;
+  messageId?: string;
+  metadata?: {
+    type: 'text' | 'file' | 'image';
+  };
+}
+
+interface MessageConfirmedData {
+  tempId: string;
+  messageId: string;
+  conversationId: string;
+  timestamp?: string;
+}
 import { useUserProfile } from "@/hooks/use-user-profile";
 
 export const useMessaging = () => {
@@ -66,7 +90,7 @@ export const useMessaging = () => {
 
       // Auto-join general channel
       if (activeChannelId) {
-        await messagingService.joinChannel({ channelId: activeChannelId });
+        await messagingService.joinChannel({ conversationId: activeChannelId });
       }
 
       // Get initial presence data
@@ -112,13 +136,13 @@ export const useMessaging = () => {
 
         // Create optimistic message for immediate UI update
         const optimisticMessage: Message = {
-          channelId: activeChannelId,
+          id: tempId,
+          conversationId: activeChannelId,
           content: content.trim(),
-          userId: currentUser.id,
+          userId: currentUser.userId,
           userEmail: currentUser.email,
           userName: currentUser.name,
-          organizationId: "",
-          timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           tempId,
           metadata: { type: "text" },
         };
@@ -131,7 +155,7 @@ export const useMessaging = () => {
 
         // Prepare message data for WebSocket
         const messageData: SendMessageData = {
-          channelId: activeChannelId,
+          conversationId: activeChannelId,
           content: content.trim(),
           recipientId,
           tempId,
@@ -188,7 +212,7 @@ export const useMessaging = () => {
     async (channelId: string) => {
       try {
         setError(null);
-        await messagingService.joinChannel({ channelId });
+        await messagingService.joinChannel({ conversationId: channelId });
         setActiveChannelId(channelId);
 
         // Clear unread count for this channel
@@ -212,7 +236,7 @@ export const useMessaging = () => {
     async (channelId: string) => {
       try {
         setError(null);
-        await messagingService.leaveChannel({ channelId });
+        await messagingService.leaveChannel({ conversationId: channelId });
       } catch (error: any) {
         console.error("Failed to leave channel:", error);
         setError(error.message || "Failed to leave channel");
@@ -226,7 +250,7 @@ export const useMessaging = () => {
     if (!activeChannelId || isTyping) return;
 
     setIsTyping(true);
-    messagingService.startTyping({ channelId: activeChannelId });
+    messagingService.startTyping({ conversationId: activeChannelId });
 
     // Stop typing after 3 seconds of inactivity
     if (typingTimeoutRef.current) {
@@ -242,7 +266,7 @@ export const useMessaging = () => {
     if (!activeChannelId || !isTyping) return;
 
     setIsTyping(false);
-    messagingService.stopTyping({ channelId: activeChannelId });
+    messagingService.stopTyping({ conversationId: activeChannelId });
 
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
@@ -295,7 +319,7 @@ export const useMessaging = () => {
     const handleNewMessage = (message: Message) => {
       // Don't add if it's a duplicate of an optimistic message we already have
       setMessages((prev) => {
-        const channelMessages = prev[message.channelId] || [];
+        const channelMessages = prev[message.conversationId] || [];
         // Check if this is our own message that was already added optimistically
         const existingOptimisticMessage = channelMessages.find(
           (msg) => msg.tempId && msg.content === message.content && msg.userId === message.userId
@@ -305,7 +329,7 @@ export const useMessaging = () => {
           // Replace the optimistic message with the confirmed one
           return {
             ...prev,
-            [message.channelId]: channelMessages.map((msg) =>
+            [message.conversationId]: channelMessages.map((msg) =>
               msg.tempId === existingOptimisticMessage.tempId ? { ...message, tempId: undefined } : msg
             ),
           };
@@ -314,15 +338,15 @@ export const useMessaging = () => {
         // Otherwise, add the new message
         return {
           ...prev,
-          [message.channelId]: [...channelMessages, message],
+          [message.conversationId]: [...channelMessages, message],
         };
       });
 
       // Update unread count if not in active channel
-      if (message.channelId !== activeChannelId && message.userId !== currentUser?.id) {
+      if (message.conversationId !== activeChannelId && message.userId !== currentUser?.userId) {
         setUnreadCounts((prev) => ({
           ...prev,
-          [message.channelId]: (prev[message.channelId] || 0) + 1,
+          [message.conversationId]: (prev[message.conversationId] || 0) + 1,
         }));
       }
     };
@@ -330,12 +354,12 @@ export const useMessaging = () => {
     const handleMessageConfirmed = (data: MessageConfirmedData) => {
       // Replace temp message with confirmed message
       setMessages((prev) => {
-        const channelMessages = prev[data.channelId] || [];
+        const channelMessages = prev[data.conversationId] || [];
         return {
           ...prev,
-          [data.channelId]: channelMessages.map((msg) =>
+          [data.conversationId]: channelMessages.map((msg) =>
             msg.tempId === data.tempId
-              ? { ...msg, messageId: data.messageId, tempId: undefined, timestamp: data.timestamp || msg.timestamp }
+              ? { ...msg, id: data.messageId, tempId: undefined, createdAt: data.timestamp || msg.createdAt }
               : msg
           ),
         };
@@ -351,6 +375,7 @@ export const useMessaging = () => {
 
     // Presence handlers
     const handleUserOnline = (data: any) => {
+      console.log("Received userOnline event:", data);
       setOnlineUsers(data.onlineUsers || []);
       if (data.userId) {
         setUserPresence((prev) => ({
@@ -386,14 +411,14 @@ export const useMessaging = () => {
     const handleUserTyping = (data: TypingIndicator) => {
       setTypingUsers((prev) => {
         const newTypingUsers = { ...prev };
-        const channelTypers = newTypingUsers[data.channelId] || [];
+        const channelTypers = newTypingUsers[data.conversationId] || [];
 
         if (data.isTyping) {
           if (!channelTypers.includes(data.userId)) {
-            newTypingUsers[data.channelId] = [...channelTypers, data.userId];
+            newTypingUsers[data.conversationId] = [...channelTypers, data.userId];
           }
         } else {
-          newTypingUsers[data.channelId] = channelTypers.filter((id) => id !== data.userId);
+          newTypingUsers[data.conversationId] = channelTypers.filter((id) => id !== data.userId);
         }
 
         return newTypingUsers;
@@ -452,7 +477,7 @@ export const useMessaging = () => {
   }, [
     connected,
     activeChannelId,
-    currentUser?.id,
+    currentUser?.userId,
     setMessages,
     setUnreadCounts,
     setOnlineUsers,
@@ -487,12 +512,14 @@ export const useMessaging = () => {
     const userId = userProfile?.id || userProfile?.userId;
     if (userProfile && userId && !currentUser) {
       setCurrentUser({
-        id: userId,
+        userId: userId,
         email: userProfile.email || "",
         firstName: userProfile.firstName || "",
         lastName: userProfile.lastName || "",
         name: `${userProfile.firstName || ""} ${userProfile.lastName || ""}`.trim() || userProfile.email || "User",
-        status: "online",
+        isArchived: false,
+        isFavorite: false,
+        role: 'member' as const,
       });
     }
   }, [userProfile, currentUser, setCurrentUser]);

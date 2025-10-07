@@ -38,7 +38,9 @@ export const AccountToggle: React.FC<AccountToggleProps> = ({
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedAccount = accounts.find(account => account.id === selectedAccountId);
+  // Safety check: ensure accounts is an array
+  const safeAccounts = Array.isArray(accounts) ? accounts : [];
+  const selectedAccount = safeAccounts.find(account => account.id === selectedAccountId);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -53,7 +55,7 @@ export const AccountToggle: React.FC<AccountToggleProps> = ({
     setIsOpen(false);
   };
 
-  if (accounts.length === 0) {
+  if (safeAccounts.length === 0) {
     return null;
   }
 
@@ -167,7 +169,7 @@ export const AccountToggle: React.FC<AccountToggleProps> = ({
             }}
           >
             <List sx={{ py: 0.5 }}>
-              {accounts.map((account) => (
+              {safeAccounts.map((account) => (
                 <AccountListItem
                   key={account.id}
                   account={account}

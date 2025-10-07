@@ -16,13 +16,34 @@ export const useEmailAccounts = () => {
   const [error, setError] = useRecoilState(emailAccountsErrorState);
   const { alertSuccess, alertFault } = useSnackBar();
 
-  // Fetch all connected accounts
+  // Fetch all connected accounts and enrich with providerChannelId
   const fetchAccounts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
+      console.log('[Email] Fetching accounts from GET /email/accounts');
       const fetchedAccounts = await emailApiClient.getAccounts();
+
+      console.log('[Email] Received accounts:', fetchedAccounts);
+      console.log('[Email] Accounts with providerChannelId:',
+        fetchedAccounts.map(acc => ({
+          id: acc.id,
+          email: acc.email,
+          hasProviderChannelId: !!acc.providerChannelId,
+          providerChannelId: acc.providerChannelId,
+        }))
+      );
+
+      // Check if any accounts are missing providerChannelId
+      const missingProviderChannelId = fetchedAccounts.some(acc => !acc.providerChannelId);
+
+      if (missingProviderChannelId) {
+        console.warn('[Email] ⚠️ Some accounts are missing providerChannelId');
+        console.warn('[Email] ⚠️ Backend should include this field in GET /email/accounts response');
+        console.warn('[Email] ⚠️ See BACKEND_TODO_PROVIDER_CHANNEL_ID.md for details');
+      }
+
       setAccounts(fetchedAccounts);
 
       // Auto-select first account if none selected
@@ -41,11 +62,16 @@ export const useEmailAccounts = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [setAccounts, setSelectedAccountId, setIsLoading, setError, alertFault]);
+  }, [setAccounts, setSelectedAccountId, setIsLoading, setError, alertFault, selectedAccountId]);
 
   // Select an account
   const selectAccount = useCallback(
     (accountId: string) => {
+      // Safety check: ensure accounts is an array
+      if (!Array.isArray(accounts)) {
+        console.error('[Email] accounts is not an array:', accounts);
+        return;
+      }
       const account = accounts.find((a) => a.id === accountId);
       if (account) {
         setSelectedAccountId(accountId);
@@ -58,6 +84,13 @@ export const useEmailAccounts = () => {
   const disconnectAccount = useCallback(
     async (accountId: string) => {
       try {
+        // Safety check: ensure accounts is an array
+        if (!Array.isArray(accounts)) {
+          console.error('[Email] accounts is not an array:', accounts);
+          alertFault('Failed to disconnect account: invalid state');
+          return false;
+        }
+
         await emailApiClient.disconnectAccount(accountId);
 
         // Remove from state
@@ -88,6 +121,11 @@ export const useEmailAccounts = () => {
 
   // Get selected account
   const getSelectedAccount = useCallback(() => {
+    // Safety check: ensure accounts is an array
+    if (!Array.isArray(accounts)) {
+      console.error('[Email] accounts is not an array:', accounts);
+      return null;
+    }
     return accounts.find((a) => a.id === selectedAccountId);
   }, [accounts, selectedAccountId]);
 
@@ -98,7 +136,8 @@ export const useEmailAccounts = () => {
 
   // Initial fetch on mount
   useEffect(() => {
-    if (accounts.length === 0 && !isLoading && !error) {
+    // Safety check: ensure accounts is an array before checking length
+    if (Array.isArray(accounts) && accounts.length === 0 && !isLoading && !error) {
       fetchAccounts();
     }
   }, []); // Only run once on mount

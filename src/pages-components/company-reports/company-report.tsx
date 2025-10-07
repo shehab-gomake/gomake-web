@@ -10,6 +10,8 @@ import { Stack } from "@mui/material";
 import { useDebounce } from "use-debounce";
 import { SendPaymentModal } from "./components/send-payment/send-payment";
 import { PaymentDetailsModal } from "./components/payment-details/payment-details";
+import { GomakePrimaryButton } from "@/components/button";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const CompanyReportWidget = () => {
   const { classes } = useStyle();
@@ -32,6 +34,7 @@ const CompanyReportWidget = () => {
     countries,
     selectedCountry,
     setSelectedCountry,
+    handleCreatePrintHouseInAccounting,
   } = useCompanyReport();
 
   const [debouncedPatternSearch] = useDebounce(patternSearch, 300);
@@ -72,11 +75,25 @@ const CompanyReportWidget = () => {
   return (
     <>
       <div style={classes.mainContainer}>
-        <HeaderTitle
-          title={t("companyReports.printhouseReport")}
-          marginTop={"0px"}
-          marginBottom={"0px"}
-        />
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ width: "100%" }}
+        >
+          <HeaderTitle
+            title={t("companyReports.printhouseReport")}
+            marginTop={"0px"}
+            marginBottom={"0px"}
+          />
+          <PrimaryButton
+            onClick={handleCreatePrintHouseInAccounting}
+            variant="contained"
+            style={classes.addPrintHouseBtn}
+          >
+            {t("companyReports.addPrintHouseToAccounting")}
+          </PrimaryButton>
+        </Stack>
         <Stack
           width={"100%"}
           direction={"row"}

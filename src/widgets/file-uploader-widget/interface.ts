@@ -21,6 +21,7 @@ export interface IUploadingFile {
   orderItemId?: string;
   productType?: string;
   downloadFilePath?: string;
+  bucketKey?: string;
 }
 
 export enum EUploadingFileStatus {
@@ -28,6 +29,7 @@ export enum EUploadingFileStatus {
   Uploaded,
   ERROR,
   DONE,
+  UploadedToGoogleCloud
 }
 
 export enum FileTypeENUM {

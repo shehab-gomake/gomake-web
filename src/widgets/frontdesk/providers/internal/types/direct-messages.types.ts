@@ -41,11 +41,24 @@ export interface DMMessage {
     type: 'text' | 'file' | 'image';
     [key: string]: any;
   };
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
+
+// Context types for contextual conversations
+export type ConversationContextType = 'QUOTE';
 
 export interface CreateConversationRequest {
   participantIds: string[];
   name?: string;
+  contextId?: string;
+  contextType?: ConversationContextType;
 }
 
 export interface CreateConversationResponse {
@@ -96,6 +109,14 @@ export interface DMMessageConfirmedEvent {
   timestamp: string;
   tempId?: string;
   status: 'sent';
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
 }
 
 export interface DMNewMessageEvent {
@@ -105,6 +126,23 @@ export interface DMNewMessageEvent {
   userId: string;
   timestamp: string;
   tempId?: string;
+  // New field: Complete user object from backend
+  user?: {
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email: string;
+  };
+}
+
+export interface DMUnreadCountUpdatedEvent {
+  conversationId: string;
+  unreadCount: number;
+}
+
+export interface DMWelcomeEvent {
+  conversationIds: string[];
 }
 
 export interface DMTypingEvent {
@@ -186,12 +224,16 @@ export interface MessageListProps {
   onLoadMore?: () => void;
   lastReadMessageId?: string;
   onScrollToUnread?: () => void;
+  highlightedMessageId?: string | null;
+  searchQuery?: string;
 }
 
 export interface MessageInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSend: (content: string) => void;
+  onSend: (content: string) => Promise<void> | void;
+  onTypingStart?: () => void;
+  onTypingStop?: () => void;
   placeholder?: string;
   disabled?: boolean;
   isSending?: boolean;
@@ -205,32 +247,6 @@ export interface UserSelectorProps {
   loading?: boolean;
   open: boolean;
   onClose: () => void;
-}
-
-// Legacy types for backward compatibility (to be phased out)
-export interface LegacyMessage {
-  channelId: string;
-  content: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
-  organizationId: string;
-  timestamp: string;
-  recipientId?: string;
-  messageId?: string;
-  tempId?: string;
-  metadata?: {
-    type: 'text' | 'file' | 'image';
-    timestamp?: string;
-  };
-}
-
-export interface LegacyChannel {
-  id: string;
-  name: string;
-  type: 'channel' | 'direct';
-  unreadCount?: number;
-  lastMessage?: string;
-  lastMessageAt?: string;
-  members?: string[];
+  onlineOnly?: boolean;
+  onToggleOnlineOnly?: (value: boolean) => void;
 }

@@ -19,7 +19,6 @@ interface SummaryData {
 
 interface SummaryWidgetProps {
   summaryData: SummaryData | null;
-  isFixed: boolean;
 }
 
 // Utilities outside component (avoids re-creation on each render)
@@ -31,13 +30,19 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 const formatNumber = (value: number) => numberFormatter.format(value);
 const formatPercentage = (value: number) => `${formatNumber(value)}%`;
 
-const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
+const SummaryWidget = ({ summaryData }: SummaryWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currenciesUnits = useRecoilValue<any[]>(currencyUnitState);
 
-  if (!isFixed || !summaryData) return null;
+  // Don't show summary if no data or if totalFixedPrice is zero/null
+  if (
+    !summaryData ||
+    summaryData.totalFixedPrice === 0 ||
+    summaryData.totalFixedPrice === null
+  )
+    return null;
 
   const getCurrencyUnitText = (currency: string) =>
     currenciesUnits.find((c) => c.value === currency)?.text || "";
@@ -49,26 +54,31 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
       : formatNumber(value);
   };
 
-  const metricsold = [
+  const metrics = [
+    {
+      key: "totalUserInputPrice",
+      label: t("priceProfit.totalUserInputPrice"),
+      value: formatNumberWithCurrency(summaryData.totalUserInputPrice),
+    },
+    {
+      key: "totalCalculatedPrice",
+      label: t("priceProfit.totalCalculatedPrice"),
+      value: formatNumberWithCurrency(summaryData.totalCalculatedPrice),
+    },
+    {
+      key: "totalFixedPrice",
+      label: t("priceProfit.totalFixedPrice"),
+      value: formatNumberWithCurrency(summaryData.totalFixedPrice),
+    },
     {
       key: "diffBeforeOptimization",
       label: t("priceProfit.diffBeforeOptimization"),
       value: formatNumberWithCurrency(summaryData.diffBeforeOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalCalculatedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalCalculatedPrice)}`,
     },
     {
       key: "diffAfterOptimization",
       label: t("priceProfit.diffAfterOptimization"),
       value: formatNumberWithCurrency(summaryData.diffAfterOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalFixedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalFixedPrice)}`,
     },
     {
       key: "accuracyBeforeOptimization",
@@ -90,75 +100,6 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
           ? "#4caf50"
           : "#f44336",
     },
-    {
-      key: "totalPoints",
-      label: t("priceProfit.totalPoints"),
-      value: summaryData.totalPoints,
-    },
-    {
-      key: "totalAbnormalPoints",
-      label: t("priceProfit.totalAbnormalPoints"),
-      value: summaryData.totalAbnormalPoints,
-    },
-  ];
-
-  const metrics = [
-    {
-      key: "diffBeforeOptimization",
-      label: t("priceProfit.diffBeforeOptimization"),
-      value: formatNumberWithCurrency(summaryData.diffBeforeOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalCalculatedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalCalculatedPrice)}`,
-    },
-    {
-      key: "diffAfterOptimization",
-      label: t("priceProfit.diffAfterOptimization"),
-      value: formatNumberWithCurrency(summaryData.diffAfterOptimization),
-      subtitle: `${t(
-        "priceProfit.totalUserInputPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalUserInputPrice)}\n${t(
-        "priceProfit.totalFixedPrice"
-      )}: ${formatNumberWithCurrency(summaryData.totalFixedPrice)}`,
-    },
-    {
-      key: "accuracy",
-      items: [
-        {
-          label: t("priceProfit.accuracyBeforeOptimization"),
-          value: formatPercentage(summaryData.accuracyBeforeOptimization),
-          color:
-            summaryData.accuracyAfterOptimization <
-            summaryData.accuracyBeforeOptimization
-              ? "#4caf50"
-              : "#f44336",
-        },
-        {
-          label: t("priceProfit.accuracyAfterOptimization"),
-          value: formatPercentage(summaryData.accuracyAfterOptimization),
-          color:
-            summaryData.accuracyAfterOptimization >
-            summaryData.accuracyBeforeOptimization
-              ? "#4caf50"
-              : "#f44336",
-        },
-      ],
-    },
-    {
-      key: "points",
-      items: [
-        {
-          label: t("priceProfit.totalPoints"),
-          value: summaryData.totalPoints,
-        },
-        {
-          label: t("priceProfit.totalAbnormalPoints"),
-          value: summaryData.totalAbnormalPoints,
-        },
-      ],
-    },
   ];
 
   return (
@@ -166,62 +107,27 @@ const SummaryWidget = ({ summaryData, isFixed }: SummaryWidgetProps) => {
       <Card style={classes.card}>
         <CardContent style={classes.cardContent}>
           <Grid container spacing={1} alignItems="stretch">
-            {metrics.map(({ key, label, value, subtitle, items }) => (
-              <Grid item xs={2} md={3} key={key} style={{ display: "flex" }}>
+            {metrics.map(({ key, label, value, color }) => (
+              <Grid
+                item
+                xs={12 / 7}
+                md={12 / 7}
+                key={key}
+                style={{ display: "flex" }}
+              >
                 <Box style={{ ...classes.metricContainer, flex: 1 }}>
-                  {/* Case 1: Single metric */}
-                  {!items && (
-                    <>
-                      <Typography variant="body2" style={classes.metricLabel}>
-                        {label}
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        style={{ ...classes.metricValue }}
-                      >
-                        {value}
-                      </Typography>
-                      {subtitle && (
-                        <Typography
-                          variant="caption"
-                          style={{
-                            fontSize: "0.65rem",
-                            color: "#666",
-                            display: "block",
-                            marginTop: "2px",
-                            whiteSpace: "pre-line",
-                          }}
-                        >
-                          {subtitle}
-                        </Typography>
-                      )}
-                    </>
-                  )}
-
-                  {/* Case 2: Grouped items */}
-                  {items && (
-                    <>
-                      {items.map((item, idx) => (
-                        <Box key={idx} style={{ marginBottom: "4px" }}>
-                          <Typography
-                            variant="body2"
-                            style={classes.metricLabel}
-                          >
-                            {item.label}
-                          </Typography>
-                          <Typography
-                            variant="h6"
-                            style={{
-                              ...classes.metricValue,
-                              ...(item.color ? { color: item.color } : {}),
-                            }}
-                          >
-                            {item.value}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </>
-                  )}
+                  <Typography variant="body2" style={classes.metricLabel}>
+                    {label}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      ...classes.metricValue,
+                      ...(color ? { color } : {}),
+                    }}
+                  >
+                    {value}
+                  </Typography>
                 </Box>
               </Grid>
             ))}
