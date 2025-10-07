@@ -7262,81 +7262,70 @@ const useDigitalOffsetPrice = ({
 
   // Add socket event listeners for sessionId-based events
   useEffect(() => {
-    debugger;
     if (sessionId) {
       const socket = io(config.api_server);
       // Listen for parameters result
       socket.on(`${sessionId}-parameters-result`, () => {
         debugger;
-        // If no data, fallback to API call
-        getAndSetChatBotProductId(
-          callApi,
-          (res) => {
-            const updatedTemplate = updateIsHidden(res, subProducts);
-            setDefaultProductTemplate(updatedTemplate);
-            initQuoteItemProduct(updatedTemplate, allMaterials);
-            setdocumentItemByEdit(res?.docmentItem);
-            setCalculationResult({ ...calculationResult, tabs: res?.tabs });
-            setProductItemValueByEdit(res?.productItemValue);
-            setValuesState(res?.productItemValue?.workTypes);
-            setWorkTypes(res?.productItemValue?.workTypes);
-            setMissionsListForEdit(res?.missions);
-            setCalculatedPriceProductItemValue(res?.calculatedPrice);
-            const itemParameters =
-              res?.data?.productItemValue?.itemParmetersValues || [];
-            if (itemParameters && itemParameters?.length > 0) {
-              const allEmpty = itemParameters.every(
-                (item) => !item.subProductType || item.subProductType === ""
-              );
-
-              if (allEmpty) {
-                setSubProductsCopy([
-                  {
-                    parameters: itemParameters,
-                    type: null,
-                  },
-                ]);
-              } else {
-                // Group by subProductType
-                const groupedByType = itemParameters.reduce((acc, item) => {
-                  const type = item.subProductType || "";
-                  if (!acc[type]) {
-                    acc[type] = [];
-                  }
-                  acc[type].push(item);
-                  return acc;
-                }, {});
-
-                // Convert to array format
-                const formattedGroups = Object.entries(groupedByType).map(
-                  ([type, parameters]) => ({
-                    type: type || null,
-                    parameters,
-                  })
+        getAllMaterial().then((materials) => {
+          getAndSetChatBotProductId(
+            callApi,
+            (res) => {
+              const updatedTemplate = updateIsHidden(res, subProducts);
+              setDefaultProductTemplate(updatedTemplate);
+              initQuoteItemProduct(updatedTemplate, materials);
+              setdocumentItemByEdit(res?.docmentItem);
+              setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+              setProductItemValueByEdit(res?.productItemValue);
+              setValuesState(res?.productItemValue?.workTypes);
+              setWorkTypes(res?.productItemValue?.workTypes);
+              setMissionsListForEdit(res?.missions);
+              setCalculatedPriceProductItemValue(res?.calculatedPrice);
+              const itemParameters =
+                res?.data?.productItemValue?.itemParmetersValues || [];
+              if (itemParameters && itemParameters?.length > 0) {
+                const allEmpty = itemParameters.every(
+                  (item) => !item.subProductType || item.subProductType === ""
                 );
 
-                setSubProductsCopy(formattedGroups);
+                if (allEmpty) {
+                  setSubProductsCopy([
+                    {
+                      parameters: itemParameters,
+                      type: null,
+                    },
+                  ]);
+                } else {
+                  // Group by subProductType
+                  const groupedByType = itemParameters.reduce((acc, item) => {
+                    const type = item.subProductType || "";
+                    if (!acc[type]) {
+                      acc[type] = [];
+                    }
+                    acc[type].push(item);
+                    return acc;
+                  }, {});
+
+                  // Convert to array format
+                  const formattedGroups = Object.entries(groupedByType).map(
+                    ([type, parameters]) => ({
+                      type: type || null,
+                      parameters,
+                    })
+                  );
+
+                  setSubProductsCopy(formattedGroups);
+                }
               }
+            },
+            {
+              Id: sessionId,
             }
-          },
-          {
-            Id: sessionId,
-          }
-        );
+          );
+        });
       });
-
-      // // Listen for productId result
-      // socket.on(`${sessionId}-productId-result`, (data) => {
-      //   // Handle productId from socket
-      //   if (data?.productId) {
-      //     // Update productId state or trigger product loading
-      //     console.log("Received productId from socket:", data.productId);
-      //   }
-      // });
-
       return () => {
         socket.off(`${sessionId}-parameters-result`);
-        // socket.off(`${sessionId}-productId-result`);
         socket.disconnect();
       };
     }
