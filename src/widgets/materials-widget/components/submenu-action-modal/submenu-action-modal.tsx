@@ -142,7 +142,7 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
                     {isPriceAction && (
                         <Box>
                             <div style={{ marginBottom: 8, fontWeight: 500 }}>
-                                {t("materials.childTable.price")}
+                                {t("products.profits.pricingListWidget.price")}
                             </div>
                             <GomakeTextInput
                                 onChange={(e) => setPriceValue(e.target.value)}
@@ -150,9 +150,8 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
                                 type="number"
                                 placeholder={t("reports.enterPrice")}
                                 style={{
-                                    width: "100%",
-                                    height: 40,
-                                    borderBottom: !priceValue ? "1px solid red" : "1px solid #ccc",
+                                    borderBottom: !priceValue ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderRadius: '4px',
                                 }}
                             />
                         </Box>

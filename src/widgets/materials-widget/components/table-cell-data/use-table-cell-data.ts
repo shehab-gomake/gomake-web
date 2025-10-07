@@ -186,7 +186,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                 updatePrintHouseMaterialRowApi(callApi, callBack, {
                     key: key,
                     id,
-                    updatedValue: filterNullFromArrays(value),
+                    updatedValue:  filterNullFromArrays(value),
                     priceIndex: index,
                 });
             }

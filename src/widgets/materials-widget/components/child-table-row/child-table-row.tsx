@@ -84,11 +84,11 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         printHouseMaterialId: '',
         supplierId: '',
         code: '',
-        quantity: 0,
-        inventory: 0,
+        quantity: null,
+        inventory: null,
         isActive: true,
-        purchasePrice: 0,
-        salePrice: 0,
+        purchasePrice: null,
+        salePrice: null,
         clients: [],
         purchaseCurrency: { value: '', label: '' },
         saleCurrency: { value: '', label: '' },
@@ -852,11 +852,11 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             printHouseMaterialId: '',
             supplierId: '',
             code: '',
-            quantity: 0,
-            inventory: 0,
+            quantity: null,
+            inventory: null,
             isActive: true,
-            purchasePrice: 0,
-            salePrice: 0,
+            purchasePrice: null,
+            salePrice: null,
             clients: [],
             purchaseCurrency: { value: '', label: '' },
             saleCurrency: { value: '', label: '' },
@@ -913,15 +913,15 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
         try {
             const inventoryData = {
                 printHouseMaterialId: rowId,
-                supplierId: inventoryFormData.supplierId,
-                code: inventoryFormData.code,
-                quantity: parseInt(inventoryFormData.quantity.toString()) || 0,
-                isActive: inventoryFormData.isActive,
-                purchasePrice: parseFloat(inventoryFormData.purchasePrice.toString()) || 0,
-                salePrice: parseFloat(inventoryFormData.salePrice.toString()) || 0,
-                clients: inventoryFormData.clients,
-                saleCurrency: inventoryFormData.saleCurrency.value,
-                purchaseCurrency: inventoryFormData.purchaseCurrency.value,
+                supplierId: inventoryFormData?.supplierId,
+                code: inventoryFormData?.code,
+                quantity: parseInt(inventoryFormData?.quantity?.toString()) || 0,
+                isActive: inventoryFormData?.isActive,
+                purchasePrice: parseFloat(inventoryFormData?.purchasePrice?.toString()) || 0,
+                salePrice: parseFloat(inventoryFormData?.salePrice?.toString()) || 0,
+                clients: inventoryFormData?.clients,
+                saleCurrency: inventoryFormData?.saleCurrency?.value,
+                purchaseCurrency: inventoryFormData?.purchaseCurrency?.value,
             };
 
             const callBack = (res) => {
@@ -941,7 +941,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
             await addSupplierInventoryApi(callApi, callBack, inventoryData);
         } catch (error) {
-            console.error('Error adding inventory:', error);
+            console.log('Error adding inventory:', error);
         }
     };
 

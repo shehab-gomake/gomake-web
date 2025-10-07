@@ -424,7 +424,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                 <div style={{ width: "100%" }}>
                   {action?.submenuOption !== undefined && (
                     <div style={{ marginBottom: 8, fontWeight: 500 }}>
-                      {t("materials.childTable.price")}
+                      {t("products.profits.pricingListWidget.price")}
                     </div>
                   )}
                   <GomakeTextInput
@@ -433,11 +433,8 @@ const ActionMenu = (props: IActionMenuProps) => {
                     type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : action?.submenuOption !== undefined ? "number" : undefined}
                     placeholder={action?.submenuOption !== undefined ? t("reports.enterPrice") : undefined}
                     style={{
-                      height: 40,
-                      borderBottom: !updatedValue ? "1px solid red" : "1px solid blue",
-                      boxShadow: "none",
-                      WebkitBoxShadow: "none",
-                      width: "100%",
+                      borderBottom: !updatedValue ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                      borderRadius: '4px',
                     }}
                   />
                 </div>
@@ -448,9 +445,9 @@ const ActionMenu = (props: IActionMenuProps) => {
               onClick={onUpdate}
               sx={{ width: "100%" }}
               variant={"contained"}
-              disabled={
-                ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
-              }
+            // disabled={
+            //   ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
+            // }
             >
               {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
             </SecondaryButton>
