@@ -32,6 +32,21 @@ const GoMakeAIComponent = () => {
 
   const handleProductIdReceived = (productId: string) => {
     setProductId(productId);
+
+    // Update the current conversation with the productId
+    if (selectedConversation) {
+      setSelectedConversation((prev) => ({
+        ...prev,
+        productId: productId,
+      }));
+    }
+
+    // Update the conversation in the history list //!here not sure
+    setConversationsHistory((prev) =>
+      prev.map((conv) =>
+        conv.sessionId === sessionId ? { ...conv, productId: productId } : conv
+      )
+    );
   };
 
   const {
@@ -73,13 +88,25 @@ const GoMakeAIComponent = () => {
 
         if (urlSessionId && typeof urlSessionId === "string") {
           // Load the conversation from URL (without updating URL again)
-          console.log("Loading conversation from URL:", urlSessionId);
           const conversationMessages = await getConversation(urlSessionId);
           setChatMessages(conversationMessages);
+
+          // Find the conversation in history to get productId //!here not sure
+          const conversationFromHistory = conversationsHistory.find(
+            (conv) => conv.sessionId === urlSessionId
+          );
+
           setSelectedConversation({
             sessionId: urlSessionId,
             messages: conversationMessages,
+            productId: conversationFromHistory?.productId || null, //!here not sure
           });
+
+          // Update productId if found in conversation history //!here not sure
+          if (conversationFromHistory?.productId) {
+            setProductId(conversationFromHistory.productId);
+          }
+
           setSessionIdManually(urlSessionId);
         } else {
           // Start a new session if no URL parameter
@@ -142,7 +169,18 @@ const GoMakeAIComponent = () => {
   // Function to load a specific conversation
   const handleConversationSelect = async (selectedSessionId: string) => {
     try {
-      setProductId(null); // Reset productId when switching conversations
+      // Find the conversation in history to get productId
+      const conversationFromHistory = conversationsHistory.find(
+        (conv) => conv.sessionId === selectedSessionId
+      );
+
+      // Set productId based on conversation history
+      if (conversationFromHistory?.productId) {
+        setProductId(conversationFromHistory.productId);
+      } else {
+        setProductId(null); // Reset if no productId found
+      }
+
       router.push(
         {
           pathname: router.pathname,
