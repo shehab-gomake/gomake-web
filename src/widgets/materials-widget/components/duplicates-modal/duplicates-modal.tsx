@@ -78,8 +78,12 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
             const field = rowData[key];
             let displayValue = field.value;
 
+            // Handle type 3 prices (array format: [value1, value2])
+            if (field.type === 3 && Array.isArray(field.value) && field.value.length >= 2) {
+                displayValue = `${field.value[0]} / ${field.value[1]}`;
+            }
             // Handle boolean values
-            if (typeof field.value === 'boolean') {
+            else if (typeof field.value === 'boolean') {
                 displayValue = field.value ? t("modal.yes") : t("modal.no");
             }
 

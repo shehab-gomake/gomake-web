@@ -1,13 +1,12 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { filterState, openAddRowModalState, selectedSupplierIdState } from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import {
     addPrintHouseMaterialCategoryRowApi,
-    deletePrintHouseMaterialCategoryRowApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
-import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi } from "@/services/api-service/materials/materials-endpoints";
+import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi, deletePrintHouseMaterialRowApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 
 const useAddCategoryRow = (isAdmin: boolean) => {
@@ -73,7 +72,7 @@ const useAddCategoryRow = (isAdmin: boolean) => {
         if (isAdmin) {
             await deleteMaterialCategoryRowApi(callApi, callBack, { rowId: id })
         } else {
-            await deletePrintHouseMaterialCategoryRowApi(callApi, callBack, { rowId: id })
+            await deletePrintHouseMaterialRowApi(callApi, callBack, id)
         }
     }
 
