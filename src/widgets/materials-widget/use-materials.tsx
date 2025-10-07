@@ -610,16 +610,29 @@ const useMaterials = (isAdmin: boolean) => {
     }
   };
 
+  const handleRefreshMaterialData = () => {
+    // Refresh materials data
+    getMaterialCategories(materialType).then();
+    getMaterialCategoryData(
+      materialType?.toString(),
+      materialCategory?.toString(),
+      materialFilter,
+      supplierId,
+      1,
+      20
+    ).then();
+  };
+
   const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
     if (selectedIds.length === 0) return;
 
     const deleteCallBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
-        // Refresh the materials data
-        getMaterialCategories(materialType).then();
+        // Close modal and refresh data
         setOpenDuplicatesModal(false);
         setDuplicatesData([]);
+        handleRefreshMaterialData();
       } else {
         alertFaultDelete();
       }
@@ -629,6 +642,11 @@ const useMaterials = (isAdmin: boolean) => {
     if (isAdmin) {
       // For admin, delete directly
       // You may need to implement the admin delete API call here
+      console.log("Deleting materials (admin):", selectedIds);
+      // For now, just close the modal and refresh
+      setOpenDuplicatesModal(false);
+      setDuplicatesData([]);
+      handleRefreshMaterialData();
     } else {
       // For print house, use the existing delete endpoint
       // Note: You'll need to implement the actual delete API call based on your backend
@@ -636,7 +654,7 @@ const useMaterials = (isAdmin: boolean) => {
       // For now, just close the modal and refresh
       setOpenDuplicatesModal(false);
       setDuplicatesData([]);
-      getMaterialCategories(materialType).then();
+      handleRefreshMaterialData();
     }
   };
 
@@ -688,6 +706,8 @@ const useMaterials = (isAdmin: boolean) => {
     duplicatesData,
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   };
 };
 

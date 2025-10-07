@@ -1164,16 +1164,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setSelectedSupplier(null);
   };
 
+  const handleRefreshMaterialData = () => {
+    // Refresh materials data
+    getMaterialCategories(materialType).then();
+  };
+
   const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
     if (selectedIds.length === 0) return;
 
     const deleteCallBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
-        // Refresh the materials data
-        getMaterialCategories(materialType).then();
+        // Close modal and refresh data
         setOpenDuplicatesModal(false);
         setDuplicatesData([]);
+        handleRefreshMaterialData();
       } else {
         alertFaultDelete();
       }
@@ -1254,6 +1259,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
     duplicatesData,
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   };
 };
 

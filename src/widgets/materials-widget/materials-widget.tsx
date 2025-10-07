@@ -100,6 +100,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     duplicatesData,
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   } = useMaterials(props.isAdmin);
 
   const { loadMoreData, hasMoreData, isLoadingMore, setPageNumber: resetPageNumber } = useMaterialsCategories(props.isAdmin);
@@ -568,6 +570,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         onClose={handleCloseDuplicatesModal}
         data={duplicatesData}
         onDelete={handleDeleteSelectedMaterials}
+        materialHeaders={materialHeaders}
+        onRefreshData={handleRefreshMaterialData}
       />
     </div >
   );

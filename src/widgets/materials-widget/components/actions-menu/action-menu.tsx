@@ -53,6 +53,7 @@ const ActionMenu = (props: IActionMenuProps) => {
     duplicatesData,
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
     properties,
     materialHeaders,
     handleChange,
@@ -473,6 +474,8 @@ const ActionMenu = (props: IActionMenuProps) => {
         onClose={handleCloseDuplicatesModal}
         data={duplicatesData}
         onDelete={handleDeleteSelectedMaterials}
+        materialHeaders={materialHeaders}
+        onRefreshData={handleRefreshMaterialData}
       />
     </>
   );

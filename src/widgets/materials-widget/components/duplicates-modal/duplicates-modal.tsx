@@ -12,6 +12,8 @@ interface IDuplicatesModalProps {
     onClose: () => void;
     data: any[];
     onDelete: (selectedIds: string[]) => void;
+    materialHeaders: { key: string; value: string; unit?: string; isShowInExtraParameters?: boolean; isForAdmin?: boolean }[];
+    onRefreshData: () => void;
 }
 
 const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
@@ -19,6 +21,8 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
     onClose,
     data,
     onDelete,
+    materialHeaders,
+    onRefreshData,
 }) => {
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
@@ -52,13 +56,17 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
     const handleDelete = () => {
         if (selectedMaterials.size > 0) {
             onDelete(Array.from(selectedMaterials));
+        } else {
+            onClose();
         }
-        onClose();
+        // Don't call onRefreshData here - it will be called after successful deletion
     };
 
     const handleCancel = () => {
         setSelectedMaterials(new Set());
         onClose();
+        // Refresh data after cancel
+        onRefreshData();
     };
 
     const renderMaterialRow = (material: any) => {
@@ -85,15 +93,25 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
     };
 
     const getTableHeaders = (materials: any[]) => {
-        if (!materials || materials.length === 0) return [];
+        if (!materials || materials.length === 0 || !materialHeaders) return [];
 
         const firstMaterial = materials[0];
-        const rowData = firstMaterial.rowData || {};
+        const rowDataKeys = Object.keys(firstMaterial.rowData || {});
 
-        return Object.keys(rowData).map(key => ({
-            key,
-            label: key.charAt(0).toUpperCase() + key.slice(1),
-        }));
+        // Filter materialHeaders to only include keys that exist in rowData
+        // and exclude extra parameters and admin-only fields
+        const filteredHeaders = materialHeaders
+            .filter(header =>
+                rowDataKeys.includes(header.key) &&
+                !header.isShowInExtraParameters
+            )
+            .map(header => ({
+                key: header.key,
+                label: header.unit ? `${header.value} (${header.unit})` : header.value,
+                unit: header.unit,
+            }));
+
+        return filteredHeaders;
     };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>, tableId: string) => {
