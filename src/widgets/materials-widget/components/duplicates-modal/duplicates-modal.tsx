@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
+import { UNIT_TYPE } from "@/enums";
 
 interface IDuplicatesModalProps {
     openModal: boolean;
@@ -28,6 +31,8 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
     const { classes } = useStyle();
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0;
     const [selectedMaterials, setSelectedMaterials] = useState<Set<string>>(new Set());
     const [showScrollIndicators, setShowScrollIndicators] = useState<{ [key: string]: boolean }>({});
 
@@ -69,13 +74,21 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
         onRefreshData();
     };
 
-    const renderMaterialRow = (material: any) => {
+    const renderMaterialRow = (material: any, tableHeaders: any[]) => {
         const rowData = material.rowData || {};
         const cells: any[] = [];
 
-        // Extract key fields from rowData
-        Object.keys(rowData).forEach((key) => {
-            const field = rowData[key];
+        // Extract key fields from rowData based on table headers
+        tableHeaders.forEach((header) => {
+            const field = rowData[header.key];
+            if (!field) {
+                cells.push({
+                    key: header.key,
+                    value: "",
+                });
+                return;
+            }
+
             let displayValue = field.value;
 
             // Handle type 3 prices (array format: [value1, value2])
@@ -88,7 +101,7 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
             }
 
             cells.push({
-                key,
+                key: header.key,
                 value: displayValue,
             });
         });
@@ -105,10 +118,22 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
         // Filter materialHeaders to only include keys that exist in rowData
         // and exclude extra parameters and admin-only fields
         const filteredHeaders = materialHeaders
-            .filter(header =>
-                rowDataKeys.includes(header.key) &&
-                !header.isShowInExtraParameters
-            )
+            .filter(header => {
+                // Exclude extra parameters and admin-only fields
+                if (header.isShowInExtraParameters) return false;
+                if (!rowDataKeys.includes(header.key)) return false;
+
+                // Conditionally exclude price fields based on unit type
+                if (unitType === UNIT_TYPE.IMPERIAL) {
+                    // For IMPERIAL, exclude "price Unit / ton" field
+                    if (header.key === "price Unit / ton") return false;
+                } else {
+                    // For non-IMPERIAL (UNITS), exclude "price(1000 Unit)" field
+                    if (header.key === "price(1000 Unit)") return false;
+                }
+
+                return true;
+            })
             .map(header => ({
                 key: header.key,
                 label: header.unit ? `${header.value} (${header.unit})` : header.value,
@@ -254,7 +279,8 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                                                 </TableHead>
                                                                 <TableBody>
                                                                     {category.printHouseMaterialDuplicated.map((material: any) => {
-                                                                        const cells = renderMaterialRow(material);
+                                                                        const headers = getTableHeaders(category.printHouseMaterialDuplicated);
+                                                                        const cells = renderMaterialRow(material, headers);
                                                                         const isSelected = selectedMaterials.has(material.id);
                                                                         return (
                                                                             <TableRow
@@ -330,7 +356,8 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                                                 </TableHead>
                                                                 <TableBody>
                                                                     {category.printHouseMaterialDeleted.map((material: any) => {
-                                                                        const cells = renderMaterialRow(material);
+                                                                        const headers = getTableHeaders(category.printHouseMaterialDeleted);
+                                                                        const cells = renderMaterialRow(material, headers);
                                                                         const isSelected = selectedMaterials.has(material.id);
                                                                         return (
                                                                             <TableRow

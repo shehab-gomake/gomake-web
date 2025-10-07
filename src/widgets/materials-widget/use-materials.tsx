@@ -584,14 +584,38 @@ const useMaterials = (isAdmin: boolean) => {
         let callBack = (res) => {
           if (res.success) {
             alertSuccessAdded();
+
             if (res?.data?.length > 0) {
               // Open modal with duplicates/deleted materials
               setDuplicatesData(res.data);
               setOpenDuplicatesModal(true);
             }
           } else {
-            alertFaultAdded();
+            const error = res?.errors;
+
+            let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
+
+            if (res?.statusCode === 2627) {
+
+            }
+            else if (res?.statusCode === 515) {
+              if (error?.errorParams?.length > 0) {
+                const row = error.errorParams.find(p => p.key === "row")?.value;
+                const fieldKey = error.errorParams.find(p => p.key !== "row")?.key;
+
+                // localized message with params
+                userMessage = t("materials.inputs.uploadMissingField", { field: fieldKey, row });
+              }
+              else if (error?.ErrorMessage) {
+                userMessage = error.ErrorMessage;
+              }
+
+              alertFault(userMessage);
+
+            }
+            alertFault(userMessage);
           }
+
           // Reset input to allow same file upload again
           e.target.value = "";
         };

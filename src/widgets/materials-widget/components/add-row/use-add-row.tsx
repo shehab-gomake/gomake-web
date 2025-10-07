@@ -5,21 +5,23 @@ import { filterState, openAddRowModalState, selectedSupplierIdState } from "../.
 import { useMaterialsCategories } from "../../use-materials-categories";
 import {
     addPrintHouseMaterialCategoryRowApi,
+    addPrintHouseMaterialRowApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi, deletePrintHouseMaterialRowApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const useAddCategoryRow = (isAdmin: boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType, materialCategory, connectionID } = query;
     const [rowData, setRowData] = useState<any>({});
-    const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete } = useSnackBar();
+    const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete, alertFault } = useSnackBar();
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
     const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
     const materialFilter = useRecoilValue(filterState);
-
+    const { t } = useTranslation();
 
     const onAddCategoryRow = async (dataRow) => {
         const stringifiedDataRow = Object.fromEntries(
@@ -34,13 +36,34 @@ const useAddCategoryRow = (isAdmin: boolean) => {
         );
 
         const callBack = (res) => {
+            const error = res?.errors;
+            let userMessage = t("materials.inputs.duplicateFailedTryAgain"); // default fallback
+
+            console.log("reaaaaaaaaaaaaaas", res);
             if (res.success) {
                 alertSuccessAdded();
                 setOpenModal(false);
                 getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), [], supplierId).then();
                 setRowData({})
             } else {
-                alertFaultAdded();
+                if (res?.statusCode === 2627) {
+                    if (error?.errorParams?.length > 0) {
+                        const duplicateFields = error?.errorParams
+                            ?.map(p => p.key)
+                            ?.filter(Boolean)
+                            ?.join(", ");
+                        userMessage = t("materials.inputs.duplicateDuplicateFields", { fields: duplicateFields });
+                    }
+                    else if (error?.ErrorMessage) {
+                        userMessage = error.ErrorMessage;
+                    }
+
+                    alertFault(userMessage);
+
+                }
+                else {
+                    alertFaultAdded();
+                }
             }
         }
         if (isAdmin) {
@@ -50,7 +73,7 @@ const useAddCategoryRow = (isAdmin: boolean) => {
                 rowData: stringifiedDataRow
             })
         } else {
-            await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
+            await addPrintHouseMaterialRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
                 supplierId: supplierId === "" ? undefined : supplierId ?? undefined,

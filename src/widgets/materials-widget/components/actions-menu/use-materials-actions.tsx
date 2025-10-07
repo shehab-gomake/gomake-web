@@ -91,7 +91,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   // Get the table cell data functions for inventory updates
   const { updateInventoryTableData, updateMainTableData, updatePurchasePricingTableData } = useTableCellData(isAdmin, true, true);
-  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate, alertSuccessDelete, alertFaultDelete } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate, alertSuccessDelete, alertFaultDelete, alertFaultDuplicate } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -727,14 +727,29 @@ const useMaterialsActions = (isAdmin: boolean) => {
         let callBack = (res) => {
           if (res.success) {
             alertSuccessAdded();
+
             if (res?.data?.length > 0) {
               // Open modal with duplicates/deleted materials
               setDuplicatesData(res.data);
               setOpenDuplicatesModal(true);
             }
           } else {
-            alertFaultAdded();
+            const error = res?.errors;
+            let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
+
+            if (error?.ErrorMessage && error?.errorParams?.length > 0) {
+              const row = error.errorParams.find(p => p.key === "row")?.value;
+              const fieldKey = error.errorParams.find(p => p.key !== "row")?.key;
+
+              // localized message with params
+              userMessage = t("materials.inputs.uploadMissingField", { field: fieldKey, row });
+            } else if (error?.ErrorMessage) {
+              userMessage = error.ErrorMessage;
+            }
+
+            alertFault(userMessage);
           }
+
           // Reset input to allow same file upload again
           e.target.value = "";
         };
@@ -956,7 +971,29 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setIsAllMaterialsChecked(false)
       handleCloseModal();
     } else {
-      alertFaultAdded();
+      const error = res?.errors;
+
+      let userMessage = t("materials.inputs.duplicateFailedTryAgain");
+
+      if (res?.statusCode === 2627) {
+
+        if (error?.errorParams?.length > 0) {
+          const duplicateFields = error?.errorParams
+            ?.map(p => p.key)
+            ?.filter(Boolean)
+            ?.join(", ");
+          userMessage = t("materials.inputs.duplicateDuplicateFields", { fields: duplicateFields });
+        }
+        else if (error?.ErrorMessage) {
+          userMessage = error.ErrorMessage;
+        }
+
+        alertFault(userMessage);
+      }
+      else {
+        alertFaultDuplicate();
+      }
+      //  alertFaultAdded();
     }
   }, [properties, selectedMaterialsIds, selectedMaterialIdForUpdate]);
   const duplicateMaterials = useCallback(async () => {
