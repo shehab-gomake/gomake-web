@@ -1,5 +1,13 @@
-import { Badge, IconButton, Stack } from "@mui/material";
+import {
+  Badge,
+  IconButton,
+  Stack,
+  Popover,
+  Typography,
+  Box,
+} from "@mui/material";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
@@ -29,16 +37,28 @@ const SystemNotifications = () => {
   const { callApi } = useGomakeAxios();
   const { pathname } = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [noNotificationsAnchorEl, setNoNotificationsAnchorEl] =
+    useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const noNotificationsOpen = Boolean(noNotificationsAnchorEl);
   const { successColor, errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const handelClick = async (event) => {
     if (notifications.length > 0) {
       setAnchorEl(event.currentTarget);
+    } else {
+      setNoNotificationsAnchorEl(event.currentTarget);
+      // Auto close after 3 seconds
+      setTimeout(() => {
+        setNoNotificationsAnchorEl(null);
+      }, 2000);
     }
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleNoNotificationsClose = () => {
+    setNoNotificationsAnchorEl(null);
   };
 
   const getNotifications = async () => {
@@ -151,6 +171,87 @@ const SystemNotifications = () => {
     </GoMakeMenu>
   );
 
+  const renderNoNotificationsPopover = () => (
+    <Popover
+      open={noNotificationsOpen}
+      anchorEl={noNotificationsAnchorEl}
+      onClose={handleNoNotificationsClose}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "center",
+      }}
+      PaperProps={{
+        style: {
+          backgroundColor: "#ffffff",
+          border: "1px solid #e0e0e0",
+          borderRadius: "12px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+          overflow: "hidden",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          p: "20px",
+          minWidth: 240,
+          textAlign: "center",
+          background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)",
+        }}
+      >
+        <Stack spacing={2} alignItems="center">
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              backgroundColor: "#e8f5e8",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 1,
+            }}
+          >
+            <CheckCircleOutlineIcon
+              sx={{
+                fontSize: 24,
+                color: "#4caf50",
+              }}
+            />
+          </Box>
+
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#2e3092",
+              fontWeight: 600,
+              fontSize: "16px",
+              mb: 0.5,
+            }}
+          >
+            {t("notifications.allCaughtUp") || "All caught up!"}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#666",
+              fontWeight: 400,
+              fontSize: "13px",
+              lineHeight: 1.4,
+            }}
+          >
+            {t("notifications.noNewNotifications") ||
+              "No new notifications at the moment"}
+          </Typography>
+        </Stack>
+      </Box>
+    </Popover>
+  );
+
   return notifications.length > 0 ? (
     <Badge
       style={{ padding: "2px" }}
@@ -171,7 +272,7 @@ const SystemNotifications = () => {
   ) : (
     <>
       {renderIconButton()}
-      {renderMenu()}
+      {renderNoNotificationsPopover()}
     </>
   );
 };

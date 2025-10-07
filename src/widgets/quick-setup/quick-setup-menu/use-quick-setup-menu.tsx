@@ -332,7 +332,10 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            window.open("https://gomake.document360.io", "_blank");
+            window.open(
+              "https://know-base-qassamat.replit.app/customer",
+              "_blank"
+            );
             setIsExpanded(false);
           },
         },
