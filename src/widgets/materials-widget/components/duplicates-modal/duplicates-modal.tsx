@@ -1,5 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Box, Stack, Typography, Checkbox, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+    Box,
+    Stack,
+    Typography,
+    Checkbox,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Tooltip
+} from "@mui/material";
 import { GoMakeModal } from "@/components/modal/modal";
 import { GomakePrimaryButton } from "@/components/button";
 import { useTranslation } from "react-i18next";

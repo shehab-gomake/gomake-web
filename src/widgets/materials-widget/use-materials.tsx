@@ -595,10 +595,7 @@ const useMaterials = (isAdmin: boolean) => {
 
             let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
 
-            if (res?.statusCode === 2627) {
-
-            }
-            else if (res?.statusCode === 515) {
+            if (res?.statusCode === 515) {
               if (error?.errorParams?.length > 0) {
                 const row = error.errorParams.find(p => p.key === "row")?.value;
                 const fieldKey = error.errorParams.find(p => p.key !== "row")?.key;
@@ -640,8 +637,6 @@ const useMaterials = (isAdmin: boolean) => {
   };
 
   const handleRefreshMaterialData = () => {
-    console.log("handleRefreshMaterialData", { materialType, materialCategory });
-
     // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
     if (materialType && materialCategory) {
       getMaterialCategoryData(
@@ -652,9 +647,7 @@ const useMaterials = (isAdmin: boolean) => {
         1, // pageNumber
         20, // pageSize
         false // appendMode
-      ).then(() => {
-        console.log('Materials data refreshed');
-      });
+      ).then();
     }
   };
 
@@ -677,7 +670,6 @@ const useMaterials = (isAdmin: boolean) => {
     if (isAdmin) {
       // For admin, delete directly
       // You may need to implement the admin delete API call here
-      console.log("Deleting materials (admin):", selectedIds);
       // For now, just close the modal and refresh
       setOpenDuplicatesModal(false);
       setDuplicatesData([]);
@@ -685,8 +677,6 @@ const useMaterials = (isAdmin: boolean) => {
     } else {
       // For print house, use the existing delete endpoint
       // Note: You'll need to implement the actual delete API call based on your backend
-      console.log("Deleting materials:", selectedIds);
-      // For now, just close the modal and refresh
       setOpenDuplicatesModal(false);
       setDuplicatesData([]);
       handleRefreshMaterialData();
