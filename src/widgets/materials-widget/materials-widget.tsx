@@ -39,6 +39,8 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
+import { ExtraParametersModal } from "./components/extra-parameters-modal/extra-parameters-modal";
+import { DuplicatesModal } from "./components/duplicates-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -47,6 +49,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
   const navStatus = useRecoilValue(navStatusState);
@@ -94,10 +97,31 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   } = useMaterials(props.isAdmin);
+
+  const { loadMoreData, hasMoreData, isLoadingMore, setPageNumber: resetPageNumber } = useMaterialsCategories(props.isAdmin);
+
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
+
+  const handleLoadMore = useCallback(() => {
+    if (materialType && materialCategory && !isLoadingMore && hasMoreData) {
+      loadMoreData(
+        materialType.toString(),
+        materialCategory.toString(),
+        materialFilter,
+        supplierId,
+        20 // pageSize
+      );
+    }
+  }, [materialType, materialCategory, materialFilter, supplierId, isLoadingMore, hasMoreData, loadMoreData]);
 
   useEffect(() => {
     if (!subCategory) {
@@ -289,24 +313,31 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     ).then();
   }, [materialCategory]);
   const isLoadingMaterials = useRecoilValue(isLoadingMaterialsState);
+
   useEffect(() => {
     if (!!materialType && !!materialCategory) {
+      // Reset to page 1 when filters change
+      resetPageNumber(1);
+
       if (props.isAdmin) {
         getMaterialCategoryData(
           materialType?.toString(),
           materialCategory?.toString(),
           materialFilter,
           supplierId,
+          1, // pageNumber
+          20 // pageSize
         ).then();
       } else {
-        if (supplierId) {
-          getMaterialCategoryData(
-            materialType?.toString(),
-            materialCategory?.toString(),
-            materialFilter,
-            supplierId,
-          ).then();
-        }
+        // For non-admin, the API uses suppliersIds, so we can call it even without supplierId
+        getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          materialFilter,
+          supplierId,
+          1, // pageNumber
+          20 // pageSize
+        ).then();
       }
     }
   }, [
@@ -327,7 +358,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             justifyContent: "flex-start",
             alignItems: "center",
             gap: 5,
-            width: "40%",
+            width: "30%",
           }}
         >
           <PrimaryButton
@@ -355,7 +386,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           </IconButton>
         </div>
         <div style={{
-          width: "60%",
+          width: "70%",
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
@@ -430,6 +461,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         renderOptionsSupplier={listSupplier}
                         checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
                         isFetchingSupplier={isFetchingSupplier}
+                        onLoadMore={handleLoadMore}
+                        hasMoreData={hasMoreData}
+                        isLoadingMore={isLoadingMore}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -446,6 +480,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         renderOptionsSupplier={listSupplier}
                         checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
                         isFetchingSupplier={isFetchingSupplier}
+                        onLoadMore={handleLoadMore}
+                        hasMoreData={hasMoreData}
+                        isLoadingMore={isLoadingMore}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>
@@ -487,6 +524,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <AddRowModal isAdmin={props.isAdmin} />
       <UpdatedNumburingModal isAdmin={props.isAdmin} />
       <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
+      <ExtraParametersModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}
@@ -520,11 +558,25 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         }
       />
       <input
+        key={fileInputKey}
         ref={elementRef}
-        onChange={uploadExcelFile}
+        onChange={(e) => {
+          uploadExcelFile(e);
+          setFileInputKey(Date.now());
+        }}
         type="file"
         accept=".xlsx"
         hidden={true}
+      />
+
+      {/* Duplicates/Deleted Materials Modal */}
+      <DuplicatesModal
+        openModal={openDuplicatesModal}
+        onClose={handleCloseDuplicatesModal}
+        data={duplicatesData}
+        onDelete={handleDeleteSelectedMaterials}
+        materialHeaders={materialHeaders}
+        onRefreshData={handleRefreshMaterialData}
       />
     </div >
   );

@@ -28,6 +28,8 @@ export const materialHeadersState = atom<
     inputType: number;
     values: [];
     isHideInDuplicate?: boolean;
+    isShowInExtraParameters?: boolean;
+    isForAdmin?: boolean;
   }[]
 >({
   key: "materialHeadersState",
@@ -242,4 +244,28 @@ export const purchasePricingTableHeadingUnitsState = atom<{
 export const showMoreFiltersState = atom<boolean>({
   key: "showMoreFiltersState",
   default: false,
+});
+
+export const hasMoreDataState = atom<boolean>({
+  key: "hasMoreDataState",
+  default: true,
+});
+
+export const isLoadingMoreState = atom<boolean>({
+  key: "isLoadingMoreState",
+  default: false,
+});
+
+export const totalItemsCountState = atom<number>({
+  key: "totalItemsCountState",
+  default: 0,
+});
+
+export const openExtraParametersModalState = atom<{
+  open: boolean;
+  rowData?: any;
+  rowId?: string;
+}>({
+  key: "openExtraParametersModalState",
+  default: { open: false },
 });

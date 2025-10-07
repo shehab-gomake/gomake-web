@@ -18,6 +18,7 @@ import { ModalType } from "@/enums";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { DuplicatesModal } from "../duplicates-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 interface IActionMenuProps {
   isAdmin: boolean;
@@ -27,6 +28,8 @@ const ActionMenu = (props: IActionMenuProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [imgInputKey, setImgInputKey] = useState(Date.now());
   const {
     onChooseAction,
     action,
@@ -48,6 +51,11 @@ const ActionMenu = (props: IActionMenuProps) => {
     _renderIcons,
     handleCloseModal,
     currencies,
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
     properties,
     materialHeaders,
     handleChange,
@@ -133,15 +141,23 @@ const ActionMenu = (props: IActionMenuProps) => {
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
       <input
+        key={fileInputKey}
         ref={elementRef}
-        onChange={uploadExcelFile}
+        onChange={(e) => {
+          uploadExcelFile(e);
+          setFileInputKey(Date.now());
+        }}
         type="file"
         accept=".xlsx"
         hidden={true}
       />
       <input
+        key={imgInputKey}
         ref={uploadImgRef}
-        onChange={updateMaterialsImages}
+        onChange={(e) => {
+          updateMaterialsImages(e);
+          setImgInputKey(Date.now());
+        }}
         type="file"
         accept=".zip,.rar,.7zip"
         hidden={true}
@@ -433,7 +449,6 @@ const ActionMenu = (props: IActionMenuProps) => {
               sx={{ width: "100%" }}
               variant={"contained"}
               disabled={
-                !updatedValue ||
                 ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
               }
             >
@@ -461,6 +476,16 @@ const ActionMenu = (props: IActionMenuProps) => {
         onClose={onCloseSupplierModal}
         customer={supplier}
         setCustomer={setSupplier}
+      />
+
+      {/* Duplicates/Deleted Materials Modal */}
+      <DuplicatesModal
+        openModal={openDuplicatesModal}
+        onClose={handleCloseDuplicatesModal}
+        data={duplicatesData}
+        onDelete={handleDeleteSelectedMaterials}
+        materialHeaders={materialHeaders}
+        onRefreshData={handleRefreshMaterialData}
       />
     </>
   );

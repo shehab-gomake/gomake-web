@@ -34,6 +34,7 @@ const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-d
 
 const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
 const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types";
+const DELETE_PRINTHOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/delete-printhouse-material-row";
 
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
@@ -437,6 +438,19 @@ const uploadQuoteItemFileApi: ICallAndSetData = async (
   );
 };
 
+const deletePrintHouseMaterialRowApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  id: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${DELETE_PRINTHOUSE_MATERIAL_ROW_URL}/${id}`,
+    callBack
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -465,5 +479,6 @@ export {
   uploadDocumentAttachmentApi,
   uploadQuoteItemFileApi,
   uploadQuoteItemFileForDocumentApi,
-  removeQuoteItemFileApi
+  removeQuoteItemFileApi,
+  deletePrintHouseMaterialRowApi
 };

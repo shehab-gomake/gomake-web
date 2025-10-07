@@ -26,6 +26,8 @@ const DELETE_MATERIAL_CATEGORY_URL =
   "/v1/printhouse-materials/delete-printhouse-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL =
   "/v1/printhouse-materials/add-printhouse-material-category-row";
+const ADD_PRINTHOUSE_MATERIAL_ROW_URL =
+  "/v1/printhouse-materials/add-printhouse-material-row";
 const UPDATE_MATERIAL_CATEGORY_CATEGORY_NAME_URL =
   "/v1/printhouse-materials/update-print-house-material-category-name";
 const DUPLICATE_MATERIAL_CATEGORY_URL =
@@ -37,6 +39,11 @@ const DOWNLOAD_MATERIAL_EXCEL_FILE =
   "/v1/printhouse-materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE =
   "/v1/printhouse-materials/upload-material-excel-file";
+const DOWNLOAD_MATERIAL_ROW_EXCEL_FILE =
+  "/v1/printhouse-materials/download-material-row-excel";
+const UPLOAD_MATERIAL_1_ROW_EXCEL_FILE =
+  "/v1/printhouse-materials/upload-material-one-row-excel";
+
 
 const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
 const GET_SUPPLIER_INVENTORIES_URL = "/v1/printhouse-materials/get-supplier-inventories";
@@ -223,6 +230,20 @@ const addPrintHouseMaterialCategoryRowApi: ICallAndSetData = async (
   );
 };
 
+const addPrintHouseMaterialRowApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_PRINTHOUSE_MATERIAL_ROW_URL,
+    callBack,
+    data
+  );
+};
+
 const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -311,6 +332,33 @@ const uploadPrintHouseMaterialExcelFileApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     UPLOAD_MATERIAL_EXCEL_FILE,
+    callBack,
+    data
+  );
+};
+
+const getPrintHouseMaterialRowExcelFileApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  materialKey: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${DOWNLOAD_MATERIAL_ROW_EXCEL_FILE}/${materialKey}`,
+    setState
+  );
+};
+
+const uploadPrintHouseMaterial1RowExcelFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPLOAD_MATERIAL_1_ROW_EXCEL_FILE,
     callBack,
     data
   );
@@ -555,10 +603,13 @@ export {
   addPrintHouseMaterialCategoryApi,
   deletePrintHouseMaterialCategoryApi,
   addPrintHouseMaterialCategoryRowApi,
+  addPrintHouseMaterialRowApi,
   deletePrintHouseMaterialCategoryRowApi,
   getMaterialsSizesApi,
   getPrintHouseMaterialExcelFileApi,
   uploadPrintHouseMaterialExcelFileApi,
+  getPrintHouseMaterialRowExcelFileApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
   updatePrintHouseMaterialCategoryNameApi,
   duplicatePrintHouseMaterialDisplayNameApi,
   updatePrintHouseCategoriesOrderApi,

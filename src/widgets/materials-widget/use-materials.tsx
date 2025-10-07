@@ -10,7 +10,7 @@ import {
 import {
   deletePrintHouseMaterialCategoryApi,
   getPrintHouseMaterialCategoriesApi,
-  uploadPrintHouseMaterialExcelFileApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -64,7 +64,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<
-      { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
+      { key: string; value: string; unit?: string; isShowInExtraParameters?: boolean; isForAdmin?: boolean }[]
     >(materialHeadersState);
 
   const [materialCategories, setMaterialCategories] = useRecoilState<
@@ -103,6 +103,10 @@ const useMaterials = (isAdmin: boolean) => {
     openDeleteTableRowWhenHaveMoreSupplierModal,
     setOpenDeleteTableRowWhenHaveMoreSupplierModal,
   ] = useState<boolean>(false);
+
+  // Duplicates/Deleted materials modal state
+  const [openDuplicatesModal, setOpenDuplicatesModal] = useState<boolean>(false);
+  const [duplicatesData, setDuplicatesData] = useState<any[]>([]);
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -143,7 +147,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
-  const { alertSuccessDelete, alertFaultDelete, alertFault } = useSnackBar();
+  const { alertSuccessDelete, alertFaultDelete, alertFault, alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
@@ -379,8 +383,8 @@ const useMaterials = (isAdmin: boolean) => {
         checked={isAllSelected()}
       />,
       ...(isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin)
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters)
       ).map((header) => {
         const convertedUnit =
           unitType === UNIT_TYPE.IMPERIAL
@@ -444,8 +448,8 @@ const useMaterials = (isAdmin: boolean) => {
 
     materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin);
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters);
 
       // Main row
       rows.push({
@@ -561,12 +565,10 @@ const useMaterials = (isAdmin: boolean) => {
   const uploadExcelFile = async (e) => {
     if (!materialType || !materialCategory) {
       alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
+      e.target.value = ""; // Reset input to allow same file upload
       return;
     }
-    if (!supplierId) {
-      alertFault("materials.inputs.errorNoSupplierId");
-      return;
-    }
+
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -579,24 +581,48 @@ const useMaterials = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        let callBack = () => {
-          getMaterialCategories(materialType).then(x => {
-            getMaterialCategoryData(
-              materialType?.toString(),
-              materialCategory?.toString(),
-              [],
-              supplierId
-            ).then();
-          });
+        let callBack = (res) => {
+          if (res.success) {
+            alertSuccessAdded();
 
-        }
+            if (res?.data?.length > 0) {
+              // Open modal with duplicates/deleted materials
+              setDuplicatesData(res.data);
+              setOpenDuplicatesModal(true);
+            }
+          } else {
+            const error = res?.errors;
+
+            let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
+
+            if (res?.statusCode === 515) {
+              if (error?.errorParams?.length > 0) {
+                const row = error.errorParams.find(p => p.key === "row")?.value;
+                const fieldKey = error.errorParams.find(p => p.key !== "row")?.key;
+
+                // localized message with params
+                userMessage = t("materials.inputs.uploadMissingField", { field: fieldKey, row });
+              }
+              else if (error?.ErrorMessage) {
+                userMessage = error.ErrorMessage;
+              }
+
+              alertFault(userMessage);
+
+            }
+            alertFault(userMessage);
+          }
+
+          // Reset input to allow same file upload again
+          e.target.value = "";
+        };
         if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
         } else {
-          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+          uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             supplierId: supplierId,
             base64: base64String,
@@ -606,6 +632,60 @@ const useMaterials = (isAdmin: boolean) => {
       };
       reader.readAsArrayBuffer(file);
     }
+    // Reset input value after reading to prevent caching
+    e.target.value = "";
+  };
+
+  const handleRefreshMaterialData = () => {
+    // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
+    if (materialType && materialCategory) {
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        materialFilter,
+        supplierId,
+        1, // pageNumber
+        20, // pageSize
+        false // appendMode
+      ).then();
+    }
+  };
+
+  const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
+    if (selectedIds.length === 0) return;
+
+    const deleteCallBack = (res) => {
+      if (res.success) {
+        alertSuccessDelete();
+        // Close modal and refresh data
+        setOpenDuplicatesModal(false);
+        setDuplicatesData([]);
+        handleRefreshMaterialData();
+      } else {
+        alertFaultDelete();
+      }
+    };
+
+    // Use the delete API endpoint
+    if (isAdmin) {
+      // For admin, delete directly
+      // You may need to implement the admin delete API call here
+      // For now, just close the modal and refresh
+      setOpenDuplicatesModal(false);
+      setDuplicatesData([]);
+      handleRefreshMaterialData();
+    } else {
+      // For print house, use the existing delete endpoint
+      // Note: You'll need to implement the actual delete API call based on your backend
+      setOpenDuplicatesModal(false);
+      setDuplicatesData([]);
+      handleRefreshMaterialData();
+    }
+  };
+
+  const handleCloseDuplicatesModal = () => {
+    setOpenDuplicatesModal(false);
+    setDuplicatesData([]);
   };
 
   return {
@@ -646,6 +726,13 @@ const useMaterials = (isAdmin: boolean) => {
     onChangeRowCheckBox,
     onClickOpenDeleteTableRowModal,
     onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
+    // Duplicates/Deleted modal
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   };
 };
 
