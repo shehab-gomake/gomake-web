@@ -28,6 +28,8 @@ const ActionMenu = (props: IActionMenuProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [imgInputKey, setImgInputKey] = useState(Date.now());
   const {
     onChooseAction,
     action,
@@ -139,15 +141,23 @@ const ActionMenu = (props: IActionMenuProps) => {
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
       <input
+        key={fileInputKey}
         ref={elementRef}
-        onChange={uploadExcelFile}
+        onChange={(e) => {
+          uploadExcelFile(e);
+          setFileInputKey(Date.now());
+        }}
         type="file"
         accept=".xlsx"
         hidden={true}
       />
       <input
+        key={imgInputKey}
         ref={uploadImgRef}
-        onChange={updateMaterialsImages}
+        onChange={(e) => {
+          updateMaterialsImages(e);
+          setImgInputKey(Date.now());
+        }}
         type="file"
         accept=".zip,.rar,.7zip"
         hidden={true}

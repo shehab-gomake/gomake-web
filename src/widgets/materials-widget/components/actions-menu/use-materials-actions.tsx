@@ -709,6 +709,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const uploadExcelFile = async (e) => {
     if (!materialType || !materialCategory) {
       alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
+      e.target.value = ""; // Reset input to allow same file upload
       return;
     }
     const file = e.target.files[0];
@@ -734,6 +735,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
           } else {
             alertFaultAdded();
           }
+          // Reset input to allow same file upload again
+          e.target.value = "";
         };
         if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
@@ -751,6 +754,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
       };
       reader.readAsArrayBuffer(file);
     }
+    // Reset input value after reading to prevent caching
+    e.target.value = "";
   };
 
   const updateMaterialsImages = async (e) => {
@@ -766,13 +771,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        updateMaterialsImagesApi(callApi, () => { }, {
+        updateMaterialsImagesApi(callApi, () => {
+          // Reset input to allow same file upload again
+          e.target.value = "";
+        }, {
           materialTypeKey: materialType.toString(),
           base64ZipFile: base64String,
         });
       };
       reader.readAsArrayBuffer(file);
     }
+    // Reset input value after reading to prevent caching
+    e.target.value = "";
   };
 
   const materialActions = useRecoilValue(materialActionState);

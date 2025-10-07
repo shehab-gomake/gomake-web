@@ -49,6 +49,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
   const navStatus = useRecoilValue(navStatusState);
@@ -557,8 +558,12 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         }
       />
       <input
+        key={fileInputKey}
         ref={elementRef}
-        onChange={uploadExcelFile}
+        onChange={(e) => {
+          uploadExcelFile(e);
+          setFileInputKey(Date.now());
+        }}
         type="file"
         accept=".xlsx"
         hidden={true}
