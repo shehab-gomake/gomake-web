@@ -31,13 +31,13 @@ const jobCards = [
   },
 ];
 
-//!here main test
 interface AIMainPanelProps {
   sendMessage: (prompt: string) => Promise<any>;
   isProcessing: boolean;
   sessionId: string | null;
   chatMessages: any[];
   onChatMessagesUpdate: (messages: any[]) => void;
+  isFullWidth?: boolean;
 }
 
 const AIMainPanel = ({
@@ -46,11 +46,11 @@ const AIMainPanel = ({
   sessionId,
   chatMessages,
   onChatMessagesUpdate,
+  isFullWidth = false,
 }: AIMainPanelProps) => {
-  const { classes } = useStyle();
+  const { classes } = useStyle({ isFullWidth });
   const [jobDescription, setJobDescription] = useState("");
 
-  //!here
   const handleSendMessage = async () => {
     if (!jobDescription.trim()) return;
 
@@ -112,7 +112,6 @@ const AIMainPanel = ({
     }
   };
 
-  //!here new
   const handleOptionClick = async (option: string) => {
     // Add user message to chat
     const newMessages = [

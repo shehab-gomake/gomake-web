@@ -3,28 +3,37 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const useStyle = () => {
+const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
   const { primaryColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
       sidebarContainer: {
-        width: 280,
-        minWidth: 280,
+        width: isCollapsed ? 80 : 280,
+        minWidth: isCollapsed ? 60 : 280,
         height: "100vh",
         backgroundColor: "#FFF",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: "20px",
+        padding: isCollapsed ? "20px 10px" : "20px",
         overflowY: "auto" as "auto",
+        transition: "width 0.3s ease, min-width 0.3s ease, padding 0.3s ease",
+        ...(isCollapsed && {
+          justifyContent: "space-between",
+        }),
       },
       header: {
         display: "flex",
-        flexDirection: "column" as "column",
-        alignItems: "flex-start",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "space-between",
         marginBottom: convertHeightToVH(30),
         padding: "0px 0px 20px 0px",
         borderBottom: "1px solid #F3F4F6",
+
+        ...(isCollapsed && {
+          gap: "8px",
+        }),
       },
       brandingContainer: {
         display: "flex",
@@ -157,7 +166,7 @@ const useStyle = () => {
         gap: 8,
       },
       scrollableList: {
-        // maxHeight: "400px", //!here
+        // maxHeight: "400px",
         maxHeight: "50vh",
         overflowY: "auto" as "auto",
         overflowX: "hidden" as "hidden",
@@ -212,13 +221,15 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
-        gap: 16,
+        gap: isCollapsed ? 8 : 16,
         marginTop: "auto",
-        paddingTop: 20,
+        paddingTop: isCollapsed ? 12 : 20,
         borderTop: "1px solid #F3F4F6",
         backgroundColor: "#FAFBFC",
-        margin: "20px -20px -20px -20px",
-        padding: "16px 20px 20px 20px",
+        margin: isCollapsed
+          ? "20px -10px -10px -10px"
+          : "20px -20px -20px -20px",
+        padding: isCollapsed ? "12px 10px 10px 10px" : "16px 20px 20px 20px",
       },
       backButton: {
         display: "flex",
@@ -258,8 +269,58 @@ const useStyle = () => {
         letterSpacing: "0.05em",
         marginBottom: 4,
       },
+      toggleButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 32,
+        height: 32,
+        borderRadius: 6,
+        backgroundColor: "#F3F4F6",
+        cursor: "pointer",
+        transition: "background-color 0.2s ease",
+        "&:hover": {
+          backgroundColor: "#E5E7EB",
+        },
+      },
+      toggleIcon: {
+        fontSize: 18,
+        color: "#6B7280",
+      },
+      // Collapsed footer styles
+      collapsedFooter: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        alignItems: "center",
+        gap: 8,
+        width: "100%",
+      },
+      collapsedBackButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 32,
+        height: 32,
+        backgroundColor: "#EFF6FF",
+        border: "1px solid #DBEAFE",
+        borderRadius: 8,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        boxShadow: "0 1px 3px rgba(59, 130, 246, 0.1)",
+        outline: "none",
+      },
+      collapsedBackButtonIcon: {
+        fontSize: 16,
+        color: "#3B82F6",
+      },
+      collapsedPoweredBy: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: 0.7,
+      },
     };
-  }, []);
+  }, [isCollapsed]);
 
   return {
     classes,

@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const useStyle = () => {
+const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
   const classes = useMemo(() => {
     return {
       bottomFormContainer: {
@@ -47,7 +46,7 @@ const useStyle = () => {
         width: 44,
         height: 44,
         borderRadius: 8,
-        background: "#3B82F6", // 👈 solid blue
+        background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
         border: "none",
         cursor: "pointer",
         display: "flex",
@@ -77,6 +76,15 @@ const useStyle = () => {
         height: "100vh",
         backgroundColor: "#e9f0f7",
         overflowY: "auto" as "auto",
+        ...(isFullWidth
+          ? {
+              maxWidth: "100%", // Full width when no productId
+              borderRight: "none", // No border when full width
+            }
+          : {
+              maxWidth: "50%", // Half width when productId exists
+              borderRight: "1px solid #E5E7EB", // Border when split layout
+            }),
       },
       newJobContainer: {
         display: "flex",
@@ -148,10 +156,7 @@ const useStyle = () => {
         fontSize: 14,
         lineHeight: "20px",
         padding: "12px 16px",
-        //!here
-        // border: "1px solid #D1D5DB",
-        // borderRadius: 8,
-        // backgroundColor: "#FFF",
+
         "&:focus": {
           outline: "none",
           borderColor: "#504FA1",
@@ -179,7 +184,6 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         marginBottom: 90,
-        //!here style
         // backgroundColor: "#FFF",
         // borderRadius: 12,
         // border: "1px solid #E5E7EB",
@@ -216,12 +220,14 @@ const useStyle = () => {
         maxWidth: 400,
         lineHeight: "24px",
       },
+
       jobTypeCardsContainer: {
         display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(400px, 1fr))", // min 400px per card
+        gridTemplateColumns: "repeat(2, 1fr)", // Always 2 columns
         gap: 24,
         marginBottom: 24,
-        maxWidth: 1200, // was 1000
+        width: "100%",
+        maxWidth: 1000,
         margin: "0 auto 24px auto",
       },
       jobTypeCard: {
@@ -232,7 +238,7 @@ const useStyle = () => {
         cursor: "pointer" as "pointer",
         transition: "all 0.2s ease",
         minHeight: 100,
-        minWidth: 420, // 👈 force card to be wider
+        width: "100%", // Take full width of grid cell
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center" as "center",
@@ -300,37 +306,12 @@ const useStyle = () => {
       //     color: "#9CA3AF",
       //   },
       // },
-      // sendButton: {
-      //   width: 48,
-      //   height: 48,
-      //   borderRadius: 8,
-      //   background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)",
-      //   border: "none",
-      //   cursor: "pointer",
-      //   display: "flex",
-      //   alignItems: "center",
-      //   justifyContent: "center",
-      //   transition: "all 0.2s ease",
-      //   "&:hover": {
-      //     background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
-      //     transform: "translateY(-1px)",
-      //   },
-      //   "&:disabled": {
-      //     background: "#D1D5DB",
-      //     cursor: "not-allowed",
-      //     transform: "none",
-      //   },
-      // },
+
       sendButtonDisabled: {
         backgroundColor: "#D1D5DB",
         cursor: "not-allowed",
       },
-      // sendIcon: {
-      //   color: "#FFF",
-      //   fontSize: 20,
-      //   transform: "rotate(-15deg)",
-      //   fontStyle: "italic",
-      // },
+
       jobTypeIconWrapper: {
         display: "flex",
         alignItems: "center" as "center",
@@ -347,7 +328,7 @@ const useStyle = () => {
         color: "#2E54E7", // same blue as the theme
       },
     };
-  }, []);
+  }, [isFullWidth]);
 
   return {
     classes,
