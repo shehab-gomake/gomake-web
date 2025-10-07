@@ -40,6 +40,7 @@ import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hook
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
 import { ExtraParametersModal } from "./components/extra-parameters-modal/extra-parameters-modal";
+import { DuplicatesModal } from "./components/duplicates-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -95,6 +96,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
   } = useMaterials(props.isAdmin);
 
   const { loadMoreData, hasMoreData, isLoadingMore, setPageNumber: resetPageNumber } = useMaterialsCategories(props.isAdmin);
@@ -321,16 +326,15 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           20 // pageSize
         ).then();
       } else {
-        if (supplierId) {
-          getMaterialCategoryData(
-            materialType?.toString(),
-            materialCategory?.toString(),
-            materialFilter,
-            supplierId,
-            1, // pageNumber
-            20 // pageSize
-          ).then();
-        }
+        // For non-admin, the API uses suppliersIds, so we can call it even without supplierId
+        getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          materialFilter,
+          supplierId,
+          1, // pageNumber
+          20 // pageSize
+        ).then();
       }
     }
   }, [
@@ -556,6 +560,14 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         type="file"
         accept=".xlsx"
         hidden={true}
+      />
+
+      {/* Duplicates/Deleted Materials Modal */}
+      <DuplicatesModal
+        openModal={openDuplicatesModal}
+        onClose={handleCloseDuplicatesModal}
+        data={duplicatesData}
+        onDelete={handleDeleteSelectedMaterials}
       />
     </div >
   );

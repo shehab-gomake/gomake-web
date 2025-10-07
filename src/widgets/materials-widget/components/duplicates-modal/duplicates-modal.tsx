@@ -72,7 +72,7 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
 
             // Handle boolean values
             if (typeof field.value === 'boolean') {
-                displayValue = field.value ? t("general.yes") : t("general.no");
+                displayValue = field.value ? t("modal.yes") : t("modal.no");
             }
 
             cells.push({
@@ -200,24 +200,9 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                             {/* Duplicated Materials Table */}
                                             {category.printHouseMaterialDuplicated && category.printHouseMaterialDuplicated.length > 0 && (
                                                 <Box>
-                                                    <Box sx={classes.deletedHeader}>
-                                                        <Typography variant="subtitle1" sx={classes.sectionTitle}>
-                                                            {t("materials.childTable.duplicatesModal.duplicatedMaterials")}
-                                                        </Typography>
-                                                        <Box sx={classes.selectAllContainer}>
-                                                            <Checkbox
-                                                                checked={category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))}
-                                                                indeterminate={
-                                                                    category.printHouseMaterialDuplicated.some((m: any) => selectedMaterials.has(m.id)) &&
-                                                                    !category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))
-                                                                }
-                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDuplicated)}
-                                                            />
-                                                            <Typography variant="body2">
-                                                                {t("materials.childTable.duplicatesModal.selectAll")}
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
+                                                    <Typography variant="subtitle1" sx={classes.sectionTitle}>
+                                                        {t("materials.childTable.duplicatesModal.duplicatedMaterials")}
+                                                    </Typography>
                                                     <Box sx={classes.tableContainerWrapper}>
                                                         <TableContainer
                                                             id={`duplicated-table-${index}`}
@@ -229,7 +214,14 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                                                 <TableHead>
                                                                     <TableRow>
                                                                         <TableCell sx={classes.headerCell}>
-                                                                            {t("materials.childTable.duplicatesModal.select")}
+                                                                            <Checkbox
+                                                                                checked={category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))}
+                                                                                indeterminate={
+                                                                                    category.printHouseMaterialDuplicated.some((m: any) => selectedMaterials.has(m.id)) &&
+                                                                                    !category.printHouseMaterialDuplicated.every((m: any) => selectedMaterials.has(m.id))
+                                                                                }
+                                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDuplicated)}
+                                                                            />
                                                                         </TableCell>
                                                                         {getTableHeaders(category.printHouseMaterialDuplicated).map((header) => (
                                                                             <TableCell key={header.key} sx={classes.headerCell}>
@@ -284,24 +276,9 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                             {/* Deleted Materials Table */}
                                             {category.printHouseMaterialDeleted && category.printHouseMaterialDeleted.length > 0 && (
                                                 <Box>
-                                                    <Box sx={classes.deletedHeader}>
-                                                        <Typography variant="subtitle1" sx={classes.sectionTitle}>
-                                                            {t("materials.childTable.duplicatesModal.deletedMaterials")}
-                                                        </Typography>
-                                                        <Box sx={classes.selectAllContainer}>
-                                                            <Checkbox
-                                                                checked={category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))}
-                                                                indeterminate={
-                                                                    category.printHouseMaterialDeleted.some((m: any) => selectedMaterials.has(m.id)) &&
-                                                                    !category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))
-                                                                }
-                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDeleted)}
-                                                            />
-                                                            <Typography variant="body2">
-                                                                {t("materials.childTable.duplicatesModal.selectAll")}
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
+                                                    <Typography variant="subtitle1" sx={classes.sectionTitle}>
+                                                        {t("materials.childTable.duplicatesModal.deletedMaterials")}
+                                                    </Typography>
                                                     <Box sx={classes.tableContainerWrapper}>
                                                         <TableContainer
                                                             id={`deleted-table-${index}`}
@@ -313,7 +290,14 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
                                                                 <TableHead>
                                                                     <TableRow>
                                                                         <TableCell sx={classes.headerCell}>
-                                                                            {t("materials.childTable.duplicatesModal.select")}
+                                                                            <Checkbox
+                                                                                checked={category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))}
+                                                                                indeterminate={
+                                                                                    category.printHouseMaterialDeleted.some((m: any) => selectedMaterials.has(m.id)) &&
+                                                                                    !category.printHouseMaterialDeleted.every((m: any) => selectedMaterials.has(m.id))
+                                                                                }
+                                                                                onChange={() => handleSelectAllInCategory(category.printHouseMaterialDeleted)}
+                                                                            />
                                                                         </TableCell>
                                                                         {getTableHeaders(category.printHouseMaterialDeleted).map((header) => (
                                                                             <TableCell key={header.key} sx={classes.headerCell}>

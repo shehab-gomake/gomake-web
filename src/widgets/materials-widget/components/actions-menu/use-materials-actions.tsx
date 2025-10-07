@@ -710,10 +710,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
       return;
     }
-    if (!supplierId) {
-      alertFault("materials.inputs.errorNoSupplierId");
-      return;
-    }
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -727,7 +723,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
           }, "")
         );
         let callBack = (res) => {
-          console.log("res222222", res);
           if (res.success) {
             alertSuccessAdded();
             if (res?.data?.length > 0) {
