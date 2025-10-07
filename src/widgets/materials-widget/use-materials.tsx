@@ -10,7 +10,7 @@ import {
 import {
   deletePrintHouseMaterialCategoryApi,
   getPrintHouseMaterialCategoriesApi,
-  uploadPrintHouseMaterialExcelFileApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -143,7 +143,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
-  const { alertSuccessDelete, alertFaultDelete, alertFault } = useSnackBar();
+  const { alertSuccessDelete, alertFaultDelete, alertFault, alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
@@ -563,10 +563,7 @@ const useMaterials = (isAdmin: boolean) => {
       alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
       return;
     }
-    if (!supplierId) {
-      alertFault("materials.inputs.errorNoSupplierId");
-      return;
-    }
+
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -579,24 +576,30 @@ const useMaterials = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        let callBack = () => {
-          getMaterialCategories(materialType).then(x => {
-            getMaterialCategoryData(
-              materialType?.toString(),
-              materialCategory?.toString(),
-              [],
-              supplierId
-            ).then();
-          });
+        let callBack = (res) => {
+          console.log("res", res);
+          if (res.success) {
 
-        }
+            alertSuccessAdded();
+            // getMaterialCategories(materialType).then(() => {
+            //   getMaterialCategoryData(
+            //     materialType?.toString(),
+            //     materialCategory?.toString(),
+            //     materialFilter,
+            //     supplierId
+            //   ).then();
+            // });
+          } else {
+            alertFaultAdded();
+          }
+        };
         if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
         } else {
-          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+          uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             supplierId: supplierId,
             base64: base64String,

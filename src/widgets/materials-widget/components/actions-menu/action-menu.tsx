@@ -18,6 +18,7 @@ import { ModalType } from "@/enums";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { DuplicatesModal } from "../duplicates-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 interface IActionMenuProps {
   isAdmin: boolean;
@@ -48,6 +49,10 @@ const ActionMenu = (props: IActionMenuProps) => {
     _renderIcons,
     handleCloseModal,
     currencies,
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
     properties,
     materialHeaders,
     handleChange,
@@ -460,6 +465,14 @@ const ActionMenu = (props: IActionMenuProps) => {
         onClose={onCloseSupplierModal}
         customer={supplier}
         setCustomer={setSupplier}
+      />
+
+      {/* Duplicates/Deleted Materials Modal */}
+      <DuplicatesModal
+        openModal={openDuplicatesModal}
+        onClose={handleCloseDuplicatesModal}
+        data={duplicatesData}
+        onDelete={handleDeleteSelectedMaterials}
       />
     </>
   );

@@ -37,6 +37,11 @@ const DOWNLOAD_MATERIAL_EXCEL_FILE =
   "/v1/printhouse-materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE =
   "/v1/printhouse-materials/upload-material-excel-file";
+const DOWNLOAD_MATERIAL_ROW_EXCEL_FILE =
+  "/v1/printhouse-materials/download-material-row-excel";
+const UPLOAD_MATERIAL_1_ROW_EXCEL_FILE =
+  "/v1/printhouse-materials/upload-material-one-row-excel";
+
 
 const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
 const GET_SUPPLIER_INVENTORIES_URL = "/v1/printhouse-materials/get-supplier-inventories";
@@ -316,6 +321,33 @@ const uploadPrintHouseMaterialExcelFileApi: ICallAndSetData = async (
   );
 };
 
+const getPrintHouseMaterialRowExcelFileApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  materialKey: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${DOWNLOAD_MATERIAL_ROW_EXCEL_FILE}/${materialKey}`,
+    setState
+  );
+};
+
+const uploadPrintHouseMaterial1RowExcelFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: any
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPLOAD_MATERIAL_1_ROW_EXCEL_FILE,
+    callBack,
+    data
+  );
+};
+
 const getSupplierInventoriesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -559,6 +591,8 @@ export {
   getMaterialsSizesApi,
   getPrintHouseMaterialExcelFileApi,
   uploadPrintHouseMaterialExcelFileApi,
+  getPrintHouseMaterialRowExcelFileApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
   updatePrintHouseMaterialCategoryNameApi,
   duplicatePrintHouseMaterialDisplayNameApi,
   updatePrintHouseCategoriesOrderApi,

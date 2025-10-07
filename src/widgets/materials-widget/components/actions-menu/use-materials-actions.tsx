@@ -25,13 +25,13 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import {
-  getPrintHouseMaterialExcelFileApi,
   updatePrintHouseMaterialsRowsApi,
-  uploadPrintHouseMaterialExcelFileApi,
   updateSupplierInventoryApi,
   updatePrintHouseMaterialSupplierApi,
   updateSupplierInventoriesActionApi,
-  updatePrintHouseMaterialSuppliersActionApi
+  updatePrintHouseMaterialSuppliersActionApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
+  getPrintHouseMaterialRowExcelFileApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { filterNullFromArrays } from "@/utils/helpers";
 import {
@@ -85,9 +85,13 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [isFetchingSupplier, setIsFetchingSupplier] = useState(false);
   const [openSupplierModal, setOpenSupplierModal] = useState(false);
 
+  // Duplicates/Deleted materials modal state
+  const [openDuplicatesModal, setOpenDuplicatesModal] = useState(false);
+  const [duplicatesData, setDuplicatesData] = useState<any[]>([]);
+
   // Get the table cell data functions for inventory updates
   const { updateInventoryTableData, updateMainTableData, updatePurchasePricingTableData } = useTableCellData(isAdmin, true, true);
-  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertFault, alertFaultUpdate, alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -659,7 +663,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     if (isAdmin) {
       await getMaterialExcelFileApi(callApi, callBack, materialType);
     } else {
-      await getPrintHouseMaterialExcelFileApi(callApi, callBack, materialType);
+      await getPrintHouseMaterialRowExcelFileApi(callApi, callBack, materialType);
     }
   };
 
@@ -722,24 +726,26 @@ const useMaterialsActions = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        let callBack = () => {
-          getMaterialCategories(materialType).then(x => {
-            getMaterialCategoryData(
-              materialType?.toString(),
-              materialCategory?.toString(),
-              [],
-              supplierId
-            ).then();
-          });
-
-        }
+        let callBack = (res) => {
+          console.log("res222222", res);
+          if (res.success) {
+            alertSuccessAdded();
+            if (res?.data?.length > 0) {
+              // Open modal with duplicates/deleted materials
+              setDuplicatesData(res.data);
+              setOpenDuplicatesModal(true);
+            }
+          } else {
+            alertFaultAdded();
+          }
+        };
         if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
         } else {
-          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+          uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             supplierId: supplierId,
             base64: base64String,
@@ -1163,6 +1169,46 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setSelectedSupplier(null);
   };
 
+  const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
+    if (selectedIds.length === 0) return;
+
+    const deleteCallBack = (res) => {
+      if (res.success) {
+        alertSuccessDelete();
+        // Refresh the materials data
+        getMaterialCategories(materialType).then();
+        setOpenDuplicatesModal(false);
+        setDuplicatesData([]);
+      } else {
+        alertFaultDelete();
+      }
+    };
+
+    // Use the existing delete API endpoint
+    await updateMaterials(
+      { action: EMaterialsActions.Delete, key: "Delete" },
+      callApi,
+      deleteCallBack,
+      {
+        materialType,
+        materialCategory,
+        isAllMaterialsChecked: false,
+        selectedMaterialsIds: selectedIds,
+        updatedValue: "delete",
+        uncheckedMaterials: [],
+        rate: 1,
+        activeFilter,
+        materialFilter,
+        supplierId
+      }
+    );
+  };
+
+  const handleCloseDuplicatesModal = () => {
+    setOpenDuplicatesModal(false);
+    setDuplicatesData([]);
+  };
+
   return {
     selectedMaterialsIds,
     onChooseAction,
@@ -1208,6 +1254,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
     isFetchingSupplier,
     setOpenSupplierModal,
     openSupplierModal,
+    // Duplicates/Deleted modal handlers
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
   };
 };
 
