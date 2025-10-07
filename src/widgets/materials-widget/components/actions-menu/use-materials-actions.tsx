@@ -304,15 +304,16 @@ const useMaterialsActions = (isAdmin: boolean) => {
           selectedMaterialsIds.includes(item.id)
         );
       }
-      const areCurrenciesSame = selectedMaterials.every(
-        item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
-      );
-      if (areCurrenciesSame) {
-        setAction(action);
-      }
-      else {
-        alertFault(t("materials.inputs.errorCurrencyMsg"));
-      }
+      setAction(action)
+      // const areCurrenciesSame = selectedMaterials.every(
+      //   item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
+      // );
+      // if (areCurrenciesSame) {
+      //   setAction(action);
+      // }
+      // else {
+      //   alertFault(t("materials.inputs.errorCurrencyMsg"));
+      // }
 
       return;
     }
@@ -441,6 +442,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const updatedTableRowModal = async () => {
+    if (!updatedValue) {
+      alertFault(t("products.offsetPrice.admin.fillValue"));
+      return;
+    }
     await updateMaterials(action, callApi, onUpdateCallBack, {
       materialType,
       materialCategory,
@@ -616,6 +621,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
         ).then();
       }
     } else {
+      if (!updatedValue) {
+        alertFault(t("products.offsetPrice.admin.fillValue"));
+        return;
+      }
       const result = await updatePrintHouseMaterialsRowsApi(
         callApi,
         onUpdateCallBack,
@@ -1162,12 +1171,20 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     let apiCall;
     if (submenuOption === 0) {
+      if (!updatedValue) {
+        alertFault(t("products.offsetPrice.admin.fillValue"));
+        return;
+      }
       // Update Default Sale Cost - existing behavior
       apiCall = updatePrintHouseMaterialsRowsApi;
     } else if (submenuOption === 1) {
       // Update Inventory Sale Cost
       if (!supplier) {
-        alertFault(t("materials.errors.pleaseSelectSupplier"));
+        alertFault(t("home.admin.pleaseSelectSupplier"));
+        return;
+      }
+      if (!updatedValue) {
+        alertFault(t("products.offsetPrice.admin.fillValue"));
         return;
       }
       requestBody.supplierId = supplier.id;
@@ -1175,7 +1192,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
     } else if (submenuOption === 2) {
       // Update Supplier Purchase Price
       if (!supplier) {
-        alertFault(t("materials.errors.pleaseSelectSupplier"));
+        alertFault(t("home.admin.pleaseSelectSupplier"));
+        return;
+      }
+      if (!updatedValue) {
+        alertFault(t("products.offsetPrice.admin.fillValue"));
         return;
       }
       requestBody.supplierId = supplier.id;

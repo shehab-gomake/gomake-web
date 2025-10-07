@@ -445,9 +445,9 @@ const ActionMenu = (props: IActionMenuProps) => {
               onClick={onUpdate}
               sx={{ width: "100%" }}
               variant={"contained"}
-              disabled={
-                ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
-              }
+            // disabled={
+            //   ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
+            // }
             >
               {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
             </SecondaryButton>
