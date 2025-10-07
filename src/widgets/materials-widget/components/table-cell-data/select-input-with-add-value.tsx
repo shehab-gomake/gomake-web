@@ -19,7 +19,6 @@ interface IProps {
 }
 
 const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
-  console.log("values", { values, parameterKey, id, value, isAdmin });
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { query } = useRouter();
@@ -111,7 +110,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
       if (isHaveMorethanMaterialSuppliers) {
         onClickOpenDeleteTableRowModal();
       } else {
-        await updateCellData(id, parameterKey, value?.id);
+        await updateCellData(id, parameterKey, value?.label);
       }
     }
   };

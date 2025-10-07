@@ -92,8 +92,8 @@ const AddInventoryModal = ({
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
                                 labelText={`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${t(`measurementUnits.${convertedInventoryUnit}`)})` : ''}`}
-                                value={inventoryFormData.quantity.toString()}
-                                onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value) || 0)}
+                                value={inventoryFormData?.quantity?.toString() || ''}
+                                onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value))}
                                 type="number"
                                 placeholder={t("materials.childTable.enterQuantity")}
                                 style={{
@@ -108,25 +108,25 @@ const AddInventoryModal = ({
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
                                 labelText={`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
-                                value={inventoryFormData.purchasePrice.toString()}
-                                onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value) || 0)}
+                                value={inventoryFormData?.purchasePrice?.toString() || ''}
+                                onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value))}
                                 type="number"
                                 placeholder={t("materials.childTable.enterPurchasePrice")}
                                 style={{
-                                    borderBottom: !inventoryFormData.purchasePrice ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderBottom: (!inventoryFormData.purchasePrice && inventoryFormData.purchasePrice !== 0) ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
                                     borderRadius: '4px',
                                 }}
                             />
                         </div>
                         <div style={classes.modalInputContainerItem}>
                             <GoMakeAutoComplate
-                                value={inventoryFormData.purchaseCurrency.value || undefined}
+                                value={inventoryFormData?.purchaseCurrency?.value || undefined}
                                 onChange={(e, value) => handleInventoryFormChange('purchaseCurrency', { value: value?.value, label: value?.label })}
                                 options={currencies}
                                 placeholder={t("materials.childTable.selectCurrency")}
                                 labelText={t("materials.childTable.purchaseCurrency")}
                                 style={{
-                                    borderBottom: !inventoryFormData.purchaseCurrency.value ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderBottom: !inventoryFormData?.purchaseCurrency?.value ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
                                     borderRadius: '4px',
                                 }}
                             />
@@ -137,25 +137,25 @@ const AddInventoryModal = ({
                         <div style={classes.modalInputContainerItem}>
                             <GomakeTextInput
                                 labelText={`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
-                                value={inventoryFormData.salePrice.toString()}
-                                onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value) || 0)}
+                                value={inventoryFormData?.salePrice?.toString() || ''}
+                                onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value))}
                                 type="number"
                                 placeholder={t("materials.childTable.enterSalePrice")}
                                 style={{
-                                    borderBottom: !inventoryFormData.salePrice ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderBottom: (!inventoryFormData?.salePrice && inventoryFormData?.salePrice !== 0) ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
                                     borderRadius: '4px',
                                 }}
                             />
                         </div>
                         <div style={classes.modalInputContainerItem}>
                             <GoMakeAutoComplate
-                                value={inventoryFormData.saleCurrency.value || undefined}
+                                value={inventoryFormData?.saleCurrency?.value || undefined}
                                 onChange={(e, value) => handleInventoryFormChange('saleCurrency', { value: value?.value, label: value?.label })}
                                 options={currencies}
                                 placeholder={t("materials.childTable.selectCurrency")}
                                 labelText={t("materials.childTable.saleCurrency")}
                                 style={{
-                                    borderBottom: !inventoryFormData.saleCurrency.value ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderBottom: !inventoryFormData?.saleCurrency?.value ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
                                     borderRadius: '4px',
                                 }}
                             />
