@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -20,8 +20,10 @@ import {
 } from '@/widgets/frontdesk/design-system';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { TicketWithDetails } from '../types/api.types';
+import { TicketWithDetails, TicketFilters } from '../types/api.types';
 import { TicketListItem } from './ticket-list-item';
+import { TicketFiltersModal } from './ticket-filters-modal';
+import { TicketSortMenu } from './ticket-sort-menu';
 
 interface TicketListPanelProps {
   viewTitle: string;
@@ -35,6 +37,10 @@ interface TicketListPanelProps {
   onViewChange?: (view: string) => void;
   isLoading?: boolean;
   error?: string | null;
+  filters: TicketFilters;
+  activeFilterCount: number;
+  onApplyFilters: (filters: TicketFilters) => void;
+  onClearFilters: () => void;
 }
 
 export const TicketListPanel: React.FC<TicketListPanelProps> = ({
@@ -48,9 +54,14 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
   onTicketCheck,
   onViewChange,
   isLoading = false,
-  error = null
+  error = null,
+  filters,
+  activeFilterCount,
+  onApplyFilters,
+  onClearFilters
 }) => {
   const [viewMenuAnchor, setViewMenuAnchor] = useState<null | HTMLElement>(null);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
 
   const handleViewMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setViewMenuAnchor(event.currentTarget);
@@ -72,6 +83,28 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
     t.status === 'OPEN'
   ).length;
 
+  // Client-side search on displayed tickets (backend has no search param)
+  const displayedTickets = useMemo(() => {
+    if (!searchQuery) return tickets;
+
+    const query = searchQuery.toLowerCase();
+    return tickets.filter(t => {
+      const ticketNum = t.ticketNumber?.toString() || '';
+      const conversationName = t.conversation?.name?.toLowerCase() || '';
+      const custEmail = t.customerEmail?.toLowerCase() || '';
+      const custName = t.customerName?.toLowerCase() || '';
+      const custPhone = t.customerPhone || '';
+
+      return (
+        ticketNum.includes(query) ||
+        conversationName.includes(query) ||
+        custEmail.includes(query) ||
+        custName.includes(query) ||
+        custPhone.includes(query)
+      );
+    });
+  }, [tickets, searchQuery]);
+
   return (
     <Box sx={{ width: 280, minWidth: 280, height: '100%' }}>
       <Panel
@@ -87,11 +120,28 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
         <PanelHeader
           title={`${viewTitle}${tickets.length > 0 ? ` (${tickets.length})` : ''}`}
           actions={
-            <IconButton size="small" aria-label="Filter tickets">
-              <Badge badgeContent={0} color="primary">
-                <FilterListIcon fontSize="small" />
-              </Badge>
-            </IconButton>
+            <Box display="flex" gap={0.5}>
+              {/* Sort Menu */}
+              <TicketSortMenu
+                sortBy={filters.sortBy || 'createdAt'}
+                sortOrder={filters.sortOrder || 'desc'}
+                onSortChange={(sortBy, sortOrder) => {
+                  const newFilters = { ...filters, sortBy: sortBy as TicketFilters['sortBy'], sortOrder };
+                  onApplyFilters(newFilters);
+                }}
+              />
+
+              {/* Filter Button */}
+              <IconButton
+                size="small"
+                onClick={() => setFilterModalOpen(true)}
+                aria-label="Filter tickets"
+              >
+                <Badge badgeContent={activeFilterCount} color="primary">
+                  <FilterListIcon fontSize="small" />
+                </Badge>
+              </IconButton>
+            </Box>
           }
         />
 
@@ -117,13 +167,13 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
               title="Error loading tickets"
               description={error}
             />
-          ) : tickets.length === 0 ? (
+          ) : displayedTickets.length === 0 ? (
             <EmptyState
               title="No tickets found"
-              description={searchQuery ? "Try adjusting your search" : "No tickets in this view"}
+              description={searchQuery ? "Try adjusting your search" : "No tickets match your filters"}
             />
           ) : (
-            tickets.map((ticket) => (
+            displayedTickets.map((ticket) => (
               <TicketListItem
                 key={ticket.id}
                 ticket={ticket}
@@ -153,6 +203,20 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           <Divider />
           <MenuItem onClick={() => handleViewSelect('all-tickets')}>All Tickets</MenuItem>
         </Menu>
+
+        {/* Filter Modal */}
+        <TicketFiltersModal
+          open={filterModalOpen}
+          onClose={() => setFilterModalOpen(false)}
+          filters={filters}
+          onApply={(partialFilters) => {
+            onApplyFilters({ ...filters, ...partialFilters, page: 1 });
+          }}
+          onClear={() => {
+            onClearFilters();
+            setFilterModalOpen(false);
+          }}
+        />
       </Panel>
     </Box>
   );

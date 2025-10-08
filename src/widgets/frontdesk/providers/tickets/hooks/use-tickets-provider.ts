@@ -1022,13 +1022,14 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   );
 
   // ============================================
-  // Auto-fetch on mount and filter changes
+  // Auto-fetch on mount only
   // ============================================
 
   useEffect(() => {
-    console.log("[TicketsProvider] Fetching tickets due to filter change or mount");
+    console.log("[TicketsProvider] Initial fetch on mount");
     fetchTickets();
-  }, [fetchTickets, filters.status, filters.priority, filters.assigneeId, filters.page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only fetch on mount - user must click "Apply Filters" to refetch
 
   // Fetch ticket details when selected (includes relatedTickets and history in response)
   useEffect(() => {

@@ -34,7 +34,8 @@ import {
   openTicketTabsAtom,
   ticketsAtom,
   ticketsLoadingAtom,
-  ticketsErrorAtom
+  ticketsErrorAtom,
+  activeFilterCountSelector
 } from '@/store/frontdesk/atoms/tickets.atoms';
 
 // Ticket provider hook
@@ -105,6 +106,7 @@ const FrontdeskWidget: React.FC = () => {
   const allTickets = useRecoilValue(ticketsAtom);
   const ticketsLoading = useRecoilValue(ticketsLoadingAtom);
   const ticketsError = useRecoilValue(ticketsErrorAtom);
+  const activeFilterCount = useRecoilValue(activeFilterCountSelector);
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
@@ -413,6 +415,17 @@ const FrontdeskWidget: React.FC = () => {
             onViewChange={(view) => handleTicketViewChange(view as TicketView)}
             isLoading={ticketsLoading}
             error={ticketsError}
+            filters={ticketsProvider.filters}
+            activeFilterCount={activeFilterCount}
+            onApplyFilters={(newFilters) => {
+              ticketsProvider.setFilters(newFilters);
+              ticketsProvider.fetchTickets(newFilters);
+            }}
+            onClearFilters={() => {
+              const defaultFilters = { page: 1, limit: 20, sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
+              ticketsProvider.setFilters(defaultFilters);
+              ticketsProvider.fetchTickets(defaultFilters);
+            }}
           />
         ) : currentSection === 'inbox' ? (
           <DynamicListPanel

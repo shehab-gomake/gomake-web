@@ -154,11 +154,14 @@ export const ticketSearchQueryAtom = atom<string>({
 });
 
 /**
- * Sort configuration
+ * Sort configuration (aligned with backend DTO)
  */
-export const ticketSortAtom = atom<{ by: 'date' | 'priority' | 'status' | 'title'; order: 'asc' | 'desc' }>({
+export const ticketSortAtom = atom<{
+  by: 'createdAt' | 'lastMessageAt' | 'priority' | 'ticketNumber' | 'status';
+  order: 'asc' | 'desc'
+}>({
   key: 'frontdesk.tickets.sort',
-  default: { by: 'date', order: 'desc' },
+  default: { by: 'createdAt', order: 'desc' },
 });
 
 /**
@@ -210,32 +213,14 @@ export const selectedTicketUiSelector = selector<Ticket | null>({
 
 /**
  * Selector: Get filtered tickets (backend format)
- * Uses backend filters - selectors now reflect real API data
+ * Backend handles all filtering via API params.
+ * This selector only returns tickets from backend - no client-side filtering.
+ * Client-side search is handled separately in the component.
  */
 export const filteredTicketsSelector = selector<TicketWithDetails[]>({
   key: 'frontdesk.tickets.filtered',
   get: ({ get }) => {
-    const tickets = get(ticketsAtom);
-    const searchQuery = get(ticketSearchQueryAtom).toLowerCase();
-
-    // Apply client-side search filter if needed
-    if (searchQuery) {
-      return tickets.filter(t => {
-        const conversationName = t.conversation?.name?.toLowerCase() || '';
-        const ticketNum = t.ticketNumber?.toString() || '';
-        const custEmail = t.customerEmail?.toLowerCase() || '';
-        const custName = t.customerName?.toLowerCase() || '';
-
-        return (
-          conversationName.includes(searchQuery) ||
-          ticketNum.includes(searchQuery) ||
-          custEmail.includes(searchQuery) ||
-          custName.includes(searchQuery)
-        );
-      });
-    }
-
-    return tickets;
+    return get(ticketsAtom); // Return all tickets from backend
   },
 });
 
@@ -289,5 +274,24 @@ export const selfAssignedTicketsSelector = selector<TicketWithDetails[]>({
   get: ({ get }) => {
     const tickets = get(ticketsAtom);
     return tickets.filter(t => t.assigneeId && t.assigneeId === t.createdBy);
+  },
+});
+
+/**
+ * Selector: Count active filters (only visible filters: status, priority, tags)
+ */
+export const activeFilterCountSelector = selector<number>({
+  key: 'frontdesk.tickets.activeFilterCount',
+  get: ({ get }) => {
+    const filters = get(ticketFiltersAtom);
+    let count = 0;
+
+    // Only count the 3 visible filters in the modal
+    if (filters.status) count++;
+    if (filters.priority) count++;
+    if (filters.tags && filters.tags.length > 0) count++;
+    // Don't count sortBy/sortOrder/page/limit or other hidden filters
+
+    return count;
   },
 });
