@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AISidebar } from "../ai-sidebar/ai-sidebar";
 import { AIMainPanel } from "../ai-main-panel/ai-main-panel";
@@ -15,17 +15,19 @@ const GoMakeAIComponent = () => {
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [productId, setProductId] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isConversationLoading, setIsConversationLoading] = useState(false);
+
+  const hasInitialized = useRef(false);
 
   // Handle real-time messages from socket
   const handleRealTimeMessage = (message: any) => {
-    // Add the new message to chat messages
     setChatMessages((prev) => [...prev, message]);
 
-    // If we're viewing a conversation, update it as well
     if (selectedConversation) {
       setSelectedConversation((prev: any) => ({
         ...prev,
-        messages: [...prev.messages, message],
+        messages: [...(prev?.messages || []), message],
       }));
     }
   };
@@ -33,18 +35,16 @@ const GoMakeAIComponent = () => {
   const handleProductIdReceived = (productId: string) => {
     setProductId(productId);
 
-    // Update the current conversation with the productId
     if (selectedConversation) {
       setSelectedConversation((prev) => ({
         ...prev,
-        productId: productId,
+        productId,
       }));
     }
 
-    // Update the conversation in the history list //!here not sure
     setConversationsHistory((prev) =>
       prev.map((conv) =>
-        conv.sessionId === sessionId ? { ...conv, productId: productId } : conv
+        conv.sessionId === sessionId ? { ...conv, productId } : conv
       )
     );
   };
@@ -60,9 +60,9 @@ const GoMakeAIComponent = () => {
     resetProcessingState,
   } = useAISocketIO(handleRealTimeMessage, handleProductIdReceived);
 
-  // Load conversations history when component mounts
+  // Load conversations history on mount
   useEffect(() => {
-    const loadConversationsHistory = async () => {
+    const loadHistory = async () => {
       try {
         const conversations = await getConversationsHistory();
         setConversationsHistory(conversations);
@@ -70,45 +70,42 @@ const GoMakeAIComponent = () => {
         console.error("Error loading conversations history:", error);
       }
     };
-
-    loadConversationsHistory();
+    loadHistory();
   }, []);
 
-  // Handle URL parameters and initialize session
+  // Initialize only once — handles page load or refresh
   useEffect(() => {
+    if (!router.isReady || hasInitialized.current) return;
+    hasInitialized.current = true;
+
     const initializeSession = async () => {
       try {
-        setProductId(null); // Reset productId when initializing session
-        // Check if there's a sessionId in the URL
+        setProductId(null);
         const { sessionId: urlSessionId } = router.query;
 
         if (urlSessionId && typeof urlSessionId === "string") {
-          // Load the conversation from URL (without updating URL again)
-          const conversationMessages = await getConversation(urlSessionId);
-          setChatMessages(conversationMessages);
+          const messages = await getConversation(urlSessionId);
+          setChatMessages(messages);
 
-          const conversationFromHistory = conversationsHistory.find(
+          const convFromHistory = conversationsHistory.find(
             (conv) => conv.sessionId === urlSessionId
           );
 
           setSelectedConversation({
             sessionId: urlSessionId,
-            messages: conversationMessages,
-            productId: conversationFromHistory?.productId || null,
+            messages,
+            productId: convFromHistory?.productId || null,
           });
 
-          if (conversationFromHistory?.productId) {
-            setProductId(conversationFromHistory.productId);
+          if (convFromHistory?.productId) {
+            setProductId(convFromHistory.productId);
           }
 
           setSessionIdManually(urlSessionId);
         } else {
-          // Start a new session if no URL parameter
           const newSession = await startSession();
-
-          // Update URL with the new session ID
           if (newSession?.sessionId) {
-            router.push(
+            router.replace(
               {
                 pathname: router.pathname,
                 query: { ...router.query, sessionId: newSession.sessionId },
@@ -120,33 +117,30 @@ const GoMakeAIComponent = () => {
         }
       } catch (error) {
         console.error("Error initializing session:", error);
-        // Fallback to starting a new session
         try {
           await startSession();
         } catch (fallbackError) {
-          console.error("Error starting fallback session:", fallbackError);
+          console.error("Fallback session start failed:", fallbackError);
         }
+      } finally {
+        setIsInitializing(false);
       }
     };
-    // Only initialize when router is ready
-    if (router.isReady) {
-      initializeSession();
-    }
-  }, [router.isReady, router.query.sessionId, conversationsHistory]);
 
+    initializeSession();
+  }, [router.isReady]);
+
+  // Handle new job creation
   const handleNewJobClick = async () => {
-    setChatMessages([]); // Clear chat messages for fresh start
-    setSelectedConversation(null); // Clear selected conversation
-    setProductId(null); // Reset productId to hide pricing widget
-    resetProcessingState(); // Reset AI thinking indicator immediately
+    setChatMessages([]);
+    setSelectedConversation(null);
+    setProductId(null);
+    resetProcessingState();
 
-    // Start a new session when clicking + New Job
     try {
       const newSession = await startSession();
-
-      // Update URL with the new session ID
       if (newSession?.sessionId) {
-        router.push(
+        router.replace(
           {
             pathname: router.pathname,
             query: { ...router.query, sessionId: newSession.sessionId },
@@ -160,25 +154,32 @@ const GoMakeAIComponent = () => {
     }
   };
 
-  // Function to load a specific conversation
   const handleConversationSelect = async (selectedSessionId: string) => {
     try {
-      // Find the conversation in history to get productId
-      const conversationFromHistory = conversationsHistory.find(
+      setProductId(null);
+      setIsConversationLoading(true);
+
+      const messages = await getConversation(selectedSessionId);
+      setChatMessages(messages);
+      setSessionIdManually(selectedSessionId);
+
+      const convFromHistory = conversationsHistory.find(
         (conv) => conv.sessionId === selectedSessionId
       );
 
-      // Set productId based on conversation history
-      if (conversationFromHistory?.productId) {
-        setProductId(conversationFromHistory.productId);
+      setSelectedConversation({
+        sessionId: selectedSessionId,
+        messages,
+        productId: convFromHistory?.productId || null,
+      });
+
+      if (convFromHistory?.productId) {
+        setProductId(convFromHistory.productId);
       } else {
         setProductId(null);
       }
 
-      setSessionIdManually(selectedSessionId);
-
-      // Update URL with the new session ID
-      router.push(
+      router.replace(
         {
           pathname: router.pathname,
           query: { ...router.query, sessionId: selectedSessionId },
@@ -188,16 +189,16 @@ const GoMakeAIComponent = () => {
       );
     } catch (error) {
       console.error("Error loading conversation:", error);
+    } finally {
+      setIsConversationLoading(false);
     }
   };
 
-  // Function to refresh conversations history
+  // Refresh conversation history
   const refreshConversationsHistory = async () => {
     try {
       const conversations = await getConversationsHistory();
-
       setConversationsHistory(conversations);
-      console.log("Refreshed conversations history:", conversations);
     } catch (error) {
       console.error("Error refreshing conversations history:", error);
     }
@@ -208,8 +209,24 @@ const GoMakeAIComponent = () => {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
+    setIsSidebarCollapsed((prev) => !prev);
   };
+
+  // if (isInitializing) {
+  //   return (
+  //     <div
+  //       style={{
+  //         ...classes.container,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         fontSize: 18,
+  //         color: "#666",
+  //       }}
+  //     >
+  //       Initializing GoMake AI...
+  //     </div>
+  //   );
+  // }
 
   return (
     <div style={classes.container}>
@@ -230,6 +247,7 @@ const GoMakeAIComponent = () => {
           chatMessages={chatMessages}
           onChatMessagesUpdate={handleChatMessagesUpdate}
           isFullWidth={!productId}
+          isLoadingConversation={isConversationLoading}
         />
         {productId && sessionId && (
           <div style={classes.priceWidgetContainer}>
