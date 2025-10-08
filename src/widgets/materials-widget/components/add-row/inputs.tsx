@@ -175,6 +175,24 @@ const rowInputs = (
             unit: header?.unit,
             disabled: true,
           };
+        case "SELECT_FIXED_VALUES_ADD_NEW":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: header.values
+              ? header.values.map((value) => ({
+                value: value.key,
+                text: value.value,
+              }))
+              : [],
+            value: "",
+            isValid: true,
+            unit: header?.unit,
+          };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else
@@ -197,6 +215,7 @@ const rowInputs = (
       }
     })
     .filter((input) => input !== null);
+
 
   const imageCase = newHeaders.find(
     (header) => header.inputType === EDataTypeEnum.IMAGE

@@ -129,8 +129,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
       }}
       modalTitle={t("materials.buttons.addNewRow")}
     >
-      <Stack display={"flex"} direction={"column"} marginTop={"10px"}>
-        <Stack style={classes.inputsDivStyle}>
+      <Stack display={"flex"} direction={"column"} marginTop={"10px"} gap={"10px"}>
+        <Stack style={classes.inputsDivStyle} className="custom-scrollbar">
           {rowInputs(
             rowData,
             isFetching,
@@ -140,7 +140,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
             clientsCategories
           ).map((item) => {
             return (
-              <Stack width={"47%"}>
+              <Stack width={"45%"}>
                 <FormInput
                   input={item as IInput}
                   changeState={onChangeInputs}
