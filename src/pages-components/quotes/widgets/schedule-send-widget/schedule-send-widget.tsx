@@ -37,6 +37,7 @@ const ScheduleSendWidget = ({
     const [scheduleType, setScheduleType] = useState<any>()
     const [dayOfMonth, setDayOfMonth] = useState<any>()
     const [dayOfWeek, setDayOfWeek] = useState<any>()
+    const [hourOfDay, setHourOfDay] = useState<any>()
     const [dateRange, setDateRange] = useState<any>(null)
 
     // Specific date fields for jobs table
@@ -51,6 +52,7 @@ const ScheduleSendWidget = ({
         setScheduleType(undefined);
         setDayOfMonth(undefined);
         setDayOfWeek(undefined);
+        setHourOfDay(undefined);
         setDateRange(null);
         setCreationDateRange(null);
         setDueDateRange(null);
@@ -80,6 +82,13 @@ const ScheduleSendWidget = ({
         label: k + 1,
         id: k + 1
     }));
+
+    // Generate hours array (0-23)
+    const hoursArray = Array.from({ length: 24 }, (v, k) => ({
+        label: `${k.toString().padStart(2, '0')}:00`,
+        id: k
+    }));
+
     const getStatementId = (item) => {
         if (typeof item?.statement === "object") {
             //material input
@@ -159,7 +168,18 @@ const ScheduleSendWidget = ({
     const _renderScheduleType = (type) => {
         switch (type) {
             case ScheduleFrequencyEnum.Daily:
-                return null
+                return <div style={{ width: "50%" }}>
+                    <label style={classes.labelStyle}>{t("sales.list.hourOfDay")}</label>
+                    <GoMakeAutoComplate
+                        options={hoursArray}
+                        style={{ height: "40px", width: "100%", border: "none" }}
+                        placeholder={t("sales.list.selectHour")}
+                        onChange={(e: any, item: any) => {
+                            setHourOfDay(item)
+                        }}
+                        value={hourOfDay}
+                    />
+                </div>
             case ScheduleFrequencyEnum.Weekly:
                 return <div style={{ width: "50%" }}>
                     <GoMakeAutoComplate
@@ -312,6 +332,7 @@ const ScheduleSendWidget = ({
                                     frequency: scheduleType?.id,
                                     startDayOfWeek: dayOfWeek?.value,
                                     startDayOfMonth: dayOfMonth?.id,
+                                    startHourOfDay: hourOfDay?.id,
                                     reportConfiguration: {
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {
