@@ -3,28 +3,37 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const useStyle = () => {
+const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
   const { primaryColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
       sidebarContainer: {
-        width: 280,
-        minWidth: 280,
+        width: isCollapsed ? 80 : 280,
+        minWidth: isCollapsed ? 60 : 280,
         height: "100vh",
         backgroundColor: "#FFF",
         display: "flex",
         flexDirection: "column" as "column",
-        padding: "20px",
+        padding: isCollapsed ? "20px 10px" : "20px",
         overflowY: "auto" as "auto",
+        transition: "width 0.3s ease, min-width 0.3s ease, padding 0.3s ease",
+        ...(isCollapsed && {
+          justifyContent: "space-between",
+        }),
       },
       header: {
         display: "flex",
-        flexDirection: "column" as "column",
-        alignItems: "flex-start",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "space-between",
         marginBottom: convertHeightToVH(30),
         padding: "0px 0px 20px 0px",
         borderBottom: "1px solid #F3F4F6",
+
+        ...(isCollapsed && {
+          gap: "8px",
+        }),
       },
       brandingContainer: {
         display: "flex",
@@ -33,9 +42,21 @@ const useStyle = () => {
         gap: 12,
         width: "100%",
       },
-
+      refreshButton: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        marginLeft: "auto",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "12px",
+        color: "#666",
+        justifyContent: "center",
+        gap: 4,
+      },
       logoContainer: {
-        background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)", // gradient
+        background: "linear-gradient(135deg, #9333ea, #ec4899)", // pink gradient
         borderRadius: 16, // smoother round corners
         padding: 12,
         display: "flex",
@@ -43,7 +64,7 @@ const useStyle = () => {
         justifyContent: "center",
         minWidth: 24,
         minHeight: 24,
-        boxShadow: "0 6px 12px rgba(46, 84, 231, 0.35)", // stronger shadow
+        boxShadow: "0 6px 12px rgba(147, 51, 234, 0.35)", // pink shadow
       },
       chatIcon: {
         fontSize: 16,
@@ -86,14 +107,14 @@ const useStyle = () => {
         position: "relative" as "relative",
         overflow: "hidden",
         "&:hover": {
-          backgroundColor: "#F8FAFC",
+          backgroundColor: "#FDF2F8",
           transform: "translateX(4px)",
         },
       },
       activeNavItem: {
-        backgroundColor: "#EFF6FF",
-        border: "1px solid #DBEAFE",
-        boxShadow: "0 2px 4px rgba(59, 130, 246, 0.1)",
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
+        boxShadow: "0 2px 4px rgba(236, 72, 153, 0.1)",
         "&::before": {
           content: '""',
           position: "absolute" as "absolute",
@@ -101,13 +122,13 @@ const useStyle = () => {
           top: 0,
           bottom: 0,
           width: 3,
-          backgroundColor: "#3B82F6",
+          backgroundColor: "#ed028c",
           borderRadius: "0 2px 2px 0",
         },
       },
       navIcon: {
         ...FONT_FAMILY.Inter(600, 16),
-        color: "#3B82F6",
+        color: "#ed028c",
         minWidth: 20,
         display: "flex",
         alignItems: "center",
@@ -115,7 +136,7 @@ const useStyle = () => {
         width: 24,
         height: 24,
         borderRadius: 6,
-        backgroundColor: "rgba(59, 130, 246, 0.1)",
+        backgroundColor: "rgba(236, 72, 153, 0.1)",
       },
       navText: {
         ...FONT_FAMILY.Inter(500, 14),
@@ -157,7 +178,7 @@ const useStyle = () => {
         gap: 8,
       },
       scrollableList: {
-        // maxHeight: "400px", //!here
+        // maxHeight: "400px",
         maxHeight: "50vh",
         overflowY: "auto" as "auto",
         overflowX: "hidden" as "hidden",
@@ -212,13 +233,15 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
-        gap: 16,
+        gap: isCollapsed ? 8 : 16,
         marginTop: "auto",
-        paddingTop: 20,
+        paddingTop: isCollapsed ? 12 : 20,
         borderTop: "1px solid #F3F4F6",
         backgroundColor: "#FAFBFC",
-        margin: "20px -20px -20px -20px",
-        padding: "16px 20px 20px 20px",
+        margin: isCollapsed
+          ? "20px -10px -10px -10px"
+          : "20px -20px -20px -20px",
+        padding: isCollapsed ? "12px 10px 10px 10px" : "16px 20px 20px 20px",
       },
       backButton: {
         display: "flex",
@@ -226,23 +249,23 @@ const useStyle = () => {
         alignItems: "center",
         gap: 8,
         padding: "10px 20px",
-        backgroundColor: "#EFF6FF",
-        border: "1px solid #DBEAFE",
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
         borderRadius: 10,
         cursor: "pointer",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         width: "100%",
         justifyContent: "center",
-        boxShadow: "0 2px 4px rgba(59, 130, 246, 0.1)",
+        boxShadow: "0 2px 4px rgba(236, 72, 153, 0.1)",
         outline: "none",
       },
       backButtonIcon: {
         fontSize: 18,
-        color: "#3B82F6",
+        color: "#EC4899",
       },
       backButtonText: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: "#3B82F6",
+        color: "#EC4899",
         letterSpacing: "-0.01em",
       },
       poweredByContainer: {
@@ -258,8 +281,58 @@ const useStyle = () => {
         letterSpacing: "0.05em",
         marginBottom: 4,
       },
+      toggleButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 32,
+        height: 32,
+        borderRadius: 6,
+        backgroundColor: "#F3F4F6",
+        cursor: "pointer",
+        transition: "background-color 0.2s ease",
+        "&:hover": {
+          backgroundColor: "#E5E7EB",
+        },
+      },
+      toggleIcon: {
+        fontSize: 18,
+        color: "#6B7280",
+      },
+      // Collapsed footer styles
+      collapsedFooter: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        alignItems: "center",
+        gap: 8,
+        width: "100%",
+      },
+      collapsedBackButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 32,
+        height: 32,
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
+        borderRadius: 8,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        boxShadow: "0 1px 3px rgba(236, 72, 153, 0.1)",
+        outline: "none",
+      },
+      collapsedBackButtonIcon: {
+        fontSize: 16,
+        color: "#ed028c",
+      },
+      collapsedPoweredBy: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: 0.7,
+      },
     };
-  }, []);
+  }, [isCollapsed]);
 
   return {
     classes,

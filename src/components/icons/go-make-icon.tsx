@@ -5,7 +5,7 @@ interface GoMakeIconProps {
 }
 
 const GoMakeIcon = ({
-  color = "#4F50AC",
+  color = "#ed028c",
   width = 159,
   height = 32,
 }: GoMakeIconProps) => {
@@ -24,8 +24,8 @@ const GoMakeIcon = ({
       {isGradient && (
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#2E54E7" />
-            <stop offset="100%" stopColor="#4C8CFF" />
+            <stop offset="0%" stopColor="#9333ea" />
+            <stop offset="100%" stopColor="#ec4899" />
           </linearGradient>
         </defs>
       )}

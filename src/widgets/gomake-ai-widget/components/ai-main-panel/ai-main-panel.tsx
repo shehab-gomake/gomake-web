@@ -7,37 +7,38 @@ import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
-
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 const jobCards = [
   {
     title: "Start a Book Job",
     description: "Design covers, layouts, and more.",
-    icon: <MenuBookOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+    icon: <MenuBookOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
   },
   {
     title: "Start a Package Job",
     description: "Create packaging for a new product.",
-    icon: <Inventory2OutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+    icon: <Inventory2OutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
   },
   {
     title: "Start a Commercial Product Job",
     description: "Develop branding for a commercial item.",
-    icon: <AssignmentOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+    icon: <AssignmentOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
   },
   {
     title: "Start a Labels Job",
     description: "Design and print custom labels.",
-    icon: <LocalOfferOutlinedIcon style={{ fontSize: 24, color: "#3B82F6" }} />,
+    icon: <LocalOfferOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
   },
 ];
 
-//!here main test
 interface AIMainPanelProps {
   sendMessage: (prompt: string) => Promise<any>;
   isProcessing: boolean;
   sessionId: string | null;
   chatMessages: any[];
   onChatMessagesUpdate: (messages: any[]) => void;
+  isFullWidth?: boolean;
+  isLoadingConversation?: boolean;
 }
 
 const AIMainPanel = ({
@@ -46,11 +47,12 @@ const AIMainPanel = ({
   sessionId,
   chatMessages,
   onChatMessagesUpdate,
+  isFullWidth = false,
+  isLoadingConversation,
 }: AIMainPanelProps) => {
-  const { classes } = useStyle();
+  const { classes } = useStyle({ isFullWidth });
   const [jobDescription, setJobDescription] = useState("");
 
-  //!here
   const handleSendMessage = async () => {
     if (!jobDescription.trim()) return;
 
@@ -112,7 +114,6 @@ const AIMainPanel = ({
     }
   };
 
-  //!here new
   const handleOptionClick = async (option: string) => {
     // Add user message to chat
     const newMessages = [
@@ -202,13 +203,23 @@ const AIMainPanel = ({
     }
   };
 
+  if (isLoadingConversation) {
+    return <div style={classes.mainPanelContainer} />;
+  }
   return (
     <div style={classes.mainPanelContainer}>
       <div style={classes.newJobContainer}>
         {/* Header - Only show when no chat messages */}
         {chatMessages.length === 0 && (
           <div style={classes.header}>
-            <div style={classes.headerIcon}>✨</div>
+            <div style={classes.headerIcon}>
+              <AutoAwesomeRoundedIcon
+                style={{
+                  fontSize: 32,
+                  color: "linear-gradient(135deg, #9333ea, #ec4899)",
+                }}
+              />
+            </div>
             <div style={classes.headerTitle}>
               Start a New Job with GoMake AI
             </div>
