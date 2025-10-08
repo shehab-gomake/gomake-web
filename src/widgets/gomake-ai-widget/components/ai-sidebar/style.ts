@@ -261,11 +261,11 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
       },
       backButtonIcon: {
         fontSize: 18,
-        color: "#ed028c",
+        color: "#EC4899",
       },
       backButtonText: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: "#ed028c",
+        color: "#EC4899",
         letterSpacing: "-0.01em",
       },
       poweredByContainer: {

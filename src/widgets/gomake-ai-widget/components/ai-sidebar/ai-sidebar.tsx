@@ -182,8 +182,8 @@ const AISidebar = ({
             <div style={(classes as any).poweredByContainer}>
               <div style={classes.poweredByLbl}>Powered by</div>
               <GoMakeIcon
-                // color="linear-gradient(135deg, #9333ea, #ec4899)"
-                color="#2E3092"
+                color="linear-gradient(135deg, #9333ea, #ec4899)"
+                //color="#2E3092"
                 height={20}
                 width={100}
               />
