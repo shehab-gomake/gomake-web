@@ -551,11 +551,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
   const onUpdateCallBack = (res) => {
     if (res.success) {
-      console.log("resqqqqqqqqqqqqqqqq", res);
       if (action?.action === EMaterialsActions.Delete) {
         setMaterialCategoryData(
           materialCategoryData.filter((material) => !material.checked)
         )
+        setSelectedMaterialsIds([])
         getMaterialCategoryData(
           materialType?.toString(),
           materialCategory?.toString(),
@@ -583,6 +583,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setIsAllMaterialsChecked(false);
       setSelectedSupplier(null);
       setUpdatedValue("");
+      setSelectedMaterialsIds([])
+
     }
     else {
       alertFaultUpdate();
@@ -621,7 +623,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         ).then();
       }
     } else {
-      if (!updatedValue) {
+      if (!updatedValue && eAction !== EMaterialsActions.UpdateIsActive && eAction !== EMaterialsActions.UpdateIsInActive) {
         alertFault(t("products.offsetPrice.admin.fillValue"));
         return;
       }
