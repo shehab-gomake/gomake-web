@@ -2923,75 +2923,9 @@ const useDigitalOffsetPrice = ({
       return;
     }
     if (connectionId && !currentSignalRConnectionId) {
+      clearStates();
       setCurrentSignalRConnectionId(connectionId);
-      setCurrentProductItemValueTotalPrice(null);
-      setSliderCurrentProductItemValueTotalPrice(null);
-      setLocalStateValue(null);
-      setCurrentCalculatedTotalPrice(null);
-      setLastProductItemValueTotalPrice(null);
-      setUrgentOrder(null);
-      setWorkFlows([]);
-      setJobActions([]);
-      setSubProducts([]);
-      setWorkTypes([]);
-      setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });
-      setCurrentProductItemValue(null);
-      setIsChangePriceForEdit(false);
-      setIsJobNameValue(false);
-      setIsActionEmployeeUpdated(false);
-
-      // Set default values for your states
-      setIsChargeForNewDie(false);
-      setMissionsListForEdit([]);
-      setSampleType(null);
-      setIsRequiredParameters([]);
-      setActiveSectionRequiredParameters([]);
-      setdocumentItemByEdit({});
-      setProductItemValueByEdit(null);
-      setGalleryModalOpen(false);
-      setMultiParameterModal(false);
-      setMakeShapeOpen(false);
-      setPrintingNotes("");
-      setGraphicNotes("");
-      setErrorMsg("");
-      setProductTemplate([]);
-      setIsMigratedFromOldSystem(false);
-      setupdatedProductTemplate(null);
-      setDefaultProductTemplate([]);
-      setSubProductsColorsModal([]);
-      setIsSetTemplete(false);
-      setCurrentProductItemValueDraftId("");
-      setAdditionalProductItems([]);
-      stIsFlowChanged(false);
-      setCurrentProductItemValueTotalWorkFlows(0);
-      setExpanded("");
-      setActiveIndex(0);
-      setActiveTab(t("products.offsetPrice.admin.logs"));
-      setPricingDefaultValue(null);
-      setCalculationExceptionsLogs(null);
-      setQuantityTypes([]);
-      // setCalculationResult(null);
-      setOutSuppliers(null);
-      setLoading(false);
-      setLoadingWithLockScreen(false);
-      setPriceRecovery(true);
-      setCanCalculation(false);
-      setSelectParameterButton(null);
-      setDeviceCategory("");
-      setDeviceSize("");
-      setSaveCurrentStation(false);
-      setcalculationServerErrorState(false);
-      setShowCalculationInCompletedAlert(false);
-      setShowCalculationInCompletedModal(false);
-      // setCurrentSignalRConnectionId(null);
-      // setCurrentCalculationSessionId("");
-      setRequestAbortController(null);
-      setBillingMethod(null);
-      setGraphicDesigner(null);
-      setIncludeVAT(null);
+      
       if (
         widgetType === EWidgetProductType.EDIT ||
         widgetType === EWidgetProductType.DUPLICATE
@@ -3035,7 +2969,76 @@ const useDigitalOffsetPrice = ({
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
+  const clearStates = ()=>{
+    setCurrentProductItemValueTotalPrice(null);
+    setSliderCurrentProductItemValueTotalPrice(null);
+    setLocalStateValue(null);
+    setCurrentCalculatedTotalPrice(null);
+    setLastProductItemValueTotalPrice(null);
+    setUrgentOrder(null);
+    setWorkFlows([]);
+    setJobActions([]);
+    setSubProducts([]);
+    setWorkTypes([]);
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setCurrentProductItemValue(null);
+    setIsChangePriceForEdit(false);
+    setIsJobNameValue(false);
+    setIsActionEmployeeUpdated(false);
 
+    // Set default values for your states
+    setIsChargeForNewDie(false);
+    setMissionsListForEdit([]);
+    setSampleType(null);
+    setIsRequiredParameters([]);
+    setActiveSectionRequiredParameters([]);
+    setdocumentItemByEdit({});
+    setProductItemValueByEdit(null);
+    setGalleryModalOpen(false);
+    setMultiParameterModal(false);
+    setMakeShapeOpen(false);
+    setPrintingNotes("");
+    setGraphicNotes("");
+    setErrorMsg("");
+    setProductTemplate([]);
+    setIsMigratedFromOldSystem(false);
+    setupdatedProductTemplate(null);
+    setDefaultProductTemplate([]);
+    setSubProductsColorsModal([]);
+    setIsSetTemplete(false);
+    setCurrentProductItemValueDraftId("");
+    setAdditionalProductItems([]);
+    stIsFlowChanged(false);
+    setCurrentProductItemValueTotalWorkFlows(0);
+    setExpanded("");
+    setActiveIndex(0);
+    setActiveTab(t("products.offsetPrice.admin.logs"));
+    setPricingDefaultValue(null);
+    setCalculationExceptionsLogs(null);
+    setQuantityTypes([]);
+    // setCalculationResult(null);
+    setOutSuppliers(null);
+    setLoading(false);
+    setLoadingWithLockScreen(false);
+    setPriceRecovery(true);
+    setCanCalculation(false);
+    setSelectParameterButton(null);
+    setDeviceCategory("");
+    setDeviceSize("");
+    setSaveCurrentStation(false);
+    setcalculationServerErrorState(false);
+    setShowCalculationInCompletedAlert(false);
+    setShowCalculationInCompletedModal(false);
+    // setCurrentSignalRConnectionId(null);
+    // setCurrentCalculationSessionId("");
+    setRequestAbortController(null);
+    setBillingMethod(null);
+    setGraphicDesigner(null);
+    setIncludeVAT(null);
+  }
   const getGraphicsTypeValue = (billingMethod?: GraphicsTypesParam) => {
     if (billingMethod && billingMethod === GraphicsTypesParam.PriceHour) {
       return billingMethodValues.find((item) => item.value === "workingHours");
@@ -7265,7 +7268,7 @@ const useDigitalOffsetPrice = ({
       const socket = io(config.api_server);
       // Listen for parameters result
       socket.on(`${sessionId}-parameters-result`, () => {
-        debugger;
+        clearStates();
         getAllMaterial().then((materials) => {
           getAndSetChatBotProductId(
             callApi,
