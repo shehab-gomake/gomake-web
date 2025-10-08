@@ -6,9 +6,6 @@ import { useRecoilValue } from "recoil";
 import { productsForDropDownList } from "@/store";
 import { materialCategorySuppliersState } from "../../state";
 import { ModalType } from "@/enums";
-import { useGomakeAxios } from "@/hooks";
-import { useRouter } from "next/router";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   parameterKey: string;
@@ -20,9 +17,6 @@ interface IProps {
 
 const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
-  const { query } = useRouter();
-  const { materialCategory } = query;
   const productValue = useRecoilValue(productsForDropDownList)
   const { updateCellData } = useTableCellData(isAdmin);
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
@@ -68,22 +62,11 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
   };
 
   const baseOptions = localValues
-    ? parameterKey === "productId" || parameterKey === "printed product"
-      ? productValue?.map((inputValue) => ({
-        ...inputValue,
-        id: inputValue.id,
-        label: inputValue.name,
-      }))
-      :
-      parameterKey === "machineCategory" ? localValues.map((inputValue) => ({
-        id: inputValue.id,
-        label: t(inputValue.name),
-      }))
-        :
-        localValues.map((inputValue) => ({
-          id: inputValue.key,
-          label: inputValue.value,
-        }))
+    ?
+    localValues.map((inputValue) => ({
+      id: inputValue.key,
+      label: inputValue.value,
+    }))
     : [];
 
   // Add "Add new value" option if user is typing something not in the list
