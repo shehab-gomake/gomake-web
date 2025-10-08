@@ -992,6 +992,9 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "16px",
+        ...(isMobileScreen && {
+          height: "100vh",
+        }),
       },
       titleStyle: {
         display: "flex",
