@@ -65,11 +65,7 @@ const GoMakeAIComponent = () => {
     const loadConversationsHistory = async () => {
       try {
         const conversations = await getConversationsHistory();
-
-        // For now, just set all conversations without filtering to avoid too many API calls
-        // The backend should ideally return only non-empty conversations
         setConversationsHistory(conversations);
-        console.log("Loaded conversations history:", conversations);
       } catch (error) {
         console.error("Error loading conversations history:", error);
       }
@@ -91,7 +87,6 @@ const GoMakeAIComponent = () => {
           const conversationMessages = await getConversation(urlSessionId);
           setChatMessages(conversationMessages);
 
-          // Find the conversation in history to get productId //!here not sure
           const conversationFromHistory = conversationsHistory.find(
             (conv) => conv.sessionId === urlSessionId
           );
@@ -99,10 +94,9 @@ const GoMakeAIComponent = () => {
           setSelectedConversation({
             sessionId: urlSessionId,
             messages: conversationMessages,
-            productId: conversationFromHistory?.productId || null, //!here not sure
+            productId: conversationFromHistory?.productId || null,
           });
 
-          // Update productId if found in conversation history //!here not sure
           if (conversationFromHistory?.productId) {
             setProductId(conversationFromHistory.productId);
           }
@@ -138,7 +132,7 @@ const GoMakeAIComponent = () => {
     if (router.isReady) {
       initializeSession();
     }
-  }, [router.isReady, router.query.sessionId]);
+  }, [router.isReady, router.query.sessionId, conversationsHistory]);
 
   const handleNewJobClick = async () => {
     setChatMessages([]); // Clear chat messages for fresh start
@@ -178,9 +172,12 @@ const GoMakeAIComponent = () => {
       if (conversationFromHistory?.productId) {
         setProductId(conversationFromHistory.productId);
       } else {
-        setProductId(null); // Reset if no productId found
+        setProductId(null);
       }
 
+      // setSessionIdManually(selectedSessionId);
+
+      // Update URL with the new session ID
       router.push(
         {
           pathname: router.pathname,
@@ -234,7 +231,7 @@ const GoMakeAIComponent = () => {
           onChatMessagesUpdate={handleChatMessagesUpdate}
           isFullWidth={!productId}
         />
-        {productId && (
+        {productId && sessionId && (
           <div style={classes.priceWidgetContainer}>
             <PriceListPageWidget
               widgetType={EWidgetProductType.CREATE}

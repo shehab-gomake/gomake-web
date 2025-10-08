@@ -352,7 +352,7 @@ const PriceListPageWidget = ({
                       }
                     : {
                         height: "calc(100vh - 260px)",
-                        overflow: "scroll",
+                        overflow: "auto",
                       }
                 }
               >

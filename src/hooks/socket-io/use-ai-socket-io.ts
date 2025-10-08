@@ -175,7 +175,6 @@ const useAISocketIO = (
       }
 
       const responseData = response.data?.data?.data;
-      //!here should use onProductIdReceived if the responseData has productId
       if (response?.success && responseData) {
         return responseData;
       } else {
