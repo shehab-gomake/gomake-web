@@ -175,7 +175,7 @@ const GoMakeAIComponent = () => {
         setProductId(null);
       }
 
-      // setSessionIdManually(selectedSessionId);
+      setSessionIdManually(selectedSessionId);
 
       // Update URL with the new session ID
       router.push(
