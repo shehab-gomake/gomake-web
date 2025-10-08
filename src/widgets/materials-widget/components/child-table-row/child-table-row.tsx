@@ -612,153 +612,156 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             ) : purchasePricingData.length === 0 ? (
                 <></>
             ) : (
-                <TableContainer
-                    component={Paper}
-                    sx={{
-                        ...classes.tableContainer,
-                    }}
-                >
-                    <DragDropContext onDragEnd={handlePurchasePricingDragEnd}>
-                        <Table sx={classes.table} stickyHeader>
-                            <TableHead>
-                                <TableRow sx={classes.headerRow}>
-                                    <TableCell sx={classes.headerCell} ></TableCell>
-                                    <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.supplierName")}
+                <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative', paddingBottom: '8px' }}>
+                    <TableContainer
+                        component={Paper}
+                        sx={{
+                            ...classes.tableContainer,
+                        }}
+                    >
+                        <DragDropContext onDragEnd={handlePurchasePricingDragEnd}>
+                            <Table sx={classes.table} stickyHeader>
+                                <TableHead>
+                                    <TableRow sx={classes.headerRow}>
+                                        <TableCell sx={classes.headerCell} ></TableCell>
+                                        <TableCell sx={classes.headerCell}>
+                                            {t("materials.childTable.supplierName")}
 
 
-                                    </TableCell>
-                                    <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.purchasePrice")}
-                                        <br />
-                                        {t(`measurementUnits.${convertedPurchasePricingUnit}`)}
-                                    </TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
-                                    <TableCell sx={classes.headerCell}></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <Droppable droppableId="purchase-pricing-rows">
-                                {(provided) => (
-                                    <TableBody
-                                        ref={provided.innerRef}
-                                        {...provided.droppableProps}
-                                    >
-                                        {purchasePricingData.map((row, index) => (
-                                            <Draggable key={row.id || `pricing-${index}`} draggableId={row.id || `pricing-${index}`} index={index}>
-                                                {(provided, snapshot) => (
-                                                    <TableRow
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        sx={{
-                                                            ...classes.bodyRow,
-                                                            ...(snapshot.isDragging && classes.draggingRow)
-                                                        }}
-                                                    >
-                                                        <TableCell
-                                                            {...provided.dragHandleProps}
-                                                            sx={classes.bodyCell}
+                                        </TableCell>
+                                        <TableCell sx={classes.headerCell}>
+                                            {t("materials.childTable.purchasePrice")}
+                                            <br />
+                                            {t(`measurementUnits.${convertedPurchasePricingUnit}`)}
+                                        </TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
+                                        <TableCell sx={classes.headerCell}></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <Droppable droppableId="purchase-pricing-rows">
+                                    {(provided) => (
+                                        <TableBody
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                        >
+                                            {purchasePricingData.map((row, index) => (
+                                                <Draggable key={row.id || `pricing-${index}`} draggableId={row.id || `pricing-${index}`} index={index}>
+                                                    {(provided, snapshot) => (
+                                                        <TableRow
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            sx={{
+                                                                ...classes.bodyRow,
+                                                                ...(snapshot.isDragging && classes.draggingRow)
+                                                            }}
                                                         >
-                                                            <SortIcon />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.supplierName || ''}
-                                                                isEditable={false}
-                                                                type={0}
-                                                                id={row.id}
-                                                                parameterKey="supplierName"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={[
-                                                                    row.purchasePrice?.["price Unit / ton"]?.value?.[0] || '',
-                                                                    row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''
-                                                                ]}
-                                                                isEditable={true}
-                                                                type={3}
-                                                                id={row.id}
-                                                                parameterKey="price Unit / ton"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.purchasePrice?.currency}
-                                                                isEditable={true}
-                                                                type={5}
-                                                                id={row.id}
-                                                                parameterKey="currency"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.quantityInPackage || ''}
-                                                                isEditable={true}
-                                                                type={1}
-                                                                id={row.id}
-                                                                parameterKey="quantityInPackage"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell}>
-                                                            <TableCellData
-                                                                value={row.supplementTime || ''}
-                                                                isEditable={true}
-                                                                type={1}
-                                                                id={row.id}
-                                                                parameterKey="supplementTime"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
-                                                            <TableCellData
-                                                                value={row.isActive}
-                                                                isEditable={true}
-                                                                type={2}
-                                                                id={row.id}
-                                                                parameterKey="Active"
-                                                                isAdmin={false}
-                                                                onChangeRowCheckBox={() => { }}
-                                                                isPurchasePricingTable={true}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
-                                                            <IconButton
-                                                                size="small"
-                                                                onClick={() => handleOpenDeleteModal(row)}
-                                                                sx={classes.deleteButton}
+                                                            <TableCell
+                                                                {...provided.dragHandleProps}
+                                                                sx={classes.bodyCell}
                                                             >
-                                                                <DeleteIcon fontSize="small" />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                    </TableBody>
-                                )}
-                            </Droppable>
-                        </Table>
-                    </DragDropContext>
-                </TableContainer>
+                                                                <SortIcon />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell}>
+                                                                <TableCellData
+                                                                    value={row.supplierName || ''}
+                                                                    isEditable={false}
+                                                                    type={0}
+                                                                    id={row.id}
+                                                                    parameterKey="supplierName"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell}>
+                                                                <TableCellData
+                                                                    value={[
+                                                                        row.purchasePrice?.["price Unit / ton"]?.value?.[0] || '',
+                                                                        row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''
+                                                                    ]}
+                                                                    isEditable={true}
+                                                                    type={3}
+                                                                    id={row.id}
+                                                                    parameterKey="price Unit / ton"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell}>
+                                                                <TableCellData
+                                                                    value={row.purchasePrice?.currency}
+                                                                    isEditable={true}
+                                                                    type={5}
+                                                                    id={row.id}
+                                                                    parameterKey="currency"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell}>
+                                                                <TableCellData
+                                                                    value={row.quantityInPackage || ''}
+                                                                    isEditable={true}
+                                                                    type={1}
+                                                                    id={row.id}
+                                                                    parameterKey="quantityInPackage"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell}>
+                                                                <TableCellData
+                                                                    value={row.supplementTime || ''}
+                                                                    isEditable={true}
+                                                                    type={1}
+                                                                    id={row.id}
+                                                                    parameterKey="supplementTime"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+
+                                                            <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                                <TableCellData
+                                                                    value={row.isActive}
+                                                                    isEditable={true}
+                                                                    type={2}
+                                                                    id={row.id}
+                                                                    parameterKey="Active"
+                                                                    isAdmin={false}
+                                                                    onChangeRowCheckBox={() => { }}
+                                                                    isPurchasePricingTable={true}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => handleOpenDeleteModal(row)}
+                                                                    sx={classes.deleteButton}
+                                                                >
+                                                                    <DeleteIcon fontSize="small" />
+                                                                </IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </TableBody>
+                                    )}
+                                </Droppable>
+                            </Table>
+                        </DragDropContext>
+                    </TableContainer>
+                </Box>
+
             )}
         </Box>
     );
