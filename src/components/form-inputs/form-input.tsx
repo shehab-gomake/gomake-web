@@ -388,7 +388,7 @@ const FormInput = ({
                     ) && inputValue.trim() !== ""
                       ? [
                         {
-                          label: `${t("materials.addNew", "Add")} "${inputValue}"`,
+                          label: inputValue,
                           value: "new",
                         },
                         ...options,
