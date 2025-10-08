@@ -345,7 +345,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             ) : inventoryData.length === 0 ? (
                 <></>
             ) : (
-                <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative' }}>
+                <Box sx={{ width: '100%', overflowX: 'visible', position: 'relative', paddingBottom: '8px' }}>
                     <DragDropContext onDragEnd={handleInventoryDragEnd}>
                         <Table sx={{ ...classes.table, position: 'relative' }} stickyHeader>
                             <TableHead>
