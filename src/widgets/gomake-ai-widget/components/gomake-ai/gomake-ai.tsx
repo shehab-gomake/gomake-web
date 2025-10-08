@@ -17,6 +17,7 @@ const GoMakeAIComponent = () => {
   const [productId, setProductId] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isConversationLoading, setIsConversationLoading] = useState(false);
+  const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
 
   const hasInitialized = useRef(false);
 
@@ -66,16 +67,19 @@ const GoMakeAIComponent = () => {
       try {
         const conversations = await getConversationsHistory();
         setConversationsHistory(conversations);
+        setIsHistoryLoaded(true);
       } catch (error) {
         console.error("Error loading conversations history:", error);
+        setIsHistoryLoaded(true); // Set to true even on error to prevent infinite loading
       }
     };
     loadHistory();
   }, []);
 
   // Initialize only once — handles page load or refresh
+  // Wait for both router to be ready AND conversations history to be loaded
   useEffect(() => {
-    if (!router.isReady || hasInitialized.current) return;
+    if (!router.isReady || !isHistoryLoaded || hasInitialized.current) return;
     hasInitialized.current = true;
 
     const initializeSession = async () => {
@@ -128,7 +132,7 @@ const GoMakeAIComponent = () => {
     };
 
     initializeSession();
-  }, [router.isReady]);
+  }, [router.isReady, isHistoryLoaded]);
 
   // Handle new job creation
   const handleNewJobClick = async () => {
@@ -212,21 +216,32 @@ const GoMakeAIComponent = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
-  // if (isInitializing) {
-  //   return (
-  //     <div
-  //       style={{
-  //         ...classes.container,
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         fontSize: 18,
-  //         color: "#666",
-  //       }}
-  //     >
-  //       Initializing GoMake AI...
-  //     </div>
-  //   );
-  // }
+  if (isInitializing) {
+    return (
+      <div style={classes.initializationContainer}>
+        <div style={classes.initializationCard}>
+          <div style={classes.initializationLogo}>
+            <div style={classes.initializationSpinner} />
+          </div>
+          <div style={classes.initializationTitle}>GoMake AI</div>
+          <div style={classes.initializationSubtitle}>
+            Initializing your intelligent assistant...
+          </div>
+          <div style={classes.initializationDotsContainer}>
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                style={{
+                  ...classes.initializationDot,
+                  animation: `ai-pulse 1.5s infinite ${i * 0.2}s`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={classes.container}>
