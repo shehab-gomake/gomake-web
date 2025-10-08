@@ -94,6 +94,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
         && header.key !== "CostPerRollPerSquareMeterPerTon"
         && header.key !== "price unit / M^2"
         && header.key !== "price unit/pack"
+        && header.inputType !== 2  // Exclude switch fields (type 2) from validation
       )
     );
     const missingFields: string[] = [];
@@ -158,7 +159,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
           variant="contained"
           onClick={() => {
             if (validateRequiredFieldsResult.isValid) {
-              onAddCategoryRow(rowData);
+              onAddCategoryRow(rowData, materialHeaders);
             } else {
               alertFault(
                 `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(

@@ -23,9 +23,25 @@ const useAddCategoryRow = (isAdmin: boolean) => {
     const materialFilter = useRecoilValue(filterState);
     const { t } = useTranslation();
 
-    const onAddCategoryRow = async (dataRow) => {
+    const onAddCategoryRow = async (dataRow, materialHeaders) => {
+        // Find all switch fields (inputType: 2) from materialHeaders
+        const switchFields = materialHeaders
+            ?.filter((header) => header.inputType === 2)
+            ?.map((header) => header.key) || [];
+
+        // Add default false value for all switch fields that are not present in dataRow
+        const dataWithDefaults = {
+            ...dataRow
+        };
+
+        switchFields.forEach((fieldKey) => {
+            if (!dataWithDefaults.hasOwnProperty(fieldKey)) {
+                dataWithDefaults[fieldKey] = false;
+            }
+        });
+
         const stringifiedDataRow = Object.fromEntries(
-            Object.entries(dataRow).map(([key, value]) => {
+            Object.entries(dataWithDefaults).map(([key, value]) => {
                 // Check if the value is an array
                 if (Array.isArray(value)) {
                     return [key, value]; // Keep arrays as-is
@@ -38,8 +54,6 @@ const useAddCategoryRow = (isAdmin: boolean) => {
         const callBack = (res) => {
             const error = res?.errors;
             let userMessage = t("materials.inputs.duplicateFailedTryAgain"); // default fallback
-
-            console.log("reaaaaaaaaaaaaaas", res);
             if (res.success) {
                 alertSuccessAdded();
                 setOpenModal(false);
