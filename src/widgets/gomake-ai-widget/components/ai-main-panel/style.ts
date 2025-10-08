@@ -46,7 +46,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         width: 44,
         height: 44,
         borderRadius: 8,
-        background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
+        background: "linear-gradient(135deg, #9333ea, #ec4899)",
         border: "none",
         cursor: "pointer",
         display: "flex",
@@ -54,7 +54,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         justifyContent: "center",
         transition: "all 0.2s ease",
         "&:hover": {
-          background: "#2563EB", // darker blue hover
+          background: "linear-gradient(135deg, #7c3aed, #db2777)", // darker pink hover
           transform: "translateY(-1px)",
         },
         "&:disabled": {
@@ -74,7 +74,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         display: "flex",
         flexDirection: "column" as "column",
         height: "100vh",
-        backgroundColor: "#e9f0f7",
+        backgroundColor: "#f8f9fa",
         overflowY: "auto" as "auto",
         ...(isFullWidth
           ? {
@@ -107,10 +107,9 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         gap: 8,
       },
       headerIcon: {
-        fontSize: 32,
         textAlign: "center" as "center",
         marginBottom: 8,
-        color: "#3B82F6",
+        color: "#ed028c",
       },
       headerTitle: {
         ...FONT_FAMILY.Inter(600, 32),
@@ -159,8 +158,8 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
 
         "&:focus": {
           outline: "none",
-          borderColor: "#504FA1",
-          boxShadow: "0 0 0 3px rgba(80, 79, 161, 0.1)",
+          borderColor: "#ed028c",
+          boxShadow: "0 0 0 3px rgba(237, 2, 140, 0.1)",
         },
         "&::placeholder": {
           color: "#9CA3AF",
@@ -244,8 +243,8 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         alignItems: "center" as "center",
         gap: 16,
         "&:hover": {
-          borderColor: "#3B82F6",
-          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.1)",
+          borderColor: "#ed028c",
+          boxShadow: "0 4px 12px rgba(236, 72, 153, 0.1)",
           transform: "translateY(-2px)",
         },
       },
@@ -319,13 +318,25 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         width: "44px",
         height: "44px",
         borderRadius: "8px",
-        backgroundColor: "#e9f0f7",
+        backgroundColor: "#fdf2f8",
         flexShrink: 0,
       },
 
       jobTypeIcon: {
         fontSize: "26px",
-        color: "#2E54E7", // same blue as the theme
+        color: "#ed028c", // pink theme
+      },
+      loadingOverlay: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "24px",
+        backgroundColor: "#FFF",
+        borderRadius: 12,
+        border: "1px solid #E5E7EB",
+        height: "100%",
       },
     };
   }, [isFullWidth]);

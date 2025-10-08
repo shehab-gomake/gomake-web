@@ -42,9 +42,21 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         gap: 12,
         width: "100%",
       },
-
+      refreshButton: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        marginLeft: "auto",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "12px",
+        color: "#666",
+        justifyContent: "center",
+        gap: 4,
+      },
       logoContainer: {
-        background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)", // gradient
+        background: "linear-gradient(135deg, #9333ea, #ec4899)", // pink gradient
         borderRadius: 16, // smoother round corners
         padding: 12,
         display: "flex",
@@ -52,7 +64,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         justifyContent: "center",
         minWidth: 24,
         minHeight: 24,
-        boxShadow: "0 6px 12px rgba(46, 84, 231, 0.35)", // stronger shadow
+        boxShadow: "0 6px 12px rgba(147, 51, 234, 0.35)", // pink shadow
       },
       chatIcon: {
         fontSize: 16,
@@ -95,14 +107,14 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         position: "relative" as "relative",
         overflow: "hidden",
         "&:hover": {
-          backgroundColor: "#F8FAFC",
+          backgroundColor: "#FDF2F8",
           transform: "translateX(4px)",
         },
       },
       activeNavItem: {
-        backgroundColor: "#EFF6FF",
-        border: "1px solid #DBEAFE",
-        boxShadow: "0 2px 4px rgba(59, 130, 246, 0.1)",
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
+        boxShadow: "0 2px 4px rgba(236, 72, 153, 0.1)",
         "&::before": {
           content: '""',
           position: "absolute" as "absolute",
@@ -110,13 +122,13 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
           top: 0,
           bottom: 0,
           width: 3,
-          backgroundColor: "#3B82F6",
+          backgroundColor: "#ed028c",
           borderRadius: "0 2px 2px 0",
         },
       },
       navIcon: {
         ...FONT_FAMILY.Inter(600, 16),
-        color: "#3B82F6",
+        color: "#ed028c",
         minWidth: 20,
         display: "flex",
         alignItems: "center",
@@ -124,7 +136,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         width: 24,
         height: 24,
         borderRadius: 6,
-        backgroundColor: "rgba(59, 130, 246, 0.1)",
+        backgroundColor: "rgba(236, 72, 153, 0.1)",
       },
       navText: {
         ...FONT_FAMILY.Inter(500, 14),
@@ -237,23 +249,23 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         alignItems: "center",
         gap: 8,
         padding: "10px 20px",
-        backgroundColor: "#EFF6FF",
-        border: "1px solid #DBEAFE",
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
         borderRadius: 10,
         cursor: "pointer",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         width: "100%",
         justifyContent: "center",
-        boxShadow: "0 2px 4px rgba(59, 130, 246, 0.1)",
+        boxShadow: "0 2px 4px rgba(236, 72, 153, 0.1)",
         outline: "none",
       },
       backButtonIcon: {
         fontSize: 18,
-        color: "#3B82F6",
+        color: "#ed028c",
       },
       backButtonText: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: "#3B82F6",
+        color: "#ed028c",
         letterSpacing: "-0.01em",
       },
       poweredByContainer: {
@@ -301,17 +313,17 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         justifyContent: "center",
         width: 32,
         height: 32,
-        backgroundColor: "#EFF6FF",
-        border: "1px solid #DBEAFE",
+        backgroundColor: "#FDF2F8",
+        border: "1px solid #FCE7F3",
         borderRadius: 8,
         cursor: "pointer",
         transition: "all 0.2s ease",
-        boxShadow: "0 1px 3px rgba(59, 130, 246, 0.1)",
+        boxShadow: "0 1px 3px rgba(236, 72, 153, 0.1)",
         outline: "none",
       },
       collapsedBackButtonIcon: {
         fontSize: 16,
-        color: "#3B82F6",
+        color: "#ed028c",
       },
       collapsedPoweredBy: {
         display: "flex",

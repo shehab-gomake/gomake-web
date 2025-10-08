@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";
-
+import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
 interface AISidebarProps {
   onNewJobClick: () => void;
   conversationsHistory?: any[];
@@ -80,16 +80,12 @@ const AISidebar = ({
               {onRefreshHistory && (
                 <button
                   onClick={onRefreshHistory}
-                  style={{
-                    marginLeft: "auto",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    color: "#666",
-                  }}
+                  style={classes.refreshButton}
                 >
-                  🔄 Refresh
+                  <CachedRoundedIcon
+                    style={{ fontSize: 16, color: "#ec4899" }}
+                  />
+                  <span style={{ fontSize: 12, color: "#666" }}>Refresh</span>
                 </button>
               )}
             </div>
@@ -119,7 +115,7 @@ const AISidebar = ({
                       backgroundColor:
                         selectedConversation?.sessionId ===
                         conversation.sessionId
-                          ? "#E0E7FF"
+                          ? "#FDF2F8"
                           : "transparent",
                       cursor: "pointer",
                       marginBottom: "4px",
@@ -155,7 +151,7 @@ const AISidebar = ({
             </button>
             <div style={classes.collapsedPoweredBy}>
               <GoMakeIcon
-                color="linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)"
+                color="linear-gradient(135deg, #9333ea, #ec4899)"
                 height={16}
                 width={56}
               />
@@ -170,11 +166,11 @@ const AISidebar = ({
                 window.location.href = "/";
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#E0E7FF";
+                e.currentTarget.style.backgroundColor = "#FDF2F8";
                 e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#EFF6FF";
+                e.currentTarget.style.backgroundColor = "#FDF2F8";
                 e.currentTarget.style.transform = "translateY(0)";
               }}
             >
@@ -186,7 +182,8 @@ const AISidebar = ({
             <div style={(classes as any).poweredByContainer}>
               <div style={classes.poweredByLbl}>Powered by</div>
               <GoMakeIcon
-                color="linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)"
+                // color="linear-gradient(135deg, #9333ea, #ec4899)"
+                color="#2E3092"
                 height={20}
                 width={100}
               />
