@@ -161,7 +161,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
                   keyItem={"item"}
                   customStyles={{
                     container: {
-                      maxWidth: 180,
+                      maxWidth: 200,
                     },
 
                   }}
