@@ -812,6 +812,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const materialActions = useRecoilValue(materialActionState);
+  console.log("materialActions", materialActions);
 
   const materialHeaders =
     useRecoilValue<

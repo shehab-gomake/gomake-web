@@ -14,12 +14,14 @@ import { DeleteMenuIcon } from "@/pages/admin/products/parameters/widget/more-ci
 import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { DuplicatesModal } from "../duplicates-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { userState } from "@/store/user";
+import { useRecoilValue } from "recoil";
 interface IActionMenuProps {
   isAdmin: boolean;
 }
@@ -134,6 +136,25 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleSubmenuClose();
     handleCloseMenu();
   };
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+
+  const getTranslationKey = (actionItem: any) => {
+    const isImperial = unitType === UNIT_TYPE.IMPERIAL;
+
+    // Special keys for action 4 (UpdatePricePerUnit) when Imperial
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnit && isImperial) {
+      return "materialsActions." + "UpdateUnitPriceImperial";
+    }
+
+    // Special keys for action 6 (UpdatePricePerTonPercents) when Imperial
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnitPercents && isImperial) {
+      return "materialsActions." + "AddPercentToUnitPriceImperial";
+    }
+
+    // Default key
+    return "materialsActions." + actionItem.text;
+  };
 
   return (
     <>
@@ -189,11 +210,8 @@ const ActionMenu = (props: IActionMenuProps) => {
                     {_renderIcons(actionItem.icon)}
                   </div>
                   <div style={clasess.rowTextStyle}>
-                    {t("materialsActions." + actionItem.text)}
+                    {t(getTranslationKey(actionItem))}
                   </div>
-                  {/* {isRTL && actionItem.isShowSubMenu && (
-                    <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
-                  )} */}
                 </div>
               </MenuItem>
               {actionItem?.isUnderLine && <Divider />}
