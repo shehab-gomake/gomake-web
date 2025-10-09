@@ -53,6 +53,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
+  console.log("materialHeaders", materialHeaders);
   const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
@@ -139,9 +140,17 @@ const AddRowModal = (props: IAddRowModalProps) => {
             currencies,
             machinesCategories,
             clientsCategories
-          ).map((item) => {
+          ).map((item, index, array) => {
+            // Check if next item is a price object and current index is odd
+            const nextItem = array[index + 1];
+            const isNextItemPriceObject = nextItem?.isPriceObject === true;
+
+            // If next item is a price object and current index is odd, make current item full width
+            // This ensures price objects always start on an even index (same row with currency)
+            const shouldMakeFullWidth = isNextItemPriceObject && (index + 1) % 2 !== 0;
+
             return (
-              <Stack width={"45%"}>
+              <Stack width={shouldMakeFullWidth ? "100%" : "45%"} key={`input-${index}`}>
                 <FormInput
                   input={item as IInput}
                   changeState={onChangeInputs}

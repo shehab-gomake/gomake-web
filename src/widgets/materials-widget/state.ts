@@ -30,6 +30,7 @@ export const materialHeadersState = atom<
     isHideInDuplicate?: boolean;
     isShowInExtraParameters?: boolean;
     isForAdmin?: boolean;
+    isPriceObject?: boolean;
   }[]
 >({
   key: "materialHeadersState",

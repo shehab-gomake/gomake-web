@@ -29,19 +29,21 @@ const rowInputs = (
             value: state?.parameterKey,
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "ARRAY_INPUT":
           return {
-            name: "Unit price",
+            name: header?.key,
             label: newMaterialHeaders ? null : "materials.inputs.unitPrice",
             type: "number",
             placeholder: "materials.inputs.unitPrice",
             required: header?.isRequired,
-            parameterKey: "unitPrice",
+            parameterKey: header?.key,
             options: [],
             value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "LIST":
           return {
@@ -60,6 +62,7 @@ const rowInputs = (
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "MULTI_SELECATION_LIST":
           return {
@@ -79,6 +82,7 @@ const rowInputs = (
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "MACHINES_LIST":
           return {
@@ -99,6 +103,7 @@ const rowInputs = (
             isValid: true,
             multiple: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
 
         case "CLIENTS_LIST":
@@ -118,6 +123,7 @@ const rowInputs = (
             multiple: true,
             loading: isFetching,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "NOTE_BOOK_TYPES":
           return {
@@ -132,6 +138,7 @@ const rowInputs = (
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "SUPPLIERS":
           return {
@@ -146,6 +153,7 @@ const rowInputs = (
             isValid: true,
             unit: header?.unit,
             disabled: true,
+            isPriceObject: header?.isPriceObject,
           };
         case "INVENTORY":
           return {
@@ -160,6 +168,7 @@ const rowInputs = (
             isValid: true,
             unit: header?.unit,
             disabled: true,
+            isPriceObject: header?.isPriceObject,
           };
         case "PURCHASE_PRICING":
           return {
@@ -174,6 +183,7 @@ const rowInputs = (
             isValid: true,
             unit: header?.unit,
             disabled: true,
+            isPriceObject: header?.isPriceObject,
           };
         case "SELECT_FIXED_VALUES_ADD_NEW":
           return {
@@ -192,6 +202,7 @@ const rowInputs = (
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
@@ -210,7 +221,7 @@ const rowInputs = (
               value: state[header?.key],
               isValid: true,
               unit: header?.unit,
-
+              isPriceObject: header?.isPriceObject,
             };
       }
     })
@@ -230,6 +241,7 @@ const rowInputs = (
       options: [],
       value: state?.[imageCase.key],
       isValid: true,
+      isPriceObject: imageCase?.isPriceObject,
     });
   }
 
