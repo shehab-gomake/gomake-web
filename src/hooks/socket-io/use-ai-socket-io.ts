@@ -5,7 +5,8 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const useAISocketIO = (
   onMessageReceived?: (message: any) => void,
-  onProductIdReceived?: (productId: string) => void
+  onProductIdReceived?: (productId: string) => void,
+  onProductUpdated?: () => void
 ) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -38,7 +39,12 @@ const useAISocketIO = (
         onProductIdReceived(data.productId);
       }
     });
-
+    socket.on(`${sessionId}-parameters-result`, () => {
+      if(onProductUpdated){
+        onProductUpdated();
+      }
+      
+    });
     return () => {
       socket.off(`${sessionId}-productId-result`);
       socket.disconnect();

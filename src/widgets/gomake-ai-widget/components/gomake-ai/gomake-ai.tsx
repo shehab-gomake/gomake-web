@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import { useRouter } from "next/router";
 import { AISidebar } from "../ai-sidebar/ai-sidebar";
 import { AIMainPanel } from "../ai-main-panel/ai-main-panel";
@@ -18,7 +18,7 @@ const GoMakeAIComponent = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isConversationLoading, setIsConversationLoading] = useState(false);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
-
+  const [productUpdateVersion,setProductUpdateVersion]= useState(0)
   const hasInitialized = useRef(false);
 
   // Handle real-time messages from socket
@@ -49,7 +49,10 @@ const GoMakeAIComponent = () => {
       )
     );
   };
-
+  
+  const handleProductUpdated = () => {
+    setProductUpdateVersion(prev=>prev+1);
+  }
   const {
     isProcessing,
     sessionId,
@@ -59,7 +62,7 @@ const GoMakeAIComponent = () => {
     getConversation,
     setSessionIdManually,
     resetProcessingState,
-  } = useAISocketIO(handleRealTimeMessage, handleProductIdReceived);
+  } = useAISocketIO(handleRealTimeMessage, handleProductIdReceived,handleProductUpdated);
 
   // Load conversations history on mount
   useEffect(() => {
@@ -242,7 +245,6 @@ const GoMakeAIComponent = () => {
       </div>
     );
   }
-
   return (
     <div style={classes.container}>
       <AISidebar
@@ -265,14 +267,15 @@ const GoMakeAIComponent = () => {
           isLoadingConversation={isConversationLoading}
         />
         {productId && sessionId && (
-          <div style={classes.priceWidgetContainer}>
-            <PriceListPageWidget
-              widgetType={EWidgetProductType.CREATE}
-              isMobileScreen={true}
-              productId={productId}
-              sessionId={sessionId}
-            />
-          </div>
+            <div style={classes.priceWidgetContainer}>
+              <PriceListPageWidget
+                  key={productUpdateVersion}
+                  widgetType={EWidgetProductType.CREATE}
+                  isMobileScreen={true}
+                  productId={productId}
+                  sessionId={sessionId}
+              />
+            </div>
         )}
       </div>
     </div>

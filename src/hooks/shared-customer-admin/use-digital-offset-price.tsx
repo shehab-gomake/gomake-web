@@ -7264,78 +7264,87 @@ const useDigitalOffsetPrice = ({
 
   // Add socket event listeners for sessionId-based events
   useEffect(() => {
-    if (sessionId) {
+   /* if (sessionId) {
       const socket = io(config.api_server);
       // Listen for parameters result
       socket.on(`${sessionId}-parameters-result`, () => {
         clearStates();
         getAllMaterial().then((materials) => {
-          getAndSetChatBotProductId(
-            callApi,
-            (res) => {
-              const updatedTemplate = updateIsHidden(res, subProducts);
-              setDefaultProductTemplate(updatedTemplate);
-              initQuoteItemProduct(updatedTemplate, materials);
-              setdocumentItemByEdit(res?.docmentItem);
-              setCalculationResult({ ...calculationResult, tabs: res?.tabs });
-              setProductItemValueByEdit(res?.productItemValue);
-              setValuesState(res?.productItemValue?.workTypes);
-              setWorkTypes(res?.productItemValue?.workTypes);
-              setMissionsListForEdit(res?.missions);
-              setCalculatedPriceProductItemValue(res?.calculatedPrice);
-              const itemParameters =
-                res?.data?.productItemValue?.itemParmetersValues || [];
-              if (itemParameters && itemParameters?.length > 0) {
-                const allEmpty = itemParameters.every(
-                  (item) => !item.subProductType || item.subProductType === ""
-                );
-
-                if (allEmpty) {
-                  setSubProductsCopy([
-                    {
-                      parameters: itemParameters,
-                      type: null,
-                    },
-                  ]);
-                } else {
-                  // Group by subProductType
-                  const groupedByType = itemParameters.reduce((acc, item) => {
-                    const type = item.subProductType || "";
-                    if (!acc[type]) {
-                      acc[type] = [];
-                    }
-                    acc[type].push(item);
-                    return acc;
-                  }, {});
-
-                  // Convert to array format
-                  const formattedGroups = Object.entries(groupedByType).map(
-                    ([type, parameters]) => ({
-                      type: type || null,
-                      parameters,
-                    })
-                  );
-
-                  setSubProductsCopy(formattedGroups);
-                }
-              }
-            },
-            {
-              Id: sessionId,
-            }
-          );
+          
         });
       });
       return () => {
         socket.off(`${sessionId}-parameters-result`);
         socket.disconnect();
       };
-    }
+    }*/
   }, [sessionId]);
 
   const getProductById = async (materials) => {
     setIsMigratedFromOldSystem(false);
+    if(sessionId){
+      getAndSetChatBotProductId(
+          callApi,
+          (res) => {
+            const updatedTemplate = updateIsHidden(res, subProducts);
+            setDefaultProductTemplate(updatedTemplate);
+            initQuoteItemProduct(updatedTemplate, materials);
+            setdocumentItemByEdit(res?.docmentItem);
+            setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+            setProductItemValueByEdit(res?.productItemValue);
+            setValuesState(res?.productItemValue?.workTypes);
+            setWorkTypes(res?.productItemValue?.workTypes);
+            setMissionsListForEdit(res?.missions);
+            setCalculatedPriceProductItemValue(res?.calculatedPrice);
+            const itemParameters =
+                res?.data?.productItemValue?.itemParmetersValues || [];
+            if (itemParameters && itemParameters?.length > 0) {
+              const allEmpty = itemParameters.every(
+                  (item) => !item.subProductType || item.subProductType === ""
+              );
 
+              if (allEmpty) {
+                setSubProductsCopy([
+                  {
+                    parameters: itemParameters,
+                    type: null,
+                  },
+                ]);
+              } else {
+                // Group by subProductType
+                const groupedByType = itemParameters.reduce((acc, item) => {
+                  const type = item.subProductType || "";
+                  if (!acc[type]) {
+                    acc[type] = [];
+                  }
+                  acc[type].push(item);
+                  return acc;
+                }, {});
+
+                // Convert to array format
+                const formattedGroups = Object.entries(groupedByType).map(
+                    ([type, parameters]) => ({
+                      type: type || null,
+                      parameters,
+                    })
+                );
+
+                setSubProductsCopy(formattedGroups);
+              }
+            }
+            let checkParameter = validateParameters(subProducts);
+            if (checkParameter) {
+              setCanCalculation(true);
+            } else {
+              setCanCalculation(false);
+            }
+          },
+          {
+            Id: sessionId,
+          }
+      );
+      return;
+    }
     if (router?.query?.profitsProfileRowId) {
       await getAndSetProfitProfileReviewProductId(
         callApi,
@@ -7355,7 +7364,8 @@ const useDigitalOffsetPrice = ({
           quantity: router?.query?.quantity,
         }
       );
-    } else {
+    } 
+    else {
       await getAndSetProductById(
         callApi,
         (data) => {
