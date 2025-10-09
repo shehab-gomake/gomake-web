@@ -20,6 +20,7 @@ import { UNIT_TYPE } from "@/enums";
 import { convertTitleUnits } from "@/utils/helpers";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { useTableCellData } from "../table-cell-data/use-table-cell-data";
+import { ConfirmationDialogExample } from "@/components/dialog/example-usage";
 
 interface IExtraParametersModalProps {
     isAdmin: boolean;
@@ -178,6 +179,7 @@ const ExtraParametersModal = ({ isAdmin }: IExtraParametersModalProps) => {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
+
 
             <DialogContent sx={{ padding: "8px", backgroundColor: "#fafafa" }}>
                 {extraHeaders.length > 0 && rowData ? (
