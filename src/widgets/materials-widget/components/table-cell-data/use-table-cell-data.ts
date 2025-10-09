@@ -4,14 +4,15 @@ import { materialsClientsState, materialsMachinesState, materialCategoryDataStat
 import {updateSupplierInventoryApi, updatePrintHouseMaterialRowApi, updatePrintHouseMaterialSupplierApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
 import { openPriceModalState } from "@/store";
 import { filterNullFromArrays } from "@/utils/helpers";
+import { useTranslation } from "react-i18next";
 
 const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purchasePricingTable: boolean = false) => {
     const {callApi} = useGomakeAxios();
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
     const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
     const [inventoryData, setInventoryData] = useRecoilState(inventoryDataState);
@@ -120,11 +121,17 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
             })
         );
     };
+    const { t } = useTranslation()
 
     const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
         return new Promise((resolve, reject) => {
             const callBack = (res) => {
+                const error = res?.errors;
+                let userMessage = t("materials.inputs.duplicateFailedTryAgain");
                 if (res.success) {
+                  
+              
+                 
                     // Handle inventory table updates
                     if (inventoryTable && res.data) {
                         // Update the specific inventory row with new data
@@ -152,8 +159,32 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     resolve(res); // Resolve with success response
                     alertSuccessUpdate();
                 } else {
-                    reject(res); // Reject with error response
-                    alertFaultUpdate();
+                    if (res?.statusCode === 2627) {
+              
+                        if (error?.errorParams?.length > 0) {
+                          const duplicateFields = error?.errorParams
+                            ?.map(p => p.key)
+                            ?.filter(Boolean)
+                            ?.join(", ");
+                          userMessage = t("materials.inputs.duplicateDuplicateFields", { fields: duplicateFields });
+                        }
+                        else if (error?.ErrorMessage) {
+                          userMessage = error.ErrorMessage;
+                        }
+                        setTimeout(() => {
+                            alertFault(userMessage);
+                        }, 0);
+                        
+                        
+                        reject(new Error(userMessage));
+
+                      }
+                      else {
+                        alertFaultUpdate();
+                        reject(res); // Reject with error response
+                      }
+                    
+                   
                 }
             };
         

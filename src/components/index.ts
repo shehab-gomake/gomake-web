@@ -3,6 +3,7 @@ export * from "./text-input";
 export * from "./button";
 export * from "./auto-complete";
 export * from "./modal";
+export * from "./dialog";
 export * from "./text-input-icon";
 export * from "./stripe-pricing-table";
 export * from "./trial-indicator";

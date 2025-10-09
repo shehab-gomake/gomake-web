@@ -1,17 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     Box,
+    Grid,
+    Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -20,10 +15,12 @@ import {
     materialHeadersState,
 } from "../../state";
 import { useTranslation } from "react-i18next";
-import { TableCellData } from "../table-cell-data/table-cell";
 import { userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertTitleUnits } from "@/utils/helpers";
+import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
+import { useTableCellData } from "../table-cell-data/use-table-cell-data";
+import { ConfirmationDialogExample } from "@/components/dialog/example-usage";
 
 interface IExtraParametersModalProps {
     isAdmin: boolean;
@@ -36,9 +33,17 @@ const ExtraParametersModal = ({ isAdmin }: IExtraParametersModalProps) => {
     const materialHeaders = useRecoilValue(materialHeadersState);
     const user = useRecoilValue<any>(userState);
     const unitType = user?.printHouseProfile?.unitType || 0;
+    const { updateCellData } = useTableCellData(isAdmin);
+
+    // Local state to manage input values
+    const [inputValues, setInputValues] = useState<Record<string, any>>({});
+    // Store original values to compare on blur
+    const [originalValues, setOriginalValues] = useState<Record<string, any>>({});
 
     const handleClose = () => {
         setOpenExtraParametersModal({ open: false });
+        setInputValues({}); // Clear input values on close
+        setOriginalValues({}); // Clear original values on close
     };
 
     // Filter headers to show only extra parameters
@@ -52,11 +57,94 @@ const ExtraParametersModal = ({ isAdmin }: IExtraParametersModalProps) => {
 
     const rowData = openExtraParametersModal.rowData;
 
+    // Initialize input values when modal opens or rowData changes
+    React.useEffect(() => {
+        if (rowData?.rowData) {
+            const initialValues: Record<string, any> = {};
+            extraHeaders.forEach((header) => {
+                if (rowData.rowData[header.key]) {
+                    initialValues[header.key] = rowData.rowData[header.key].value || '';
+                }
+            });
+            setInputValues(initialValues);
+            setOriginalValues(initialValues); // Store original values
+        }
+    }, [rowData, extraHeaders]);
+
+    const handleInputChange = (key: string, value: any) => {
+        setInputValues((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleInputBlur = async (key: string, value: any) => {
+        // Only update if value has changed from original
+        const originalValue = originalValues[key];
+        if (rowData?.id && value !== originalValue) {
+            try {
+                await updateCellData(rowData.id, key, value);
+                // Update original value after successful update
+                setOriginalValues((prev) => ({
+                    ...prev,
+                    [key]: value,
+                }));
+            } catch (error) {
+                console.error("Error updating cell data:", error);
+                // Revert to original value on error
+                setInputValues((prev) => ({
+                    ...prev,
+                    [key]: originalValue,
+                }));
+            }
+        }
+    };
+
+    const renderInputField = (header: any, cellData: any) => {
+        const convertedUnit =
+            unitType === UNIT_TYPE.IMPERIAL
+                ? convertTitleUnits(header.unit)
+                : header.unit;
+
+        const label = header.unit
+            ? `${header.value} ${convertedUnit ? `(${t(`measurementUnits.${convertedUnit}`)})` : ''}`
+            : header.value;
+
+        const inputValue = inputValues[header.key] !== undefined
+            ? inputValues[header.key]
+            : (cellData?.value || '');
+
+        return (
+            <Box sx={{ mb: 1 }}>
+                <Typography
+                    variant="body2"
+                    sx={{
+                        // mb: 1,
+                        fontWeight: 600,
+                        color: "#333",
+                        fontSize: "14px",
+                    }}
+                >
+                    {label}
+                </Typography>
+                <GoMakeTextInput
+                    value={inputValue}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleInputChange(header.key, e.target.value)
+                    }
+                    onBlur={() => handleInputBlur(header.key, inputValues[header.key])}
+                    placeholder={label}
+                    disabled={!isAdmin && header.isForAdmin}
+                />
+            </Box>
+        );
+    };
+
     return (
         <Dialog
             open={openExtraParametersModal.open}
             onClose={handleClose}
-            maxWidth="xl"
+            maxWidth="md"
             fullWidth
             PaperProps={{
                 sx: {
@@ -71,7 +159,7 @@ const ExtraParametersModal = ({ isAdmin }: IExtraParametersModalProps) => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     borderBottom: "1px solid #e0e0e0",
-                    padding: "16px 24px",
+                    padding: "8px 16px",
                     backgroundColor: "#f5f5f5",
                 }}
             >
@@ -92,96 +180,41 @@ const ExtraParametersModal = ({ isAdmin }: IExtraParametersModalProps) => {
                 </IconButton>
             </DialogTitle>
 
-            <DialogContent sx={{ padding: "24px", backgroundColor: "#fafafa" }}>
-                {extraHeaders.length > 0 ? (
-                    <TableContainer
-                        component={Paper}
-                        sx={{
-                            maxHeight: "60vh",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                            borderRadius: "8px",
-                        }}
-                    >
-                        <Table stickyHeader>
-                            <TableHead>
-                                <TableRow>
-                                    {extraHeaders.map((header, index) => {
-                                        const convertedUnit =
-                                            unitType === UNIT_TYPE.IMPERIAL
-                                                ? convertTitleUnits(header.unit)
-                                                : header.unit;
 
-                                        return (
-                                            <TableCell
-                                                key={index}
-                                                sx={{
-                                                    textAlign: "center",
-                                                    fontWeight: "bold",
-                                                    whiteSpace: "nowrap",
-                                                    backgroundColor: "#EBECFF",
-                                                    color: "#333",
-                                                    fontSize: "14px",
-                                                    padding: "16px 12px",
-                                                    borderBottom: "2px solid #5759A8",
-                                                }}
-                                            >
-                                                {header.unit ? (
-                                                    <div>
-                                                        <span>{header.value}</span>
-                                                        {convertedUnit && (
-                                                            <small style={{ display: "block", fontSize: "11px" }}>
-                                                                ({t(`measurementUnits.${convertedUnit}`)})
-                                                            </small>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div style={{ textTransform: "capitalize" }}>
-                                                        {header.value}
-                                                        <div style={{ height: "24px", width: "100%" }} />
-                                                    </div>
-                                                )}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rowData && (
-                                    <TableRow
-                                        sx={{
-                                            "&:hover": {
-                                                backgroundColor: "#f5f5f5",
-                                            },
-                                        }}
-                                    >
-                                        {extraHeaders.map((header, index) => (
-                                            <TableCell
-                                                key={index}
-                                                sx={{
-                                                    textAlign: "center",
-                                                    padding: "12px",
-                                                    borderBottom: "1px solid #e0e0e0",
-                                                }}
-                                            >
-                                                {rowData.rowData && rowData.rowData[header.key] ? (
-                                                    <TableCellData
-                                                        {...rowData.rowData[header.key]}
-                                                        id={rowData.id}
-                                                        parameterKey={header.key}
-                                                        isAdmin={isAdmin}
-                                                        unit={header.unit}
-                                                        rowData={rowData.rowData}
-                                                    />
-                                                ) : (
-                                                    <span style={{ color: "#999" }}>-</span>
-                                                )}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
+            <DialogContent sx={{ padding: "8px", backgroundColor: "#fafafa" }}>
+                {extraHeaders.length > 0 && rowData ? (
+                    <Grid container spacing={2} sx={{ overflow: "scroll", marginTop: "10px" }}>
+                        {extraHeaders.map((header, index) => (
+                            <Grid item key={index}>
+                                {rowData.rowData && rowData.rowData[header.key] ? (
+                                    renderInputField(header, rowData.rowData[header.key])
+                                ) : (
+                                    <Box >
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                // mb: 1,
+                                                fontWeight: 600,
+                                                color: "#333",
+                                                fontSize: "14px",
+                                            }}
+                                        >
+                                            {header.value}
+                                        </Typography>
+                                        <GoMakeTextInput
+                                            value=""
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                handleInputChange(header.key, e.target.value)
+                                            }
+                                            onBlur={() => handleInputBlur(header.key, inputValues[header.key])}
+                                            placeholder={header.value}
+                                            disabled={!isAdmin && header.isForAdmin}
+                                        />
+                                    </Box>
                                 )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                            </Grid>
+                        ))}
+                    </Grid>
                 ) : (
                     <Box
                         sx={{

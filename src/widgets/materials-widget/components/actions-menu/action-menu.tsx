@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EMaterialsActions } from "@/widgets/materials-widget/enums";
 import { useMaterialsActions } from "@/widgets/materials-widget/components/actions-menu/use-materials-actions";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeDialog, GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { useStyle } from "./style";
 import { AddPlusIcon, CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
@@ -14,12 +13,16 @@ import { DeleteMenuIcon } from "@/pages/admin/products/parameters/widget/more-ci
 import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { DuplicatesModal } from "../duplicates-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { userState } from "@/store/user";
+import { useRecoilValue } from "recoil";
+import { Add as AddIcon } from "@mui/icons-material";
+
 interface IActionMenuProps {
   isAdmin: boolean;
 }
@@ -134,6 +137,25 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleSubmenuClose();
     handleCloseMenu();
   };
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+
+  const getTranslationKey = (actionItem: any) => {
+    const isImperial = unitType === UNIT_TYPE.IMPERIAL;
+
+    // Special keys for action 4 (UpdatePricePerUnit) when Imperial
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnit && isImperial) {
+      return "materialsActions." + "UpdateUnitPriceImperial";
+    }
+
+    // Special keys for action 6 (UpdatePricePerTonPercents) when Imperial
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnitPercents && isImperial) {
+      return "materialsActions." + "AddPercentToUnitPriceImperial";
+    }
+
+    // Default key
+    return "materialsActions." + actionItem.text;
+  };
 
   return (
     <>
@@ -189,11 +211,8 @@ const ActionMenu = (props: IActionMenuProps) => {
                     {_renderIcons(actionItem.icon)}
                   </div>
                   <div style={clasess.rowTextStyle}>
-                    {t("materialsActions." + actionItem.text)}
+                    {t(getTranslationKey(actionItem))}
                   </div>
-                  {/* {isRTL && actionItem.isShowSubMenu && (
-                    <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
-                  )} */}
                 </div>
               </MenuItem>
               {actionItem?.isUnderLine && <Divider />}
@@ -228,17 +247,22 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClickDelete={onUpdate}
         />
         :
-        <GoMakeModal
+        <GoMakeDialog
+          open={action !== null}
           onClose={handleCloseModal}
-          insideStyle={{ width: 500, height: "auto" }}
-          openModal={action !== null}
-          modalTitle={t("materialsActions." + action?.text)}
+          title={t("materialsActions." + action?.text)}
+          primaryButtonLabel={action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
+          cancelButtonLabel={t("materials.childTable.cancel")}
+          onPrimaryAction={onUpdate}
+          maxWidth="sm"
+          fullWidth
         >
           <Stack
             gap={3}
             alignItems={"center"}
             justifyContent={"center"}
             minWidth={"350px"}
+            paddingTop={"8px"}
           >
             {action?.action === EMaterialsActions.UpdateCurrency ? (
               <div style={clasess.UpdateCurrencyView}>
@@ -248,7 +272,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     <div style={{ marginBottom: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
                       {t("materials.childTable.supplier")}
                       <IconButton onClick={() => setOpenSupplierModal(true)} size="small">
-                        <AddPlusIcon />
+                        <AddIcon sx={{ color: "#f50057" }} />
                       </IconButton>
                     </div>
                     <ClientAutocomplete
@@ -320,11 +344,17 @@ const ActionMenu = (props: IActionMenuProps) => {
                   alignItems: "flex-start",
                   width: "100%",
                   gap: 10,
+                  overflowY: "scroll",
+                  maxHeight: 500,
+                  padding: 10,
+                  paddingTop: 0,
                 }}
+                className="custom-scrollbar"
               >
                 {properties?.map((item, index) => {
                   return (
                     <div
+                      key={index}
                       style={{
                         display: "flex",
                         flexDirection: "row",
@@ -357,8 +387,9 @@ const ActionMenu = (props: IActionMenuProps) => {
                             [],
                             [],
                             [item?.key]
-                          ).map((item) => (
+                          ).map((item, itemIndex) => (
                             <FormInput
+                              key={itemIndex}
                               input={item as IInput}
                               changeState={(e, v) =>
                                 handleChange(index, "values", v)
@@ -403,7 +434,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     <div style={{ marginBottom: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
                       {t("materials.childTable.supplier")}
                       <IconButton onClick={() => setOpenSupplierModal(true)} size="small">
-                        <AddPlusIcon />
+                        <AddIcon sx={{ color: "#f50057" }} />
                       </IconButton>
                     </div>
                     <ClientAutocomplete
@@ -422,11 +453,11 @@ const ActionMenu = (props: IActionMenuProps) => {
                 )}
 
                 <div style={{ width: "100%" }}>
-                  {action?.submenuOption !== undefined && (
+                  {/* {action?.submenuOption !== undefined && (
                     <div style={{ marginBottom: 8, fontWeight: 500 }}>
                       {t("products.profits.pricingListWidget.price")}
                     </div>
-                  )}
+                  )} */}
                   <GomakeTextInput
                     onChange={(e) => onTextInputChange(e.target.value)}
                     value={updatedValue}
@@ -441,18 +472,8 @@ const ActionMenu = (props: IActionMenuProps) => {
               </div>
 
             )}
-            <SecondaryButton
-              onClick={onUpdate}
-              sx={{ width: "100%" }}
-              variant={"contained"}
-            // disabled={
-            //   ((action?.submenuOption === 1 || action?.submenuOption === 2) && !selectedSupplier)
-            // }
-            >
-              {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
-            </SecondaryButton>
           </Stack>
-        </GoMakeModal>
+        </GoMakeDialog>
       }
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}

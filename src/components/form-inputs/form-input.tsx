@@ -21,10 +21,12 @@ import {
   materialsMachinesState,
   materialsParametersState,
 } from "@/widgets/materials-widget/state";
-import { productsForDropDownList } from "@/store";
+import { productsForDropDownList, userState } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
 import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
+import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits } from "@/utils/helpers";
 
 const FormInput = ({
   input,
@@ -35,8 +37,8 @@ const FormInput = ({
   loading,
   keyItem,
   hideLabel = false,
+  customStyles,
 }: IFormInput) => {
-  console.log("input", { input, error, changeState, readonly, checkWhatRenderArray, loading, keyItem, hideLabel });
   const [options, setOptions] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
   const { callApi } = useGomakeAxios();
@@ -233,9 +235,15 @@ const FormInput = ({
       });
     }
   }, [optionsUrl]);
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+  const convertedUnit =
+    unitType === UNIT_TYPE.IMPERIAL
+      ? convertTitleUnits(input.unit)
+      : input.unit;
 
   return (
-    <>
+    <div style={customStyles?.container}>
       {!input.disabled && (
         <div
           style={
@@ -258,10 +266,7 @@ const FormInput = ({
                 {input.unit && (
                   <small>
                     {`${t(
-                      `measurementUnits.${translateUnit && input.unit
-                        ? units[input.unit]?.imperialUnit
-                        : input.unit
-                      }`
+                      `measurementUnits.${convertedUnit}`
                     )}`}
                   </small>
                 )}
@@ -340,7 +345,7 @@ const FormInput = ({
                     ? keyItem
                     : `${input.value}-${selectedLabel}-${selectedOptions}`
                 }
-                style={{
+                style={customStyles?.select || {
                   minWidth: 180,
                   border: 0,
                   height: 40,
@@ -501,7 +506,7 @@ const FormInput = ({
                 onChange={handleSwitchCheck}
               />
             ) : input.type === "color" ? (
-              <div style={classes.fileInputStyle}>
+              <div style={customStyles?.colorInput || classes.fileInputStyle}>
                 <MuiColorInput
                   value={color}
                   onChange={handleChange}
@@ -509,19 +514,23 @@ const FormInput = ({
                 />
               </div>
             ) : input.type === "image" ? (
-              <ImageUploadComponent
-                onChange={(value) => changeState(input.parameterKey, value)}
-                value={selectedNameFile}
-              />
+              <div style={customStyles?.imageInput}>
+                <ImageUploadComponent
+                  onChange={(value) => changeState(input.parameterKey, value)}
+                  value={selectedNameFile}
+                />
+              </div>
             ) : input.type === "phone" ? (
-              <PhoneInputComponent
-                onChange={onChangePhoneNumber}
-                value={input.value}
-                placeholder={t(input.placeholder)}
-              />
+              <div style={customStyles?.phoneInput}>
+                <PhoneInputComponent
+                  onChange={onChangePhoneNumber}
+                  value={input.value}
+                  placeholder={t(input.placeholder)}
+                />
+              </div>
             ) : input.type === "password" ? (
               <GomakeTextInput
-                style={{ height: "40px", minWidth: 180 }}
+                style={customStyles?.textInput || { height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
                 error={
@@ -539,7 +548,7 @@ const FormInput = ({
               />
             ) : (
               <GomakeTextInput
-                style={{ height: "40px", minWidth: 180 }}
+                style={customStyles?.textInput || { height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
                 error={
@@ -555,7 +564,7 @@ const FormInput = ({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

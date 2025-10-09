@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, IconButton } from "@mui/material";
+import { Box, Tooltip, IconButton } from "@mui/material";
 
-import { GomakeTextInput, GomakePrimaryButton, GoMakeAutoComplate, } from "@/components";
+import { GomakeTextInput, GoMakeAutoComplate, GoMakeDialog } from "@/components";
 
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE, } from "@/pages/customers/enums";
@@ -47,116 +47,116 @@ const AddPurchasePricingModal = ({
             : purchasePricingTableHeadingUnits.inventoryUnit;
 
     return (
-        <Dialog
+        <GoMakeDialog
             open={isAddPurchasePricingModalOpen}
             onClose={handleCloseAddPurchasePricingModal}
+            title={t("materials.childTable.addPurchasePricing")}
+            primaryButtonLabel={t("materials.childTable.addPurchasePricing")}
+            cancelButtonLabel={t("materials.childTable.cancel")}
+            onPrimaryAction={() => handleAddPurchasePricing(null)}
             maxWidth="sm"
             fullWidth
         >
-            <DialogTitle sx={classes.dialogTitle}>{t("materials.childTable.addPurchasePricing")}</DialogTitle>
-            <DialogContent sx={classes.modalContent1}>
-                <Box sx={classes.modalContent}>
-                    <Box>
-                        <div style={classes.modalLabelText}>{t("materials.childTable.supplier")}
-                            <Tooltip title={t("materials.sheetPaper.addNewSupplier")}>
-                                <IconButton onClick={() => setOpenSupplierModal(true)}>
-                                    <AddIcon sx={{ color: "#f50057" }} />
-                                </IconButton>
-                            </Tooltip>
-                        </div>
-                        <ClientAutocomplete
-                            key={selectedSupplierForPricing?.id}
-                            clientType={CLIENT_TYPE.SUPPLIER}
-                            onChange={handleSupplierSelectForPricing}
-                            options={renderOptionsSupplier || []}
-                            placeholder={t("materials.childTable.selectSupplier")}
-                            style={{ width: '100%' }}
-                            value={selectedSupplierForPricing}
-                            onChangeTextField={checkWhatRenderArraySupplier}
-                            loading={isFetchingSupplier}
-                            getOptionLabel={(option: any) => `${option.name}`}
-                        />
-                    </Box>
-
-                    <div style={classes.modalInputContainer}>
-                        <div style={classes.modalInputContainerItem}>
-
-                            <GomakeTextInput
-                                labelText={`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
-                                value={formData?.purchasePrice}
-                                onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
-                                type="number"
-                                placeholder={t("materials.childTable.enterPurchaseRollPrice")}
-                                style={{
-                                    borderBottom: !formData?.purchasePrice ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
-                                    borderRadius: '4px',
-                                }}
-                            />
-                        </div>
-                        <div style={classes.modalInputContainerItem}>
-                            <GoMakeAutoComplate
-                                value={formData.currency.value || undefined}
-                                onChange={(e, value) => handleFormChange('currency', { value: value?.value, label: value?.label })}
-                                options={currencies}
-                                placeholder={t("materials.childTable.selectCurrency")}
-                                labelText={t("materials.childTable.purchaseCurrency")}
-                                style={{
-                                    borderBottom: !formData.currency.value ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
-                                    borderRadius: '4px',
-                                }}
-                            />
-                        </div>
+            <Box sx={classes.modalContent}>
+                <Box>
+                    <div style={classes.modalLabelText}>{t("materials.childTable.supplier")}
+                        <div style={{ color: "red" }}>*</div>
+                        <Tooltip title={t("materials.sheetPaper.addNewSupplier")}>
+                            <IconButton onClick={() => setOpenSupplierModal(true)}>
+                                <AddIcon sx={{ color: "#f50057" }} />
+                            </IconButton>
+                        </Tooltip>
                     </div>
-                    <div style={classes.modalInputContainer}>
-                        <div style={classes.modalInputContainerItem}>
-                            <GomakeTextInput
-                                labelText={`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
-                                value={formData.quantityInPackage}
-                                onChange={(e) => handleFormChange('quantityInPackage', e.target.value)}
-                                type="number"
-                                placeholder={t("materials.childTable.enterQuantity")}
-                                style={{
-                                    borderBottom: !formData?.quantityInPackage ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
-                                    borderRadius: '4px',
-                                }}
-                            />
-                        </div>
-                        <div style={classes.modalInputContainerItem}>
-                            <GomakeTextInput
-                                labelText={t("materials.childTable.supplementTimeWorkingDays")}
-                                value={formData.supplementTime}
-                                onChange={(e) => handleFormChange('supplementTime', e.target.value)}
-                                type="number"
-                                placeholder={t("materials.childTable.enterSupplementTime")}
-                                style={{
-                                    borderBottom: !formData?.supplementTime ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
-                                    borderRadius: '4px',
-                                }}
-                            />
-                        </div>
-                    </div>
-
-
-
+                    <ClientAutocomplete
+                        key={selectedSupplierForPricing?.id}
+                        clientType={CLIENT_TYPE.SUPPLIER}
+                        onChange={handleSupplierSelectForPricing}
+                        options={renderOptionsSupplier || []}
+                        placeholder={t("materials.childTable.selectSupplier")}
+                        style={{ width: '100%' }}
+                        value={selectedSupplierForPricing}
+                        onChangeTextField={checkWhatRenderArraySupplier}
+                        loading={isFetchingSupplier}
+                        getOptionLabel={(option: any) => `${option.name}`}
+                        customStyle={{
+                            borderBottom: "none",
+                            borderRadius: '4px',
+                        }}
+                    />
                 </Box>
-            </DialogContent>
-            <DialogActions sx={classes.modalActions}>
-                <div style={classes.modalActionsContainer}>
-                    <GomakePrimaryButton
-                        onClick={handleCloseAddPurchasePricingModal}
-                        style={classes.modalCancelButton}
-                    >
-                        {t("materials.childTable.cancel")}
-                    </GomakePrimaryButton>
-                    <GomakePrimaryButton
-                        onClick={() => handleAddPurchasePricing(null)}
-                        style={classes.modalSubmitButton}
-                    >
-                        {t("materials.childTable.addPurchasePricing")}
-                    </GomakePrimaryButton>
+
+                <div style={classes.modalInputContainer}>
+                    <div style={classes.modalInputContainerItem}>
+                        <div style={classes.modalLabelText2}>
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
+                            <div style={{ color: "red" }}>*</div>
+                        </div>
+                        <GomakeTextInput
+                            value={formData?.purchasePrice}
+                            onChange={(e) => handleFormChange('purchasePrice', e.target.value)}
+                            type="number"
+                            placeholder={t("materials.childTable.enterPurchaseRollPrice")}
+                            style={{
+                                borderBottom: "none",
+                                borderRadius: '4px',
+                            }}
+                        />
+                    </div>
+                    <div style={classes.modalInputContainerItem}>
+                        <div style={classes.modalLabelText2}>
+                            {t("materials.childTable.purchaseCurrency")}
+                            <div style={{ color: "red" }}>*</div>
+                        </div>
+                        <GoMakeAutoComplate
+                            value={formData.currency.value || undefined}
+                            onChange={(e, value) => handleFormChange('currency', { value: value?.value, label: value?.label })}
+                            options={currencies}
+                            placeholder={t("materials.childTable.selectCurrency")}
+                            style={{
+                                borderBottom: "none",
+                                borderRadius: '4px',
+                            }}
+                        />
+                    </div>
                 </div>
-            </DialogActions>
-        </Dialog>
+                <div style={classes.modalInputContainer}>
+                    <div style={classes.modalInputContainerItem}>
+                        <div style={classes.modalLabelText2}>
+                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
+                            <div style={{ color: "red" }}>*</div>
+                        </div>
+                        <GomakeTextInput
+                            value={formData.quantityInPackage}
+                            onChange={(e) => handleFormChange('quantityInPackage', e.target.value)}
+                            type="number"
+                            placeholder={t("materials.childTable.enterQuantity")}
+                            style={{
+                                borderBottom: "none",
+                                borderRadius: '4px',
+                            }}
+                        />
+                    </div>
+                    <div style={classes.modalInputContainerItem}>
+                        <div style={classes.modalLabelText2}>
+                            {t("materials.childTable.supplementTimeWorkingDays")}
+                        </div>
+                        <GomakeTextInput
+                            value={formData.supplementTime}
+                            onChange={(e) => handleFormChange('supplementTime', e.target.value)}
+                            type="number"
+                            placeholder={t("materials.childTable.enterSupplementTime")}
+                            style={{
+                                borderBottom: "none",
+                                borderRadius: '4px',
+                            }}
+                        />
+                    </div>
+                </div>
+
+
+
+            </Box>
+        </GoMakeDialog>
     );
 };
 

@@ -23,6 +23,10 @@ const useInputUnit = () => {
             imperialRatio: 39.37007874,
             imperialUnit: EMeasurementUnits.INCH
         },
+        [EMeasurementUnits.M]: {
+            imperialRatio: 39.37007874,
+            imperialUnit: EMeasurementUnits.INCH
+        },
         [EMeasurementUnits.GRAM]: {
             imperialRatio: 0.00220462,
             imperialUnit: EMeasurementUnits.LB
@@ -170,6 +174,14 @@ const useInputUnit = () => {
         [EMeasurementUnits.PROFILE_PER_HOUR]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.PROFILE_PER_HOUR
+        },
+        [EMeasurementUnits.UNITS]: {
+            imperialRatio: 1,
+            imperialUnit: EMeasurementUnits.UNITS
+        },
+        [EMeasurementUnits.GSM]: {
+            imperialRatio: 1,
+            imperialUnit: EMeasurementUnits.GSM
         }
     };
 

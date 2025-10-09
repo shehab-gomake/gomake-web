@@ -4,6 +4,7 @@ export enum EMeasurementUnits {
     UM = 'um',
     GRAM = 'gram',
     METER = 'meter',
+    M = 'm',
     KG = 'kg',
     PPM = 'ppm',
     PERCENTAGE = 'percentage',
@@ -49,5 +50,7 @@ export enum EMeasurementUnits {
     SQUARE_FEET = 'squareFeet',
     LB = 'lb',
     PT = 'pt',
+    UNITS = 'units',
+    GSM = 'gsm',
 
 }
