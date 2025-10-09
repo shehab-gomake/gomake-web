@@ -117,7 +117,8 @@ const useStyle = () => {
         padding: '4px',
         backgroundColor: '#EBECFF',
          width: 'fit-content',
-        minWidth: 'fit-content',  
+        minWidth: 'fit-content',
+        textTransform: 'capitalize',
       },
       
       headerCellText:{
@@ -135,6 +136,7 @@ const useStyle = () => {
         zIndex: 105,
         width: 'fit-content',
         minWidth: 'fit-content',
+        textTransform: 'capitalize',
       },
       headerCellStickyLast: {
         textAlign: 'center',
@@ -147,6 +149,7 @@ const useStyle = () => {
         zIndex: 105,
         width: 'fit-content',
         minWidth: 'fit-content',
+        textTransform: 'capitalize',
       },
 
       // Body row styles

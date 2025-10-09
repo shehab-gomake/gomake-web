@@ -431,7 +431,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.purchasePrice?.["price Unit / ton"]?.value || []}
+                                                                value={row.purchasePrice?.[convertedPricingUnit]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -455,7 +455,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.salePrice?.["price Unit / ton"]?.value || []}
+                                                                value={row.salePrice?.[convertedPricingUnit]?.value || []}
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
@@ -679,8 +679,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                             <TableCell sx={classes.bodyCell}>
                                                                 <TableCellData
                                                                     value={[
-                                                                        row.purchasePrice?.["price Unit / ton"]?.value?.[0] || '',
-                                                                        row.purchasePrice?.["price Unit / ton"]?.value?.[1] || ''
+                                                                        row.purchasePrice?.[convertedPricingUnit]?.value?.[0] || '',
+                                                                        row.purchasePrice?.[convertedPricingUnit]?.value?.[1] || ''
                                                                     ]}
                                                                     isEditable={true}
                                                                     type={3}

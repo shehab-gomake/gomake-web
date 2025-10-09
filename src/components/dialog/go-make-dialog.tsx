@@ -172,7 +172,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
                                             // disabled={primaryButtonDisabled || primaryButtonLoading}
                                             >
                                                 <div style={classes.primaryButtonContainer}>
-                                                    <div >
+                                                    {primaryButtonIcon || primaryButtonLoading && <div >
                                                         {
                                                             primaryButtonLoading ? (
                                                                 <CircularProgress size={16} color="inherit" />
@@ -180,7 +180,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
                                                                 primaryButtonIcon
                                                             )
                                                         }
-                                                    </div>
+                                                    </div>}
                                                     <div>
                                                         {primaryButtonLoading ? t("common.loading") || "Loading..." : primaryLabel}
                                                     </div>
