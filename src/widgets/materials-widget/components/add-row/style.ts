@@ -4,7 +4,7 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: "35%",
+        width: 440,
         height: "fit-content",
         padding: 20,
       },

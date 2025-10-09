@@ -37,6 +37,7 @@ const FormInput = ({
   loading,
   keyItem,
   hideLabel = false,
+  customStyles,
 }: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -242,7 +243,7 @@ const FormInput = ({
       : input.unit;
 
   return (
-    <>
+    <div style={customStyles?.container}>
       {!input.disabled && (
         <div
           style={
@@ -344,7 +345,7 @@ const FormInput = ({
                     ? keyItem
                     : `${input.value}-${selectedLabel}-${selectedOptions}`
                 }
-                style={{
+                style={customStyles?.select || {
                   minWidth: 180,
                   border: 0,
                   height: 40,
@@ -505,7 +506,7 @@ const FormInput = ({
                 onChange={handleSwitchCheck}
               />
             ) : input.type === "color" ? (
-              <div style={classes.fileInputStyle}>
+              <div style={customStyles?.colorInput || classes.fileInputStyle}>
                 <MuiColorInput
                   value={color}
                   onChange={handleChange}
@@ -513,19 +514,23 @@ const FormInput = ({
                 />
               </div>
             ) : input.type === "image" ? (
-              <ImageUploadComponent
-                onChange={(value) => changeState(input.parameterKey, value)}
-                value={selectedNameFile}
-              />
+              <div style={customStyles?.imageInput}>
+                <ImageUploadComponent
+                  onChange={(value) => changeState(input.parameterKey, value)}
+                  value={selectedNameFile}
+                />
+              </div>
             ) : input.type === "phone" ? (
-              <PhoneInputComponent
-                onChange={onChangePhoneNumber}
-                value={input.value}
-                placeholder={t(input.placeholder)}
-              />
+              <div style={customStyles?.phoneInput}>
+                <PhoneInputComponent
+                  onChange={onChangePhoneNumber}
+                  value={input.value}
+                  placeholder={t(input.placeholder)}
+                />
+              </div>
             ) : input.type === "password" ? (
               <GomakeTextInput
-                style={{ height: "40px", minWidth: 180 }}
+                style={customStyles?.textInput || { height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
                 error={
@@ -543,7 +548,7 @@ const FormInput = ({
               />
             ) : (
               <GomakeTextInput
-                style={{ height: "40px", minWidth: 180 }}
+                style={customStyles?.textInput || { height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
                 error={
@@ -559,7 +564,7 @@ const FormInput = ({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

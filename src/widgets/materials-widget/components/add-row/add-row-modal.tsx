@@ -131,7 +131,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
       }}
       modalTitle={t("materials.buttons.addNewRow")}
     >
-      <Stack display={"flex"} direction={"column"} marginTop={"10px"} gap={"10px"}>
+      <Stack display={"flex"} direction={"column"} marginTop={"10px"}>
         <Stack style={classes.inputsDivStyle} className="custom-scrollbar">
           {rowInputs(
             rowData,
@@ -150,7 +150,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
             const shouldMakeFullWidth = isNextItemPriceObject && (index + 1) % 2 !== 0;
 
             return (
-              <Stack width={shouldMakeFullWidth ? "100%" : "45%"} key={`input-${index}`}>
+              <Stack width={shouldMakeFullWidth ? "100%" : "48%"} key={`input-${index}`}>
                 <FormInput
                   input={item as IInput}
                   changeState={onChangeInputs}
@@ -159,6 +159,12 @@ const AddRowModal = (props: IAddRowModalProps) => {
                   checkWhatRenderArray={checkWhatRenderArray}
                   loading={item?.loading || false}
                   keyItem={"item"}
+                  customStyles={{
+                    container: {
+                      maxWidth: 180,
+                    },
+
+                  }}
                 />
               </Stack>
             );
