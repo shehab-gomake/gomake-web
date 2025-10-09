@@ -21,10 +21,12 @@ import {
   materialsMachinesState,
   materialsParametersState,
 } from "@/widgets/materials-widget/state";
-import { productsForDropDownList } from "@/store";
+import { productsForDropDownList, userState } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
 import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
+import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits } from "@/utils/helpers";
 
 const FormInput = ({
   input,
@@ -36,7 +38,6 @@ const FormInput = ({
   keyItem,
   hideLabel = false,
 }: IFormInput) => {
-  console.log("input", { input, error, changeState, readonly, checkWhatRenderArray, loading, keyItem, hideLabel });
   const [options, setOptions] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
   const { callApi } = useGomakeAxios();
@@ -233,6 +234,12 @@ const FormInput = ({
       });
     }
   }, [optionsUrl]);
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+  const convertedUnit =
+    unitType === UNIT_TYPE.IMPERIAL
+      ? convertTitleUnits(input.unit)
+      : input.unit;
 
   return (
     <>
@@ -258,10 +265,7 @@ const FormInput = ({
                 {input.unit && (
                   <small>
                     {`${t(
-                      `measurementUnits.${translateUnit && input.unit
-                        ? units[input.unit]?.imperialUnit
-                        : input.unit
-                      }`
+                      `measurementUnits.${convertedUnit}`
                     )}`}
                   </small>
                 )}
