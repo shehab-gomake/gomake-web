@@ -43,7 +43,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
-    const { alertFaultAdded, alertFault } = useSnackBar();
+    const { alertFaultAdded, alertFault, alertRequiredFields } = useSnackBar();
     const openChildTable = useRecoilValue(openChildTableState);
     const isLoadingInventory = useRecoilValue(isLoadingInventoryState);
     const isLoadingPurchasePricing = useRecoilValue(isLoadingPurchasePricingState);
@@ -784,6 +784,29 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const handleAddPurchasePricing = async (existingSupplierAction?: ExistingSupplierActionEnum) => {
         try {
+            // Validate required fields (only if not handling existing supplier action)
+            if (existingSupplierAction === null || existingSupplierAction === undefined) {
+                if (!selectedSupplierForPricing?.id && !formData.supplierId) {
+                    alertRequiredFields();
+                    return;
+                }
+
+                if (formData?.purchasePrice === null || formData?.purchasePrice === undefined || formData?.purchasePrice === '' || parseFloat(formData?.purchasePrice) < 0) {
+                    alertRequiredFields();
+                    return;
+                }
+
+                if (!formData?.currency?.value) {
+                    alertRequiredFields();
+                    return;
+                }
+
+                if (formData?.quantityInPackage === null || formData?.quantityInPackage === undefined || formData?.quantityInPackage === '' || parseInt(formData?.quantityInPackage) < 0) {
+                    alertRequiredFields();
+                    return;
+                }
+            }
+
             const requestBody = {
                 printHouseMaterialId: rowId,
                 supplierId: selectedSupplierForPricing?.id || formData.supplierId,
@@ -914,6 +937,37 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
 
     const handleAddInventory = async () => {
         try {
+            // Validate required fields
+            if (!inventoryFormData?.supplierId) {
+                alertRequiredFields();
+                return;
+            }
+
+            if (!inventoryFormData?.quantity) {
+                alertRequiredFields();
+                return;
+            }
+
+            if (inventoryFormData?.purchasePrice === null || inventoryFormData?.purchasePrice === undefined || inventoryFormData?.purchasePrice === '' || inventoryFormData?.purchasePrice < 0) {
+                alertRequiredFields();
+                return;
+            }
+
+            if (!inventoryFormData?.purchaseCurrency?.value) {
+                alertRequiredFields();
+                return;
+            }
+
+            if (inventoryFormData?.salePrice === null || inventoryFormData?.salePrice === undefined || inventoryFormData?.salePrice === '' || inventoryFormData?.salePrice < 0) {
+                alertRequiredFields();
+                return;
+            }
+
+            if (!inventoryFormData?.saleCurrency?.value) {
+                alertRequiredFields();
+                return;
+            }
+
             const inventoryData = {
                 printHouseMaterialId: rowId,
                 supplierId: inventoryFormData?.supplierId,

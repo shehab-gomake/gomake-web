@@ -316,7 +316,18 @@ const useStyle = () => {
         padding:"8px 16px",
       },
       modalLabelText: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
         marginBottom: '8px',
+        fontSize: '14px',
+        fontWeight: 600,
+        color: '#000'
+      },
+      modalLabelText2: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
         fontSize: '14px',
         fontWeight: 600,
         color: '#000'
