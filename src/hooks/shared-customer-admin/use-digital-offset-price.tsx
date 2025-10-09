@@ -4,6 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { createOrderFolders } from "@/utils/order-folder-utils";
 import {
   getAndSetChatBotProductId,
   getAndSetProductById,
@@ -147,6 +151,8 @@ const useDigitalOffsetPrice = ({
   const { secondColor } = useGomakeTheme();
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
+  const [companyProfile] = useRecoilState(printHouseProfile);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false);
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
@@ -527,7 +533,7 @@ const useDigitalOffsetPrice = ({
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${
       productId || (router?.query?.productId ?? productItemCalculationException)
     }&ignoreCalculatedWorkflows=${
-        ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
+      ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
     }`;
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
@@ -2925,7 +2931,7 @@ const useDigitalOffsetPrice = ({
     if (connectionId && !currentSignalRConnectionId) {
       clearStates();
       setCurrentSignalRConnectionId(connectionId);
-      
+
       if (
         widgetType === EWidgetProductType.EDIT ||
         widgetType === EWidgetProductType.DUPLICATE
@@ -2969,7 +2975,7 @@ const useDigitalOffsetPrice = ({
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
-  const clearStates = ()=>{
+  const clearStates = () => {
     setCurrentProductItemValueTotalPrice(null);
     setSliderCurrentProductItemValueTotalPrice(null);
     setLocalStateValue(null);
@@ -3038,7 +3044,7 @@ const useDigitalOffsetPrice = ({
     setBillingMethod(null);
     setGraphicDesigner(null);
     setIncludeVAT(null);
-  }
+  };
   const getGraphicsTypeValue = (billingMethod?: GraphicsTypesParam) => {
     if (billingMethod && billingMethod === GraphicsTypesParam.PriceHour) {
       return billingMethodValues.find((item) => item.value === "workingHours");
@@ -7264,7 +7270,7 @@ const useDigitalOffsetPrice = ({
 
   // Add socket event listeners for sessionId-based events
   useEffect(() => {
-   /* if (sessionId) {
+    /* if (sessionId) {
       const socket = io(config.api_server);
       // Listen for parameters result
       socket.on(`${sessionId}-parameters-result`, () => {
@@ -7282,66 +7288,66 @@ const useDigitalOffsetPrice = ({
 
   const getProductById = async (materials) => {
     setIsMigratedFromOldSystem(false);
-    if(sessionId){
+    if (sessionId) {
       getAndSetChatBotProductId(
-          callApi,
-          (res) => {
-            const updatedTemplate = updateIsHidden(res, subProducts);
-            setDefaultProductTemplate(updatedTemplate);
-            initQuoteItemProduct(updatedTemplate, materials);
-            setdocumentItemByEdit(res?.docmentItem);
-            setCalculationResult({ ...calculationResult, tabs: res?.tabs });
-            setProductItemValueByEdit(res?.productItemValue);
-            setValuesState(res?.productItemValue?.workTypes);
-            setWorkTypes(res?.productItemValue?.workTypes);
-            setMissionsListForEdit(res?.missions);
-            setCalculatedPriceProductItemValue(res?.calculatedPrice);
-            const itemParameters =
-                res?.data?.productItemValue?.itemParmetersValues || [];
-            if (itemParameters && itemParameters?.length > 0) {
-              const allEmpty = itemParameters.every(
-                  (item) => !item.subProductType || item.subProductType === ""
+        callApi,
+        (res) => {
+          const updatedTemplate = updateIsHidden(res, subProducts);
+          setDefaultProductTemplate(updatedTemplate);
+          initQuoteItemProduct(updatedTemplate, materials);
+          setdocumentItemByEdit(res?.docmentItem);
+          setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+          setProductItemValueByEdit(res?.productItemValue);
+          setValuesState(res?.productItemValue?.workTypes);
+          setWorkTypes(res?.productItemValue?.workTypes);
+          setMissionsListForEdit(res?.missions);
+          setCalculatedPriceProductItemValue(res?.calculatedPrice);
+          const itemParameters =
+            res?.data?.productItemValue?.itemParmetersValues || [];
+          if (itemParameters && itemParameters?.length > 0) {
+            const allEmpty = itemParameters.every(
+              (item) => !item.subProductType || item.subProductType === ""
+            );
+
+            if (allEmpty) {
+              setSubProductsCopy([
+                {
+                  parameters: itemParameters,
+                  type: null,
+                },
+              ]);
+            } else {
+              // Group by subProductType
+              const groupedByType = itemParameters.reduce((acc, item) => {
+                const type = item.subProductType || "";
+                if (!acc[type]) {
+                  acc[type] = [];
+                }
+                acc[type].push(item);
+                return acc;
+              }, {});
+
+              // Convert to array format
+              const formattedGroups = Object.entries(groupedByType).map(
+                ([type, parameters]) => ({
+                  type: type || null,
+                  parameters,
+                })
               );
 
-              if (allEmpty) {
-                setSubProductsCopy([
-                  {
-                    parameters: itemParameters,
-                    type: null,
-                  },
-                ]);
-              } else {
-                // Group by subProductType
-                const groupedByType = itemParameters.reduce((acc, item) => {
-                  const type = item.subProductType || "";
-                  if (!acc[type]) {
-                    acc[type] = [];
-                  }
-                  acc[type].push(item);
-                  return acc;
-                }, {});
-
-                // Convert to array format
-                const formattedGroups = Object.entries(groupedByType).map(
-                    ([type, parameters]) => ({
-                      type: type || null,
-                      parameters,
-                    })
-                );
-
-                setSubProductsCopy(formattedGroups);
-              }
+              setSubProductsCopy(formattedGroups);
             }
-            let checkParameter = validateParameters(subProducts);
-            if (checkParameter) {
-              setCanCalculation(true);
-            } else {
-              setCanCalculation(false);
-            }
-          },
-          {
-            Id: sessionId,
           }
+          let checkParameter = validateParameters(subProducts);
+          if (checkParameter) {
+            setCanCalculation(true);
+          } else {
+            setCanCalculation(false);
+          }
+        },
+        {
+          Id: sessionId,
+        }
       );
       return;
     }
@@ -7364,8 +7370,7 @@ const useDigitalOffsetPrice = ({
           quantity: router?.query?.quantity,
         }
       );
-    } 
-    else {
+    } else {
       await getAndSetProductById(
         callApi,
         (data) => {
@@ -8015,8 +8020,22 @@ const useDigitalOffsetPrice = ({
     setLoadingWithLockScreen(true);
     const docType = router?.query?.documentType ?? "0";
     const duplicateType = router?.query?.duplicateType;
-    const callBack = (res) => {
+    const callBack = async (res) => {
       if (res?.success) {
+        // Create order folders if this is an order creation and preference is enabled
+        const documentId = router?.query?.documentId.toString();
+        if (
+          Number(docType) === DOCUMENT_TYPE.order &&
+          duplicateType !== "1" &&
+          duplicateType !== "2" &&
+          documentId &&
+          CheckPreferenceValue(
+            EPreferences.INITIALIZE_ORDER_FOLDERS_AFTER_CREATION
+          )
+        ) {
+          await createOrderFolders(callApi, documentId, companyProfile);
+        }
+
         docType === "0" || duplicateType === "1" || duplicateType === "2"
           ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
@@ -8040,9 +8059,22 @@ const useDigitalOffsetPrice = ({
 
     if (workflowValidation.isValid) {
       // If workflows are valid, proceed with the update
-      const callBack = (res) => {
+      const callBack = async (res) => {
         if (res?.success) {
           const isCreation = res?.data;
+          const documentId = router?.query?.documentId.toString();
+          // Create order folders if this is an order creation and preference is enabled
+          if (
+            Number(router.query.documentType) === DOCUMENT_TYPE.order &&
+            isCreation &&
+            documentId &&
+            CheckPreferenceValue(
+              EPreferences.INITIALIZE_ORDER_FOLDERS_AFTER_CREATION
+            )
+          ) {
+            await createOrderFolders(callApi, documentId, companyProfile);
+          }
+
           Number(router.query.documentType) == DOCUMENT_TYPE.quote
             ? isCreation
               ? navigate("/quote")
