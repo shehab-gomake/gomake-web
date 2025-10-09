@@ -14,10 +14,12 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
 export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketView = 'my-tickets' | 'past-due' | 'high-priority' | 'unassigned' | 'all-tickets';
+export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done';
 
 interface NavigationSidebarProps {
   selectedChannel: Channel;
@@ -34,11 +36,12 @@ interface NavigationSidebarProps {
   };
   ticketCounts?: {
     'my-tickets'?: number;
-    'past-due'?: number;
-    'high-priority'?: number;
     'unassigned'?: number;
     'all-tickets'?: number;
+    'done'?: number;
   };
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
   className?: string;
 }
 
@@ -121,6 +124,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   onTicketViewSelect,
   channelBadges = {},
   ticketCounts = {},
+  isCollapsed = false,
+  onToggleCollapse,
   className
 }) => {
   const theme = useTheme();
@@ -136,10 +141,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
   const ticketViewItems = [
     { id: 'my-tickets' as TicketView, icon: <InboxIcon fontSize="small" />, label: 'My Tickets' },
-    { id: 'past-due' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Past Due' },
-    { id: 'high-priority' as TicketView, icon: <PriorityHighIcon fontSize="small" />, label: 'High Priority' },
     { id: 'unassigned' as TicketView, icon: <PersonOutlineIcon fontSize="small" />, label: 'Unassigned' },
-    { id: 'all-tickets' as TicketView, icon: <ViewListIcon fontSize="small" />, label: 'All Tickets' }
+    { id: 'all-tickets' as TicketView, icon: <ViewListIcon fontSize="small" />, label: 'All Tickets' },
+    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' }
   ];
 
   const systemItems = [
@@ -155,83 +159,135 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         height: '100%',
         backgroundColor: theme.palette.background.paper,
         paddingTop: '64px',
-        width: 220,
-        minWidth: 220
+        width: isCollapsed ? 64 : 220,
+        minWidth: isCollapsed ? 64 : 220,
+        transition: 'width 0.3s ease-in-out'
       }}
     >
-      {/* Ticket Views Section */}
-      <Box sx={{ py: 1 }}>
+      {/* Toggle Collapse Button - Top */}
+      {onToggleCollapse && (
         <Box
           sx={{
+            p: 1,
+            borderBottom: `1px solid ${theme.palette.divider}`,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            px: 2,
-            py: 1,
-            cursor: 'pointer',
-            '&:hover': { backgroundColor: theme.palette.action.hover }
+            justifyContent: 'flex-end'
           }}
-          onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
         >
-          <Typography
-            variant="caption"
-            sx={{
-              color: theme.palette.text.secondary,
-              fontWeight: 600,
-              fontSize: '0.688rem',
-              textTransform: 'uppercase',
-              letterSpacing: 0.5
-            }}
-          >
-            TICKET VIEWS
-          </Typography>
-          {ticketViewsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          <Tooltip title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"} placement="right">
+            <IconButton
+              onClick={onToggleCollapse}
+              size="small"
+              sx={{
+                color: theme.palette.text.secondary,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                  color: theme.palette.primary.main
+                }
+              }}
+            >
+              {isCollapsed ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />}
+            </IconButton>
+          </Tooltip>
         </Box>
-        <Collapse in={ticketViewsExpanded}>
+      )}
+
+      {/* Ticket Views Section */}
+      <Box sx={{ py: 1 }}>
+        {!isCollapsed && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1,
+              cursor: 'pointer',
+              '&:hover': { backgroundColor: theme.palette.action.hover }
+            }}
+            onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontWeight: 600,
+                fontSize: '0.688rem',
+                textTransform: 'uppercase',
+                letterSpacing: 0.5
+              }}
+            >
+              TICKET VIEWS
+            </Typography>
+            {ticketViewsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          </Box>
+        )}
+        <Collapse in={isCollapsed || ticketViewsExpanded}>
           <List disablePadding>
             {ticketViewItems.map(item => (
-              <ListItemButton
-                key={item.id}
-                selected={selectedTicketView === item.id}
-                onClick={() => onTicketViewSelect?.(item.id)}
-                sx={{
-                  py: 1,
-                  px: 2,
-                  '&.Mui-selected': {
-                    backgroundColor: theme.palette.primary.main + '10',
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.main + '20'
+              <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+                <ListItemButton
+                  selected={selectedTicketView === item.id}
+                  onClick={() => onTicketViewSelect?.(item.id)}
+                  sx={{
+                    py: 1,
+                    px: isCollapsed ? 1.5 : 2,
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    '&.Mui-selected': {
+                      backgroundColor: theme.palette.primary.main + '10',
+                      borderLeft: `3px solid ${theme.palette.primary.main}`,
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.main + '20'
+                      }
                     }
-                  }
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
-                  <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      variant: 'body2',
-                      sx: { fontSize: '0.875rem', fontWeight: selectedTicketView === item.id ? 600 : 400 }
-                    }}
-                  />
-                  {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
+                  }}
+                >
+                  {isCollapsed ? (
                     <Badge
-                      badgeContent={ticketCounts[item.id]}
+                      badgeContent={ticketCounts[item.id] || 0}
                       color="default"
                       sx={{
                         '& .MuiBadge-badge': {
-                          fontSize: '0.688rem',
-                          height: 18,
-                          minWidth: 18,
+                          fontSize: '0.625rem',
+                          height: 16,
+                          minWidth: 16,
                           backgroundColor: theme.palette.grey[200],
                           color: theme.palette.text.primary
                         }
                       }}
-                    />
+                      invisible={!ticketCounts[item.id] || ticketCounts[item.id]! <= 0}
+                    >
+                      <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>{item.icon}</Box>
+                    </Badge>
+                  ) : (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                      <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
+                      <ListItemText
+                        primary={item.label}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          sx: { fontSize: '0.875rem', fontWeight: selectedTicketView === item.id ? 600 : 400 }
+                        }}
+                      />
+                      {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
+                        <Badge
+                          badgeContent={ticketCounts[item.id]}
+                          color="default"
+                          sx={{
+                            '& .MuiBadge-badge': {
+                              fontSize: '0.688rem',
+                              height: 18,
+                              minWidth: 18,
+                              backgroundColor: theme.palette.grey[200],
+                              color: theme.palette.text.primary
+                            }
+                          }}
+                        />
+                      )}
+                    </Box>
                   )}
-                </Box>
-              </ListItemButton>
+                </ListItemButton>
+              </Tooltip>
             ))}
           </List>
         </Collapse>
@@ -241,78 +297,99 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Live Chats Section */}
       <Box sx={{ py: 1 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            px: 2,
-            py: 1,
-            cursor: 'pointer',
-            '&:hover': { backgroundColor: theme.palette.action.hover }
-          }}
-          onClick={() => setChatsExpanded(!chatsExpanded)}
-        >
-          <Typography
-            variant="caption"
+        {!isCollapsed && (
+          <Box
             sx={{
-              color: theme.palette.text.secondary,
-              fontWeight: 600,
-              fontSize: '0.688rem',
-              textTransform: 'uppercase',
-              letterSpacing: 0.5
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1,
+              cursor: 'pointer',
+              '&:hover': { backgroundColor: theme.palette.action.hover }
             }}
+            onClick={() => setChatsExpanded(!chatsExpanded)}
           >
-            LIVE CHATS
-          </Typography>
-          {chatsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-        </Box>
-        <Collapse in={chatsExpanded}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontWeight: 600,
+                fontSize: '0.688rem',
+                textTransform: 'uppercase',
+                letterSpacing: 0.5
+              }}
+            >
+              LIVE CHATS
+            </Typography>
+            {chatsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          </Box>
+        )}
+        <Collapse in={isCollapsed || chatsExpanded}>
           <List disablePadding>
             {channelItems.map(item => (
-              <ListItemButton
-                key={item.id}
-                selected={selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView}
-                onClick={() => {
-                  onSectionSelect('inbox');
-                  onChannelSelect(item.id);
-                }}
-                sx={{
-                  py: 1,
-                  px: 2,
-                  '&.Mui-selected': {
-                    backgroundColor: theme.palette.primary.main + '10',
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.main + '20'
+              <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+                <ListItemButton
+                  selected={selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView}
+                  onClick={() => {
+                    onSectionSelect('inbox');
+                    onChannelSelect(item.id);
+                  }}
+                  sx={{
+                    py: 1,
+                    px: isCollapsed ? 1.5 : 2,
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    '&.Mui-selected': {
+                      backgroundColor: theme.palette.primary.main + '10',
+                      borderLeft: `3px solid ${theme.palette.primary.main}`,
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.main + '20'
+                      }
                     }
-                  }
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
-                  <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      variant: 'body2',
-                      sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView ? 600 : 400 }
-                    }}
-                  />
-                  {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
+                  }}
+                >
+                  {isCollapsed ? (
                     <Badge
-                      badgeContent={channelBadges[item.id]}
+                      badgeContent={channelBadges[item.id] || 0}
                       color="error"
                       sx={{
                         '& .MuiBadge-badge': {
-                          fontSize: '0.688rem',
-                          height: 18,
-                          minWidth: 18
+                          fontSize: '0.625rem',
+                          height: 16,
+                          minWidth: 16
                         }
                       }}
-                    />
+                      invisible={!channelBadges[item.id] || channelBadges[item.id]! <= 0}
+                    >
+                      <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>{item.icon}</Box>
+                    </Badge>
+                  ) : (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                      <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
+                      <ListItemText
+                        primary={item.label}
+                        primaryTypographyProps={{
+                          variant: 'body2',
+                          sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView ? 600 : 400 }
+                        }}
+                      />
+                      {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
+                        <Badge
+                          badgeContent={channelBadges[item.id]}
+                          color="error"
+                          sx={{
+                            '& .MuiBadge-badge': {
+                              fontSize: '0.688rem',
+                              height: 18,
+                              minWidth: 18
+                            }
+                          }}
+                        />
+                      )}
+                    </Box>
                   )}
-                </Box>
-              </ListItemButton>
+                </ListItemButton>
+              </Tooltip>
             ))}
           </List>
         </Collapse>

@@ -52,10 +52,25 @@ export const navigationIndexAtom = atom<number>({
 
 /**
  * Sidebar collapsed state
+ * Automatically persisted to localStorage
  */
 export const sidebarCollapsedAtom = atom<boolean>({
   key: 'frontdesk.sidebarCollapsed',
-  default: false
+  default: false,
+  effects_UNSTABLE: [
+    ({ setSelf, onSet }) => {
+      // Load saved state from localStorage on initialization
+      const saved = localStorage.getItem('frontdesk.sidebarCollapsed');
+      if (saved !== null) {
+        setSelf(saved === 'true');
+      }
+
+      // Persist changes to localStorage automatically
+      onSet((newValue) => {
+        localStorage.setItem('frontdesk.sidebarCollapsed', String(newValue));
+      });
+    },
+  ],
 });
 
 /**

@@ -75,7 +75,13 @@ export interface Ticket {
   reopenedAt?: string | null;
   reopenCount: number;
   mergedIntoId?: string | null;
-  // Origin tracking
+  /**
+   * Origin tracking - REQUIRED field
+   *
+   * Conversations are now channel-specific (EMAIL, WHATSAPP, SMS).
+   * Each customer can have multiple tickets across different channels.
+   * This field links the ticket to its originating channel.
+   */
   originProviderChannelId: string;
   // Creator and assignment tracking
   createdBy: string; // User ID who created the ticket
@@ -111,7 +117,16 @@ export interface TicketWithDetails extends Ticket {
     name: string;
     priority: TicketPriority;
   } | null;
-  // Origin provider channel details
+  /**
+   * Origin provider channel details - ALWAYS populated
+   *
+   * Conversations are channel-isolated: email messages stay separate from WhatsApp.
+   * Reply endpoint uses this channel automatically (no need to specify).
+   *
+   * - type: Channel type (EMAIL, WHATSAPP, SMS, PUSH)
+   * - identifier: Email address or phone number
+   * - name: Human-readable channel name
+   */
   originProviderChannel: {
     id: string;
     type: ChannelType;
@@ -190,6 +205,7 @@ export interface TicketFilters {
   createdBy?: string; // Filter by ticket creator
   customerEmail?: string;
   customerPhone?: string;
+  providerChannel?: ChannelType; // Filter by channel type (EMAIL, WHATSAPP, SMS)
   tags?: string[];
   page?: number; // default 1, min 1
   limit?: number; // default 20, max 100
@@ -332,6 +348,13 @@ export interface RelatedTicket {
   customerEmail?: string | null;
   customerPhone?: string | null;
   createdAt: string;
+  // Channel information for multi-channel customer support
+  originProviderChannel?: {
+    id: string;
+    type: ChannelType;
+    identifier: string;
+    name: string;
+  };
 }
 
 export interface TicketHistoryEntry {

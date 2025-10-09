@@ -197,11 +197,10 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           }}
         >
           <MenuItem onClick={() => handleViewSelect('my-tickets')}>My Tickets</MenuItem>
-          <MenuItem onClick={() => handleViewSelect('past-due')}>Past Due</MenuItem>
-          <MenuItem onClick={() => handleViewSelect('high-priority')}>High Priority</MenuItem>
           <MenuItem onClick={() => handleViewSelect('unassigned')}>Unassigned</MenuItem>
-          <Divider />
           <MenuItem onClick={() => handleViewSelect('all-tickets')}>All Tickets</MenuItem>
+          <Divider />
+          <MenuItem onClick={() => handleViewSelect('done')}>Done</MenuItem>
         </Menu>
 
         {/* Filter Modal */}

@@ -66,6 +66,7 @@ export class TicketsService extends MessagingHubHttpClient {
     if (filters?.createdBy) params.append('createdBy', filters.createdBy);
     if (filters?.customerEmail) params.append('customerEmail', filters.customerEmail);
     if (filters?.customerPhone) params.append('customerPhone', filters.customerPhone);
+    if (filters?.providerChannel) params.append('providerChannel', filters.providerChannel);
     if (filters?.tags && filters.tags.length > 0) {
       filters.tags.forEach((tag) => params.append('tags', tag));
     }

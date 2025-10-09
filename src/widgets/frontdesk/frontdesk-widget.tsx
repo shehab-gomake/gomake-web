@@ -20,7 +20,7 @@ import { TicketDetailView } from './providers/tickets/components/ticket-detail-v
 
 // For unified view placeholder
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';
-import { unreadCountByProviderSelector } from '@/store/frontdesk';
+import { unreadCountByProviderSelector, sidebarCollapsedAtom } from '@/store/frontdesk';
 
 // Ticket state
 import {
@@ -80,10 +80,9 @@ const FrontdeskWidget: React.FC = () => {
 
       const viewMap: Record<string, TicketView> = {
         'my-tickets': 'my-tickets',
-        'past-due': 'past-due',
-        'high-priority': 'high-priority',
         'unassigned': 'unassigned',
-        'all-tickets': 'all-tickets'
+        'all-tickets': 'all-tickets',
+        'done': 'done'
       };
       return viewMap[provider] || null;
     }
@@ -96,6 +95,9 @@ const FrontdeskWidget: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // UI state from Recoil (with automatic localStorage persistence)
+  const [sidebarCollapsed, setSidebarCollapsed] = useRecoilState(sidebarCollapsedAtom);
 
   // Ticket state and provider hook
   const ticketsProvider = useTicketsProvider();
@@ -183,10 +185,9 @@ const FrontdeskWidget: React.FC = () => {
     // Update URL to reflect ticket view
     const viewMap = {
       'my-tickets': 'my-tickets',
-      'past-due': 'past-due',
-      'high-priority': 'high-priority',
       'unassigned': 'unassigned',
-      'all-tickets': 'all-tickets'
+      'all-tickets': 'all-tickets',
+      'done': 'done'
     };
     const url = `/frontdesk/tickets/${viewMap[view as keyof typeof viewMap]}`;
 
@@ -247,6 +248,11 @@ const FrontdeskWidget: React.FC = () => {
 
   const handleTicketClose = () => {
     setSelectedTicketId(null);
+  };
+
+  const handleToggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+    // localStorage sync happens automatically via Recoil atom effects
   };
 
   // Render list content based on selection (kept for compatibility but not displayed)
@@ -371,14 +377,12 @@ const FrontdeskWidget: React.FC = () => {
     switch (view) {
       case 'my-tickets':
         return 'My Tickets';
-      case 'past-due':
-        return 'Past Due';
-      case 'high-priority':
-        return 'High Priority';
       case 'unassigned':
         return 'Unassigned';
       case 'all-tickets':
         return 'All Tickets';
+      case 'done':
+        return 'Done';
       default:
         return 'Tickets';
     }
@@ -389,6 +393,7 @@ const FrontdeskWidget: React.FC = () => {
 
   return (
     <ThreeColumnLayout
+      navigationWidth={sidebarCollapsed ? 64 : 220}
       navigationContent={
         <NavigationSidebar
           selectedChannel={currentChannel}
@@ -399,6 +404,8 @@ const FrontdeskWidget: React.FC = () => {
           onTicketViewSelect={handleTicketViewChange}
           channelBadges={channelBadges}
           ticketCounts={ticketsProvider.ticketCounts}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={handleToggleSidebarCollapse}
         />
       }
       listContent={

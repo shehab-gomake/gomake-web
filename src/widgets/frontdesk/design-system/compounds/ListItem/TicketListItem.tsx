@@ -8,15 +8,6 @@ import { TicketTypeBadge, TicketType } from '../../primitives/Badge/TicketTypeBa
 import { colorTokens, semanticSpacing } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { TagList } from '../../components/TagChip';
-import EmailIcon from '@mui/icons-material/Email';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import SmsIcon from '@mui/icons-material/Sms';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import WarningIcon from '@mui/icons-material/Warning';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export interface TicketListItemProps {
   /** Ticket ID */
@@ -43,33 +34,6 @@ export interface TicketListItemProps {
   participants?: Array<{ userId: string; name: string; avatarUrl?: string }>;
   /** Tags */
   tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
-  /** Customer info */
-  customer?: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    channel: 'EMAIL' | 'WHATSAPP' | 'SMS' | 'PUSH';
-  };
-  /** Message preview (last message content) */
-  messagePreview?: string;
-  /** Assignee info */
-  assignee?: {
-    name: string;
-    avatarUrl?: string;
-  } | null;
-  /** Response status */
-  responseStatus?: 'awaiting_first_response' | 'in_conversation';
-  /** SLA urgency info */
-  slaUrgency?: {
-    status: 'safe' | 'warning' | 'overdue';
-    timeRemaining?: string; // e.g., "2h 30m" or "Overdue 1h"
-  };
-  /** Message count */
-  messageCount?: number;
-  /** Category name */
-  category?: string | null;
-  /** Last message direction */
-  lastMessageDirection?: 'INBOUND' | 'OUTBOUND';
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
   /** Check handler */
@@ -88,30 +52,6 @@ const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'er
       return 'error';
     default:
       return 'primary';
-  }
-};
-
-const getChannelIcon = (channel: 'EMAIL' | 'WHATSAPP' | 'SMS' | 'PUSH') => {
-  switch (channel) {
-    case 'EMAIL':
-      return <EmailIcon sx={{ fontSize: 14 }} />;
-    case 'WHATSAPP':
-      return <WhatsAppIcon sx={{ fontSize: 14 }} />;
-    case 'SMS':
-      return <SmsIcon sx={{ fontSize: 14 }} />;
-    case 'PUSH':
-      return <NotificationsIcon sx={{ fontSize: 14 }} />;
-  }
-};
-
-const getSlaUrgencyColor = (status: 'safe' | 'warning' | 'overdue') => {
-  switch (status) {
-    case 'safe':
-      return colorTokens.success[600]; // Green
-    case 'warning':
-      return colorTokens.warning[600]; // Amber
-    case 'overdue':
-      return colorTokens.error[600]; // Red
   }
 };
 
@@ -134,14 +74,6 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   isUnread = false,
   participants = [],
   tags = [],
-  customer,
-  messagePreview,
-  assignee,
-  responseStatus,
-  slaUrgency,
-  messageCount,
-  category,
-  lastMessageDirection,
   onClick,
   onCheck,
 }) => {
@@ -153,7 +85,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
         display: 'flex',
         alignItems: 'flex-start',
         gap: 1.5,
-        py: 1.75,
+        py: 1.25,
         px: 2,
         borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
         backgroundColor: isSelected
@@ -183,16 +115,16 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       )}
 
       {/* Content */}
-      <Stack flex={1} spacing={1} sx={{ minWidth: 0 }}>
+      <Stack flex={1} spacing={0.75} sx={{ minWidth: 0 }}>
         {/* Header Row - Ticket Number + Date + Status */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={0.75}>
+          <Stack direction="row" alignItems="center" gap={0.5}>
             <Typography
               variant="caption"
               sx={{
-                fontWeight: 600,
+                fontWeight: 500,
                 color: colorTokens.semantic.text.secondary,
-                fontSize: 11,
+                fontSize: 10.5,
               }}
             >
               {ticketNumber}
@@ -201,62 +133,63 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
               variant="caption"
               sx={{
                 color: colorTokens.semantic.text.tertiary,
-                fontSize: 11,
+                fontSize: 10.5,
               }}
             >
               · {updatedAt}
             </Typography>
           </Stack>
-          {/* Status Chip */}
           <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
         </Stack>
 
-        {/* Customer Row - Channel Icon + Email/Name */}
-        <Stack direction="row" alignItems="center" gap={0.75}>
-          {customer && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                color: colorTokens.semantic.text.secondary,
-              }}
-            >
-              {getChannelIcon(customer.channel)}
-            </Box>
-          )}
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: isUnread ? 600 : 500,
-              color: colorTokens.semantic.text.primary,
-              fontSize: 13.5,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {title}
-          </Typography>
-        </Stack>
+        {/* Title Row */}
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: isUnread ? 600 : 500,
+            color: colorTokens.semantic.text.primary,
+            fontSize: 13,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flex: 1,
+          }}
+        >
+          {title}
+        </Typography>
 
-        {/* Message Preview */}
-        {messagePreview && (
-          <Typography
-            variant="caption"
-            sx={{
-              color: colorTokens.semantic.text.tertiary,
-              fontSize: 12,
-              fontStyle: 'italic',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              lineHeight: 1.5,
-              pl: 3, // Indent to align with customer name (after icon)
-            }}
-          >
-            {messagePreview}
-          </Typography>
-        )}
+        {/* Footer Row - Priority + Participants + Tags + Unread */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Stack direction="row" alignItems="center" gap={1}>
+            {/* Priority Badge */}
+            <PriorityBadge priority={priority as PriorityLevel} mode="icon" size="xs" />
+
+            {/* Participants - Show only if present */}
+            {participants.length > 0 && (
+              <AvatarGroup users={participants} size="xs" max={2} />
+            )}
+
+            {/* Tags - Show max 2 */}
+            {tags && tags.length > 0 && (
+              <TagList
+                tags={tags as any}
+                size="small"
+                variant="outlined"
+                maxDisplay={2}
+              />
+            )}
+          </Stack>
+
+          {/* Unread indicator */}
+          {isUnread && (
+            <FiberManualRecordIcon
+              sx={{
+                fontSize: 10,
+                color: colorTokens.primary[600],
+              }}
+            />
+          )}
+        </Stack>
       </Stack>
     </ListItem>
   );

@@ -48,6 +48,7 @@ import {
   Chip,
   PriorityBadge,
   TicketTypeBadge,
+  ChannelBadge,
   AttachmentCard,
   MessageCard,
   SystemEventMessage,
@@ -108,8 +109,8 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   console.log('[TicketDetailView] Messages count:', ticket.conversation?.messages?.length || 0);
 
   const handleSendReply = (data: any) => {
-    if (onReply && data.content) {
-      onReply(data.content);
+    if (onReply && data.message) {
+      onReply(data.message);
     }
   };
 
@@ -156,27 +157,13 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 {/* Origin Provider Channel Badge */}
                 {ticket.originProviderChannel && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Typography
-                      component="span"
-                      sx={{ fontSize: 16 }}
-                      role="img"
-                      aria-label={ticket.originProviderChannel.type}
-                    >
-                      {getChannelIcon(ticket.originProviderChannel.type)}
-                    </Typography>
-                    <Chip
-                      label={`${ticket.originProviderChannel.type}`}
-                      size="small"
-                      sx={{
-                        height: 20,
-                        fontSize: 10,
-                        fontWeight: 600,
-                        backgroundColor: getChannelColor(ticket.originProviderChannel.type),
-                        color: 'white',
-                      }}
+                    <ChannelBadge
+                      channel={ticket.originProviderChannel.type.toLowerCase() as any}
+                      mode="both"
+                      size="sm"
                     />
-                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary, ml: 0.5 }}>
-                      via {ticket.originProviderChannel.identifier}
+                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
+                      · {ticket.originProviderChannel.identifier}
                     </Typography>
                   </Box>
                 )}
