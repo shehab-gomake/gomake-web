@@ -65,6 +65,9 @@ import { RelatedTickets } from './related-tickets';
 import { CustomerProfileSection } from './customer-profile-section';
 import { useQuickActions } from '../hooks/use-quick-actions';
 import { getGroupedActions, GROUP_LABELS } from '../utils/quick-actions-config';
+import { InlineReplySection } from '@/widgets/frontdesk/components/shared/InlineReplySection';
+import { MessageItem } from '@/widgets/frontdesk/components/shared/MessageItem';
+import { ticketToUnified } from '@/widgets/frontdesk/utils/message-transformer';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
@@ -106,6 +109,11 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
+  // Inline reply state - open by default for tickets
+  const [showInlineReply, setShowInlineReply] = useState(true);
+  const [replyText, setReplyText] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
+
   // Quick Actions integration
   const { availableActions, hasCustomer, executeAction, getActionBlockReason } = useQuickActions({
     ticketId: ticket.id,
@@ -131,6 +139,28 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const handleSendReply = (data: any) => {
     if (onReply && data.message) {
       onReply(data.message);
+    }
+  };
+
+  // Inline reply handlers
+  const handleCancelReply = () => {
+    // Just clear the text, keep reply section open
+    setReplyText("");
+  };
+
+  const handleSendInlineReply = async () => {
+    if (!replyText.trim() || !onReply) return;
+
+    setIsSendingReply(true);
+    try {
+      await onReply(replyText);
+      setReplyText("");
+      setShowInlineReply(false);
+    } catch (error) {
+      console.error("[TicketDetailView] Failed to send reply:", error);
+      // Keep reply open so user can retry
+    } finally {
+      setIsSendingReply(false);
     }
   };
 
@@ -392,6 +422,9 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                       return null;
                     }
 
+                    // Transform ticket message to unified format
+                    const unifiedMessage = ticketToUnified(message, ticket);
+
                     return (
                       <React.Fragment key={message.id}>
                         {/* Show assignment event if it's the first message */}
@@ -416,26 +449,11 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                           />
                         )}
 
-                        {/* Message Card */}
-                        <MessageCard
-                          id={message.id}
-                          channel={(message.channel || 'email') as any}
-                          direction={(message.direction || 'INBOUND').toLowerCase() as any}
-                          status="delivered"
-                          author={{
-                            name: message.direction === 'INBOUND'
-                              ? (ticket.customerName || ticket.customerEmail || 'Customer')
-                              : (ticket.assignee?.name || 'Agent'),
-                            email: message.direction === 'INBOUND'
-                              ? (ticket.customerEmail || message.fromIdentifier || '')
-                              : (ticket.assignee?.email || ''),
-                            avatarUrl: undefined,
-                          }}
-                          content={message.content || ''}
-                          contentType={message.metadata?.hasHtml ? 'html' : undefined}
-                          timestamp={message.createdAt}
-                          attachments={[]}
-                          isPrivate={false}
+                        {/* Unified Message Item */}
+                        <MessageItem
+                          message={unifiedMessage}
+                          variant="ticket"
+                          isLast={index === ticket.conversation.messages.length - 1}
                         />
                       </React.Fragment>
                     );
@@ -737,31 +755,15 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </Box>
         )}
 
-        {/* Message Composer at Bottom - Only show in Conversation view */}
+        {/* Inline Reply Section - Always visible in Conversation view */}
         {activeView === 'conversation' && !conversationMinimized && (
-          <MessageComposer
-            placeholder="Hi, please check this article for more information"
-            availableChannels={['whatsapp', 'email', 'sms', 'phone']}
-            defaultChannel="whatsapp"
-            availableFrom={[
-              {
-                id: 'csfiki',
-                name: 'CSFikri',
-                identifier: 'support@company.com',
-              },
-              {
-                id: 'support',
-                name: 'Support Team',
-                identifier: 'team@company.com',
-              },
-            ]}
-            defaultFrom="csfiki"
-            showAIToggle={true}
-            aiEnabled={false}
-            onSend={handleSendReply}
-            onAIToggle={(enabled) => console.log('AI toggle:', enabled)}
-            onAttachFile={() => console.log('Attach file')}
-            onAttachImage={() => console.log('Attach image')}
+          <InlineReplySection
+            title="Reply to Ticket"
+            replyText={replyText}
+            isSending={isSendingReply}
+            onReplyTextChange={setReplyText}
+            onSend={handleSendInlineReply}
+            onCancel={handleCancelReply}
           />
         )}
       </Box>
@@ -832,7 +834,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           >
             <Chip
               label={uiStatus}
-              color={uiStatus === 'To Do' ? 'primary' : uiStatus === 'In Progress' ? 'warning' : uiStatus === 'Done' ? 'success' : 'error'}
+              color={uiStatus === 'New' ? 'primary' : uiStatus === 'Active' ? 'warning' : uiStatus === 'Resolved' ? 'success' : uiStatus === 'On Hold' ? 'error' : 'neutral'}
               variant="soft"
               size="small"
               sx={{
@@ -1088,7 +1090,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          To Do (Open)
+          {apiStatusToUi('OPEN')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1098,7 +1100,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          In Progress
+          {apiStatusToUi('IN_PROGRESS')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1108,7 +1110,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Pending
+          {apiStatusToUi('PENDING')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1118,7 +1120,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Done (Resolved)
+          {apiStatusToUi('RESOLVED')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1128,7 +1130,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Closed
+          {apiStatusToUi('CLOSED')}
         </MenuItem>
       </Menu>
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Menu, MenuItem, MenuProps, Typography, Box, Divider, Tooltip } from '@mui/material';
+import { Menu, MenuProps, Typography, Box, Divider, Tooltip } from '@mui/material';
+import { ActionMenuItem } from '../../primitives/MenuItem';
 import { colorTokens, spacingTokens, radiusTokens, shadowTokens } from '../../tokens';
 
 export interface QuickActionItem {
@@ -137,51 +138,14 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
             const tooltipContent = action.disabled ? action.disabledReason || action.tooltip : action.tooltip;
 
             const menuItem = (
-              <MenuItem
+              <ActionMenuItem
                 key={action.id}
-                onClick={() => handleActionClick(action)}
+                id={action.id}
+                label={action.label}
+                icon={action.icon}
                 disabled={isDisabled}
-                sx={{
-                  px: 2,
-                  py: 1.5,
-                  gap: 1.5,
-                  '&:hover': {
-                    backgroundColor: colorTokens.primary[50],
-                  },
-                  '&.Mui-disabled': {
-                    opacity: 0.5,
-                  },
-                }}
-              >
-                {/* Icon */}
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 20,
-                    height: 20,
-                    color: isDisabled ? colorTokens.semantic.text.tertiary : colorTokens.primary[600],
-                  }}
-                >
-                  {action.icon}
-                </Box>
-
-                {/* Label */}
-                <Typography
-                  variant="body2"
-                  sx={{
-                    flex: 1,
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: isDisabled
-                      ? colorTokens.semantic.text.tertiary
-                      : colorTokens.semantic.text.primary,
-                  }}
-                >
-                  {action.label}
-                </Typography>
-              </MenuItem>
+                onClick={() => handleActionClick(action)}
+              />
             );
 
             // Wrap in tooltip if there's a tooltip or disabled reason

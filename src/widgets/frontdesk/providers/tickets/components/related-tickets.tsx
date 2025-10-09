@@ -28,10 +28,11 @@ const formatRelativeTime = (dateString: string): string => {
 const getStatusColor = (status: TicketStatus): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
   const uiStatus = apiStatusToUi(status);
 
-  if (uiStatus === 'To Do') return 'primary';
-  if (uiStatus === 'In Progress') return 'warning';
-  if (uiStatus === 'Done') return 'success';
-  if (uiStatus === 'Blocked') return 'error';
+  if (uiStatus === 'New') return 'primary';
+  if (uiStatus === 'Active') return 'warning';
+  if (uiStatus === 'On Hold') return 'error';
+  if (uiStatus === 'Resolved') return 'success';
+  if (uiStatus === 'Closed') return 'neutral';
   return 'neutral';
 };
 

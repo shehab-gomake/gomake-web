@@ -17,13 +17,18 @@ src/
 │   │   ├── email/                # Gmail provider (OAuth)
 │   │   ├── whatsapp/             # WhatsApp provider
 │   │   └── unified/              # Unified inbox view
-│   ├── components/               # Shared React components (e.g., message bubbles, conversation list)
+│   ├── components/               # Shared React components
 │   ├── hooks/                    # Custom React hooks for provider logic
-│   └── controllers/              # Business logic, navigation, and actions
+│   ├── controllers/              # Business logic, navigation, and actions
+│   ├── design-system/            # Storybook components and design tokens
+│   ├── layouts/                  # Reusable layout components
+│   ├── settings/                 # Configuration and settings components
+│   ├── types/                    # TypeScript type definitions
+│   └── utils/                    # Utility functions
 │
 ├── store/frontdesk/
 │   ├── atoms/                    # Recoil state atoms, scoped per provider
-│   └── selectors/                # Recoil selectors for derived state (e.g., message aggregation)
+│   └── selectors/                # Recoil selectors for derived state
 │
 └── services/
     ├── api-service/frontdesk/     # REST API calls
@@ -43,93 +48,78 @@ Start here if you're new to FrontDesk. These documents provide a high-level over
 
 Deep dives into each communication provider located in `src/widgets/frontdesk/providers/`.
 
-- **Internal (Direct Messages):**
-  - **[direct-messages-frontend.md](01-providers/direct-messages/direct-messages-frontend.md)**: Covers WebSocket integration, real-time messaging, and conversation management.
-  - **[direct-messages-archiving-guide.md](01-providers/direct-messages/direct-messages-archiving-guide.md)**: Guide to the conversation archiving feature.
+- **[Direct Messages (DM)](01-providers/direct-messages/README.md)**: Covers WebSocket integration, real-time messaging, and conversation management.
+- **[Email (Gmail)](01-providers/email/EMAIL_PROVIDER_GUIDE.md)**: Covers OAuth flow and email-specific logic.
+- **[Tickets/Support](01-providers/tickets/README.md)**: In-depth documentation for the Tickets feature.
+- **WhatsApp**: *(Documentation to be created)*
+- **Unified Inbox**: *(Documentation to be created)*
 
-- **Email (Gmail):**
-  - `[EMAIL_PROVIDER_GUIDE.md]` - *(Documentation to be created)*: Will cover OAuth flow and email-specific logic.
-
-- **WhatsApp:**
-  - `[WHATSAPP_PROVIDER_GUIDE.md]` - *(Documentation to be created)*: Will cover WhatsApp integration details.
-
-- **Unified Inbox:**
-  - `[UNIFIED_INBOX_GUIDE.md]` - *(Documentation to be created)*: Will explain message aggregation and the unified view logic.
-
-### 3. API and Services
-
-Documentation for backend APIs and frontend services.
-
-- **[API_REFERENCE.md](03-api/API_REFERENCE.md)**: Complete reference for REST API endpoints and WebSocket events.
-- **[API_INTEGRATION_GUIDE.md](03-api/API_INTEGRATION_GUIDE.md)**: Frontend-focused guide on how to connect to and use the APIs.
-
-### 4. Feature Guides
+### 3. Feature Guides
 
 In-depth documentation for specific, complex features.
 
-- **Search:**
-  - **[SEARCH_API_FRONTEND_GUIDE.md](02-features/search/SEARCH_API_FRONTEND_GUIDE.md)**: A guide to implementing global and in-conversation search.
+- **[Search](02-features/search/SEARCH_API_FRONTEND_GUIDE.md)**: A guide to implementing global and in-conversation search.
+- **[Tags](02-features/tags/README.md)**: Documentation for the tag management system.
 
-- **Tickets/Support:**
-  - **[TICKETS_PROVIDER_GUIDE.md](01-providers/tickets/TICKETS_PROVIDER_GUIDE.md)**: An overview of the ticket lifecycle and multi-channel support.
-  - **[tickets/](01-providers/tickets/)**: In-depth documentation for the Tickets feature, including:
-    - **[README.md](01-providers/tickets/README.md)**: Index of the tickets documentation.
-    - **[INTEGRATION_SUMMARY.md](01-providers/tickets/INTEGRATION_SUMMARY.md)**: Summary of the backend integration project.
-    - **[TICKETS_BACKEND_INTEGRATION.md](01-providers/tickets/TICKETS_BACKEND_INTEGRATION.md)**: The complete technical guide for the backend integration.
-    - **[TICKETS_QUICK_REFERENCE.md](01-providers/tickets/TICKETS_QUICK_REFERENCE.md)**: A developer cheat sheet.
-    - **[FRONTEND_MIGRATION_GUIDE_V2.md](01-providers/tickets/FRONTEND_MIGRATION_GUIDE_V2.md)**: Guide for migrating to the V2 ticketing system.
+### 4. API and Services
 
-- **Quick Actions:**
-  - **[Design System README - Quick Actions Section](../src/widgets/frontdesk/design-system/README.md#-ticket-quick-actions-integration)**: Complete documentation for the Quick Actions system including:
-    - QuickActionButton and QuickActionMenu components
-    - useQuickActions hook for navigation and customer context management
-    - Pre-configured actions (Quote, Invoice, Order, Receipt, Delivery Note, Purchase Order, Purchase Invoice, Print, Export, Delete)
-    - Integration patterns and customization guide
-    - Full implementation examples with code snippets
+Documentation for backend APIs and frontend services.
+
+- **[API and Services Hub](03-api/README.md)**: Index for API and WebSocket documentation.
 
 ### 5. AI Agent Playbooks
 
 Guides for AI-assisted development, located in [04-ai-agents/](04-ai-agents/).
 
-- **[00-readme.md](04-ai-agents/00-readme.md)**: Hub for AI-assisted development.
-- **[01-orientation.md](04-ai-agents/01-orientation.md)**: System orientation for agents.
-- **[02-feature-development-playbook.md](04-ai-agents/02-feature-development-playbook.md)**: Workflow for new features.
-- **[03-maintenance-bugfixing-guide.md](04-ai-agents/03-maintenance-bugfixing-guide.md)**: Guide for maintenance and bug fixing.
-- **[04-data-integrations.md](04-ai-agents/04-data-integrations.md)**: Data integration patterns and contracts.
-- **[05-verification-checklists.md](04-ai-agents/05-verification-checklists.md)**: Quality assurance checklists.
+- **[AI Agent Hub](04-ai-agents/00-readme.md)**: Hub for AI-assisted development.
 
 ## 🗂️ Documentation File Structure
 
 ```
 docs/frontdesk/
 ├── README.md
+├── FRONTDESK_KNOWLEDGE_BASE.md
 ├── 00-core/
 │   ├── FRONTDESK_ARCHITECTURE.md
 │   └── DEVELOPER_GUIDE.md
 ├── 01-providers/
 │   ├── direct-messages/
-│   │   ├── direct-messages-frontend.md
-│   │   └── direct-messages-archiving-guide.md
+│   │   ├── README.md
+│   │   ├── direct-messages-archiving-guide.md
+│   │   └── direct-messages-frontend.md
+│   ├── email/
+│   │   └── EMAIL_PROVIDER_GUIDE.md
 │   └── tickets/
-│       ├── TICKETS_PROVIDER_GUIDE.md
 │       ├── README.md
 │       ├── INTEGRATION_SUMMARY.md
 │       ├── TICKETS_BACKEND_INTEGRATION.md
+│       ├── TICKETS_PROVIDER_GUIDE.md
 │       ├── TICKETS_QUICK_REFERENCE.md
 │       └── FRONTEND_MIGRATION_GUIDE_V2.md
 ├── 02-features/
-│   └── search/
-│       └── SEARCH_API_FRONTEND_GUIDE.md
+│   ├── search/
+│   │   └── SEARCH_API_FRONTEND_GUIDE.md
+│   └── tags/
+│       ├── README.md
+│       ├── TAG_INTEGRATION_SUMMARY.md
+│       └── TAG_SYSTEM_IMPLEMENTATION.md
 ├── 03-api/
+│   ├── README.md
 │   ├── API_REFERENCE.md
-│   └── API_INTEGRATION_GUIDE.md
-└── 04-ai-agents/
-    ├── 00-readme.md
-    ├── 01-orientation.md
-    ├── 02-feature-development-playbook.md
-    ├── 03-maintenance-bugfixing-guide.md
-    ├── 04-data-integrations.md
-    └── 05-verification-checklists.md
+│   └── WEBSOCKET_GUIDE.md
+├── 04-ai-agents/
+│   ├── 00-readme.md
+│   ├── 01-orientation.md
+│   ├── 02-feature-development-playbook.md
+│   ├── 03-maintenance-bugfixing-guide.md
+│   ├── 04-data-integrations.md
+│   └── 05-verification-checklists.md
+└── archive/
+    ├── FRONTDESK_IMPROVEMENT_PLAN.md
+    ├── TASK_UNIFY_ARCHITECTURE.md
+    ├── frontend-conversations-guide.md
+    ├── frontend-ui-requirements.md
+    └── internal-messaging-guide.md
 ```
 
 ## 📖 How to Use This Documentation

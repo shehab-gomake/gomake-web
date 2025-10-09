@@ -24,24 +24,24 @@ import {
 // ============================================
 
 const API_TO_UI_STATUS: Record<ApiTicketStatus, UiTicketStatus> = {
-  OPEN: 'To Do',
-  IN_PROGRESS: 'In Progress',
-  PENDING: 'In Progress', // Map PENDING to In Progress for UI
-  RESOLVED: 'Done',
-  CLOSED: 'Done',
-  REOPENED: 'To Do', // Map REOPENED to To Do
+  OPEN: 'New',
+  IN_PROGRESS: 'Active',
+  PENDING: 'On Hold', // Map PENDING to On Hold for UI
+  RESOLVED: 'Resolved',
+  CLOSED: 'Closed',
+  REOPENED: 'New', // Map REOPENED to New
 };
 
 const UI_TO_API_STATUS: Record<UiTicketStatus, ApiTicketStatus> = {
-  'To Do': 'OPEN',
-  'In Progress': 'IN_PROGRESS',
-  'Done': 'RESOLVED',
-  'Blocked': 'PENDING',
-  'Cancelled': 'CLOSED',
+  'New': 'OPEN',
+  'Active': 'IN_PROGRESS',
+  'On Hold': 'PENDING',
+  'Resolved': 'RESOLVED',
+  'Closed': 'CLOSED',
 };
 
 export function apiStatusToUi(status: ApiTicketStatus): UiTicketStatus {
-  return API_TO_UI_STATUS[status] || 'To Do';
+  return API_TO_UI_STATUS[status] || 'New';
 }
 
 export function uiStatusToApi(status: UiTicketStatus): ApiTicketStatus {

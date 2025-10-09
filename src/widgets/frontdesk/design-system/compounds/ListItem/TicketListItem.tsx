@@ -1,13 +1,13 @@
 import React from 'react';
-import { Box, Checkbox, ListItem, Typography, Stack } from '@mui/material';
-import { Avatar } from '../../primitives/Avatar';
+import { Box, Stack } from '@mui/material';
+import { ActionMenuItem } from '../../primitives/MenuItem';
 import { AvatarGroup } from '../../primitives/Avatar';
 import { Chip } from '../../primitives/Chip';
 import { PriorityBadge, PriorityLevel } from '../../primitives/Badge/PriorityBadge';
-import { TicketTypeBadge, TicketType } from '../../primitives/Badge/TicketTypeBadge';
-import { colorTokens, semanticSpacing } from '../../tokens';
+import { colorTokens } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { TagList } from '../../components/TagChip';
+import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 
 export interface TicketListItemProps {
   /** Ticket ID */
@@ -40,16 +40,18 @@ export interface TicketListItemProps {
   onCheck?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' => {
+const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
   switch (status) {
-    case 'To Do':
+    case 'New':
       return 'primary';
-    case 'In Progress':
+    case 'Active':
       return 'warning';
-    case 'Done':
-      return 'success';
-    case 'Blocked':
+    case 'On Hold':
       return 'error';
+    case 'Resolved':
+      return 'success';
+    case 'Closed':
+      return 'neutral';
     default:
       return 'primary';
   }
@@ -58,8 +60,8 @@ const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'er
 /**
  * TicketListItem Component
  *
- * Specialized list item for ticket/task displays.
- * Improved with professional priority indicators and better visual hierarchy.
+ * Specialized list item for ticket/task displays using ActionMenuItem.
+ * Uses QuickActionMenu-style design: px: 2, py: 1.5, gap: 1.5
  */
 export const TicketListItem: React.FC<TicketListItemProps> = ({
   id,
@@ -77,120 +79,67 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   onClick,
   onCheck,
 }) => {
-  return (
-    <ListItem
-      disablePadding
-      onClick={onClick}
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 1.5,
-        py: 1.25,
-        px: 2,
-        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
-        backgroundColor: isSelected
-          ? colorTokens.semantic.interactive.selected
-          : 'transparent',
-        cursor: 'pointer',
-        transition: 'background-color 0.15s ease',
-        '&:hover': {
-          backgroundColor: isSelected
-            ? colorTokens.semantic.interactive.selectedHover
-            : colorTokens.semantic.interactive.hover,
-        },
-      }}
-    >
-      {/* Checkbox */}
-      {onCheck && (
-        <Checkbox
+  // Build secondary text: ticket number + date
+  const secondaryText = `${ticketNumber} · ${updatedAt}`;
+
+  // Build icon: Priority badge icon
+  const icon = <PriorityBadge priority={priority as PriorityLevel} mode="icon" size="xs" />;
+
+  // Build right element: Status chip + participants + tags + unread indicator
+  const rightElement = (
+    <Stack direction="row" alignItems="center" gap={1}>
+      {/* Status Chip */}
+      <Chip
+        label={status}
+        color={getStatusColor(status)}
+        variant="soft"
+        size="small"
+        sx={{ fontSize: 11 }}
+      />
+
+      {/* Participants */}
+      {participants.length > 0 && (
+        <AvatarGroup users={participants} size="xs" max={2} />
+      )}
+
+      {/* Tags */}
+      {tags && tags.length > 0 && (
+        <TagList
+          tags={tags as any}
           size="small"
-          checked={isChecked}
-          onChange={(e) => {
-            e.stopPropagation();
-            onCheck(e.target.checked, e);
-          }}
-          onClick={(e) => e.stopPropagation()}
-          sx={{ p: 0, mt: 0.25 }}
+          variant="outlined"
+          maxDisplay={2}
         />
       )}
 
-      {/* Content */}
-      <Stack flex={1} spacing={0.75} sx={{ minWidth: 0 }}>
-        {/* Header Row - Ticket Number + Date + Status */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={0.5}>
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 500,
-                color: colorTokens.semantic.text.secondary,
-                fontSize: 10.5,
-              }}
-            >
-              {ticketNumber}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: colorTokens.semantic.text.tertiary,
-                fontSize: 10.5,
-              }}
-            >
-              · {updatedAt}
-            </Typography>
-          </Stack>
-          <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
-        </Stack>
-
-        {/* Title Row */}
-        <Typography
-          variant="body2"
+      {/* Unread indicator */}
+      {isUnread && (
+        <FiberManualRecordIcon
           sx={{
-            fontWeight: isUnread ? 600 : 500,
-            color: colorTokens.semantic.text.primary,
-            fontSize: 13,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flex: 1,
+            fontSize: 10,
+            color: colorTokens.primary[600],
           }}
-        >
-          {title}
-        </Typography>
+        />
+      )}
+    </Stack>
+  );
 
-        {/* Footer Row - Priority + Participants + Tags + Unread */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={1}>
-            {/* Priority Badge */}
-            <PriorityBadge priority={priority as PriorityLevel} mode="icon" size="xs" />
-
-            {/* Participants - Show only if present */}
-            {participants.length > 0 && (
-              <AvatarGroup users={participants} size="xs" max={2} />
-            )}
-
-            {/* Tags - Show max 2 */}
-            {tags && tags.length > 0 && (
-              <TagList
-                tags={tags as any}
-                size="small"
-                variant="outlined"
-                maxDisplay={2}
-              />
-            )}
-          </Stack>
-
-          {/* Unread indicator */}
-          {isUnread && (
-            <FiberManualRecordIcon
-              sx={{
-                fontSize: 10,
-                color: colorTokens.primary[600],
-              }}
-            />
-          )}
-        </Stack>
-      </Stack>
-    </ListItem>
+  return (
+    <ActionMenuItem
+      id={id}
+      label={title}
+      icon={icon}
+      secondaryText={secondaryText}
+      rightElement={rightElement}
+      isSelected={isSelected}
+      isChecked={isChecked}
+      onClick={onClick}
+      onCheck={onCheck}
+      sx={{
+        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+        borderRadius: 0, // Remove border radius for list items
+        alignItems: 'flex-start', // Align content to top
+      }}
+    />
   );
 };

@@ -15,6 +15,7 @@ import {
   Stack,
 } from '@mui/material';
 import { TicketFilters, TicketStatus, TicketPriority } from '../types/api.types';
+import { apiStatusToUi } from '../types/transformers';
 
 interface TicketFiltersModalProps {
   open: boolean;
@@ -99,7 +100,7 @@ export const TicketFiltersModal: React.FC<TicketFiltersModalProps> = ({
               </MenuItem>
               {STATUSES.map(s => (
                 <MenuItem key={s} value={s}>
-                  {s.replace('_', ' ')}
+                  {apiStatusToUi(s)}
                 </MenuItem>
               ))}
             </Select>

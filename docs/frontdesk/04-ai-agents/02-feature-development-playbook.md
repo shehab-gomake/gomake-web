@@ -28,7 +28,7 @@ Follow this sequence whenever you add a capability (new provider view, shared co
    - Update provider hooks to orchestrate async work and state transitions.
 3. **Services**
    - Extend existing API service classes under `src/services/frontdesk/api/`.
-   - Real-time? Subscribe via `messaging-service.ts` and ensure cleanup in `useEffect` teardown.
+   - Real-time? Subscribe via `messaging-socket.service.ts` (exported as `messagingService`) and ensure cleanup in `useEffect` teardown.
 4. **UI Components**
    - Reuse shared components when possible. If creating new ones, place them under `components/` with clear props and story-worthy defaults.
    - Keep styling consistent (Material-UI, theme tokens).
@@ -37,7 +37,7 @@ Follow this sequence whenever you add a capability (new provider view, shared co
 
 ## Phase 4 – Documentation & Hand-off
 - Update or cross-link existing docs when you introduce new behaviors.
-- Mention architectural changes in `docs/frontdesk/FRONTDESK_ARCHITECTURE.md` or at least leave TODO markers for future doc pass.
+- Mention architectural changes in `docs/frontdesk/00-core/FRONTDESK_ARCHITECTURE.md` or at least leave TODO markers for future doc pass.
 - Leave breadcrumbs for QA: describe entry point, required feature flags, and risky areas.
 
 ## Guardrails for Junior Agents

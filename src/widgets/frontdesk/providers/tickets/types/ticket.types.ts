@@ -1,4 +1,4 @@
-export type TicketStatus = 'To Do' | 'In Progress' | 'Done' | 'Blocked' | 'Cancelled';
+export type TicketStatus = 'New' | 'Active' | 'On Hold' | 'Resolved' | 'Closed';
 export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
 export type TicketType = 'Task' | 'Bug' | 'Feature' | 'Support' | 'Question';
 
