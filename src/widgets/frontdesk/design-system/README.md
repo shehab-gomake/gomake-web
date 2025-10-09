@@ -43,6 +43,7 @@ import {
   MessageStatusIndicator,
   Button,
   IconButton,
+  QuickActionButton,
   Chip,
   SearchInput,
   TextInput,
@@ -59,6 +60,8 @@ import {
   MessageCard,
   AttachmentCard,
   ConversationSidebar,
+  QuickActionMenu,
+  QuickActionItem,
   ConnectionErrorState,
   ConnectingState,
 
@@ -293,6 +296,28 @@ Primary action buttons with consistent styling.
 >
   <SearchIcon />
 </IconButton>
+```
+
+### QuickActionButton
+
+Specialized dropdown button for quick actions with lightning bolt icon and dropdown indicator.
+
+```tsx
+<QuickActionButton
+  size="sm"                    // sm | md | lg
+  isOpen={menuOpen}
+  loading={false}
+  onClick={(e) => setAnchorEl(e.currentTarget)}
+>
+  Quick Actions
+</QuickActionButton>
+
+// Features:
+// - Lightning bolt icon (⚡)
+// - Dropdown arrow indicator (rotates when open)
+// - Loading state support
+// - Primary button styling
+// - Automatic open/close visual states
 ```
 
 ### Chip
@@ -551,6 +576,148 @@ Sidebar component for conversation lists with header actions.
 >
   <ConversationList conversations={conversations} />
 </ConversationSidebar>
+```
+
+### QuickActionMenu
+
+Dropdown menu for displaying grouped quick actions with icons, tooltips, and disabled states. Designed to work with QuickActionButton.
+
+```tsx
+import { QuickActionMenu, QuickActionItem } from '@/widgets/frontdesk/design-system';
+
+// Define your actions
+const actions: QuickActionItem[] = [
+  {
+    id: 'create_quote',
+    label: 'Create Quote',
+    icon: <DescriptionIcon fontSize="small" />,
+    tooltip: 'Create a new quote for this customer',
+    disabled: !hasCustomer,
+    disabledReason: 'Customer must be linked first',
+    group: 'sales',
+  },
+  {
+    id: 'create_invoice',
+    label: 'Create Invoice',
+    icon: <ReceiptIcon fontSize="small" />,
+    group: 'sales',
+  },
+  {
+    id: 'export_conversation',
+    label: 'Export Conversation',
+    icon: <DownloadIcon fontSize="small" />,
+    group: 'other',
+  },
+];
+
+// Group labels for menu sections
+const groupLabels = {
+  sales: 'Sales Documents',
+  purchase: 'Purchase Documents',
+  other: 'Other Actions',
+};
+
+// Render menu
+<QuickActionMenu
+  anchorEl={anchorElement}
+  open={isOpen}
+  onClose={handleClose}
+  actions={actions}
+  groupLabels={groupLabels}
+  onActionClick={(action) => executeAction(action.id)}
+  loading={false}
+/>
+
+// Features:
+// - Grouped actions with section labels
+// - Icon + label layout
+// - Automatic disabled state styling
+// - Tooltip support (shows disabled reason or action tooltip)
+// - Click-to-close behavior
+// - Professional dropdown styling with shadows
+// - Empty state handling
+```
+
+### Full Quick Actions Example
+
+Complete implementation with button, menu, and action handling:
+
+```tsx
+import {
+  QuickActionButton,
+  QuickActionMenu,
+  QuickActionItem
+} from '@/widgets/frontdesk/design-system';
+
+function TicketActions({ ticketId, customerId }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // Define available actions
+  const actions: QuickActionItem[] = [
+    {
+      id: 'create_quote',
+      label: 'Create Quote',
+      icon: <DescriptionIcon fontSize="small" />,
+      tooltip: 'Create a new quote',
+      disabled: !customerId,
+      disabledReason: 'Customer must be linked to create a quote',
+      group: 'sales',
+    },
+    {
+      id: 'create_invoice',
+      label: 'Create Invoice',
+      icon: <ReceiptIcon fontSize="small" />,
+      disabled: !customerId,
+      disabledReason: 'Customer must be linked to create an invoice',
+      group: 'sales',
+    },
+    {
+      id: 'create_order',
+      label: 'Create Order',
+      icon: <ShoppingCartIcon fontSize="small" />,
+      disabled: !customerId,
+      group: 'sales',
+    },
+  ];
+
+  const groupLabels = {
+    sales: 'Sales Documents',
+    other: 'Other Actions',
+  };
+
+  const handleActionClick = (action: QuickActionItem) => {
+    console.log('Action selected:', action.id);
+    // Navigate or perform action
+    switch (action.id) {
+      case 'create_quote':
+        navigateToQuote(customerId);
+        break;
+      case 'create_invoice':
+        navigateToInvoice(customerId);
+        break;
+      // ... handle other actions
+    }
+  };
+
+  return (
+    <>
+      <QuickActionButton
+        size="sm"
+        isOpen={Boolean(anchorEl)}
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+      />
+
+      <QuickActionMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        actions={actions}
+        groupLabels={groupLabels}
+        onActionClick={handleActionClick}
+      />
+    </>
+  );
+}
 ```
 
 ### ConnectionStates
@@ -946,6 +1113,145 @@ interface TicketComment {
 4. **Clear Distinction** - Visual hierarchy separates public/private communications
 5. **Status Tracking** - Real-time delivery and read status
 6. **Type Safety** - Full TypeScript support for all channel types
+
+## ⚡ Ticket Quick Actions Integration
+
+The design system provides a complete Quick Actions system for tickets that enables shortcuts to other system operations like creating quotes, invoices, and orders directly from ticket contexts.
+
+### Quick Actions Pattern
+
+This pattern uses `QuickActionButton` + `QuickActionMenu` + `useQuickActions` hook to provide context-aware shortcuts:
+
+```tsx
+import {
+  QuickActionButton,
+  QuickActionMenu,
+  QuickActionItem,
+} from '@/widgets/frontdesk/design-system';
+import { useQuickActions } from '@/widgets/frontdesk/providers/tickets/hooks/use-quick-actions';
+
+function TicketDetailView({ ticket }) {
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState(null);
+
+  // Hook handles navigation, customer context, and validation
+  const { availableActions, executeAction, getActionBlockReason } = useQuickActions({
+    ticketId: ticket.id,
+    customerId: ticket.customerId,
+    customerName: ticket.customerName,
+    customerEmail: ticket.customerEmail,
+    customerPhone: ticket.customerPhone,
+    onActionComplete: (actionType) => {
+      console.log('Action completed:', actionType);
+    },
+    onActionError: (actionType, error) => {
+      showNotification(`Cannot execute action: ${error}`, 'error');
+    },
+  });
+
+  // Convert actions to menu items
+  const menuItems: QuickActionItem[] = availableActions.map((action) => ({
+    id: action.type,
+    label: action.label,
+    icon: action.icon,
+    tooltip: action.tooltip,
+    disabled: !!getActionBlockReason(action.type),
+    disabledReason: getActionBlockReason(action.type) || undefined,
+    group: action.group,
+  }));
+
+  return (
+    <>
+      {/* Quick Actions Button in Header */}
+      <QuickActionButton
+        size="sm"
+        isOpen={Boolean(quickActionsAnchor)}
+        onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+      />
+
+      {/* Quick Actions Menu */}
+      <QuickActionMenu
+        anchorEl={quickActionsAnchor}
+        open={Boolean(quickActionsAnchor)}
+        onClose={() => setQuickActionsAnchor(null)}
+        actions={menuItems}
+        groupLabels={{
+          sales: 'Sales Documents',
+          purchase: 'Purchase Documents',
+          other: 'Other Actions',
+        }}
+        onActionClick={(action) => executeAction(action.id as any)}
+      />
+    </>
+  );
+}
+```
+
+### Pre-configured Actions
+
+The system includes 8 pre-configured actions in `quick-actions-config.tsx`:
+
+**Sales Documents:**
+- Create Quote
+- Create Invoice
+- Create Order
+- Create Receipt
+- Create Delivery Note
+
+**Purchase Documents:**
+- Create Purchase Order
+- Create Purchase Invoice
+
+**Other:**
+- Export Conversation (coming soon)
+
+### Customer Context Handling
+
+Actions automatically validate customer requirements:
+
+```tsx
+// If customer is linked (customerId exists)
+✅ Navigate to /quote with customer pre-selected
+
+// If customer is NOT linked but email/phone exists
+⚠️ Show error: "Customer must be linked to ticket first"
+   Option: "Link Customer" button
+
+// If no customer data at all
+❌ Action disabled with tooltip: "No customer information available"
+```
+
+### Customizing Actions
+
+Add custom actions by extending the configuration:
+
+```tsx
+// src/widgets/frontdesk/providers/tickets/utils/quick-actions-config.tsx
+
+export const QUICK_ACTIONS_CONFIG: Record<QuickActionType, QuickActionConfig> = {
+  // ... existing actions
+
+  // Add custom action
+  create_task: {
+    type: 'create_task',
+    label: 'Create Task',
+    icon: <TaskIcon fontSize="small" />,
+    route: '/tasks/new',
+    requiresCustomerId: false,
+    group: 'other',
+    tooltip: 'Create a new task',
+    enabled: true,
+  },
+};
+```
+
+### Integration Benefits
+
+1. **Context Preservation** - Customer data flows from ticket to document
+2. **Smart Validation** - Automatically checks prerequisites (customer linked, etc.)
+3. **Type-Safe** - Full TypeScript support throughout
+4. **Reusable** - Can be used in ticket lists, detail views, etc.
+5. **Extensible** - Easy to add new actions or customize existing ones
+6. **Consistent UX** - Follows FrontDesk design system patterns
 
 ## 🤝 Contributing
 

@@ -79,6 +79,14 @@ In-depth documentation for specific, complex features.
     - **[TICKETS_QUICK_REFERENCE.md](01-providers/tickets/TICKETS_QUICK_REFERENCE.md)**: A developer cheat sheet.
     - **[FRONTEND_MIGRATION_GUIDE_V2.md](01-providers/tickets/FRONTEND_MIGRATION_GUIDE_V2.md)**: Guide for migrating to the V2 ticketing system.
 
+- **Quick Actions:**
+  - **[Design System README - Quick Actions Section](../src/widgets/frontdesk/design-system/README.md#-ticket-quick-actions-integration)**: Complete documentation for the Quick Actions system including:
+    - QuickActionButton and QuickActionMenu components
+    - useQuickActions hook for navigation and customer context management
+    - Pre-configured actions (Quote, Invoice, Order, Receipt, Delivery Note, Purchase Order, Purchase Invoice, Print, Export, Delete)
+    - Integration patterns and customization guide
+    - Full implementation examples with code snippets
+
 ### 5. AI Agent Playbooks
 
 Guides for AI-assisted development, located in [04-ai-agents/](04-ai-agents/).

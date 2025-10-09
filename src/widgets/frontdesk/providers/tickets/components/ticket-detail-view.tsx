@@ -21,9 +21,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import EmailIcon from '@mui/icons-material/Email';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
@@ -57,11 +55,16 @@ import {
   TagInput,
   TagList,
   PopularTags,
+  QuickActionButton,
+  QuickActionMenu,
+  QuickActionItem,
 } from '@/widgets/frontdesk/design-system';
 import { Alert } from '@mui/material';
 import { TicketTimeline } from './ticket-timeline';
 import { RelatedTickets } from './related-tickets';
 import { CustomerProfileSection } from './customer-profile-section';
+import { useQuickActions } from '../hooks/use-quick-actions';
+import { getGroupedActions, GROUP_LABELS } from '../utils/quick-actions-config';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
@@ -97,11 +100,28 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   onSelectRelatedTicket,
 }) => {
   const theme = useTheme();
-  const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
+
+  // Quick Actions integration
+  const { availableActions, hasCustomer, executeAction, getActionBlockReason } = useQuickActions({
+    ticketId: ticket.id,
+    customerId: ticket.customerId,
+    customerName: ticket.customerName,
+    customerEmail: ticket.customerEmail,
+    customerPhone: ticket.customerPhone,
+    onActionComplete: (actionType) => {
+      console.log('[TicketDetailView] Quick action completed:', actionType);
+    },
+    onActionError: (actionType, error) => {
+      console.error('[TicketDetailView] Quick action error:', actionType, error);
+      // TODO: Show toast notification
+      alert(`Cannot execute action: ${error}`);
+    },
+  });
 
   // Add defensive logging
   console.log('[TicketDetailView] Rendering ticket:', ticket.id, ticket.ticketNumber);
@@ -112,6 +132,22 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
     if (onReply && data.message) {
       onReply(data.message);
     }
+  };
+
+  // Quick Actions menu helpers
+  const groupedActions = getGroupedActions();
+  const quickActionMenuItems: QuickActionItem[] = availableActions.map((action) => ({
+    id: action.type,
+    label: action.label,
+    icon: action.icon,
+    tooltip: action.tooltip,
+    disabled: !!getActionBlockReason(action.type),
+    disabledReason: getActionBlockReason(action.type) || undefined,
+    group: action.group,
+  }));
+
+  const handleQuickActionClick = (action: QuickActionItem) => {
+    executeAction(action.id as any);
   };
 
   // Convert UI status to backend status for display
@@ -192,13 +228,12 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
             {/* Right Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-              <IconButton size="small" title="Send email notification">
-                <EmailIcon fontSize="small" />
-              </IconButton>
-
-              <IconButton size="small" onClick={(e) => setMoreMenuAnchor(e.currentTarget)}>
-                <MoreVertIcon fontSize="small" />
-              </IconButton>
+              {/* Quick Actions Button */}
+              <QuickActionButton
+                size="sm"
+                isOpen={Boolean(quickActionsAnchor)}
+                onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+              />
 
               <IconButton size="small" onClick={onClose}>
                 <CloseIcon fontSize="small" />
@@ -1029,16 +1064,15 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
       </Box>
 
-      {/* More Menu */}
-      <Menu
-        anchorEl={moreMenuAnchor}
-        open={Boolean(moreMenuAnchor)}
-        onClose={() => setMoreMenuAnchor(null)}
-      >
-        <MenuItem>Print</MenuItem>
-        <MenuItem>Export</MenuItem>
-        <MenuItem>Delete</MenuItem>
-      </Menu>
+      {/* Quick Actions Menu */}
+      <QuickActionMenu
+        anchorEl={quickActionsAnchor}
+        open={Boolean(quickActionsAnchor)}
+        onClose={() => setQuickActionsAnchor(null)}
+        actions={quickActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleQuickActionClick}
+      />
 
       {/* Status Menu */}
       <Menu
