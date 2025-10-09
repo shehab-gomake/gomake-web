@@ -9,7 +9,7 @@
 import { GoMakeDialog } from "@/components/dialog";
 import { Grid, Box, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { GoMakeTextInput } from "@/components/text-input";
+import { GoMakeTextInput } from "../text-input/go-make-text-input";
 
 // This is a simplified example showing the structure
 export const ExtraParametersModalRefactored = ({
