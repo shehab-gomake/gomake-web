@@ -18,7 +18,6 @@ const useAISocketIO = (
     }
     const socket = io(config.api_server);
     socket.on(sessionId, (message: any) => {
-      debugger;
       if (onMessageReceived) {
         onMessageReceived(message);
       }
@@ -93,7 +92,6 @@ const useAISocketIO = (
       );
 
       // Check HTTP status code
-      debugger;
       if (response?.status && response.status !== 200) {
         const errorMessage =
           response?.message ||
