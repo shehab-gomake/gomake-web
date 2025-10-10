@@ -4,9 +4,7 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: 460,
-        height: "fit-content",
-        padding: 20,
+        padding: "5px",
       },
       inputsDivStyle: {
         display: "flex",

@@ -115,6 +115,8 @@ const useStyle = ({ customStyles, isRTL = false }: UseStyleProps) => {
      alignItems: "center",
      gap: "8px",
      width: "100%",
+     padding: "8px",
+     cursor: "pointer",
       },
     };
   }, [primaryColor, neutralColor, customStyles, isRTL]);

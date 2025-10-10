@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { GoMakeModal } from "@/components";
+import { GoMakeDialog } from "@/components";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -16,7 +16,6 @@ import {
 import { rowInputs } from "./inputs";
 import { useStyle } from "./style";
 import { Stack } from "@mui/material";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddCategoryRow } from "./use-add-row";
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { GetParameterValuesByIdAi } from "@/services/api-service/parameters/parameters-outputs";
@@ -122,17 +121,37 @@ const AddRowModal = (props: IAddRowModalProps) => {
     materialHeaders,
     rowData
   );
+
+  const handleAdd = () => {
+    if (validateRequiredFieldsResult.isValid) {
+      onAddCategoryRow(rowData, materialHeaders);
+    } else {
+      alertFault(
+        `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(
+          ", "
+        )}`
+      );
+    }
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+    setRowData("");
+  };
+
   return (
-    <GoMakeModal
-      insideStyle={classes.insideStyle}
-      openModal={openModal}
-      onClose={() => {
-        setOpenModal(false), setRowData("");
-      }}
-      modalTitle={t("materials.buttons.addNewRow")}
+    <GoMakeDialog
+      open={openModal}
+      onClose={handleClose}
+      title={t("materials.buttons.addNewRow")}
+      primaryButtonLabel={t("materials.buttons.add")}
+      cancelButtonLabel={t("materials.childTable.cancel")}
+      onPrimaryAction={handleAdd}
+      maxWidth="xs"
+      fullWidth
     >
-      <Stack display={"flex"} direction={"column"} marginTop={"10px"}>
-        <Stack style={classes.inputsDivStyle} className="custom-scrollbar">
+      <Stack display={"flex"} direction={"column"} marginTop={"10px"} width={"100%"}>
+        <Stack style={classes.inputsDivStyle} className="custom-scrollbar" width={"100%"}>
           {rowInputs(
             rowData,
             isFetching,
@@ -170,25 +189,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
             );
           })}
         </Stack>
-        <SecondaryButton
-          variant="contained"
-          onClick={() => {
-            if (validateRequiredFieldsResult.isValid) {
-              onAddCategoryRow(rowData, materialHeaders);
-            } else {
-              alertFault(
-                `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(
-                  ", "
-                )}`
-              );
-            }
-          }}
-          style={classes.addBtnStyle}
-        >
-          {t("materials.buttons.add")}
-        </SecondaryButton>
       </Stack>
-    </GoMakeModal>
+    </GoMakeDialog>
   );
 };
 
