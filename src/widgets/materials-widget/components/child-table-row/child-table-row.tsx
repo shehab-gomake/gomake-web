@@ -479,7 +479,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.inventory || ''}
+                                                                value={row.inventory ?? ''}
                                                                 isEditable={true}
                                                                 type={1}
                                                                 id={row.id}

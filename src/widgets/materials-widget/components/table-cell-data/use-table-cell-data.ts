@@ -51,7 +51,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     const inventoryFields = ['totalInventory'];
 
                     for (const field of inventoryFields) {
-                        if (updatedRow.rowData[field]) {
+                        if (updatedRow.rowData[field] !== undefined) {
                             updatedRow.rowData = {
                                 ...updatedRow.rowData,
                                 [field]: {
@@ -129,9 +129,6 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                 const error = res?.errors;
                 let userMessage = t("materials.inputs.duplicateFailedTryAgain");
                 if (res.success) {
-                  
-              
-                 
                     // Handle inventory table updates
                     if (inventoryTable && res.data) {
                         // Update the specific inventory row with new data
@@ -140,7 +137,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                         }
                         
                         // Update Total Inventory in parent table
-                        if (res.data.totalInventory && typeof res.data.totalInventory === 'number') {
+                        if ( typeof res.data.totalInventory === 'number') {
                             updateTotalInventoryInParent(openChildTable.rowId, res.data.totalInventory);
                         }
                     }

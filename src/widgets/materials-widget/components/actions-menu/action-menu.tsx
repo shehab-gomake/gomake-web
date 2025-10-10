@@ -376,7 +376,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         />
                       </div>
                       <div
-                        style={{ width: "50%", marginTop: -16, height: "100%" }}
+                        style={{ width: "50%", height: "100%" }}
                       >
                         {properties[index].key &&
                           rowInputs(
