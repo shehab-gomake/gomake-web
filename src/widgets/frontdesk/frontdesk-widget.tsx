@@ -29,7 +29,6 @@ import {
   selectedTicketIdAtom,
   selectedTicketSelector,
   ticketSearchQueryAtom,
-  selectedTicketIdsAtom,
   ticketCountsSelector,
   openTicketTabsAtom,
   ticketsAtom,
@@ -103,7 +102,6 @@ const FrontdeskWidget: React.FC = () => {
   const ticketsProvider = useTicketsProvider();
   const [selectedTicketView, setSelectedTicketView] = useRecoilState(selectedTicketViewAtom);
   const [selectedTicketId, setSelectedTicketId] = useRecoilState(selectedTicketIdAtom);
-  const [selectedTicketIds, setSelectedTicketIds] = useRecoilState(selectedTicketIdsAtom);
   const [openTicketTabs, setOpenTicketTabs] = useRecoilState(openTicketTabsAtom);
   const allTickets = useRecoilValue(ticketsAtom);
   const ticketsLoading = useRecoilValue(ticketsLoadingAtom);
@@ -272,13 +270,6 @@ const FrontdeskWidget: React.FC = () => {
     }
   };
 
-  const handleTicketCheck = (ticketId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedTicketIds([...selectedTicketIds, ticketId]);
-    } else {
-      setSelectedTicketIds(selectedTicketIds.filter(id => id !== ticketId));
-    }
-  };
 
   const handleTicketClose = () => {
     setSelectedTicketId(null);
@@ -448,11 +439,9 @@ const FrontdeskWidget: React.FC = () => {
             viewTitle={getTicketViewTitle(selectedTicketView as TicketView)}
             tickets={ticketsProvider.filteredTickets}
             selectedTicketId={ticketsProvider.selectedTicketId}
-            selectedTicketIds={ticketsProvider.selectedTicketIds}
             searchQuery={ticketsProvider.searchQuery}
             onSearchChange={ticketsProvider.setSearchQuery}
             onTicketSelect={handleTicketSelect}
-            onTicketCheck={handleTicketCheck}
             onViewChange={(view) => handleTicketViewChange(view as TicketView)}
             isLoading={ticketsLoading}
             error={ticketsError}
