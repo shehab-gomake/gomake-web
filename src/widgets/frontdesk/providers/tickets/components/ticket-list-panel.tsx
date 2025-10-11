@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -78,28 +78,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
     t.status === 'OPEN'
   ).length;
 
-  // Client-side search on displayed tickets (backend has no search param)
-  const displayedTickets = useMemo(() => {
-    if (!searchQuery) return tickets;
-
-    const query = searchQuery.toLowerCase();
-    return tickets.filter(t => {
-      const ticketNum = t.ticketNumber?.toString() || '';
-      const conversationName = t.conversation?.name?.toLowerCase() || '';
-      const custEmail = t.customerEmail?.toLowerCase() || '';
-      const custName = t.customerName?.toLowerCase() || '';
-      const custPhone = t.customerPhone || '';
-
-      return (
-        ticketNum.includes(query) ||
-        conversationName.includes(query) ||
-        custEmail.includes(query) ||
-        custName.includes(query) ||
-        custPhone.includes(query)
-      );
-    });
-  }, [tickets, searchQuery]);
-
   return (
     <Box sx={{ width: 280, minWidth: 280, height: '100%' }}>
       <Panel
@@ -161,13 +139,13 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
               title="Error loading tickets"
               description={error}
             />
-          ) : displayedTickets.length === 0 ? (
+          ) : tickets.length === 0 ? (
             <EmptyState
               title="No tickets found"
               description={searchQuery ? "Try adjusting your search" : "No tickets match your filters"}
             />
           ) : (
-            displayedTickets.map((ticket) => (
+            tickets.map((ticket) => (
               <TicketListItem
                 key={ticket.id}
                 ticket={ticket}

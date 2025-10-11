@@ -58,6 +58,7 @@ export class TicketsService extends MessagingHubHttpClient {
   async listTickets(filters?: TicketFilters): Promise<PaginatedTicketsResponse> {
     const params = new URLSearchParams();
 
+    if (filters?.search?.trim()) params.append('search', filters.search.trim());
     if (filters?.status) params.append('status', filters.status);
     if (filters?.priority) params.append('priority', filters.priority);
     if (filters?.assigneeId) params.append('assigneeId', filters.assigneeId);

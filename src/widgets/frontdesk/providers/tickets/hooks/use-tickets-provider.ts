@@ -1057,6 +1057,48 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only fetch on mount - user must click "Apply Filters" to refetch
 
+  // ============================================
+  // Debounced Search Effect
+  // ============================================
+
+  useEffect(() => {
+    // Validate search query
+    const trimmedSearch = searchQuery.trim();
+
+    // Skip if empty
+    if (!trimmedSearch) {
+      // If search was cleared, refetch without search param
+      if (filters.search) {
+        const { search, ...filtersWithoutSearch } = filters;
+        fetchTickets({ ...filtersWithoutSearch, page: 1 });
+      }
+      return;
+    }
+
+    // Validate length
+    if (trimmedSearch.length > 255) {
+      setError('Search query is too long (max 255 characters)');
+      return;
+    }
+
+    // Allow 1 character only for numeric searches (ticket numbers)
+    if (trimmedSearch.length === 1 && !/^\d+$/.test(trimmedSearch)) {
+      // Don't show error, just don't search yet
+      return;
+    }
+
+    // Debounce search - wait 500ms after user stops typing
+    const timeoutId = setTimeout(() => {
+      console.log("[TicketsProvider] Executing debounced search:", trimmedSearch);
+      fetchTickets({ ...filters, search: trimmedSearch, page: 1 });
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]); // Only depend on searchQuery - filters handled separately
+
   // Fetch ticket details when selected (includes relatedTickets and history in response)
   useEffect(() => {
     if (selectedTicketId) {

@@ -243,6 +243,7 @@ export interface PaginatedTicketsResponse {
 // ============================================
 
 export interface TicketFilters {
+  search?: string; // Search by ticket number, customer info, or message content (max 255 chars)
   status?: TicketStatus;
   priority?: TicketPriority;
   assigneeId?: string;
