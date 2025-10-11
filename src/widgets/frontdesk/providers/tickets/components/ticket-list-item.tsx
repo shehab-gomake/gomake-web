@@ -40,9 +40,19 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
     onCheck?.(ticket.id, checked);
   };
 
+  // Multi-conversation support: Use conversations array if available, otherwise fall back to single conversation
+  const conversations = ticket.conversations || (ticket.conversation ? [{
+    ...ticket.conversation,
+    channel: 'EMAIL' as any, // Default to EMAIL for old format
+    provider: { id: '', vendor: '', type: 'EMAIL' },
+    identifier: ticket.customerEmail || '',
+    messageCount: ticket.conversation.messages?.length || 0,
+  }] : []);
+  const latestConversation = conversations.length > 0 ? conversations[0] : null;
+
   // Determine if ticket is unread (has recent message and no first response)
   const isUnread = Boolean(
-    ticket.conversation.lastMessageAt &&
+    latestConversation?.lastMessageAt &&
     !ticket.firstResponseAt &&
     ticket.status === 'OPEN'
   );
@@ -70,8 +80,15 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   const title = ticket.customerName ||
                 ticket.customerEmail ||
                 ticket.customerPhone ||
-                ticket.conversation.name ||
+                latestConversation?.name ||
                 'Unknown Customer';
+
+  // Extract channel info for multi-conversation badge
+  const channels = ticket.channels || (latestConversation?.channel ? [{ type: latestConversation.channel, vendor: latestConversation.provider?.vendor || '' }] : []);
+  const conversationCount = ticket.conversationCount || conversations.length;
+
+  // TODO: Add channel badges and conversation count to design system component
+  // For now, the multi-conversation info will be visible in the detail view tabs
 
   return (
     <DSTicketListItem
@@ -81,7 +98,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       status={apiStatusToUi(ticket.status)}
       priority={apiPriorityToUi(ticket.priority)}
       type={'Support'} // All backend tickets are Support type
-      updatedAt={formatConversationDate(ticket.conversation.lastMessageAt || ticket.updatedAt)}
+      updatedAt={formatConversationDate(latestConversation?.lastMessageAt || ticket.updatedAt)}
       isSelected={selected}
       isChecked={checked}
       isUnread={isUnread}

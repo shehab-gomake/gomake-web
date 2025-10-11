@@ -72,7 +72,12 @@ import { ticketToUnified } from '@/widgets/frontdesk/utils/message-transformer';
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
   onClose: () => void;
-  onReply?: (content: string) => void;
+  /**
+   * BREAKING CHANGE: onReply now requires conversationId
+   * @param content - Reply message content
+   * @param conversationId - Conversation ID (which channel/tab to reply on)
+   */
+  onReply?: (content: string, conversationId: string) => void;
   onStatusChange?: (status: string) => void;
   onPriorityChange?: (priority: string) => void;
   onAddTags?: (tags: string[]) => void;
@@ -109,6 +114,22 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
+  // Multi-conversation support: Track active conversation (tab)
+  // Use conversations array if available, otherwise fall back to single conversation
+  const conversations = ticket.conversations || (ticket.conversation ? [{
+    ...ticket.conversation,
+    channel: 'EMAIL' as any, // Default to EMAIL for old format
+    provider: { id: '', vendor: '', type: 'EMAIL' },
+    identifier: ticket.customerEmail || '',
+    messageCount: ticket.conversation.messages?.length || 0,
+  }] : []);
+  const [activeConversationId, setActiveConversationId] = useState<string>(
+    conversations[0]?.id || ''
+  );
+
+  // Get active conversation based on selected tab
+  const activeConversation = conversations.find(c => c.id === activeConversationId) || conversations[0];
+
   // Inline reply state - open by default for tickets
   const [showInlineReply, setShowInlineReply] = useState(true);
   const [replyText, setReplyText] = useState("");
@@ -131,14 +152,20 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
     },
   });
 
-  // Add defensive logging
+  // Add defensive logging with multi-conversation support
   console.log('[TicketDetailView] Rendering ticket:', ticket.id, ticket.ticketNumber);
-  console.log('[TicketDetailView] Conversation:', ticket.conversation ? 'exists' : 'MISSING');
-  console.log('[TicketDetailView] Messages count:', ticket.conversation?.messages?.length || 0);
+  console.log('[TicketDetailView] Conversations:', conversations.length);
+  console.log('[TicketDetailView] Active conversation:', activeConversationId);
+  console.log('[TicketDetailView] Active conversation messages:', activeConversation?.messages?.length || 0);
+
+  // Backward compatibility check
+  if (ticket.conversation && !ticket.conversations) {
+    console.warn('[TicketDetailView] ⚠️ OLD FORMAT: ticket.conversation detected (no conversations array)');
+  }
 
   const handleSendReply = (data: any) => {
-    if (onReply && data.message) {
-      onReply(data.message);
+    if (onReply && data.message && activeConversationId) {
+      onReply(data.message, activeConversationId);
     }
   };
 
@@ -149,11 +176,15 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   };
 
   const handleSendInlineReply = async () => {
-    if (!replyText.trim() || !onReply) return;
+    if (!replyText.trim() || !onReply || !activeConversationId) {
+      console.error('[TicketDetailView] Cannot send reply: missing reply text, onReply handler, or activeConversationId');
+      return;
+    }
 
     setIsSendingReply(true);
     try {
-      await onReply(replyText);
+      console.log('[TicketDetailView] Sending reply to conversation:', activeConversationId);
+      await onReply(replyText, activeConversationId);
       setReplyText("");
       setShowInlineReply(false);
     } catch (error) {
@@ -343,6 +374,52 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </Button>
         </Box>
 
+        {/* Conversation Tabs - Multi-Channel Support */}
+        {activeView === 'conversation' && conversations.length > 1 && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 2,
+              py: 1.5,
+              borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+              backgroundColor: theme.palette.background.paper,
+              overflowX: 'auto',
+            }}
+          >
+            {conversations.map((conversation) => {
+              const channelIcon = getChannelIcon(conversation.channel || 'EMAIL');
+              const isActive = conversation.id === activeConversationId;
+
+              return (
+                <Button
+                  key={conversation.id}
+                  size="small"
+                  onClick={() => setActiveConversationId(conversation.id)}
+                  sx={{
+                    textTransform: 'none',
+                    px: 2,
+                    py: 1,
+                    fontWeight: isActive ? 600 : 400,
+                    color: isActive ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+                    backgroundColor: isActive ? colorTokens.primary[50] : 'transparent',
+                    borderRadius: '8px',
+                    border: `1px solid ${isActive ? colorTokens.primary[200] : 'transparent'}`,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+                    },
+                  }}
+                >
+                  {channelIcon} {conversation.channel || 'Email'} ({conversation.messageCount || conversation.messages?.length || 0})
+                </Button>
+              );
+            })}
+          </Box>
+        )}
+
         {/* Comments/Thread - Multi-Channel Timeline */}
         {activeView === 'conversation' && (
           <Box
@@ -375,7 +452,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <ChatBubbleOutlineIcon sx={{ fontSize: 20, color: colorTokens.semantic.text.secondary }} />
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Conversation ({ticket.conversation?.messages?.length || 0} messages)
+                    {conversations.length > 1 ? `${conversations.length} Conversations` : 'Conversation'} ({activeConversation?.messages?.length || 0} messages)
                   </Typography>
                 </Box>
                 <KeyboardArrowDownIcon sx={{ color: colorTokens.semantic.text.secondary }} />
@@ -395,7 +472,9 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
-                    Conversation Timeline
+                    {conversations.length > 1
+                      ? `${activeConversation?.channel || 'Email'} Conversation`
+                      : 'Conversation Timeline'}
                   </Typography>
                   <IconButton
                     size="small"
@@ -413,9 +492,9 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   actor={{ name: ticket.customerName || ticket.customerEmail || 'Customer' }}
                 />
 
-                {/* Render messages and system events */}
-                {ticket.conversation?.messages && Array.isArray(ticket.conversation.messages) && ticket.conversation.messages.length > 0 ? (
-                  ticket.conversation.messages.map((message, index) => {
+                {/* Render messages from ACTIVE conversation only */}
+                {activeConversation?.messages && Array.isArray(activeConversation.messages) && activeConversation.messages.length > 0 ? (
+                  activeConversation.messages.map((message, index) => {
                     // Defensive null checks for message
                     if (!message || !message.id) {
                       console.warn('[TicketDetailView] Skipping invalid message:', message);
@@ -453,14 +532,14 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                         <MessageItem
                           message={unifiedMessage}
                           variant="ticket"
-                          isLast={index === ticket.conversation.messages.length - 1}
+                          isLast={index === activeConversation.messages.length - 1}
                         />
                       </React.Fragment>
                     );
                   })
                 ) : null}
 
-                {(!ticket.conversation?.messages || ticket.conversation.messages.length === 0) && (
+                {(!activeConversation?.messages || activeConversation.messages.length === 0) && (
                   <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       No messages yet
@@ -510,7 +589,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   Description
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.7, color: colorTokens.semantic.text.primary }}>
-                  {ticket.conversation?.messages?.[0]?.content || 'No description available'}
+                  {activeConversation?.messages?.[0]?.content || conversations[0]?.messages?.[0]?.content || 'No description available'}
                 </Typography>
               </Box>
 
@@ -588,7 +667,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                       }}
                     />
                     <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
-                      Resolve the customer's issue via {ticket.conversation?.messages?.[0]?.channel || 'email'}
+                      Resolve the customer's issue via {conversations.length > 1 ? 'multiple channels' : (activeConversation?.channel || 'email')}
                     </Typography>
                   </Box>
                   <Box

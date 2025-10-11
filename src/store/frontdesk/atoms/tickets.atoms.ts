@@ -138,6 +138,15 @@ export const selectedTicketIdAtom = atom<string | null>({
 });
 
 /**
+ * Active conversation ID for multi-conversation tickets
+ * Tracks which tab/conversation is currently active for viewing and replying
+ */
+export const activeConversationIdAtom = atom<string | null>({
+  key: 'frontdesk.tickets.activeConversationId',
+  default: null,
+});
+
+/**
  * Currently selected ticket view (my-tickets, past-due, etc.)
  */
 export const selectedTicketViewAtom = atom<string | null>({

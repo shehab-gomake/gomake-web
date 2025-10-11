@@ -25,6 +25,7 @@ import {
   popularTagsAtom,
   tagSuggestionsAtom,
   tagsLoadingAtom,
+  activeConversationIdAtom,
 } from "@/store/frontdesk/atoms/tickets.atoms";
 import { ticketSocketService } from "@/services/frontdesk";
 import {
@@ -68,6 +69,10 @@ export interface UseTicketsProviderResult {
   setSelectedTicketId: (id: string | null) => void;
   selectedTicket: TicketWithDetails | null;
 
+  // Active conversation (multi-conversation support)
+  activeConversationId: string | null;
+  setActiveConversationId: (id: string | null) => void;
+
   // Multi-selection
   selectedTicketIds: string[];
   setSelectedTicketIds: (ids: string[]) => void;
@@ -98,7 +103,7 @@ export interface UseTicketsProviderResult {
   fetchTickets: (filters?: TicketFilters) => Promise<void>;
   refreshTickets: () => Promise<void>;
   createTicketFromConversation: (data: CreateFromConversationDto) => Promise<TicketWithDetails>;
-  replyToTicket: (ticketId: string, content: string) => Promise<void>;
+  replyToTicket: (ticketId: string, content: string, conversationId: string) => Promise<void>;
   updateTicket: (ticketId: string, updates: UpdateTicketDto) => Promise<void>;
   updateTicketStatus: (ticketId: string, status: UpdateTicketStatusDto["status"]) => Promise<void>;
   updateTicketPriority: (ticketId: string, priority: UpdateTicketPriorityDto["priority"]) => Promise<void>;
@@ -164,6 +169,9 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // WebSocket connection state
   const [socketConnected, setSocketConnected] = useRecoilState(ticketSocketConnectedAtom);
   const [socketError, setSocketError] = useRecoilState(ticketSocketErrorAtom);
+
+  // Active conversation (for multi-conversation tickets)
+  const [activeConversationId, setActiveConversationId] = useRecoilState(activeConversationIdAtom);
 
   // Review Queue
   const [reviewQueueConversations, setReviewQueueConversations] = useRecoilState(reviewQueueConversationsAtom);
@@ -586,21 +594,26 @@ export function useTicketsProvider(): UseTicketsProviderResult {
         console.log("[TicketsProvider] Ticket fetched successfully:", {
           id: ticket.id,
           ticketNumber: ticket.ticketNumber,
-          hasConversation: !!ticket.conversation,
-          messagesCount: ticket.conversation?.messages?.length || 0,
+          hasConversations: !!ticket.conversations && ticket.conversations.length > 0,
+          conversationsCount: ticket.conversations?.length || 0,
+          totalMessagesCount: ticket.conversations?.reduce((sum, conv) => sum + (conv.messages?.length || 0), 0) || 0,
           hasTags: Array.isArray(ticket.tags),
           tagsCount: ticket.tags?.length || 0,
         });
 
-        // Validate ticket structure
-        if (!ticket.conversation) {
-          console.error("[TicketsProvider] ⚠️ Ticket missing conversation object:", ticket.id);
+        // Validate ticket structure - Support multi-conversation tickets
+        if (!ticket.conversations || ticket.conversations.length === 0) {
+          console.error("[TicketsProvider] ⚠️ Ticket missing conversations array:", ticket.id);
           setError(`Ticket #${ticket.ticketNumber} is missing conversation data`);
           return;
         }
 
-        if (!Array.isArray(ticket.conversation.messages)) {
-          console.error("[TicketsProvider] ⚠️ Ticket conversation.messages is not an array:", ticket.id);
+        // Validate at least one conversation has messages array
+        const hasValidMessages = ticket.conversations.some(
+          conv => Array.isArray(conv.messages)
+        );
+        if (!hasValidMessages) {
+          console.error("[TicketsProvider] ⚠️ Ticket conversations have invalid messages:", ticket.id);
           setError(`Ticket #${ticket.ticketNumber} has invalid messages data`);
           return;
         }
@@ -660,11 +673,24 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     [setIsLoading, setError]
   );
 
+  /**
+   * Reply to Ticket
+   * BREAKING CHANGE: Now requires conversationId to specify which channel to reply on
+   *
+   * @param ticketId - Ticket ID
+   * @param content - Reply message content
+   * @param conversationId - Conversation ID (which channel/tab to reply on)
+   */
   const replyToTicket = useCallback(
-    async (ticketId: string, content: string) => {
+    async (ticketId: string, content: string, conversationId: string) => {
       try {
-        await ticketsService.replyToTicket(ticketId, content);
-        console.log("[TicketsProvider] Reply sent successfully");
+        console.log("[TicketsProvider] Sending reply:", {
+          ticketId,
+          conversationId,
+          contentLength: content.length,
+        });
+        await ticketsService.replyToTicket(ticketId, content, conversationId);
+        console.log("[TicketsProvider] Reply sent successfully to conversation:", conversationId);
         // Message will be updated via WebSocket event
       } catch (err: any) {
         console.error("[TicketsProvider] Reply error:", err);
@@ -1064,6 +1090,10 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     selectedTicketId,
     setSelectedTicketId,
     selectedTicket,
+
+    // Active conversation
+    activeConversationId,
+    setActiveConversationId,
 
     // Multi-selection
     selectedTicketIds,

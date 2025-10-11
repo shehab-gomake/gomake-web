@@ -95,6 +95,53 @@ export interface Ticket {
 // Hydrated Ticket Model (with relationships)
 // ============================================
 
+// ============================================
+// Conversation & Message Models
+// ============================================
+
+export interface ConversationMessage {
+  id: string;
+  content: string;
+  createdAt: string;
+  direction: MessageDirection;
+  channel?: ChannelType;
+  fromIdentifier?: string;
+  // Delivery tracking fields
+  status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  sentAt?: string;
+  deliveredAt?: string;
+  errorMessage?: string;
+  metadata?: {
+    subject?: string; // email only
+    messageType?: string; // WhatsApp media type
+    hasHtml?: boolean;
+  };
+  channelMetadata?: {
+    providerMessageId?: string;
+    [key: string]: any;
+  };
+}
+
+/**
+ * Conversation - Represents a single communication channel
+ * NEW: One ticket can have multiple conversations
+ */
+export interface Conversation {
+  id: string;
+  name: string;
+  channel: ChannelType;
+  provider: {
+    id: string;
+    vendor: string;
+    type: string;
+  };
+  identifier: string; // email address or phone number
+  messageCount: number;
+  lastMessageAt: string;
+  createdAt: string;
+  messages: ConversationMessage[];
+}
+
 export interface TicketWithDetails extends Ticket {
   // Creator details (populated from createdBy)
   creator?: {
@@ -133,33 +180,32 @@ export interface TicketWithDetails extends Ticket {
     identifier: string; // email address or phone number
     name: string;
   };
-  conversation: {
+  /**
+   * BREAKING CHANGE: Multi-Conversation Support
+   *
+   * OLD: conversation: { id, name, messages: [...] }
+   * NEW: conversations: [{ id, name, channel, messages: [...] }, ...]
+   *
+   * One ticket can now have multiple conversations across different channels.
+   * Example: Customer emails → creates Email conversation
+   *          Same customer WhatsApps → adds WhatsApp conversation to SAME ticket
+   */
+  conversations: Conversation[];
+  conversationCount: number;
+  channels: Array<{
+    type: ChannelType;
+    vendor: string;
+  }>;
+  /**
+   * @deprecated Use conversations[] instead
+   * Kept for backward compatibility with old tickets
+   */
+  conversation?: {
     id: string;
     name: string;
     createdAt: string;
     lastMessageAt: string | null;
-    messages: Array<{
-      id: string;
-      content: string;
-      createdAt: string;
-      direction: MessageDirection;
-      channel?: ChannelType;
-      fromIdentifier?: string;
-      // Delivery tracking fields
-      status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
-      sentAt?: string;
-      deliveredAt?: string;
-      errorMessage?: string;
-      metadata?: {
-        subject?: string; // email only
-        messageType?: string; // WhatsApp media type
-        hasHtml?: boolean;
-      };
-      channelMetadata?: {
-        providerMessageId?: string;
-        [key: string]: any;
-      };
-    }>;
+    messages: ConversationMessage[];
   };
   sla?: {
     firstResponseDue: string;
@@ -229,8 +275,16 @@ export interface CreateFromConversationDto {
   customerId?: string; // Optional: GoMake customer ID
 }
 
+/**
+ * Reply to Ticket DTO
+ * BREAKING CHANGE: conversationId is NOW REQUIRED
+ *
+ * Backend needs to know which conversation (channel) to reply on.
+ * Frontend must pass the active tab's conversationId.
+ */
 export interface ReplyTicketDto {
   content: string;
+  conversationId: string; // ✅ NOW REQUIRED - which conversation/channel to reply on
 }
 
 /**

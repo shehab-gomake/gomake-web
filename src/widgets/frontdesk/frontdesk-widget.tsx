@@ -587,9 +587,11 @@ const FrontdeskWidget: React.FC = () => {
                 <TicketDetailView
                   ticket={ticketsProvider.selectedTicket}
                   onClose={handleTicketClose}
-                  onReply={async (content) => {
-                    if (ticketsProvider.selectedTicket) {
-                      await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content);
+                  onReply={async (content, conversationId) => {
+                    if (ticketsProvider.selectedTicket && conversationId) {
+                      await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content, conversationId);
+                    } else {
+                      console.error('[FrontDeskWidget] Cannot send reply: missing ticket or conversationId');
                     }
                   }}
                   onStatusChange={async (status) => {

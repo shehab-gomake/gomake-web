@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import {
   IconButton,
-  Menu,
   MenuItem,
   ListItemText,
   ListItemIcon,
   Divider,
-  Typography,
-  Box,
 } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CheckIcon from '@mui/icons-material/Check';
+import { DropdownMenu, MenuSubheader } from '@/widgets/frontdesk/components/dropdown-menu';
 
 interface TicketSortMenuProps {
   sortBy: 'createdAt' | 'lastMessageAt' | 'priority' | 'ticketNumber' | 'status';
@@ -59,19 +57,14 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
         <SortIcon fontSize="small" />
       </IconButton>
 
-      <Menu
+      <DropdownMenu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        PaperProps={{
-          sx: { width: 220 }
-        }}
+        width={220}
+        disableContentPadding
       >
-        <Box px={2} py={1}>
-          <Typography variant="caption" color="text.secondary" fontWeight={600}>
-            SORT BY
-          </Typography>
-        </Box>
+        <MenuSubheader>SORT BY</MenuSubheader>
 
         {SORT_OPTIONS.map((option) => (
           <MenuItem
@@ -88,11 +81,7 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
 
         <Divider sx={{ my: 1 }} />
 
-        <Box px={2} py={1}>
-          <Typography variant="caption" color="text.secondary" fontWeight={600}>
-            ORDER
-          </Typography>
-        </Box>
+        <MenuSubheader>ORDER</MenuSubheader>
 
         <MenuItem
           onClick={() => handleSortOrderChange('desc')}
@@ -119,7 +108,7 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
             <CheckIcon fontSize="small" color="primary" />
           )}
         </MenuItem>
-      </Menu>
+      </DropdownMenu>
     </>
   );
 };

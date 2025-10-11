@@ -22,7 +22,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { TicketWithDetails, TicketFilters } from '../types/api.types';
 import { TicketListItem } from './ticket-list-item';
-import { TicketFiltersModal } from './ticket-filters-modal';
+import { TicketFiltersMenu } from './ticket-filters-menu';
 import { TicketSortMenu } from './ticket-sort-menu';
 
 interface TicketListPanelProps {
@@ -61,7 +61,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
   onClearFilters
 }) => {
   const [viewMenuAnchor, setViewMenuAnchor] = useState<null | HTMLElement>(null);
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
 
   const handleViewMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setViewMenuAnchor(event.currentTarget);
@@ -131,16 +130,15 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
                 }}
               />
 
-              {/* Filter Button */}
-              <IconButton
-                size="small"
-                onClick={() => setFilterModalOpen(true)}
-                aria-label="Filter tickets"
-              >
-                <Badge badgeContent={activeFilterCount} color="primary">
-                  <FilterListIcon fontSize="small" />
-                </Badge>
-              </IconButton>
+              {/* Filter Menu */}
+              <TicketFiltersMenu
+                filters={filters}
+                onApply={(partialFilters) => {
+                  onApplyFilters({ ...filters, ...partialFilters, page: 1 });
+                }}
+                onClear={onClearFilters}
+                activeFilterCount={activeFilterCount}
+              />
             </Box>
           }
         />
@@ -202,20 +200,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           <Divider />
           <MenuItem onClick={() => handleViewSelect('resolved')}>Resolved</MenuItem>
         </Menu>
-
-        {/* Filter Modal */}
-        <TicketFiltersModal
-          open={filterModalOpen}
-          onClose={() => setFilterModalOpen(false)}
-          filters={filters}
-          onApply={(partialFilters) => {
-            onApplyFilters({ ...filters, ...partialFilters, page: 1 });
-          }}
-          onClear={() => {
-            onClearFilters();
-            setFilterModalOpen(false);
-          }}
-        />
       </Panel>
     </Box>
   );

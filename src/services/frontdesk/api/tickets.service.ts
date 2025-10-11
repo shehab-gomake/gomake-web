@@ -98,11 +98,14 @@ export class TicketsService extends MessagingHubHttpClient {
   /**
    * Reply to Ticket
    * POST /api/tickets/:id/reply
+   *
+   * BREAKING CHANGE: conversationId is NOW REQUIRED
+   * Backend needs to know which conversation/channel to reply on (Email, WhatsApp, SMS, etc.)
    */
-  async replyToTicket(ticketId: string, content: string): Promise<ReplyTicketResponse> {
+  async replyToTicket(ticketId: string, content: string, conversationId: string): Promise<ReplyTicketResponse> {
     return await this.post<ReplyTicketResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/reply`,
-      { content }
+      { content, conversationId }
     );
   }
 

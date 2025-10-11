@@ -5,5 +5,5 @@ export { ReviewQueue } from './review-queue';
 export { CreateTicketModal } from './create-ticket-modal';
 export { TicketTimeline } from './ticket-timeline';
 export { RelatedTickets } from './related-tickets';
-export { TicketFiltersModal } from './ticket-filters-modal';
+export { TicketFiltersMenu } from './ticket-filters-menu';
 export { TicketSortMenu } from './ticket-sort-menu';
