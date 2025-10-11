@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { BoardMissionStatusForFilter } from "./widgets/enums";
 import {
   exportJobTableToExcelApi,
+  exportJobTableToExcelAsyncApi,
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
@@ -105,6 +106,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertFaultGetData,
     alertFaultUpdate,
     alertSuccessUpdate,
+    alertSuccess
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -1764,19 +1766,32 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, []);
 
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [exportEmail, setExportEmail] = useState("");
+
   const ExportJobsTableToExcel = async () => {
+    // Show email modal instead of direct export
+    setShowEmailModal(true);
+  };
+
+  const handleEmailModalClose = () => {
+    setShowEmailModal(false);
+    setExportEmail("");
+  };
+
+  const handleExportWithEmail = async () => {
+    if (!exportEmail || !exportEmail.includes("@")) {
+      alertFault(t("boardMissions.invalidEmail"));
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
-        const downloadLink = document.createElement("a");
-        if (typeof res.data === "string") {
-          downloadLink.href = res.data;
-        } else {
-          const link = URL.createObjectURL(res.data);
-          downloadLink.href = link;
-        }
-        downloadLink.download = "table.xlsx";
-        downloadLink.click();
+        alertSuccess(t("boardMissions.exportRequestSubmitted"));
+        setShowEmailModal(false);
+        setExportEmail("");
       } else {
+        alertFault(t("boardMissions.exportFailed"));
       }
     };
 
@@ -1871,9 +1886,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageSize: currentPageSize,
       orderNumber: router?.query?.orderNumber,
       exampleTypes: currentProofTypes,
+      email: exportEmail,
     };
 
-    await exportJobTableToExcelApi(callApi, callBack, data);
+    await exportJobTableToExcelAsyncApi(callApi, callBack, data);
   };
 
   const handleClickBackToProcess = async (mission) => {
@@ -2218,7 +2234,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+    // Email export modal
+    showEmailModal,
+    exportEmail,
+    setExportEmail,
+    handleEmailModalClose,
+    handleExportWithEmail,
   };
 };
 
 export { useBoardMissions };
+

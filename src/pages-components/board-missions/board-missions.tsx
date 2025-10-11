@@ -5,7 +5,9 @@ import { useBoardMissions } from "./use-board-missions";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GoMakeModal,
   GomakePrimaryButton,
+  GomakeTextInput,
   SecondSwitch,
   ThreeOptionsModal,
 } from "@/components";
@@ -61,6 +63,7 @@ import ProductMultiSelect from "@/components/auto-complete/product-multi-select"
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -211,6 +214,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+    // Email export modal
+    showEmailModal,
+    exportEmail,
+    setExportEmail,
+    handleEmailModalClose,
+    handleExportWithEmail,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -816,6 +825,42 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onPageChange={handleScheduledReportsPageChange}
         onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
+
+      {/* Email Export Modal */}
+      <GoMakeModal
+        openModal={showEmailModal}
+        onClose={handleEmailModalClose}
+        modalTitle={t("boardMissions.exportToExcel")}
+        insideStyle={{ width: "400px", height: "fit-content" }}
+      >
+        <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div>
+            <h4>{t("boardMissions.enterEmailForExport")}</h4>
+            <GomakeTextInput
+              placeholder={t("boardMissions.emailPlaceholder")}
+              value={exportEmail}
+              onChange={(e) => setExportEmail(e.target.value)}
+              type="email"
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+            <PrimaryButton
+              variant="outlined"
+              onClick={handleEmailModalClose}
+            >
+              {t("modal.cancel")}
+            </PrimaryButton>
+            <PrimaryButton
+              variant="contained"
+              onClick={handleExportWithEmail}
+              disabled={!exportEmail || !exportEmail.includes("@")}
+            >
+              {t("boardMissions.sendToEmail")}
+            </PrimaryButton>
+          </div>
+        </div>
+      </GoMakeModal>
     </>
   );
 };
