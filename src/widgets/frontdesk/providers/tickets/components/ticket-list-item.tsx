@@ -7,9 +7,7 @@ import { formatConversationDate } from '@/widgets/frontdesk/utils';
 interface TicketListItemProps {
   ticket: TicketWithDetails;
   selected?: boolean;
-  checked?: boolean;
   onSelect: (ticketId: string, openInNewTab?: boolean) => void;
-  onCheck?: (ticketId: string, checked: boolean) => void;
 }
 
 /**
@@ -20,9 +18,7 @@ interface TicketListItemProps {
 export const TicketListItem: React.FC<TicketListItemProps> = ({
   ticket,
   selected = false,
-  checked = false,
-  onSelect,
-  onCheck
+  onSelect
 }) => {
   const handleClick = (e: React.MouseEvent) => {
     // Middle click or Ctrl/Cmd + click opens in new tab
@@ -34,10 +30,6 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
     } else {
       onSelect(ticket.id, false);
     }
-  };
-
-  const handleCheck = (checked: boolean) => {
-    onCheck?.(ticket.id, checked);
   };
 
   // Multi-conversation support: Use conversations array if available, otherwise fall back to single conversation
@@ -100,12 +92,10 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       type={'Support'} // All backend tickets are Support type
       updatedAt={formatConversationDate(latestConversation?.lastMessageAt || ticket.updatedAt)}
       isSelected={selected}
-      isChecked={checked}
       isUnread={isUnread}
       participants={participants}
       tags={ticket.tags || []} // Display tags
       onClick={handleClick}
-      onCheck={onCheck ? handleCheck : undefined}
     />
   );
 };

@@ -26,8 +26,6 @@ export interface TicketListItemProps {
   updatedAt: string;
   /** Is selected */
   isSelected?: boolean;
-  /** Is checked (for bulk actions) */
-  isChecked?: boolean;
   /** Has unread updates */
   isUnread?: boolean;
   /** Participants */
@@ -36,8 +34,6 @@ export interface TicketListItemProps {
   tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
-  /** Check handler */
-  onCheck?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
@@ -72,12 +68,10 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   type,
   updatedAt,
   isSelected = false,
-  isChecked = false,
   isUnread = false,
   participants = [],
   tags = [],
   onClick,
-  onCheck,
 }) => {
   // Build secondary text: ticket number + date
   const secondaryText = `${ticketNumber} · ${updatedAt}`;
@@ -132,9 +126,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       secondaryText={secondaryText}
       rightElement={rightElement}
       isSelected={isSelected}
-      isChecked={isChecked}
       onClick={onClick}
-      onCheck={onCheck}
       sx={{
         borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
         borderRadius: 0, // Remove border radius for list items

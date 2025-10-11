@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuItem, Box, Typography, Checkbox } from '@mui/material';
+import { MenuItem, Box, Typography } from '@mui/material';
 import { colorTokens, radiusTokens } from '../../tokens';
 
 export interface ActionMenuItemProps {
@@ -15,14 +15,10 @@ export interface ActionMenuItemProps {
   rightElement?: React.ReactNode;
   /** Whether item is selected */
   isSelected?: boolean;
-  /** Whether item is checked (shows checkbox) */
-  isChecked?: boolean;
   /** Whether item is disabled */
   disabled?: boolean;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
-  /** Checkbox handler */
-  onCheck?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
   /** Custom styling */
   sx?: any;
 }
@@ -50,10 +46,8 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
   secondaryText,
   rightElement,
   isSelected = false,
-  isChecked = false,
   disabled = false,
   onClick,
-  onCheck,
   sx = {},
 }) => {
   return (
@@ -86,20 +80,6 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
         ...sx,
       }}
     >
-      {/* Optional Checkbox */}
-      {onCheck && (
-        <Checkbox
-          size="small"
-          checked={isChecked}
-          onChange={(e) => {
-            e.stopPropagation();
-            onCheck(e.target.checked, e);
-          }}
-          onClick={(e) => e.stopPropagation()}
-          sx={{ p: 0 }}
-        />
-      )}
-
       {/* Icon Container (20x20) */}
       {icon && (
         <Box

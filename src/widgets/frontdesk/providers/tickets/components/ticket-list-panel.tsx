@@ -29,11 +29,9 @@ interface TicketListPanelProps {
   viewTitle: string;
   tickets: TicketWithDetails[];
   selectedTicketId: string | null;
-  selectedTicketIds: string[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onTicketSelect: (ticketId: string) => void;
-  onTicketCheck: (ticketId: string, checked: boolean) => void;
   onViewChange?: (view: string) => void;
   isLoading?: boolean;
   error?: string | null;
@@ -47,11 +45,9 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
   viewTitle,
   tickets,
   selectedTicketId,
-  selectedTicketIds,
   searchQuery,
   onSearchChange,
   onTicketSelect,
-  onTicketCheck,
   onViewChange,
   isLoading = false,
   error = null,
@@ -176,9 +172,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
                 key={ticket.id}
                 ticket={ticket}
                 selected={selectedTicketId === ticket.id}
-                checked={selectedTicketIds.includes(ticket.id)}
                 onSelect={onTicketSelect}
-                onCheck={onTicketCheck}
               />
             ))
           )}
