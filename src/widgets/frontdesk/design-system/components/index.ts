@@ -6,3 +6,4 @@
 export * from './TagInput';
 export * from './TagChip';
 export * from './PopularTags';
+export * from './TagFilterChips';

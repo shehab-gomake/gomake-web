@@ -1,6 +1,6 @@
 import React from 'react';
 import { TicketListItem as DSTicketListItem } from '@/widgets/frontdesk/design-system';
-import { TicketWithDetails } from '../types/api.types';
+import { TicketWithDetails, Tag } from '../types/api.types';
 import { apiStatusToUi, apiPriorityToUi } from '../types/transformers';
 import { formatConversationDate } from '@/widgets/frontdesk/utils';
 
@@ -8,6 +8,7 @@ interface TicketListItemProps {
   ticket: TicketWithDetails;
   selected?: boolean;
   onSelect: (ticketId: string, openInNewTab?: boolean) => void;
+  onTagClick?: (tag: Tag) => void;
 }
 
 /**
@@ -18,7 +19,8 @@ interface TicketListItemProps {
 export const TicketListItem: React.FC<TicketListItemProps> = ({
   ticket,
   selected = false,
-  onSelect
+  onSelect,
+  onTagClick,
 }) => {
   const handleClick = (e: React.MouseEvent) => {
     // Middle click or Ctrl/Cmd + click opens in new tab
@@ -96,6 +98,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       participants={participants}
       tags={ticket.tags || []} // Display tags
       onClick={handleClick}
+      onTagClick={onTagClick} // Pass tag click handler
     />
   );
 };

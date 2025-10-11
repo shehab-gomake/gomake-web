@@ -12,17 +12,22 @@ import {
   IconButton,
   Badge,
   Typography,
+  Divider,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { TicketFilters, TicketStatus, TicketPriority } from '../types/api.types';
+import { TicketFilters, TicketStatus, TicketPriority, Tag } from '../types/api.types';
 import { apiStatusToUi } from '../types/transformers';
 import { DropdownMenu } from '@/widgets/frontdesk/components/dropdown-menu';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 
 interface TicketFiltersMenuProps {
   filters: TicketFilters;
   onApply: (filters: Partial<TicketFilters>) => void;
   onClear: () => void;
   activeFilterCount: number;
+  // Popular tags
+  popularTags?: Tag[];
+  onFetchPopularTags?: () => void;
 }
 
 const STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING', 'RESOLVED', 'CLOSED', 'REOPENED'];
@@ -32,13 +37,22 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
   filters,
   onApply,
   onClear,
-  activeFilterCount
+  activeFilterCount,
+  popularTags = [],
+  onFetchPopularTags,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [status, setStatus] = useState(filters.status);
   const [priority, setPriority] = useState(filters.priority);
   const [tags, setTags] = useState(filters.tags || []);
   const [tagInput, setTagInput] = useState('');
+
+  // Fetch popular tags when menu opens
+  useEffect(() => {
+    if (anchorEl && onFetchPopularTags && popularTags.length === 0) {
+      onFetchPopularTags();
+    }
+  }, [anchorEl, onFetchPopularTags, popularTags.length]);
 
   useEffect(() => {
     if (anchorEl) {
@@ -160,9 +174,54 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
 
           {/* Tags */}
           <Box>
-            <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-              Tags
+            <Divider sx={{ mb: 2 }} />
+            <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block', fontWeight: 600, textTransform: 'uppercase' }}>
+              Filter by Tags
             </Typography>
+
+            {/* Popular Tags - Quick Select */}
+            {popularTags.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10, fontWeight: 600 }}>
+                    POPULAR TAGS
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                  {popularTags.slice(0, 8).map((tag) => {
+                    const isSelected = tags.includes(tag.name);
+                    return (
+                      <Chip
+                        key={tag.id}
+                        label={`${tag.displayName} (${tag.usageCount})`}
+                        size="small"
+                        variant={isSelected ? 'filled' : 'outlined'}
+                        onClick={() => {
+                          if (isSelected) {
+                            handleRemoveTag(tag.name);
+                          } else {
+                            setTags([...tags, tag.name]);
+                          }
+                        }}
+                        sx={{
+                          backgroundColor: isSelected ? tag.color || '#E91E63' : 'transparent',
+                          color: isSelected ? '#fff' : tag.color || '#E91E63',
+                          borderColor: tag.color || '#E91E63',
+                          cursor: 'pointer',
+                          fontSize: 11,
+                          '&:hover': {
+                            backgroundColor: isSelected ? tag.color || '#E91E63' : `${tag.color || '#E91E63'}22`,
+                          },
+                        }}
+                      />
+                    );
+                  })}
+                </Box>
+              </Box>
+            )}
+
+            {/* Manual Tag Input */}
             <Box display="flex" gap={1} mb={tags.length > 0 ? 1 : 0}>
               <TextField
                 fullWidth
@@ -187,16 +246,23 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                 Add
               </Button>
             </Box>
+
+            {/* Selected Tags */}
             {tags.length > 0 && (
-              <Box display="flex" flexWrap="wrap" gap={0.5}>
-                {tags.map((tag) => (
-                  <Chip
-                    key={tag}
-                    label={tag}
-                    size="small"
-                    onDelete={() => handleRemoveTag(tag)}
-                  />
-                ))}
+              <Box>
+                <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontSize: 10, color: 'text.secondary' }}>
+                  Selected ({tags.length}):
+                </Typography>
+                <Box display="flex" flexWrap="wrap" gap={0.5}>
+                  {tags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      size="small"
+                      onDelete={() => handleRemoveTag(tag)}
+                    />
+                  ))}
+                </Box>
               </Box>
             )}
           </Box>

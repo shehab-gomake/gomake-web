@@ -456,6 +456,18 @@ const FrontdeskWidget: React.FC = () => {
               ticketsProvider.setFilters(defaultFilters);
               ticketsProvider.fetchTickets(defaultFilters);
             }}
+            onTagClick={(tag) => {
+              // Filter tickets by clicked tag
+              const newFilters = {
+                ...ticketsProvider.filters,
+                tags: [tag.name],
+                page: 1,
+              };
+              ticketsProvider.setFilters(newFilters);
+              ticketsProvider.fetchTickets(newFilters);
+            }}
+            popularTags={ticketsProvider.popularTags}
+            onFetchPopularTags={() => ticketsProvider.fetchPopularTags({ limit: 10 })}
           />
         ) : currentSection === 'inbox' ? (
           <DynamicListPanel

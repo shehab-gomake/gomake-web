@@ -32,6 +32,8 @@ export interface TicketListItemProps {
   tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
+  /** Tag click handler - called when a tag is clicked */
+  onTagClick?: (tag: { id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }) => void;
 }
 
 const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
@@ -74,6 +76,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   participants = [],
   tags = [],
   onClick,
+  onTagClick,
 }) => {
   // Build custom content with better layout
   const customContent = (
@@ -171,6 +174,10 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
                 size="small"
                 variant="outlined"
                 maxDisplay={2}
+                onClickTag={onTagClick ? (tag) => {
+                  // Stop propagation to prevent ticket selection when clicking tag
+                  onTagClick(tag);
+                } : undefined}
               />
             </>
           )}
