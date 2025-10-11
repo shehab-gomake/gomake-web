@@ -130,6 +130,22 @@ const FrontdeskWidget: React.FC = () => {
       const initialTicketView = getInitialTicketView();
       if (initialTicketView) {
         setSelectedTicketView(initialTicketView);
+
+        // Apply filters for the initial view
+        const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
+          'my-tickets': { assigneeId: 'me', status: undefined },
+          'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
+          'all-tickets': { assigneeId: undefined, status: undefined },
+          'done': { assigneeId: undefined, status: 'RESOLVED' }
+        };
+
+        const newFilters = {
+          ...ticketsProvider.filters,
+          ...viewFilters[initialTicketView],
+          page: 1
+        };
+
+        ticketsProvider.setFilters(newFilters);
       }
 
       // Initialize ticket ID from route if present (for direct ticket links)
@@ -181,6 +197,24 @@ const FrontdeskWidget: React.FC = () => {
 
     // Also update section to inbox when selecting a ticket view
     setCurrentSection('inbox');
+
+    // Fetch tickets with appropriate filters based on view
+    // Note: Backend supports assigneeId='me' as special keyword for current user
+    const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
+      'my-tickets': { assigneeId: 'me', status: undefined },
+      'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
+      'all-tickets': { assigneeId: undefined, status: undefined },
+      'done': { assigneeId: undefined, status: 'RESOLVED' }
+    };
+
+    const newFilters = {
+      ...ticketsProvider.filters,
+      ...viewFilters[view],
+      page: 1
+    };
+
+    ticketsProvider.setFilters(newFilters);
+    ticketsProvider.fetchTickets(newFilters);
 
     // Update URL to reflect ticket view
     const viewMap = {

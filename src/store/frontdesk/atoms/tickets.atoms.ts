@@ -222,14 +222,22 @@ export const selectedTicketUiSelector = selector<Ticket | null>({
 
 /**
  * Selector: Get filtered tickets (backend format)
- * Backend handles all filtering via API params.
- * This selector only returns tickets from backend - no client-side filtering.
- * Client-side search is handled separately in the component.
+ * Backend handles most filtering via API params.
+ * Special case: "unassigned" view needs client-side filtering since backend
+ * doesn't support assigneeId=null in the query params.
  */
 export const filteredTicketsSelector = selector<TicketWithDetails[]>({
   key: 'frontdesk.tickets.filtered',
   get: ({ get }) => {
-    return get(ticketsAtom); // Return all tickets from backend
+    const tickets = get(ticketsAtom);
+    const selectedView = get(selectedTicketViewAtom);
+
+    // Special handling for unassigned view: filter out tickets with assigneeId
+    if (selectedView === 'unassigned') {
+      return tickets.filter(t => !t.assigneeId);
+    }
+
+    return tickets; // Return all tickets from backend for other views
   },
 });
 

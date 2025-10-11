@@ -38,6 +38,7 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HistoryIcon from '@mui/icons-material/History';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TicketWithDetails } from '../types/api.types';
 import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
@@ -64,7 +65,7 @@ import { TicketTimeline } from './ticket-timeline';
 import { RelatedTickets } from './related-tickets';
 import { CustomerProfileSection } from './customer-profile-section';
 import { useQuickActions } from '../hooks/use-quick-actions';
-import { getGroupedActions, GROUP_LABELS } from '../utils/quick-actions-config';
+import { getGroupedActions, GROUP_LABELS, getActionsExcludingTickets, getTicketActions } from '../utils/quick-actions-config';
 import { InlineReplySection } from '@/widgets/frontdesk/components/shared/InlineReplySection';
 import { MessageItem } from '@/widgets/frontdesk/components/shared/MessageItem';
 import { ticketToUnified } from '@/widgets/frontdesk/utils/message-transformer';
@@ -111,6 +112,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
+  const [ticketActionsAnchor, setTicketActionsAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
@@ -195,19 +197,39 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
     }
   };
 
-  // Quick Actions menu helpers
-  const groupedActions = getGroupedActions();
-  const quickActionMenuItems: QuickActionItem[] = availableActions.map((action) => ({
-    id: action.type,
-    label: action.label,
-    icon: action.icon,
-    tooltip: action.tooltip,
-    disabled: !!getActionBlockReason(action.type),
-    disabledReason: getActionBlockReason(action.type) || undefined,
-    group: action.group,
-  }));
+  // Quick Actions menu helpers (excluding ticket actions)
+  const actionsExcludingTickets = getActionsExcludingTickets();
+  const ticketOnlyActions = getTicketActions();
+
+  const quickActionMenuItems: QuickActionItem[] = availableActions
+    .filter((action) => actionsExcludingTickets.some(a => a.type === action.type))
+    .map((action) => ({
+      id: action.type,
+      label: action.label,
+      icon: action.icon,
+      tooltip: action.tooltip,
+      disabled: !!getActionBlockReason(action.type),
+      disabledReason: getActionBlockReason(action.type) || undefined,
+      group: action.group,
+    }));
+
+  const ticketActionMenuItems: QuickActionItem[] = availableActions
+    .filter((action) => ticketOnlyActions.some(a => a.type === action.type))
+    .map((action) => ({
+      id: action.type,
+      label: action.label,
+      icon: action.icon,
+      tooltip: action.tooltip,
+      disabled: !!getActionBlockReason(action.type),
+      disabledReason: getActionBlockReason(action.type) || undefined,
+      group: action.group,
+    }));
 
   const handleQuickActionClick = (action: QuickActionItem) => {
+    executeAction(action.id as any);
+  };
+
+  const handleTicketActionClick = (action: QuickActionItem) => {
     executeAction(action.id as any);
   };
 
@@ -289,12 +311,19 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
             {/* Right Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-              {/* Quick Actions Button */}
-              <QuickActionButton
-                size="sm"
-                isOpen={Boolean(quickActionsAnchor)}
-                onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
-              />
+              {/* Ticket Actions 3-dot Menu */}
+              <IconButton
+                size="small"
+                onClick={(e) => setTicketActionsAnchor(e.currentTarget)}
+                sx={{
+                  backgroundColor: Boolean(ticketActionsAnchor) ? colorTokens.neutral[100] : 'transparent',
+                  '&:hover': {
+                    backgroundColor: colorTokens.neutral[100],
+                  }
+                }}
+              >
+                <MoreVertIcon fontSize="small" />
+              </IconButton>
 
               <IconButton size="small" onClick={onClose}>
                 <CloseIcon fontSize="small" />
@@ -858,6 +887,20 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           p: 2
         }}
       >
+        {/* Actions Button - Sales/Purchase Documents */}
+        <Box sx={{ mb: 2.5 }}>
+          <QuickActionButton
+            size="sm"
+            isOpen={Boolean(quickActionsAnchor)}
+            onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+            sx={{ width: '100%' }}
+          >
+            Actions
+          </QuickActionButton>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
         {/* Customer Profile Section */}
         <CustomerProfileSection
           customerId={ticket.customerId}
@@ -1145,7 +1188,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
       </Box>
 
-      {/* Quick Actions Menu */}
+      {/* Quick Actions Menu (Sales/Purchase Documents only) */}
       <QuickActionMenu
         anchorEl={quickActionsAnchor}
         open={Boolean(quickActionsAnchor)}
@@ -1153,6 +1196,16 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
         actions={quickActionMenuItems}
         groupLabels={GROUP_LABELS}
         onActionClick={handleQuickActionClick}
+      />
+
+      {/* Ticket Actions Menu (3-dot menu in header) */}
+      <QuickActionMenu
+        anchorEl={ticketActionsAnchor}
+        open={Boolean(ticketActionsAnchor)}
+        onClose={() => setTicketActionsAnchor(null)}
+        actions={ticketActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleTicketActionClick}
       />
 
       {/* Status Menu */}

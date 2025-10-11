@@ -201,3 +201,21 @@ export const GROUP_LABELS: Record<string, string> = {
   ticket: 'Ticket Actions',
   other: 'Other Actions',
 };
+
+/**
+ * Get actions excluding ticket group (for main Actions button)
+ */
+export const getActionsExcludingTickets = (): QuickActionConfig[] => {
+  return Object.values(QUICK_ACTIONS_CONFIG).filter(
+    (action) => action.enabled !== false && action.group !== 'ticket'
+  );
+};
+
+/**
+ * Get only ticket actions (for 3-dot menu)
+ */
+export const getTicketActions = (): QuickActionConfig[] => {
+  return Object.values(QUICK_ACTIONS_CONFIG).filter(
+    (action) => action.enabled !== false && action.group === 'ticket'
+  );
+};
