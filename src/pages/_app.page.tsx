@@ -20,6 +20,7 @@ import { FileUploaderProvider } from "@/providers/signalr-provider/file-uploader
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
+import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
 
 i18n
   .use(Backend)
@@ -61,6 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <GoMakeSnackBar />
                   <GomakeLoading />
                   <GomakeLoadingWithShadow />
+                  <GoSupportChatWidget />
                 </LocalizationProvider>
               </EnhancedErrorBoundary>
             </UpdatePathWrapper>
