@@ -18,6 +18,12 @@ const useStyle = () => {
         marginBottom: 15,
         backgroundColor: secondColor(500),
       },
+      addPrintHouseBtn: {
+        width: "auto",
+        minWidth: "200px",
+        height: "40px",
+        ...FONT_FAMILY.Lexend(500, 15),
+      },
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
