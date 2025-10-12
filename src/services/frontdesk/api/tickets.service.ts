@@ -40,6 +40,8 @@ import {
   ListTagsQueryDto,
   GetPopularTagsQueryDto,
   TagsListResponse,
+  TicketViewStatus,
+  UnreadCountResponse,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
 const TICKETS_BASE_URL = '/tickets';
@@ -441,6 +443,42 @@ export class TicketsService extends MessagingHubHttpClient {
     return await this.delete<GenericSuccessResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/tags/${encodeURIComponent(tagId)}`
     );
+  }
+
+  // ============================================
+  // Ticket View Tracking (Read/Unread Status)
+  // ============================================
+
+  /**
+   * Get Ticket View Status for Current User
+   * GET /api/tickets/:id/view-status
+   * Returns when the user last viewed this ticket and if there's unread activity
+   */
+  async getTicketViewStatus(ticketId: string): Promise<TicketViewStatus> {
+    return await this.get<TicketViewStatus>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/view-status`
+    );
+  }
+
+  /**
+   * Mark Ticket as Read
+   * PATCH /api/tickets/:id/mark-read
+   * Manually mark a ticket as read (updates lastViewedAt and sets hasUnread to false)
+   */
+  async markTicketAsRead(ticketId: string): Promise<GenericSuccessResponse> {
+    return await this.patch<GenericSuccessResponse>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/mark-read`,
+      {}
+    );
+  }
+
+  /**
+   * Get Unread Tickets Count for Current User
+   * GET /api/tickets/unread-count
+   * Returns the number of tickets with unread activity for the current user
+   */
+  async getUnreadTicketsCount(): Promise<UnreadCountResponse> {
+    return await this.get<UnreadCountResponse>(`${TICKETS_BASE_URL}/unread-count`);
   }
 }
 

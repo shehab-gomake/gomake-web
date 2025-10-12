@@ -9,6 +9,7 @@ import {
   ConversationNeedsReviewPayload,
   transformApiTicketToUi,
   Tag,
+  TicketViewStatus,
 } from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
 
@@ -127,6 +128,25 @@ export const tagSuggestionsAtom = atom<Tag[]>({
 export const tagsLoadingAtom = atom<boolean>({
   key: 'frontdesk.tickets.tagsLoading',
   default: false,
+});
+
+/**
+ * Ticket View Status Map - Per-ticket read/unread tracking
+ * Key: ticketId, Value: TicketViewStatus
+ * Populated by GET /tickets/:id/view-status or included in ticket details
+ */
+export const ticketViewStatusMapAtom = atom<Record<string, TicketViewStatus>>({
+  key: 'frontdesk.tickets.viewStatusMap',
+  default: {},
+});
+
+/**
+ * Unread tickets count for current user
+ * Fetched from GET /tickets/unread-count
+ */
+export const unreadTicketsCountAtom = atom<number>({
+  key: 'frontdesk.tickets.unreadCount',
+  default: 0,
 });
 
 /**

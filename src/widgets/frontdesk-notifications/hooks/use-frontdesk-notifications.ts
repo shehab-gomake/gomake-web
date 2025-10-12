@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import {
   frontdeskNotificationsAtom,
@@ -9,11 +9,13 @@ import {
   notificationsLoadingAtom,
   notificationsErrorAtom,
   BackendNotification,
+  BackendNotificationType,
 } from '@/store/frontdesk/atoms/notifications.atoms';
 import {
   notificationsService,
   notificationsWebSocketService,
 } from '@/services/frontdesk';
+import { snackbarState } from '@/store/snackbar';
 
 /**
  * Hook for managing FrontDesk notifications
@@ -26,6 +28,7 @@ export const useFrontdeskNotifications = () => {
   const [notifications, setNotifications] = useRecoilState(frontdeskNotificationsAtom);
   const [loading, setLoading] = useRecoilState(notificationsLoadingAtom);
   const [error, setError] = useRecoilState(notificationsErrorAtom);
+  const setSnackbar = useSetRecoilState(snackbarState);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -180,6 +183,9 @@ export const useFrontdeskNotifications = () => {
         if (notification.entityType === 'ticket' && notification.entityId) {
           // Navigate to specific ticket
           router.push(`/frontdesk/inbox?view=my-tickets&ticket=${notification.entityId}`);
+        } else if (notification.entityType === 'email' && notification.entityId) {
+          // Navigate to email provider view
+          router.push(`/frontdesk/inbox?view=email&emailId=${notification.entityId}`);
         } else if (notification.entityType === 'conversation' && notification.entityId) {
           // Navigate to specific conversation
           router.push(`/frontdesk/inbox?view=internal&conversation=${notification.entityId}`);
@@ -222,6 +228,16 @@ export const useFrontdeskNotifications = () => {
     notificationsWebSocketService.onNewNotification((notification) => {
       console.log('[useFrontdeskNotifications] New notification received:', notification);
       setNotifications((prev) => [notification, ...prev]);
+
+      // Show toast notification for EMAIL_RECEIVED type
+      if (notification.type === BackendNotificationType.EMAIL_RECEIVED) {
+        const senderName = notification.title.replace('New email from ', '') || 'Unknown Sender';
+        setSnackbar({
+          state: true,
+          message: `📧 ${notification.title}\n${notification.body || ''}`,
+          type: 'success',
+        });
+      }
     });
 
     // Handle notification read
@@ -254,7 +270,7 @@ export const useFrontdeskNotifications = () => {
       notificationsWebSocketService.clearHandlers();
       notificationsWebSocketService.disconnect();
     };
-  }, [setNotifications, setError]);
+  }, [setNotifications, setError, setSnackbar]);
 
   /**
    * Initial fetch on mount

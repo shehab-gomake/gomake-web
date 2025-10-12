@@ -26,6 +26,8 @@ import {
   tagSuggestionsAtom,
   tagsLoadingAtom,
   activeConversationIdAtom,
+  ticketViewStatusMapAtom,
+  unreadTicketsCountAtom,
 } from "@/store/frontdesk/atoms/tickets.atoms";
 import { ticketSocketService } from "@/services/frontdesk";
 import {
@@ -44,6 +46,7 @@ import {
   UpdateTagDto,
   ListTagsQueryDto,
   GetPopularTagsQueryDto,
+  TicketViewStatus,
 } from "@/widgets/frontdesk/providers/tickets/types";
 
 export interface UseTicketsProviderResult {
@@ -136,6 +139,13 @@ export interface UseTicketsProviderResult {
   deleteTag: (tagId: string) => Promise<void>;
   addTagsToTicket: (ticketId: string, tags: string[]) => Promise<void>;
   removeTagFromTicket: (ticketId: string, tagId: string) => Promise<void>;
+
+  // View Tracking (Read/Unread Status)
+  ticketViewStatusMap: Record<string, TicketViewStatus>;
+  unreadTicketsCount: number;
+  fetchTicketViewStatus: (ticketId: string) => Promise<void>;
+  markTicketAsRead: (ticketId: string) => Promise<void>;
+  fetchUnreadCount: () => Promise<void>;
 }
 
 /**
@@ -181,6 +191,10 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const [popularTags, setPopularTags] = useRecoilState(popularTagsAtom);
   const [tagSuggestions, setTagSuggestions] = useRecoilState(tagSuggestionsAtom);
   const [tagsLoading, setTagsLoading] = useRecoilState(tagsLoadingAtom);
+
+  // View Tracking
+  const [ticketViewStatusMap, setTicketViewStatusMap] = useRecoilState(ticketViewStatusMapAtom);
+  const [unreadTicketsCount, setUnreadTicketsCount] = useRecoilState(unreadTicketsCountAtom);
 
   // Selectors
   const filteredTickets = useRecoilValue(filteredTicketsSelector);
@@ -1016,6 +1030,90 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   );
 
   // ============================================
+  // View Tracking Actions (Read/Unread Status)
+  // ============================================
+
+  /**
+   * Fetch view status for a specific ticket
+   * Updates the ticketViewStatusMap with the ticket's read/unread state
+   */
+  const fetchTicketViewStatus = useCallback(
+    async (ticketId: string) => {
+      try {
+        const viewStatus = await ticketsService.getTicketViewStatus(ticketId);
+        setTicketViewStatusMap((prev) => ({
+          ...prev,
+          [ticketId]: viewStatus,
+        }));
+        console.log("[TicketsProvider] View status fetched:", ticketId, viewStatus);
+      } catch (err: any) {
+        console.error("[TicketsProvider] Fetch view status error:", err);
+      }
+    },
+    [setTicketViewStatusMap]
+  );
+
+  /**
+   * Mark a ticket as read
+   * Updates lastViewedAt and sets hasUnread to false
+   */
+  const markTicketAsRead = useCallback(
+    async (ticketId: string) => {
+      try {
+        await ticketsService.markTicketAsRead(ticketId);
+
+        // Optimistically update the view status
+        setTicketViewStatusMap((prev) => ({
+          ...prev,
+          [ticketId]: {
+            ...prev[ticketId],
+            hasUnread: false,
+            lastViewedAt: new Date().toISOString(),
+          },
+        }));
+
+        // Also update the ticket's viewStatus if it's in the list
+        setTickets((prev) =>
+          prev.map((t) => {
+            if (t.id === ticketId && t.viewStatus) {
+              return {
+                ...t,
+                viewStatus: {
+                  ...t.viewStatus,
+                  hasUnread: false,
+                  lastViewedAt: new Date().toISOString(),
+                },
+              };
+            }
+            return t;
+          })
+        );
+
+        // Decrement unread count
+        setUnreadTicketsCount((prev) => Math.max(0, prev - 1));
+
+        console.log("[TicketsProvider] Ticket marked as read:", ticketId);
+      } catch (err: any) {
+        console.error("[TicketsProvider] Mark as read error:", err);
+      }
+    },
+    [setTicketViewStatusMap, setTickets, setUnreadTicketsCount]
+  );
+
+  /**
+   * Fetch the total unread tickets count for the current user
+   */
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const response = await ticketsService.getUnreadTicketsCount();
+      setUnreadTicketsCount(response.count);
+      console.log("[TicketsProvider] Unread count fetched:", response.count);
+    } catch (err: any) {
+      console.error("[TicketsProvider] Fetch unread count error:", err);
+    }
+  }, [setUnreadTicketsCount]);
+
+  // ============================================
   // Selection Actions
   // ============================================
 
@@ -1100,6 +1198,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   }, [searchQuery]); // Only depend on searchQuery - filters handled separately
 
   // Fetch ticket details when selected (includes relatedTickets and history in response)
+  // Also mark ticket as read automatically
   useEffect(() => {
     if (selectedTicketId) {
       console.log("[TicketsProvider] Ticket selected, fetching details:", selectedTicketId);
@@ -1107,8 +1206,13 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       // Fetch full ticket details - backend includes relatedTickets and history
       // This optimizes from 3 API calls down to 1 call
       fetchTicketById(selectedTicketId);
+
+      // Mark ticket as read when user opens it
+      // Note: Backend GET /tickets/:id also automatically marks as viewed
+      // This is an additional explicit call for UI feedback
+      markTicketAsRead(selectedTicketId);
     }
-  }, [selectedTicketId, fetchTicketById]);
+  }, [selectedTicketId, fetchTicketById, markTicketAsRead]);
 
   return {
     // Connection
@@ -1200,5 +1304,12 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     deleteTag,
     addTagsToTicket,
     removeTagFromTicket,
+
+    // View Tracking (Read/Unread Status)
+    ticketViewStatusMap,
+    unreadTicketsCount,
+    fetchTicketViewStatus,
+    markTicketAsRead,
+    fetchUnreadCount,
   };
 }

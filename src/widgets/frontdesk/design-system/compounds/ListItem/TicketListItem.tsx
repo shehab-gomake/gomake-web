@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
 import { AvatarGroup } from '../../primitives/Avatar';
 import { Chip } from '../../primitives/Chip';
 import { PriorityBadge, PriorityLevel } from '../../primitives/Badge/PriorityBadge';
 import { colorTokens } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { TagList } from '../../components/TagChip';
 
 export interface TicketListItemProps {
@@ -30,26 +31,55 @@ export interface TicketListItemProps {
   participants?: Array<{ userId: string; name: string; avatarUrl?: string }>;
   /** Tags */
   tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
+  /** SLA breach status */
+  slaBreached?: boolean;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
   /** Tag click handler - called when a tag is clicked */
   onTagClick?: (tag: { id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }) => void;
 }
 
+/**
+ * Map backend ticket statuses to design system chip colors
+ * Backend statuses: OPEN, IN_PROGRESS, PENDING, RESOLVED, CLOSED, REOPENED
+ */
 const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
-  switch (status) {
-    case 'New':
-      return 'primary';
-    case 'Active':
-      return 'warning';
-    case 'On Hold':
-      return 'error';
-    case 'Resolved':
-      return 'success';
-    case 'Closed':
-      return 'neutral';
+  switch (status.toUpperCase()) {
+    case 'OPEN':
+    case 'NEW':
+      return 'primary'; // Blue - new/needs attention
+    case 'IN_PROGRESS':
+    case 'ACTIVE':
+      return 'warning'; // Orange - actively worked
+    case 'PENDING':
+    case 'ON HOLD':
+      return 'warning'; // Yellow/Orange - waiting
+    case 'RESOLVED':
+      return 'success'; // Green - fixed
+    case 'CLOSED':
+      return 'neutral'; // Gray - done
+    case 'REOPENED':
+      return 'error'; // Red - needs re-attention
     default:
       return 'primary';
+  }
+};
+
+/**
+ * Get subtle background color for ticket row based on status
+ * Used to visually distinguish ticket states at a glance
+ */
+const getStatusBackgroundTint = (status: string, isSelected: boolean): string => {
+  if (isSelected) return 'transparent'; // Don't override selection color
+
+  switch (status.toUpperCase()) {
+    case 'REOPENED':
+      return 'rgba(244, 67, 54, 0.03)'; // Subtle red tint
+    case 'PENDING':
+    case 'ON HOLD':
+      return 'rgba(255, 152, 0, 0.03)'; // Subtle orange tint
+    default:
+      return 'transparent';
   }
 };
 
@@ -75,6 +105,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   isUnread = false,
   participants = [],
   tags = [],
+  slaBreached = false,
   onClick,
   onTagClick,
 }) => {
@@ -89,9 +120,13 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
         px: 2,
         py: 1.5,
         cursor: 'pointer',
-        backgroundColor: isSelected ? colorTokens.primary[100] : 'transparent',
+        backgroundColor: isSelected
+          ? colorTokens.primary[100]
+          : getStatusBackgroundTint(status, isSelected),
         borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
-        transition: 'background-color 0.15s ease',
+        // Add left border for unread tickets for extra visibility
+        borderLeft: isUnread ? `3px solid ${colorTokens.primary[600]}` : '3px solid transparent',
+        transition: 'all 0.15s ease',
         '&:hover': {
           backgroundColor: isSelected ? colorTokens.primary[100] : colorTokens.primary[50],
         },
@@ -147,7 +182,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
           )}
         </Box>
 
-        {/* Metadata Row: Time + Participants + Tags */}
+        {/* Metadata Row: Time + SLA Breach + Participants + Tags */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
             variant="caption"
@@ -158,6 +193,35 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
           >
             {updatedAt}
           </Typography>
+
+          {/* SLA Breach Indicator */}
+          {slaBreached && (
+            <>
+              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
+              <Tooltip title="SLA breached - overdue" arrow>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    color: '#EF4444', // Error red color for SLA breach
+                  }}
+                >
+                  <AccessTimeIcon sx={{ fontSize: 12 }} />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'inherit',
+                    }}
+                  >
+                    Overdue
+                  </Typography>
+                </Box>
+              </Tooltip>
+            </>
+          )}
 
           {participants.length > 0 && (
             <>

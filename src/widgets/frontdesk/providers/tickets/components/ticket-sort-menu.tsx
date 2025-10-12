@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import {
-  IconButton,
-  MenuItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-} from '@mui/material';
+import { IconButton, MenuItem, ListItemText, ListItemIcon } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CheckIcon from '@mui/icons-material/Check';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import MessageIcon from '@mui/icons-material/Message';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import { DropdownMenu, MenuSubheader } from '@/widgets/frontdesk/components/dropdown-menu';
+import { colorTokens } from '@/widgets/frontdesk/design-system';
 
 interface TicketSortMenuProps {
   sortBy: 'createdAt' | 'lastMessageAt' | 'priority' | 'ticketNumber' | 'status';
@@ -18,12 +15,50 @@ interface TicketSortMenuProps {
   onSortChange: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
 }
 
-const SORT_OPTIONS = [
-  { value: 'createdAt', label: 'Created Date' },
-  { value: 'lastMessageAt', label: 'Last Message' },
-  { value: 'priority', label: 'Priority' },
-  { value: 'ticketNumber', label: 'Ticket Number' },
-  { value: 'status', label: 'Status' },
+interface SortOption {
+  field: 'createdAt' | 'lastMessageAt' | 'priority' | 'ticketNumber' | 'status';
+  order: 'asc' | 'desc';
+  label: string;
+  icon: React.ReactNode;
+}
+
+const SORT_OPTIONS: SortOption[] = [
+  {
+    field: 'createdAt',
+    order: 'desc',
+    label: 'Newest First',
+    icon: <CalendarTodayIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    field: 'createdAt',
+    order: 'asc',
+    label: 'Oldest First',
+    icon: <CalendarTodayIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    field: 'lastMessageAt',
+    order: 'desc',
+    label: 'Recently Updated',
+    icon: <MessageIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    field: 'priority',
+    order: 'desc',
+    label: 'Priority (High → Low)',
+    icon: <PriorityHighIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    field: 'priority',
+    order: 'asc',
+    label: 'Priority (Low → High)',
+    icon: <PriorityHighIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    field: 'ticketNumber',
+    order: 'desc',
+    label: 'Ticket Number',
+    icon: <ConfirmationNumberIcon sx={{ fontSize: 18 }} />,
+  },
 ];
 
 export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
@@ -41,19 +76,24 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
     setAnchorEl(null);
   };
 
-  const handleSortByChange = (value: string) => {
-    onSortChange(value, sortOrder);
-    handleClose();
-  };
-
-  const handleSortOrderChange = (order: 'asc' | 'desc') => {
-    onSortChange(sortBy, order);
+  const handleSortSelect = (field: string, order: 'asc' | 'desc') => {
+    onSortChange(field, order);
     handleClose();
   };
 
   return (
     <>
-      <IconButton size="small" onClick={handleClick} aria-label="Sort tickets">
+      <IconButton
+        size="small"
+        onClick={handleClick}
+        aria-label="Sort tickets"
+        sx={{
+          color: colorTokens.semantic.text.secondary,
+          '&:hover': {
+            backgroundColor: colorTokens.neutral[100],
+          },
+        }}
+      >
         <SortIcon fontSize="small" />
       </IconButton>
 
@@ -61,53 +101,43 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        width={220}
+        width={240}
         disableContentPadding
       >
         <MenuSubheader>SORT BY</MenuSubheader>
 
-        {SORT_OPTIONS.map((option) => (
-          <MenuItem
-            key={option.value}
-            onClick={() => handleSortByChange(option.value)}
-            selected={sortBy === option.value}
-          >
-            <ListItemText>{option.label}</ListItemText>
-            {sortBy === option.value && (
-              <CheckIcon fontSize="small" color="primary" />
-            )}
-          </MenuItem>
-        ))}
+        {SORT_OPTIONS.map((option) => {
+          const isSelected = sortBy === option.field && sortOrder === option.order;
 
-        <Divider sx={{ my: 1 }} />
-
-        <MenuSubheader>ORDER</MenuSubheader>
-
-        <MenuItem
-          onClick={() => handleSortOrderChange('desc')}
-          selected={sortOrder === 'desc'}
-        >
-          <ListItemIcon>
-            <ArrowDownwardIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Descending</ListItemText>
-          {sortOrder === 'desc' && (
-            <CheckIcon fontSize="small" color="primary" />
-          )}
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => handleSortOrderChange('asc')}
-          selected={sortOrder === 'asc'}
-        >
-          <ListItemIcon>
-            <ArrowUpwardIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Ascending</ListItemText>
-          {sortOrder === 'asc' && (
-            <CheckIcon fontSize="small" color="primary" />
-          )}
-        </MenuItem>
+          return (
+            <MenuItem
+              key={`${option.field}-${option.order}`}
+              onClick={() => handleSortSelect(option.field, option.order)}
+              selected={isSelected}
+              sx={{
+                py: 1.5,
+                px: 2,
+                '&.Mui-selected': {
+                  backgroundColor: `${colorTokens.primary[50]} !important`,
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 32, color: colorTokens.primary[600] }}>
+                {option.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={option.label}
+                primaryTypographyProps={{
+                  fontSize: 14,
+                  fontWeight: isSelected ? 600 : 400,
+                }}
+              />
+              {isSelected && (
+                <CheckIcon fontSize="small" sx={{ color: colorTokens.primary[600] }} />
+              )}
+            </MenuItem>
+          );
+        })}
       </DropdownMenu>
     </>
   );

@@ -44,8 +44,9 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   }] : []);
   const latestConversation = conversations.length > 0 ? conversations[0] : null;
 
-  // Determine if ticket is unread (has recent message and no first response)
-  const isUnread = Boolean(
+  // Determine if ticket is unread using backend TicketView tracking
+  // Priority: viewStatus.hasUnread (most accurate) > fallback to old logic
+  const isUnread = ticket.viewStatus?.hasUnread ?? Boolean(
     latestConversation?.lastMessageAt &&
     !ticket.firstResponseAt &&
     ticket.status === 'OPEN'
@@ -97,6 +98,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       isUnread={isUnread}
       participants={participants}
       tags={ticket.tags || []} // Display tags
+      slaBreached={ticket.sla?.breached ?? false} // Pass SLA breach status
       onClick={handleClick}
       onTagClick={onTagClick} // Pass tag click handler
     />

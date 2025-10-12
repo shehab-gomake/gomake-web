@@ -24,6 +24,9 @@ export enum BackendNotificationType {
   DM_RECEIVED = 'DM_RECEIVED',
   DM_MENTION = 'DM_MENTION',
 
+  // Email notifications
+  EMAIL_RECEIVED = 'EMAIL_RECEIVED',
+
   // System notifications
   SYSTEM_ALERT = 'SYSTEM_ALERT',
 }
@@ -91,7 +94,7 @@ export function mapNotificationToTab(
     return 'TICKET';
   }
 
-  // All other types (DM_RECEIVED, DM_MENTION, SYSTEM_ALERT) go to Messages tab
+  // All other types (DM_RECEIVED, DM_MENTION, EMAIL_RECEIVED, SYSTEM_ALERT) go to Messages tab
   return 'MESSAGE';
 }
 
@@ -113,6 +116,7 @@ export function getNotificationIcon(type: BackendNotificationType): string {
     [BackendNotificationType.TICKET_SLA_WARNING]: '⏰',
     [BackendNotificationType.DM_RECEIVED]: '✉️',
     [BackendNotificationType.DM_MENTION]: '👤',
+    [BackendNotificationType.EMAIL_RECEIVED]: '📧',
     [BackendNotificationType.SYSTEM_ALERT]: '🔔',
   };
 

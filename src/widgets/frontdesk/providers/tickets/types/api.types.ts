@@ -215,6 +215,11 @@ export interface TicketWithDetails extends Ticket {
     breached: boolean;
     breachedAt?: string | null;
   } | null;
+  /**
+   * View tracking status for current user
+   * Populated by GET /tickets/:id or GET /tickets/:id/view-status
+   */
+  viewStatus?: TicketViewStatus;
   // Optional: Related data (included when fetching single ticket by ID)
   relatedTickets?: RelatedTicket[];
   history?: TicketHistoryEntry[];
@@ -527,6 +532,31 @@ export interface ConversationNeedsReviewPayload {
   metadata: Record<string, any>;
   printHouseId: string;
   timestamp: string;
+}
+
+// ============================================
+// Ticket View Tracking (Read/Unread Status)
+// ============================================
+
+/**
+ * Ticket View Status - Tracks when a user last viewed a ticket
+ * Backend: TicketView table (prisma/schema.prisma:502-527)
+ */
+export interface TicketViewStatus {
+  /** Last time this user viewed the ticket */
+  lastViewedAt: string | null;
+  /** Has new activity since last view? */
+  hasUnread: boolean;
+  /** ID of last message this user saw */
+  lastViewedMessageId: string | null;
+}
+
+/**
+ * Unread Count Response
+ * GET /tickets/unread-count
+ */
+export interface UnreadCountResponse {
+  count: number;
 }
 
 // ============================================

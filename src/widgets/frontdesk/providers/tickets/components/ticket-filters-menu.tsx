@@ -1,37 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import {
-  MenuItem,
-  TextField,
-  Box,
-  Chip,
-  Stack,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  IconButton,
-  Badge,
-  Typography,
-  Divider,
-} from '@mui/material';
+import { IconButton, Badge, MenuItem, ListItemText, Box, Typography, Button, Divider } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import CircleIcon from '@mui/icons-material/Circle';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import { TicketFilters, TicketStatus, TicketPriority, Tag } from '../types/api.types';
 import { apiStatusToUi } from '../types/transformers';
-import { DropdownMenu } from '@/widgets/frontdesk/components/dropdown-menu';
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import { DropdownMenu, MenuSubheader } from '@/widgets/frontdesk/components/dropdown-menu';
+import { Chip, colorTokens } from '@/widgets/frontdesk/design-system';
 
 interface TicketFiltersMenuProps {
   filters: TicketFilters;
   onApply: (filters: Partial<TicketFilters>) => void;
   onClear: () => void;
   activeFilterCount: number;
-  // Popular tags
   popularTags?: Tag[];
   onFetchPopularTags?: () => void;
 }
 
 const STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING', 'RESOLVED', 'CLOSED', 'REOPENED'];
 const PRIORITIES: TicketPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
+
+// Status colors
+const STATUS_COLORS: Record<TicketStatus, string> = {
+  OPEN: colorTokens.info[600],
+  IN_PROGRESS: colorTokens.warning[600],
+  PENDING: colorTokens.warning[600],
+  RESOLVED: colorTokens.success[600],
+  CLOSED: colorTokens.neutral[600],
+  REOPENED: colorTokens.error[600],
+};
+
+// Priority colors
+const PRIORITY_COLORS: Record<TicketPriority, string> = {
+  LOW: colorTokens.neutral[600],
+  MEDIUM: colorTokens.info[600],
+  HIGH: colorTokens.warning[600],
+  URGENT: colorTokens.error[600],
+};
 
 export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
   filters,
@@ -45,7 +52,6 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
   const [status, setStatus] = useState(filters.status);
   const [priority, setPriority] = useState(filters.priority);
   const [tags, setTags] = useState(filters.tags || []);
-  const [tagInput, setTagInput] = useState('');
 
   // Fetch popular tags when menu opens
   useEffect(() => {
@@ -70,49 +76,36 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
     setAnchorEl(null);
   };
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput('');
-    }
+  const handleStatusChange = (newStatus: TicketStatus | undefined) => {
+    setStatus(newStatus);
+    // Apply immediately
+    onApply({ status: newStatus, priority, tags: tags.length > 0 ? tags : undefined });
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter(t => t !== tag));
+  const handlePriorityChange = (newPriority: TicketPriority | undefined) => {
+    setPriority(newPriority);
+    // Apply immediately
+    onApply({ status, priority: newPriority, tags: tags.length > 0 ? tags : undefined });
   };
 
-  const handleApply = () => {
-    onApply({ status, priority, tags });
-    handleClose();
+  const handleToggleTag = (tagName: string) => {
+    const newTags = tags.includes(tagName)
+      ? tags.filter((t) => t !== tagName)
+      : [...tags, tagName];
+
+    setTags(newTags);
+    // Apply immediately
+    onApply({ status, priority, tags: newTags.length > 0 ? newTags : undefined });
   };
 
-  const handleClear = () => {
+  const handleClearAll = () => {
     setStatus(undefined);
     setPriority(undefined);
     setTags([]);
-    setTagInput('');
     onClear();
-    handleClose();
   };
 
-  const actions = (
-    <>
-      <Button onClick={handleClear} color="inherit" size="small">
-        Clear
-      </Button>
-      <Button
-        onClick={handleApply}
-        variant="contained"
-        size="small"
-        sx={{
-          bgcolor: '#E91E63',
-          '&:hover': { bgcolor: '#C2185B' },
-        }}
-      >
-        Apply
-      </Button>
-    </>
-  );
+  const hasActiveFilters = status !== undefined || priority !== undefined || tags.length > 0;
 
   return (
     <>
@@ -120,153 +113,234 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
         size="small"
         onClick={handleClick}
         aria-label="Filter tickets"
+        sx={{
+          color: colorTokens.semantic.text.secondary,
+          '&:hover': {
+            backgroundColor: colorTokens.neutral[100],
+          },
+        }}
       >
         <Badge badgeContent={activeFilterCount} color="primary">
           <FilterListIcon fontSize="small" />
         </Badge>
       </IconButton>
+
       <DropdownMenu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
-        title="FILTER BY"
-        actions={actions}
         width={280}
       >
-        <Stack spacing={2}>
-          {/* Status */}
-          <FormControl fullWidth size="small">
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={status || ''}
-              label="Status"
-              onChange={(e) => setStatus(e.target.value as TicketStatus || undefined)}
-            >
-              <MenuItem value="">
-                <em>All Statuses</em>
-              </MenuItem>
-              {STATUSES.map(s => (
-                <MenuItem key={s} value={s}>
-                  {apiStatusToUi(s)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {/* Status Section */}
+        <Box sx={{ mb: 2 }}>
+          <MenuSubheader>STATUS</MenuSubheader>
 
-          {/* Priority */}
-          <FormControl fullWidth size="small">
-            <InputLabel>Priority</InputLabel>
-            <Select
-              value={priority || ''}
-              label="Priority"
-              onChange={(e) => setPriority(e.target.value as TicketPriority || undefined)}
-            >
-              <MenuItem value="">
-                <em>All Priorities</em>
-              </MenuItem>
-              {PRIORITIES.map(p => (
-                <MenuItem key={p} value={p}>
-                  {p}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* Tags */}
-          <Box>
-            <Divider sx={{ mb: 2 }} />
-            <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block', fontWeight: 600, textTransform: 'uppercase' }}>
-              Filter by Tags
-            </Typography>
-
-            {/* Popular Tags - Quick Select */}
-            {popularTags.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                  <LocalOfferOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10, fontWeight: 600 }}>
-                    POPULAR TAGS
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
-                  {popularTags.slice(0, 8).map((tag) => {
-                    const isSelected = tags.includes(tag.name);
-                    return (
-                      <Chip
-                        key={tag.id}
-                        label={`${tag.displayName} (${tag.usageCount})`}
-                        size="small"
-                        variant={isSelected ? 'filled' : 'outlined'}
-                        onClick={() => {
-                          if (isSelected) {
-                            handleRemoveTag(tag.name);
-                          } else {
-                            setTags([...tags, tag.name]);
-                          }
-                        }}
-                        sx={{
-                          backgroundColor: isSelected ? tag.color || '#E91E63' : 'transparent',
-                          color: isSelected ? '#fff' : tag.color || '#E91E63',
-                          borderColor: tag.color || '#E91E63',
-                          cursor: 'pointer',
-                          fontSize: 11,
-                          '&:hover': {
-                            backgroundColor: isSelected ? tag.color || '#E91E63' : `${tag.color || '#E91E63'}22`,
-                          },
-                        }}
-                      />
-                    );
-                  })}
-                </Box>
-              </Box>
+          {/* All Statuses Option */}
+          <MenuItem
+            onClick={() => handleStatusChange(undefined)}
+            sx={{
+              py: 1,
+              px: 2,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+            }}
+          >
+            {status === undefined ? (
+              <RadioButtonCheckedIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />
+            ) : (
+              <RadioButtonUncheckedIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
             )}
+            <ListItemText
+              primary="All Statuses"
+              primaryTypographyProps={{
+                fontSize: 13,
+                fontWeight: status === undefined ? 600 : 400,
+              }}
+            />
+          </MenuItem>
 
-            {/* Manual Tag Input */}
-            <Box display="flex" gap={1} mb={tags.length > 0 ? 1 : 0}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Type tag name"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
+          {/* Individual Status Options */}
+          {STATUSES.map((s) => {
+            const isSelected = status === s;
+            return (
+              <MenuItem
+                key={s}
+                onClick={() => handleStatusChange(s)}
+                sx={{
+                  py: 1,
+                  px: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
                 }}
-              />
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={handleAddTag}
-                disabled={!tagInput.trim()}
-                sx={{ minWidth: 60 }}
               >
-                Add
+                {isSelected ? (
+                  <RadioButtonCheckedIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />
+                ) : (
+                  <RadioButtonUncheckedIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
+                )}
+                <CircleIcon sx={{ fontSize: 8, color: STATUS_COLORS[s] }} />
+                <ListItemText
+                  primary={apiStatusToUi(s)}
+                  primaryTypographyProps={{
+                    fontSize: 13,
+                    fontWeight: isSelected ? 600 : 400,
+                  }}
+                />
+              </MenuItem>
+            );
+          })}
+        </Box>
+
+        <Divider sx={{ my: 1 }} />
+
+        {/* Priority Section */}
+        <Box sx={{ mb: 2 }}>
+          <MenuSubheader>PRIORITY</MenuSubheader>
+
+          {/* All Priorities Option */}
+          <MenuItem
+            onClick={() => handlePriorityChange(undefined)}
+            sx={{
+              py: 1,
+              px: 2,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+            }}
+          >
+            {priority === undefined ? (
+              <RadioButtonCheckedIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />
+            ) : (
+              <RadioButtonUncheckedIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
+            )}
+            <ListItemText
+              primary="All Priorities"
+              primaryTypographyProps={{
+                fontSize: 13,
+                fontWeight: priority === undefined ? 600 : 400,
+              }}
+            />
+          </MenuItem>
+
+          {/* Individual Priority Options */}
+          {PRIORITIES.map((p) => {
+            const isSelected = priority === p;
+            return (
+              <MenuItem
+                key={p}
+                onClick={() => handlePriorityChange(p)}
+                sx={{
+                  py: 1,
+                  px: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                }}
+              >
+                {isSelected ? (
+                  <RadioButtonCheckedIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />
+                ) : (
+                  <RadioButtonUncheckedIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
+                )}
+                <CircleIcon sx={{ fontSize: 8, color: PRIORITY_COLORS[p] }} />
+                <ListItemText
+                  primary={p}
+                  primaryTypographyProps={{
+                    fontSize: 13,
+                    fontWeight: isSelected ? 600 : 400,
+                  }}
+                />
+              </MenuItem>
+            );
+          })}
+        </Box>
+
+        {/* Tags Section */}
+        {popularTags.length > 0 && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <Box sx={{ mb: 1 }}>
+              <Box sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <LocalOfferOutlinedIcon sx={{ fontSize: 14, color: colorTokens.semantic.text.secondary }} />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  Tags {tags.length > 0 && `(${tags.length})`}
+                </Typography>
+              </Box>
+
+              {/* Tag Chips */}
+              <Box sx={{ px: 2, pb: 1, display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                {popularTags.slice(0, 12).map((tag) => {
+                  const isSelected = tags.includes(tag.name);
+                  return (
+                    <Chip
+                      key={tag.id}
+                      label={tag.displayName}
+                      variant={isSelected ? 'filled' : 'outlined'}
+                      color={isSelected ? 'primary' : 'neutral'}
+                      size="small"
+                      onClick={() => handleToggleTag(tag.name)}
+                      sx={{
+                        cursor: 'pointer',
+                        fontSize: 11,
+                        transition: 'all 0.15s ease',
+                        ...(tag.color && !isSelected
+                          ? {
+                              borderColor: tag.color,
+                              color: tag.color,
+                            }
+                          : {}),
+                        ...(tag.color && isSelected
+                          ? {
+                              backgroundColor: tag.color,
+                              borderColor: tag.color,
+                            }
+                          : {}),
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                        },
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
+          </>
+        )}
+
+        {/* Clear All Button */}
+        {hasActiveFilters && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <Box sx={{ px: 2, pb: 1 }}>
+              <Button
+                fullWidth
+                onClick={handleClearAll}
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: colorTokens.neutral[600],
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: colorTokens.neutral[100],
+                  },
+                }}
+              >
+                Clear All Filters
               </Button>
             </Box>
-
-            {/* Selected Tags */}
-            {tags.length > 0 && (
-              <Box>
-                <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontSize: 10, color: 'text.secondary' }}>
-                  Selected ({tags.length}):
-                </Typography>
-                <Box display="flex" flexWrap="wrap" gap={0.5}>
-                  {tags.map((tag) => (
-                    <Chip
-                      key={tag}
-                      label={tag}
-                      size="small"
-                      onDelete={() => handleRemoveTag(tag)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </Box>
-        </Stack>
+          </>
+        )}
       </DropdownMenu>
     </>
   );
