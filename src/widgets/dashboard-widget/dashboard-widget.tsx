@@ -21,12 +21,8 @@ import { useDashboardSocketIo } from "@/hooks/socket-io/use-dashboard-socket-io"
 import { useTranslation } from "react-i18next";
 
 const DashboardWidget = ({}: IDashboardWidget) => {
-  const {
-    machines,
-    addMachineProgress,
-    addEmployeeProgress,
-    getCheckedMachines,
-  } = useGomakeMachines();
+  const { machines, addMachineProgress, addEmployeeProgress } =
+    useGomakeMachines();
   const [tasksFilter, setTasksFilter] = useState<string>("");
   const selectedClients = useRecoilValue(dashboardClientsState);
   const { classes } = useStyle();
@@ -98,7 +94,6 @@ const DashboardWidget = ({}: IDashboardWidget) => {
   };
 
   const usedMachines = useCallback(() => {
-    const checkedMachines = getCheckedMachines();
     const filteredBoardsMissions = getFilteredBoardsMissions();
     if (!Array.isArray(filteredBoardsMissions)) {
       console.error(

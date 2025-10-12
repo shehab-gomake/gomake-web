@@ -10,14 +10,14 @@ import {
   StepStatus,
 } from "@/store/print-house-setup-state-state";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
 import { useGomakeRouter } from "@/hooks";
 import { useRouter } from "next/router";
-import OfflinePinIcon from "@mui/icons-material/OfflinePin";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 const useSetupGuideMenu = ({
   handleOpenModal,
@@ -35,6 +35,13 @@ const useSetupGuideMenu = ({
   const [showGuideMenuState, setShowGuideMenuState] = useState(true);
   const { navigate } = useGomakeRouter();
   const router = useRouter();
+  const { getClientTypesCategories } = useClientTypesList();
+
+  // Modal states for customer/supplier
+  const [openCustomerModal, setOpenCustomerModal] = useState(false);
+  const [openSupplierModal, setOpenSupplierModal] = useState(false);
+  const [customer, setCustomer] = useState(null);
+  const [supplier, setSupplier] = useState(null);
 
   useEffect(() => {
     const saved = getItem("gomake_showGuideMenu");
@@ -59,6 +66,41 @@ const useSetupGuideMenu = ({
 
   const handleToggleVerifyBusiness = () => {
     setOpenVerifyBusiness((prev) => !prev);
+  };
+
+  // Handler functions for customer/supplier modals
+  const handleOpenCustomerModal = () => {
+    setOpenCustomerModal(true);
+    collapseMenu();
+    // Load customer client types
+    getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
+  };
+
+  const handleOpenSupplierModal = () => {
+    setOpenSupplierModal(true);
+    collapseMenu();
+    // Load supplier client types
+    getClientTypesCategories(CLIENT_TYPE_Id.SUPPLIER);
+  };
+
+  const handleCloseCustomerModal = () => {
+    setOpenCustomerModal(false);
+    setCustomer(null);
+  };
+
+  const handleCloseSupplierModal = () => {
+    setOpenSupplierModal(false);
+    setSupplier(null);
+  };
+
+  const onCustomerAdd = (newCustomer) => {
+    handleCloseCustomerModal();
+    navigate("/customers");
+  };
+
+  const onSupplierAdd = (newSupplier) => {
+    handleCloseSupplierModal();
+    navigate("/suppliers");
   };
 
   const toggleExpand = () => {
@@ -238,8 +280,7 @@ const useSetupGuideMenu = ({
                 StepStatus.IN_PROGRESS
               );
             }
-            navigate("/customers");
-            collapseMenu();
+            handleOpenCustomerModal();
           },
         },
         {
@@ -255,8 +296,7 @@ const useSetupGuideMenu = ({
                 StepStatus.IN_PROGRESS
               );
             }
-            navigate("/suppliers");
-            collapseMenu();
+            handleOpenSupplierModal();
           },
         },
       ],
@@ -332,7 +372,10 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            window.open("https://gomake.document360.io", "_blank");
+            window.open(
+              "https://know-base-qassamat.replit.app/customer",
+              "_blank"
+            );
             setIsExpanded(false);
           },
         },
@@ -583,6 +626,19 @@ const useSetupGuideMenu = ({
     getAllGroupKeys,
     findNextStepLabel,
     findNextStep,
+    // Customer/Supplier modal states and handlers
+    openCustomerModal,
+    openSupplierModal,
+    customer,
+    supplier,
+    setCustomer,
+    setSupplier,
+    handleOpenCustomerModal,
+    handleOpenSupplierModal,
+    handleCloseCustomerModal,
+    handleCloseSupplierModal,
+    onCustomerAdd,
+    onSupplierAdd,
   };
 };
 
