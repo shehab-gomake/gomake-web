@@ -57,7 +57,9 @@ const TableCellData = ({
       onClickOpenDeleteTableRowModal()
     }
     else {
-      await updateCellData(id, parameterKey, !value);
+      // Convert string "false"/"true" to boolean, then toggle
+      const boolValue = (!value || value === "false" || value === "") ? false : true;
+      await updateCellData(id, parameterKey, !boolValue);
 
     }
   };
@@ -75,7 +77,9 @@ const TableCellData = ({
             title={t("materials.modals.updateModalTitle")}
             yesBtn={t("documentingSettings.update")}
             onClickDelete={async () => {
-              await updateCellData(id, parameterKey, !value);
+              // Convert string "false"/"true" to boolean, then toggle
+              const boolValue = (!value || value === "false" || value === "") ? false : true;
+              await updateCellData(id, parameterKey, !boolValue);
             }}
           />
         </>
