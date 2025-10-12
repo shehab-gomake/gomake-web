@@ -70,7 +70,7 @@ export const notificationCountsSelector = selector<{
 
 /**
  * Selector: Message notifications only (DM_RECEIVED, DM_MENTION, etc.)
- * Filters for unread notifications that belong to Messages tab
+ * Returns ALL message notifications (both read and unread)
  * Sorted by creation date (newest first)
  */
 export const messageNotificationsSelector = selector<BackendNotification[]>({
@@ -79,8 +79,8 @@ export const messageNotificationsSelector = selector<BackendNotification[]>({
     const notifications = get(frontdeskNotificationsAtom);
     return notifications
       .filter((n) => {
-        // Must be unread and belong to Messages tab
-        return isNotificationUnread(n) && mapNotificationToTab(n.type) === 'MESSAGE';
+        // Filter by Messages tab only (show both read and unread)
+        return mapNotificationToTab(n.type) === 'MESSAGE';
       })
       .sort((a, b) => {
         // Sort by creation date, newest first
@@ -91,7 +91,7 @@ export const messageNotificationsSelector = selector<BackendNotification[]>({
 
 /**
  * Selector: Ticket notifications only (TICKET_ASSIGNED, TICKET_SLA_BREACH, etc.)
- * Filters for unread notifications that belong to Tickets tab
+ * Returns ALL ticket notifications (both read and unread)
  * Sorted by creation date (newest first)
  */
 export const ticketNotificationsSelector = selector<BackendNotification[]>({
@@ -100,8 +100,8 @@ export const ticketNotificationsSelector = selector<BackendNotification[]>({
     const notifications = get(frontdeskNotificationsAtom);
     return notifications
       .filter((n) => {
-        // Must be unread and belong to Tickets tab
-        return isNotificationUnread(n) && mapNotificationToTab(n.type) === 'TICKET';
+        // Filter by Tickets tab only (show both read and unread)
+        return mapNotificationToTab(n.type) === 'TICKET';
       })
       .sort((a, b) => {
         // Sort by creation date, newest first

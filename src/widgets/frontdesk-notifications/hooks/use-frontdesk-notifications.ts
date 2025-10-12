@@ -54,7 +54,7 @@ export const useFrontdeskNotifications = () => {
       setError(null);
 
       const response = await notificationsService.getNotifications({
-        unreadOnly: true,
+        unreadOnly: false,
         limit: 20, // Load 20 notifications per page
         page,
       });

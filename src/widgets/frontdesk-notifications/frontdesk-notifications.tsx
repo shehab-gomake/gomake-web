@@ -23,7 +23,11 @@ const FrontdeskNotifications = () => {
     counts,
     handleNotificationClick,
     navigateToFrontdesk,
+    notifications,
   } = useFrontdeskNotifications();
+
+  // Calculate total notifications (read + unread)
+  const totalNotifications = messageNotifications.length + ticketNotifications.length;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -68,8 +72,8 @@ const FrontdeskNotifications = () => {
     >
       <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14) }}>
         {type === 'messages'
-          ? 'No new message notifications'
-          : 'No new ticket notifications'}
+          ? 'No message notifications'
+          : 'No ticket notifications'}
       </Typography>
     </Box>
   );
@@ -110,7 +114,13 @@ const FrontdeskNotifications = () => {
               marginTop: '4px',
             }}
           >
-            {counts.total} unread notification{counts.total !== 1 ? 's' : ''}
+            {counts.total > 0 ? (
+              <>
+                {counts.total} unread{totalNotifications > counts.total ? `, ${totalNotifications} total` : ''}
+              </>
+            ) : (
+              `${totalNotifications} notification${totalNotifications !== 1 ? 's' : ''}`
+            )}
           </Typography>
         </Box>
 

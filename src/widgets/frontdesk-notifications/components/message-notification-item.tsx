@@ -23,6 +23,9 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
+  // Check if notification is unread
+  const isUnread = isNotificationUnread(notification);
+
   // Extract channel from notification metadata
   const channel = extractChannel(notification) || 'DM';
 
@@ -61,8 +64,11 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
       padding="12px 20px"
       sx={{
         cursor: 'pointer',
+        backgroundColor: isUnread ? 'transparent' : neutralColor(50),
+        opacity: isUnread ? 1 : 0.7,
         '&:hover': {
-          backgroundColor: neutralColor(50),
+          backgroundColor: isUnread ? neutralColor(50) : neutralColor(100),
+          opacity: 1,
         },
         borderBottom: `1px solid ${neutralColor(100)}`,
       }}
@@ -88,7 +94,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
         <Stack direction="row" alignItems="center" gap="8px">
           <Typography
             sx={{
-              ...FONT_FAMILY.Lexend(600, 14),
+              ...FONT_FAMILY.Lexend(isUnread ? 600 : 500, 14),
               color: primaryColor(900),
             }}
           >
@@ -136,7 +142,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
       </Stack>
 
       {/* Unread Indicator */}
-      {isNotificationUnread(notification) && (
+      {isUnread && (
         <Box
           sx={{
             width: 8,

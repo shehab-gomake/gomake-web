@@ -22,6 +22,9 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
+  // Check if notification is unread
+  const isUnread = isNotificationUnread(notification);
+
   // Extract ticket info from notification metadata
   const ticketNumber = extractTicketNumber(notification) || 'TICKET-####';
   const ticketPriority = extractTicketPriority(notification);
@@ -70,8 +73,11 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
       alignItems="flex-start"
       sx={{
         cursor: 'pointer',
+        backgroundColor: isUnread ? 'transparent' : neutralColor(50),
+        opacity: isUnread ? 1 : 0.7,
         '&:hover': {
-          backgroundColor: neutralColor(50),
+          backgroundColor: isUnread ? neutralColor(50) : neutralColor(100),
+          opacity: 1,
         },
         borderBottom: `1px solid ${neutralColor(100)}`,
       }}
@@ -93,7 +99,7 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
         <Stack direction="row" alignItems="center" gap="8px">
           <Typography
             sx={{
-              ...FONT_FAMILY.Lexend(600, 13),
+              ...FONT_FAMILY.Lexend(isUnread ? 600 : 500, 13),
               color: neutralColor(600),
             }}
           >
@@ -122,7 +128,7 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
         {/* Title */}
         <Typography
           sx={{
-            ...FONT_FAMILY.Lexend(600, 14),
+            ...FONT_FAMILY.Lexend(isUnread ? 600 : 500, 14),
             color: primaryColor(900),
           }}
         >
@@ -153,7 +159,7 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
       </Stack>
 
       {/* Unread Indicator */}
-      {isNotificationUnread(notification) && (
+      {isUnread && (
         <Box
           sx={{
             width: 8,

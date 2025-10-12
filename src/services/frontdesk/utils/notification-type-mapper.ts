@@ -14,6 +14,7 @@ export enum BackendNotificationType {
   // Ticket notifications
   TICKET_ASSIGNED = 'TICKET_ASSIGNED',
   TICKET_REASSIGNED = 'TICKET_REASSIGNED',
+  TICKET_UPDATED = 'TICKET_UPDATED',
   TICKET_MESSAGE_RECEIVED = 'TICKET_MESSAGE_RECEIVED',
   TICKET_REOPENED = 'TICKET_REOPENED',
   TICKET_SLA_BREACH = 'TICKET_SLA_BREACH',
@@ -78,6 +79,7 @@ export function mapNotificationToTab(
   const ticketTypes: BackendNotificationType[] = [
     BackendNotificationType.TICKET_ASSIGNED,
     BackendNotificationType.TICKET_REASSIGNED,
+    BackendNotificationType.TICKET_UPDATED,
     BackendNotificationType.TICKET_MESSAGE_RECEIVED,
     BackendNotificationType.TICKET_REOPENED,
     BackendNotificationType.TICKET_SLA_BREACH,
@@ -104,6 +106,7 @@ export function getNotificationIcon(type: BackendNotificationType): string {
   const iconMap: Record<BackendNotificationType, string> = {
     [BackendNotificationType.TICKET_ASSIGNED]: '🎫',
     [BackendNotificationType.TICKET_REASSIGNED]: '🔄',
+    [BackendNotificationType.TICKET_UPDATED]: '✏️',
     [BackendNotificationType.TICKET_MESSAGE_RECEIVED]: '💬',
     [BackendNotificationType.TICKET_REOPENED]: '🔓',
     [BackendNotificationType.TICKET_SLA_BREACH]: '⚠️',
