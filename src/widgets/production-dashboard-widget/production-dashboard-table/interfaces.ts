@@ -60,4 +60,11 @@ export interface DepartmentSummaryDTO {
   averageGrowth: number | null;
   jobsTotalEstimatedCost: number;
   jobsEstimatedPrice: number;
+  totalDoneJobs: number;
+  totalDoneHours: number;
+  totalInProcessJobs: number;
+  totalInProcessHours: number;
+  totalReportedJobs: number;
+  totalReportedHours: number;
+  averagePerformance: number | null;
 }
