@@ -15,3 +15,4 @@ export * from './AttachmentCard';
 export * from './MessageCard';
 export * from './SystemEventMessage';
 export * from './MessageComposer';
+export * from './QuickActionMenu';

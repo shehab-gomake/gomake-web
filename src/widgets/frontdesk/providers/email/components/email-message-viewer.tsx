@@ -4,9 +4,10 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailConversation } from "../types/email.types";
 import { useMessageViewer } from "../hooks/use-message-viewer";
 import { MessageViewerHeader } from "./message-viewer/message-viewer-header";
-import { MessageItem } from "./message-viewer/message-item";
-import { InlineReplySection } from "./message-viewer/inline-reply-section";
 import { MessageViewerEmpty } from "./message-viewer/message-viewer-empty";
+import { MessageItem } from "@/widgets/frontdesk/components/shared/MessageItem";
+import { InlineReplySection } from "@/widgets/frontdesk/components/shared/InlineReplySection";
+import { emailToUnified } from "@/widgets/frontdesk/utils/message-transformer";
 
 interface EmailMessageViewerProps {
   conversation: EmailConversation | null;
@@ -103,21 +104,27 @@ export const EmailMessageViewer: React.FC<EmailMessageViewerProps> = ({
             </Typography>
           </Box>
         ) : (
-          messages.map((message, index) => (
-            <MessageItem
-              key={message.id}
-              message={message}
-              accountId={accountId}
-              isLast={index === messages.length - 1}
-              showInlineReply={showInlineReply}
-            />
-          ))
+          messages.map((message, index) => {
+            // Transform email message to unified format
+            const unifiedMessage = emailToUnified(message, accountId);
+
+            return (
+              <MessageItem
+                key={message.id}
+                message={unifiedMessage}
+                variant="email"
+                accountId={accountId}
+                isLast={index === messages.length - 1}
+              />
+            );
+          })
         )}
       </Box>
 
       {/* Inline Reply Section */}
       <Collapse in={showInlineReply}>
         <InlineReplySection
+          showReplyAll={true}
           isReplyAll={isReplyAll}
           replyText={replyText}
           isSending={isSending}

@@ -1,12 +1,11 @@
 import React from 'react';
-import { Box, Checkbox, ListItem, Typography, Stack } from '@mui/material';
-import { Avatar } from '../../primitives/Avatar';
+import { Box, Typography, Tooltip } from '@mui/material';
 import { AvatarGroup } from '../../primitives/Avatar';
 import { Chip } from '../../primitives/Chip';
 import { PriorityBadge, PriorityLevel } from '../../primitives/Badge/PriorityBadge';
-import { TicketTypeBadge, TicketType } from '../../primitives/Badge/TicketTypeBadge';
-import { colorTokens, semanticSpacing } from '../../tokens';
+import { colorTokens } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { TagList } from '../../components/TagChip';
 
 export interface TicketListItemProps {
@@ -16,8 +15,10 @@ export interface TicketListItemProps {
   ticketNumber: string;
   /** Ticket title */
   title: string;
-  /** Status */
+  /** Status (raw backend format: OPEN, REOPENED, etc. for color logic) */
   status: string;
+  /** Status label (optional friendly display: "Open", "Reopened", etc.) */
+  statusLabel?: string;
   /** Priority */
   priority: 'Urgent' | 'High' | 'Medium' | 'Low';
   /** Ticket type */
@@ -26,171 +27,242 @@ export interface TicketListItemProps {
   updatedAt: string;
   /** Is selected */
   isSelected?: boolean;
-  /** Is checked (for bulk actions) */
-  isChecked?: boolean;
   /** Has unread updates */
   isUnread?: boolean;
   /** Participants */
   participants?: Array<{ userId: string; name: string; avatarUrl?: string }>;
   /** Tags */
   tags?: Array<{ id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }>;
+  /** SLA breach status */
+  slaBreached?: boolean;
   /** Click handler */
   onClick?: (e: React.MouseEvent) => void;
-  /** Check handler */
-  onCheck?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Tag click handler - called when a tag is clicked */
+  onTagClick?: (tag: { id: string; name: string; displayName: string; color?: string | null; category: string; usageCount: number; isSystem: boolean }) => void;
 }
 
-const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' => {
-  switch (status) {
-    case 'To Do':
-      return 'primary';
-    case 'In Progress':
-      return 'warning';
-    case 'Done':
-      return 'success';
-    case 'Blocked':
-      return 'error';
+/**
+ * Map backend ticket statuses to design system chip colors
+ * Backend statuses: OPEN, IN_PROGRESS, PENDING, RESOLVED, CLOSED, REOPENED
+ */
+const getStatusColor = (status: string): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
+  switch (status.toUpperCase()) {
+    case 'OPEN':
+    case 'NEW':
+      return 'primary'; // Blue - new/needs attention
+    case 'IN_PROGRESS':
+    case 'ACTIVE':
+      return 'warning'; // Orange - actively worked
+    case 'PENDING':
+    case 'ON HOLD':
+      return 'warning'; // Yellow/Orange - waiting
+    case 'RESOLVED':
+      return 'success'; // Green - fixed
+    case 'CLOSED':
+      return 'neutral'; // Gray - done
+    case 'REOPENED':
+      return 'error'; // Red - needs re-attention
     default:
       return 'primary';
   }
 };
 
 /**
+ * Get subtle background color for ticket row based on status
+ * Used to visually distinguish ticket states at a glance
+ */
+const getStatusBackgroundTint = (status: string, isSelected: boolean): string => {
+  if (isSelected) return 'transparent'; // Don't override selection color
+
+  switch (status.toUpperCase()) {
+    case 'REOPENED':
+      return 'rgba(244, 67, 54, 0.03)'; // Subtle red tint
+    case 'PENDING':
+    case 'ON HOLD':
+      return 'rgba(255, 152, 0, 0.03)'; // Subtle orange tint
+    default:
+      return 'transparent';
+  }
+};
+
+/**
  * TicketListItem Component
  *
- * Specialized list item for ticket/task displays.
- * Improved with professional priority indicators and better visual hierarchy.
+ * Redesigned ticket list item with better visual hierarchy:
+ * - Priority badge with background (more visible)
+ * - Ticket number integrated with title
+ * - Status chip prominent on right
+ * - Metadata (time, participants, tags) clearly separated
+ * - Unread indicator integrated with title
  */
 export const TicketListItem: React.FC<TicketListItemProps> = ({
   id,
   ticketNumber,
   title,
   status,
+  statusLabel,
   priority,
   type,
   updatedAt,
   isSelected = false,
-  isChecked = false,
   isUnread = false,
   participants = [],
   tags = [],
+  slaBreached = false,
   onClick,
-  onCheck,
+  onTagClick,
 }) => {
-  return (
-    <ListItem
-      disablePadding
+  // Build custom content with better layout
+  const customContent = (
+    <Box
       onClick={onClick}
       sx={{
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         gap: 1.5,
-        py: 1.25,
         px: 2,
-        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
-        backgroundColor: isSelected
-          ? colorTokens.semantic.interactive.selected
-          : 'transparent',
+        py: 1.5,
         cursor: 'pointer',
-        transition: 'background-color 0.15s ease',
+        backgroundColor: isSelected
+          ? colorTokens.primary[100]
+          : getStatusBackgroundTint(status, isSelected),
+        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+        // Add left border for unread tickets for extra visibility
+        borderLeft: isUnread ? `3px solid ${colorTokens.primary[600]}` : '3px solid transparent',
+        transition: 'all 0.15s ease',
         '&:hover': {
-          backgroundColor: isSelected
-            ? colorTokens.semantic.interactive.selectedHover
-            : colorTokens.semantic.interactive.hover,
+          backgroundColor: isSelected ? colorTokens.primary[100] : colorTokens.primary[50],
         },
       }}
     >
-      {/* Checkbox */}
-      {onCheck && (
-        <Checkbox
-          size="small"
-          checked={isChecked}
-          onChange={(e) => {
-            e.stopPropagation();
-            onCheck(e.target.checked, e);
-          }}
-          onClick={(e) => e.stopPropagation()}
-          sx={{ p: 0, mt: 0.25 }}
+      {/* Left: Priority Badge with background */}
+      <Box sx={{ flexShrink: 0 }}>
+        <PriorityBadge
+          priority={priority as PriorityLevel}
+          mode="icon"
+          size="sm"
+          showBackground
         />
-      )}
+      </Box>
 
-      {/* Content */}
-      <Stack flex={1} spacing={0.75} sx={{ minWidth: 0 }}>
-        {/* Header Row - Ticket Number + Date + Status */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={0.5}>
-            <Typography
-              variant="caption"
+      {/* Center: Title and Metadata */}
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        {/* Title Row: Ticket number + Title + Unread indicator */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: colorTokens.semantic.text.tertiary,
+              flexShrink: 0,
+            }}
+          >
+            {ticketNumber}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: 14,
+              fontWeight: isUnread ? 600 : 500,
+              color: colorTokens.semantic.text.primary,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              flex: 1,
+            }}
+          >
+            {title}
+          </Typography>
+          {isUnread && (
+            <FiberManualRecordIcon
               sx={{
-                fontWeight: 500,
-                color: colorTokens.semantic.text.secondary,
-                fontSize: 10.5,
+                fontSize: 8,
+                color: colorTokens.primary[600],
+                flexShrink: 0,
               }}
-            >
-              {ticketNumber}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: colorTokens.semantic.text.tertiary,
-                fontSize: 10.5,
-              }}
-            >
-              · {updatedAt}
-            </Typography>
-          </Stack>
-          <Chip label={status} color={getStatusColor(status)} variant="soft" size="small" />
-        </Stack>
+            />
+          )}
+        </Box>
 
-        {/* Title Row */}
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: isUnread ? 600 : 500,
-            color: colorTokens.semantic.text.primary,
-            fontSize: 13,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flex: 1,
-          }}
-        >
-          {title}
-        </Typography>
+        {/* Metadata Row: Time + SLA Breach + Participants + Tags */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              fontSize: 11,
+              color: colorTokens.semantic.text.secondary,
+            }}
+          >
+            {updatedAt}
+          </Typography>
 
-        {/* Footer Row - Priority + Participants + Tags + Unread */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Stack direction="row" alignItems="center" gap={1}>
-            {/* Priority Badge */}
-            <PriorityBadge priority={priority as PriorityLevel} mode="icon" size="xs" />
+          {/* SLA Breach Indicator */}
+          {slaBreached && (
+            <>
+              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
+              <Tooltip title="SLA breached - overdue" arrow>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    color: '#EF4444', // Error red color for SLA breach
+                  }}
+                >
+                  <AccessTimeIcon sx={{ fontSize: 12 }} />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: 'inherit',
+                    }}
+                  >
+                    Overdue
+                  </Typography>
+                </Box>
+              </Tooltip>
+            </>
+          )}
 
-            {/* Participants - Show only if present */}
-            {participants.length > 0 && (
+          {participants.length > 0 && (
+            <>
+              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
               <AvatarGroup users={participants} size="xs" max={2} />
-            )}
+            </>
+          )}
 
-            {/* Tags - Show max 2 */}
-            {tags && tags.length > 0 && (
+          {tags && tags.length > 0 && (
+            <>
+              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
               <TagList
                 tags={tags as any}
                 size="small"
                 variant="outlined"
                 maxDisplay={2}
+                onClickTag={onTagClick ? (tag) => {
+                  // Stop propagation to prevent ticket selection when clicking tag
+                  onTagClick(tag);
+                } : undefined}
               />
-            )}
-          </Stack>
-
-          {/* Unread indicator */}
-          {isUnread && (
-            <FiberManualRecordIcon
-              sx={{
-                fontSize: 10,
-                color: colorTokens.primary[600],
-              }}
-            />
+            </>
           )}
-        </Stack>
-      </Stack>
-    </ListItem>
+        </Box>
+      </Box>
+
+      {/* Right: Status Chip */}
+      <Box sx={{ flexShrink: 0 }}>
+        <Chip
+          label={statusLabel || status} // Use friendly label if provided, else raw status
+          color={getStatusColor(status)} // Use raw status for color determination
+          variant="soft"
+          size="small"
+          sx={{ fontSize: 11, fontWeight: 600 }}
+        />
+      </Box>
+    </Box>
   );
+
+  return customContent;
 };

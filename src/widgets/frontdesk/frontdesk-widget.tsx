@@ -20,7 +20,7 @@ import { TicketDetailView } from './providers/tickets/components/ticket-detail-v
 
 // For unified view placeholder
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';
-import { unreadCountByProviderSelector } from '@/store/frontdesk';
+import { unreadCountByProviderSelector, sidebarCollapsedAtom } from '@/store/frontdesk';
 
 // Ticket state
 import {
@@ -29,22 +29,28 @@ import {
   selectedTicketIdAtom,
   selectedTicketSelector,
   ticketSearchQueryAtom,
-  selectedTicketIdsAtom,
   ticketCountsSelector,
   openTicketTabsAtom,
   ticketsAtom,
   ticketsLoadingAtom,
-  ticketsErrorAtom
+  ticketsErrorAtom,
+  activeFilterCountSelector
 } from '@/store/frontdesk/atoms/tickets.atoms';
 
 // Ticket provider hook
 import { useTicketsProvider } from './providers/tickets/hooks/use-tickets-provider';
 
+// Direct messages state (for conversation navigation)
+import { dmActiveConversationIdState } from '@/store/direct-messages';
+
 const FrontdeskWidget: React.FC = () => {
   const router = useRouter();
-  const { frontdeskRoute, provider } = router.query as {
+  const { frontdeskRoute, provider, view, ticket, conversation } = router.query as {
     frontdeskRoute?: string;
     provider?: string;
+    view?: string;
+    ticket?: string;
+    conversation?: string;
   };
 
 
@@ -59,6 +65,11 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   const getInitialChannel = (): Channel => {
+    // Check for 'view' query parameter first (from notifications)
+    if (view === 'internal') return 'internal';
+    if (view === 'email') return 'email';
+    if (view === 'whatsapp') return 'whatsapp';
+
     // If we're in tickets route, don't set a channel
     if (frontdeskRoute === 'tickets') return 'all';
     if (frontdeskRoute !== 'inbox' && !provider) return 'all';
@@ -70,6 +81,17 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   const getInitialTicketView = (): TicketView | null => {
+    // Check for 'view' query parameter first (from notifications)
+    if (view) {
+      const viewMap: Record<string, TicketView> = {
+        'my-tickets': 'my-tickets',
+        'unassigned': 'unassigned',
+        'all-tickets': 'all-tickets',
+        'done': 'done'
+      };
+      return viewMap[view] || null;
+    }
+
     // If we're on a tickets route, parse the provider param as ticket view
     if (frontdeskRoute === 'tickets' && provider) {
       // Check if provider is a ticket ID (format: TICKET-XXXXX or starts with number)
@@ -79,10 +101,9 @@ const FrontdeskWidget: React.FC = () => {
 
       const viewMap: Record<string, TicketView> = {
         'my-tickets': 'my-tickets',
-        'past-due': 'past-due',
-        'high-priority': 'high-priority',
         'unassigned': 'unassigned',
-        'all-tickets': 'all-tickets'
+        'all-tickets': 'all-tickets',
+        'done': 'done'
       };
       return viewMap[provider] || null;
     }
@@ -96,15 +117,21 @@ const FrontdeskWidget: React.FC = () => {
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // UI state from Recoil (with automatic localStorage persistence)
+  const [sidebarCollapsed, setSidebarCollapsed] = useRecoilState(sidebarCollapsedAtom);
+
   // Ticket state and provider hook
   const ticketsProvider = useTicketsProvider();
   const [selectedTicketView, setSelectedTicketView] = useRecoilState(selectedTicketViewAtom);
   const [selectedTicketId, setSelectedTicketId] = useRecoilState(selectedTicketIdAtom);
-  const [selectedTicketIds, setSelectedTicketIds] = useRecoilState(selectedTicketIdsAtom);
   const [openTicketTabs, setOpenTicketTabs] = useRecoilState(openTicketTabsAtom);
   const allTickets = useRecoilValue(ticketsAtom);
   const ticketsLoading = useRecoilValue(ticketsLoadingAtom);
   const ticketsError = useRecoilValue(ticketsErrorAtom);
+  const activeFilterCount = useRecoilValue(activeFilterCountSelector);
+
+  // Direct messages state (for conversation navigation)
+  const [activeConversationId, setActiveConversationId] = useRecoilState(dmActiveConversationIdState);
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
@@ -126,20 +153,47 @@ const FrontdeskWidget: React.FC = () => {
       const initialTicketView = getInitialTicketView();
       if (initialTicketView) {
         setSelectedTicketView(initialTicketView);
+
+        // Apply filters for the initial view
+        const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
+          'my-tickets': { assigneeId: 'me', status: undefined },
+          'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
+          'all-tickets': { assigneeId: undefined, status: undefined },
+          'done': { assigneeId: undefined, status: 'RESOLVED' }
+        };
+
+        const newFilters = {
+          ...ticketsProvider.filters,
+          ...viewFilters[initialTicketView],
+          page: 1
+        };
+
+        ticketsProvider.setFilters(newFilters);
       }
 
-      // Initialize ticket ID from route if present (for direct ticket links)
-      if (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider))) {
-        setSelectedTicketId(provider);
-        // Set a default view so tickets show in the list
-        setSelectedTicketView('all-tickets');
+      // Initialize ticket ID from query parameter (from notifications) OR path parameter
+      const ticketIdToOpen = ticket || (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider)) ? provider : null);
+
+      if (ticketIdToOpen) {
+        setSelectedTicketId(ticketIdToOpen);
+
+        // If ticket view is not already set, set a default view
+        if (!initialTicketView) {
+          setSelectedTicketView('all-tickets');
+        }
+
         // Add to open tabs
-        setOpenTicketTabs([provider]);
+        setOpenTicketTabs([ticketIdToOpen]);
+      }
+
+      // Initialize conversation ID from query parameter (from notifications)
+      if (conversation) {
+        setActiveConversationId(conversation);
       }
 
       setIsInitialized(true);
     }
-  }, [frontdeskRoute, provider, isInitialized]);
+  }, [frontdeskRoute, provider, view, ticket, conversation, isInitialized]);
 
   // Navigation handlers - update state immediately, then update URL
   const handleSectionChange = (section: Section) => {
@@ -178,13 +232,30 @@ const FrontdeskWidget: React.FC = () => {
     // Also update section to inbox when selecting a ticket view
     setCurrentSection('inbox');
 
+    // Fetch tickets with appropriate filters based on view
+    // Note: Backend supports assigneeId='me' as special keyword for current user
+    const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
+      'my-tickets': { assigneeId: 'me', status: undefined },
+      'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
+      'all-tickets': { assigneeId: undefined, status: undefined },
+      'done': { assigneeId: undefined, status: 'RESOLVED' }
+    };
+
+    const newFilters = {
+      ...ticketsProvider.filters,
+      ...viewFilters[view],
+      page: 1
+    };
+
+    ticketsProvider.setFilters(newFilters);
+    ticketsProvider.fetchTickets(newFilters);
+
     // Update URL to reflect ticket view
     const viewMap = {
       'my-tickets': 'my-tickets',
-      'past-due': 'past-due',
-      'high-priority': 'high-priority',
       'unassigned': 'unassigned',
-      'all-tickets': 'all-tickets'
+      'all-tickets': 'all-tickets',
+      'done': 'done'
     };
     const url = `/frontdesk/tickets/${viewMap[view as keyof typeof viewMap]}`;
 
@@ -235,16 +306,14 @@ const FrontdeskWidget: React.FC = () => {
     }
   };
 
-  const handleTicketCheck = (ticketId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedTicketIds([...selectedTicketIds, ticketId]);
-    } else {
-      setSelectedTicketIds(selectedTicketIds.filter(id => id !== ticketId));
-    }
-  };
 
   const handleTicketClose = () => {
     setSelectedTicketId(null);
+  };
+
+  const handleToggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+    // localStorage sync happens automatically via Recoil atom effects
   };
 
   // Render list content based on selection (kept for compatibility but not displayed)
@@ -369,14 +438,12 @@ const FrontdeskWidget: React.FC = () => {
     switch (view) {
       case 'my-tickets':
         return 'My Tickets';
-      case 'past-due':
-        return 'Past Due';
-      case 'high-priority':
-        return 'High Priority';
       case 'unassigned':
         return 'Unassigned';
       case 'all-tickets':
         return 'All Tickets';
+      case 'done':
+        return 'Done';
       default:
         return 'Tickets';
     }
@@ -387,6 +454,7 @@ const FrontdeskWidget: React.FC = () => {
 
   return (
     <ThreeColumnLayout
+      navigationWidth={sidebarCollapsed ? 64 : 220}
       navigationContent={
         <NavigationSidebar
           selectedChannel={currentChannel}
@@ -397,6 +465,8 @@ const FrontdeskWidget: React.FC = () => {
           onTicketViewSelect={handleTicketViewChange}
           channelBadges={channelBadges}
           ticketCounts={ticketsProvider.ticketCounts}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={handleToggleSidebarCollapse}
         />
       }
       listContent={
@@ -405,14 +475,35 @@ const FrontdeskWidget: React.FC = () => {
             viewTitle={getTicketViewTitle(selectedTicketView as TicketView)}
             tickets={ticketsProvider.filteredTickets}
             selectedTicketId={ticketsProvider.selectedTicketId}
-            selectedTicketIds={ticketsProvider.selectedTicketIds}
             searchQuery={ticketsProvider.searchQuery}
             onSearchChange={ticketsProvider.setSearchQuery}
             onTicketSelect={handleTicketSelect}
-            onTicketCheck={handleTicketCheck}
             onViewChange={(view) => handleTicketViewChange(view as TicketView)}
             isLoading={ticketsLoading}
             error={ticketsError}
+            filters={ticketsProvider.filters}
+            activeFilterCount={activeFilterCount}
+            onApplyFilters={(newFilters) => {
+              ticketsProvider.setFilters(newFilters);
+              ticketsProvider.fetchTickets(newFilters);
+            }}
+            onClearFilters={() => {
+              const defaultFilters = { page: 1, limit: 20, sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
+              ticketsProvider.setFilters(defaultFilters);
+              ticketsProvider.fetchTickets(defaultFilters);
+            }}
+            onTagClick={(tag) => {
+              // Filter tickets by clicked tag
+              const newFilters = {
+                ...ticketsProvider.filters,
+                tags: [tag.name],
+                page: 1,
+              };
+              ticketsProvider.setFilters(newFilters);
+              ticketsProvider.fetchTickets(newFilters);
+            }}
+            popularTags={ticketsProvider.popularTags}
+            onFetchPopularTags={() => ticketsProvider.fetchPopularTags({ limit: 10 })}
           />
         ) : currentSection === 'inbox' ? (
           <DynamicListPanel
@@ -567,9 +658,11 @@ const FrontdeskWidget: React.FC = () => {
                 <TicketDetailView
                   ticket={ticketsProvider.selectedTicket}
                   onClose={handleTicketClose}
-                  onReply={async (content) => {
-                    if (ticketsProvider.selectedTicket) {
-                      await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content);
+                  onReply={async (content, conversationId) => {
+                    if (ticketsProvider.selectedTicket && conversationId) {
+                      await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content, conversationId);
+                    } else {
+                      console.error('[FrontDeskWidget] Cannot send reply: missing ticket or conversationId');
                     }
                   }}
                   onStatusChange={async (status) => {
@@ -601,6 +694,10 @@ const FrontdeskWidget: React.FC = () => {
                   relatedTickets={ticketsProvider.relatedTickets}
                   onSelectRelatedTicket={(ticketId) => {
                     ticketsProvider.setSelectedTicketId(ticketId);
+                  }}
+                  onTicketUpdate={async (updatedTicket) => {
+                    // Refresh tickets to get the latest data
+                    await ticketsProvider.refreshTickets();
                   }}
                 />
               ) : (

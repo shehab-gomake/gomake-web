@@ -21,9 +21,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import EmailIcon from '@mui/icons-material/Email';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
@@ -40,14 +38,16 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HistoryIcon from '@mui/icons-material/History';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TicketWithDetails } from '../types/api.types';
-import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
+import { formatTicketStatus, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
 import { isApproachingSLA, isOverdueSLA } from '../utils/sla-helpers';
 import {
   Chip,
   PriorityBadge,
   TicketTypeBadge,
+  ChannelBadge,
   AttachmentCard,
   MessageCard,
   SystemEventMessage,
@@ -56,16 +56,31 @@ import {
   TagInput,
   TagList,
   PopularTags,
+  QuickActionButton,
+  QuickActionMenu,
+  QuickActionItem,
 } from '@/widgets/frontdesk/design-system';
 import { Alert } from '@mui/material';
 import { TicketTimeline } from './ticket-timeline';
 import { RelatedTickets } from './related-tickets';
 import { CustomerProfileSection } from './customer-profile-section';
+import { useQuickActions } from '../hooks/use-quick-actions';
+import { getGroupedActions, GROUP_LABELS, getActionsExcludingTickets, getTicketActions } from '../utils/quick-actions-config';
+import { InlineReplySection } from '@/widgets/frontdesk/components/shared/InlineReplySection';
+import { MessageItem } from '@/widgets/frontdesk/components/shared/MessageItem';
+import { ticketToUnified } from '@/widgets/frontdesk/utils/message-transformer';
+import { TicketFormModal } from './ticket-form-modal';
+import { useTicketFormModal } from '../hooks/use-ticket-form-modal';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
   onClose: () => void;
-  onReply?: (content: string) => void;
+  /**
+   * BREAKING CHANGE: onReply now requires conversationId
+   * @param content - Reply message content
+   * @param conversationId - Conversation ID (which channel/tab to reply on)
+   */
+  onReply?: (content: string, conversationId: string) => void;
   onStatusChange?: (status: string) => void;
   onPriorityChange?: (priority: string) => void;
   onAddTags?: (tags: string[]) => void;
@@ -75,6 +90,7 @@ interface TicketDetailViewProps {
   ticketHistory?: any[];
   relatedTickets?: any[];
   onSelectRelatedTicket?: (ticketId: string) => void;
+  onTicketUpdate?: (updatedTicket: TicketWithDetails) => void;
 }
 
 const formatDateTime = (dateString: string) => {
@@ -94,27 +110,156 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   ticketHistory = [],
   relatedTickets = [],
   onSelectRelatedTicket,
+  onTicketUpdate,
 }) => {
   const theme = useTheme();
-  const [moreMenuAnchor, setMoreMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
+  const [ticketActionsAnchor, setTicketActionsAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
 
-  // Add defensive logging
+  // Edit ticket modal
+  const editModal = useTicketFormModal({
+    mode: 'edit',
+    ticketId: ticket.id,
+    ticket: ticket,
+    onSuccess: (updatedTicket) => {
+      console.log('[TicketDetailView] ✅ Ticket updated successfully:', updatedTicket.ticketNumber);
+      if (onTicketUpdate) {
+        onTicketUpdate(updatedTicket);
+      }
+    },
+    onError: (error) => {
+      console.error('[TicketDetailView] ❌ Failed to update ticket:', error);
+    },
+  });
+
+  // Multi-conversation support: Track active conversation (tab)
+  // Use conversations array if available, otherwise fall back to single conversation
+  const conversations = ticket.conversations || (ticket.conversation ? [{
+    ...ticket.conversation,
+    channel: 'EMAIL' as any, // Default to EMAIL for old format
+    provider: { id: '', vendor: '', type: 'EMAIL' },
+    identifier: ticket.customerEmail || '',
+    messageCount: ticket.conversation.messages?.length || 0,
+  }] : []);
+  const [activeConversationId, setActiveConversationId] = useState<string>(
+    conversations[0]?.id || ''
+  );
+
+  // Get active conversation based on selected tab
+  const activeConversation = conversations.find(c => c.id === activeConversationId) || conversations[0];
+
+  // Inline reply state - open by default for tickets
+  const [showInlineReply, setShowInlineReply] = useState(true);
+  const [replyText, setReplyText] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
+
+  // Quick Actions integration
+  const { availableActions, hasCustomer, executeAction, getActionBlockReason } = useQuickActions({
+    ticketId: ticket.id,
+    customerId: ticket.customerId,
+    customerName: ticket.customerName,
+    customerEmail: ticket.customerEmail,
+    customerPhone: ticket.customerPhone,
+    onActionComplete: (actionType) => {
+      console.log('[TicketDetailView] Quick action completed:', actionType);
+    },
+    onActionError: (actionType, error) => {
+      console.error('[TicketDetailView] Quick action error:', actionType, error);
+      // TODO: Show toast notification
+      alert(`Cannot execute action: ${error}`);
+    },
+  });
+
+  // Add defensive logging with multi-conversation support
   console.log('[TicketDetailView] Rendering ticket:', ticket.id, ticket.ticketNumber);
-  console.log('[TicketDetailView] Conversation:', ticket.conversation ? 'exists' : 'MISSING');
-  console.log('[TicketDetailView] Messages count:', ticket.conversation?.messages?.length || 0);
+  console.log('[TicketDetailView] Conversations:', conversations.length);
+  console.log('[TicketDetailView] Active conversation:', activeConversationId);
+  console.log('[TicketDetailView] Active conversation messages:', activeConversation?.messages?.length || 0);
+
+  // Backward compatibility check
+  if (ticket.conversation && !ticket.conversations) {
+    console.warn('[TicketDetailView] ⚠️ OLD FORMAT: ticket.conversation detected (no conversations array)');
+  }
 
   const handleSendReply = (data: any) => {
-    if (onReply && data.content) {
-      onReply(data.content);
+    if (onReply && data.message && activeConversationId) {
+      onReply(data.message, activeConversationId);
     }
   };
 
-  // Convert UI status to backend status for display
-  const uiStatus = apiStatusToUi(ticket.status);
+  // Inline reply handlers
+  const handleCancelReply = () => {
+    // Just clear the text, keep reply section open
+    setReplyText("");
+  };
+
+  const handleSendInlineReply = async () => {
+    if (!replyText.trim() || !onReply || !activeConversationId) {
+      console.error('[TicketDetailView] Cannot send reply: missing reply text, onReply handler, or activeConversationId');
+      return;
+    }
+
+    setIsSendingReply(true);
+    try {
+      console.log('[TicketDetailView] Sending reply to conversation:', activeConversationId);
+      await onReply(replyText, activeConversationId);
+      setReplyText("");
+      setShowInlineReply(false);
+    } catch (error) {
+      console.error("[TicketDetailView] Failed to send reply:", error);
+      // Keep reply open so user can retry
+    } finally {
+      setIsSendingReply(false);
+    }
+  };
+
+  // Quick Actions menu helpers (excluding ticket actions)
+  const actionsExcludingTickets = getActionsExcludingTickets();
+  const ticketOnlyActions = getTicketActions();
+
+  const quickActionMenuItems: QuickActionItem[] = availableActions
+    .filter((action) => actionsExcludingTickets.some(a => a.type === action.type))
+    .map((action) => ({
+      id: action.type,
+      label: action.label,
+      icon: action.icon,
+      tooltip: action.tooltip,
+      disabled: !!getActionBlockReason(action.type),
+      disabledReason: getActionBlockReason(action.type) || undefined,
+      group: action.group,
+    }));
+
+  const ticketActionMenuItems: QuickActionItem[] = availableActions
+    .filter((action) => ticketOnlyActions.some(a => a.type === action.type))
+    .map((action) => ({
+      id: action.type,
+      label: action.label,
+      icon: action.icon,
+      tooltip: action.tooltip,
+      disabled: !!getActionBlockReason(action.type),
+      disabledReason: getActionBlockReason(action.type) || undefined,
+      group: action.group,
+    }));
+
+  const handleQuickActionClick = (action: QuickActionItem) => {
+    executeAction(action.id as any);
+  };
+
+  const handleTicketActionClick = (action: QuickActionItem) => {
+    // Handle edit_ticket action specially
+    if (action.id === 'edit_ticket') {
+      editModal.openModal();
+      return;
+    }
+    executeAction(action.id as any);
+  };
+
+  // Format status and priority for display
+  const uiStatus = formatTicketStatus(ticket.status);
   const uiPriority = apiPriorityToUi(ticket.priority);
 
   return (
@@ -156,27 +301,13 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 {/* Origin Provider Channel Badge */}
                 {ticket.originProviderChannel && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Typography
-                      component="span"
-                      sx={{ fontSize: 16 }}
-                      role="img"
-                      aria-label={ticket.originProviderChannel.type}
-                    >
-                      {getChannelIcon(ticket.originProviderChannel.type)}
-                    </Typography>
-                    <Chip
-                      label={`${ticket.originProviderChannel.type}`}
-                      size="small"
-                      sx={{
-                        height: 20,
-                        fontSize: 10,
-                        fontWeight: 600,
-                        backgroundColor: getChannelColor(ticket.originProviderChannel.type),
-                        color: 'white',
-                      }}
+                    <ChannelBadge
+                      channel={ticket.originProviderChannel.type.toLowerCase() as any}
+                      mode="both"
+                      size="sm"
                     />
-                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary, ml: 0.5 }}>
-                      via {ticket.originProviderChannel.identifier}
+                    <Typography variant="caption" sx={{ color: colorTokens.semantic.text.tertiary }}>
+                      · {ticket.originProviderChannel.identifier}
                     </Typography>
                   </Box>
                 )}
@@ -205,11 +336,17 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
             {/* Right Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-              <IconButton size="small" title="Send email notification">
-                <EmailIcon fontSize="small" />
-              </IconButton>
-
-              <IconButton size="small" onClick={(e) => setMoreMenuAnchor(e.currentTarget)}>
+              {/* Ticket Actions 3-dot Menu */}
+              <IconButton
+                size="small"
+                onClick={(e) => setTicketActionsAnchor(e.currentTarget)}
+                sx={{
+                  backgroundColor: Boolean(ticketActionsAnchor) ? colorTokens.neutral[100] : 'transparent',
+                  '&:hover': {
+                    backgroundColor: colorTokens.neutral[100],
+                  }
+                }}
+              >
                 <MoreVertIcon fontSize="small" />
               </IconButton>
 
@@ -291,6 +428,52 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </Button>
         </Box>
 
+        {/* Conversation Tabs - Multi-Channel Support */}
+        {activeView === 'conversation' && conversations.length > 1 && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 2,
+              py: 1.5,
+              borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+              backgroundColor: theme.palette.background.paper,
+              overflowX: 'auto',
+            }}
+          >
+            {conversations.map((conversation) => {
+              const channelIcon = getChannelIcon(conversation.channel || 'EMAIL');
+              const isActive = conversation.id === activeConversationId;
+
+              return (
+                <Button
+                  key={conversation.id}
+                  size="small"
+                  onClick={() => setActiveConversationId(conversation.id)}
+                  sx={{
+                    textTransform: 'none',
+                    px: 2,
+                    py: 1,
+                    fontWeight: isActive ? 600 : 400,
+                    color: isActive ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+                    backgroundColor: isActive ? colorTokens.primary[50] : 'transparent',
+                    borderRadius: '8px',
+                    border: `1px solid ${isActive ? colorTokens.primary[200] : 'transparent'}`,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+                    },
+                  }}
+                >
+                  {channelIcon} {conversation.channel || 'Email'} ({conversation.messageCount || conversation.messages?.length || 0})
+                </Button>
+              );
+            })}
+          </Box>
+        )}
+
         {/* Comments/Thread - Multi-Channel Timeline */}
         {activeView === 'conversation' && (
           <Box
@@ -323,7 +506,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <ChatBubbleOutlineIcon sx={{ fontSize: 20, color: colorTokens.semantic.text.secondary }} />
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Conversation ({ticket.conversation?.messages?.length || 0} messages)
+                    {conversations.length > 1 ? `${conversations.length} Conversations` : 'Conversation'} ({activeConversation?.messages?.length || 0} messages)
                   </Typography>
                 </Box>
                 <KeyboardArrowDownIcon sx={{ color: colorTokens.semantic.text.secondary }} />
@@ -343,7 +526,9 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
-                    Conversation Timeline
+                    {conversations.length > 1
+                      ? `${activeConversation?.channel || 'Email'} Conversation`
+                      : 'Conversation Timeline'}
                   </Typography>
                   <IconButton
                     size="small"
@@ -361,14 +546,17 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   actor={{ name: ticket.customerName || ticket.customerEmail || 'Customer' }}
                 />
 
-                {/* Render messages and system events */}
-                {ticket.conversation?.messages && Array.isArray(ticket.conversation.messages) && ticket.conversation.messages.length > 0 ? (
-                  ticket.conversation.messages.map((message, index) => {
+                {/* Render messages from ACTIVE conversation only */}
+                {activeConversation?.messages && Array.isArray(activeConversation.messages) && activeConversation.messages.length > 0 ? (
+                  activeConversation.messages.map((message, index) => {
                     // Defensive null checks for message
                     if (!message || !message.id) {
                       console.warn('[TicketDetailView] Skipping invalid message:', message);
                       return null;
                     }
+
+                    // Transform ticket message to unified format
+                    const unifiedMessage = ticketToUnified(message, ticket);
 
                     return (
                       <React.Fragment key={message.id}>
@@ -394,33 +582,18 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                           />
                         )}
 
-                        {/* Message Card */}
-                        <MessageCard
-                          id={message.id}
-                          channel={(message.channel || 'email') as any}
-                          direction={(message.direction || 'INBOUND').toLowerCase() as any}
-                          status="delivered"
-                          author={{
-                            name: message.direction === 'INBOUND'
-                              ? (ticket.customerName || ticket.customerEmail || 'Customer')
-                              : (ticket.assignee?.name || 'Agent'),
-                            email: message.direction === 'INBOUND'
-                              ? (ticket.customerEmail || message.fromIdentifier || '')
-                              : (ticket.assignee?.email || ''),
-                            avatarUrl: undefined,
-                          }}
-                          content={message.content || ''}
-                          contentType={message.metadata?.hasHtml ? 'html' : undefined}
-                          timestamp={message.createdAt}
-                          attachments={[]}
-                          isPrivate={false}
+                        {/* Unified Message Item */}
+                        <MessageItem
+                          message={unifiedMessage}
+                          variant="ticket"
+                          isLast={index === activeConversation.messages.length - 1}
                         />
                       </React.Fragment>
                     );
                   })
                 ) : null}
 
-                {(!ticket.conversation?.messages || ticket.conversation.messages.length === 0) && (
+                {(!activeConversation?.messages || activeConversation.messages.length === 0) && (
                   <Box sx={{ textAlign: 'center', py: 8, backgroundColor: 'white', borderRadius: '8px', border: `1px solid ${colorTokens.semantic.border.default}` }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       No messages yet
@@ -470,7 +643,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                   Description
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.7, color: colorTokens.semantic.text.primary }}>
-                  {ticket.conversation?.messages?.[0]?.content || 'No description available'}
+                  {activeConversation?.messages?.[0]?.content || conversations[0]?.messages?.[0]?.content || 'No description available'}
                 </Typography>
               </Box>
 
@@ -548,7 +721,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                       }}
                     />
                     <Typography variant="body2" sx={{ fontSize: 14, lineHeight: 1.6 }}>
-                      Resolve the customer's issue via {ticket.conversation?.messages?.[0]?.channel || 'email'}
+                      Resolve the customer's issue via {conversations.length > 1 ? 'multiple channels' : (activeConversation?.channel || 'email')}
                     </Typography>
                   </Box>
                   <Box
@@ -715,31 +888,15 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           </Box>
         )}
 
-        {/* Message Composer at Bottom - Only show in Conversation view */}
+        {/* Inline Reply Section - Always visible in Conversation view */}
         {activeView === 'conversation' && !conversationMinimized && (
-          <MessageComposer
-            placeholder="Hi, please check this article for more information"
-            availableChannels={['whatsapp', 'email', 'sms', 'phone']}
-            defaultChannel="whatsapp"
-            availableFrom={[
-              {
-                id: 'csfiki',
-                name: 'CSFikri',
-                identifier: 'support@company.com',
-              },
-              {
-                id: 'support',
-                name: 'Support Team',
-                identifier: 'team@company.com',
-              },
-            ]}
-            defaultFrom="csfiki"
-            showAIToggle={true}
-            aiEnabled={false}
-            onSend={handleSendReply}
-            onAIToggle={(enabled) => console.log('AI toggle:', enabled)}
-            onAttachFile={() => console.log('Attach file')}
-            onAttachImage={() => console.log('Attach image')}
+          <InlineReplySection
+            title="Reply to Ticket"
+            replyText={replyText}
+            isSending={isSendingReply}
+            onReplyTextChange={setReplyText}
+            onSend={handleSendInlineReply}
+            onCancel={handleCancelReply}
           />
         )}
       </Box>
@@ -755,6 +912,20 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           p: 2
         }}
       >
+        {/* Actions Button - Sales/Purchase Documents */}
+        <Box sx={{ mb: 2.5 }}>
+          <QuickActionButton
+            size="sm"
+            isOpen={Boolean(quickActionsAnchor)}
+            onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+            sx={{ width: '100%' }}
+          >
+            Actions
+          </QuickActionButton>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
         {/* Customer Profile Section */}
         <CustomerProfileSection
           customerId={ticket.customerId}
@@ -810,7 +981,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           >
             <Chip
               label={uiStatus}
-              color={uiStatus === 'To Do' ? 'primary' : uiStatus === 'In Progress' ? 'warning' : uiStatus === 'Done' ? 'success' : 'error'}
+              color={uiStatus === 'New' ? 'primary' : uiStatus === 'Active' ? 'warning' : uiStatus === 'Resolved' ? 'success' : uiStatus === 'On Hold' ? 'error' : 'neutral'}
               variant="soft"
               size="small"
               sx={{
@@ -1042,16 +1213,25 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
 
       </Box>
 
-      {/* More Menu */}
-      <Menu
-        anchorEl={moreMenuAnchor}
-        open={Boolean(moreMenuAnchor)}
-        onClose={() => setMoreMenuAnchor(null)}
-      >
-        <MenuItem>Print</MenuItem>
-        <MenuItem>Export</MenuItem>
-        <MenuItem>Delete</MenuItem>
-      </Menu>
+      {/* Quick Actions Menu (Sales/Purchase Documents only) */}
+      <QuickActionMenu
+        anchorEl={quickActionsAnchor}
+        open={Boolean(quickActionsAnchor)}
+        onClose={() => setQuickActionsAnchor(null)}
+        actions={quickActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleQuickActionClick}
+      />
+
+      {/* Ticket Actions Menu (3-dot menu in header) */}
+      <QuickActionMenu
+        anchorEl={ticketActionsAnchor}
+        open={Boolean(ticketActionsAnchor)}
+        onClose={() => setTicketActionsAnchor(null)}
+        actions={ticketActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleTicketActionClick}
+      />
 
       {/* Status Menu */}
       <Menu
@@ -1067,7 +1247,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          To Do (Open)
+          {formatTicketStatus('OPEN')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1077,7 +1257,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          In Progress
+          {formatTicketStatus('IN_PROGRESS')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1087,7 +1267,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Pending
+          {formatTicketStatus('PENDING')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1097,7 +1277,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Done (Resolved)
+          {formatTicketStatus('RESOLVED')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1107,7 +1287,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          Closed
+          {formatTicketStatus('CLOSED')}
         </MenuItem>
       </Menu>
 
@@ -1158,6 +1338,25 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           🔴 Urgent
         </MenuItem>
       </Menu>
+
+      {/* Edit Ticket Modal */}
+      <TicketFormModal
+        mode="edit"
+        open={editModal.isOpen}
+        onClose={editModal.closeModal}
+        onSubmit={editModal.handleSubmit}
+        ticket={ticket}
+        clients={editModal.clients}
+        onClientSearch={editModal.handleClientSearch}
+        clientsLoading={editModal.clientsLoading}
+        assignees={editModal.assignees}
+        onAssigneeSearch={editModal.handleAssigneeSearch}
+        assigneesLoading={editModal.assigneesLoading}
+        popularTags={editModal.popularTags}
+        onSuggestTags={editModal.handleSuggestTags}
+        isSubmitting={editModal.isSubmitting}
+        error={editModal.error}
+      />
     </Box>
   );
 };

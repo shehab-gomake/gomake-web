@@ -13,11 +13,11 @@ Use this flow when stabilizing existing FrontDesk functionality.
 | UI rendering / layout drift | `src/widgets/frontdesk/providers/*` or `layouts/` | JSX structure, Material-UI props, responsive breakpoints |
 | Stale or missing data | Recoil atoms/selectors | Default values, selector dependencies, effects |
 | REST failures | `src/services/frontdesk/api/` | Endpoint path, payload shape, auth headers |
-| Real-time desync | `messaging-service.ts` & provider hooks | Socket subscriptions, cleanup, optimistic updates |
+| Real-time desync | `messaging-socket.service.ts` & provider hooks | Socket subscriptions, cleanup, optimistic updates |
 
 ## 3. Debugging Toolkit
 - Insert temporary `console.debug` statements gated by the `FRONTDESK_DEBUG` flag.
-- Check WebSocket rooms and events (see [direct-messages-frontend.md](../direct-messages-frontend.md)).
+- Check WebSocket rooms and events (see [direct-messages-frontend.md](../01-providers/direct-messages/direct-messages-frontend.md)).
 - Use `npm run lint` to catch obvious mistakes before running heavier tests.
 
 ## 4. Fix Safely

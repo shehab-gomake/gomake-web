@@ -1,4 +1,16 @@
-export type TicketStatus = 'To Do' | 'In Progress' | 'Done' | 'Blocked' | 'Cancelled';
+/**
+ * Ticket Status - Unified with Backend Enum
+ * Uses Prisma schema TicketStatus enum directly
+ * @see /Users/omarsabbah/Desktop/Messaging-Hub/prisma/schema.prisma
+ */
+export type TicketStatus =
+  | 'OPEN'
+  | 'IN_PROGRESS'
+  | 'PENDING'
+  | 'RESOLVED'
+  | 'CLOSED'
+  | 'REOPENED';
+
 export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
 export type TicketType = 'Task' | 'Bug' | 'Feature' | 'Support' | 'Question';
 

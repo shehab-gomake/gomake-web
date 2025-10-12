@@ -40,6 +40,8 @@ import {
   ListTagsQueryDto,
   GetPopularTagsQueryDto,
   TagsListResponse,
+  TicketViewStatus,
+  UnreadCountResponse,
 } from '@/widgets/frontdesk/providers/tickets/types';
 
 const TICKETS_BASE_URL = '/tickets';
@@ -58,6 +60,7 @@ export class TicketsService extends MessagingHubHttpClient {
   async listTickets(filters?: TicketFilters): Promise<PaginatedTicketsResponse> {
     const params = new URLSearchParams();
 
+    if (filters?.search?.trim()) params.append('search', filters.search.trim());
     if (filters?.status) params.append('status', filters.status);
     if (filters?.priority) params.append('priority', filters.priority);
     if (filters?.assigneeId) params.append('assigneeId', filters.assigneeId);
@@ -66,6 +69,7 @@ export class TicketsService extends MessagingHubHttpClient {
     if (filters?.createdBy) params.append('createdBy', filters.createdBy);
     if (filters?.customerEmail) params.append('customerEmail', filters.customerEmail);
     if (filters?.customerPhone) params.append('customerPhone', filters.customerPhone);
+    if (filters?.providerChannel) params.append('providerChannel', filters.providerChannel);
     if (filters?.tags && filters.tags.length > 0) {
       filters.tags.forEach((tag) => params.append('tags', tag));
     }
@@ -97,11 +101,14 @@ export class TicketsService extends MessagingHubHttpClient {
   /**
    * Reply to Ticket
    * POST /api/tickets/:id/reply
+   *
+   * BREAKING CHANGE: conversationId is NOW REQUIRED
+   * Backend needs to know which conversation/channel to reply on (Email, WhatsApp, SMS, etc.)
    */
-  async replyToTicket(ticketId: string, content: string): Promise<ReplyTicketResponse> {
+  async replyToTicket(ticketId: string, content: string, conversationId: string): Promise<ReplyTicketResponse> {
     return await this.post<ReplyTicketResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/reply`,
-      { content }
+      { content, conversationId }
     );
   }
 
@@ -436,6 +443,42 @@ export class TicketsService extends MessagingHubHttpClient {
     return await this.delete<GenericSuccessResponse>(
       `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/tags/${encodeURIComponent(tagId)}`
     );
+  }
+
+  // ============================================
+  // Ticket View Tracking (Read/Unread Status)
+  // ============================================
+
+  /**
+   * Get Ticket View Status for Current User
+   * GET /api/tickets/:id/view-status
+   * Returns when the user last viewed this ticket and if there's unread activity
+   */
+  async getTicketViewStatus(ticketId: string): Promise<TicketViewStatus> {
+    return await this.get<TicketViewStatus>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/view-status`
+    );
+  }
+
+  /**
+   * Mark Ticket as Read
+   * PATCH /api/tickets/:id/mark-read
+   * Manually mark a ticket as read (updates lastViewedAt and sets hasUnread to false)
+   */
+  async markTicketAsRead(ticketId: string): Promise<GenericSuccessResponse> {
+    return await this.patch<GenericSuccessResponse>(
+      `${TICKETS_BASE_URL}/${encodeURIComponent(ticketId)}/mark-read`,
+      {}
+    );
+  }
+
+  /**
+   * Get Unread Tickets Count for Current User
+   * GET /api/tickets/unread-count
+   * Returns the number of tickets with unread activity for the current user
+   */
+  async getUnreadTicketsCount(): Promise<UnreadCountResponse> {
+    return await this.get<UnreadCountResponse>(`${TICKETS_BASE_URL}/unread-count`);
   }
 }
 
