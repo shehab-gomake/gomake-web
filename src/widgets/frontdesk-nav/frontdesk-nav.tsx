@@ -11,6 +11,7 @@ import { FONT_FAMILY } from '@/utils/font-family';
 import { NotificationTabs, TabPanel } from '@/widgets/frontdesk-notifications/components/notification-tabs';
 import { MessageNotificationItem } from '@/widgets/frontdesk-notifications/components/message-notification-item';
 import { TicketNotificationItem } from '@/widgets/frontdesk-notifications/components/ticket-notification-item';
+import { InfiniteScrollObserver } from '@/widgets/frontdesk-notifications/components/infinite-scroll-observer';
 import { useFrontdeskNotifications } from '@/widgets/frontdesk-notifications/hooks/use-frontdesk-notifications';
 
 const FrontdeskNav = () => {
@@ -25,9 +26,12 @@ const FrontdeskNav = () => {
     counts,
     loading,
     error,
+    hasMore,
+    isLoadingMore,
     handleNotificationClick,
     navigateToFrontdesk,
     retryFetch,
+    loadMore,
   } = useFrontdeskNotifications();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -168,6 +172,12 @@ const FrontdeskNav = () => {
                   onClick={handleNotificationItemClick}
                 />
               ))}
+              {/* Infinite scroll loader */}
+              <InfiniteScrollObserver
+                onLoadMore={loadMore}
+                hasMore={hasMore}
+                isLoading={isLoadingMore}
+              />
             </Stack>
           ) : (
             renderEmptyState('messages')
@@ -184,6 +194,12 @@ const FrontdeskNav = () => {
                   onClick={handleNotificationItemClick}
                 />
               ))}
+              {/* Infinite scroll loader */}
+              <InfiniteScrollObserver
+                onLoadMore={loadMore}
+                hasMore={hasMore}
+                isLoading={isLoadingMore}
+              />
             </Stack>
           ) : (
             renderEmptyState('tickets')

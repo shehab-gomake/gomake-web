@@ -75,9 +75,9 @@ export class NotificationsService extends MessagingHubHttpClient {
    * GET /notifications?type=TICKET_ASSIGNED&unreadOnly=true&page=1&limit=20
    *
    * @param filters - Optional filters (type, unreadOnly, pagination)
-   * @returns Promise<BackendNotification[]> - List of notifications
+   * @returns Promise<PaginatedNotificationsResponse> - Paginated notifications with metadata
    */
-  async getNotifications(filters?: NotificationFilters): Promise<BackendNotification[]> {
+  async getNotifications(filters?: NotificationFilters): Promise<PaginatedNotificationsResponse> {
     const params = new URLSearchParams();
 
     if (filters?.type) params.append('type', filters.type);
@@ -88,11 +88,11 @@ export class NotificationsService extends MessagingHubHttpClient {
     const queryString = params.toString() ? `?${params.toString()}` : '';
 
     // Backend returns { success, data: [...notifications], pagination }
-    // MessagingHubHttpClient auto-unwraps to just return data
+    // MessagingHubHttpClient auto-unwraps to return the data object
     const response = await this.get<PaginatedNotificationsResponse>(`${NOTIFICATIONS_BASE_URL}${queryString}`);
 
-    // Return just the notifications array
-    return response.data || response as any;
+    // Return full response with pagination metadata for infinite scroll
+    return response;
   }
 
   /**

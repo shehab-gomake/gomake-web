@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import {
@@ -17,7 +17,7 @@ import {
 
 /**
  * Hook for managing FrontDesk notifications
- * Provides state, actions, real-time updates, and navigation handlers
+ * Provides state, actions, real-time updates, navigation handlers, and infinite scroll
  */
 export const useFrontdeskNotifications = () => {
   const router = useRouter();
@@ -27,33 +27,87 @@ export const useFrontdeskNotifications = () => {
   const [loading, setLoading] = useRecoilState(notificationsLoadingAtom);
   const [error, setError] = useRecoilState(notificationsErrorAtom);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   // Selectors
   const counts = useRecoilValue(notificationCountsSelector);
   const messageNotifications = useRecoilValue(messageNotificationsSelector);
   const ticketNotifications = useRecoilValue(ticketNotificationsSelector);
 
   /**
-   * Fetch notifications from API
+   * Fetch notifications from API with pagination support
+   *
+   * @param page - Page number to fetch (default: 1)
+   * @param append - Whether to append results to existing notifications or replace them
    */
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (page = 1, append = false) => {
     try {
-      setLoading(true);
+      // Set appropriate loading state
+      if (append) {
+        setIsLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
 
-      const fetchedNotifications = await notificationsService.getNotifications({
+      const response = await notificationsService.getNotifications({
         unreadOnly: true,
-        limit: 50,
+        limit: 20, // Load 20 notifications per page
+        page,
       });
 
-      setNotifications(fetchedNotifications);
+      console.log('[useFrontdeskNotifications] Raw response:', response);
+
+      // Extract notifications array from response
+      // Handle both unwrapped array and { data, pagination } structure
+      const notificationsData = Array.isArray(response)
+        ? response
+        : (response.data || []);
+
+      // Update notifications state
+      if (append) {
+        // Append mode: Add new notifications while preventing duplicates
+        setNotifications((prev) => {
+          const existingIds = new Set(prev.map((n) => n.id));
+          const newNotifications = notificationsData.filter((n) => !existingIds.has(n.id));
+          return [...prev, ...newNotifications];
+        });
+      } else {
+        // Replace mode: Set as new list
+        setNotifications(notificationsData);
+      }
+
+      // Update pagination state
+      setCurrentPage(page);
+      setHasMore(response.pagination?.hasNext || false);
+
+      console.log(`[useFrontdeskNotifications] Loaded page ${page}, hasMore: ${response.pagination?.hasNext}`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch notifications';
       console.error('[useFrontdeskNotifications] Fetch error:', errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
   }, [setNotifications, setLoading, setError]);
+
+  /**
+   * Load more notifications (next page)
+   * Used by infinite scroll component
+   */
+  const loadMore = useCallback(async () => {
+    if (!hasMore || isLoadingMore) {
+      console.log('[useFrontdeskNotifications] loadMore skipped:', { hasMore, isLoadingMore });
+      return;
+    }
+
+    console.log('[useFrontdeskNotifications] Loading more, current page:', currentPage);
+    await fetchNotifications(currentPage + 1, true);
+  }, [currentPage, hasMore, isLoadingMore, fetchNotifications]);
 
   /**
    * Mark a single notification as read
@@ -218,6 +272,11 @@ export const useFrontdeskNotifications = () => {
     loading,
     error,
 
+    // Pagination state
+    hasMore,
+    isLoadingMore,
+    currentPage,
+
     // Actions
     markAsRead,
     markAllAsRead,
@@ -225,6 +284,7 @@ export const useFrontdeskNotifications = () => {
     navigateToFrontdesk,
     retryFetch,
     fetchNotifications,
+    loadMore,
 
     // Computed
     hasNotifications: counts.total > 0,
