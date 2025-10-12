@@ -36,6 +36,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
+  console.log("materialTableFilters", materialTableFilters);
+
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
@@ -162,7 +164,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           }
         })}
 
-      {!props.isAdmin && materialSuppliers?.length > 0 && materialTableFilters && materialTableFilters?.length > 0 && (
+      {!props.isAdmin && materialSuppliers?.length > 0 && (
         <GoMakeAutoComplate
           key={`${materialCategory}-suppliers-${selectedSuppliers?.length || 0}`}
           onChange={(e, v) => {
@@ -189,7 +191,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           defaultFiltering={false}
         />
       )}
-      {!props.isAdmin && materialTableFilters && materialTableFilters?.length > 0 ? (
+      {!props.isAdmin ? (
         <GoMakeAutoComplate
           style={{ width: "150px" }}
           options={activeFilterOptions}
@@ -250,7 +252,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       )}
 
       <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "auto" }}>
-        {materialTableFilters && materialTableFilters?.length > 0 && <ActionMenu isAdmin={props.isAdmin} />}
+        {<ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>
   );
