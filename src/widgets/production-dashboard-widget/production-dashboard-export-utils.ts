@@ -66,18 +66,20 @@ export const exportProductionDashboardToExcel = (
       )})`,
       formatTime(department.summary.totalEstimatedHours),
       department.summary.totalJobs,
-      "-",
-      "-",
-      "-",
-      "-",
-      "-",
-      "-",
+      formatTime(department.summary.totalDoneHours),
+      department.summary.totalDoneJobs,
+      formatTime(department.summary.totalInProcessHours),
+      department.summary.totalInProcessJobs,
+      formatTime(department.summary.totalReportedHours),
+      department.summary.totalReportedJobs,
       "-",
       "-",
       department.summary.averageGrowth !== null
         ? department.summary.averageGrowth.toFixed(2)
         : "-",
-      "-",
+      department.summary.averagePerformance !== null
+        ? department.summary.averagePerformance.toFixed(2)
+        : "-",
       "-",
       department.summary.jobsTotalEstimatedCost.toFixed(2),
       department.summary.jobsEstimatedPrice.toFixed(2),

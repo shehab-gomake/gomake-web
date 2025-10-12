@@ -85,9 +85,18 @@ const MainProductionReportTable = () => {
           {formatTime(department.summary.totalEstimatedHours)} /{" "}
           {department.summary.totalJobs}
         </span>,
-        <span style={{ fontWeight: "bold" }}>-</span>,
-        <span style={{ fontWeight: "bold" }}>-</span>,
-        <span style={{ fontWeight: "bold" }}>-</span>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalDoneHours)} /{" "}
+          {department.summary.totalDoneJobs}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalInProcessHours)} /{" "}
+          {department.summary.totalInProcessJobs}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalReportedHours)} /{" "}
+          {department.summary.totalReportedJobs}
+        </span>,
         <Box>
           {department.summary.averageGrowth !== null && (
             <span style={{ fontWeight: "bold" }}>
@@ -98,7 +107,16 @@ const MainProductionReportTable = () => {
             <span style={{ fontWeight: "bold" }}>-</span>
           )}
         </Box>,
-        <span style={{ fontWeight: "bold" }}>-</span>,
+        <Box>
+          {department.summary.averagePerformance !== null && (
+            <span style={{ fontWeight: "bold" }}>
+              {formatPercentage(department.summary.averagePerformance)}
+            </span>
+          )}
+          {department.summary.averagePerformance === null && (
+            <span style={{ fontWeight: "bold" }}>-</span>
+          )}
+        </Box>,
         <Box>
           <span style={{ fontWeight: "bold" }}>
             {formatCurrency(department.summary.jobsTotalEstimatedCost)}
