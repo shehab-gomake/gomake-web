@@ -256,8 +256,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromDate(value[0]);
-      setToDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDate(firstDate);
+        setToDate(secondDate);
+      } else {
+        setFromDate(secondDate);
+        setToDate(firstDate);
+      }
     } else {
       setFromDate(null);
       setToDate(null);
@@ -266,8 +274,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectDueTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromDueDate(value[0]);
-      setToDueDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDueDate is always the earlier date and toDueDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDueDate(firstDate);
+        setToDueDate(secondDate);
+      } else {
+        setFromDueDate(secondDate);
+        setToDueDate(firstDate);
+      }
     } else {
       setFromDueDate(null);
       setToDueDate(null);
@@ -276,8 +292,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectReadyTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromReadyDate(value[0]);
-      setToReadyDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromReadyDate is always the earlier date and toReadyDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromReadyDate(firstDate);
+        setToReadyDate(secondDate);
+      } else {
+        setFromReadyDate(secondDate);
+        setToReadyDate(firstDate);
+      }
     } else {
       setFromReadyDate(null);
       setToReadyDate(null);

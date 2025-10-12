@@ -41,8 +41,16 @@ const usePriceProfit = () => {
 
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromDate(value[0]);
-      setToDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDate(firstDate);
+        setToDate(secondDate);
+      } else {
+        setFromDate(secondDate);
+        setToDate(firstDate);
+      }
     } else {
       // Reset to default dates if cleared
       const defaultDates = getDefaultDateRange();
