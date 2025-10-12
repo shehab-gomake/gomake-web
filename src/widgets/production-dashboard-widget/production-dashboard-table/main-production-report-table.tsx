@@ -4,18 +4,11 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Collapse,
   IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Chip,
 } from "@mui/material";
-import { ExpandMore, ExpandLess } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useStyle } from "../style";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -36,387 +29,163 @@ const MainProductionReportTable = () => {
     toggleAllDepartments,
     formatTime,
     formatPercentage,
-    formatNumber,
     formatCurrency,
   } = useMainProductionReport();
 
-  const CollapsibleTable = () => {
-    if (!data?.departments) return null;
+  // Generate flat table data with expand/collapse functionality
+  const generateTableData = () => {
+    if (!data?.departments) return [];
 
-    return (
-      <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
-        <Table stickyHeader sx={classes.collapsibleTable}>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                {t("productionReport.department")}
-              </TableCell>
-              {/* <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                {t("productionReport.supplier")}
-              </TableCell> */}
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.totalEstimated")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.timeJobs")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.done")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.timeJobs")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.inProcess")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.timeJobs")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.reported")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.timeJobsPercent")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.capacity")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.percentGrowth")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.performance")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.percentGrowth")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.jobAnalytics")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.costPrice")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.sla")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.percentGrowth")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.avgProductionTime")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.dailyProductivity")}
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.departments.map((department: DepartmentPerformanceDTO) => (
-              <React.Fragment key={department.departmentId}>
-                {/* Department Row */}
-                <TableRow sx={classes.departmentRow}>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <IconButton
-                        size="small"
-                        onClick={() =>
-                          toggleDepartment(department.departmentId)
-                        }
-                        sx={{ mr: 1 }}
-                      >
-                        {expandedDepartments.has(department.departmentId) ? (
-                          <ExpandLess />
-                        ) : (
-                          <ExpandMore />
-                        )}
-                      </IconButton>
-                      <Typography variant="subtitle1" fontWeight="bold">
-                        {department.departmentName}
-                      </Typography>
-                      <Chip
-                        label={`${department.stations.length} ${t(
-                          "productionReport.stations"
-                        )}`}
-                        size="small"
-                        sx={{
-                          ml: 1,
-                          backgroundColor: "#e3f2fd",
-                          color: "#1976d2",
-                          fontWeight: "bold",
-                          fontSize: "0.75rem",
-                          height: "24px",
-                          "& .MuiChip-label": {
-                            px: 1,
-                          },
-                        }}
-                      />
-                    </Box>
-                  </TableCell>
-                  <TableCell colSpan={9}>
-                    <Typography variant="body2" color="textSecondary">
-                      {t("productionReport.departmentSummary")}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
+    const tableData: any[] = [];
 
-                {/* Station Rows - Collapsible */}
-                <TableRow>
-                  <TableCell colSpan={10} sx={{ padding: 0 }}>
-                    <Collapse
-                      in={expandedDepartments.has(department.departmentId)}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <Box sx={{ margin: 1 }}>
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.stationDetails")}
-                              </TableCell>
-                              {/* <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.supplier")}
-                              </TableCell> */}
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.totalEstimated")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.done")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.inProcess")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.reported")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.capacity")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.performance")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.jobAnalytics")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.sla")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.avgTime")}
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {department.stations.map(
-                              (station: StationPerformanceDTO) => (
-                                <TableRow
-                                  key={station.stationId}
-                                  sx={classes.stationRow}
-                                >
-                                  <TableCell>
-                                    <Typography
-                                      variant="body2"
-                                      fontWeight="medium"
-                                    >
-                                      {station.stationName}
-                                    </Typography>
-                                  </TableCell>
+    data.departments.forEach((department: DepartmentPerformanceDTO) => {
+      const isExpanded = expandedDepartments.has(department.departmentId);
+      const expandIcon = isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />;
 
-                                  {/* <TableCell>
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                    >
-                                      {station.supplierName || "N/A"}
-                                    </Typography>
-                                  </TableCell> */}
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatTime(station.totalEstimated.time)}{" "}
-                                      / {station.totalEstimated.jobs}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatTime(station.done.time)} /{" "}
-                                      {station.done.jobs}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatTime(station.inProcess.time)} /{" "}
-                                      {station.inProcess.jobs}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatTime(station.reported.time)} /{" "}
-                                      {station.reported.jobs}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        (
-                                        {station.totalEstimated.jobs > 0
-                                          ? formatPercentage(
-                                              (station.reported.jobs /
-                                                station.totalEstimated.jobs) *
-                                                100
-                                            )
-                                          : "N/A"}
-                                        )
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatPercentage(
-                                        station.capacity.capacity
-                                      )}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        (
-                                        {formatPercentage(
-                                          station.capacity.growth
-                                        )}
-                                        )
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatPercentage(
-                                        station.performance.productivity
-                                      )}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        (
-                                        {formatPercentage(
-                                          station.performance.growth
-                                        )}
-                                        )
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatCurrency(
-                                        station.jobAnalytics
-                                          .jobsTotalEstimatedCost
-                                      )}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        {formatCurrency(
-                                          station.jobAnalytics
-                                            .jobsEstimatedPrice
-                                        )}
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatPercentage(station.sla?.sla)}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        ({formatPercentage(station.sla?.growth)}
-                                        )
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
-                                      {formatTime(
-                                        station.averageProductionTime
-                                      )}
-                                    </Typography>
-                                  </TableCell>
-                                </TableRow>
-                              )
-                            )}
-                          </TableBody>
-                        </Table>
-                      </Box>
-                    </Collapse>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    );
+      // Department header row with expand/collapse button and summary values
+      tableData.push([
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            gap: 1,
+          }}
+          onClick={() => toggleDepartment(department.departmentId)}
+        >
+          <IconButton size="small" sx={{ mr: 1 }}>
+            {expandIcon}
+          </IconButton>
+          <span style={{ fontWeight: "bold" }}>
+            {department.departmentName}
+          </span>
+          <Chip
+            label={`${department.summary.totalStations} ${t(
+              "productionReport.stations"
+            )}`}
+            size="small"
+            sx={{
+              backgroundColor: "#e3f2fd",
+              color: "#1976d2",
+              fontWeight: "bold",
+              fontSize: "0.75rem",
+              height: "24px",
+              "& .MuiChip-label": {
+                px: 1,
+              },
+            }}
+          />
+        </Box>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalEstimatedHours)} /{" "}
+          {department.summary.totalJobs}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>-</span>,
+        <span style={{ fontWeight: "bold" }}>-</span>,
+        <span style={{ fontWeight: "bold" }}>-</span>,
+        <Box>
+          {department.summary.averageGrowth !== null && (
+            <span style={{ fontWeight: "bold" }}>
+              {formatPercentage(department.summary.averageGrowth)}
+            </span>
+          )}
+          {department.summary.averageGrowth === null && (
+            <span style={{ fontWeight: "bold" }}>-</span>
+          )}
+        </Box>,
+        <span style={{ fontWeight: "bold" }}>-</span>,
+        <Box>
+          <span style={{ fontWeight: "bold" }}>
+            {formatCurrency(department.summary.jobsTotalEstimatedCost)}
+          </span>
+          <br />
+          <Typography variant="caption" color="textSecondary">
+            {formatCurrency(department.summary.jobsEstimatedPrice)}
+          </Typography>
+        </Box>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatPercentage(department.summary.averageSLA)}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalWorkingHours)}
+        </span>,
+      ]);
+
+      // Station rows (only if expanded)
+      if (isExpanded) {
+        department.stations.forEach((station: StationPerformanceDTO) => {
+          tableData.push([
+            <Box sx={{ pl: 4 }}>{station.stationName}</Box>,
+            `${formatTime(station.totalEstimated.time)} / ${
+              station.totalEstimated.jobs
+            }`,
+            `${formatTime(station.done.time)} / ${station.done.jobs}`,
+            `${formatTime(station.inProcess.time)} / ${station.inProcess.jobs}`,
+            <Box>
+              {formatTime(station.reported.time)} / {station.reported.jobs}
+              <br />
+              <Typography variant="caption" color="textSecondary">
+                (
+                {station.totalEstimated.jobs > 0
+                  ? formatPercentage(
+                      (station.reported.jobs / station.totalEstimated.jobs) *
+                        100
+                    )
+                  : "N/A"}
+                )
+              </Typography>
+            </Box>,
+            <Box>
+              {formatPercentage(station.capacity.capacity)}
+              <br />
+              <Typography variant="caption" color="textSecondary">
+                ({formatPercentage(station.capacity.growth)})
+              </Typography>
+            </Box>,
+            <Box>
+              {formatPercentage(station.performance.productivity)}
+              <br />
+              <Typography variant="caption" color="textSecondary">
+                ({formatPercentage(station.performance.growth)})
+              </Typography>
+            </Box>,
+            <Box>
+              {formatCurrency(station.jobAnalytics.jobsTotalEstimatedCost)}
+              <br />
+              <Typography variant="caption" color="textSecondary">
+                {formatCurrency(station.jobAnalytics.jobsEstimatedPrice)}
+              </Typography>
+            </Box>,
+            <Box>
+              {formatPercentage(station.sla?.sla)}
+              <br />
+              <Typography variant="caption" color="textSecondary">
+                ({formatPercentage(station.sla?.growth)})
+              </Typography>
+            </Box>,
+            formatTime(station.averageProductionTime),
+          ]);
+        });
+      }
+    });
+
+    return tableData;
   };
+
+  const tableData = generateTableData();
+
+  const tableHeaders = [
+    t("productionReport.stationDetails"),
+    t("productionReport.totalEstimated"),
+    t("productionReport.done"),
+    t("productionReport.inProcess"),
+    t("productionReport.reported"),
+    t("productionReport.capacity"),
+    t("productionReport.performance"),
+    t("productionReport.jobAnalytics"),
+    t("productionReport.sla"),
+    t("productionReport.avgTime"),
+  ];
 
   if (loading) {
     return (
@@ -445,7 +214,7 @@ const MainProductionReportTable = () => {
     );
   }
 
-  if (!data) {
+  if (!data || tableData.length === 0) {
     return (
       <Box style={classes.subContainer}>
         <Typography align="center">
@@ -465,16 +234,18 @@ const MainProductionReportTable = () => {
           marginBottom: "16px",
         }}
       >
-        <Typography variant="h6">
-          {t("productionReport.mainProductionReport")}
+        <Box>
+          <Typography variant="h6">
+            {t("productionReport.mainProductionReport")}
+          </Typography>
           {data.reportGeneratedAt && (
             <Typography variant="caption" display="block" color="textSecondary">
               {t("productionReport.generatedAt")}:{" "}
               {format(new Date(data.reportGeneratedAt), "MMM d, yyyy HH:mm")}
             </Typography>
           )}
-        </Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
+        </Box>
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
           <IconButton
             onClick={toggleAllDepartments}
             size="small"
@@ -484,9 +255,9 @@ const MainProductionReportTable = () => {
             }}
           >
             {expandedDepartments.size === data?.departments?.length ? (
-              <ExpandLess />
+              <ExpandLessIcon />
             ) : (
-              <ExpandMore />
+              <ExpandMoreIcon />
             )}
           </IconButton>
           <Typography
@@ -500,7 +271,14 @@ const MainProductionReportTable = () => {
           </Typography>
         </Box>
       </Box>
-      <CollapsibleTable />
+      <PrimaryTable
+        stickyFirstCol={false}
+        stickyHeader={true}
+        rows={tableData}
+        headers={tableHeaders}
+        variant="RoundTable"
+        maxHeight={"60vh"}
+      />
     </Box>
   );
 };

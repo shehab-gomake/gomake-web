@@ -49,7 +49,6 @@ export const useMainProductionReport = () => {
       );
 
       if (response?.success) {
-        debugger;
         setData(response.data.data.data);
       } else {
         setError(response?.message || "Failed to fetch data");

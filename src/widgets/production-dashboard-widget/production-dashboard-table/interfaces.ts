@@ -13,7 +13,7 @@ export interface DepartmentPerformanceDTO {
 export interface StationPerformanceDTO {
   stationId: string;
   stationName: string;
-  supplierName?: string; //?should be visible ?
+  supplierName?: string;
   totalEstimated: StationMetrics;
   done: StationMetrics;
   inProcess: StationMetrics;
@@ -28,7 +28,7 @@ export interface StationPerformanceDTO {
 export interface StationMetrics {
   time: number;
   jobs: number;
-  percentageReported?: number; //!here new how to show
+  percentageReported?: number;
 }
 
 export interface CapacityMetricsDTO {
@@ -51,13 +51,13 @@ export interface JobAnalytics {
   jobsEstimatedPrice: number;
 }
 
-//!here we can ignore it because it is not used
 export interface DepartmentSummaryDTO {
   totalStations: number;
   totalJobs: number;
   totalEstimatedHours: number;
   totalWorkingHours: number;
-  averagePerformance: number;
   averageSLA: number;
-  overallGrowth: number | null;
+  averageGrowth: number | null;
+  jobsTotalEstimatedCost: number;
+  jobsEstimatedPrice: number;
 }

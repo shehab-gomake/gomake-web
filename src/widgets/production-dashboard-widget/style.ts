@@ -6,14 +6,14 @@ const useStyle = () => {
       container: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "30px",
+        gap: "16px",
         minHeight: "85vh",
       },
       subContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: 16,
-        padding: "24px 21px 24px 32px",
+        gap: 8,
+        padding: "16px 21px 24px 32px",
         backgroundColor: "#fff",
         boxShadow: "0px 4px 20px rgba(238, 238, 238, 0.501967)",
         border: "1px solid #F8F9FA",
