@@ -88,7 +88,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit !== "price" ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -122,7 +122,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
+                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit !== "price" ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
