@@ -44,10 +44,7 @@ const MainProductionReportTable = () => {
     if (!data?.departments) return null;
 
     return (
-      <TableContainer
-        component={Paper}
-        //sx={{ maxHeight: "70vh" }}
-      >
+      <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
         <Table stickyHeader sx={classes.collapsibleTable}>
           <TableHead>
             <TableRow>
@@ -332,7 +329,9 @@ const MainProductionReportTable = () => {
                                   </TableCell>
                                   <TableCell>
                                     <Typography variant="body2">
-                                      {formatNumber(station.capacity.capacity)}
+                                      {formatPercentage(
+                                        station.capacity.capacity
+                                      )}
                                       <br />
                                       <Typography
                                         variant="caption"
