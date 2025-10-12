@@ -126,7 +126,7 @@
     "deletefailed": "فشل الحذف",
     "formNotValid": "النموذج غير صالح",
     "RequiredFields": "حقول مطلوبة مفقودة",
-    "duplicateFailed" : "فشل النسخ"
+    "duplicateFailed": "فشل النسخ"
   },
   "home": {
     "admin": {
@@ -1492,7 +1492,6 @@
         "byClient": "حسب العميل",
         "byClientType": "حسب نوع العميل",
         "uploadImg": "تحميل صورة"
-        
       }
     },
     "parameters": {
@@ -1641,7 +1640,7 @@
       "sendQuote": "إرسال الاقتباس",
       "cancel": "إلغاء",
       "yesBtn": "نعم",
-      "noBtn":"لا",
+      "noBtn": "لا",
       "subTitleCancelModal": "هل أنت متأكد أنك تريد إلغاء هذا العرض؟",
       "cancellationBtn": "الغاء",
       "titleCancelModal": "تأكيد الإلغاء",
@@ -2077,11 +2076,11 @@
     "dayOfWork": "أيام العمل",
     "sunday": "الأحد",
     "monday": "الاثنين",
-    "tuesday":"الثلاثاء",
-    "wednesday":"الاربعاء",
-    "thursday":"الخميس",
-    "friday" :"الجمعة",
-    "saturday":"السبت"
+    "tuesday": "الثلاثاء",
+    "wednesday": "الاربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت"
   },
   "remainWords": {
     "newQuote": "عرض جديد",
@@ -2420,5 +2419,4 @@
     "CLOSE": "تم إغلاق المستند",
     "CLOSE2": "تم إغلاقه كـ {{documentType}}"
   }
-
 }
