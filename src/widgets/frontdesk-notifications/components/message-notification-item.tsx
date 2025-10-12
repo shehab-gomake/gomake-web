@@ -6,11 +6,15 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { FONT_FAMILY } from '@/utils/font-family';
 import { MessageDateTimeComponent } from '@/widgets/messenger/components/message-date-time-component';
-import { IFrontdeskNotification } from '@/store/frontdesk/atoms/notifications.atoms';
+import {
+  BackendNotification,
+  extractChannel,
+  isNotificationUnread,
+} from '@/services/frontdesk/utils/notification-type-mapper';
 
 interface MessageNotificationItemProps {
-  notification: IFrontdeskNotification;
-  onClick: (notification: IFrontdeskNotification) => void;
+  notification: BackendNotification;
+  onClick: (notification: BackendNotification) => void;
 }
 
 const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
@@ -19,8 +23,15 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
+  // Extract channel from notification metadata
+  const channel = extractChannel(notification) || 'DM';
+
+  // Extract sender info from metadata
+  const senderName = notification.metadata?.senderName || notification.metadata?.userName || 'Unknown User';
+  const senderAvatar = notification.metadata?.senderAvatar || notification.metadata?.userAvatar;
+
   const getChannelIcon = () => {
-    switch (notification.metadata.channel) {
+    switch (channel) {
       case 'EMAIL':
         return <EmailOutlinedIcon sx={{ fontSize: 14, color: '#2e3092' }} />;
       case 'WHATSAPP':
@@ -32,7 +43,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
   };
 
   const getChannelColor = () => {
-    switch (notification.metadata.channel) {
+    switch (channel) {
       case 'EMAIL':
         return '#2e3092';
       case 'WHATSAPP':
@@ -59,7 +70,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
     >
       {/* Avatar */}
       <Avatar
-        src={notification.metadata.senderAvatar}
+        src={senderAvatar}
         sx={{
           width: 40,
           height: 40,
@@ -68,7 +79,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
           ...FONT_FAMILY.Lexend(600, 14),
         }}
       >
-        {notification.metadata.senderName?.charAt(0).toUpperCase() || 'U'}
+        {senderName.charAt(0).toUpperCase()}
       </Avatar>
 
       {/* Content */}
@@ -81,7 +92,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
               color: primaryColor(900),
             }}
           >
-            {notification.metadata.senderName || 'Unknown User'}
+            {senderName}
           </Typography>
           <Box
             sx={{
@@ -100,7 +111,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
                 color: getChannelColor(),
               }}
             >
-              {notification.metadata.channel}
+              {channel}
             </Typography>
           </Box>
         </Stack>
@@ -115,17 +126,17 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
             whiteSpace: 'nowrap',
           }}
         >
-          {notification.message}
+          {notification.body || notification.title}
         </Typography>
 
         {/* Timestamp */}
         <Box sx={{ color: neutralColor(400) }}>
-          <MessageDateTimeComponent date={notification.timestamp} />
+          <MessageDateTimeComponent date={new Date(notification.createdAt)} />
         </Box>
       </Stack>
 
       {/* Unread Indicator */}
-      {!notification.isRead && (
+      {isNotificationUnread(notification) && (
         <Box
           sx={{
             width: 8,

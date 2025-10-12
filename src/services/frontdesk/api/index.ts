@@ -9,3 +9,4 @@ export * from './frontdesk-endpoints';
 // Export individual service modules
 export * from './direct-messages.service';
 export * from './tickets.service';
+export * from './notifications.service';

@@ -1,196 +1,174 @@
 /**
  * FrontDesk Notifications API Service
+ * Source: /Users/omarsabbah/Desktop/Messaging-Hub/docs/guides/NOTIFICATION_SYSTEM_FRONTEND_GUIDE.md
  *
- * This service provides API endpoints for managing FrontDesk notifications.
- * Currently using placeholder/stub implementations with dummy data.
- * Ready to be connected to real backend endpoints.
- *
- * @module services/frontdesk/api/notifications
+ * REST operations for the FrontDesk notification system.
+ * Base URL: /notifications
+ * Auth: Bearer token required on all requests
+ * Tenant scoping: Automatic via printHouseId from JWT
  */
 
-import { IFrontdeskNotification } from '@/store/frontdesk/atoms/notifications.atoms';
+import { MessagingHubHttpClient } from '@/services/messaging-hub-http-client';
+import {
+  BackendNotification,
+  BackendNotificationType,
+} from '@/services/frontdesk/utils/notification-type-mapper';
 
 /**
- * API Response structure
+ * Query filters for listing notifications
  */
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
+export interface NotificationFilters {
+  type?: BackendNotificationType;
+  unreadOnly?: boolean;
+  page?: number;
+  limit?: number;
 }
 
 /**
- * Get all unread FrontDesk notifications
- *
- * Backend endpoint (to be implemented):
- * GET /v1/frontdesk/notifications/unread
- *
- * Query params:
- * - type?: 'MESSAGE' | 'TICKET' (optional filter)
- * - limit?: number (default: 50)
- * - offset?: number (default: 0)
- *
- * @returns Promise<ApiResponse<IFrontdeskNotification[]>>
+ * Paginated response for notifications
  */
-export const getUnreadNotifications = async (
-  type?: 'MESSAGE' | 'TICKET'
-): Promise<ApiResponse<IFrontdeskNotification[]>> => {
-  // TODO: Replace with actual API call when backend is ready
-  // Example implementation:
-  // const response = await axios.get('/v1/frontdesk/notifications/unread', {
-  //   params: { type }
-  // });
-  // return response.data;
-
-  console.log('[API Stub] getUnreadNotifications called with type:', type);
-
-  // Stub response
-  return {
-    success: true,
-    data: [],
-    message: 'Stub: Backend not yet connected',
+export interface PaginatedNotificationsResponse {
+  data: BackendNotification[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
-};
+}
 
 /**
- * Mark a notification as read
- *
- * Backend endpoint (to be implemented):
- * PUT /v1/frontdesk/notifications/:id/read
- *
- * @param notificationId - The notification ID to mark as read
- * @returns Promise<ApiResponse<void>>
+ * Unread count response
  */
-export const markNotificationAsRead = async (
-  notificationId: string
-): Promise<ApiResponse<void>> => {
-  // TODO: Replace with actual API call when backend is ready
-  // Example implementation:
-  // const response = await axios.put(`/v1/frontdesk/notifications/${notificationId}/read`);
-  // return response.data;
-
-  console.log('[API Stub] markNotificationAsRead called for ID:', notificationId);
-
-  // Stub response
-  return {
-    success: true,
-    message: 'Stub: Backend not yet connected',
-  };
-};
+export interface UnreadCountResponse {
+  count: number;
+  type?: string;
+}
 
 /**
- * Mark all notifications as read
- *
- * Backend endpoint (to be implemented):
- * PUT /v1/frontdesk/notifications/mark-all-read
- *
- * Body:
- * - type?: 'MESSAGE' | 'TICKET' (optional - mark only specific type)
- *
- * @param type - Optional: mark only specific notification type as read
- * @returns Promise<ApiResponse<void>>
+ * Mark all as read response
  */
-export const markAllNotificationsAsRead = async (
-  type?: 'MESSAGE' | 'TICKET'
-): Promise<ApiResponse<void>> => {
-  // TODO: Replace with actual API call when backend is ready
-  // Example implementation:
-  // const response = await axios.put('/v1/frontdesk/notifications/mark-all-read', { type });
-  // return response.data;
-
-  console.log('[API Stub] markAllNotificationsAsRead called with type:', type);
-
-  // Stub response
-  return {
-    success: true,
-    message: 'Stub: Backend not yet connected',
-  };
-};
+export interface MarkAllAsReadResponse {
+  count: number;
+  message: string;
+}
 
 /**
- * Delete a notification
- *
- * Backend endpoint (to be implemented):
- * DELETE /v1/frontdesk/notifications/:id
- *
- * @param notificationId - The notification ID to delete
- * @returns Promise<ApiResponse<void>>
+ * Generic success response
  */
-export const deleteNotification = async (
-  notificationId: string
-): Promise<ApiResponse<void>> => {
-  // TODO: Replace with actual API call when backend is ready
-  // Example implementation:
-  // const response = await axios.delete(`/v1/frontdesk/notifications/${notificationId}`);
-  // return response.data;
+export interface SuccessResponse {
+  success: boolean;
+  message: string;
+}
 
-  console.log('[API Stub] deleteNotification called for ID:', notificationId);
-
-  // Stub response
-  return {
-    success: true,
-    message: 'Stub: Backend not yet connected',
-  };
-};
+const NOTIFICATIONS_BASE_URL = '/notifications';
 
 /**
- * Get notification statistics
- *
- * Backend endpoint (to be implemented):
- * GET /v1/frontdesk/notifications/stats
- *
- * @returns Promise<ApiResponse<{ total: number; messages: number; tickets: number }>>
+ * NotificationsService
+ * Handles all REST API operations for FrontDesk notifications
  */
-export const getNotificationStats = async (): Promise<
-  ApiResponse<{ total: number; messages: number; tickets: number }>
-> => {
-  // TODO: Replace with actual API call when backend is ready
-  // Example implementation:
-  // const response = await axios.get('/v1/frontdesk/notifications/stats');
-  // return response.data;
+export class NotificationsService extends MessagingHubHttpClient {
+  /**
+   * Get notifications with optional filters
+   * GET /notifications?type=TICKET_ASSIGNED&unreadOnly=true&page=1&limit=20
+   *
+   * @param filters - Optional filters (type, unreadOnly, pagination)
+   * @returns Promise<BackendNotification[]> - List of notifications
+   */
+  async getNotifications(filters?: NotificationFilters): Promise<BackendNotification[]> {
+    const params = new URLSearchParams();
 
-  console.log('[API Stub] getNotificationStats called');
+    if (filters?.type) params.append('type', filters.type);
+    if (filters?.unreadOnly) params.append('unreadOnly', 'true');
+    if (filters?.page) params.append('page', filters.page.toString());
+    if (filters?.limit) params.append('limit', filters.limit.toString());
 
-  // Stub response
-  return {
-    success: true,
-    data: {
-      total: 0,
-      messages: 0,
-      tickets: 0,
-    },
-    message: 'Stub: Backend not yet connected',
-  };
-};
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+
+    // Backend returns { success, data: [...notifications], pagination }
+    // MessagingHubHttpClient auto-unwraps to just return data
+    const response = await this.get<PaginatedNotificationsResponse>(`${NOTIFICATIONS_BASE_URL}${queryString}`);
+
+    // Return just the notifications array
+    return response.data || response as any;
+  }
+
+  /**
+   * Get unread notification count
+   * GET /notifications/unread/count?type=TICKET_ASSIGNED
+   *
+   * @param type - Optional: count for specific notification type
+   * @returns Promise<number> - Count of unread notifications
+   */
+  async getUnreadCount(type?: BackendNotificationType): Promise<number> {
+    const params = new URLSearchParams();
+    if (type) params.append('type', type);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const response = await this.get<UnreadCountResponse>(`${NOTIFICATIONS_BASE_URL}/unread/count${queryString}`);
+
+    return response.count;
+  }
+
+  /**
+   * Mark a notification as read
+   * POST /notifications/:id/read
+   *
+   * @param notificationId - ID of notification to mark as read
+   * @returns Promise<BackendNotification> - Updated notification
+   */
+  async markAsRead(notificationId: string): Promise<BackendNotification> {
+    return await this.post<BackendNotification>(`${NOTIFICATIONS_BASE_URL}/${notificationId}/read`);
+  }
+
+  /**
+   * Mark all notifications as read
+   * POST /notifications/mark-all-read?type=TICKET_ASSIGNED
+   *
+   * @param type - Optional: mark only specific type as read
+   * @returns Promise<{ count: number }> - Number of notifications marked as read
+   */
+  async markAllAsRead(type?: BackendNotificationType): Promise<{ count: number }> {
+    const params = new URLSearchParams();
+    if (type) params.append('type', type);
+
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const response = await this.post<MarkAllAsReadResponse>(`${NOTIFICATIONS_BASE_URL}/mark-all-read${queryString}`);
+
+    return { count: response.count };
+  }
+
+  /**
+   * Dismiss a notification (remove from list without marking as read)
+   * POST /notifications/:id/dismiss
+   *
+   * @param notificationId - ID of notification to dismiss
+   * @returns Promise<BackendNotification> - Dismissed notification
+   */
+  async dismiss(notificationId: string): Promise<BackendNotification> {
+    return await this.post<BackendNotification>(`${NOTIFICATIONS_BASE_URL}/${notificationId}/dismiss`);
+  }
+
+  /**
+   * Delete a notification permanently
+   * DELETE /notifications/:id
+   *
+   * @param notificationId - ID of notification to delete
+   * @returns Promise<void>
+   */
+  async deleteNotification(notificationId: string): Promise<void> {
+    await this.delete<SuccessResponse>(`${NOTIFICATIONS_BASE_URL}/${notificationId}`);
+  }
+}
 
 /**
- * Subscribe to notification updates via WebSocket
+ * Singleton instance of NotificationsService
+ * Import and use this instance throughout the application
  *
- * WebSocket endpoint (to be implemented):
- * ws://api/frontdesk/notifications
- *
- * Events to listen for:
- * - 'notification:new' - New notification created
- * - 'notification:read' - Notification marked as read
- * - 'notification:deleted' - Notification deleted
- *
- * Usage example:
- * ```typescript
- * const socket = io(config.api_server);
- * socket.on('frontdesk:notification:new', (notification) => {
- *   // Add notification to state
- * });
- * ```
+ * @example
+ * import { notificationsService } from '@/services/frontdesk';
+ * const notifications = await notificationsService.getNotifications({ unreadOnly: true });
  */
-export const subscribeToNotifications = () => {
-  // TODO: Implement WebSocket subscription when backend is ready
-  // Example implementation similar to use-messenger-socket-io.ts:
-  // const socket = io(config.api_server);
-  // socket.on('frontdesk:notification:new', (notification) => {
-  //   setNotifications(prev => [...prev, notification]);
-  // });
-  // return () => socket.disconnect();
-
-  console.log('[API Stub] subscribeToNotifications called - WebSocket not yet implemented');
-};
+export const notificationsService = new NotificationsService();

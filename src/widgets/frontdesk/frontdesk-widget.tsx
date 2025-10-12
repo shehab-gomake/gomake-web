@@ -40,11 +40,17 @@ import {
 // Ticket provider hook
 import { useTicketsProvider } from './providers/tickets/hooks/use-tickets-provider';
 
+// Direct messages state (for conversation navigation)
+import { dmActiveConversationIdState } from '@/store/direct-messages';
+
 const FrontdeskWidget: React.FC = () => {
   const router = useRouter();
-  const { frontdeskRoute, provider } = router.query as {
+  const { frontdeskRoute, provider, view, ticket, conversation } = router.query as {
     frontdeskRoute?: string;
     provider?: string;
+    view?: string;
+    ticket?: string;
+    conversation?: string;
   };
 
 
@@ -59,6 +65,11 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   const getInitialChannel = (): Channel => {
+    // Check for 'view' query parameter first (from notifications)
+    if (view === 'internal') return 'internal';
+    if (view === 'email') return 'email';
+    if (view === 'whatsapp') return 'whatsapp';
+
     // If we're in tickets route, don't set a channel
     if (frontdeskRoute === 'tickets') return 'all';
     if (frontdeskRoute !== 'inbox' && !provider) return 'all';
@@ -70,6 +81,17 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   const getInitialTicketView = (): TicketView | null => {
+    // Check for 'view' query parameter first (from notifications)
+    if (view) {
+      const viewMap: Record<string, TicketView> = {
+        'my-tickets': 'my-tickets',
+        'unassigned': 'unassigned',
+        'all-tickets': 'all-tickets',
+        'done': 'done'
+      };
+      return viewMap[view] || null;
+    }
+
     // If we're on a tickets route, parse the provider param as ticket view
     if (frontdeskRoute === 'tickets' && provider) {
       // Check if provider is a ticket ID (format: TICKET-XXXXX or starts with number)
@@ -107,6 +129,9 @@ const FrontdeskWidget: React.FC = () => {
   const ticketsLoading = useRecoilValue(ticketsLoadingAtom);
   const ticketsError = useRecoilValue(ticketsErrorAtom);
   const activeFilterCount = useRecoilValue(activeFilterCountSelector);
+
+  // Direct messages state (for conversation navigation)
+  const [activeConversationId, setActiveConversationId] = useRecoilState(dmActiveConversationIdState);
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
@@ -146,18 +171,29 @@ const FrontdeskWidget: React.FC = () => {
         ticketsProvider.setFilters(newFilters);
       }
 
-      // Initialize ticket ID from route if present (for direct ticket links)
-      if (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider))) {
-        setSelectedTicketId(provider);
-        // Set a default view so tickets show in the list
-        setSelectedTicketView('all-tickets');
+      // Initialize ticket ID from query parameter (from notifications) OR path parameter
+      const ticketIdToOpen = ticket || (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider)) ? provider : null);
+
+      if (ticketIdToOpen) {
+        setSelectedTicketId(ticketIdToOpen);
+
+        // If ticket view is not already set, set a default view
+        if (!initialTicketView) {
+          setSelectedTicketView('all-tickets');
+        }
+
         // Add to open tabs
-        setOpenTicketTabs([provider]);
+        setOpenTicketTabs([ticketIdToOpen]);
+      }
+
+      // Initialize conversation ID from query parameter (from notifications)
+      if (conversation) {
+        setActiveConversationId(conversation);
       }
 
       setIsInitialized(true);
     }
-  }, [frontdeskRoute, provider, isInitialized]);
+  }, [frontdeskRoute, provider, view, ticket, conversation, isInitialized]);
 
   // Navigation handlers - update state immediately, then update URL
   const handleSectionChange = (section: Section) => {

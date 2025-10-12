@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Badge, IconButton, Stack, Box, Typography } from '@mui/material';
+import { Badge, IconButton, Stack, Box, Typography, CircularProgress, Button } from '@mui/material';
 import HeadsetMicOutlinedIcon from '@mui/icons-material/HeadsetMicOutlined';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { GoMakeMenu } from '@/components';
 import { CustomTooltip } from '@/widgets/header';
@@ -21,8 +23,11 @@ const FrontdeskNav = () => {
     messageNotifications,
     ticketNotifications,
     counts,
+    loading,
+    error,
     handleNotificationClick,
     navigateToFrontdesk,
+    retryFetch,
   } = useFrontdeskNotifications();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -47,6 +52,10 @@ const FrontdeskNav = () => {
     handleClose();
   };
 
+  const handleRetry = () => {
+    retryFetch();
+  };
+
   const renderIconButton = () => (
     <CustomTooltip title="FrontDesk" arrow>
       <IconButton
@@ -56,6 +65,61 @@ const FrontdeskNav = () => {
         <HeadsetMicOutlinedIcon style={{ color: '#2e3092', width: 22, height: 22 }} />
       </IconButton>
     </CustomTooltip>
+  );
+
+  const renderLoadingState = () => (
+    <Box
+      sx={{
+        padding: '60px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+      }}
+    >
+      <CircularProgress size={40} sx={{ color: primaryColor(500) }} />
+      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14), color: neutralColor(600) }}>
+        Loading notifications...
+      </Typography>
+    </Box>
+  );
+
+  const renderErrorState = () => (
+    <Box
+      sx={{
+        padding: '40px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        textAlign: 'center',
+      }}
+    >
+      <ErrorOutlineIcon sx={{ fontSize: 48, color: '#EF4444' }} />
+      <Typography sx={{ ...FONT_FAMILY.Lexend(600, 16), color: neutralColor(900) }}>
+        Failed to load notifications
+      </Typography>
+      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 13), color: neutralColor(600) }}>
+        {error || 'An error occurred while fetching notifications'}
+      </Typography>
+      <Button
+        onClick={handleRetry}
+        startIcon={<RefreshIcon />}
+        sx={{
+          ...FONT_FAMILY.Lexend(600, 14),
+          color: primaryColor(500),
+          textTransform: 'none',
+          padding: '8px 16px',
+          '&:hover': {
+            backgroundColor: `${primaryColor(500)}10`,
+          },
+        }}
+      >
+        Retry
+      </Button>
+    </Box>
   );
 
   const renderEmptyState = (type: 'messages' | 'tickets') => (
@@ -73,6 +137,61 @@ const FrontdeskNav = () => {
       </Typography>
     </Box>
   );
+
+  const renderTabContent = () => {
+    // Show loading state on first load
+    if (loading && messageNotifications.length === 0 && ticketNotifications.length === 0) {
+      return renderLoadingState();
+    }
+
+    // Show error state if error exists and no notifications loaded
+    if (error && messageNotifications.length === 0 && ticketNotifications.length === 0) {
+      return renderErrorState();
+    }
+
+    // Show tab content
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          maxHeight: 400,
+        }}
+      >
+        <TabPanel value={activeTab} index={0}>
+          {messageNotifications.length > 0 ? (
+            <Stack>
+              {messageNotifications.map((notification) => (
+                <MessageNotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onClick={handleNotificationItemClick}
+                />
+              ))}
+            </Stack>
+          ) : (
+            renderEmptyState('messages')
+          )}
+        </TabPanel>
+
+        <TabPanel value={activeTab} index={1}>
+          {ticketNotifications.length > 0 ? (
+            <Stack>
+              {ticketNotifications.map((notification) => (
+                <TicketNotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onClick={handleNotificationItemClick}
+                />
+              ))}
+            </Stack>
+          ) : (
+            renderEmptyState('tickets')
+          )}
+        </TabPanel>
+      </Box>
+    );
+  };
 
   const renderMenu = () => (
     <GoMakeMenu
@@ -114,54 +233,19 @@ const FrontdeskNav = () => {
           </Typography>
         </Box>
 
-        {/* Tabs */}
-        <NotificationTabs
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          messageBadgeCount={counts.messages}
-          ticketBadgeCount={counts.tickets}
-        />
+        {/* Tabs - hide during loading or error on initial load */}
+        {!(loading && messageNotifications.length === 0 && ticketNotifications.length === 0) &&
+         !(error && messageNotifications.length === 0 && ticketNotifications.length === 0) && (
+          <NotificationTabs
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            messageBadgeCount={counts.messages}
+            ticketBadgeCount={counts.tickets}
+          />
+        )}
 
-        {/* Tab Content */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: 'auto',
-            maxHeight: 400,
-          }}
-        >
-          <TabPanel value={activeTab} index={0}>
-            {messageNotifications.length > 0 ? (
-              <Stack>
-                {messageNotifications.map((notification) => (
-                  <MessageNotificationItem
-                    key={notification.id}
-                    notification={notification}
-                    onClick={handleNotificationItemClick}
-                  />
-                ))}
-              </Stack>
-            ) : (
-              renderEmptyState('messages')
-            )}
-          </TabPanel>
-
-          <TabPanel value={activeTab} index={1}>
-            {ticketNotifications.length > 0 ? (
-              <Stack>
-                {ticketNotifications.map((notification) => (
-                  <TicketNotificationItem
-                    key={notification.id}
-                    notification={notification}
-                    onClick={handleNotificationItemClick}
-                  />
-                ))}
-              </Stack>
-            ) : (
-              renderEmptyState('tickets')
-            )}
-          </TabPanel>
-        </Box>
+        {/* Tab Content / Loading / Error */}
+        {renderTabContent()}
 
         {/* Footer Button */}
         <Box

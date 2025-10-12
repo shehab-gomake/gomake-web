@@ -4,11 +4,16 @@ import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { FONT_FAMILY } from '@/utils/font-family';
 import { MessageDateTimeComponent } from '@/widgets/messenger/components/message-date-time-component';
 import { PriorityBadge } from '@/widgets/frontdesk/design-system/primitives/Badge/PriorityBadge';
-import { IFrontdeskNotification, NotificationPriority } from '@/store/frontdesk/atoms/notifications.atoms';
+import {
+  BackendNotification,
+  extractTicketPriority,
+  extractTicketNumber,
+  isNotificationUnread,
+} from '@/services/frontdesk/utils/notification-type-mapper';
 
 interface TicketNotificationItemProps {
-  notification: IFrontdeskNotification;
-  onClick: (notification: IFrontdeskNotification) => void;
+  notification: BackendNotification;
+  onClick: (notification: BackendNotification) => void;
 }
 
 const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
@@ -17,31 +22,43 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
+  // Extract ticket info from notification metadata
+  const ticketNumber = extractTicketNumber(notification) || 'TICKET-####';
+  const ticketPriority = extractTicketPriority(notification);
+  const ticketStatus = notification.metadata?.status || notification.metadata?.ticketStatus;
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'New':
+      case 'OPEN':
         return primaryColor(500);
       case 'In Progress':
+      case 'IN_PROGRESS':
       case 'Active':
         return '#FFA500'; // Orange
       case 'On Hold':
+      case 'ON_HOLD':
         return '#EF4444'; // Red
       case 'Resolved':
+      case 'RESOLVED':
         return '#10B981'; // Green
       case 'Closed':
+      case 'CLOSED':
         return neutralColor(500);
       default:
         return primaryColor(500);
     }
   };
 
-  // Map priority to PriorityBadge format
+  // Map backend priority to PriorityBadge format
   const getPriorityLevel = (): 'Low' | 'Medium' | 'High' | 'Urgent' => {
-    const priority = notification.metadata.priority;
-    if (priority === 'LOW') return 'Low';
-    if (priority === 'MEDIUM') return 'Medium';
-    if (priority === 'HIGH') return 'High';
-    if (priority === 'URGENT') return 'Urgent';
+    if (!ticketPriority) return 'Medium';
+
+    if (ticketPriority === 'LOW') return 'Low';
+    if (ticketPriority === 'MEDIUM') return 'Medium';
+    if (ticketPriority === 'HIGH') return 'High';
+    if (ticketPriority === 'URGENT') return 'Urgent';
+
     return 'Medium';
   };
 
@@ -80,23 +97,23 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
               color: neutralColor(600),
             }}
           >
-            {notification.metadata.ticketNumber}
+            {ticketNumber}
           </Typography>
-          {notification.metadata.status && (
+          {ticketStatus && (
             <Box
               sx={{
                 padding: '2px 8px',
                 borderRadius: '4px',
-                backgroundColor: `${getStatusColor(notification.metadata.status)}15`,
+                backgroundColor: `${getStatusColor(ticketStatus)}15`,
               }}
             >
               <Typography
                 sx={{
                   ...FONT_FAMILY.Lexend(600, 11),
-                  color: getStatusColor(notification.metadata.status),
+                  color: getStatusColor(ticketStatus),
                 }}
               >
-                {notification.metadata.status}
+                {ticketStatus}
               </Typography>
             </Box>
           )}
@@ -113,28 +130,30 @@ const TicketNotificationItem: React.FC<TicketNotificationItemProps> = ({
         </Typography>
 
         {/* Message Preview */}
-        <Typography
-          sx={{
-            ...FONT_FAMILY.Lexend(400, 13),
-            color: neutralColor(600),
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {notification.message}
-        </Typography>
+        {notification.body && (
+          <Typography
+            sx={{
+              ...FONT_FAMILY.Lexend(400, 13),
+              color: neutralColor(600),
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {notification.body}
+          </Typography>
+        )}
 
         {/* Timestamp */}
         <Box sx={{ color: neutralColor(400) }}>
-          <MessageDateTimeComponent date={notification.timestamp} />
+          <MessageDateTimeComponent date={new Date(notification.createdAt)} />
         </Box>
       </Stack>
 
       {/* Unread Indicator */}
-      {!notification.isRead && (
+      {isNotificationUnread(notification) && (
         <Box
           sx={{
             width: 8,
