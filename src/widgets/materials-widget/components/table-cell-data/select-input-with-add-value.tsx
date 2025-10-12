@@ -3,7 +3,6 @@ import { useTableCellData } from "@/widgets/materials-widget/components/table-ce
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
-import { productsForDropDownList } from "@/store";
 import { materialCategorySuppliersState } from "../../state";
 import { ModalType } from "@/enums";
 
@@ -17,7 +16,6 @@ interface IProps {
 
 const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const { t } = useTranslation();
-  const productValue = useRecoilValue(productsForDropDownList)
   const { updateCellData } = useTableCellData(isAdmin);
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
   const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
@@ -39,24 +37,22 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
   }, [values]);
 
   const addNewParameterValue = async (newValue: string) => {
-    // Create temporary option for immediate UI feedback
-    const tempOption = {
-      key: `temp_${Date.now()}`,
-      value: newValue,
-    };
-    setLocalValues(prevValues => [...prevValues, tempOption]);
-
     if (isHaveMorethanMaterialSuppliers) {
-      setSelectedValue(tempOption);
+      // For multiple suppliers, just set the selected value and open modal
+      // Don't add to local values yet
+      setSelectedValue({
+        id: "new_temp",
+        label: newValue,
+        isNew: true
+      });
       onClickOpenDeleteTableRowModal();
     } else {
+      // For single supplier, add immediately
       try {
-        // Call updateCellData and let the backend response update the real values
         await updateCellData(id, parameterKey, newValue);
         // The useEffect will sync the new values from props when the backend responds
       } catch (error) {
-        // If update fails, remove the temporary option
-        setLocalValues(prevValues => prevValues.filter(v => v.key !== tempOption.key));
+        console.error("Failed to add new value:", error);
       }
     }
   };
@@ -69,10 +65,13 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
     }))
     : [];
 
-  // Add "Add new value" option if user is typing something not in the list
-  const options = inputValue && !baseOptions.find(option =>
-    option.label.toLowerCase() === inputValue.toLowerCase()
-  ) && inputValue.trim() !== ""
+  // Check if input value already exists in the list (case-insensitive, trimmed)
+  const valueAlreadyExists = inputValue && baseOptions.some(option =>
+    option.label.toLowerCase().trim() === inputValue.toLowerCase().trim()
+  );
+
+  // Add "Add new value" option only if user is typing something not in the list
+  const options = inputValue && !valueAlreadyExists && inputValue.trim() !== ""
     ? [
       {
         id: "new",
@@ -81,7 +80,9 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
       ...baseOptions,
     ]
     : baseOptions;
+
   const [selectedValue, setSelectedValue] = useState<any>()
+
   const onSelectChange = async (event: SyntheticEvent, value) => {
     setSelectedValue(value);
 
@@ -93,6 +94,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
       if (isHaveMorethanMaterialSuppliers) {
         onClickOpenDeleteTableRowModal();
       } else {
+        // Always send the label (actual value), never the id (UUID)
         await updateCellData(id, parameterKey, value?.label);
       }
     }
@@ -132,11 +134,11 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
         title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={async () => {
-          // For new values, send the actual value, for existing values send the id
-          const valueToSend = selectedValue?.key?.startsWith('temp_')
-            ? selectedValue?.value
-            : selectedValue?.id || selectedValue?.key;
+          // Always send the label (actual value), never the id (UUID key)
+          const valueToSend = selectedValue?.label;
           await updateCellData(id, parameterKey, valueToSend);
+          setInputValue("");
+          onClickCloseDeleteTableRowModal();
         }}
       />
     </div>
