@@ -33,17 +33,16 @@ const rowInputs = (
           };
         case "ARRAY_INPUT":
           return {
-            name: header?.key,
+            name: "Unit price",
             label: newMaterialHeaders ? null : "materials.inputs.unitPrice",
             type: "number",
             placeholder: "materials.inputs.unitPrice",
             required: header?.isRequired,
-            parameterKey: header?.key,
+            parameterKey: "unitPrice",
             options: [],
             value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
-            isPriceObject: header?.isPriceObject,
           };
         case "LIST":
           return {
