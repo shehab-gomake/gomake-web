@@ -6,18 +6,23 @@ import {
   Typography,
   IconButton,
   Chip,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import DownloadIcon from "@mui/icons-material/Download";
 import { useStyle } from "../style";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { DepartmentPerformanceDTO, StationPerformanceDTO } from "./interfaces";
 import { useMainProductionReport } from "./use-main-production-report";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { exportProductionDashboardToExcel } from "../production-dashboard-export-utils";
 
 const MainProductionReportTable = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
 
   // Use custom hook for all state and functions
   const {
@@ -187,6 +192,12 @@ const MainProductionReportTable = () => {
     t("productionReport.avgTime"),
   ];
 
+  // Export to Excel handler
+  const handleExportToExcel = () => {
+    if (!data?.departments) return;
+    exportProductionDashboardToExcel(data.departments, t);
+  };
+
   if (loading) {
     return (
       <Box style={classes.subContainer}>
@@ -245,30 +256,46 @@ const MainProductionReportTable = () => {
             </Typography>
           )}
         </Box>
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          <IconButton
-            onClick={toggleAllDepartments}
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <Button
+            variant="contained"
+            startIcon={<DownloadIcon />}
+            onClick={handleExportToExcel}
             size="small"
             sx={{
-              backgroundColor: "#e3f2fd",
-              "&:hover": { backgroundColor: "#bbdefb" },
+              backgroundColor: primaryColor(500),
+              "&:hover": { backgroundColor: primaryColor(200) },
+              textTransform: "none",
+              fontWeight: "bold",
             }}
           >
-            {expandedDepartments.size === data?.departments?.length ? (
-              <ExpandLessIcon />
-            ) : (
-              <ExpandMoreIcon />
-            )}
-          </IconButton>
-          <Typography
-            variant="caption"
-            color="textSecondary"
-            sx={{ alignSelf: "center" }}
-          >
-            {expandedDepartments.size === data?.departments?.length
-              ? t("productionReport.collapseAll")
-              : t("productionReport.expandAll")}
-          </Typography>
+            {t("materialsActions.DownLoadExcel") || "Download Excel"}
+          </Button>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <IconButton
+              onClick={toggleAllDepartments}
+              size="small"
+              sx={{
+                backgroundColor: "#e3f2fd",
+                "&:hover": { backgroundColor: "#bbdefb" },
+              }}
+            >
+              {expandedDepartments.size === data?.departments?.length ? (
+                <ExpandLessIcon />
+              ) : (
+                <ExpandMoreIcon />
+              )}
+            </IconButton>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              sx={{ alignSelf: "center" }}
+            >
+              {expandedDepartments.size === data?.departments?.length
+                ? t("productionReport.collapseAll")
+                : t("productionReport.expandAll")}
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <PrimaryTable

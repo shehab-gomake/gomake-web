@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { DateRangePicker } from "rsuite";
 import { useRef, useState } from "react";
 import { predefinedRanges } from "@/utils/dateRanges";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const ProductionDashboardFilters = () => {
   const { classes } = useStyle();
@@ -87,7 +88,11 @@ const ProductionDashboardFilters = () => {
     <div style={classes.datesContainer}>
       <div>
         <label
-          style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
         >
           {t("sales.quote.deliveryDate") || "Delivery Date"}
         </label>
@@ -107,7 +112,11 @@ const ProductionDashboardFilters = () => {
       </div>
       <div>
         <label
-          style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
         >
           {t("sales.quote.creationDate") || "Creation Date"}
         </label>
