@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { dashboardDateState, productionCreationDateState } from "@/store";
+import {
+  dashboardDateState,
+  productionCreationDateState,
+  systemCurrencyState,
+} from "@/store";
 import { useGomakeAxios } from "@/hooks";
 import { MainProductionReportResponseDTO } from "./interfaces";
 
@@ -8,6 +12,7 @@ export const useMainProductionReport = () => {
   const { callApi } = useGomakeAxios();
   const { dates: deliveryDates } = useRecoilValue(dashboardDateState);
   const { dates: creationDates } = useRecoilValue(productionCreationDateState);
+  const systemCurrency = useRecoilValue(systemCurrencyState);
 
   // State management
   const [loading, setLoading] = useState(false);
@@ -96,8 +101,15 @@ export const useMainProductionReport = () => {
   // Formatting functions
   const formatTime = (time: number) => {
     const safeTime = safeNumber(time);
-    if (safeTime == null) return "0.00";
-    return safeTime.toFixed(2);
+    if (safeTime == null) return "0h 0m";
+
+    const hours = Math.floor(safeTime);
+    const minutes = Math.round((safeTime - hours) * 60);
+
+    if (minutes === 0) {
+      return `${hours}h`;
+    }
+    return `${hours}h ${minutes}m`;
   };
 
   const formatPercentage = (value: number) => {
@@ -112,13 +124,14 @@ export const useMainProductionReport = () => {
     return safeValue.toFixed(2);
   };
 
-  //!here change to use systemCurrency
   const formatCurrency = (value: number) => {
     const safeValue = safeNumber(value);
     if (safeValue == null) return "N/A";
+
+    const currency = systemCurrency || "USD";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: currency,
     }).format(safeValue);
   };
 
