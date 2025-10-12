@@ -1,5 +1,5 @@
-import { GoMakeModal, GomakeTextInput } from "@/components";
-import { SecondaryButton } from "@/components/button/secondary-button";
+import { GomakeTextInput } from "@/components";
+import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { useAddMaterialCategory } from "./use-add-material-category";
 import { FormControlLabel, MenuItem, Stack, TextField } from "@mui/material";
 import { ImageUploadComponent } from "@/components/form-inputs/image-input";
@@ -83,19 +83,23 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
   };
 
   return (
-    <GoMakeModal
-      insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
-      openModal={openModal}
+    <GoMakeDialog
+      open={openModal}
       onClose={handleClose}
-      modalTitle={modalTitle}
+      title={modalTitle}
+      onPrimaryAction={actionHandler}
+      primaryButtonLabel={actionLabel}
+      maxWidth="sm"
+      fullWidth
+      customStyles={{
+        paper: { width: 400 },
+      }}
     >
       <Stack
         gap={5}
         justifyContent={"flex-start"}
-        height={"100%"}
-        width={"90%"}
-        margin={"auto"}
-        marginTop={"20px"}
+        width={"100%"}
+        paddingTop={"10px"}
       >
         <GomakeTextInput
           value={newCategory}
@@ -264,17 +268,8 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
               value={imgUrl}
             />
           )}
-        {
-          <SecondaryButton
-            onClick={actionHandler}
-            variant={"contained"}
-            sx={{ width: "100%" }}
-          >
-            {actionLabel}
-          </SecondaryButton>
-        }
       </Stack>
-    </GoMakeModal>
+    </GoMakeDialog>
   );
 };
 
