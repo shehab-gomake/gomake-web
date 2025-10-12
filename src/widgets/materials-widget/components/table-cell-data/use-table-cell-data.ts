@@ -173,7 +173,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                         }
                         setTimeout(() => {
                             alertFault(userMessage);
-                        }, 0);
+                        }, 1000);
                         
                         
                         reject(new Error(userMessage));
