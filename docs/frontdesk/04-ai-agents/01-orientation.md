@@ -9,10 +9,10 @@ Use this primer to ground yourself before touching code. It condenses the author
 
 ## 2. High-Level Architecture
 - Entry point: `src/widgets/frontdesk/frontdesk-widget.tsx` selects provider views.
-- Layout: `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx` (currently two columns—refactor toward real three-column per [Improvement Plan](../FRONTDESK_IMPROVEMENT_PLAN.md)).
+- Layout: `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx` (currently two columns—refactor toward real three-column per [Improvement Plan](../../archive/frontdesk%20docs/FRONTDESK_IMPROVEMENT_PLAN.md)).
 - Providers live under `src/widgets/frontdesk/providers/{internal,email,whatsapp,unified}/` with siblings `components/`, `hooks/`, and `controllers/`.
 - State: Recoil atoms/selectors per provider in `src/store/frontdesk/`.
-- APIs: REST services under `src/services/frontdesk/api/`, real-time via `src/services/frontdesk/websocket/messaging-service.ts`.
+- APIs: REST services under `src/services/frontdesk/api/`, real-time via `src/services/frontdesk/websocket/messaging-socket.service.ts`.
 
 ## 3. Current Gaps to Watch
 - Layout fragmentation: each provider ships bespoke structure—standardize during new work.
@@ -21,10 +21,11 @@ Use this primer to ground yourself before touching code. It condenses the author
 - Shared conversation components are not yet generic; extending them requires careful prop design.
 
 ## 4. Key Reference Docs (Load As Needed)
-- [FRONTDESK_ARCHITECTURE.md](../FRONTDESK_ARCHITECTURE.md) – structural overview and refactoring goals.
-- [DEVELOPER_GUIDE.md](../DEVELOPER_GUIDE.md) – quick commands, directory map, common tasks.
-- [direct-messages-frontend.md](../direct-messages-frontend.md) – DM REST + WebSocket contracts.
-- [FRONTDESK_IMPROVEMENT_PLAN.md](../FRONTDESK_IMPROVEMENT_PLAN.md) – prioritized roadmap of known issues.
+- [FRONTDESK_ARCHITECTURE.md](../00-core/FRONTDESK_ARCHITECTURE.md) – structural overview and refactoring goals.
+- [DEVELOPER_GUIDE.md](../00-core/DEVELOPER_GUIDE.md) – quick commands, directory map, common tasks.
+- [direct-messages-frontend.md](../01-providers/direct-messages/direct-messages-frontend.md) – DM REST + WebSocket contracts.
+- [FRONTDESK_KNOWLEDGE_BASE.md](../FRONTDESK_KNOWLEDGE_BASE.md) – long-form system knowledge and current initiatives.
+- [FRONTDESK_IMPROVEMENT_PLAN.md](../../archive/frontdesk%20docs/FRONTDESK_IMPROVEMENT_PLAN.md) – archived roadmap for historical context.
 
 ## 5. Directory Cheat Sheet
 ```
@@ -42,8 +43,8 @@ src/services/frontdesk/api/  # HTTP clients per provider
 ## 6. Data Flow Summary
 1. UI event triggers provider hook.
 2. Hook orchestrates Recoil updates + service calls.
-3. REST via axios client (`src/services/frontdesk/api/...`).
-4. Real-time updates push through `messaging-service.ts` to Recoil.
+3. REST via `MessagingHubHttpClient` derivatives (`src/services/frontdesk/api/...` or provider utility clients).
+4. Real-time updates push through `messaging-socket.service.ts` (exported as `messagingService`) to Recoil.
 5. Components subscribe via `useRecoilValue` or selectors.
 
 Confirm this mental model before starting the task—misplaced code is the fastest path to regressions.

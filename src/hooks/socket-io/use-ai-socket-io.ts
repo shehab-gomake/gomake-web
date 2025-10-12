@@ -3,8 +3,11 @@ import io from "socket.io-client";
 import config from "@/config";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-//!here socket
-const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
+const useAISocketIO = (
+  onMessageReceived?: (message: any) => void,
+  onProductIdReceived?: (productId: string) => void,
+  onProductUpdated?: () => void
+) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { callApi } = useGomakeAxios();
@@ -16,7 +19,6 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
     }
     const socket = io(config.api_server);
     socket.on(sessionId, (message: any) => {
-      debugger;
       if (onMessageReceived) {
         onMessageReceived(message);
       }
@@ -31,7 +33,20 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
       setIsProcessing(false);
     });
 
+    // Listen for productId result
+    socket.on(`${sessionId}-productId-result`, (data: any) => {
+      if (data?.productId && onProductIdReceived) {
+        onProductIdReceived(data.productId);
+      }
+    });
+    socket.on(`${sessionId}-parameters-result`, () => {
+      if(onProductUpdated){
+        onProductUpdated();
+      }
+      
+    });
     return () => {
+      socket.off(`${sessionId}-productId-result`);
       socket.disconnect();
     };
   }, [sessionId]);
@@ -83,7 +98,6 @@ const useAISocketIO = (onMessageReceived?: (message: any) => void) => {
       );
 
       // Check HTTP status code
-      debugger;
       if (response?.status && response.status !== 200) {
         const errorMessage =
           response?.message ||

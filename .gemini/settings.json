@@ -1,16 +1,9 @@
 {
   "mcpServers": {
-    "serena": {
-      "command": "uvx",
+    "chrome-devtools": {
+      "command": "npx",
       "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "ide-assistant",
-        "--project",
-        "/Users/omarsabbah/Desktop/gomake-services/gomake-web"
+        "chrome-devtools-mcp@latest"
       ]
     }
   }

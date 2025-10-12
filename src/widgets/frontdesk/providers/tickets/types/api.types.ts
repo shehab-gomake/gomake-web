@@ -75,7 +75,13 @@ export interface Ticket {
   reopenedAt?: string | null;
   reopenCount: number;
   mergedIntoId?: string | null;
-  // Origin tracking
+  /**
+   * Origin tracking - REQUIRED field
+   *
+   * Conversations are now channel-specific (EMAIL, WHATSAPP, SMS).
+   * Each customer can have multiple tickets across different channels.
+   * This field links the ticket to its originating channel.
+   */
   originProviderChannelId: string;
   // Creator and assignment tracking
   createdBy: string; // User ID who created the ticket
@@ -88,6 +94,53 @@ export interface Ticket {
 // ============================================
 // Hydrated Ticket Model (with relationships)
 // ============================================
+
+// ============================================
+// Conversation & Message Models
+// ============================================
+
+export interface ConversationMessage {
+  id: string;
+  content: string;
+  createdAt: string;
+  direction: MessageDirection;
+  channel?: ChannelType;
+  fromIdentifier?: string;
+  // Delivery tracking fields
+  status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  sentAt?: string;
+  deliveredAt?: string;
+  errorMessage?: string;
+  metadata?: {
+    subject?: string; // email only
+    messageType?: string; // WhatsApp media type
+    hasHtml?: boolean;
+  };
+  channelMetadata?: {
+    providerMessageId?: string;
+    [key: string]: any;
+  };
+}
+
+/**
+ * Conversation - Represents a single communication channel
+ * NEW: One ticket can have multiple conversations
+ */
+export interface Conversation {
+  id: string;
+  name: string;
+  channel: ChannelType;
+  provider: {
+    id: string;
+    vendor: string;
+    type: string;
+  };
+  identifier: string; // email address or phone number
+  messageCount: number;
+  lastMessageAt: string;
+  createdAt: string;
+  messages: ConversationMessage[];
+}
 
 export interface TicketWithDetails extends Ticket {
   // Creator details (populated from createdBy)
@@ -111,40 +164,48 @@ export interface TicketWithDetails extends Ticket {
     name: string;
     priority: TicketPriority;
   } | null;
-  // Origin provider channel details
+  /**
+   * Origin provider channel details - ALWAYS populated
+   *
+   * Conversations are channel-isolated: email messages stay separate from WhatsApp.
+   * Reply endpoint uses this channel automatically (no need to specify).
+   *
+   * - type: Channel type (EMAIL, WHATSAPP, SMS, PUSH)
+   * - identifier: Email address or phone number
+   * - name: Human-readable channel name
+   */
   originProviderChannel: {
     id: string;
     type: ChannelType;
     identifier: string; // email address or phone number
     name: string;
   };
-  conversation: {
+  /**
+   * BREAKING CHANGE: Multi-Conversation Support
+   *
+   * OLD: conversation: { id, name, messages: [...] }
+   * NEW: conversations: [{ id, name, channel, messages: [...] }, ...]
+   *
+   * One ticket can now have multiple conversations across different channels.
+   * Example: Customer emails → creates Email conversation
+   *          Same customer WhatsApps → adds WhatsApp conversation to SAME ticket
+   */
+  conversations: Conversation[];
+  conversationCount: number;
+  channels: Array<{
+    type: ChannelType;
+    vendor: string;
+  }>;
+  /**
+   * @deprecated Use conversations[] instead
+   * Kept for backward compatibility with old tickets
+   */
+  conversation?: {
     id: string;
     name: string;
     createdAt: string;
     lastMessageAt: string | null;
-    messages: Array<{
-      id: string;
-      content: string;
-      createdAt: string;
-      direction: MessageDirection;
-      channel?: ChannelType;
-      fromIdentifier?: string;
-      // Delivery tracking fields
-      status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
-      sentAt?: string;
-      deliveredAt?: string;
-      errorMessage?: string;
-      metadata?: {
-        subject?: string; // email only
-        messageType?: string; // WhatsApp media type
-        hasHtml?: boolean;
-      };
-      channelMetadata?: {
-        providerMessageId?: string;
-        [key: string]: any;
-      };
-    }>;
+    messages: ConversationMessage[];
   };
   sla?: {
     firstResponseDue: string;
@@ -154,6 +215,11 @@ export interface TicketWithDetails extends Ticket {
     breached: boolean;
     breachedAt?: string | null;
   } | null;
+  /**
+   * View tracking status for current user
+   * Populated by GET /tickets/:id or GET /tickets/:id/view-status
+   */
+  viewStatus?: TicketViewStatus;
   // Optional: Related data (included when fetching single ticket by ID)
   relatedTickets?: RelatedTicket[];
   history?: TicketHistoryEntry[];
@@ -182,6 +248,7 @@ export interface PaginatedTicketsResponse {
 // ============================================
 
 export interface TicketFilters {
+  search?: string; // Search by ticket number, customer info, or message content (max 255 chars)
   status?: TicketStatus;
   priority?: TicketPriority;
   assigneeId?: string;
@@ -190,6 +257,7 @@ export interface TicketFilters {
   createdBy?: string; // Filter by ticket creator
   customerEmail?: string;
   customerPhone?: string;
+  providerChannel?: ChannelType; // Filter by channel type (EMAIL, WHATSAPP, SMS)
   tags?: string[];
   page?: number; // default 1, min 1
   limit?: number; // default 20, max 100
@@ -213,8 +281,16 @@ export interface CreateFromConversationDto {
   customerId?: string; // Optional: GoMake customer ID
 }
 
+/**
+ * Reply to Ticket DTO
+ * BREAKING CHANGE: conversationId is NOW REQUIRED
+ *
+ * Backend needs to know which conversation (channel) to reply on.
+ * Frontend must pass the active tab's conversationId.
+ */
 export interface ReplyTicketDto {
   content: string;
+  conversationId: string; // ✅ NOW REQUIRED - which conversation/channel to reply on
 }
 
 /**
@@ -332,6 +408,13 @@ export interface RelatedTicket {
   customerEmail?: string | null;
   customerPhone?: string | null;
   createdAt: string;
+  // Channel information for multi-channel customer support
+  originProviderChannel?: {
+    id: string;
+    type: ChannelType;
+    identifier: string;
+    name: string;
+  };
 }
 
 export interface TicketHistoryEntry {
@@ -449,6 +532,31 @@ export interface ConversationNeedsReviewPayload {
   metadata: Record<string, any>;
   printHouseId: string;
   timestamp: string;
+}
+
+// ============================================
+// Ticket View Tracking (Read/Unread Status)
+// ============================================
+
+/**
+ * Ticket View Status - Tracks when a user last viewed a ticket
+ * Backend: TicketView table (prisma/schema.prisma:502-527)
+ */
+export interface TicketViewStatus {
+  /** Last time this user viewed the ticket */
+  lastViewedAt: string | null;
+  /** Has new activity since last view? */
+  hasUnread: boolean;
+  /** ID of last message this user saw */
+  lastViewedMessageId: string | null;
+}
+
+/**
+ * Unread Count Response
+ * GET /tickets/unread-count
+ */
+export interface UnreadCountResponse {
+  count: number;
 }
 
 // ============================================

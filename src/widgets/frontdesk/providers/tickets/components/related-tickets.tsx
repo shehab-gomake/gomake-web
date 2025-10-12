@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { colorTokens, Chip, PriorityBadge } from '@/widgets/frontdesk/design-system';
+import { colorTokens, Chip, PriorityBadge, ChannelBadge } from '@/widgets/frontdesk/design-system';
 import { parseISO, formatDistanceToNow } from 'date-fns';
-import { RelatedTicket, TicketStatus } from '../types/api.types';
-import { apiStatusToUi, apiPriorityToUi } from '../types/transformers';
+import { RelatedTicket, TicketStatus, ChannelType } from '../types/api.types';
+import { formatTicketStatus, apiPriorityToUi } from '../types/transformers';
 
 export interface RelatedTicketsProps {
   /** Related tickets from the same customer */
@@ -26,12 +26,12 @@ const formatRelativeTime = (dateString: string): string => {
 };
 
 const getStatusColor = (status: TicketStatus): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
-  const uiStatus = apiStatusToUi(status);
-
-  if (uiStatus === 'To Do') return 'primary';
-  if (uiStatus === 'In Progress') return 'warning';
-  if (uiStatus === 'Done') return 'success';
-  if (uiStatus === 'Blocked') return 'error';
+  // Map backend statuses directly to colors
+  if (status === 'OPEN' || status === 'REOPENED') return 'primary';
+  if (status === 'IN_PROGRESS') return 'warning';
+  if (status === 'PENDING') return 'error';
+  if (status === 'RESOLVED') return 'success';
+  if (status === 'CLOSED') return 'neutral';
   return 'neutral';
 };
 
@@ -59,13 +59,36 @@ export const RelatedTickets: React.FC<RelatedTicketsProps> = ({
     );
   }
 
+  // Group tickets by channel for multi-channel customer insights
+  const ticketsByChannel = relatedTickets.reduce((acc, ticket) => {
+    const channel = ticket.originProviderChannel?.type || 'UNKNOWN';
+    if (!acc[channel]) acc[channel] = [];
+    acc[channel].push(ticket);
+    return acc;
+  }, {} as Record<string, RelatedTicket[]>);
+
+  const channels = Object.keys(ticketsByChannel);
+  const isMultiChannel = channels.length > 1;
+
   const displayTickets = relatedTickets.slice(0, maxDisplay);
   const hasMore = relatedTickets.length > maxDisplay;
 
   return (
     <Box>
+      {/* Multi-channel customer indicator */}
+      {isMultiChannel && (
+        <Box sx={{ mb: 2, px: 1.5, py: 1, backgroundColor: colorTokens.primary[50], borderRadius: '6px', border: `1px solid ${colorTokens.primary[200]}` }}>
+          <Typography variant="caption" sx={{ color: colorTokens.primary[700], fontSize: 12, fontWeight: 600 }}>
+            Multi-channel customer · {channels.length} channels
+          </Typography>
+          <Typography variant="caption" sx={{ color: colorTokens.primary[600], fontSize: 11, display: 'block', mt: 0.5 }}>
+            This customer has contacted support via multiple channels
+          </Typography>
+        </Box>
+      )}
+
       {displayTickets.map((ticket) => {
-        const uiStatus = apiStatusToUi(ticket.status);
+        const uiStatus = formatTicketStatus(ticket.status);
         const uiPriority = apiPriorityToUi(ticket.priority);
         const statusColor = getStatusColor(ticket.status);
 
@@ -91,18 +114,28 @@ export const RelatedTickets: React.FC<RelatedTicketsProps> = ({
                 : {},
             }}
           >
-            {/* Header: Ticket Number + Status */}
+            {/* Header: Ticket Number + Channel + Status */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 600,
-                  fontSize: 13,
-                  color: colorTokens.primary[700],
-                }}
-              >
-                #{ticket.ticketNumber}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: 13,
+                    color: colorTokens.primary[700],
+                  }}
+                >
+                  #{ticket.ticketNumber}
+                </Typography>
+                {/* Channel Badge */}
+                {ticket.originProviderChannel && (
+                  <ChannelBadge
+                    channel={ticket.originProviderChannel.type.toLowerCase() as any}
+                    mode="icon"
+                    size="xs"
+                  />
+                )}
+              </Box>
               <Chip
                 label={uiStatus}
                 color={statusColor}

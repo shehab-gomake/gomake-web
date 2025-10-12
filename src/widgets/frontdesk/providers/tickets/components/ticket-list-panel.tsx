@@ -16,39 +16,52 @@ import {
   PanelContent,
   SearchInput,
   EmptyState,
-  colorTokens
+  colorTokens,
+  TagFilterChips,
 } from '@/widgets/frontdesk/design-system';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { TicketWithDetails } from '../types/api.types';
+import { TicketWithDetails, TicketFilters, Tag } from '../types/api.types';
 import { TicketListItem } from './ticket-list-item';
+import { TicketFiltersMenu } from './ticket-filters-menu';
+import { TicketSortMenu } from './ticket-sort-menu';
 
 interface TicketListPanelProps {
   viewTitle: string;
   tickets: TicketWithDetails[];
   selectedTicketId: string | null;
-  selectedTicketIds: string[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onTicketSelect: (ticketId: string) => void;
-  onTicketCheck: (ticketId: string, checked: boolean) => void;
   onViewChange?: (view: string) => void;
   isLoading?: boolean;
   error?: string | null;
+  filters: TicketFilters;
+  activeFilterCount: number;
+  onApplyFilters: (filters: TicketFilters) => void;
+  onClearFilters: () => void;
+  onTagClick?: (tag: Tag) => void;
+  popularTags?: Tag[];
+  onFetchPopularTags?: () => void;
 }
 
 export const TicketListPanel: React.FC<TicketListPanelProps> = ({
   viewTitle,
   tickets,
   selectedTicketId,
-  selectedTicketIds,
   searchQuery,
   onSearchChange,
   onTicketSelect,
-  onTicketCheck,
   onViewChange,
   isLoading = false,
-  error = null
+  error = null,
+  filters,
+  activeFilterCount,
+  onApplyFilters,
+  onClearFilters,
+  onTagClick,
+  popularTags = [],
+  onFetchPopularTags,
 }) => {
   const [viewMenuAnchor, setViewMenuAnchor] = useState<null | HTMLElement>(null);
 
@@ -87,11 +100,29 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
         <PanelHeader
           title={`${viewTitle}${tickets.length > 0 ? ` (${tickets.length})` : ''}`}
           actions={
-            <IconButton size="small" aria-label="Filter tickets">
-              <Badge badgeContent={0} color="primary">
-                <FilterListIcon fontSize="small" />
-              </Badge>
-            </IconButton>
+            <Box display="flex" gap={0.5}>
+              {/* Sort Menu */}
+              <TicketSortMenu
+                sortBy={filters.sortBy || 'createdAt'}
+                sortOrder={filters.sortOrder || 'desc'}
+                onSortChange={(sortBy, sortOrder) => {
+                  const newFilters = { ...filters, sortBy: sortBy as TicketFilters['sortBy'], sortOrder };
+                  onApplyFilters(newFilters);
+                }}
+              />
+
+              {/* Filter Menu */}
+              <TicketFiltersMenu
+                filters={filters}
+                onApply={(partialFilters) => {
+                  onApplyFilters({ ...filters, ...partialFilters, page: 1 });
+                }}
+                onClear={onClearFilters}
+                activeFilterCount={activeFilterCount}
+                popularTags={popularTags}
+                onFetchPopularTags={onFetchPopularTags}
+              />
+            </Box>
           }
         />
 
@@ -105,6 +136,30 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
             showClear={searchQuery.length > 0}
           />
         </Box>
+
+        {/* Active Tag Filters */}
+        {filters.tags && filters.tags.length > 0 && (
+          <TagFilterChips
+            tags={filters.tags.map((tagName) => ({
+              id: tagName,
+              name: tagName,
+              displayName: tagName,
+              color: null,
+              category: 'GENERAL' as any,
+              usageCount: 0,
+              isSystem: false,
+              printHouseId: '',
+              createdAt: '',
+            }))}
+            onRemoveTag={(tag) => {
+              const newTags = filters.tags?.filter(t => t !== tag.name) || [];
+              onApplyFilters({ ...filters, tags: newTags.length > 0 ? newTags : undefined, page: 1 });
+            }}
+            onClearAll={() => {
+              onApplyFilters({ ...filters, tags: undefined, page: 1 });
+            }}
+          />
+        )}
 
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>
@@ -120,7 +175,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           ) : tickets.length === 0 ? (
             <EmptyState
               title="No tickets found"
-              description={searchQuery ? "Try adjusting your search" : "No tickets in this view"}
+              description={searchQuery ? "Try adjusting your search" : "No tickets match your filters"}
             />
           ) : (
             tickets.map((ticket) => (
@@ -128,9 +183,8 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
                 key={ticket.id}
                 ticket={ticket}
                 selected={selectedTicketId === ticket.id}
-                checked={selectedTicketIds.includes(ticket.id)}
                 onSelect={onTicketSelect}
-                onCheck={onTicketCheck}
+                onTagClick={onTagClick}
               />
             ))
           )}
@@ -147,11 +201,10 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           }}
         >
           <MenuItem onClick={() => handleViewSelect('my-tickets')}>My Tickets</MenuItem>
-          <MenuItem onClick={() => handleViewSelect('past-due')}>Past Due</MenuItem>
-          <MenuItem onClick={() => handleViewSelect('high-priority')}>High Priority</MenuItem>
           <MenuItem onClick={() => handleViewSelect('unassigned')}>Unassigned</MenuItem>
-          <Divider />
           <MenuItem onClick={() => handleViewSelect('all-tickets')}>All Tickets</MenuItem>
+          <Divider />
+          <MenuItem onClick={() => handleViewSelect('resolved')}>Resolved</MenuItem>
         </Menu>
       </Panel>
     </Box>

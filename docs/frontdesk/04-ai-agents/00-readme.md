@@ -15,16 +15,17 @@ Welcome, AI engineer. This folder equips you to plan, implement, and validate Fr
 - Mirror existing patterns; do not invent new folder structures.
 - Prefer shared components/hooks when possible. If you must create a new one, document it here.
 - Cross-reference the source docs in `docs/frontdesk/` for deep dives:
-  - [Architecture](../FRONTDESK_ARCHITECTURE.md)
-  - [Developer Guide](../DEVELOPER_GUIDE.md)
-  - [DM Frontend Guide](../direct-messages-frontend.md)
-  - [Improvement Plan](../FRONTDESK_IMPROVEMENT_PLAN.md)
+  - [Architecture](../00-core/FRONTDESK_ARCHITECTURE.md)
+  - [Developer Guide](../00-core/DEVELOPER_GUIDE.md)
+  - [DM Frontend Guide](../01-providers/direct-messages/direct-messages-frontend.md)
+  - [Knowledge Base](../FRONTDESK_KNOWLEDGE_BASE.md)
+  - [Improvement Plan (archived)](../../archive/frontdesk%20docs/FRONTDESK_IMPROVEMENT_PLAN.md)
 
 ## Quick System Facts
 - Framework: Next.js (Pages Router) + TypeScript
 - State: Recoil atoms/selectors under `src/store/frontdesk/`
 - UI: Material-UI first; check shared components in `src/widgets/frontdesk/components/`
-- Real-time: Socket.IO client via `src/services/frontdesk/websocket/messaging-service.ts`
+- Real-time: Socket.IO client via `src/services/frontdesk/websocket/messaging-socket.service.ts`
 
 ## Suggested Commands
 Use the project workflow in `docs/frontdesk` and the wider repo memories:

@@ -13,7 +13,7 @@ import { EmailConversationList } from "./components/email-conversation-list";
 import { EmailMessageViewer } from "./components/email-message-viewer";
 import { useEmailProvider } from "./hooks/use-email-provider";
 import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning";
-import { CreateTicketModal } from "../tickets/components/create-ticket-modal";
+import { TicketFormModal } from "../tickets/components/ticket-form-modal";
 
 export const EmailProviderView: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -317,7 +317,8 @@ export const EmailProviderView: React.FC = () => {
       />
 
       {/* Create Ticket Modal */}
-      <CreateTicketModal
+      <TicketFormModal
+        mode="create"
         open={ticketModal.isOpen}
         onClose={ticketModal.closeModal}
         onSubmit={ticketModal.handleSubmit}
@@ -327,6 +328,8 @@ export const EmailProviderView: React.FC = () => {
         assignees={ticketModal.assignees}
         onAssigneeSearch={ticketModal.handleAssigneeSearch}
         assigneesLoading={ticketModal.assigneesLoading}
+        popularTags={ticketModal.popularTags}
+        onSuggestTags={ticketModal.handleSuggestTags}
         isSubmitting={ticketModal.isSubmitting}
         error={ticketModal.error}
       />

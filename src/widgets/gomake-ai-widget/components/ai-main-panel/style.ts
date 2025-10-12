@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 
-const useStyle = () => {
+const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
   const classes = useMemo(() => {
     return {
       bottomFormContainer: {
@@ -47,7 +46,7 @@ const useStyle = () => {
         width: 44,
         height: 44,
         borderRadius: 8,
-        background: "#3B82F6", // 👈 solid blue
+        background: "linear-gradient(135deg, #9333ea, #ec4899)",
         border: "none",
         cursor: "pointer",
         display: "flex",
@@ -55,7 +54,7 @@ const useStyle = () => {
         justifyContent: "center",
         transition: "all 0.2s ease",
         "&:hover": {
-          background: "#2563EB", // darker blue hover
+          background: "linear-gradient(135deg, #7c3aed, #db2777)", // darker pink hover
           transform: "translateY(-1px)",
         },
         "&:disabled": {
@@ -75,8 +74,17 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         height: "100vh",
-        backgroundColor: "#e9f0f7",
+        backgroundColor: "#f8f9fa",
         overflowY: "auto" as "auto",
+        ...(isFullWidth
+          ? {
+              maxWidth: "100%", // Full width when no productId
+              borderRight: "none", // No border when full width
+            }
+          : {
+              maxWidth: "50%", // Half width when productId exists
+              borderRight: "1px solid #E5E7EB", // Border when split layout
+            }),
       },
       newJobContainer: {
         display: "flex",
@@ -99,10 +107,9 @@ const useStyle = () => {
         gap: 8,
       },
       headerIcon: {
-        fontSize: 32,
         textAlign: "center" as "center",
         marginBottom: 8,
-        color: "#3B82F6",
+        color: "#ed028c",
       },
       headerTitle: {
         ...FONT_FAMILY.Inter(600, 32),
@@ -148,14 +155,11 @@ const useStyle = () => {
         fontSize: 14,
         lineHeight: "20px",
         padding: "12px 16px",
-        //!here
-        // border: "1px solid #D1D5DB",
-        // borderRadius: 8,
-        // backgroundColor: "#FFF",
+
         "&:focus": {
           outline: "none",
-          borderColor: "#504FA1",
-          boxShadow: "0 0 0 3px rgba(80, 79, 161, 0.1)",
+          borderColor: "#ed028c",
+          boxShadow: "0 0 0 3px rgba(237, 2, 140, 0.1)",
         },
         "&::placeholder": {
           color: "#9CA3AF",
@@ -179,7 +183,6 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         marginBottom: 90,
-        //!here style
         // backgroundColor: "#FFF",
         // borderRadius: 12,
         // border: "1px solid #E5E7EB",
@@ -216,31 +219,40 @@ const useStyle = () => {
         maxWidth: 400,
         lineHeight: "24px",
       },
+
       jobTypeCardsContainer: {
         display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(400px, 1fr))", // min 400px per card
+        gridTemplateColumns: "repeat(2, 1fr)", // Always 2 columns
         gap: 24,
         marginBottom: 24,
-        maxWidth: 1200, // was 1000
+        width: "100%",
+        maxWidth: 1000,
         margin: "0 auto 24px auto",
       },
       jobTypeCard: {
         backgroundColor: "#FFF",
-        borderRadius: 12,
-        padding: "20px",
+        borderRadius: 16,
+        padding: "24px",
         border: "1px solid #E5E7EB",
         cursor: "pointer" as "pointer",
-        transition: "all 0.2s ease",
-        minHeight: 100,
-        minWidth: 420, // 👈 force card to be wider
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        minHeight: 120,
+        width: "100%", // Take full width of grid cell
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center" as "center",
-        gap: 16,
+        gap: 20,
+        position: "relative" as "relative",
+        overflow: "hidden",
         "&:hover": {
-          borderColor: "#3B82F6",
-          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.1)",
-          transform: "translateY(-2px)",
+          borderColor: "#ed028c",
+          boxShadow: "0 8px 25px rgba(236, 72, 153, 0.15)",
+          transform: "translateY(-4px) scale(1.02)",
+          backgroundColor: "#FDF2F8",
+        },
+        "&:active": {
+          transform: "translateY(-2px) scale(1.01)",
+          transition: "all 0.1s ease",
         },
       },
 
@@ -300,54 +312,50 @@ const useStyle = () => {
       //     color: "#9CA3AF",
       //   },
       // },
-      // sendButton: {
-      //   width: 48,
-      //   height: 48,
-      //   borderRadius: 8,
-      //   background: "linear-gradient(135deg, #2E54E7 0%, #4C8CFF 100%)",
-      //   border: "none",
-      //   cursor: "pointer",
-      //   display: "flex",
-      //   alignItems: "center",
-      //   justifyContent: "center",
-      //   transition: "all 0.2s ease",
-      //   "&:hover": {
-      //     background: "linear-gradient(135deg, #1E44D7 0%, #3A7CFF 100%)",
-      //     transform: "translateY(-1px)",
-      //   },
-      //   "&:disabled": {
-      //     background: "#D1D5DB",
-      //     cursor: "not-allowed",
-      //     transform: "none",
-      //   },
-      // },
+
       sendButtonDisabled: {
         backgroundColor: "#D1D5DB",
         cursor: "not-allowed",
       },
-      // sendIcon: {
-      //   color: "#FFF",
-      //   fontSize: 20,
-      //   transform: "rotate(-15deg)",
-      //   fontStyle: "italic",
-      // },
+
       jobTypeIconWrapper: {
         display: "flex",
         alignItems: "center" as "center",
         justifyContent: "center" as "center",
-        width: "44px",
-        height: "44px",
-        borderRadius: "8px",
-        backgroundColor: "#e9f0f7",
+        width: "56px",
+        height: "56px",
+        borderRadius: "16px",
+        background: "linear-gradient(135deg, #fdf2f8, #fce7f3)",
+        border: "1px solid rgba(236, 72, 153, 0.1)",
         flexShrink: 0,
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        position: "relative" as "relative",
+        overflow: "hidden",
+        "&:hover": {
+          background: "linear-gradient(135deg, #fce7f3, #f9a8d4)",
+          transform: "scale(1.1) rotate(5deg)",
+          boxShadow: "0 4px 12px rgba(236, 72, 153, 0.2)",
+        },
       },
 
       jobTypeIcon: {
         fontSize: "26px",
-        color: "#2E54E7", // same blue as the theme
+        color: "#ed028c", // pink theme
+      },
+      loadingOverlay: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "24px",
+        backgroundColor: "#FFF",
+        borderRadius: 12,
+        border: "1px solid #E5E7EB",
+        height: "100%",
       },
     };
-  }, []);
+  }, [isFullWidth]);
 
   return {
     classes,

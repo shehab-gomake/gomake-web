@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Stack,
   Box,
@@ -91,6 +91,21 @@ const DirectMessagesProviderView: React.FC = () => {
   const [showConnectionStatus, setShowConnectionStatus] = useState(true);
   const [isTeamColumnVisible, setIsTeamColumnVisible] = useState(true);
 
+  // Track if we've auto-selected a conversation from URL parameter
+  const hasAutoSelectedRef = useRef(false);
+
+  // Auto-select conversation from URL parameter (from notifications)
+  useEffect(() => {
+    // If activeConversationId is set, conversations are loaded, and we haven't auto-selected yet
+    if (activeConversationId && conversations.length > 0 && !hasAutoSelectedRef.current) {
+      const conversation = conversations.find(c => c.id === activeConversationId);
+      if (conversation) {
+        console.log('[DirectMessagesProviderView] Auto-selecting conversation from URL:', activeConversationId);
+        selectConversation(conversation);
+        hasAutoSelectedRef.current = true;
+      }
+    }
+  }, [activeConversationId, conversations, selectConversation]);
 
   // Auto-clear error message after 6 seconds
   React.useEffect(() => {

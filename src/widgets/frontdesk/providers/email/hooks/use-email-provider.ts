@@ -8,7 +8,7 @@ import { useEmailConversationManager } from "./use-email-conversation-manager";
 import { useEmailComposer } from "./use-email-composer";
 import { useProviders } from "./use-providers";
 import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
-import { useCreateTicketModal } from "../../tickets/hooks/use-create-ticket-modal";
+import { useTicketFormModal } from "../../tickets/hooks/use-ticket-form-modal";
 
 export const useEmailProvider = () => {
   const router = useRouter();
@@ -96,7 +96,8 @@ export const useEmailProvider = () => {
   const [pendingTicketData, setPendingTicketData] = useState<{ providerId: string; conversationId: string } | null>(null);
 
   // Initialize create ticket modal
-  const createTicketModal = useCreateTicketModal({
+  const createTicketModal = useTicketFormModal({
+    mode: "create",
     providerId: pendingTicketData?.providerId,
     externalConversationId: pendingTicketData?.conversationId,
     onSuccess: (ticket) => {

@@ -479,7 +479,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                         </TableCell>
                                                         <TableCell sx={classes.bodyCell}>
                                                             <TableCellData
-                                                                value={row.inventory || ''}
+                                                                value={row.inventory ?? ''}
                                                                 isEditable={true}
                                                                 type={1}
                                                                 id={row.id}
@@ -917,7 +917,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     const inventoryFields = ['totalInventory'];
 
                     for (const field of inventoryFields) {
-                        if (updatedRow.rowData[field]) {
+                        if (updatedRow.rowData[field] !== undefined) {
                             updatedRow.rowData = {
                                 ...updatedRow.rowData,
                                 [field]: {
@@ -985,7 +985,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             const callBack = (res) => {
                 if (res.success) {
                     // Update Total Inventory in parent table
-                    if (res.data && typeof res.data === 'number') {
+                    if (typeof res.data === 'number') {
                         updateTotalInventoryInParent(rowId, res.data);
                     }
 
@@ -1045,7 +1045,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             const callBack = (res) => {
                 if (res.success) {
                     // Update Total Inventory in parent table
-                    if (res.data && typeof res.data === 'number') {
+                    if (typeof res.data === 'number') {
                         updateTotalInventoryInParent(rowId, res.data);
                     }
 

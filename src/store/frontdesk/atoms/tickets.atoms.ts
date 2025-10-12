@@ -9,6 +9,7 @@ import {
   ConversationNeedsReviewPayload,
   transformApiTicketToUi,
   Tag,
+  TicketViewStatus,
 } from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
 
@@ -130,10 +131,38 @@ export const tagsLoadingAtom = atom<boolean>({
 });
 
 /**
+ * Ticket View Status Map - Per-ticket read/unread tracking
+ * Key: ticketId, Value: TicketViewStatus
+ * Populated by GET /tickets/:id/view-status or included in ticket details
+ */
+export const ticketViewStatusMapAtom = atom<Record<string, TicketViewStatus>>({
+  key: 'frontdesk.tickets.viewStatusMap',
+  default: {},
+});
+
+/**
+ * Unread tickets count for current user
+ * Fetched from GET /tickets/unread-count
+ */
+export const unreadTicketsCountAtom = atom<number>({
+  key: 'frontdesk.tickets.unreadCount',
+  default: 0,
+});
+
+/**
  * Currently selected ticket ID
  */
 export const selectedTicketIdAtom = atom<string | null>({
   key: 'frontdesk.tickets.selectedId',
+  default: null,
+});
+
+/**
+ * Active conversation ID for multi-conversation tickets
+ * Tracks which tab/conversation is currently active for viewing and replying
+ */
+export const activeConversationIdAtom = atom<string | null>({
+  key: 'frontdesk.tickets.activeConversationId',
   default: null,
 });
 
@@ -154,11 +183,14 @@ export const ticketSearchQueryAtom = atom<string>({
 });
 
 /**
- * Sort configuration
+ * Sort configuration (aligned with backend DTO)
  */
-export const ticketSortAtom = atom<{ by: 'date' | 'priority' | 'status' | 'title'; order: 'asc' | 'desc' }>({
+export const ticketSortAtom = atom<{
+  by: 'createdAt' | 'lastMessageAt' | 'priority' | 'ticketNumber' | 'status';
+  order: 'asc' | 'desc'
+}>({
   key: 'frontdesk.tickets.sort',
-  default: { by: 'date', order: 'desc' },
+  default: { by: 'createdAt', order: 'desc' },
 });
 
 /**
@@ -210,32 +242,22 @@ export const selectedTicketUiSelector = selector<Ticket | null>({
 
 /**
  * Selector: Get filtered tickets (backend format)
- * Uses backend filters - selectors now reflect real API data
+ * Backend handles most filtering via API params.
+ * Special case: "unassigned" view needs client-side filtering since backend
+ * doesn't support assigneeId=null in the query params.
  */
 export const filteredTicketsSelector = selector<TicketWithDetails[]>({
   key: 'frontdesk.tickets.filtered',
   get: ({ get }) => {
     const tickets = get(ticketsAtom);
-    const searchQuery = get(ticketSearchQueryAtom).toLowerCase();
+    const selectedView = get(selectedTicketViewAtom);
 
-    // Apply client-side search filter if needed
-    if (searchQuery) {
-      return tickets.filter(t => {
-        const conversationName = t.conversation?.name?.toLowerCase() || '';
-        const ticketNum = t.ticketNumber?.toString() || '';
-        const custEmail = t.customerEmail?.toLowerCase() || '';
-        const custName = t.customerName?.toLowerCase() || '';
-
-        return (
-          conversationName.includes(searchQuery) ||
-          ticketNum.includes(searchQuery) ||
-          custEmail.includes(searchQuery) ||
-          custName.includes(searchQuery)
-        );
-      });
+    // Special handling for unassigned view: filter out tickets with assigneeId
+    if (selectedView === 'unassigned') {
+      return tickets.filter(t => !t.assigneeId);
     }
 
-    return tickets;
+    return tickets; // Return all tickets from backend for other views
   },
 });
 
@@ -289,5 +311,24 @@ export const selfAssignedTicketsSelector = selector<TicketWithDetails[]>({
   get: ({ get }) => {
     const tickets = get(ticketsAtom);
     return tickets.filter(t => t.assigneeId && t.assigneeId === t.createdBy);
+  },
+});
+
+/**
+ * Selector: Count active filters (only visible filters: status, priority, tags)
+ */
+export const activeFilterCountSelector = selector<number>({
+  key: 'frontdesk.tickets.activeFilterCount',
+  get: ({ get }) => {
+    const filters = get(ticketFiltersAtom);
+    let count = 0;
+
+    // Only count the 3 visible filters in the modal
+    if (filters.status) count++;
+    if (filters.priority) count++;
+    if (filters.tags && filters.tags.length > 0) count++;
+    // Don't count sortBy/sortOrder/page/limit or other hidden filters
+
+    return count;
   },
 });

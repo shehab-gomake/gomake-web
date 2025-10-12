@@ -38,11 +38,18 @@ export const TagChip: React.FC<TagChipProps> = ({
 }) => {
   const theme = useTheme();
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.stopPropagation(); // Prevent parent click handlers (e.g., ticket selection)
+      onClick();
+    }
+  };
+
   const chipElement = (
     <Chip
       label={tag.displayName}
       onDelete={onDelete}
-      onClick={onClick}
+      onClick={onClick ? handleClick : undefined}
       size={size}
       variant={variant}
       sx={{
