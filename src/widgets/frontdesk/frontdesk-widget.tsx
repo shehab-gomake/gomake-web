@@ -695,6 +695,10 @@ const FrontdeskWidget: React.FC = () => {
                   onSelectRelatedTicket={(ticketId) => {
                     ticketsProvider.setSelectedTicketId(ticketId);
                   }}
+                  onTicketUpdate={async (updatedTicket) => {
+                    // Refresh tickets to get the latest data
+                    await ticketsProvider.refreshTickets();
+                  }}
                 />
               ) : (
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>

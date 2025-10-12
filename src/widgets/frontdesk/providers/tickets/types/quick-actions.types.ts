@@ -24,6 +24,7 @@ export type QuickActionType =
   | 'create_purchase_invoice'
 
   // Ticket Actions
+  | 'edit_ticket'
   | 'print_ticket'
   | 'export_ticket'
   | 'delete_ticket'

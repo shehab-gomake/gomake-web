@@ -20,6 +20,7 @@ import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 /**
  * All available quick actions
@@ -120,6 +121,17 @@ export const QUICK_ACTIONS_CONFIG: Record<QuickActionType, QuickActionConfig> = 
     requiresCustomerId: false,
     group: 'ticket',
     tooltip: 'Print this ticket',
+    enabled: true,
+  },
+
+  edit_ticket: {
+    type: 'edit_ticket',
+    label: 'Edit Ticket',
+    icon: <EditOutlinedIcon fontSize="small" />,
+    route: '', // No route, handled in hook
+    requiresCustomerId: false,
+    group: 'ticket',
+    tooltip: 'Edit ticket details',
     enabled: true,
   },
 

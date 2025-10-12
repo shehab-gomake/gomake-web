@@ -69,6 +69,8 @@ import { getGroupedActions, GROUP_LABELS, getActionsExcludingTickets, getTicketA
 import { InlineReplySection } from '@/widgets/frontdesk/components/shared/InlineReplySection';
 import { MessageItem } from '@/widgets/frontdesk/components/shared/MessageItem';
 import { ticketToUnified } from '@/widgets/frontdesk/utils/message-transformer';
+import { TicketFormModal } from './ticket-form-modal';
+import { useTicketFormModal } from '../hooks/use-ticket-form-modal';
 
 interface TicketDetailViewProps {
   ticket: TicketWithDetails;
@@ -88,6 +90,7 @@ interface TicketDetailViewProps {
   ticketHistory?: any[];
   relatedTickets?: any[];
   onSelectRelatedTicket?: (ticketId: string) => void;
+  onTicketUpdate?: (updatedTicket: TicketWithDetails) => void;
 }
 
 const formatDateTime = (dateString: string) => {
@@ -107,6 +110,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   ticketHistory = [],
   relatedTickets = [],
   onSelectRelatedTicket,
+  onTicketUpdate,
 }) => {
   const theme = useTheme();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
@@ -115,6 +119,22 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   const [ticketActionsAnchor, setTicketActionsAnchor] = useState<null | HTMLElement>(null);
   const [activeView, setActiveView] = useState<'conversation' | 'objectives' | 'activity'>('conversation');
   const [conversationMinimized, setConversationMinimized] = useState(false);
+
+  // Edit ticket modal
+  const editModal = useTicketFormModal({
+    mode: 'edit',
+    ticketId: ticket.id,
+    ticket: ticket,
+    onSuccess: (updatedTicket) => {
+      console.log('[TicketDetailView] ✅ Ticket updated successfully:', updatedTicket.ticketNumber);
+      if (onTicketUpdate) {
+        onTicketUpdate(updatedTicket);
+      }
+    },
+    onError: (error) => {
+      console.error('[TicketDetailView] ❌ Failed to update ticket:', error);
+    },
+  });
 
   // Multi-conversation support: Track active conversation (tab)
   // Use conversations array if available, otherwise fall back to single conversation
@@ -230,6 +250,11 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
   };
 
   const handleTicketActionClick = (action: QuickActionItem) => {
+    // Handle edit_ticket action specially
+    if (action.id === 'edit_ticket') {
+      editModal.openModal();
+      return;
+    }
     executeAction(action.id as any);
   };
 
@@ -1313,6 +1338,25 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
           🔴 Urgent
         </MenuItem>
       </Menu>
+
+      {/* Edit Ticket Modal */}
+      <TicketFormModal
+        mode="edit"
+        open={editModal.isOpen}
+        onClose={editModal.closeModal}
+        onSubmit={editModal.handleSubmit}
+        ticket={ticket}
+        clients={editModal.clients}
+        onClientSearch={editModal.handleClientSearch}
+        clientsLoading={editModal.clientsLoading}
+        assignees={editModal.assignees}
+        onAssigneeSearch={editModal.handleAssigneeSearch}
+        assigneesLoading={editModal.assigneesLoading}
+        popularTags={editModal.popularTags}
+        onSuggestTags={editModal.handleSuggestTags}
+        isSubmitting={editModal.isSubmitting}
+        error={editModal.error}
+      />
     </Box>
   );
 };
