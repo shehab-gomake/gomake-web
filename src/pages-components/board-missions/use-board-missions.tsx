@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { BoardMissionStatusForFilter } from "./widgets/enums";
 import {
   exportJobTableToExcelApi,
+  exportJobTableToExcelAsyncApi,
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
@@ -105,6 +106,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertFaultGetData,
     alertFaultUpdate,
     alertSuccessUpdate,
+    alertSuccess
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -254,8 +256,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromDate(value[0]);
-      setToDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDate is always the earlier date and toDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDate(firstDate);
+        setToDate(secondDate);
+      } else {
+        setFromDate(secondDate);
+        setToDate(firstDate);
+      }
     } else {
       setFromDate(null);
       setToDate(null);
@@ -264,8 +274,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectDueTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromDueDate(value[0]);
-      setToDueDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromDueDate is always the earlier date and toDueDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromDueDate(firstDate);
+        setToDueDate(secondDate);
+      } else {
+        setFromDueDate(secondDate);
+        setToDueDate(firstDate);
+      }
     } else {
       setFromDueDate(null);
       setToDueDate(null);
@@ -274,8 +292,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const onSelectReadyTimeDates = (value) => {
     if (value && value.length === 2) {
-      setFromReadyDate(value[0]);
-      setToReadyDate(value[1]);
+      const [firstDate, secondDate] = value;
+
+      // Ensure fromReadyDate is always the earlier date and toReadyDate is always the later date
+      if (firstDate <= secondDate) {
+        setFromReadyDate(firstDate);
+        setToReadyDate(secondDate);
+      } else {
+        setFromReadyDate(secondDate);
+        setToReadyDate(firstDate);
+      }
     } else {
       setFromReadyDate(null);
       setToReadyDate(null);
@@ -1760,19 +1786,32 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, []);
 
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [exportEmail, setExportEmail] = useState("");
+
   const ExportJobsTableToExcel = async () => {
+    // Show email modal instead of direct export
+    setShowEmailModal(true);
+  };
+
+  const handleEmailModalClose = () => {
+    setShowEmailModal(false);
+    setExportEmail("");
+  };
+
+  const handleExportWithEmail = async () => {
+    if (!exportEmail || !exportEmail.includes("@")) {
+      alertFault(t("boardMissions.invalidEmail"));
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
-        const downloadLink = document.createElement("a");
-        if (typeof res.data === "string") {
-          downloadLink.href = res.data;
-        } else {
-          const link = URL.createObjectURL(res.data);
-          downloadLink.href = link;
-        }
-        downloadLink.download = "table.xlsx";
-        downloadLink.click();
+        alertSuccess(t("boardMissions.exportRequestSubmitted"));
+        setShowEmailModal(false);
+        setExportEmail("");
       } else {
+        alertFault(t("boardMissions.exportFailed"));
       }
     };
 
@@ -1867,9 +1906,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageSize: currentPageSize,
       orderNumber: router?.query?.orderNumber,
       exampleTypes: currentProofTypes,
+      email: exportEmail,
     };
 
-    await exportJobTableToExcelApi(callApi, callBack, data);
+    await exportJobTableToExcelAsyncApi(callApi, callBack, data);
   };
 
   const handleClickBackToProcess = async (mission) => {
@@ -2214,7 +2254,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+    // Email export modal
+    showEmailModal,
+    exportEmail,
+    setExportEmail,
+    handleEmailModalClose,
+    handleExportWithEmail,
   };
 };
 
 export { useBoardMissions };
+

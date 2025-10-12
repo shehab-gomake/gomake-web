@@ -1,5 +1,6 @@
 import "react-calendar-timeline/lib/Timeline.css"; // Global timeline styles
 import "@/styles/globals.css";
+import "@/styles/ai-animations.css";
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import i18n from "i18next";

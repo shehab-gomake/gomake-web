@@ -1,7 +1,10 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAllDataPrintHousesReports } from "@/services/api-service/company-report/get-print-houses-report";
+import {
+  getAllDataPrintHousesReports,
+  createPrintHouseInAccountingApi,
+} from "@/services/api-service/company-report/get-print-houses-report";
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
 import { OptionsComponent } from "@/pages-components/company-reports/components/options-component";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -217,6 +220,18 @@ export const useCompanyReport = () => {
     value: PrintHousePayStatus;
   } | null>();
 
+  const handleCreatePrintHouseInAccounting = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccess("Print house created in accounting successfully");
+        getReport(); // Refresh the report data
+      } else {
+        alertFault("Failed to create print house in accounting");
+      }
+    };
+    await createPrintHouseInAccountingApi(callApi, callBack, {});
+  };
+
   return {
     t,
     tableHeaders,
@@ -237,5 +252,6 @@ export const useCompanyReport = () => {
     countries,
     selectedCountry,
     setSelectedCountry,
+    handleCreatePrintHouseInAccounting,
   };
 };

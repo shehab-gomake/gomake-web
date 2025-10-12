@@ -109,6 +109,8 @@ const useStyle = (dir: string) => {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center" as "center",
+        //?new
+        gap: 10,
       },
       splitBoardsStatusesRow: {
         height: 40,
