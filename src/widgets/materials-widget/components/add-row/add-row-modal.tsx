@@ -147,7 +147,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
       primaryButtonLabel={t("materials.buttons.add")}
       cancelButtonLabel={t("materials.childTable.cancel")}
       onPrimaryAction={handleAdd}
-      maxWidth="xs"
+      maxWidth="sm"
       fullWidth
     >
       <Stack display={"flex"} direction={"column"} marginTop={"10px"} width={"100%"}>
@@ -167,7 +167,6 @@ const AddRowModal = (props: IAddRowModalProps) => {
             // If next item is a price object and current index is odd, make current item full width
             // This ensures price objects always start on an even index (same row with currency)
             const shouldMakeFullWidth = isNextItemPriceObject && (index + 1) % 2 !== 0;
-
             return (
               <Stack width={shouldMakeFullWidth ? "100%" : "48%"} key={`input-${index}`}>
                 <FormInput
@@ -180,7 +179,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
                   keyItem={"item"}
                   customStyles={{
                     container: {
-                      maxWidth: 200,
+                      maxWidth: 273,
                     },
 
                   }}

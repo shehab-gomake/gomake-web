@@ -43,6 +43,7 @@ const rowInputs = (
             value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "LIST":
           return {

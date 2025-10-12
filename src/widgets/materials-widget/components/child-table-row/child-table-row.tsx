@@ -358,20 +358,20 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {t(`measurementUnits.${convertedPricingUnit}`)}
+                                        {convertedPricingUnit !== "price" && t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.saleCost")}
                                         <br />
-                                        {t(`measurementUnits.${convertedPricingUnit}`)}
+                                        {convertedPricingUnit !== "price" && t(`measurementUnits.${convertedPricingUnit}`)}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.inventory")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
+                                        {t("materials.childTable.inventory")} ({convertedInventoryUnit !== "price" && t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.quantity")} ({t(`measurementUnits.${convertedInventoryUnit}`)})
+                                        {t("materials.childTable.quantity")} ({convertedInventoryUnit !== "price" && t(`measurementUnits.${convertedInventoryUnit}`)})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
@@ -435,7 +435,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
-                                                                parameterKey="purchasePrice"
+                                                                parameterKey={`${convertedPricingUnit} ! purchasePrice`}
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -459,7 +459,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                 isEditable={true}
                                                                 type={3}
                                                                 id={row.id}
-                                                                parameterKey="salePrice"
+                                                                parameterKey={`${convertedPricingUnit} ! salePrice`}
                                                                 isAdmin={false}
                                                                 onChangeRowCheckBox={() => { }}
                                                                 isInventoryTable={true}
@@ -632,10 +632,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         <TableCell sx={classes.headerCell}>
                                             {t("materials.childTable.purchasePrice")}
                                             <br />
-                                            {t(`measurementUnits.${convertedPurchasePricingUnit}`)}
+                                            {convertedPurchasePricingUnit !== "price" && t(`measurementUnits.${convertedPurchasePricingUnit}`)}
                                         </TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({convertedPurchasePricingInventoryUnit !== "price" && t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})</TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                         <TableCell sx={classes.headerCell}></TableCell>
@@ -678,14 +678,15 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                             </TableCell>
                                                             <TableCell sx={classes.bodyCell}>
                                                                 <TableCellData
-                                                                    value={[
-                                                                        row.purchasePrice?.[convertedPricingUnit]?.value?.[0] || '',
-                                                                        row.purchasePrice?.[convertedPricingUnit]?.value?.[1] || ''
-                                                                    ]}
+                                                                    value={
+                                                                        Array.isArray(row.purchasePrice?.[convertedPricingUnit]?.value)
+                                                                            ? row.purchasePrice[convertedPricingUnit].value
+                                                                            : [row.purchasePrice?.[convertedPricingUnit]?.value].filter(v => v !== undefined && v !== null)
+                                                                    }
                                                                     isEditable={true}
                                                                     type={3}
                                                                     id={row.id}
-                                                                    parameterKey="price Unit / ton"
+                                                                    parameterKey={`${convertedPricingUnit} ! purchasePrice`}
                                                                     isAdmin={false}
                                                                     onChangeRowCheckBox={() => { }}
                                                                     isPurchasePricingTable={true}
