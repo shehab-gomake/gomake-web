@@ -375,7 +375,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
-                                    <TableCell sx={classes.headerCell}>{t("materials.childTable.jobs")}</TableCell>
+                                    {/* <TableCell sx={classes.headerCell}>{t("materials.childTable.jobs")}</TableCell> */}
                                     <TableCell sx={classes.headerCell}>
                                         {/* {t("materials.childTable.actions")} */}
                                     </TableCell>
@@ -529,7 +529,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                                 checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
                                                             />
                                                         </TableCell>
-                                                        <TableCell sx={classes.bodyCell} className="fixed-column">
+                                                        {/* <TableCell sx={classes.bodyCell} className="fixed-column">
                                                             <Box
                                                                 onClick={() => handleOpenJobsModal(row.supplierName, row.code, materialType, row.id)}
                                                                 sx={{
@@ -553,7 +553,7 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                             >
                                                                 {t("materials.childTable.show")}
                                                             </Box>
-                                                        </TableCell>
+                                                        </TableCell> */}
                                                         <TableCell sx={classes.bodyCell} className="fixed-column">
 
                                                             <IconButton
