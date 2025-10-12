@@ -6,7 +6,7 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import CircleIcon from '@mui/icons-material/Circle';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import { TicketFilters, TicketStatus, TicketPriority, Tag } from '../types/api.types';
-import { apiStatusToUi } from '../types/transformers';
+import { formatTicketStatus } from '../types/transformers';
 import { DropdownMenu, MenuSubheader } from '@/widgets/frontdesk/components/dropdown-menu';
 import { Chip, colorTokens } from '@/widgets/frontdesk/design-system';
 
@@ -182,7 +182,7 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                 )}
                 <CircleIcon sx={{ fontSize: 8, color: STATUS_COLORS[s] }} />
                 <ListItemText
-                  primary={apiStatusToUi(s)}
+                  primary={formatTicketStatus(s)}
                   primaryTypographyProps={{
                     fontSize: 13,
                     fontWeight: isSelected ? 600 : 400,

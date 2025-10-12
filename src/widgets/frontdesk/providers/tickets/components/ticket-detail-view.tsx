@@ -40,7 +40,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HistoryIcon from '@mui/icons-material/History';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { TicketWithDetails } from '../types/api.types';
-import { apiStatusToUi, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
+import { formatTicketStatus, apiPriorityToUi, getChannelIcon, getChannelColor } from '../types/transformers';
 import { format, parseISO } from 'date-fns';
 import { isApproachingSLA, isOverdueSLA } from '../utils/sla-helpers';
 import {
@@ -233,8 +233,8 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
     executeAction(action.id as any);
   };
 
-  // Convert UI status to backend status for display
-  const uiStatus = apiStatusToUi(ticket.status);
+  // Format status and priority for display
+  const uiStatus = formatTicketStatus(ticket.status);
   const uiPriority = apiPriorityToUi(ticket.priority);
 
   return (
@@ -1222,7 +1222,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          {apiStatusToUi('OPEN')}
+          {formatTicketStatus('OPEN')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1232,7 +1232,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          {apiStatusToUi('IN_PROGRESS')}
+          {formatTicketStatus('IN_PROGRESS')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1242,7 +1242,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          {apiStatusToUi('PENDING')}
+          {formatTicketStatus('PENDING')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1252,7 +1252,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          {apiStatusToUi('RESOLVED')}
+          {formatTicketStatus('RESOLVED')}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -1262,7 +1262,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
             setStatusMenuAnchor(null);
           }}
         >
-          {apiStatusToUi('CLOSED')}
+          {formatTicketStatus('CLOSED')}
         </MenuItem>
       </Menu>
 

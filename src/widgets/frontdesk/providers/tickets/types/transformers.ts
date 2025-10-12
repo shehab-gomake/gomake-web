@@ -20,32 +20,32 @@ import {
 } from './ticket.types';
 
 // ============================================
-// Status Transformers
+// Status Formatters (Unified Backend Enum)
 // ============================================
 
-const API_TO_UI_STATUS: Record<ApiTicketStatus, UiTicketStatus> = {
-  OPEN: 'New',
-  IN_PROGRESS: 'Active',
-  PENDING: 'On Hold', // Map PENDING to On Hold for UI
-  RESOLVED: 'Resolved',
-  CLOSED: 'Closed',
-  REOPENED: 'New', // Map REOPENED to New
-};
-
-const UI_TO_API_STATUS: Record<UiTicketStatus, ApiTicketStatus> = {
-  'New': 'OPEN',
-  'Active': 'IN_PROGRESS',
-  'On Hold': 'PENDING',
-  'Resolved': 'RESOLVED',
-  'Closed': 'CLOSED',
-};
-
-export function apiStatusToUi(status: ApiTicketStatus): UiTicketStatus {
-  return API_TO_UI_STATUS[status] || 'New';
+/**
+ * Format backend ticket status for display
+ * Uses backend enum directly - no transformation needed
+ * This maintains consistency between backend and frontend
+ */
+export function formatTicketStatus(status: ApiTicketStatus): string {
+  const labels: Record<ApiTicketStatus, string> = {
+    OPEN: 'Open',
+    IN_PROGRESS: 'In Progress',
+    PENDING: 'Pending',
+    RESOLVED: 'Resolved',
+    CLOSED: 'Closed',
+    REOPENED: 'Reopened',
+  };
+  return labels[status] || status;
 }
 
-export function uiStatusToApi(status: UiTicketStatus): ApiTicketStatus {
-  return UI_TO_API_STATUS[status] || 'OPEN';
+/**
+ * @deprecated Use formatTicketStatus() instead
+ * Kept for backward compatibility during migration
+ */
+export function apiStatusToUi(status: ApiTicketStatus): string {
+  return formatTicketStatus(status);
 }
 
 // ============================================
@@ -144,7 +144,7 @@ export function transformApiTicketToUi(apiTicket: ApiTicket): UiTicket {
     ticketNumber: `#${apiTicket.ticketNumber}`,
     title: apiTicket.conversation.name || `Ticket #${apiTicket.ticketNumber}`,
     description: messages[0]?.content || '',
-    status: apiStatusToUi(apiTicket.status),
+    status: apiTicket.status, // Use backend enum directly - unified types
     priority: apiPriorityToUi(apiTicket.priority),
     type: 'Support', // Default type for tickets from backend
 
@@ -194,7 +194,7 @@ export function transformApiTicketToUi(apiTicket: ApiTicket): UiTicket {
 // ============================================
 
 export function getFilterLabel(key: string, value: any): string {
-  if (key === 'status') return apiStatusToUi(value as ApiTicketStatus);
+  if (key === 'status') return formatTicketStatus(value as ApiTicketStatus);
   if (key === 'priority') return apiPriorityToUi(value as ApiTicketPriority);
   return String(value);
 }

@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { colorTokens, Chip, PriorityBadge, ChannelBadge } from '@/widgets/frontdesk/design-system';
 import { parseISO, formatDistanceToNow } from 'date-fns';
 import { RelatedTicket, TicketStatus, ChannelType } from '../types/api.types';
-import { apiStatusToUi, apiPriorityToUi } from '../types/transformers';
+import { formatTicketStatus, apiPriorityToUi } from '../types/transformers';
 
 export interface RelatedTicketsProps {
   /** Related tickets from the same customer */
@@ -26,13 +26,12 @@ const formatRelativeTime = (dateString: string): string => {
 };
 
 const getStatusColor = (status: TicketStatus): 'primary' | 'warning' | 'success' | 'error' | 'neutral' => {
-  const uiStatus = apiStatusToUi(status);
-
-  if (uiStatus === 'New') return 'primary';
-  if (uiStatus === 'Active') return 'warning';
-  if (uiStatus === 'On Hold') return 'error';
-  if (uiStatus === 'Resolved') return 'success';
-  if (uiStatus === 'Closed') return 'neutral';
+  // Map backend statuses directly to colors
+  if (status === 'OPEN' || status === 'REOPENED') return 'primary';
+  if (status === 'IN_PROGRESS') return 'warning';
+  if (status === 'PENDING') return 'error';
+  if (status === 'RESOLVED') return 'success';
+  if (status === 'CLOSED') return 'neutral';
   return 'neutral';
 };
 
@@ -89,7 +88,7 @@ export const RelatedTickets: React.FC<RelatedTicketsProps> = ({
       )}
 
       {displayTickets.map((ticket) => {
-        const uiStatus = apiStatusToUi(ticket.status);
+        const uiStatus = formatTicketStatus(ticket.status);
         const uiPriority = apiPriorityToUi(ticket.priority);
         const statusColor = getStatusColor(ticket.status);
 

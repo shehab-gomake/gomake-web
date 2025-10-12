@@ -1,7 +1,7 @@
 import React from 'react';
 import { TicketListItem as DSTicketListItem } from '@/widgets/frontdesk/design-system';
 import { TicketWithDetails, Tag } from '../types/api.types';
-import { apiStatusToUi, apiPriorityToUi } from '../types/transformers';
+import { formatTicketStatus, apiPriorityToUi } from '../types/transformers';
 import { formatConversationDate } from '@/widgets/frontdesk/utils';
 
 interface TicketListItemProps {
@@ -90,7 +90,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       id={ticket.id}
       ticketNumber={`#${ticket.ticketNumber}`}
       title={title}
-      status={apiStatusToUi(ticket.status)}
+      status={formatTicketStatus(ticket.status)}
       priority={apiPriorityToUi(ticket.priority)}
       type={'Support'} // All backend tickets are Support type
       updatedAt={formatConversationDate(latestConversation?.lastMessageAt || ticket.updatedAt)}
