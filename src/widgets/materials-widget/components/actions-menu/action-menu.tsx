@@ -279,7 +279,9 @@ const ActionMenu = (props: IActionMenuProps) => {
                       key={selectedSupplier?.id}
                       clientType={CLIENT_TYPE.SUPPLIER}
                       onChange={(e: any, supplier: any) => setSelectedSupplier(supplier)}
-                      options={renderOptionsSupplier || []}
+                      options={(renderOptionsSupplier || []).filter((supplier, index, self) =>
+                        index === self.findIndex((s) => s.id === supplier.id)
+                      )}
                       placeholder={t("materials.childTable.selectSupplier")}
                       style={{ width: "100%" }}
                       value={selectedSupplier}
@@ -441,7 +443,9 @@ const ActionMenu = (props: IActionMenuProps) => {
                       key={selectedSupplier?.id}
                       clientType={CLIENT_TYPE.SUPPLIER}
                       onChange={(e: any, supplier: any) => setSelectedSupplier(supplier)}
-                      options={renderOptionsSupplier || []}
+                      options={(renderOptionsSupplier || []).filter((supplier, index, self) =>
+                        index === self.findIndex((s) => s.id === supplier.id)
+                      )}
                       placeholder={t("materials.childTable.selectSupplier")}
                       style={{ width: "100%" }}
                       value={selectedSupplier}
