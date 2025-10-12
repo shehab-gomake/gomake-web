@@ -5,4 +5,3 @@ export {
   useMainProductionReport,
 } from "./production-dashboard-table";
 export * from "./production-dashboard-table/interfaces";
-export * from "./production-dashboard-table/mock-data";

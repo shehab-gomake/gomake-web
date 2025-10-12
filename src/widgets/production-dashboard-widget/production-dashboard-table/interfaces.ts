@@ -13,27 +13,26 @@ export interface DepartmentPerformanceDTO {
 export interface StationPerformanceDTO {
   stationId: string;
   stationName: string;
-  supplierName?: string;
+  supplierName?: string; //?should be visible ?
   totalEstimated: StationMetrics;
   done: StationMetrics;
   inProcess: StationMetrics;
   reported: StationMetrics;
   capacity: CapacityMetricsDTO;
   performance: PerformanceMetricsDTO;
-  dueDatePerformance: DDP;
   jobAnalytics: JobAnalytics;
-  sla?: number;
+  sla: DDP;
   averageProductionTime: number;
 }
 
 export interface StationMetrics {
   time: number;
   jobs: number;
+  percentageReported?: number; //!here new how to show
 }
 
 export interface CapacityMetricsDTO {
-  totalEstimated: number;
-  totalWorkingHours: number;
+  capacity: number;
   growth: number;
 }
 
@@ -43,43 +42,22 @@ export interface PerformanceMetricsDTO {
 }
 
 export interface DDP {
-  percentage: number;
+  sla: number;
   growth: number;
 }
 
 export interface JobAnalytics {
-  estimatedCost: number;
-  estimatedPrice: number;
+  jobsTotalEstimatedCost: number;
+  jobsEstimatedPrice: number;
 }
-
-//!here from ibrahem
-// export interface CapacityMetricsDTO{
-//   capacity: number;
-//   growth: number;
-// }
-
-//!here from ibrahem
-// export interface DDP {
-//   dueDatePerformance : number;
-//   growth: number;
-// }
-
-//!here from ibrahem
-// export interface JobAnalytics {
-//   jobsTotalEstimatedCost : number;
-//   jobsEstimatedPrice : number;
-// }
 
 //!here we can ignore it because it is not used
 export interface DepartmentSummaryDTO {
-  totalEstimated: StationMetrics;
-  done: StationMetrics;
-  inProcess: StationMetrics;
-  reported: StationMetrics;
-  capacity: CapacityMetricsDTO;
-  performance: PerformanceMetricsDTO;
-  dueDatePerformance: DDP;
-  jobAnalytics: JobAnalytics;
-  sla?: number;
-  averageProductionTime: number;
+  totalStations: number;
+  totalJobs: number;
+  totalEstimatedHours: number;
+  totalWorkingHours: number;
+  averagePerformance: number;
+  averageSLA: number;
+  overallGrowth: number | null;
 }

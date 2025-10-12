@@ -36,6 +36,7 @@ const MainProductionReportTable = () => {
     toggleAllDepartments,
     formatTime,
     formatPercentage,
+    formatNumber,
     formatCurrency,
   } = useMainProductionReport();
 
@@ -55,11 +56,11 @@ const MainProductionReportTable = () => {
               >
                 {t("productionReport.department")}
               </TableCell>
-              <TableCell
+              {/* <TableCell
                 sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
               >
                 {t("productionReport.supplier")}
-              </TableCell>
+              </TableCell> */}
               <TableCell
                 sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
               >
@@ -137,18 +138,6 @@ const MainProductionReportTable = () => {
               >
                 <Box>
                   <Typography variant="subtitle2" fontWeight="bold">
-                    {t("productionReport.ddp")}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {t("productionReport.percentGrowth")}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell
-                sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
-              >
-                <Box>
-                  <Typography variant="subtitle2" fontWeight="bold">
                     {t("productionReport.jobAnalytics")}
                   </Typography>
                   <Typography variant="caption" color="textSecondary">
@@ -159,7 +148,14 @@ const MainProductionReportTable = () => {
               <TableCell
                 sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
               >
-                {t("productionReport.sla")}
+                <Box>
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    {t("productionReport.sla")}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {t("productionReport.percentGrowth")}
+                  </Typography>
+                </Box>
               </TableCell>
               <TableCell
                 sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
@@ -217,7 +213,7 @@ const MainProductionReportTable = () => {
                       />
                     </Box>
                   </TableCell>
-                  <TableCell colSpan={11}>
+                  <TableCell colSpan={9}>
                     <Typography variant="body2" color="textSecondary">
                       {t("productionReport.departmentSummary")}
                     </Typography>
@@ -226,7 +222,7 @@ const MainProductionReportTable = () => {
 
                 {/* Station Rows - Collapsible */}
                 <TableRow>
-                  <TableCell colSpan={12} sx={{ padding: 0 }}>
+                  <TableCell colSpan={10} sx={{ padding: 0 }}>
                     <Collapse
                       in={expandedDepartments.has(department.departmentId)}
                       timeout="auto"
@@ -239,9 +235,9 @@ const MainProductionReportTable = () => {
                               <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
                                 {t("productionReport.stationDetails")}
                               </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
+                              {/* <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
                                 {t("productionReport.supplier")}
-                              </TableCell>
+                              </TableCell> */}
                               <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
                                 {t("productionReport.totalEstimated")}
                               </TableCell>
@@ -259,9 +255,6 @@ const MainProductionReportTable = () => {
                               </TableCell>
                               <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
                                 {t("productionReport.performance")}
-                              </TableCell>
-                              <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
-                                {t("productionReport.ddp")}
                               </TableCell>
                               <TableCell sx={{ backgroundColor: "#e3f2fd" }}>
                                 {t("productionReport.jobAnalytics")}
@@ -290,14 +283,14 @@ const MainProductionReportTable = () => {
                                     </Typography>
                                   </TableCell>
 
-                                  <TableCell>
+                                  {/* <TableCell>
                                     <Typography
                                       variant="body2"
                                       color="textSecondary"
                                     >
                                       {station.supplierName || "N/A"}
                                     </Typography>
-                                  </TableCell>
+                                  </TableCell> */}
                                   <TableCell>
                                     <Typography variant="body2">
                                       {formatTime(station.totalEstimated.time)}{" "}
@@ -326,22 +319,20 @@ const MainProductionReportTable = () => {
                                         color="textSecondary"
                                       >
                                         (
-                                        {formatPercentage(
-                                          (station.reported.jobs /
-                                            station.totalEstimated.jobs) *
-                                            100
-                                        )}
+                                        {station.totalEstimated.jobs > 0
+                                          ? formatPercentage(
+                                              (station.reported.jobs /
+                                                station.totalEstimated.jobs) *
+                                                100
+                                            )
+                                          : "N/A"}
                                         )
                                       </Typography>
                                     </Typography>
                                   </TableCell>
                                   <TableCell>
                                     <Typography variant="body2">
-                                      {formatPercentage(
-                                        (station.capacity.totalEstimated /
-                                          station.capacity.totalWorkingHours) *
-                                          100
-                                      )}
+                                      {formatNumber(station.capacity.capacity)}
                                       <br />
                                       <Typography
                                         variant="caption"
@@ -375,26 +366,9 @@ const MainProductionReportTable = () => {
                                   </TableCell>
                                   <TableCell>
                                     <Typography variant="body2">
-                                      {formatPercentage(
-                                        station.dueDatePerformance.percentage
-                                      )}
-                                      <br />
-                                      <Typography
-                                        variant="caption"
-                                        color="textSecondary"
-                                      >
-                                        (
-                                        {formatPercentage(
-                                          station.dueDatePerformance.growth
-                                        )}
-                                        )
-                                      </Typography>
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography variant="body2">
                                       {formatCurrency(
-                                        station.jobAnalytics.estimatedCost
+                                        station.jobAnalytics
+                                          .jobsTotalEstimatedCost
                                       )}
                                       <br />
                                       <Typography
@@ -402,16 +376,23 @@ const MainProductionReportTable = () => {
                                         color="textSecondary"
                                       >
                                         {formatCurrency(
-                                          station.jobAnalytics.estimatedPrice
+                                          station.jobAnalytics
+                                            .jobsEstimatedPrice
                                         )}
                                       </Typography>
                                     </Typography>
                                   </TableCell>
                                   <TableCell>
                                     <Typography variant="body2">
-                                      {station.sla
-                                        ? formatPercentage(station.sla)
-                                        : "N/A"}
+                                      {formatPercentage(station.sla?.sla)}
+                                      <br />
+                                      <Typography
+                                        variant="caption"
+                                        color="textSecondary"
+                                      >
+                                        ({formatPercentage(station.sla?.growth)}
+                                        )
+                                      </Typography>
                                     </Typography>
                                   </TableCell>
                                   <TableCell>

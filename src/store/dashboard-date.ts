@@ -22,4 +22,13 @@ const dashboardDateState = atom<{
   }, // default value (aka initial value)
 });
 
-export { dashboardDateState };
+const productionCreationDateState = atom<{
+  dates: IDateRange;
+}>({
+  key: "productionCreationDate",
+  default: {
+    dates: THIS_MONTH_DATE_RANGE,
+  },
+});
+
+export { dashboardDateState, productionCreationDateState };

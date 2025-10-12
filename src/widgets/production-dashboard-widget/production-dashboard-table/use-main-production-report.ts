@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { dashboardDateState } from "@/store";
+import { dashboardDateState, productionCreationDateState } from "@/store";
 import { useGomakeAxios } from "@/hooks";
-import { format } from "date-fns";
-import {
-  MainProductionReportResponseDTO,
-  DepartmentPerformanceDTO,
-} from "./interfaces";
-import { mockProductionReportData } from "./mock-data";
+import { MainProductionReportResponseDTO } from "./interfaces";
 
 export const useMainProductionReport = () => {
   const { callApi } = useGomakeAxios();
-  const { dates } = useRecoilValue(dashboardDateState);
+  const { dates: deliveryDates } = useRecoilValue(dashboardDateState);
+  const { dates: creationDates } = useRecoilValue(productionCreationDateState);
 
   // State management
   const [loading, setLoading] = useState(false);
@@ -25,36 +21,34 @@ export const useMainProductionReport = () => {
 
   // API call function
   const fetchData = async () => {
-    if (!dates.startDate || !dates.endDate) return;
+    if (!deliveryDates.startDate || !deliveryDates.endDate) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Use mock data for testing
-      setData(mockProductionReportData);
-
-      // Uncomment below to use real API when ready
-      /*
       const response = await callApi(
-        "GET",
-        "/v1/jobs-service/get-main-production-report",
+        "POST",
+        "/v1/job-service/production-dashboard/get-main-production-report",
         {
-          startDate: format(dates.startDate, "yyyy-MM-dd"),
-          endDate: format(dates.endDate, "yyyy-MM-dd"),
+          fromDeliveryDate: deliveryDates.startDate.toISOString(),
+          toDeliveryDate: deliveryDates.endDate.toISOString(),
+          fromCreationDate: creationDates.startDate
+            ? creationDates.startDate.toISOString()
+            : undefined,
+          toCreationDate: creationDates.endDate
+            ? creationDates.endDate.toISOString()
+            : undefined,
         },
         false
       );
 
       if (response?.success) {
-        setData(response.data);
+        debugger;
+        setData(response.data.data.data);
       } else {
         setError(response?.message || "Failed to fetch data");
       }
-      */
     } catch (err) {
       setError("An error occurred while fetching data");
       console.error("Error fetching production report:", err);
@@ -91,28 +85,52 @@ export const useMainProductionReport = () => {
     }
   };
 
+  // Helper function to safely parse numbers
+  const safeNumber = (value: any): number | null => {
+    if (value == null) return null;
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    if (!isFinite(num) || isNaN(num)) return null;
+    return num;
+  };
+
   // Formatting functions
   const formatTime = (time: number) => {
-    const hours = Math.floor(time / 60);
-    const minutes = time % 60;
-    return `${hours}h ${minutes}m`;
+    const safeTime = safeNumber(time);
+    if (safeTime == null) return "0.00";
+    return safeTime.toFixed(2);
   };
 
   const formatPercentage = (value: number) => {
-    return `${value.toFixed(1)}%`;
+    const safeValue = safeNumber(value);
+    if (safeValue == null) return "N/A";
+    return `${safeValue.toFixed(2)}%`;
   };
 
+  const formatNumber = (value: number) => {
+    const safeValue = safeNumber(value);
+    if (safeValue == null) return "N/A";
+    return safeValue.toFixed(2);
+  };
+
+  //!here change to use systemCurrency
   const formatCurrency = (value: number) => {
+    const safeValue = safeNumber(value);
+    if (safeValue == null) return "N/A";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-    }).format(value);
+    }).format(safeValue);
   };
 
   // Effect to fetch data when dates change
   useEffect(() => {
     fetchData();
-  }, [dates.startDate, dates.endDate]);
+  }, [
+    deliveryDates.startDate,
+    deliveryDates.endDate,
+    creationDates.startDate,
+    creationDates.endDate,
+  ]);
 
   return {
     // State
@@ -126,6 +144,7 @@ export const useMainProductionReport = () => {
     toggleAllDepartments,
     formatTime,
     formatPercentage,
+    formatNumber,
     formatCurrency,
   };
 };
