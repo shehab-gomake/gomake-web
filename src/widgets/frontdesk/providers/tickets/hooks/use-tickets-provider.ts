@@ -326,26 +326,47 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     ticketSocketService.onTicketMessageReceived((payload) => {
       console.log("[TicketsProvider] Inbound message:", payload.channel, payload.identifier);
 
-      // Refresh ticket to show new message
+      // Refresh ticket to show new message (if currently selected)
       if (selectedTicketId === payload.ticketId) {
         fetchTicketById(payload.ticketId);
       }
 
-      // Update ticket in list (lastMessageAt)
+      // Update ticket in list with new message timestamp AND set hasUnread
       setTickets((prev) =>
         prev.map((t) => {
-          if (t.id === payload.ticketId && t.conversation) {
+          if (t.id === payload.ticketId) {
             return {
               ...t,
-              conversation: {
+              conversation: t.conversation ? {
                 ...t.conversation,
                 lastMessageAt: new Date().toISOString(),
+              } : undefined,
+              // Optimistically set hasUnread=true (backend confirmed this is correct approach)
+              viewStatus: {
+                lastViewedAt: t.viewStatus?.lastViewedAt || null,
+                hasUnread: true,
+                lastViewedMessageId: t.viewStatus?.lastViewedMessageId || null,
               },
             };
           }
           return t;
         })
       );
+
+      // Also update the viewStatus map for consistency
+      setTicketViewStatusMap((prev) => ({
+        ...prev,
+        [payload.ticketId]: {
+          lastViewedAt: prev[payload.ticketId]?.lastViewedAt || null,
+          hasUnread: true,
+          lastViewedMessageId: prev[payload.ticketId]?.lastViewedMessageId || null,
+        },
+      }));
+
+      // Increment unread count
+      setUnreadTicketsCount((prev) => prev + 1);
+
+      console.log("[TicketsProvider] Marked ticket as unread after new message:", payload.ticketId);
     });
 
     // 9. ticket.customer.updated - Refresh customer info
@@ -643,6 +664,19 @@ export function useTicketsProvider(): UseTicketsProviderResult {
             return [ticket, ...prev];
           }
         });
+
+        // Sync viewStatus from backend response to local map
+        if (ticket.viewStatus) {
+          setTicketViewStatusMap((prev) => ({
+            ...prev,
+            [ticketId]: ticket.viewStatus!,
+          }));
+          console.log("[TicketsProvider] Synced viewStatus from backend:", {
+            ticketId,
+            hasUnread: ticket.viewStatus.hasUnread,
+            lastViewedAt: ticket.viewStatus.lastViewedAt,
+          });
+        }
 
         // Extract and set related data if included in response
         if (ticket.relatedTickets) {
@@ -1062,13 +1096,13 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       try {
         await ticketsService.markTicketAsRead(ticketId);
 
-        // Optimistically update the view status
+        // Optimistically update the view status (safe even if ticket not in map yet)
         setTicketViewStatusMap((prev) => ({
           ...prev,
           [ticketId]: {
-            ...prev[ticketId],
-            hasUnread: false,
             lastViewedAt: new Date().toISOString(),
+            hasUnread: false,
+            lastViewedMessageId: prev[ticketId]?.lastViewedMessageId || null,
           },
         }));
 
@@ -1152,6 +1186,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   useEffect(() => {
     console.log("[TicketsProvider] Initial fetch on mount");
     fetchTickets();
+    fetchUnreadCount(); // Initialize unread count badge
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only fetch on mount - user must click "Apply Filters" to refetch
 
@@ -1198,21 +1233,17 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   }, [searchQuery]); // Only depend on searchQuery - filters handled separately
 
   // Fetch ticket details when selected (includes relatedTickets and history in response)
-  // Also mark ticket as read automatically
+  // Backend automatically marks ticket as viewed AND returns updated viewStatus
   useEffect(() => {
     if (selectedTicketId) {
       console.log("[TicketsProvider] Ticket selected, fetching details:", selectedTicketId);
 
       // Fetch full ticket details - backend includes relatedTickets and history
-      // This optimizes from 3 API calls down to 1 call
+      // Backend GET /tickets/:id automatically marks as viewed AND returns updated viewStatus
+      // This optimizes from 3 API calls down to 1 call (no need for separate PATCH /mark-read)
       fetchTicketById(selectedTicketId);
-
-      // Mark ticket as read when user opens it
-      // Note: Backend GET /tickets/:id also automatically marks as viewed
-      // This is an additional explicit call for UI feedback
-      markTicketAsRead(selectedTicketId);
     }
-  }, [selectedTicketId, fetchTicketById, markTicketAsRead]);
+  }, [selectedTicketId, fetchTicketById]);
 
   return {
     // Connection

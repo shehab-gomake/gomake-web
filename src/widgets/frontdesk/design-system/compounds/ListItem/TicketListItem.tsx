@@ -15,8 +15,10 @@ export interface TicketListItemProps {
   ticketNumber: string;
   /** Ticket title */
   title: string;
-  /** Status */
+  /** Status (raw backend format: OPEN, REOPENED, etc. for color logic) */
   status: string;
+  /** Status label (optional friendly display: "Open", "Reopened", etc.) */
+  statusLabel?: string;
   /** Priority */
   priority: 'Urgent' | 'High' | 'Medium' | 'Low';
   /** Ticket type */
@@ -98,6 +100,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   ticketNumber,
   title,
   status,
+  statusLabel,
   priority,
   type,
   updatedAt,
@@ -251,8 +254,8 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       {/* Right: Status Chip */}
       <Box sx={{ flexShrink: 0 }}>
         <Chip
-          label={status}
-          color={getStatusColor(status)}
+          label={statusLabel || status} // Use friendly label if provided, else raw status
+          color={getStatusColor(status)} // Use raw status for color determination
           variant="soft"
           size="small"
           sx={{ fontSize: 11, fontWeight: 600 }}

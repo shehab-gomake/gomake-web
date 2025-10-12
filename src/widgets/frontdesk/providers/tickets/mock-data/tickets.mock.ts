@@ -413,7 +413,7 @@ export const mockTickets: Ticket[] = [
     ticketNumber: 'APPS-216',
     title: 'Ut sapiente sunt',
     description: 'Completed ticket example',
-    status: 'Resolved',
+    status: 'RESOLVED',
     priority: 'Medium',
     type: 'Task',
     reporter: mockParticipants.john,
@@ -442,7 +442,7 @@ export const ticketViews = {
 
   pastDue: (ticket: Ticket) => {
     if (!ticket.dueDate) return false;
-    return new Date(ticket.dueDate) < new Date() && ticket.status !== 'Resolved';
+    return new Date(ticket.dueDate) < new Date() && ticket.status !== 'RESOLVED';
   },
 
   highPriority: (ticket: Ticket) =>
