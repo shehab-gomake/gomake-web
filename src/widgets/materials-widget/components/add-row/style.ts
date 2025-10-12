@@ -9,10 +9,9 @@ const useStyle = () => {
       inputsDivStyle: {
         display: "flex",
         flexDirection: 'row' as "row",
-        gap: "15px",
+        gap: "5px",
         flexWrap: "wrap" as "wrap",
         justifyContent: 'space-between',
-        padding: "0 5px",
         overflowY: "auto" as "auto",
         maxHeight: "500px",
       },

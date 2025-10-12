@@ -265,17 +265,17 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialCategories]);
 
   // Helper function to translate header values
-  const translateHeaderValue = (key: string, originalValue: string) => {
+  const translateHeaderValue = (key: string, originalValue: string, header?: any) => {
     const convertedUnit =
       unitType === UNIT_TYPE.IMPERIAL
         ? convertTitleUnits(key)
         : key;
-    // Special case for "price Unit / ton"
-    if (key === "price Unit / ton") {
+    // Special case for headers with isPriceObject = true
+    if (header?.isPriceObject === true) {
       return <div>
         {t("materials.childTable.priceUnitPerTon")}
         <br />
-        {t(`measurementUnits.${convertedUnit}`)}
+        {key !== "price" && t(`measurementUnits.${convertedUnit}`)}
       </div>;
     }
 
@@ -295,6 +295,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   // Helper function to translate values array
   const translateValuesArray = (values: any[]) => {
+    console.log("valuesvaluesvalues", values);
     return values.map(item => ({
       ...item,
       value: translateHeaderValue(item.key, item.value)
@@ -305,10 +306,11 @@ const useMaterials = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         const tableHeaders = res.data?.tableHeaders;
+        console.log("tableHeaders", tableHeaders);
         // Translate header values
         const translatedHeaders = tableHeaders.map(header => ({
           ...header,
-          value: translateHeaderValue(header.key, header.value),
+          value: translateHeaderValue(header.key, header.value, header),
           values: header.values ? translateValuesArray(header.values) : header.values
         }));
 

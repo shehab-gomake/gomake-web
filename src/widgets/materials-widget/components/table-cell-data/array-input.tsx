@@ -14,6 +14,9 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useSnackBar } from "@/hooks";
 
 const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable }: IRowData) => {
+  console.log("valueArrayvalueArrayvalueArray", {
+    isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable, valueArray
+  });
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");
@@ -57,23 +60,21 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
             pricingType = 2; // SalesPrice
           }
 
-          await updateCellData(id, "price Unit / ton", updateValue, isUpdate, pricingType);
+          await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate, pricingType);
           setIsUpdate(null);
-          alertSuccessUpdate();
         } else {
           // Use original logic for main table
           if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
             setIsLoading(false);
             onClickOpenDeleteTableRowModal()
           } else {
-            await updateCellData(id, parameterKey, updateValue, isUpdate);
+            await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
             setIsUpdate(null);
             alertSuccessUpdate();
           }
         }
       } catch (error) {
         alertFaultUpdate();
-        console.error("Error updating array input:", error);
       } finally {
         setIsLoading(false);
       }
