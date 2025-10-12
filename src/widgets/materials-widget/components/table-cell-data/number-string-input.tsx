@@ -12,8 +12,6 @@ import { useTranslation } from "react-i18next";
 import { ModalType, UNIT_TYPE } from "@/enums";
 import { convertValueToImperial } from "@/utils/helpers";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
-import { useSnackBar } from "@/hooks";
-
 import { userState } from "@/store/user";
 
 const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit, isInventoryTable, isPurchasePricingTable }: IRowData) => {
@@ -30,7 +28,6 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
 
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
     // Update optimistic value when props change
     useEffect(() => {
@@ -111,19 +108,15 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                     .then((response: any) => {
                         setIsLoading(false);
                         // Check if the response indicates success or failure
-                        if (response && response.success !== false) {
-                            alertSuccessUpdate();
-                        } else {
+                        if (response && response.success === false) {
                             // Revert to previous value if API response indicates failure
                             setOptimisticValue(originalPreviousValue);
-                            alertFaultUpdate();
                         }
                     })
                     .catch(() => {
                         setIsLoading(false);
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
-                        alertFaultUpdate();
                     });
             } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
                 onClickOpenDeleteTableRowModal()
@@ -135,19 +128,15 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                     .then((response: any) => {
                         setIsLoading(false);
                         // Check if the response indicates success or failure
-                        if (response && response.success !== false) {
-                            alertSuccessUpdate();
-                        } else {
+                        if (response && response.success === false) {
                             // Revert to previous value if API response indicates failure
                             setOptimisticValue(originalPreviousValue);
-                            alertFaultUpdate();
                         }
                     })
                     .catch(() => {
                         setIsLoading(false);
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
-                        alertFaultUpdate();
                     });
             }
         } else {

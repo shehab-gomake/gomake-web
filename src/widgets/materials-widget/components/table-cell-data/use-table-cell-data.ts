@@ -156,8 +156,8 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     if(key.includes("price")){
                         onClickOpenPriceModal()
                     }
-                    resolve(res); // Resolve with success response
                     alertSuccessUpdate();
+                    resolve(res); // Resolve with success response
                 } else {
                     if (res?.statusCode === 2627) {
               
@@ -171,17 +171,13 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                         else if (error?.ErrorMessage) {
                           userMessage = error.ErrorMessage;
                         }
-                        setTimeout(() => {
-                            alertFault(userMessage);
-                        }, 1000);
-                        
-                        
-                        reject(new Error(userMessage));
-
+                        alertFault(userMessage);
+                        // Resolve with error info instead of rejecting to prevent unhandled errors
+                        resolve({ success: false, error: userMessage, statusCode: 2627 });
                       }
                       else {
                         alertFaultUpdate();
-                        reject(res); // Reject with error response
+                        resolve({ success: false, error: res }); // Resolve with error response
                       }
                     
                    
