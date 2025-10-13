@@ -29,12 +29,13 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
   const hiddenPages = ["/gomake-ai"];
   const shouldHideWidget = hiddenPages.includes(router.pathname);
 
-  // Early return if widget should be hidden
-  if (shouldHideWidget) {
-    return null;
-  }
-
   useEffect(() => {
+    // Don't load widget if it should be hidden
+    if (shouldHideWidget) {
+      setIsLoading(false);
+      return;
+    }
+
     const loadChatWidget = async () => {
       try {
         setIsLoading(true);
@@ -95,9 +96,22 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
     };
 
     loadChatWidget();
-  }, [apiKey, position, primaryColor, theme, userProfile, callApi]);
+  }, [
+    apiKey,
+    position,
+    primaryColor,
+    theme,
+    userProfile,
+    callApi,
+    shouldHideWidget,
+  ]);
 
   // Don't render anything visible - the widget will be injected by the script
+  // Hide widget on specific pages
+  if (shouldHideWidget) {
+    return null;
+  }
+
   if (isLoading) {
     return null; // You could show a loading indicator here if needed
   }
