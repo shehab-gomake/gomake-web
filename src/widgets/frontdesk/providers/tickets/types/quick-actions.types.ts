@@ -26,8 +26,7 @@ export type QuickActionType =
   // Ticket Actions
   | 'edit_ticket'
   | 'print_ticket'
-  | 'export_ticket'
-  | 'delete_ticket'
+  | 'archive_ticket'
 
   // Other Actions
   | 'export_conversation';

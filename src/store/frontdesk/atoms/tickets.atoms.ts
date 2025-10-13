@@ -243,8 +243,10 @@ export const selectedTicketUiSelector = selector<Ticket | null>({
 /**
  * Selector: Get filtered tickets (backend format)
  * Backend handles most filtering via API params.
- * Special case: "unassigned" view needs client-side filtering since backend
- * doesn't support assigneeId=null in the query params.
+ * Special cases:
+ * - "unassigned" view needs client-side filtering since backend doesn't support assigneeId=null
+ * - "done" view filters for RESOLVED status only (resolved but not yet closed)
+ * - "archived" view filters for CLOSED status only (fully closed tickets)
  */
 export const filteredTicketsSelector = selector<TicketWithDetails[]>({
   key: 'frontdesk.tickets.filtered',
@@ -255,6 +257,16 @@ export const filteredTicketsSelector = selector<TicketWithDetails[]>({
     // Special handling for unassigned view: filter out tickets with assigneeId
     if (selectedView === 'unassigned') {
       return tickets.filter(t => !t.assigneeId);
+    }
+
+    // Filter for Done view: show only RESOLVED tickets (not CLOSED)
+    if (selectedView === 'done') {
+      return tickets.filter(t => t.status === 'RESOLVED');
+    }
+
+    // Filter for Archived view: show only CLOSED tickets
+    if (selectedView === 'archived') {
+      return tickets.filter(t => t.status === 'CLOSED');
     }
 
     return tickets; // Return all tickets from backend for other views
@@ -287,6 +299,8 @@ export const ticketCountsSelector = selector<Record<string, number>>({
       'high-priority': tickets.filter(t => t.priority === 'HIGH' || t.priority === 'URGENT').length,
       'unassigned': tickets.filter(t => !t.assigneeId).length,
       'all-tickets': tickets.length,
+      'done': tickets.filter(t => t.status === 'RESOLVED').length,
+      'archived': tickets.filter(t => t.status === 'CLOSED').length,
     };
   },
 });

@@ -67,7 +67,15 @@ The main widget (`frontdesk-widget.tsx`) uses `ThreeColumnLayout` to provide a *
 
 ```
 src/widgets/frontdesk/
-├── frontdesk-widget.tsx                 # Main widget entry point & routing
+├── frontdesk-widget.tsx                 # Main widget entry point
+│
+├── routing/                             # Centralized routing system
+│   ├── types.ts                         # Route type definitions
+│   ├── route-parser.ts                  # URL parsing logic
+│   ├── route-builder.ts                 # URL building logic
+│   ├── hooks/
+│   │   └── use-frontdesk-router.ts      # Main routing hook
+│   └── index.ts                         # Exports
 │
 ├── layouts/                             # Layout components
 │   ├── three-column/
@@ -171,6 +179,64 @@ src/services/
 └── websocket/                          # Real-time messaging
     └── messaging-service.ts            # WebSocket client singleton
 ```
+
+---
+
+## Routing System
+
+FrontDesk features a **centralized, type-safe routing system** built on top of Next.js routing. All routing logic is consolidated in the `src/widgets/frontdesk/routing/` directory.
+
+### Route Types
+
+The system uses TypeScript discriminated unions for type-safe routing:
+
+```typescript
+enum RouteType {
+  INBOX = 'inbox',           // Unified dashboard
+  CHANNEL = 'channel',       // Provider-specific view (email, whatsapp, DM)
+  TICKET_LIST = 'ticket-list',  // Filtered ticket view
+  TICKET_DETAIL = 'ticket-detail', // Specific ticket
+  SECTION = 'section'        // Admin, assigned, settings
+}
+```
+
+### URL Patterns
+
+- `/frontdesk/inbox` → Dashboard (unified view)
+- `/frontdesk/inbox/email` → Email channel
+- `/frontdesk/inbox/internal?conversation=123` → DM with conversation
+- `/frontdesk/tickets/my-tickets` → Ticket list view
+- `/frontdesk/tickets/TICKET-123` → Ticket detail
+- `/frontdesk/assigned` → Assigned section
+- `/frontdesk/inbox?view=email&conversation=456` → Deep link from notification
+
+### Usage Example
+
+```typescript
+import { useFrontDeskRouter, RouteBuilder } from '@/widgets/frontdesk/routing';
+
+function MyComponent() {
+  const { navigate, currentRoute, isInTicketMode } = useFrontDeskRouter();
+
+  // Navigate to email channel
+  navigate(RouteBuilder.email());
+
+  // Navigate to specific ticket
+  navigate(RouteBuilder.ticketDetail('TICKET-123'));
+
+  // Open ticket in new tab
+  navigate(RouteBuilder.ticketDetail('TICKET-456'), { newTab: true });
+}
+```
+
+### Benefits
+
+- **Type Safety**: Compiler catches routing errors at build time
+- **Centralized Logic**: All routing logic in one place
+- **Deep Linking**: Clean support for notification deep links
+- **URL Sync**: Automatic bidirectional sync between URL and state
+- **Testability**: Easy to test route parsing and building logic
+- **Backward Compatible**: Legacy navigation handlers still work
 
 ---
 

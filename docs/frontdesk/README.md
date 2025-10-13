@@ -11,15 +11,23 @@ The core FrontDesk implementation is located in `src/widgets/frontdesk/`. Here i
 ```
 src/
 ├── widgets/frontdesk/
-│   ├── frontdesk-widget.tsx      # Entry point, routing, and main layout
+│   ├── frontdesk-widget.tsx      # Entry point and main layout
+│   ├── routing/                  # ⭐ NEW: Centralized routing system
+│   │   ├── types.ts              # Route type definitions (5 route types)
+│   │   ├── route-parser.ts       # URL parsing logic
+│   │   ├── route-builder.ts      # URL building utilities
+│   │   ├── hooks/                # Routing hooks
+│   │   │   └── use-frontdesk-router.ts  # Main routing hook
+│   │   └── index.ts              # Public API
 │   ├── providers/                # Logic for each communication channel
 │   │   ├── internal/             # Direct Messages (DMs) via WebSocket
 │   │   ├── email/                # Gmail provider (OAuth)
 │   │   ├── whatsapp/             # WhatsApp provider
+│   │   ├── tickets/              # Support tickets with WebSocket
 │   │   └── unified/              # Unified inbox view
 │   ├── components/               # Shared React components
 │   ├── hooks/                    # Custom React hooks for provider logic
-│   ├── controllers/              # Business logic, navigation, and actions
+│   ├── controllers/              # Business logic and navigation (legacy)
 │   ├── design-system/            # Storybook components and design tokens
 │   ├── layouts/                  # Reusable layout components
 │   ├── settings/                 # Configuration and settings components
@@ -35,14 +43,55 @@ src/
     └── websocket/                # WebSocket service for real-time communication
 ```
 
+## 📋 Recent Updates
+
+### January 2025 - Routing System Refactor (v2.0.0)
+
+Major architectural improvement introducing a centralized, type-safe routing system. See [CHANGELOG.md](CHANGELOG.md) for complete details.
+
+**Key Improvements:**
+- ✅ Centralized routing in `src/widgets/frontdesk/routing/`
+- ✅ Type-safe navigation with TypeScript
+- ✅ Fixed UUID ticket ID navigation bug
+- ✅ Fixed LIVE CHATS sidebar highlighting
+- ✅ Reduced main widget complexity by ~200 lines
+
+---
+
 ## 📚 Documentation Guide
 
 ### 1. Core Concepts
 
 Start here if you're new to FrontDesk. These documents provide a high-level overview of the architecture and development practices.
 
-- **[FRONTDESK_ARCHITECTURE.md](00-core/FRONTDESK_ARCHITECTURE.md)**: The complete architecture, including system diagrams, state management patterns, and provider models.
+- **[FRONTDESK_ARCHITECTURE.md](00-core/FRONTDESK_ARCHITECTURE.md)**: The complete architecture, including system diagrams, state management patterns, routing system, and provider models.
 - **[DEVELOPER_GUIDE.md](00-core/DEVELOPER_GUIDE.md)**: A quick reference for common development tasks, code patterns, and debugging tips.
+
+#### 🆕 Routing System (January 2025)
+
+FrontDesk now features a **centralized, type-safe routing system** located in `src/widgets/frontdesk/routing/`:
+
+- **Type-Safe Navigation**: All routes are strongly typed with TypeScript discriminated unions
+- **URL Patterns**: Clean, predictable URL structure for all features
+- **Deep Linking**: First-class support for notification deep links
+- **Developer Experience**: Auto-completion and compile-time route validation
+
+**Quick Example:**
+```typescript
+import { useFrontDeskRouter, RouteBuilder } from '@/widgets/frontdesk/routing';
+
+function MyComponent() {
+  const { navigate } = useFrontDeskRouter();
+
+  // Navigate to email channel
+  navigate(RouteBuilder.email());
+
+  // Navigate to specific ticket
+  navigate(RouteBuilder.ticketDetail('TICKET-123'));
+}
+```
+
+See [FRONTDESK_ARCHITECTURE.md - Routing System](00-core/FRONTDESK_ARCHITECTURE.md#routing-system) for details.
 
 ### 2. Provider Guides
 
@@ -77,11 +126,12 @@ Guides for AI-assisted development, located in [04-ai-agents/](04-ai-agents/).
 
 ```
 docs/frontdesk/
-├── README.md
-├── FRONTDESK_KNOWLEDGE_BASE.md
+├── README.md                           # You are here - Documentation hub
+├── CHANGELOG.md                        # Version history and updates ⭐ NEW
+├── FRONTDESK_KNOWLEDGE_BASE.md        # Comprehensive knowledge base
 ├── 00-core/
-│   ├── FRONTDESK_ARCHITECTURE.md
-│   └── DEVELOPER_GUIDE.md
+│   ├── FRONTDESK_ARCHITECTURE.md      # Complete architecture (includes routing)
+│   └── DEVELOPER_GUIDE.md              # Quick reference (includes routing examples)
 ├── 01-providers/
 │   ├── direct-messages/
 │   │   ├── README.md

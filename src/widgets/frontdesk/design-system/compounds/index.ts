@@ -16,3 +16,4 @@ export * from './MessageCard';
 export * from './SystemEventMessage';
 export * from './MessageComposer';
 export * from './QuickActionMenu';
+export * from './StatCard';

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from "next/router";
 import { useRecoilValue, useRecoilState } from 'recoil';
+
 // Three-column layout components
 import { ThreeColumnLayout } from './layouts/three-column';
-import { NavigationSidebar, Channel, Section, TicketView } from './layouts/components/NavigationSidebar';
+import { NavigationSidebar, Channel, Section, TicketView as LegacyTicketView } from './layouts/components/NavigationSidebar';
 import { DynamicListPanel } from './layouts/components/DynamicListPanel';
 import { ContentArea } from './layouts/components/ContentArea';
 
@@ -25,11 +25,7 @@ import { unreadCountByProviderSelector, sidebarCollapsedAtom } from '@/store/fro
 // Ticket state
 import {
   selectedTicketViewAtom,
-  filteredTicketsSelector,
   selectedTicketIdAtom,
-  selectedTicketSelector,
-  ticketSearchQueryAtom,
-  ticketCountsSelector,
   openTicketTabsAtom,
   ticketsAtom,
   ticketsLoadingAtom,
@@ -43,79 +39,28 @@ import { useTicketsProvider } from './providers/tickets/hooks/use-tickets-provid
 // Direct messages state (for conversation navigation)
 import { dmActiveConversationIdState } from '@/store/direct-messages';
 
+// NEW: Centralized routing system
+import { useFrontDeskRouter, RouteType, TicketView } from './routing';
+
 const FrontdeskWidget: React.FC = () => {
-  const router = useRouter();
-  const { frontdeskRoute, provider, view, ticket, conversation } = router.query as {
-    frontdeskRoute?: string;
-    provider?: string;
-    view?: string;
-    ticket?: string;
-    conversation?: string;
-  };
+  // NEW: Use centralized routing system
+  const {
+    currentRoute,
+    currentSection,
+    currentChannel,
+    currentTicketView,
+    isInTicketMode,
+    isInitialized,
+    queryParams,
+    handleSectionChange,
+    handleChannelChange,
+    handleTicketViewChange,
+    goToTicket,
+  } = useFrontDeskRouter();
 
-
-  // Initialize state from route only on mount
-  const getInitialSection = (): Section => {
-    if (!frontdeskRoute || frontdeskRoute === 'inbox') return 'inbox';
-    if (frontdeskRoute === 'assigned') return 'assigned';
-    if (frontdeskRoute === 'admin') return 'admin';
-    if (frontdeskRoute === 'settings') return 'settings';
-    if (frontdeskRoute === 'tickets') return 'inbox'; // Tickets are shown in inbox section
-    return 'inbox';
-  };
-
-  const getInitialChannel = (): Channel => {
-    // Check for 'view' query parameter first (from notifications)
-    if (view === 'internal') return 'internal';
-    if (view === 'email') return 'email';
-    if (view === 'whatsapp') return 'whatsapp';
-
-    // If we're in tickets route, don't set a channel
-    if (frontdeskRoute === 'tickets') return 'all';
-    if (frontdeskRoute !== 'inbox' && !provider) return 'all';
-    if (provider === 'email') return 'email';
-    if (provider === 'whatsapp') return 'whatsapp';
-    if (provider === 'internal') return 'internal';
-    if (provider === 'unified') return 'all';
-    return 'all';
-  };
-
-  const getInitialTicketView = (): TicketView | null => {
-    // Check for 'view' query parameter first (from notifications)
-    if (view) {
-      const viewMap: Record<string, TicketView> = {
-        'my-tickets': 'my-tickets',
-        'unassigned': 'unassigned',
-        'all-tickets': 'all-tickets',
-        'done': 'done'
-      };
-      return viewMap[view] || null;
-    }
-
-    // If we're on a tickets route, parse the provider param as ticket view
-    if (frontdeskRoute === 'tickets' && provider) {
-      // Check if provider is a ticket ID (format: TICKET-XXXXX or starts with number)
-      if (provider.startsWith('TICKET-') || /^\d+$/.test(provider)) {
-        return null; // Will show ticket detail directly
-      }
-
-      const viewMap: Record<string, TicketView> = {
-        'my-tickets': 'my-tickets',
-        'unassigned': 'unassigned',
-        'all-tickets': 'all-tickets',
-        'done': 'done'
-      };
-      return viewMap[provider] || null;
-    }
-    return null;
-  };
-
-  // Use state for navigation - this prevents hard refreshes
-  const [currentSection, setCurrentSection] = useState<Section>(getInitialSection());
-  const [currentChannel, setCurrentChannel] = useState<Channel>(getInitialChannel());
+  // UI state
   const [searchValue, setSearchValue] = useState('');
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // UI state from Recoil (with automatic localStorage persistence)
   const [sidebarCollapsed, setSidebarCollapsed] = useRecoilState(sidebarCollapsedAtom);
@@ -135,110 +80,103 @@ const FrontdeskWidget: React.FC = () => {
 
   const channelBadges = useRecoilValue(unreadCountByProviderSelector);
 
-  // Load popular tags when tickets view is shown
+  // Load popular tags when in ticket mode
   useEffect(() => {
-    if (frontdeskRoute === 'tickets' && ticketsProvider.popularTags.length === 0) {
+    if (isInTicketMode && ticketsProvider.popularTags.length === 0) {
       ticketsProvider.fetchPopularTags({ limit: 10 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frontdeskRoute]);
+  }, [isInTicketMode]);
 
-  // Only sync with route on initial load
+  // Initialize ticket view and filters when route changes
   useEffect(() => {
-    if (!isInitialized) {
-      setCurrentSection(getInitialSection());
-      setCurrentChannel(getInitialChannel());
+    if (!isInitialized) return;
 
-      // Initialize ticket view from route if present
-      const initialTicketView = getInitialTicketView();
-      if (initialTicketView) {
-        setSelectedTicketView(initialTicketView);
+    if (currentTicketView) {
+      // Convert TicketView enum to legacy string
+      const legacyViewMap: Record<TicketView, LegacyTicketView> = {
+        [TicketView.MY_TICKETS]: 'my-tickets',
+        [TicketView.UNASSIGNED]: 'unassigned',
+        [TicketView.ALL_TICKETS]: 'all-tickets',
+        [TicketView.DONE]: 'done',
+        [TicketView.ARCHIVED]: 'archived'
+      };
 
-        // Apply filters for the initial view
-        const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
-          'my-tickets': { assigneeId: 'me', status: undefined },
-          'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
-          'all-tickets': { assigneeId: undefined, status: undefined },
-          'done': { assigneeId: undefined, status: 'RESOLVED' }
-        };
+      const legacyView = legacyViewMap[currentTicketView];
+      setSelectedTicketView(legacyView as any);
 
-        const newFilters = {
-          ...ticketsProvider.filters,
-          ...viewFilters[initialTicketView],
-          page: 1
-        };
+      // Apply filters for the view
+      const viewFilters: Record<LegacyTicketView, Partial<typeof ticketsProvider.filters>> = {
+        'my-tickets': { assigneeId: 'me', status: undefined },
+        'unassigned': { assigneeId: undefined, status: 'OPEN' },
+        'all-tickets': { assigneeId: undefined, status: undefined },
+        'done': { assigneeId: undefined, status: 'RESOLVED' },
+        'archived': { assigneeId: undefined, status: 'CLOSED' }
+      };
 
-        ticketsProvider.setFilters(newFilters);
-      }
+      const newFilters = {
+        ...ticketsProvider.filters,
+        ...viewFilters[legacyView],
+        page: 1
+      };
 
-      // Initialize ticket ID from query parameter (from notifications) OR path parameter
-      const ticketIdToOpen = ticket || (frontdeskRoute === 'tickets' && provider && (provider.startsWith('TICKET-') || /^\d+$/.test(provider)) ? provider : null);
-
-      if (ticketIdToOpen) {
-        setSelectedTicketId(ticketIdToOpen);
-
-        // If ticket view is not already set, set a default view
-        if (!initialTicketView) {
-          setSelectedTicketView('all-tickets');
-        }
-
-        // Add to open tabs
-        setOpenTicketTabs([ticketIdToOpen]);
-      }
-
-      // Initialize conversation ID from query parameter (from notifications)
-      if (conversation) {
-        setActiveConversationId(conversation);
-      }
-
-      setIsInitialized(true);
+      ticketsProvider.setFilters(newFilters);
     }
-  }, [frontdeskRoute, provider, view, ticket, conversation, isInitialized]);
+  }, [currentTicketView, isInitialized]);
 
-  // Navigation handlers - update state immediately, then update URL
-  const handleSectionChange = (section: Section) => {
-    // Update state immediately for instant UI response
-    setCurrentSection(section);
+  // Initialize ticket ID from route
+  useEffect(() => {
+    if (!isInitialized) return;
 
-    // Update URL without causing a re-render
-    const url = section === 'inbox'
-      ? '/frontdesk/inbox'
-      : `/frontdesk/${section}`;
+    if (currentRoute.type === RouteType.TICKET_DETAIL) {
+      const ticketId = currentRoute.ticketId;
+      setSelectedTicketId(ticketId);
 
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
-  };
+      // Add to open tabs if not already there
+      if (!openTicketTabs.includes(ticketId)) {
+        setOpenTicketTabs([...openTicketTabs, ticketId]);
+      }
 
-  const handleChannelChange = (channel: Channel) => {
-    // Update state immediately for instant UI response
-    setCurrentChannel(channel);
+      // Set default view if not set
+      if (!currentTicketView) {
+        setSelectedTicketView('all-tickets' as any);
+      }
+    }
+  }, [currentRoute, isInitialized]);
 
-    // Clear ticket view when switching to chat channels
-    setSelectedTicketView(null as any);
+  // Initialize conversation ID from query params (from notifications)
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    if (queryParams.conversation) {
+      setActiveConversationId(queryParams.conversation);
+    }
+  }, [queryParams.conversation, isInitialized]);
+
+  // Synchronize selectedTicketView with routing state
+  // This ensures navigation sidebar highlights correctly for LIVE CHATS items
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    // Clear ticket view when navigating to non-ticket routes
+    // Prevents stale ticket view from interfering with channel selection highlighting
+    if (!isInTicketMode && selectedTicketView !== null) {
+      setSelectedTicketView(null);
+    }
+  }, [isInTicketMode, isInitialized, selectedTicketView]);
+
+  // Ticket-specific handlers
+  const handleTicketViewChangeWithFetch = (view: LegacyTicketView) => {
+    // Clear ticket selection when changing view
     setSelectedTicketId(null);
 
-    // Update URL without causing a re-render
-    const channelMap = { 'all': 'unified', 'email': 'email', 'whatsapp': 'whatsapp', 'internal': 'internal' };
-    const url = `/frontdesk/inbox/${channelMap[channel]}`;
-
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
-  };
-
-  const handleTicketViewChange = (view: TicketView) => {
-    setSelectedTicketView(view);
-    setSelectedTicketId(null); // Clear ticket selection when changing view
-
-    // Also update section to inbox when selecting a ticket view
-    setCurrentSection('inbox');
-
-    // Fetch tickets with appropriate filters based on view
-    // Note: Backend supports assigneeId='me' as special keyword for current user
-    const viewFilters: Record<TicketView, Partial<typeof ticketsProvider.filters>> = {
+    // Fetch tickets with appropriate filters
+    const viewFilters: Record<LegacyTicketView, Partial<typeof ticketsProvider.filters>> = {
       'my-tickets': { assigneeId: 'me', status: undefined },
-      'unassigned': { assigneeId: undefined, status: 'OPEN' }, // Omit assigneeId filter - will need client-side filtering for null
+      'unassigned': { assigneeId: undefined, status: 'OPEN' },
       'all-tickets': { assigneeId: undefined, status: undefined },
-      'done': { assigneeId: undefined, status: 'RESOLVED' }
+      'done': { assigneeId: undefined, status: 'RESOLVED' },
+      'archived': { assigneeId: undefined, status: 'CLOSED' }
     };
 
     const newFilters = {
@@ -250,24 +188,20 @@ const FrontdeskWidget: React.FC = () => {
     ticketsProvider.setFilters(newFilters);
     ticketsProvider.fetchTickets(newFilters);
 
-    // Update URL to reflect ticket view
-    const viewMap = {
-      'my-tickets': 'my-tickets',
-      'unassigned': 'unassigned',
-      'all-tickets': 'all-tickets',
-      'done': 'done'
+    // Navigate using routing system (convert to TicketView enum)
+    const viewMap: Record<LegacyTicketView, TicketView> = {
+      'my-tickets': TicketView.MY_TICKETS,
+      'unassigned': TicketView.UNASSIGNED,
+      'all-tickets': TicketView.ALL_TICKETS,
+      'done': TicketView.DONE,
+      'archived': TicketView.ARCHIVED
     };
-    const url = `/frontdesk/tickets/${viewMap[view as keyof typeof viewMap]}`;
-
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
+    handleTicketViewChange(viewMap[view]);
   };
 
   const handleTicketSelect = (ticketId: string, openInNewTab?: boolean) => {
     if (openInNewTab) {
-      // Open ticket in new tab
-      const url = `/frontdesk/tickets/${ticketId}`;
-      window.open(url, '_blank');
+      goToTicket(ticketId, currentTicketView as any, { newTab: true });
     } else {
       setSelectedTicketId(ticketId);
 
@@ -276,16 +210,14 @@ const FrontdeskWidget: React.FC = () => {
         setOpenTicketTabs([...openTicketTabs, ticketId]);
       }
 
-      // Update URL to reflect selected ticket
-      const url = `/frontdesk/tickets/${ticketId}`;
-      window.history.pushState({}, '', url);
+      // Navigate using routing system
+      goToTicket(ticketId, currentTicketView as any);
     }
   };
 
   const handleTicketTabChange = (ticketId: string) => {
     setSelectedTicketId(ticketId);
-    const url = `/frontdesk/tickets/${ticketId}`;
-    window.history.pushState({}, '', url);
+    goToTicket(ticketId, currentTicketView as any);
   };
 
   const handleTicketTabClose = (ticketId: string) => {
@@ -298,14 +230,12 @@ const FrontdeskWidget: React.FC = () => {
         // Switch to the last remaining tab
         handleTicketTabChange(newTabs[newTabs.length - 1]);
       } else {
-        // No more tabs open, clear selection
+        // No more tabs open, clear selection and go back to list
         setSelectedTicketId(null);
-        const url = `/frontdesk/tickets/${selectedTicketView || 'all-tickets'}`;
-        window.history.pushState({}, '', url);
+        handleTicketViewChange(currentTicketView || ('all-tickets' as any));
       }
     }
   };
-
 
   const handleTicketClose = () => {
     setSelectedTicketId(null);
@@ -434,8 +364,17 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   // Helper to get ticket view title
-  const getTicketViewTitle = (view: TicketView): string => {
-    switch (view) {
+  const getTicketViewTitle = (view: TicketView | LegacyTicketView): string => {
+    // Handle both enum and string formats
+    const viewStr = typeof view === 'string' ? view : {
+      [TicketView.MY_TICKETS]: 'my-tickets',
+      [TicketView.UNASSIGNED]: 'unassigned',
+      [TicketView.ALL_TICKETS]: 'all-tickets',
+      [TicketView.DONE]: 'done',
+      [TicketView.ARCHIVED]: 'archived'
+    }[view];
+
+    switch (viewStr) {
       case 'my-tickets':
         return 'My Tickets';
       case 'unassigned':
@@ -444,13 +383,12 @@ const FrontdeskWidget: React.FC = () => {
         return 'All Tickets';
       case 'done':
         return 'Done';
+      case 'archived':
+        return 'Archived';
       default:
         return 'Tickets';
     }
   };
-
-  // Determine if we're in ticket view mode
-  const isTicketView = selectedTicketView !== null && selectedTicketView !== undefined;
 
   return (
     <ThreeColumnLayout
@@ -459,10 +397,20 @@ const FrontdeskWidget: React.FC = () => {
         <NavigationSidebar
           selectedChannel={currentChannel}
           selectedSection={currentSection}
-          selectedTicketView={selectedTicketView as TicketView | undefined}
+          selectedTicketView={selectedTicketView as LegacyTicketView | undefined}
           onChannelSelect={handleChannelChange}
           onSectionSelect={handleSectionChange}
-          onTicketViewSelect={handleTicketViewChange}
+          onTicketViewSelect={(view) => {
+            // Convert legacy string to enum
+            const viewMap: Record<LegacyTicketView, TicketView> = {
+              'my-tickets': TicketView.MY_TICKETS,
+              'unassigned': TicketView.UNASSIGNED,
+              'all-tickets': TicketView.ALL_TICKETS,
+              'done': TicketView.DONE,
+              'archived': TicketView.ARCHIVED
+            };
+            handleTicketViewChange(viewMap[view]);
+          }}
           channelBadges={channelBadges}
           ticketCounts={ticketsProvider.ticketCounts}
           isCollapsed={sidebarCollapsed}
@@ -470,15 +418,15 @@ const FrontdeskWidget: React.FC = () => {
         />
       }
       listContent={
-        isTicketView ? (
+        isInTicketMode ? (
           <TicketListPanel
-            viewTitle={getTicketViewTitle(selectedTicketView as TicketView)}
+            viewTitle={getTicketViewTitle(currentTicketView as TicketView)}
             tickets={ticketsProvider.filteredTickets}
             selectedTicketId={ticketsProvider.selectedTicketId}
             searchQuery={ticketsProvider.searchQuery}
             onSearchChange={ticketsProvider.setSearchQuery}
             onTicketSelect={handleTicketSelect}
-            onViewChange={(view) => handleTicketViewChange(view as TicketView)}
+            onViewChange={(view) => handleTicketViewChangeWithFetch(view as LegacyTicketView)}
             isLoading={ticketsLoading}
             error={ticketsError}
             filters={ticketsProvider.filters}
@@ -516,7 +464,7 @@ const FrontdeskWidget: React.FC = () => {
       }
       mainContent={
         <ContentArea>
-          {isTicketView ? (
+          {isInTicketMode ? (
             <>
               {/* Ticket Tabs Navigation */}
               {openTicketTabs.length > 0 && (
@@ -713,7 +661,7 @@ const FrontdeskWidget: React.FC = () => {
           )}
         </ContentArea>
       }
-      hideMiddleColumn={!isTicketView}
+      hideMiddleColumn={!isInTicketMode}
     />
   );
 };

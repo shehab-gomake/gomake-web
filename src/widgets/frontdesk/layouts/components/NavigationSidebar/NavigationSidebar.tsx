@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import EmailIcon from '@mui/icons-material/Email';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ChatIcon from '@mui/icons-material/Chat';
-import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import InboxIcon from '@mui/icons-material/Inbox';
@@ -16,10 +16,17 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArchiveIcon from '@mui/icons-material/Archive';
 
+/**
+ * Legacy type exports for backward compatibility
+ * These are kept for components that haven't migrated to the centralized routing system yet.
+ *
+ * For new code, use the types from @/widgets/frontdesk/routing instead.
+ */
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
 export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done';
+export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done' | 'archived';
 
 interface NavigationSidebarProps {
   selectedChannel: Channel;
@@ -39,6 +46,7 @@ interface NavigationSidebarProps {
     'unassigned'?: number;
     'all-tickets'?: number;
     'done'?: number;
+    'archived'?: number;
   };
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -133,7 +141,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatsExpanded, setChatsExpanded] = useState(true);
 
   const channelItems = [
-    { id: 'all' as Channel, icon: <AllInclusiveIcon />, label: 'All Channels' },
     { id: 'email' as Channel, icon: <EmailIcon />, label: 'Email' },
     { id: 'whatsapp' as Channel, icon: <WhatsAppIcon />, label: 'WhatsApp' },
     { id: 'internal' as Channel, icon: <ChatIcon />, label: 'Direct Messages' }
@@ -143,7 +150,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     { id: 'my-tickets' as TicketView, icon: <InboxIcon fontSize="small" />, label: 'My Tickets' },
     { id: 'unassigned' as TicketView, icon: <PersonOutlineIcon fontSize="small" />, label: 'Unassigned' },
     { id: 'all-tickets' as TicketView, icon: <ViewListIcon fontSize="small" />, label: 'All Tickets' },
-    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' }
+    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' },
+    { id: 'archived' as TicketView, icon: <ArchiveIcon fontSize="small" />, label: 'Archived' }
   ];
 
   const systemItems = [
@@ -158,7 +166,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         flexDirection: 'column',
         height: '100%',
         backgroundColor: theme.palette.background.paper,
-        paddingTop: '64px',
         width: isCollapsed ? 64 : 220,
         minWidth: isCollapsed ? 64 : 220,
         transition: 'width 0.3s ease-in-out'
@@ -191,6 +198,54 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           </Tooltip>
         </Box>
       )}
+
+      {/* Dashboard - Top Item */}
+      <Box sx={{ py: 1 }}>
+        <List disablePadding>
+          <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
+            <ListItemButton
+              selected={selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView}
+              onClick={() => {
+                onSectionSelect('inbox');
+                onChannelSelect('all');
+              }}
+              sx={{
+                py: 1,
+                px: isCollapsed ? 1.5 : 2,
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main + '10',
+                  borderLeft: `3px solid ${theme.palette.primary.main}`,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main + '20'
+                  }
+                }
+              }}
+            >
+              {isCollapsed ? (
+                <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                  <DashboardIcon />
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                  <Box sx={{ color: theme.palette.text.secondary }}>
+                    <DashboardIcon />
+                  </Box>
+                  <ListItemText
+                    primary="Dashboard"
+                    primaryTypographyProps={{
+                      variant: 'body2',
+                      sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView ? 600 : 400 }
+                    }}
+                  />
+                </Box>
+              )}
+            </ListItemButton>
+          </Tooltip>
+        </List>
+      </Box>
+
+      <Divider sx={{ my: 1 }} />
 
       {/* Ticket Views Section */}
       <Box sx={{ py: 1 }}>
@@ -407,15 +462,47 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           borderTop: `1px solid ${theme.palette.divider}`
         }}
       >
-        {systemItems.map(item => (
-          <NavItem
-            key={item.id}
-            icon={item.icon}
-            label={item.label}
-            isSelected={selectedSection === item.id}
-            onClick={() => onSectionSelect(item.id)}
-          />
-        ))}
+        <List disablePadding>
+          {systemItems.map(item => (
+            <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={selectedSection === item.id}
+                onClick={() => onSectionSelect(item.id)}
+                sx={{
+                  py: 1,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  '&.Mui-selected': {
+                    backgroundColor: theme.palette.primary.main + '10',
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main + '20'
+                    }
+                  }
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                    {item.icon}
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      {item.icon}
+                    </Box>
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontSize: '0.875rem', fontWeight: selectedSection === item.id ? 600 : 400 }
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+          ))}
+        </List>
       </Box>
     </Box>
   );

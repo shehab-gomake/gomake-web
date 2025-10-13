@@ -120,8 +120,8 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
         display: 'flex',
         alignItems: 'center',
         gap: 1.5,
-        px: 2,
-        py: 1.5,
+        px: 1.75,
+        py: 1.25,
         cursor: 'pointer',
         backgroundColor: isSelected
           ? colorTokens.primary[100]
@@ -146,16 +146,17 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       </Box>
 
       {/* Center: Title and Metadata */}
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
         {/* Title Row: Ticket number + Title + Unread indicator */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
             variant="caption"
             sx={{
-              fontSize: 11,
-              fontWeight: 600,
+              fontSize: 12,
+              fontWeight: 700,
               color: colorTokens.semantic.text.tertiary,
               flexShrink: 0,
+              letterSpacing: '0.01em',
             }}
           >
             {ticketNumber}
@@ -164,12 +165,13 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
             variant="body2"
             sx={{
               fontSize: 14,
-              fontWeight: isUnread ? 600 : 500,
+              fontWeight: 600, // Always semibold for consistency
               color: colorTokens.semantic.text.primary,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               flex: 1,
+              opacity: isUnread ? 1 : 0.9, // Subtle difference for read items
             }}
           >
             {title}
@@ -186,79 +188,68 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
         </Box>
 
         {/* Metadata Row: Time + SLA Breach + Participants + Tags */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
           <Typography
             variant="caption"
             sx={{
-              fontSize: 11,
+              fontSize: 12,
               color: colorTokens.semantic.text.secondary,
             }}
           >
             {updatedAt}
           </Typography>
 
-          {/* SLA Breach Indicator */}
+          {/* SLA Breach Indicator - Icon only for compact display */}
           {slaBreached && (
             <>
-              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
-              <Tooltip title="SLA breached - overdue" arrow>
-                <Box
+              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
+              <Tooltip title="SLA breached - ticket overdue" arrow placement="top">
+                <AccessTimeIcon
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.5,
+                    fontSize: 14,
                     color: '#EF4444', // Error red color for SLA breach
+                    cursor: 'help',
                   }}
-                >
-                  <AccessTimeIcon sx={{ fontSize: 12 }} />
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      color: 'inherit',
-                    }}
-                  >
-                    Overdue
-                  </Typography>
-                </Box>
+                />
               </Tooltip>
             </>
           )}
 
           {participants.length > 0 && (
             <>
-              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
+              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
               <AvatarGroup users={participants} size="xs" max={2} />
             </>
           )}
 
           {tags && tags.length > 0 && (
             <>
-              <Box sx={{ width: 2, height: 2, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
-              <TagList
-                tags={tags as any}
-                size="small"
-                variant="outlined"
-                maxDisplay={2}
-                onClickTag={onTagClick ? (tag) => {
-                  // Stop propagation to prevent ticket selection when clicking tag
-                  onTagClick(tag);
-                } : undefined}
-              />
+              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: colorTokens.semantic.text.tertiary }} />
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <TagList
+                  tags={tags as any}
+                  size="small"
+                  variant="outlined"
+                  maxDisplay={1}
+                  onClickTag={onTagClick ? (tag) => {
+                    // Stop propagation to prevent ticket selection when clicking tag
+                    onTagClick(tag);
+                  } : undefined}
+                />
+              </Box>
             </>
           )}
         </Box>
       </Box>
 
       {/* Right: Status Chip */}
-      <Box sx={{ flexShrink: 0 }}>
+      <Box sx={{ flexShrink: 0, ml: 'auto', pl: 1.5 }}>
         <Chip
           label={statusLabel || status} // Use friendly label if provided, else raw status
           color={getStatusColor(status)} // Use raw status for color determination
           variant="soft"
           size="small"
-          sx={{ fontSize: 11, fontWeight: 600 }}
+          sx={{ fontSize: 11, fontWeight: 600, minWidth: 75 }}
         />
       </Box>
     </Box>
