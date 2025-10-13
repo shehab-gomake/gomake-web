@@ -1,0 +1,305 @@
+/**
+ * WebSocket Event Types for Tickets System
+ * Source: /Users/omarsabbah/Desktop/Messaging-Hub/docs/developer/ticketing/frontend-ticketing/realtime-and-webhooks.md
+ *
+ * All 20 real-time events for ticketing system (16 core + 4 tag events).
+ * Events are broadcast to organization room: `org:${printHouseId}`
+ */
+
+import { TicketWithDetails, ChannelType, Tag, TicketChangeEntry } from './api.types';
+
+// ============================================
+// WebSocket Event Payloads (20 Events)
+// ============================================
+
+/**
+ * Event: ticket.created
+ * When: Ticket created manually or via service
+ */
+export interface TicketCreatedPayload {
+  ticket: TicketWithDetails;
+  conversationId?: string;
+  channel?: ChannelType;
+  customerIdentifier?: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.updated
+ * When: Any ticket field is updated via PATCH /tickets/:id
+ * This is the primary update event emitted by the new general-purpose endpoint
+ */
+export interface TicketUpdatedPayload {
+  ticketId: string;
+  ticket: TicketWithDetails;
+  userId: string;
+  printHouseId: string;
+  changes: TicketChangeEntry[];
+}
+
+/**
+ * Event: ticket.assigned
+ * When: Manager assigns a ticket
+ */
+export interface TicketAssignedPayload {
+  ticketId: string;
+  assigneeId: string;
+  managerId: string;
+  ticket: TicketWithDetails;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.status.changed
+ * When: Agent/manager changes status
+ */
+export interface TicketStatusChangedPayload {
+  ticketId: string;
+  userId: string;
+  oldStatus: string;
+  newStatus: string;
+  ticket: TicketWithDetails;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.reply.sent
+ * When: Outbound reply queued
+ */
+export interface TicketReplySentPayload {
+  ticketId: string;
+  userId: string;
+  content: string;
+  isFirstResponse: boolean;
+  messageId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.reopened
+ * When: Manual or auto reopen
+ */
+export interface TicketReopenedPayload {
+  ticketId: string;
+  userId: string;
+  isAutoReopen: boolean;
+  ticket: TicketWithDetails;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.merged
+ * When: Tickets merged
+ */
+export interface TicketMergedPayload {
+  sourceTicketId: string;
+  targetTicketId: string;
+  userId: string;
+  sourceTicketNumber: number;
+  targetTicketNumber: number;
+  printHouseId: string;
+}
+
+/**
+ * Event: tickets.bulkAssigned
+ * When: Manager reassigns multiple tickets
+ */
+export interface TicketsBulkAssignedPayload {
+  ticketIds: string[];
+  assigneeId: string;
+  managerId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.message.received
+ * When: Webhook ingested inbound message
+ */
+export interface TicketMessageReceivedPayload {
+  ticketId: string;
+  messageId: string;
+  channel: ChannelType;
+  identifier: string; // email or phone
+  content?: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.customer.updated
+ * When: GoMake lookup succeeded after ticket creation
+ */
+export interface TicketCustomerUpdatedPayload {
+  ticketId: string;
+  customerId?: string | null;
+  customerEmail?: string | null;
+  customerPhone?: string | null;
+  customerName?: string | null;
+  printHouseId: string;
+}
+
+/**
+ * Event: sla.breached
+ * When: First-response or resolution SLA exceeded
+ */
+export interface SLABreachedPayload {
+  ticketId: string;
+  type: 'first_response' | 'resolution';
+  breachedAt: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.autoResponse
+ * When: Auto-response sent to customer
+ */
+export interface TicketAutoResponsePayload {
+  ticketId: string;
+  content: string;
+  messageId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: webhook.message.processed
+ * When: Each webhook completes
+ */
+export interface WebhookMessageProcessedPayload {
+  webhookType: 'email' | 'whatsapp' | 'sms';
+  status: 'success' | 'no_ticket' | 'error';
+  action: string;
+  ticketId?: string;
+  identifier: string; // email or phone
+  printHouseId: string;
+  error?: string;
+}
+
+/**
+ * Event: message.delivered 
+ * When: Outbound message sent successfully or failed
+ */
+export interface MessageDeliveredPayload {
+  messageId: string;
+  ticketId?: string;
+  channel: ChannelType;
+  status: 'SENT' | 'FAILED';
+  printHouseId: string;
+  providerMessageId?: string;
+  error?: string;
+}
+
+/**
+ * Event: message.delivery.failed
+ * When: Message send failed after all retries
+ */
+export interface MessageDeliveryFailedPayload {
+  messageId: string;
+  ticketId?: string;
+  error: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.tags.added
+ * When: Tags added to a ticket
+ */
+export interface TicketTagsAddedPayload {
+  ticketId: string;
+  tagIds: string[];
+  userId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: ticket.tag.removed
+ * When: Tag removed from a ticket
+ */
+export interface TicketTagRemovedPayload {
+  ticketId: string;
+  tagId: string;
+  userId: string;
+  printHouseId: string;
+}
+
+/**
+ * Event: tag.created
+ * When: New tag created
+ */
+export interface TagCreatedPayload {
+  tag: Tag;
+  printHouseId: string;
+  userId: string;
+}
+
+/**
+ * Event: tag.deleted
+ * When: Tag deleted
+ */
+export interface TagDeletedPayload {
+  tagId: string;
+  printHouseId: string;
+}
+
+// ============================================
+// Event Handler Types
+// ============================================
+
+export type TicketCreatedHandler = (payload: TicketCreatedPayload) => void;
+export type TicketUpdatedHandler = (payload: TicketUpdatedPayload) => void;
+export type TicketAssignedHandler = (payload: TicketAssignedPayload) => void;
+export type TicketStatusChangedHandler = (payload: TicketStatusChangedPayload) => void;
+export type TicketReplySentHandler = (payload: TicketReplySentPayload) => void;
+export type TicketReopenedHandler = (payload: TicketReopenedPayload) => void;
+export type TicketMergedHandler = (payload: TicketMergedPayload) => void;
+export type TicketsBulkAssignedHandler = (payload: TicketsBulkAssignedPayload) => void;
+export type TicketMessageReceivedHandler = (payload: TicketMessageReceivedPayload) => void;
+export type TicketCustomerUpdatedHandler = (payload: TicketCustomerUpdatedPayload) => void;
+export type SLABreachedHandler = (payload: SLABreachedPayload) => void;
+export type TicketAutoResponseHandler = (payload: TicketAutoResponsePayload) => void;
+export type WebhookMessageProcessedHandler = (payload: WebhookMessageProcessedPayload) => void;
+export type MessageDeliveredHandler = (payload: MessageDeliveredPayload) => void;
+export type MessageDeliveryFailedHandler = (payload: MessageDeliveryFailedPayload) => void;
+export type TicketTagsAddedHandler = (payload: TicketTagsAddedPayload) => void;
+export type TicketTagRemovedHandler = (payload: TicketTagRemovedPayload) => void;
+export type TagCreatedHandler = (payload: TagCreatedPayload) => void;
+export type TagDeletedHandler = (payload: TagDeletedPayload) => void;
+
+// ============================================
+// Event Names (constants for type safety)
+// ============================================
+
+/**
+ * Event: conversation.needs.review
+ * When: Message received but no ticket exists
+ * NOTE: ConversationNeedsReviewPayload is exported from api.types.ts
+ */
+import type { ConversationNeedsReviewPayload } from './api.types';
+
+export type ConversationNeedsReviewHandler = (payload: ConversationNeedsReviewPayload) => void;
+
+export const TICKET_EVENTS = {
+  CREATED: 'ticket.created',
+  UPDATED: 'ticket.updated', // New general-purpose update event
+  ASSIGNED: 'ticket.assigned',
+  STATUS_CHANGED: 'ticket.status.changed',
+  REPLY_SENT: 'ticket.reply.sent',
+  REOPENED: 'ticket.reopened',
+  MERGED: 'ticket.merged',
+  BULK_ASSIGNED: 'tickets.bulkAssigned',
+  MESSAGE_RECEIVED: 'ticket.message.received',
+  CUSTOMER_UPDATED: 'ticket.customer.updated',
+  SLA_BREACHED: 'sla.breached',
+  AUTO_RESPONSE: 'ticket.autoResponse',
+  WEBHOOK_PROCESSED: 'webhook.message.processed',
+  // Message Delivery Events
+  MESSAGE_DELIVERED: 'message.delivered',
+  MESSAGE_DELIVERY_FAILED: 'message.delivery.failed',
+  // Review Queue Event
+  CONVERSATION_NEEDS_REVIEW: 'conversation.needs.review',
+  // Tag Events
+  TAGS_ADDED: 'ticket.tags.added',
+  TAG_REMOVED: 'ticket.tag.removed',
+  TAG_CREATED: 'tag.created',
+  TAG_DELETED: 'tag.deleted',
+} as const;
+
+export type TicketEventName = typeof TICKET_EVENTS[keyof typeof TICKET_EVENTS];
