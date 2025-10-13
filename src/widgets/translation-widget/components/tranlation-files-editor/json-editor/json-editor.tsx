@@ -1,15 +1,22 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 
 import { Stack, IStackStyles } from "@fluentui/react";
-import Editor, { useMonaco, BeforeMount, OnMount, OnValidate } from "@monaco-editor/react";
 import dirtyJson from "dirty-json";
-import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
+import type * as Monaco from "monaco-editor";
+
+// Dynamically import Monaco Editor components to avoid SSR issues
+const MonacoEditor = dynamic(
+  () => import("@monaco-editor/react").then((mod) => ({ default: mod.default })),
+  { ssr: false }
+);
 
 import { ErrorMessageBar } from "./components/error-message-bar";
 import { TitleBar } from "./components/title-bar";
 import { ToolBar } from "./components/tool-bar";
 import {downloadJsonFile,parseJsonSchemaString,prettifyJsonString,minifyJsonString} from "@/widgets/translation-widget/components/tranlation-files-editor/json-editor/utils";
+import { BeforeMount, OnMount, OnValidate } from "@monaco-editor/react";
 
 
 const stackStyles: IStackStyles = {
@@ -44,7 +51,7 @@ export const JSONEditor = ({
                                onChange,
                                onUploadClick
                            }: JSONEditorProps) => {
-    const monaco = useMonaco();
+    const [monaco, setMonaco] = useState<any>(null);
     const [errors, setErrors] = useState<string[]>([]);
     //const [isAutoPrettifyOn, toggleAutoPrettifyOn] = useToggle(false);
     const isAutoPrettifyOn = false;
@@ -209,7 +216,7 @@ export const JSONEditor = ({
                         height: `calc(100% - 20vh)`,
                     }}
                 >
-                    <Editor
+                    <MonacoEditor
                         language="json"
                         path={path}
                         options={{
@@ -220,7 +227,10 @@ export const JSONEditor = ({
                             formatOnType: true,
                             scrollBeyondLastLine: false,
                         }}
-                        onMount={handleEditorDidMount}
+                        onMount={(editor, monacoInstance) => {
+                            setMonaco(monacoInstance);
+                            handleEditorDidMount(editor, monacoInstance);
+                        }}
                         onChange={handleEditorChange}
                         beforeMount={handleEditorWillMount}
                         onValidate={handleEditorValidation}
