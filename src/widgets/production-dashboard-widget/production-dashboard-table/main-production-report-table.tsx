@@ -98,12 +98,22 @@ const MainProductionReportTable = () => {
           {department.summary.totalReportedJobs}
         </span>,
         <Box>
-          {department.summary.averageGrowth !== null && (
+          {department.summary.averageCapacity !== null && (
             <span style={{ fontWeight: "bold" }}>
-              {formatPercentage(department.summary.averageGrowth)}
+              {formatPercentage(department.summary.averageCapacity)}
             </span>
           )}
-          {department.summary.averageGrowth === null && (
+          {department.summary.averageCapacity === null && (
+            <span style={{ fontWeight: "bold" }}>-</span>
+          )}
+        </Box>,
+        <Box>
+          {department.summary.averageCapacityGrowth !== null && (
+            <span style={{ fontWeight: "bold" }}>
+              {formatPercentage(department.summary.averageCapacityGrowth)}
+            </span>
+          )}
+          {department.summary.averageCapacityGrowth === null && (
             <span style={{ fontWeight: "bold" }}>-</span>
           )}
         </Box>,
@@ -158,13 +168,8 @@ const MainProductionReportTable = () => {
                 )
               </Typography>
             </Box>,
-            <Box>
-              {formatPercentage(station.capacity.capacity)}
-              <br />
-              <Typography variant="caption" color="textSecondary">
-                ({formatPercentage(station.capacity.growth)})
-              </Typography>
-            </Box>,
+            formatPercentage(station.capacity.capacity),
+            formatPercentage(station.capacity.growth),
             <Box>
               {formatPercentage(station.performance.productivity)}
               <br />
@@ -237,7 +242,15 @@ const MainProductionReportTable = () => {
         {t("productionReport.capacity")}
       </Typography>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.percentageGrowth")}
+        {"%"}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.growth")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {"%"}
       </Typography>
     </Box>,
     <Box>

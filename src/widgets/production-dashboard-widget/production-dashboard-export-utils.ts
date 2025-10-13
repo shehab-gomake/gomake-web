@@ -25,7 +25,6 @@ const formatTime = (time: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
-//!here
 export const exportProductionDashboardToExcel = (
   departments: DepartmentPerformanceDTO[],
   t: (key: string) => string
@@ -48,13 +47,11 @@ export const exportProductionDashboardToExcel = (
     t("productionReport.reported") + " (Jobs)",
     t("productionReport.reported") + " (%)",
     t("productionReport.capacity") + " (%)",
-    t("productionReport.capacity") + " (Growth %)",
+    t("productionReport.growth") + " (%)",
     t("productionReport.performance") + " (%)",
     t("productionReport.performance") + " (Growth %)",
     t("productionReport.jobAnalytics") + " (Cost)",
     t("productionReport.jobAnalytics") + " (Price)",
-    t("productionReport.sla") + " (%)",
-    t("productionReport.sla") + " (Growth %)",
     t("productionReport.totalEstimatedWorkingHours"),
     t("productionReport.avgTime"),
   ]);
@@ -75,9 +72,11 @@ export const exportProductionDashboardToExcel = (
       formatTime(department.summary.totalReportedHours),
       department.summary.totalReportedJobs,
       "-",
-      "-",
-      department.summary.averageGrowth !== null
-        ? department.summary.averageGrowth.toFixed(2)
+      department.summary.averageCapacity !== null
+        ? department.summary.averageCapacity.toFixed(2)
+        : "-",
+      department.summary.averageCapacityGrowth !== null
+        ? department.summary.averageCapacityGrowth.toFixed(2)
         : "-",
       department.summary.averagePerformance !== null
         ? department.summary.averagePerformance.toFixed(2)
@@ -85,8 +84,6 @@ export const exportProductionDashboardToExcel = (
       "-",
       department.summary.jobsTotalEstimatedCost.toFixed(2),
       department.summary.jobsEstimatedPrice.toFixed(2),
-      department.summary.averageSLA.toFixed(2),
-      "-",
       formatTime(department.summary.totalEstimatedWorkingHours),
       formatTime(department.summary.totalWorkingHours),
     ]);
@@ -118,8 +115,6 @@ export const exportProductionDashboardToExcel = (
         station.performance.growth.toFixed(2),
         station.jobAnalytics.jobsTotalEstimatedCost.toFixed(2),
         station.jobAnalytics.jobsEstimatedPrice.toFixed(2),
-        station.sla?.sla.toFixed(2) || "0",
-        station.sla?.growth.toFixed(2) || "0",
         formatTime(station.totalEstimatedWorkingHours),
         formatTime(station.averageProductionTime),
       ]);
@@ -145,13 +140,12 @@ export const exportProductionDashboardToExcel = (
     { wch: 12 }, // Reported Jobs
     { wch: 12 }, // Reported %
     { wch: 12 }, // Capacity %
-    { wch: 15 }, // Capacity Growth
+    { wch: 15 }, // Capacity Growth %
     { wch: 12 }, // Performance %
-    { wch: 15 }, // Performance Growth
+    { wch: 15 }, // Performance Growth %
     { wch: 15 }, // Job Analytics Cost
     { wch: 15 }, // Job Analytics Price
-    { wch: 12 }, // SLA %
-    { wch: 15 }, // SLA Growth
+    { wch: 20 }, // Total Estimated Working Hours
     { wch: 15 }, // Avg Time
   ];
 

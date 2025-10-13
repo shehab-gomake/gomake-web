@@ -21,7 +21,7 @@ export interface StationPerformanceDTO {
   capacity: CapacityMetricsDTO;
   performance: PerformanceMetricsDTO;
   jobAnalytics: JobAnalytics;
-  sla: DDP;
+  sla?: DDP;
   averageProductionTime: number;
   totalEstimatedWorkingHours: number;
 }
@@ -58,8 +58,9 @@ export interface DepartmentSummaryDTO {
   totalEstimatedHours: number;
   totalWorkingHours: number;
   totalEstimatedWorkingHours: number;
-  averageSLA: number;
-  averageGrowth: number | null;
+  averageSLA?: number;
+  averageCapacity: number | null;
+  averageCapacityGrowth: number | null;
   jobsTotalEstimatedCost: number;
   jobsEstimatedPrice: number;
   totalDoneJobs: number;
