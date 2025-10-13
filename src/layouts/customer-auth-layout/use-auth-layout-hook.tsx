@@ -63,6 +63,7 @@ const useAuthLayoutHook = (
         key: "goAI",
         title: "Go-AI",
         path: "/gomake-ai",
+        Permission: Permissions.SHOW_GOMAKE_AI,
         isList: false,
         icon: () => {
           return <AIIcon />;

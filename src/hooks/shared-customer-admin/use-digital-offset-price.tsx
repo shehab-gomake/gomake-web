@@ -8038,7 +8038,7 @@ const useDigitalOffsetPrice = ({
     const callBack = async (res) => {
       if (res?.success) {
         // Create order folders if this is an order creation and preference is enabled
-        const documentId = router?.query?.documentId.toString();
+        const documentId = router?.query?.documentId?.toString();
         if (
           Number(docType) === DOCUMENT_TYPE.order &&
           duplicateType !== "1" &&
@@ -8077,7 +8077,7 @@ const useDigitalOffsetPrice = ({
       const callBack = async (res) => {
         if (res?.success) {
           const isCreation = res?.data;
-          const documentId = router?.query?.documentId.toString();
+          const documentId = router?.query?.documentId?.toString();
           // Create order folders if this is an order creation and preference is enabled
           if (
             Number(router.query.documentType) === DOCUMENT_TYPE.order &&
