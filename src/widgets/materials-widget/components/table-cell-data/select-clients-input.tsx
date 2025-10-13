@@ -1,14 +1,10 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { useCustomerDropDownList, useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { ModalType } from "@/enums";
-import { useDebouncedCallback } from "use-debounce";
-import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
     parameterKey: string;
@@ -37,50 +33,7 @@ const SelectClientsInput = ({
     listClient,
     checkWhatRenderArrayCustomer
 }: IProps) => {
-    console.log("listClient", listClient);
     const { updateCellData } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
-    const { callApi } = useGomakeAxios();
-
-    // const [listClient, setListClient] = useState([]);
-    // const [isFetchingCustomer, setIsFetchingCustomer] = useState(false);
-    // const debouncedGetAllClients = useDebouncedCallback((value: string) => {
-    //     getAllClients(value);
-    // }, 1200);
-
-    // const getAllClients = useCallback(
-    //     async (SearchTerm?: string) => {
-    //         if (SearchTerm) {
-    //             setIsFetchingCustomer(true);
-    //         }
-    //         await getAndSetAllCustomers(callApi, setListClient, {
-    //             clientType: CLIENT_TYPE.CUSTOMER,
-    //             searchTerm: SearchTerm as string,
-    //         });
-    //         setIsFetchingCustomer(false);
-    //     },
-    //     []
-    // );
-
-
-    // const checkWhatRenderArrayCustomer = (e: any) => {
-    //     const value = e.target.value.trim();
-    //     if (value === "") {
-    //         debouncedGetAllClients.cancel();
-    //         getRecentClients();
-    //     } else {
-    //         debouncedGetAllClients(value);
-    //     }
-    // };
-
-    // const getRecentClients = useCallback(async () => {
-    //     await getAndSetRecentCustomers(callApi, setListClient, {
-    //         ClientType: CLIENT_TYPE.CUSTOMER,
-    //     });
-    // }, []);
-
-    // useEffect(() => {
-    //     getRecentClients();
-    // }, []);
 
     const { t } = useTranslation();
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
@@ -160,10 +113,9 @@ const SelectClientsInput = ({
                 value={currentClientId ? clientsOptions.find((x) => x.value === currentClientId)?.label : undefined}
                 style={{
                     border: 0,
-                    width: 180,
+                    minWidth: 180,
                 }}
                 options={clientsOptions}
-                // getOptionLabel={(option: any) => option?.label || ""}
                 isOptionEqualToValue={(option: any, value: any) => String(option?.value) === String(value?.value)}
             />
             <GoMakeDeleteModal

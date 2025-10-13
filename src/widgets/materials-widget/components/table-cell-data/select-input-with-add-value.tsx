@@ -120,7 +120,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
         defaultValue={value ? baseOptions.find((x) => x.id == value) || { id: value, label: value } : null}
         style={{
           border: 0,
-          width: 150,
+          minWidth: 180,
         }}
         options={options}
         getOptionLabel={(option: any) => option?.label || ""}
