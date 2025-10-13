@@ -166,7 +166,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         flexDirection: 'column',
         height: '100%',
         backgroundColor: theme.palette.background.paper,
-        paddingTop: '64px',
         width: isCollapsed ? 64 : 220,
         minWidth: isCollapsed ? 64 : 220,
         transition: 'width 0.3s ease-in-out'
@@ -463,15 +462,47 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           borderTop: `1px solid ${theme.palette.divider}`
         }}
       >
-        {systemItems.map(item => (
-          <NavItem
-            key={item.id}
-            icon={item.icon}
-            label={item.label}
-            isSelected={selectedSection === item.id}
-            onClick={() => onSectionSelect(item.id)}
-          />
-        ))}
+        <List disablePadding>
+          {systemItems.map(item => (
+            <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={selectedSection === item.id}
+                onClick={() => onSectionSelect(item.id)}
+                sx={{
+                  py: 1,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  '&.Mui-selected': {
+                    backgroundColor: theme.palette.primary.main + '10',
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main + '20'
+                    }
+                  }
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                    {item.icon}
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      {item.icon}
+                    </Box>
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontSize: '0.875rem', fontWeight: selectedSection === item.id ? 600 : 400 }
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+          ))}
+        </List>
       </Box>
     </Box>
   );
