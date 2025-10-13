@@ -127,9 +127,6 @@ const MainProductionReportTable = () => {
           </Typography>
         </Box>,
         <span style={{ fontWeight: "bold" }}>
-          {formatPercentage(department.summary.averageSLA)}
-        </span>,
-        <span style={{ fontWeight: "bold" }}>
           {formatTime(department.summary.totalWorkingHours)}
         </span>,
       ]);
@@ -179,13 +176,6 @@ const MainProductionReportTable = () => {
                 {formatCurrency(station.jobAnalytics.jobsEstimatedPrice)}
               </Typography>
             </Box>,
-            <Box>
-              {formatPercentage(station.sla?.sla)}
-              <br />
-              <Typography variant="caption" color="textSecondary">
-                ({formatPercentage(station.sla?.growth)})
-              </Typography>
-            </Box>,
             formatTime(station.averageProductionTime),
           ]);
         });
@@ -198,16 +188,78 @@ const MainProductionReportTable = () => {
   const tableData = generateTableData();
 
   const tableHeaders = [
-    t("productionReport.stationDetails"),
-    t("productionReport.totalEstimated"),
-    t("productionReport.done"),
-    t("productionReport.inProcess"),
-    t("productionReport.reported"),
-    t("productionReport.capacity"),
-    t("productionReport.performance"),
-    t("productionReport.jobAnalytics"),
-    t("productionReport.sla"),
-    t("productionReport.avgTime"),
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.stationDetails")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.departmentStation")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.totalEstimated")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.done")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.inProcess")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.reported")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobsPercentage")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.capacity")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.percentageGrowth")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.performance")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.productivityGrowth")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.jobAnalytics")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.costPrice")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.totalWorkingHours")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.hoursPerDay")}
+      </Typography>
+    </Box>,
   ];
 
   // Export to Excel handler
