@@ -275,7 +275,7 @@ const useMaterials = (isAdmin: boolean) => {
       return <div>
         {t("materials.childTable.priceUnitPerTon")}
         <br />
-        {key !== "price" && t(`measurementUnits.${convertedUnit}`)}
+        {key !== "price" && originalValue}
       </div>;
     }
 

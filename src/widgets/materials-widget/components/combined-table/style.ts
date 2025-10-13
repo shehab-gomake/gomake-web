@@ -133,17 +133,17 @@ const useStyle = () => {
       scrollIndicatorButton: {
         position: 'absolute',
         top: '50%',
-        [isRTL ? 'left' : 'right']: `${4 * (123)}px`, // Position at the start of fixed columns (4 columns)
+        [isRTL ? 'left' : 'right']: `${4 * (122)}px`, // Position at the start of fixed columns (4 columns)
         transform: 'translateY(-50%)',
-        backgroundColor: primaryColor(300),
+        backgroundColor: primaryColor(200),
         color: '#fff',
         width: '32px',
         height: '32px',
-        boxShadow: `0 4px 12px ${primaryColor(300)}`,
+        boxShadow: `0 4px 12px ${primaryColor(200)}`,
         zIndex: 1000,
         '&:hover': {
-          backgroundColor: primaryColor(300),
-          boxShadow: `0 6px 16px ${primaryColor(400)}`,
+          backgroundColor: primaryColor(200),
+          boxShadow: `0 6px 16px ${primaryColor(200)}`,
         },
         '&:active': {
           transform: 'translateY(-50%) scale(0.95)',
