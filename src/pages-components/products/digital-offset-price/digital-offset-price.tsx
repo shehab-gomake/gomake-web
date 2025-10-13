@@ -36,7 +36,19 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
 
-const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
+const PriceListPageWidget = ({
+  widgetType,
+  isMobileScreen = false,
+  productId,
+  sessionId,
+  interactionId
+}: {
+  widgetType: any;
+  isMobileScreen?: boolean;
+  productId?: string;
+  sessionId?: string;
+  interactionId? :string;
+}) => {
   const { clasess } = useStyle({ isMobileScreen });
   const {
     t,
@@ -112,7 +124,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
-  } = useDigitalOffsetPrice({ clasess, widgetType });
+  } = useDigitalOffsetPrice({ clasess, widgetType, productId, sessionId,interactionId });
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
@@ -277,11 +289,10 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
       position: "top",
     },
   ];
-  const { } = useGoMakeTour(productSteps, [relatedParameters]);
+  const {} = useGoMakeTour(productSteps, [relatedParameters]);
   const func = () => {
     getSelectedWorkFlow(currentSignalRConnectionId).then();
   };
-
 
   return (
     <div>
@@ -337,14 +348,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 style={
                   !isMobileScreen
                     ? {
-                      height: "calc(100vh - 300px)",
-                      overflow: "scroll",
-                      width: "calc(100% - 330px)",
-                    }
+                        height: "calc(100vh - 300px)",
+                        overflow: "scroll",
+                        width: "calc(100% - 330px)",
+                      }
                     : {
-                      height: "calc(100vh - 260px)",
-                      overflow: "scroll",
-                    }
+                        height: "calc(100vh - 260px)",
+                        overflow: "auto",
+                      }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -449,13 +460,21 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 errorMsg={errorMsg}
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
-                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
+                showCalculationInCompletedAlert={
+                  showCalculationInCompletedAlert
+                }
                 setCanCalculation={setCanCalculation}
               />
             )}
           </div>
           {/* buttons section */}
-          <div style={clasess.buttonsContainer}>
+          <div
+            style={
+              productId && isMobileScreen
+                ? clasess.aiButtonsContainer
+                : clasess.buttonsContainer
+            }
+          >
             {isMobileScreen ? (
               <div
                 style={{
@@ -500,7 +519,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   </SecondaryButton>
                 )}
 
-                {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])].length - 1 !== activeIndex && (
+                {[
+                  ...visibleSections,
+                  ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
+                    ? [PricingTab]
+                    : []),
+                ].length -
+                  1 !==
+                  activeIndex && (
                   <div data-tour="next-button">
                     <SecondaryButton
                       variant="contained"
@@ -522,7 +548,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                       {t("products.offsetPrice.admin.previousBtn")}
                     </GomakePrimaryButton>
                   )}
-                  {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])].length - 1 !== activeIndex && (
+                  {[
+                    ...visibleSections,
+                    ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
+                      ? [PricingTab]
+                      : []),
+                  ].length -
+                    1 !==
+                    activeIndex && (
                     <div data-tour="next-button">
                       <GomakePrimaryButton
                         style={clasess.nextBtnStyle}
@@ -553,17 +586,17 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={() => {
-
                       if (isButtonDisabledState) {
                         alertFault("alerts.outOfAllowed");
                         return;
                       }
 
-
                       if (
                         DOCUMENT_TYPE.order ===
-                        Number(router.query.documentType) &&
-                        isFlowChanged && missionsListForEdit && missionsListForEdit.length > 0
+                          Number(router.query.documentType) &&
+                        isFlowChanged &&
+                        missionsListForEdit &&
+                        missionsListForEdit.length > 0
                       ) {
                         onClickOpenCurrentStationModal();
                       } else {
@@ -583,7 +616,10 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={isLoadingPrice || widgetType === EWidgetProductType.CALCULATION_ERROR}
+                    disabled={
+                      isLoadingPrice ||
+                      widgetType === EWidgetProductType.CALCULATION_ERROR
+                    }
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>

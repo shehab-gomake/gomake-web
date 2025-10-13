@@ -17,7 +17,7 @@ import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
 import { languageOptionsState, languagesState } from "@/store/languages";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupsApi } from "@/services/api-service/suppliers/suppliers-endpoints";
@@ -269,7 +269,8 @@ const useCustomerCard = ({
       filteredContacts,
       filteredAddresses,
       filteredUsers,
-      CheckPreferenceValue
+      CheckPreferenceValue,
+      typeClient === CLIENT_TYPE.SUPPLIER
     );
 
     if (isValid) {
@@ -326,7 +327,8 @@ const useCustomerCard = ({
       filteredContacts,
       filteredAddresses,
       filteredUsers,
-      CheckPreferenceValue
+      CheckPreferenceValue,
+      typeClient === CLIENT_TYPE.SUPPLIER
     );
 
     if (isValid) {

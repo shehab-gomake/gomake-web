@@ -33,15 +33,22 @@ const TranslationTable = () => {
   }, [debouncedSearchTerm, currentPage]);
 
   return (
-    <div>
-      <SearchInputComponent onChange={(e) => setSearchTerm(e)} />
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <SearchInputComponent
+        searchInputStyle={{
+          height: 40,
+          width: "30%",
+          minWidth: 300,
+        }}
+        onChange={(e) => setSearchTerm(e)}
+      />
       <PrimaryTable
         stickyFirstCol={false}
         stickyHeader={false}
         rows={translationsTableRows}
         headers={translationsTableHeaders}
-      ></PrimaryTable>
-      <div style={{ marginBottom: "5px" }}>
+      />
+      <div style={{ marginBottom: "8px" }}>
         <Pagination
           count={totalPages}
           variant="outlined"
