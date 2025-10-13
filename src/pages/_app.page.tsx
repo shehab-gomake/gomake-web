@@ -68,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <GoMakeSnackBar />
                   <GomakeLoading />
                   <GomakeLoadingWithShadow />
-                  {shouldShowChatWidget && <GoSupportChatWidget />}
+                  {/*shouldShowChatWidget && <GoSupportChatWidget />*/}
                 </LocalizationProvider>
               </EnhancedErrorBoundary>
             </UpdatePathWrapper>
