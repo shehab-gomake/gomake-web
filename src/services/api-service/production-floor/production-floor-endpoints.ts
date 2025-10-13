@@ -499,14 +499,18 @@ const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data) => {
 const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (
   callApi,
   callBack,
-  orderItemId: string,
+  data: any,
   lock = false,
   abortController: AbortController
 ) => {
+  let url = GET_UPLOADED_FILES_URL + data.orderItemId;
+  if(data.productType) {
+    url += `?productType=${data.productType}`;
+  }
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
-    GET_UPLOADED_FILES_URL + orderItemId,
+    EHttpMethod.GET, 
+    url,
     callBack,
     {},
     lock,

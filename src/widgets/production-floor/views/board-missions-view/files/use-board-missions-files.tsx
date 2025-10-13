@@ -31,6 +31,7 @@ const useBoardMissionsFiles = () => {
         setFiles(res.data);
       }
     };
+    
     await getAllBoardMissionsUploadedFiles(
       callApi,
       callBack,
