@@ -17,6 +17,12 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
+/**
+ * Legacy type exports for backward compatibility
+ * These are kept for components that haven't migrated to the centralized routing system yet.
+ *
+ * For new code, use the types from @/widgets/frontdesk/routing instead.
+ */
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
 export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
 export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done';
