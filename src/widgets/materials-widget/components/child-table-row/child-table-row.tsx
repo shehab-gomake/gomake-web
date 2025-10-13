@@ -345,20 +345,20 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {convertedPricingUnit && convertedPricingUnit.key !== "price" && convertedPricingUnit.value}
+                                        {convertedPricingUnit && convertedPricingUnit.value}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.saleCost")}
                                         <br />
-                                        {convertedPricingUnit && convertedPricingUnit.key !== "price" && convertedPricingUnit.value}
+                                        {convertedPricingUnit && convertedPricingUnit.value}
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.inventory")} ({convertedInventoryUnit && convertedInventoryUnit.key !== "price" && convertedInventoryUnit.value})
+                                        {t("materials.childTable.inventory")} ({convertedInventoryUnit && convertedInventoryUnit.value})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.quantity")} ({convertedInventoryUnit && convertedInventoryUnit.key !== "price" && convertedInventoryUnit.value})
+                                        {t("materials.childTable.quantity")} ({convertedInventoryUnit && convertedInventoryUnit.value})
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
@@ -619,10 +619,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         <TableCell sx={classes.headerCell}>
                                             {t("materials.childTable.purchasePrice")}
                                             <br />
-                                            {convertedPurchasePricingUnit && convertedPurchasePricingUnit.key !== "price" && convertedPurchasePricingUnit.value}
+                                            {convertedPurchasePricingUnit && convertedPurchasePricingUnit.value}
                                         </TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({convertedPurchasePricingInventoryUnit && convertedPurchasePricingInventoryUnit.key !== "price" && convertedPurchasePricingInventoryUnit.value})</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({convertedPurchasePricingInventoryUnit && convertedPurchasePricingInventoryUnit.value})</TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                         <TableCell sx={classes.headerCell}></TableCell>

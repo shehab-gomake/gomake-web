@@ -14,9 +14,6 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useSnackBar } from "@/hooks";
 
 const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable }: IRowData) => {
-  console.log("valueArrayvalueArrayvalueArray", {
-    isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable, valueArray
-  });
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");

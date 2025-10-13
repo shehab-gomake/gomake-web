@@ -16,6 +16,7 @@ const useStyle = () => {
         alignitems: "flex-start",
         justifyContent: "flex-start",
         height: 40,
+        minWidth: 180,
         overflow: "scroll",
       },
       menuItem: {
