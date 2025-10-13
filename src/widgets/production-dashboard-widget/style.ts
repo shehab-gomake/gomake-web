@@ -46,6 +46,12 @@ const useStyle = () => {
           backgroundColor: "#e9ecef",
         },
       },
+      searchBtnStyle: {
+        display: "flex",
+        height: 40,
+        width: "fit-content",
+        alignSelf: "flex-end",
+      },
       stationRow: {
         "&:hover": {
           backgroundColor: "#f0f8ff",

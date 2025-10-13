@@ -1,52 +1,65 @@
 import { useStyle } from "../style";
 import { useRecoilState } from "recoil";
-import { dashboardDateState, productionCreationDateState } from "@/store";
 import { useTranslation } from "react-i18next";
 import { DateRangePicker } from "rsuite";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useSnackBar } from "@/hooks";
+import { PrimaryButton } from "@/components/button/primary-button";
+import {
+  productionCreationDateState,
+  productionDeliveryDateState,
+} from "@/store/production-dashboard-dates";
 
 const ProductionDashboardFilters = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
+  const { alertFault } = useSnackBar();
 
-  // Delivery date state
-  const [dashboardDate, setDashboardDate] = useRecoilState(dashboardDateState);
-  const deliveryPickerRef = useRef(null);
-  const [deliveryFromDate, setDeliveryFromDate] = useState<Date | null>(
-    dashboardDate.dates.startDate || null
+  // Recoil state
+  const [deliveryDate, setDeliveryDate] = useRecoilState(
+    productionDeliveryDateState
   );
-  const [deliveryToDate, setDeliveryToDate] = useState<Date | null>(
-    dashboardDate.dates.endDate || null
-  );
-
-  // Creation date state
   const [creationDate, setCreationDate] = useRecoilState(
     productionCreationDateState
   );
+
+  // Local state for delivery date
+  const deliveryPickerRef = useRef(null);
+  const [deliveryFromDate, setDeliveryFromDate] = useState<Date | null>(null);
+  const [deliveryToDate, setDeliveryToDate] = useState<Date | null>(null);
+
+  // Local state for creation date
   const creationPickerRef = useRef(null);
-  const [creationFromDate, setCreationFromDate] = useState<Date | null>(
-    creationDate.dates.startDate || null
-  );
-  const [creationToDate, setCreationToDate] = useState<Date | null>(
-    creationDate.dates.endDate || null
-  );
+  const [creationFromDate, setCreationFromDate] = useState<Date | null>(null);
+  const [creationToDate, setCreationToDate] = useState<Date | null>(null);
+
+  // Error state
+
+  // Initialize local state from Recoil on mount
+  useEffect(() => {
+    if (creationDate.dates.startDate && creationDate.dates.endDate) {
+      setCreationFromDate(creationDate.dates.startDate);
+      setCreationToDate(creationDate.dates.endDate);
+    }
+    if (deliveryDate.dates.startDate && deliveryDate.dates.endDate) {
+      setDeliveryFromDate(deliveryDate.dates.startDate);
+      setDeliveryToDate(deliveryDate.dates.endDate);
+    }
+  }, []);
 
   // Delivery date handlers
   const handleDeliveryDateChange = (dateRange: [Date, Date] | null) => {
     if (dateRange && dateRange.length === 2) {
       setDeliveryFromDate(dateRange[0]);
       setDeliveryToDate(dateRange[1]);
-      setDashboardDate({
-        ...dashboardDate,
-        dates: {
-          startDate: dateRange[0],
-          endDate: dateRange[1],
-        },
-      });
+    } else if (dateRange === null) {
+      // Allow clearing the date
+      setDeliveryFromDate(null);
+      setDeliveryToDate(null);
     }
   };
 
@@ -65,12 +78,10 @@ const ProductionDashboardFilters = () => {
     if (dateRange && dateRange.length === 2) {
       setCreationFromDate(dateRange[0]);
       setCreationToDate(dateRange[1]);
-      setCreationDate({
-        dates: {
-          startDate: dateRange[0],
-          endDate: dateRange[1],
-        },
-      });
+    } else if (dateRange === null) {
+      // Allow clearing the date
+      setCreationFromDate(null);
+      setCreationToDate(null);
     }
   };
 
@@ -84,32 +95,37 @@ const ProductionDashboardFilters = () => {
     }
   };
 
+  // Search button handler
+  const handleSearch = () => {
+    // Validate: at least one date range must be selected
+    const hasDeliveryDates = deliveryFromDate && deliveryToDate;
+    const hasCreationDates = creationFromDate && creationToDate;
+
+    if (!hasDeliveryDates && !hasCreationDates) {
+      alertFault(t("productionReport.selectAtLeastOneDate"));
+      return;
+    }
+
+    // Update delivery date state
+    setDeliveryDate({
+      ...deliveryDate,
+      dates: {
+        startDate: deliveryFromDate || undefined,
+        endDate: deliveryToDate || undefined,
+      },
+    });
+
+    // Update creation date state
+    setCreationDate({
+      dates: {
+        startDate: creationFromDate || undefined,
+        endDate: creationToDate || undefined,
+      },
+    });
+  };
+
   return (
     <div style={classes.datesContainer}>
-      <div>
-        <label
-          style={{
-            display: "block",
-            marginBottom: 8,
-            ...FONT_FAMILY.Lexend(500, 15),
-          }}
-        >
-          {t("sales.quote.deliveryDate") || "Delivery Date"}
-        </label>
-        <DateRangePicker
-          ref={deliveryPickerRef}
-          onChange={handleDeliveryDateChange}
-          onSelect={handleDeliverySelect}
-          value={
-            deliveryFromDate && deliveryToDate
-              ? [deliveryFromDate, deliveryToDate]
-              : null
-          }
-          ranges={predefinedRanges}
-          placement={isRTL ? "bottomEnd" : "bottomStart"}
-          style={{ direction: dir }}
-        />
-      </div>
       <div>
         <label
           style={{
@@ -134,6 +150,37 @@ const ProductionDashboardFilters = () => {
           style={{ direction: dir }}
         />
       </div>
+      <div>
+        <label
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
+        >
+          {t("sales.quote.deliveryDate") || "Delivery Date"}
+        </label>
+        <DateRangePicker
+          ref={deliveryPickerRef}
+          onChange={handleDeliveryDateChange}
+          onSelect={handleDeliverySelect}
+          value={
+            deliveryFromDate && deliveryToDate
+              ? [deliveryFromDate, deliveryToDate]
+              : null
+          }
+          ranges={predefinedRanges}
+          placement={isRTL ? "bottomEnd" : "bottomStart"}
+          style={{ direction: dir }}
+        />
+      </div>
+      <PrimaryButton
+        variant="contained"
+        onClick={handleSearch}
+        style={classes.searchBtnStyle}
+      >
+        {t("sales.quote.search")}
+      </PrimaryButton>
     </div>
   );
 };
