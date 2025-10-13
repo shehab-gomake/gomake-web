@@ -17,15 +17,6 @@ interface MessageNotificationItemProps {
   onClick: (notification: BackendNotification) => void;
 }
 
-/**
- * Extract sender name from notification title as fallback
- * Pattern: "New email from {sender}"
- */
-const extractSenderFromTitle = (title: string): string => {
-  const match = title.match(/New email from (.+)/i);
-  return match ? match[1] : 'Unknown User';
-};
-
 const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
   notification,
   onClick,
@@ -38,11 +29,8 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
   // Extract channel from notification metadata
   const channel = extractChannel(notification) || 'DM';
 
-  // Extract sender info from metadata (preferred) or title (fallback)
-  const senderName =
-    notification.metadata?.senderName ||
-    notification.metadata?.userName ||
-    extractSenderFromTitle(notification.title);
+  // Extract sender info from metadata
+  const senderName = notification.metadata?.senderName || notification.metadata?.userName || 'Unknown User';
   const senderAvatar = notification.metadata?.senderAvatar || notification.metadata?.userAvatar;
 
   const getChannelIcon = () => {
