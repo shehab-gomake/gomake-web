@@ -3,7 +3,6 @@ import { getGoSupportUserTokenApi } from "@/services/api-service/support/support
 import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { useRouter } from "next/router";
 
 interface GoSupportChatWidgetProps {
   position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
@@ -16,7 +15,6 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
   primaryColor = "#8b5cf6",
   theme = "dark",
 }) => {
-  const router = useRouter();
   const apiKey =
     "54cf7618c497b6d1f1f3938a5ca39c5dc58c61135453361f90d742c6a789c7f0";
   const [userToken, setUserToken] = useState<string>("");
@@ -25,16 +23,8 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
   const userProfile = useRecoilValue(userProfileState);
   const { callApi } = useGomakeAxios();
 
-  // Hide widget on specific pages where it might interfere with the UI
-  const hiddenPages = ["/gomake-ai"];
-  const shouldHideWidget = hiddenPages.includes(router.pathname);
-
   useEffect(() => {
-    // Don't load widget if it should be hidden
-    if (shouldHideWidget) {
-      setIsLoading(false);
-      return;
-    }
+    let scriptElement: HTMLScriptElement | null = null;
 
     const loadChatWidget = async () => {
       try {
@@ -84,6 +74,7 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
       script.src =
         "https://know-base-qassamat.replit.app/public/chat-widget.js";
       script.async = true;
+      script.id = "gomake-chat-widget-script";
       script.onload = () => {
         setIsLoading(false);
       };
@@ -93,25 +84,42 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
       };
 
       document.body.appendChild(script);
+      scriptElement = script;
     };
 
     loadChatWidget();
-  }, [
-    apiKey,
-    position,
-    primaryColor,
-    theme,
-    userProfile,
-    callApi,
-    shouldHideWidget,
-  ]);
+
+    // Cleanup function
+    return () => {
+      // Remove the script element
+      if (scriptElement && scriptElement.parentNode) {
+        scriptElement.parentNode.removeChild(scriptElement);
+      }
+
+      // Remove widget DOM elements that the script may have created
+      const widgetContainer = document.getElementById("gomake-chat-widget");
+      if (widgetContainer && widgetContainer.parentNode) {
+        widgetContainer.parentNode.removeChild(widgetContainer);
+      }
+
+      // Remove any other widget-related elements (button, iframe, etc.)
+      const widgetElements = document.querySelectorAll(
+        '[class*="chat-widget"], [id*="chat-widget"], [class*="gomake-chat"]'
+      );
+      widgetElements.forEach((element) => {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+      });
+
+      // Clean up global config
+      if ((window as any).GoMakeChat) {
+        delete (window as any).GoMakeChat;
+      }
+    };
+  }, [apiKey, position, primaryColor, theme, userProfile, callApi]);
 
   // Don't render anything visible - the widget will be injected by the script
-  // Hide widget on specific pages
-  if (shouldHideWidget) {
-    return null;
-  }
-
   if (isLoading) {
     return null; // You could show a loading indicator here if needed
   }
