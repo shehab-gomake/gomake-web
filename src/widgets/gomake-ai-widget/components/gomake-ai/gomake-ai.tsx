@@ -20,7 +20,7 @@ const GoMakeAIComponent = () => {
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
   const [productUpdateVersion,setProductUpdateVersion]= useState(0)
   const hasInitialized = useRef(false);
-
+  const [interactionId, setInteractionId] = useState("");
   // Handle real-time messages from socket
   const handleRealTimeMessage = (message: any) => {
     setChatMessages((prev) => [...prev, message]);
@@ -50,7 +50,8 @@ const GoMakeAIComponent = () => {
     );
   };
   
-  const handleProductUpdated = () => {
+  const handleProductUpdated = (interactionId:string) => {
+    setInteractionId(interactionId)
     setProductUpdateVersion(prev=>prev+1);
   }
   const {
@@ -274,6 +275,7 @@ const GoMakeAIComponent = () => {
                   isMobileScreen={true}
                   productId={productId}
                   sessionId={sessionId}
+                  interactionId={interactionId}
               />
             </div>
         )}

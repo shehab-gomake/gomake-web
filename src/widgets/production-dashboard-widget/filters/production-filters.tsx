@@ -1,116 +1,139 @@
-import { GoMakeDatepicker } from "@/components/datepicker";
-import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop-down";
-import { useStyle } from "../../monitoring-dashboard-widget/filters/style";
+import { useStyle } from "../style";
+import { useRecoilState } from "recoil";
+import { dashboardDateState, productionCreationDateState } from "@/store";
+import { useTranslation } from "react-i18next";
+import { DateRangePicker } from "rsuite";
+import { useRef, useState } from "react";
+import { predefinedRanges } from "@/utils/dateRanges";
+import { FONT_FAMILY } from "@/utils/font-family";
 
-interface ProductionDashboardFiltersProps {
-  selectedStations: string[];
-  setSelectedStations: (stations: string[]) => void;
-  selectedMachines: string[];
-  setSelectedMachines: (machines: string[]) => void;
-  selectedMaterials: string[];
-  setSelectedMaterials: (materials: string[]) => void;
-  stationsStructure: any;
-  materialsData: any[];
-}
-
-const ProductionDashboardFilters = ({
-  selectedStations,
-  setSelectedStations,
-  selectedMachines,
-  setSelectedMachines,
-  selectedMaterials,
-  setSelectedMaterials,
-  stationsStructure,
-  materialsData
-}: ProductionDashboardFiltersProps) => {
+const ProductionDashboardFilters = () => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
-  // Create station items for filter
-  const stationItems = Object.keys(stationsStructure).map(stationName => ({
-    id: stationName,
-    label: `${stationName} Station`
-  }));
-
-  // Create machine items for filter
-  const machineItems = Object.entries(stationsStructure).flatMap(([stationName, stationData]: [string, any]) =>
-    stationData.machines.map((machine: any[]) => ({
-      id: machine[0],
-      label: `${machine[0]} (${stationName})`
-    }))
+  // Delivery date state
+  const [dashboardDate, setDashboardDate] = useRecoilState(dashboardDateState);
+  const deliveryPickerRef = useRef(null);
+  const [deliveryFromDate, setDeliveryFromDate] = useState<Date | null>(
+    dashboardDate.dates.startDate || null
+  );
+  const [deliveryToDate, setDeliveryToDate] = useState<Date | null>(
+    dashboardDate.dates.endDate || null
   );
 
-  // Create material items for filter
-  const materialItems = materialsData.map(material => ({
-    id: material[0],
-    label: material[0]
-  }));
+  // Creation date state
+  const [creationDate, setCreationDate] = useRecoilState(
+    productionCreationDateState
+  );
+  const creationPickerRef = useRef(null);
+  const [creationFromDate, setCreationFromDate] = useState<Date | null>(
+    creationDate.dates.startDate || null
+  );
+  const [creationToDate, setCreationToDate] = useState<Date | null>(
+    creationDate.dates.endDate || null
+  );
 
-  const toggleStation = (id: string) => {
-    setSelectedStations(
-      selectedStations.includes(id)
-        ? selectedStations.filter(i => i !== id)
-        : [...selectedStations, id]
-    );
+  // Delivery date handlers
+  const handleDeliveryDateChange = (dateRange: [Date, Date] | null) => {
+    if (dateRange && dateRange.length === 2) {
+      setDeliveryFromDate(dateRange[0]);
+      setDeliveryToDate(dateRange[1]);
+      setDashboardDate({
+        ...dashboardDate,
+        dates: {
+          startDate: dateRange[0],
+          endDate: dateRange[1],
+        },
+      });
+    }
   };
 
-  const toggleAllStations = () => {
-    const allIds = stationItems.map(s => s.id);
-    const isAllSelected = allIds.every(id => selectedStations.includes(id));
-    setSelectedStations(isAllSelected ? [] : allIds);
+  const handleDeliverySelect = (date: Date) => {
+    if (!deliveryFromDate) {
+      setDeliveryFromDate(date);
+    } else if (!deliveryToDate) {
+      setDeliveryToDate(date);
+      handleDeliveryDateChange([deliveryFromDate, date]);
+      deliveryPickerRef.current?.close();
+    }
   };
 
-  const toggleMachine = (id: string) => {
-    setSelectedMachines(
-      selectedMachines.includes(id)
-        ? selectedMachines.filter(i => i !== id)
-        : [...selectedMachines, id]
-    );
+  // Creation date handlers
+  const handleCreationDateChange = (dateRange: [Date, Date] | null) => {
+    if (dateRange && dateRange.length === 2) {
+      setCreationFromDate(dateRange[0]);
+      setCreationToDate(dateRange[1]);
+      setCreationDate({
+        dates: {
+          startDate: dateRange[0],
+          endDate: dateRange[1],
+        },
+      });
+    }
   };
 
-  const toggleAllMachines = () => {
-    const allIds = machineItems.map(m => m.id);
-    const isAllSelected = allIds.every(id => selectedMachines.includes(id));
-    setSelectedMachines(isAllSelected ? [] : allIds);
-  };
-
-  const toggleMaterial = (id: string) => {
-    setSelectedMaterials(
-      selectedMaterials.includes(id)
-        ? selectedMaterials.filter(i => i !== id)
-        : [...selectedMaterials, id]
-    );
-  };
-
-  const toggleAllMaterials = () => {
-    const allIds = materialItems.map(m => m.id);
-    const isAllSelected = allIds.every(id => selectedMaterials.includes(id));
-    setSelectedMaterials(isAllSelected ? [] : allIds);
+  const handleCreationSelect = (date: Date) => {
+    if (!creationFromDate) {
+      setCreationFromDate(date);
+    } else if (!creationToDate) {
+      setCreationToDate(date);
+      handleCreationDateChange([creationFromDate, date]);
+      creationPickerRef.current?.close();
+    }
   };
 
   return (
     <div style={classes.datesContainer}>
-      <GoMakeDatepicker />
-      <MultiSelectDropdown
-        items={stationItems}
-        selectedIds={selectedStations}
-        onToggle={toggleStation}
-        onToggleAll={toggleAllStations}
-        buttonLabel="Stations"
-      />
-      <MultiSelectDropdown
-        items={machineItems}
-        selectedIds={selectedMachines}
-        onToggle={toggleMachine}
-        onToggleAll={toggleAllMachines}
-        buttonLabel="Machines"
-      />
-      <MultiSelectDropdown
-        items={materialItems}
-        selectedIds={selectedMaterials}
-        onToggle={toggleMaterial}
-        onToggleAll={toggleAllMaterials}
-        buttonLabel="Materials"
-      />
+      <div>
+        <label
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
+        >
+          {t("sales.quote.deliveryDate") || "Delivery Date"}
+        </label>
+        <DateRangePicker
+          ref={deliveryPickerRef}
+          onChange={handleDeliveryDateChange}
+          onSelect={handleDeliverySelect}
+          value={
+            deliveryFromDate && deliveryToDate
+              ? [deliveryFromDate, deliveryToDate]
+              : null
+          }
+          ranges={predefinedRanges}
+          placement={isRTL ? "bottomEnd" : "bottomStart"}
+          style={{ direction: dir }}
+        />
+      </div>
+      <div>
+        <label
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
+        >
+          {t("sales.quote.creationDate") || "Creation Date"}
+        </label>
+        <DateRangePicker
+          ref={creationPickerRef}
+          onChange={handleCreationDateChange}
+          onSelect={handleCreationSelect}
+          value={
+            creationFromDate && creationToDate
+              ? [creationFromDate, creationToDate]
+              : null
+          }
+          ranges={predefinedRanges}
+          placement={isRTL ? "bottomEnd" : "bottomStart"}
+          style={{ direction: dir }}
+        />
+      </div>
     </div>
   );
 };
