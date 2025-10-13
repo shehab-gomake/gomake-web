@@ -36,8 +36,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
-  console.log("materialTableFilters", materialTableFilters);
-
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
@@ -75,7 +73,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
 
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"} flexWrap={"wrap"}>
-      {displayedFilters &&
+      {displayedFilters && materialTableFilters?.length > 0 &&
         displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
@@ -251,7 +249,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "auto" }}>
+      <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "10px", marginRight: "5px" }}>
         {<ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>

@@ -37,6 +37,7 @@ import {
   materialsMachinesState,
   materialsTablePageState,
   materialsUnCheckedState,
+  materialTableFiltersState,
   materialTypeTableState,
   openChildTableState,
   selectedSupplierIdState,
@@ -159,9 +160,11 @@ const useMaterials = (isAdmin: boolean) => {
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const setIsLoadingMaterials = useSetRecoilState<boolean>(isLoadingMaterialsState);
   const setOpenChildTable = useSetRecoilState(openChildTableState);
+  const setMaterialTableFilters = useSetRecoilState(materialTableFiltersState);
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
+    setMaterialTableFilters([]);
     if (category != materialCategory) {
       setMaterialCategoryData([]);
       setIsLoadingMaterials(true);

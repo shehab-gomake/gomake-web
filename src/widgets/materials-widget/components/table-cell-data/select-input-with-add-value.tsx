@@ -75,7 +75,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
     ? [
       {
         id: "new",
-        label: `${t("materials.addNew", "Add")} "${inputValue}"`,
+        label: `${t("home.addNew")} "${inputValue}"`,
       },
       ...baseOptions,
     ]
@@ -116,7 +116,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
         onInputChange={(event: any, newInputValue: string) => {
           setInputValue(newInputValue);
         }}
-        placeholder={t("materials.selectValue", "Select a value")}
+        placeholder={t("materials.inputs.selectValue")}
         defaultValue={value ? baseOptions.find((x) => x.id == value) || { id: value, label: value } : null}
         style={{
           border: 0,
