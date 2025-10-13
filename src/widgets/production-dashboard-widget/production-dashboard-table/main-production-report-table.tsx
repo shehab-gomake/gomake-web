@@ -127,6 +127,9 @@ const MainProductionReportTable = () => {
           </Typography>
         </Box>,
         <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalEstimatedWorkingHours)}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>
           {formatTime(department.summary.totalWorkingHours)}
         </span>,
       ]);
@@ -176,6 +179,7 @@ const MainProductionReportTable = () => {
                 {formatCurrency(station.jobAnalytics.jobsEstimatedPrice)}
               </Typography>
             </Box>,
+            formatTime(station.totalEstimatedWorkingHours),
             formatTime(station.averageProductionTime),
           ]);
         });
@@ -254,10 +258,18 @@ const MainProductionReportTable = () => {
     </Box>,
     <Box>
       <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.totalWorkingHours")}
+        {t("productionReport.totalEstimatedWorkingHours")}
       </Typography>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.hoursPerDay")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.avgTime")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.dailyProductivity")}
       </Typography>
     </Box>,
   ];

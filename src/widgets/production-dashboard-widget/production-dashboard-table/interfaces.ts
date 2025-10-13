@@ -23,6 +23,7 @@ export interface StationPerformanceDTO {
   jobAnalytics: JobAnalytics;
   sla: DDP;
   averageProductionTime: number;
+  totalEstimatedWorkingHours: number;
 }
 
 export interface StationMetrics {
@@ -56,6 +57,7 @@ export interface DepartmentSummaryDTO {
   totalJobs: number;
   totalEstimatedHours: number;
   totalWorkingHours: number;
+  totalEstimatedWorkingHours: number;
   averageSLA: number;
   averageGrowth: number | null;
   jobsTotalEstimatedCost: number;

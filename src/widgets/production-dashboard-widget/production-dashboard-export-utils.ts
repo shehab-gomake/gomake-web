@@ -25,6 +25,7 @@ const formatTime = (time: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
+//!here
 export const exportProductionDashboardToExcel = (
   departments: DepartmentPerformanceDTO[],
   t: (key: string) => string
@@ -54,6 +55,7 @@ export const exportProductionDashboardToExcel = (
     t("productionReport.jobAnalytics") + " (Price)",
     t("productionReport.sla") + " (%)",
     t("productionReport.sla") + " (Growth %)",
+    t("productionReport.totalEstimatedWorkingHours"),
     t("productionReport.avgTime"),
   ]);
 
@@ -85,6 +87,7 @@ export const exportProductionDashboardToExcel = (
       department.summary.jobsEstimatedPrice.toFixed(2),
       department.summary.averageSLA.toFixed(2),
       "-",
+      formatTime(department.summary.totalEstimatedWorkingHours),
       formatTime(department.summary.totalWorkingHours),
     ]);
 
@@ -117,6 +120,7 @@ export const exportProductionDashboardToExcel = (
         station.jobAnalytics.jobsEstimatedPrice.toFixed(2),
         station.sla?.sla.toFixed(2) || "0",
         station.sla?.growth.toFixed(2) || "0",
+        formatTime(station.totalEstimatedWorkingHours),
         formatTime(station.averageProductionTime),
       ]);
     });
