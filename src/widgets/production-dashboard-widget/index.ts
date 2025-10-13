@@ -5,3 +5,4 @@ export {
   useMainProductionReport,
 } from "./production-dashboard-table";
 export * from "./production-dashboard-table/interfaces";
+export { exportProductionDashboardToExcel } from "./production-dashboard-export-utils";
