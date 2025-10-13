@@ -1,11 +1,14 @@
 import { GomakeTextInput } from "@/components";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { useAddMaterialCategory } from "./use-add-material-category";
-import { FormControlLabel, MenuItem, Stack, TextField } from "@mui/material";
+import { FormControlLabel, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { ImageUploadComponent } from "@/components/form-inputs/image-input";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
+import { UNIT_TYPE } from "@/enums";
 
 interface IAddCategoryModalProps {
   isAdmin: boolean;
@@ -56,6 +59,9 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
     additionalAttributes,
   } = useAddMaterialCategory(props.isAdmin);
 
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+
   const actionLabel = duplicateCategoryModalState
     ? t("navigationButtons.duplicate")
     : editCategoryModalState
@@ -101,14 +107,18 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         width={"100%"}
         paddingTop={"10px"}
       >
-        <GomakeTextInput
-          value={newCategory}
-          onChange={onSetCategory}
-          placeholder={t("materials.inputs.addCategory")}
-          style={{ width: "100%", height: "40px" }}
-        />
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>{t("materials.inputs.newCategory")}</div>
+          <GomakeTextInput
+            value={newCategory}
+            onChange={onSetCategory}
+            placeholder={t("materials.inputs.addCategory")}
+            style={{ width: "100%", height: "40px" }}
+          />
+        </div>
 
-        {!duplicateCategoryModalState &&
+
+        {!duplicateCategoryModalState && unitType === UNIT_TYPE.IMPERIAL &&
           additionalAttributes?.map((attr, index) => {
             const value = attr?.defaultValue ?? "";
             const isRequired = attr?.isRequired;

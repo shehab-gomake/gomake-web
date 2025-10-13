@@ -95,7 +95,6 @@ const ActionMenu = (props: IActionMenuProps) => {
     setOpenSupplierModal(false);
   };
 
-  console.log("action", action);
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
