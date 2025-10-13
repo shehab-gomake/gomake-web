@@ -18,8 +18,7 @@ import ShoppingBasketOutlinedIcon from '@mui/icons-material/ShoppingBasketOutlin
 import PointOfSaleOutlinedIcon from '@mui/icons-material/PointOfSaleOutlined';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
-import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 /**
@@ -135,25 +134,14 @@ export const QUICK_ACTIONS_CONFIG: Record<QuickActionType, QuickActionConfig> = 
     enabled: true,
   },
 
-  export_ticket: {
-    type: 'export_ticket',
-    label: 'Export Ticket',
-    icon: <SaveAltOutlinedIcon fontSize="small" />,
+  archive_ticket: {
+    type: 'archive_ticket',
+    label: 'Archive Ticket',
+    icon: <ArchiveOutlinedIcon fontSize="small" />,
     route: '', // No route, handled in hook
     requiresCustomerId: false,
     group: 'ticket',
-    tooltip: 'Export ticket to PDF',
-    enabled: true,
-  },
-
-  delete_ticket: {
-    type: 'delete_ticket',
-    label: 'Delete Ticket',
-    icon: <DeleteOutlineIcon fontSize="small" />,
-    route: '', // No route, handled in hook
-    requiresCustomerId: false,
-    group: 'ticket',
-    tooltip: 'Delete this ticket',
+    tooltip: 'Archive this ticket',
     enabled: true,
   },
 

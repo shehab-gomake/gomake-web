@@ -146,22 +146,16 @@ export function useQuickActions(options: UseQuickActionsOptions): UseQuickAction
             onActionComplete?.(actionType);
             break;
 
-          case 'export_ticket':
-            // TODO: Implement export ticket to PDF
-            console.log('[useQuickActions] Export ticket not yet implemented');
-            onActionError?.(actionType, 'Export ticket not yet implemented');
-            break;
-
-          case 'delete_ticket':
-            // TODO: Implement delete ticket with confirmation
-            console.log('[useQuickActions] Delete ticket requires confirmation modal');
-            const confirmed = window.confirm('Are you sure you want to delete this ticket? This action cannot be undone.');
+          case 'archive_ticket':
+            // TODO: Implement archive ticket with confirmation
+            console.log('[useQuickActions] Archive ticket requires confirmation modal');
+            const confirmed = window.confirm('Are you sure you want to archive this ticket? You can restore it later from archived tickets.');
             if (confirmed) {
-              // TODO: Call delete API
-              console.log('[useQuickActions] Delete ticket confirmed');
-              onActionError?.(actionType, 'Delete ticket API not yet implemented');
+              // TODO: Call archive API
+              console.log('[useQuickActions] Archive ticket confirmed');
+              onActionError?.(actionType, 'Archive ticket API not yet implemented');
             } else {
-              console.log('[useQuickActions] Delete ticket cancelled');
+              console.log('[useQuickActions] Archive ticket cancelled');
             }
             break;
 

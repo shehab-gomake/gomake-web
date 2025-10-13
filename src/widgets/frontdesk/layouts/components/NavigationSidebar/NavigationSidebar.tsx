@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import EmailIcon from '@mui/icons-material/Email';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ChatIcon from '@mui/icons-material/Chat';
-import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import InboxIcon from '@mui/icons-material/Inbox';
@@ -133,7 +133,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatsExpanded, setChatsExpanded] = useState(true);
 
   const channelItems = [
-    { id: 'all' as Channel, icon: <AllInclusiveIcon />, label: 'All Channels' },
     { id: 'email' as Channel, icon: <EmailIcon />, label: 'Email' },
     { id: 'whatsapp' as Channel, icon: <WhatsAppIcon />, label: 'WhatsApp' },
     { id: 'internal' as Channel, icon: <ChatIcon />, label: 'Direct Messages' }
@@ -191,6 +190,54 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           </Tooltip>
         </Box>
       )}
+
+      {/* Dashboard - Top Item */}
+      <Box sx={{ py: 1 }}>
+        <List disablePadding>
+          <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
+            <ListItemButton
+              selected={selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView}
+              onClick={() => {
+                onSectionSelect('inbox');
+                onChannelSelect('all');
+              }}
+              sx={{
+                py: 1,
+                px: isCollapsed ? 1.5 : 2,
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.primary.main + '10',
+                  borderLeft: `3px solid ${theme.palette.primary.main}`,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main + '20'
+                  }
+                }
+              }}
+            >
+              {isCollapsed ? (
+                <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                  <DashboardIcon />
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                  <Box sx={{ color: theme.palette.text.secondary }}>
+                    <DashboardIcon />
+                  </Box>
+                  <ListItemText
+                    primary="Dashboard"
+                    primaryTypographyProps={{
+                      variant: 'body2',
+                      sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView ? 600 : 400 }
+                    }}
+                  />
+                </Box>
+              )}
+            </ListItemButton>
+          </Tooltip>
+        </List>
+      </Box>
+
+      <Divider sx={{ my: 1 }} />
 
       {/* Ticket Views Section */}
       <Box sx={{ py: 1 }}>
