@@ -98,7 +98,8 @@ const FrontdeskWidget: React.FC = () => {
         [TicketView.MY_TICKETS]: 'my-tickets',
         [TicketView.UNASSIGNED]: 'unassigned',
         [TicketView.ALL_TICKETS]: 'all-tickets',
-        [TicketView.DONE]: 'done'
+        [TicketView.DONE]: 'done',
+        [TicketView.ARCHIVED]: 'archived'
       };
 
       const legacyView = legacyViewMap[currentTicketView];
@@ -109,7 +110,8 @@ const FrontdeskWidget: React.FC = () => {
         'my-tickets': { assigneeId: 'me', status: undefined },
         'unassigned': { assigneeId: undefined, status: 'OPEN' },
         'all-tickets': { assigneeId: undefined, status: undefined },
-        'done': { assigneeId: undefined, status: 'RESOLVED' }
+        'done': { assigneeId: undefined, status: 'RESOLVED' },
+        'archived': { assigneeId: undefined, status: 'CLOSED' }
       };
 
       const newFilters = {
@@ -173,7 +175,8 @@ const FrontdeskWidget: React.FC = () => {
       'my-tickets': { assigneeId: 'me', status: undefined },
       'unassigned': { assigneeId: undefined, status: 'OPEN' },
       'all-tickets': { assigneeId: undefined, status: undefined },
-      'done': { assigneeId: undefined, status: 'RESOLVED' }
+      'done': { assigneeId: undefined, status: 'RESOLVED' },
+      'archived': { assigneeId: undefined, status: 'CLOSED' }
     };
 
     const newFilters = {
@@ -190,7 +193,8 @@ const FrontdeskWidget: React.FC = () => {
       'my-tickets': TicketView.MY_TICKETS,
       'unassigned': TicketView.UNASSIGNED,
       'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE
+      'done': TicketView.DONE,
+      'archived': TicketView.ARCHIVED
     };
     handleTicketViewChange(viewMap[view]);
   };
@@ -366,7 +370,8 @@ const FrontdeskWidget: React.FC = () => {
       [TicketView.MY_TICKETS]: 'my-tickets',
       [TicketView.UNASSIGNED]: 'unassigned',
       [TicketView.ALL_TICKETS]: 'all-tickets',
-      [TicketView.DONE]: 'done'
+      [TicketView.DONE]: 'done',
+      [TicketView.ARCHIVED]: 'archived'
     }[view];
 
     switch (viewStr) {
@@ -378,6 +383,8 @@ const FrontdeskWidget: React.FC = () => {
         return 'All Tickets';
       case 'done':
         return 'Done';
+      case 'archived':
+        return 'Archived';
       default:
         return 'Tickets';
     }
@@ -399,7 +406,8 @@ const FrontdeskWidget: React.FC = () => {
               'my-tickets': TicketView.MY_TICKETS,
               'unassigned': TicketView.UNASSIGNED,
               'all-tickets': TicketView.ALL_TICKETS,
-              'done': TicketView.DONE
+              'done': TicketView.DONE,
+              'archived': TicketView.ARCHIVED
             };
             handleTicketViewChange(viewMap[view]);
           }}

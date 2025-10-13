@@ -74,6 +74,7 @@ const mapTicketViewToPath = (view: TicketView): string => {
     [TicketView.UNASSIGNED]: 'unassigned',
     [TicketView.ALL_TICKETS]: 'all-tickets',
     [TicketView.DONE]: 'done',
+    [TicketView.ARCHIVED]: 'archived',
   };
   return map[view];
 };
@@ -237,6 +238,7 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
         [TicketView.UNASSIGNED]: 'Unassigned',
         [TicketView.ALL_TICKETS]: 'All Tickets',
         [TicketView.DONE]: 'Done',
+        [TicketView.ARCHIVED]: 'Archived',
       };
       return {
         title: viewNames[route.view],

@@ -33,6 +33,7 @@ export enum TicketView {
   UNASSIGNED = 'unassigned',
   ALL_TICKETS = 'all-tickets',
   DONE = 'done',
+  ARCHIVED = 'archived',
 }
 
 /**
@@ -152,7 +153,7 @@ export interface RouteMetadata {
  */
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
 export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketViewLegacy = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done';
+export type TicketViewLegacy = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done' | 'archived';
 
 /**
  * Type guards for route discrimination
@@ -201,6 +202,7 @@ export const mapLegacyTicketView = (view: TicketViewLegacy): TicketView => {
     'unassigned': TicketView.UNASSIGNED,
     'all-tickets': TicketView.ALL_TICKETS,
     'done': TicketView.DONE,
+    'archived': TicketView.ARCHIVED,
   };
   return map[view];
 };

@@ -15,7 +15,8 @@ npm run dev
 
 ### Key Files to Know
 - **Main Widget**: `src/widgets/frontdesk/frontdesk-widget.tsx`
-- **Main Layout**: `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx` (Note: Currently a two-column layout)
+- **Routing System**: `src/widgets/frontdesk/routing/` ⭐ NEW
+- **Main Layout**: `src/widgets/frontdesk/layouts/three-column/ThreeColumnLayout.tsx`
 - **Navigation**: `src/widgets/frontdesk/layouts/components/NavigationSidebar/NavigationSidebar.tsx`
 - **Providers**: `src/widgets/frontdesk/providers/[provider-name]/`
 - **State**: `src/store/frontdesk/`
@@ -32,6 +33,84 @@ frontdesk/
 ├── controllers/       → Business logic and navigation
 ├── hooks/            → Custom React hooks
 └── types/            → TypeScript definitions
+```
+
+---
+
+## 🧭 Routing System (NEW)
+
+### Navigation with Type Safety
+
+FrontDesk uses a centralized routing system for type-safe navigation:
+
+```typescript
+import { useFrontDeskRouter, RouteBuilder } from '@/widgets/frontdesk/routing';
+
+function MyComponent() {
+  const { navigate, currentRoute, isInTicketMode } = useFrontDeskRouter();
+
+  // Navigate to inbox/dashboard
+  navigate(RouteBuilder.inbox());
+
+  // Navigate to specific channel
+  navigate(RouteBuilder.email());
+  navigate(RouteBuilder.whatsapp());
+  navigate(RouteBuilder.internal()); // Direct messages
+
+  // Navigate to tickets
+  navigate(RouteBuilder.myTickets());
+  navigate(RouteBuilder.allTickets());
+  navigate(RouteBuilder.ticketDetail('846c2a13-4133-4046-b04a-e3607f8e45b6'));
+
+  // Open in new tab
+  navigate(RouteBuilder.ticketDetail('TICKET-123'), { newTab: true });
+
+  // Navigate to sections
+  navigate(RouteBuilder.settings());
+  navigate(RouteBuilder.assigned());
+}
+```
+
+### Supported URL Patterns
+
+```
+/frontdesk/inbox                           → Dashboard (unified)
+/frontdesk/inbox/email                     → Email channel
+/frontdesk/inbox/whatsapp                  → WhatsApp channel
+/frontdesk/inbox/internal                  → Direct messages
+/frontdesk/inbox/internal?conversation=123 → DM with conversation
+/frontdesk/tickets/my-tickets              → My tickets view
+/frontdesk/tickets/all-tickets             → All tickets view
+/frontdesk/tickets/846c...45b6             → Ticket detail (UUID)
+/frontdesk/tickets/TICKET-123              → Ticket detail (legacy)
+/frontdesk/assigned                        → Assigned section
+/frontdesk/settings                        → Settings section
+```
+
+### Check Current Route
+
+```typescript
+const { currentRoute, currentSection, currentChannel, isInTicketMode } = useFrontDeskRouter();
+
+if (currentRoute.type === RouteType.TICKET_DETAIL) {
+  console.log('Viewing ticket:', currentRoute.ticketId);
+}
+
+if (isInTicketMode) {
+  // Show ticket-specific UI
+}
+```
+
+### Deep Linking from Notifications
+
+The routing system automatically handles deep links with query parameters:
+
+```typescript
+// URL: /frontdesk/inbox?view=email&conversation=456
+// Automatically parsed and routed to email channel with conversation 456
+
+// URL: /frontdesk/inbox?ticket=TICKET-789
+// Automatically opens ticket TICKET-789
 ```
 
 ---

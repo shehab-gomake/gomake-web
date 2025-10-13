@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArchiveIcon from '@mui/icons-material/Archive';
 
 /**
  * Legacy type exports for backward compatibility
@@ -25,7 +26,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
  */
 export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
 export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done';
+export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done' | 'archived';
 
 interface NavigationSidebarProps {
   selectedChannel: Channel;
@@ -45,6 +46,7 @@ interface NavigationSidebarProps {
     'unassigned'?: number;
     'all-tickets'?: number;
     'done'?: number;
+    'archived'?: number;
   };
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -148,7 +150,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     { id: 'my-tickets' as TicketView, icon: <InboxIcon fontSize="small" />, label: 'My Tickets' },
     { id: 'unassigned' as TicketView, icon: <PersonOutlineIcon fontSize="small" />, label: 'Unassigned' },
     { id: 'all-tickets' as TicketView, icon: <ViewListIcon fontSize="small" />, label: 'All Tickets' },
-    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' }
+    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' },
+    { id: 'archived' as TicketView, icon: <ArchiveIcon fontSize="small" />, label: 'Archived' }
   ];
 
   const systemItems = [

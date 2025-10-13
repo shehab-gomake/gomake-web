@@ -98,6 +98,7 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
       'unassigned': TicketView.UNASSIGNED,
       'all-tickets': TicketView.ALL_TICKETS,
       'done': TicketView.DONE,
+      'archived': TicketView.ARCHIVED,
     };
 
     const view = ticketViewMap[provider];
@@ -171,6 +172,7 @@ const applyQueryParamOverrides = (
       'unassigned': TicketView.UNASSIGNED,
       'all-tickets': TicketView.ALL_TICKETS,
       'done': TicketView.DONE,
+      'archived': TicketView.ARCHIVED,
     };
 
     if (ticketViewMap[queryParams.view]) {
