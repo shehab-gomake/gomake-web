@@ -5,12 +5,10 @@ import { GomakeTextInput, GoMakeAutoComplate, GoMakeDialog } from "@/components"
 
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE, } from "@/pages/customers/enums";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { currenciesState } from "../../state";
 import { Add as AddIcon } from "@mui/icons-material";
-import { UNIT_TYPE } from "@/enums";
-import { convertTitleUnits } from "@/utils/helpers";
-import { userState } from "@/store";
+
 
 
 
@@ -33,25 +31,15 @@ const AddPurchasePricingModal = ({
     setOpenSupplierModal,
 }) => {
     const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
-    const user = useRecoilValue<any>(userState);
-    const unitType = user?.printHouseProfile?.unitType || 0;
-
-    const convertedPurchasePricingUnit =
-        unitType === UNIT_TYPE.IMPERIAL
-            ? convertTitleUnits(purchasePricingTableHeadingUnits.pricingUnit)
-            : purchasePricingTableHeadingUnits.pricingUnit;
-
-    const convertedPurchasePricingInventoryUnit =
-        unitType === UNIT_TYPE.IMPERIAL
-            ? convertTitleUnits(purchasePricingTableHeadingUnits.inventoryUnit)
-            : purchasePricingTableHeadingUnits.inventoryUnit;
+    const convertedPurchasePricingUnit = purchasePricingTableHeadingUnits.pricingUnit;
+    const convertedPurchasePricingInventoryUnit = purchasePricingTableHeadingUnits.inventoryUnit;
 
     return (
         <GoMakeDialog
             open={isAddPurchasePricingModalOpen}
             onClose={handleCloseAddPurchasePricingModal}
-            title={t("materials.childTable.addPurchasePricing")}
-            primaryButtonLabel={t("materials.childTable.addPurchasePricing")}
+            title={t("materials.sheetPaper.addNewSupplier")}
+            primaryButtonLabel={t("materials.sheetPaper.addNewSupplier")}
             cancelButtonLabel={t("materials.childTable.cancel")}
             onPrimaryAction={() => handleAddPurchasePricing(null)}
             maxWidth="sm"
@@ -88,7 +76,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit !== "price" ? `( ${t(`measurementUnits.${convertedPurchasePricingUnit}`).split(' / ')[0]} )` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${(convertedPurchasePricingUnit && convertedPurchasePricingUnit.key !== "price") ? `(${convertedPurchasePricingUnit.value.split(' / ')[0]}})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -122,7 +110,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit !== "price" ? `(${t(`measurementUnits.${convertedPurchasePricingInventoryUnit}`)})` : ''}`}
+                            {`${t("materials.childTable.quantityInPackage")} ${(convertedPurchasePricingInventoryUnit && convertedPurchasePricingInventoryUnit.key !== "price") ? `(${convertedPurchasePricingInventoryUnit.value})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput

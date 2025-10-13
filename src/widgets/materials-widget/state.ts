@@ -227,19 +227,25 @@ export const openJobsModalState = atom<{
 });
 
 export const inventoryTableHeadingUnitsState = atom<{
-  inventoryUnit?: string;
-  pricingUnit?: string;
+  inventoryUnit?: {key: string; value: string};
+  pricingUnit?: {key: string; value: string};
 }>({
   key: "inventoryTableHeadingUnitsState",
-  default: {},
+  default: {
+    inventoryUnit: {key: '', value: ''},
+    pricingUnit: {key: '', value: ''},
+  },
 });
 
 export const purchasePricingTableHeadingUnitsState = atom<{
-  inventoryUnit?: string;
-  pricingUnit?: string;
+  inventoryUnit?: {key: string; value: string};
+  pricingUnit?: {key: string; value: string};
 }>({
   key: "purchasePricingTableHeadingUnitsState",
-  default: {},
+  default: {
+    inventoryUnit: {key: '', value: ''},
+    pricingUnit: {key: '', value: ''},
+  },
 });
 
 export const showMoreFiltersState = atom<boolean>({

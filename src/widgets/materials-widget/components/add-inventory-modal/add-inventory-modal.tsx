@@ -7,10 +7,7 @@ import { GomakeTextInput, GoMakeAutoComplate, GoMakeDialog } from "@/components"
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE, } from "@/pages/customers/enums";
 import { currenciesState } from "../../state";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { userState } from "@/store/user";
-import { UNIT_TYPE } from "@/enums";
-import { convertTitleUnits } from "@/utils/helpers";
+import { useRecoilState } from "recoil";
 
 const AddInventoryModal = ({
     isAddInventoryModalOpen,
@@ -34,16 +31,8 @@ const AddInventoryModal = ({
     isFetchingCustomer,
 }) => {
     const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
-    const user = useRecoilValue<any>(userState);
-    const unitType = user?.printHouseProfile?.unitType || 0;
-    const convertedPricingUnit =
-        unitType === UNIT_TYPE.IMPERIAL
-            ? convertTitleUnits(inventoryTableHeadingUnits.pricingUnit)
-            : inventoryTableHeadingUnits.pricingUnit;
-    const convertedInventoryUnit =
-        unitType === UNIT_TYPE.IMPERIAL
-            ? convertTitleUnits(inventoryTableHeadingUnits.inventoryUnit)
-            : inventoryTableHeadingUnits.inventoryUnit;
+    const convertedPricingUnit = inventoryTableHeadingUnits.pricingUnit;
+    const convertedInventoryUnit = inventoryTableHeadingUnits.inventoryUnit;
 
     return (
         <GoMakeDialog
@@ -98,7 +87,7 @@ const AddInventoryModal = ({
                     </div>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantity")} ${convertedInventoryUnit !== "price" ? `(${t(`measurementUnits.${convertedInventoryUnit}`)})` : ''}`}
+                            {`${t("materials.childTable.quantity")} ${(convertedInventoryUnit && convertedInventoryUnit.key !== "price") ? `(${convertedInventoryUnit.value})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -117,7 +106,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit !== "price" ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${(convertedPricingUnit && convertedPricingUnit.key !== "price") ? `(${convertedPricingUnit.value.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -140,7 +129,6 @@ const AddInventoryModal = ({
                             onChange={(e, value) => handleInventoryFormChange('purchaseCurrency', { value: value?.value, label: value?.label })}
                             options={currencies}
                             placeholder={t("materials.childTable.selectCurrency")}
-                            // labelText={t("materials.childTable.purchaseCurrency")}
                             style={{
                                 borderBottom: "none",
                                 borderRadius: '4px',
@@ -152,7 +140,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit !== "price" ? `(${t(`measurementUnits.${convertedPricingUnit}`).split(' / ')[0]})` : ''}`}
+                            {`${t("materials.childTable.saleCost")} ${(convertedPricingUnit && convertedPricingUnit.key !== "price") ? `(${convertedPricingUnit.value.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
