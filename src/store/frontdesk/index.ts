@@ -64,6 +64,24 @@ export {
   internalTypingUsersAtom
 } from './atoms/internal.atoms';
 
+// Settings atoms
+export {
+  settingsActiveTabAtom,
+  settingsTemplatesAtom,
+  settingsSelectedTemplateAtom,
+  settingsTemplateGroupsAtom,
+  settingsTemplateTypesAtom,
+  settingsTemplateVariablesAtom,
+  settingsTemplateFiltersAtom,
+  settingsLoadingAtom,
+  settingsErrorAtom,
+  settingsTemplateEditorModalAtom,
+  settingsAddTemplateModalAtom,
+  settingsAddGroupModalAtom,
+  settingsTemplateSubjectAtom,
+  settingsTemplateBodyAtom
+} from './atoms/settings.atoms';
+
 // Navigation selectors
 export {
   currentNavigationStateSelector,

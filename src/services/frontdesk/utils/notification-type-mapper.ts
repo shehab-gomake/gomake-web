@@ -166,6 +166,10 @@ export function extractChannel(notification: BackendNotification): 'DM' | 'EMAIL
     return 'DM';
   }
 
+  if (notification.type === BackendNotificationType.EMAIL_RECEIVED) {
+    return 'EMAIL';
+  }
+
   return null;
 }
 

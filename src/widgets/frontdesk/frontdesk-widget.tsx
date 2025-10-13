@@ -22,6 +22,9 @@ import { TicketDetailView } from './providers/tickets/components/ticket-detail-v
 import { UnifiedProvider } from './providers/unified/UnifiedProvider';
 import { unreadCountByProviderSelector, sidebarCollapsedAtom } from '@/store/frontdesk';
 
+// Settings view
+import { FrontdeskSettingsView } from './settings/frontdesk-settings-view';
+
 // Ticket state
 import {
   selectedTicketViewAtom,
@@ -200,13 +203,12 @@ const FrontdeskWidget: React.FC = () => {
     // Update state immediately for instant UI response
     setCurrentSection(section);
 
-    // Update URL without causing a re-render
+    // Navigate using Next.js router
     const url = section === 'inbox'
       ? '/frontdesk/inbox'
       : `/frontdesk/${section}`;
 
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
+    router.push(url, undefined, { shallow: true });
   };
 
   const handleChannelChange = (channel: Channel) => {
@@ -217,12 +219,11 @@ const FrontdeskWidget: React.FC = () => {
     setSelectedTicketView(null as any);
     setSelectedTicketId(null);
 
-    // Update URL without causing a re-render
+    // Navigate using Next.js router
     const channelMap = { 'all': 'unified', 'email': 'email', 'whatsapp': 'whatsapp', 'internal': 'internal' };
     const url = `/frontdesk/inbox/${channelMap[channel]}`;
 
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
+    router.push(url, undefined, { shallow: true });
   };
 
   const handleTicketViewChange = (view: TicketView) => {
@@ -250,7 +251,7 @@ const FrontdeskWidget: React.FC = () => {
     ticketsProvider.setFilters(newFilters);
     ticketsProvider.fetchTickets(newFilters);
 
-    // Update URL to reflect ticket view
+    // Navigate using Next.js router
     const viewMap = {
       'my-tickets': 'my-tickets',
       'unassigned': 'unassigned',
@@ -259,8 +260,7 @@ const FrontdeskWidget: React.FC = () => {
     };
     const url = `/frontdesk/tickets/${viewMap[view as keyof typeof viewMap]}`;
 
-    // Use window.history API for smoother navigation
-    window.history.pushState({}, '', url);
+    router.push(url, undefined, { shallow: true });
   };
 
   const handleTicketSelect = (ticketId: string, openInNewTab?: boolean) => {
@@ -276,16 +276,16 @@ const FrontdeskWidget: React.FC = () => {
         setOpenTicketTabs([...openTicketTabs, ticketId]);
       }
 
-      // Update URL to reflect selected ticket
+      // Navigate using Next.js router
       const url = `/frontdesk/tickets/${ticketId}`;
-      window.history.pushState({}, '', url);
+      router.push(url, undefined, { shallow: true });
     }
   };
 
   const handleTicketTabChange = (ticketId: string) => {
     setSelectedTicketId(ticketId);
     const url = `/frontdesk/tickets/${ticketId}`;
-    window.history.pushState({}, '', url);
+    router.push(url, undefined, { shallow: true });
   };
 
   const handleTicketTabClose = (ticketId: string) => {
@@ -301,7 +301,7 @@ const FrontdeskWidget: React.FC = () => {
         // No more tabs open, clear selection
         setSelectedTicketId(null);
         const url = `/frontdesk/tickets/${selectedTicketView || 'all-tickets'}`;
-        window.history.pushState({}, '', url);
+        router.push(url, undefined, { shallow: true });
       }
     }
   };
@@ -407,12 +407,7 @@ const FrontdeskWidget: React.FC = () => {
             </Box>
           );
         case 'settings':
-          return (
-            <Box sx={{ p: 3 }}>
-              <Typography variant="h4">Settings</Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>User settings</Typography>
-            </Box>
-          );
+          return <FrontdeskSettingsView />;
         default:
           return null;
       }
