@@ -41,11 +41,13 @@ const PriceListPageWidget = ({
   isMobileScreen = false,
   productId,
   sessionId,
+  interactionId
 }: {
   widgetType: any;
   isMobileScreen?: boolean;
   productId?: string;
   sessionId?: string;
+  interactionId? :string;
 }) => {
   const { clasess } = useStyle({ isMobileScreen });
   const {
@@ -122,7 +124,7 @@ const PriceListPageWidget = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
-  } = useDigitalOffsetPrice({ clasess, widgetType, productId, sessionId });
+  } = useDigitalOffsetPrice({ clasess, widgetType, productId, sessionId,interactionId });
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
