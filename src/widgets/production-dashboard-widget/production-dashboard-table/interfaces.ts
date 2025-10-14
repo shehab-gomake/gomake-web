@@ -1,6 +1,7 @@
 export interface MainProductionReportResponseDTO {
   reportGeneratedAt: string;
   departments: DepartmentPerformanceDTO[];
+  sla: number;
 }
 
 export interface DepartmentPerformanceDTO {
@@ -21,8 +22,9 @@ export interface StationPerformanceDTO {
   capacity: CapacityMetricsDTO;
   performance: PerformanceMetricsDTO;
   jobAnalytics: JobAnalytics;
-  sla: DDP;
+  sla?: DDP;
   averageProductionTime: number;
+  totalEstimatedWorkingHours: number;
 }
 
 export interface StationMetrics {
@@ -56,8 +58,10 @@ export interface DepartmentSummaryDTO {
   totalJobs: number;
   totalEstimatedHours: number;
   totalWorkingHours: number;
-  averageSLA: number;
-  averageGrowth: number | null;
+  totalEstimatedWorkingHours: number;
+  averageSLA?: number;
+  averageCapacity: number | null;
+  averageCapacityGrowth: number | null;
   jobsTotalEstimatedCost: number;
   jobsEstimatedPrice: number;
   totalDoneJobs: number;
@@ -67,4 +71,5 @@ export interface DepartmentSummaryDTO {
   totalReportedJobs: number;
   totalReportedHours: number;
   averagePerformance: number | null;
+  averagePerformanceGrowth: number | null;
 }

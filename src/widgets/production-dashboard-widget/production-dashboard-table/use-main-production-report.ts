@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store";
 import {
-  dashboardDateState,
   productionCreationDateState,
-  systemCurrencyState,
-} from "@/store";
+  productionDeliveryDateState,
+} from "@/store/production-dashboard-dates";
 import { useGomakeAxios } from "@/hooks";
 import { MainProductionReportResponseDTO } from "./interfaces";
 
 export const useMainProductionReport = () => {
   const { callApi } = useGomakeAxios();
-  const { dates: deliveryDates } = useRecoilValue(dashboardDateState);
+  const { dates: deliveryDates } = useRecoilValue(productionDeliveryDateState);
   const { dates: creationDates } = useRecoilValue(productionCreationDateState);
   const systemCurrency = useRecoilValue(systemCurrencyState);
 
@@ -26,7 +26,16 @@ export const useMainProductionReport = () => {
 
   // API call function
   const fetchData = async () => {
-    if (!deliveryDates.startDate || !deliveryDates.endDate) return;
+    // Require at least one date range to be filled
+    const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
+    const hasCreationDates = creationDates.startDate && creationDates.endDate;
+
+    if (!hasDeliveryDates && !hasCreationDates) {
+      setError(
+        "Please select at least one date range (Delivery Date or Creation Date)"
+      );
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -36,8 +45,12 @@ export const useMainProductionReport = () => {
         "POST",
         "/v1/job-service/production-dashboard/get-main-production-report",
         {
-          fromDeliveryDate: deliveryDates.startDate.toISOString(),
-          toDeliveryDate: deliveryDates.endDate.toISOString(),
+          fromDeliveryDate: deliveryDates.startDate
+            ? deliveryDates.startDate.toISOString()
+            : undefined,
+          toDeliveryDate: deliveryDates.endDate
+            ? deliveryDates.endDate.toISOString()
+            : undefined,
           fromCreationDate: creationDates.startDate
             ? creationDates.startDate.toISOString()
             : undefined,
@@ -134,9 +147,15 @@ export const useMainProductionReport = () => {
     }).format(safeValue);
   };
 
-  // Effect to fetch data when dates change
+  // Fetch data when dates change (triggered by search button or initial load)
   useEffect(() => {
-    fetchData();
+    const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
+    const hasCreationDates = creationDates.startDate && creationDates.endDate;
+
+    // Only fetch if at least one date range is set
+    if (hasDeliveryDates || hasCreationDates) {
+      fetchData();
+    }
   }, [
     deliveryDates.startDate,
     deliveryDates.endDate,
@@ -152,6 +171,7 @@ export const useMainProductionReport = () => {
     expandedDepartments,
 
     // Functions
+    fetchData,
     toggleDepartment,
     toggleAllDepartments,
     formatTime,
