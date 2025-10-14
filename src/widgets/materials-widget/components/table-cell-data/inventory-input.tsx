@@ -23,7 +23,6 @@ const InventoryInput = ({ value, isAdmin, id, minStock, optimalStock, currentInv
     const isExpanded = openChildTable.rowId === id && openChildTable.tableType === 'inventory';
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
-    console.log("isRTL", isRTL);
     const toggleExpanded = () => {
         if (isExpanded) {
             setOpenChildTable({ rowId: '', tableType: null });

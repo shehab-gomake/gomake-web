@@ -298,7 +298,6 @@ const useMaterials = (isAdmin: boolean) => {
 
   // Helper function to translate values array
   const translateValuesArray = (values: any[]) => {
-    console.log("valuesvaluesvalues", values);
     return values.map(item => ({
       ...item,
       value: translateHeaderValue(item.key, item.value)
@@ -309,7 +308,6 @@ const useMaterials = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         const tableHeaders = res.data?.tableHeaders;
-        console.log("tableHeaders", tableHeaders);
         // Translate header values
         const translatedHeaders = tableHeaders.map(header => ({
           ...header,
