@@ -5,7 +5,7 @@ export default function GoMakeAIPage() {
   return (
     <CustomerAuthLayout
       staticPageTitle={"GoMake AI"}
-      allowAnonymous={false}
+      allowAnonymous={true}
       disableHeaderSideMenu={true}
     >
       <GoMakeAIComponent />

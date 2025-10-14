@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AISidebar } from "../ai-sidebar/ai-sidebar";
 import { AIMainPanel } from "../ai-main-panel/ai-main-panel";
@@ -6,10 +6,15 @@ import { useStyle } from "./style";
 import { useAISocketIO } from "@/hooks/socket-io/use-ai-socket-io";
 import { PriceListPageWidget } from "@/pages-components/products/digital-offset-price/digital-offset-price";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import { LandingModal } from "../landing-modal/landing-modal";
+import { getUserToken, updateTokenStorage } from "@/services/storage-data";
+import { useGomakeAxios } from "@/hooks";
+import { createGuestUserForGomakeAIApi } from "@/services/api-service/customers/employees-api";
 
 const GoMakeAIComponent = () => {
   const { classes } = useStyle();
   const router = useRouter();
+  const { callApi } = useGomakeAxios();
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [conversationsHistory, setConversationsHistory] = useState<any[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
@@ -18,9 +23,14 @@ const GoMakeAIComponent = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isConversationLoading, setIsConversationLoading] = useState(false);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
-  const [productUpdateVersion,setProductUpdateVersion]= useState(0)
+  const [productUpdateVersion, setProductUpdateVersion] = useState(0);
   const hasInitialized = useRef(false);
   const [interactionId, setInteractionId] = useState("");
+  const [showLandingModal, setShowLandingModal] = useState(false);
+  const [onboardingData, setOnboardingData] = useState<{
+    email: string;
+    country: string;
+  } | null>(null);
   // Handle real-time messages from socket
   const handleRealTimeMessage = (message: any) => {
     setChatMessages((prev) => [...prev, message]);
@@ -49,11 +59,11 @@ const GoMakeAIComponent = () => {
       )
     );
   };
-  
-  const handleProductUpdated = (interactionId:string) => {
-    setInteractionId(interactionId)
-    setProductUpdateVersion(prev=>prev+1);
-  }
+
+  const handleProductUpdated = (interactionId: string) => {
+    setInteractionId(interactionId);
+    setProductUpdateVersion((prev) => prev + 1);
+  };
   const {
     isProcessing,
     sessionId,
@@ -63,7 +73,11 @@ const GoMakeAIComponent = () => {
     getConversation,
     setSessionIdManually,
     resetProcessingState,
-  } = useAISocketIO(handleRealTimeMessage, handleProductIdReceived,handleProductUpdated);
+  } = useAISocketIO(
+    handleRealTimeMessage,
+    handleProductIdReceived,
+    handleProductUpdated
+  );
 
   // Load conversations history on mount
   useEffect(() => {
@@ -79,6 +93,37 @@ const GoMakeAIComponent = () => {
     };
     loadHistory();
   }, []);
+
+  // Handle token from URL redirect
+  useEffect(() => {
+    if (router.isReady && router.query.token) {
+      const token = router.query.token as string;
+      updateTokenStorage(token);
+
+      // Remove token from URL
+      const { token: _, ...restQuery } = router.query;
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: restQuery,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [router.isReady, router.query.token]);
+
+  // Check if landing modal should be shown
+  useEffect(() => {
+    if (router.isReady) {
+      const hasToken = !!getUserToken();
+      const isOnboarding = router.query.onboarding === "true";
+
+      if (!hasToken && isOnboarding) {
+        setShowLandingModal(true);
+      }
+    }
+  }, [router.isReady, router.query.onboarding]);
 
   // Initialize only once — handles page load or refresh
   // Wait for both router to be ready AND conversations history to be loaded
@@ -220,6 +265,35 @@ const GoMakeAIComponent = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
+  // Prevent closing modal - it should only close after successful API call
+  const handleLandingModalClose = () => {
+    // Do nothing - modal can't be closed manually
+  };
+
+  const handleLandingModalContinue = async (email: string, country: string) => {
+    try {
+      setOnboardingData({ email, country });
+
+      const callBack = (res: any) => {
+        if (res.success) {
+          const redirectUrl = res?.data?.redirectUrl;
+          if (redirectUrl) {
+            // Redirect to the URL which will contain the token
+            // The useEffect will handle extracting and saving the token
+            window.location.href = redirectUrl;
+          }
+        }
+      };
+
+      await createGuestUserForGomakeAIApi(callApi, callBack, {
+        email,
+        country,
+      });
+    } catch (error) {
+      console.error("Error creating guest user:", error);
+    }
+  };
+
   if (isInitializing) {
     return (
       <div style={classes.initializationContainer}>
@@ -246,6 +320,7 @@ const GoMakeAIComponent = () => {
       </div>
     );
   }
+
   return (
     <div style={classes.container}>
       <AISidebar
@@ -268,18 +343,23 @@ const GoMakeAIComponent = () => {
           isLoadingConversation={isConversationLoading}
         />
         {productId && sessionId && (
-            <div style={classes.priceWidgetContainer}>
-              <PriceListPageWidget
-                  key={productUpdateVersion}
-                  widgetType={EWidgetProductType.CREATE}
-                  isMobileScreen={true}
-                  productId={productId}
-                  sessionId={sessionId}
-                  interactionId={interactionId}
-              />
-            </div>
+          <div style={classes.priceWidgetContainer}>
+            <PriceListPageWidget
+              key={productUpdateVersion}
+              widgetType={EWidgetProductType.CREATE}
+              isMobileScreen={true}
+              productId={productId}
+              sessionId={sessionId}
+              interactionId={interactionId}
+            />
+          </div>
         )}
       </div>
+      <LandingModal
+        open={showLandingModal}
+        onClose={handleLandingModalClose}
+        onContinue={handleLandingModalContinue}
+      />
     </div>
   );
 };
