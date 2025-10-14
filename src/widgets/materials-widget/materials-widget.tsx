@@ -49,6 +49,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const dir: "rtl" | "ltr" = t("direction");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
+  const [filterBarHeight, setFilterBarHeight] = useState(40); // Default single-line height
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
   const navStatus = useRecoilValue(navStatusState);
@@ -109,6 +110,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
+
+  const handleFilterHeightChange = useCallback((height: number) => {
+    setFilterBarHeight(height);
+  }, []);
 
   const handleLoadMore = useCallback(() => {
     if (materialType && materialCategory && !isLoadingMore && hasMoreData) {
@@ -378,6 +383,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             isFetchingSupplier={isFetchingSupplier}
             renderOptionsSupplier={listSupplier}
             checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+            onHeightChange={handleFilterHeightChange}
           />
         </div>
       </div>
@@ -445,6 +451,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         onLoadMore={handleLoadMore}
                         hasMoreData={hasMoreData}
                         isLoadingMore={isLoadingMore}
+                        filterBarHeight={filterBarHeight}
                       />
                     ) : flag &&
                       materialCategories.find(
@@ -464,6 +471,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                         onLoadMore={handleLoadMore}
                         hasMoreData={hasMoreData}
                         isLoadingMore={isLoadingMore}
+                        filterBarHeight={filterBarHeight}
                       />
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>

@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -20,6 +20,7 @@ interface FiltersActionsBarProps {
   isFetchingSupplier?: boolean;
   renderOptionsSupplier?: any;
   checkWhatRenderArraySupplier?: any;
+  onHeightChange?: (height: number) => void;
 }
 
 const FiltersActionsBar = (props: FiltersActionsBarProps) => {
@@ -74,8 +75,18 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     : materialTableFilters?.slice(0, INITIAL_FILTERS_COUNT);
   const hasMoreFilters = materialTableFilters && materialTableFilters.length > INITIAL_FILTERS_COUNT;
 
+  const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  // Measure and report filter bar height changes
+  useEffect(() => {
+    if (filterContainerRef.current && props.onHeightChange) {
+      const height = filterContainerRef.current.offsetHeight;
+      props.onHeightChange(height);
+    }
+  }, [showMore, materialTableFilters, props.onHeightChange]);
+
   return (
-    <Stack direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
+    <Stack ref={filterContainerRef} direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
       {displayedFilters && materialTableFilters?.length > 0 &&
         displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
