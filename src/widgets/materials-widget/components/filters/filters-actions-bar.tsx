@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -20,6 +20,7 @@ interface FiltersActionsBarProps {
   isFetchingSupplier?: boolean;
   renderOptionsSupplier?: any;
   checkWhatRenderArraySupplier?: any;
+  onHeightChange?: (height: number) => void;
 }
 
 const FiltersActionsBar = (props: FiltersActionsBarProps) => {
@@ -35,6 +36,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     getFilterValue,
     materialCategory,
   } = useMaterialFilters();
+
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
@@ -71,8 +75,18 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     : materialTableFilters?.slice(0, INITIAL_FILTERS_COUNT);
   const hasMoreFilters = materialTableFilters && materialTableFilters.length > INITIAL_FILTERS_COUNT;
 
+  const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  // Measure and report filter bar height changes
+  useEffect(() => {
+    if (filterContainerRef.current && props.onHeightChange) {
+      const height = filterContainerRef.current.offsetHeight;
+      props.onHeightChange(height);
+    }
+  }, [showMore, materialTableFilters, props.onHeightChange]);
+
   return (
-    <Stack direction={"row"} gap={2} alignItems={"center"} flexWrap={"wrap"}>
+    <Stack ref={filterContainerRef} direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
       {displayedFilters && materialTableFilters?.length > 0 &&
         displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
@@ -149,7 +163,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v, unit)}
-                style={{ width: "200px" }}
+                style={{ width: "180px" }}
                 value={getFilterValue(key)}
                 options={convertedUnit}
                 placeholder={
@@ -191,7 +205,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       )}
       {!props.isAdmin ? (
         <GoMakeAutoComplate
-          style={{ width: "150px" }}
+          style={!hasMoreFilters ? {
+            width: "100px",
+            [isRTL ? 'marginLeft' : 'marginRight']: "38px"
+          } : { width: "100px" }
+          }
           options={activeFilterOptions}
           value={activeFilterLabel()}
           onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
@@ -205,7 +223,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         <Box
           onClick={() => setShowMore(!showMore)}
           sx={{
-            padding: "6px 12px",
+            padding: "3px 6px",
             backgroundColor: "#f8f9fa",
             borderRadius: "6px",
             cursor: "pointer",
@@ -218,6 +236,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             gap: "4px",
             minHeight: "32px",
             whiteSpace: "nowrap",
+            [isRTL ? 'marginLeft' : 'marginRight']: "32px",
             "&:hover": {
               backgroundColor: "#e9ecef",
             },
@@ -249,7 +268,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "10px", marginRight: "5px" }}>
+      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
         {<ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>

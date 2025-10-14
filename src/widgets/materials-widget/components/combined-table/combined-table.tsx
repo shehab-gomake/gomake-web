@@ -22,6 +22,7 @@ interface ICombinedTableProps {
     onLoadMore?: () => void;
     hasMoreData?: boolean;
     isLoadingMore?: boolean;
+    filterBarHeight?: number;
 }
 
 const CombinedTable = ({
@@ -38,6 +39,7 @@ const CombinedTable = ({
     onLoadMore,
     hasMoreData = false,
     isLoadingMore = false,
+    filterBarHeight = 40,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
     const { t } = useTranslation();
@@ -136,6 +138,9 @@ const CombinedTable = ({
 
     const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
+    // Calculate dynamic table height based on actual filter bar height
+    // Base offset: 120px (header) + 10px (padding) + filterBarHeight
+    const tableMaxHeight = `calc(100vh - ${110 + filterBarHeight}px)`;
 
     return (
         <>
@@ -143,7 +148,7 @@ const CombinedTable = ({
                 <TableContainer
                     ref={tableContainerRef}
                     component={Paper}
-                    sx={{ ...classes.tableContainer, maxHeight: showMore ? "calc(100vh - 213px)" : "calc(100vh - 150px)" }}
+                    sx={{ ...classes.tableContainer, maxHeight: tableMaxHeight }}
                 >
                     <Table sx={classes.table} stickyHeader>
                         <TableHead>

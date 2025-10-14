@@ -104,8 +104,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const convertedPurchasePricingUnit = purchasePricingTableHeadingUnits.pricingUnit;
     const convertedPurchasePricingInventoryUnit = purchasePricingTableHeadingUnits.inventoryUnit;
 
-    console.log('convertedPricingUnit', convertedPricingUnit);
-
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
@@ -665,11 +663,37 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                                             </TableCell>
                                                             <TableCell sx={classes.bodyCell}>
                                                                 <TableCellData
-                                                                    value={
-                                                                        Array.isArray(row.purchasePrice?.[convertedPricingUnit?.key]?.value)
-                                                                            ? row.purchasePrice[convertedPricingUnit?.key].value
-                                                                            : [row.purchasePrice?.[convertedPricingUnit?.key]?.value].filter(v => v !== undefined && v !== null)
-                                                                    }
+                                                                    value={(() => {
+                                                                        let extractedValue;
+                                                                        const pricingData = row.purchasePrice;
+
+                                                                        if (convertedPurchasePricingUnit?.key) {
+                                                                            // If a specific key is available, try to get the value from the nested object
+                                                                            extractedValue = pricingData?.[convertedPurchasePricingUnit.key]?.value;
+                                                                        } else {
+                                                                            // If no specific key (convertedPurchasePricingUnit?.key is null/undefined)
+                                                                            if (pricingData && typeof pricingData === 'object') {
+                                                                                // If pricingData is an object, try to find a 'value' property directly
+                                                                                // or take the value from the first available unit key.
+                                                                                if ('value' in pricingData) {
+                                                                                    extractedValue = pricingData.value;
+                                                                                } else {
+                                                                                    const firstUnitKey = Object.keys(pricingData)[0];
+                                                                                    if (firstUnitKey) {
+                                                                                        extractedValue = pricingData[firstUnitKey]?.value;
+                                                                                    }
+                                                                                }
+                                                                            } else {
+                                                                                // If pricingData is a primitive (number, string) or null/undefined, use it directly
+                                                                                extractedValue = pricingData;
+                                                                            }
+                                                                        }
+
+                                                                        // Ensure the value is an array for TableCellData, filtering out null/undefined
+                                                                        return Array.isArray(extractedValue)
+                                                                            ? extractedValue.filter(v => v !== undefined && v !== null)
+                                                                            : (extractedValue !== undefined && extractedValue !== null ? [extractedValue] : []);
+                                                                    })()}
                                                                     isEditable={true}
                                                                     type={3}
                                                                     id={row.id}

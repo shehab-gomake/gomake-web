@@ -106,7 +106,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit.value.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -140,7 +140,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit.value.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput

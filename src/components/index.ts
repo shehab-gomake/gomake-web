@@ -13,3 +13,4 @@ export * from "./modal-deleted";
 export * from "./menu";
 export * from "./switch";
 export * from "./form-inputs/filter-section-component";
+export * from "./multi-select/gomake-multi-select";

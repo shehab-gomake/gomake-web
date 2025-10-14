@@ -52,7 +52,6 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
-  console.log("materialHeaders", materialHeaders);
   const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
