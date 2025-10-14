@@ -6,7 +6,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 const useAISocketIO = (
   onMessageReceived?: (message: any) => void,
   onProductIdReceived?: (productId: string) => void,
-  onProductUpdated?: (interactionId:string) => void
+  onProductUpdated?: (interactionId: string) => void
 ) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -39,11 +39,10 @@ const useAISocketIO = (
         onProductIdReceived(data.productId);
       }
     });
-    socket.on(`${sessionId}-parameters-result`, (data:any) => {
-      if(onProductUpdated){
+    socket.on(`${sessionId}-parameters-result`, (data: any) => {
+      if (onProductUpdated) {
         onProductUpdated(data.interactionId);
       }
-      
     });
     return () => {
       socket.off(`${sessionId}-productId-result`);
@@ -68,7 +67,7 @@ const useAISocketIO = (
         return response.data?.data?.data;
       } else {
         const errorMessage = response?.message || "Failed to start AI session";
-        alertFault(errorMessage);
+        // alertFault(errorMessage);
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -143,7 +142,7 @@ const useAISocketIO = (
       } else {
         const errorMessage =
           response?.message || "Failed to get conversations history";
-        alertFault(errorMessage);
+        // alertFault(errorMessage);
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -183,7 +182,7 @@ const useAISocketIO = (
         return responseData;
       } else {
         const errorMessage = response?.message || "Failed to get conversation";
-        alertFault(errorMessage);
+        // alertFault(errorMessage);
         throw new Error(errorMessage);
       }
     } catch (error) {
