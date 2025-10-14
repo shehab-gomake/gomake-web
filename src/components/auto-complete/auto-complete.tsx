@@ -131,7 +131,8 @@ const GoMakeAutoComplate = ({
   noOptionsText,
   componentsProps,
   isOptionEqualToValue,
-  labelText
+  labelText,
+  getOptionDisabled
 }: {
   value?: any;
   onChange?: any;
@@ -165,6 +166,7 @@ const GoMakeAutoComplate = ({
   componentsProps?: any;
   isOptionEqualToValue?: (option: any, value: any) => boolean;
   labelText?: string;
+  getOptionDisabled?: (option: any) => boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -281,6 +283,7 @@ const GoMakeAutoComplate = ({
           isOptionEqualToValue ??
           ((option: any, value: any) => String(option?.id) === String(value?.id))
         }
+        getOptionDisabled={getOptionDisabled}
       />
     </>
 
