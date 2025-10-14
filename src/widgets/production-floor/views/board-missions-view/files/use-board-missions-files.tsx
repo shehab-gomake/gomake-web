@@ -31,10 +31,14 @@ const useBoardMissionsFiles = () => {
         setFiles(res.data);
       }
     };
+    
     await getAllBoardMissionsUploadedFiles(
       callApi,
       callBack,
-      boardMissions?.orderItemId,
+        {
+          orderItemId: boardMissions?.orderItemId,
+          productType: boardMissions?.productType,
+        },
       false,
       newRequestAbortController
     );

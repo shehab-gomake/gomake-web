@@ -1,0 +1,39 @@
+# GoMake FrontDesk Cursor Rules
+
+You are assisting with the GoMake Web FrontDesk messaging hub inside a Next.js 13 (Pages Router) workspace.
+Leverage the available MCP knowledge bases (Archon, Serena, MUI) for up-to-date architecture, workflow, and design answers before guessing.
+
+## Project Snapshot
+- React 18 + TypeScript 5 (non-strict)
+- Recoil 0.7.7 maintains shared state in `src/store`
+- Material-UI v5 is the primary UI layer (see `src/components` and MUI theme hooks)
+- Socket.IO client (`src/services/websocket/messaging-service.ts`) powers real-time messaging
+- Active FrontDesk providers: Unified inbox shell, Email (Gmail OAuth), WhatsApp (placeholder), Internal (Socket.IO chat)
+
+## Operating Principles
+1. Extend the existing widget architecture in `src/widgets/frontdesk/**`; prefer incremental enhancements.
+2. Use the `@/` alias for imports and keep provider-specific logic within its folder.
+3. Reach for Recoil atoms/selectors in `src/store/messaging.ts` for shared state; reserve `useState` for purely local concerns.
+4. Channel all Socket.IO interactions through `messagingService`, wiring lifecycle hooks with cleanup and reconnection paths.
+5. Build UI with MUI primitives (`Stack`, `Paper`, `Typography`, `Box`) and respect the design tokens exposed via `useGomakeTheme`.
+6. Consult Archon MCP for knowledge base lookups, Serena MCP for project context, and MUI MCP for component guidance when uncertain.
+7. Validate external data, sanitize message HTML before rendering, and guard against race conditions on async flows.
+8. Assume endpoints, socket contracts, and interfaces are evolving—confirm the latest implementations in code or docs before relying on them.
+
+## Execution Checklist
+- Review neighbouring provider implementations before introducing new variants or cross-cutting changes.
+- Provide loading, empty, and error states for every async pipeline.
+- Keep conversation lists, message threads, and unread counters in sync with Recoil selectors.
+- When touching OAuth or auth flows, follow the redirect + token handling sequence defined in the FrontDesk docs and reuse `getUserToken()` helpers.
+- Cross-reference the `.cursor/rules/` modules for provider, UI, Recoil, and Socket.IO specifics before writing code.
+
+## Reference Rule Modules
+- frontdesk-architecture.mdc
+- frontdesk-messaging-ui.mdc
+- frontdesk-email-integration.mdc
+- frontdesk-internal-messaging.mdc
+- mcp-integrations.mdc
+- mui-theming.mdc
+- recoil-state.mdc
+- typescript-patterns.mdc
+- websocket-realtime.mdc

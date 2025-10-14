@@ -21,6 +21,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
 import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
+import { useRouter } from "next/router";
 
 i18n
   .use(Backend)
@@ -38,6 +39,11 @@ i18n
 
 export default function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+
+  // Pages where the chat widget should be hidden
+  const hiddenChatWidgetPages = ["/gomake-ai"];
+  const shouldShowChatWidget = !hiddenChatWidgetPages.includes(router.pathname);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -62,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <GoMakeSnackBar />
                   <GomakeLoading />
                   <GomakeLoadingWithShadow />
-                  <GoSupportChatWidget />
+                  {shouldShowChatWidget && <GoSupportChatWidget />}
                 </LocalizationProvider>
               </EnhancedErrorBoundary>
             </UpdatePathWrapper>

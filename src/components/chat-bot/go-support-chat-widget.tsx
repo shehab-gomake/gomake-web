@@ -24,6 +24,8 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
   const { callApi } = useGomakeAxios();
 
   useEffect(() => {
+    let scriptElement: HTMLScriptElement | null = null;
+
     const loadChatWidget = async () => {
       try {
         setIsLoading(true);
@@ -72,6 +74,7 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
       script.src =
         "https://know-base-qassamat.replit.app/public/chat-widget.js";
       script.async = true;
+      script.id = "gomake-chat-widget-script";
       script.onload = () => {
         setIsLoading(false);
       };
@@ -81,9 +84,39 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
       };
 
       document.body.appendChild(script);
+      scriptElement = script;
     };
 
     loadChatWidget();
+
+    // Cleanup function
+    return () => {
+      // Remove the script element
+      if (scriptElement && scriptElement.parentNode) {
+        scriptElement.parentNode.removeChild(scriptElement);
+      }
+
+      // Remove widget DOM elements that the script may have created
+      const widgetContainer = document.getElementById("gomake-chat-widget");
+      if (widgetContainer && widgetContainer.parentNode) {
+        widgetContainer.parentNode.removeChild(widgetContainer);
+      }
+
+      // Remove any other widget-related elements (button, iframe, etc.)
+      const widgetElements = document.querySelectorAll(
+        '[class*="chat-widget"], [id*="chat-widget"], [class*="gomake-chat"]'
+      );
+      widgetElements.forEach((element) => {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+      });
+
+      // Clean up global config
+      if ((window as any).GoMakeChat) {
+        delete (window as any).GoMakeChat;
+      }
+    };
   }, [apiKey, position, primaryColor, theme, userProfile, callApi]);
 
   // Don't render anything visible - the widget will be injected by the script

@@ -125,11 +125,13 @@ const useDigitalOffsetPrice = ({
   widgetType,
   productId,
   sessionId,
+  interactionId
 }: {
   clasess: any;
   widgetType: any;
   productId?: string;
   sessionId?: string;
+  interactionId?: string;
 }) => {
   if (typeof window !== "undefined") {
     try {
@@ -7763,34 +7765,47 @@ const useDigitalOffsetPrice = ({
           const documentItemId = router?.query?.documentItemId;
           const conn = generateConnectionId(connectionId);
           setCurrentSignalRConnectionId(conn);
+          
+          let calculationObj =  {
+            calculationSessionId: newCalculationSessionId,
+            signalRConnectionId: conn,
+            clientId: router?.query?.customerId,
+            clientTypeId: router?.query?.clientTypeId,
+            productId: productId || router?.query?.productId,
+            generalParameters:
+                unitType === UNIT_TYPE.IMPERIAL
+                    ? convertedGeneralParameters
+                    : updatedGeneralParameters,
+            subProducts: calculationSubProducts,
+            itemParmetersValues:
+                unitType === UNIT_TYPE.IMPERIAL
+                    ? convertedItemParameters
+                    : itemParmetersValues,
+            workTypes: workTypes,
+            isChargeForNewDie: isChargeForNewDie,
+            productType: productTemplate?.productType,
+            templateId: productTemplate?.templateId,
+            documentType: docType,
+            documentItemId: documentItemId,
+            calculationMetaData: null,
+            //priceRecovery: priceRecovery,
+          };
+          if(sessionId){
+            const chatBotMetaDataObj = {
+              sessionId,
+              interactionId,
+            }
+            const chatBotMetaDataJsonStr = JSON.stringify(chatBotMetaDataObj);
+            calculationObj.calculationMetaData = {
+              additionalData:chatBotMetaDataJsonStr
+            }
+          }
           const res: any = await callApi(
             "POST",
             productTemplate?.isHaveFixedAction
               ? "/v1/erp-service/product-item-value/create-default-work-flow"
               : `/v1/calculation-service/calculations/calculate-productV2`,
-            {
-              calculationSessionId: newCalculationSessionId,
-              signalRConnectionId: conn,
-              clientId: router?.query?.customerId,
-              clientTypeId: router?.query?.clientTypeId,
-              productId: productId || router?.query?.productId,
-              generalParameters:
-                unitType === UNIT_TYPE.IMPERIAL
-                  ? convertedGeneralParameters
-                  : updatedGeneralParameters,
-              subProducts: calculationSubProducts,
-              itemParmetersValues:
-                unitType === UNIT_TYPE.IMPERIAL
-                  ? convertedItemParameters
-                  : itemParmetersValues,
-              workTypes: workTypes,
-              isChargeForNewDie: isChargeForNewDie,
-              productType: productTemplate?.productType,
-              templateId: productTemplate?.templateId,
-              documentType: docType,
-              documentItemId: documentItemId,
-              //priceRecovery: priceRecovery,
-            },
+            calculationObj,
             false,
             newRequestAbortController
           );
@@ -8023,7 +8038,7 @@ const useDigitalOffsetPrice = ({
     const callBack = async (res) => {
       if (res?.success) {
         // Create order folders if this is an order creation and preference is enabled
-        const documentId = router?.query?.documentId.toString();
+        const documentId = router?.query?.documentId?.toString();
         if (
           Number(docType) === DOCUMENT_TYPE.order &&
           duplicateType !== "1" &&
@@ -8062,7 +8077,7 @@ const useDigitalOffsetPrice = ({
       const callBack = async (res) => {
         if (res?.success) {
           const isCreation = res?.data;
-          const documentId = router?.query?.documentId.toString();
+          const documentId = router?.query?.documentId?.toString();
           // Create order folders if this is an order creation and preference is enabled
           if (
             Number(router.query.documentType) === DOCUMENT_TYPE.order &&

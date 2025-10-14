@@ -74,107 +74,109 @@ const CustomerAuthLayout = ({
     }
   }, [appVersion]);*/
 
-  return disableHeaderSideMenu ? (
+  return (
     <>
-      {canAccess && (
-        <div
-          style={{
-            ...classes.bodyContainer,
-            backgroundColor: backgroundColor ?? "#FFF",
-          }}
-        >
-          {children}
-        </div>
-      )}
-    </>
-  ) : (
-    <>
-      {
-        <div style={classes.container}>
-          <Head>
-            <title>{getPageTitle()}</title>
-          </Head>
-          {isMobileScreen ? (
-            <div></div>
-          ) : (
-            <LeftSideLayout customGap={customGap} />
+      {disableHeaderSideMenu ? (
+        <>
+          {canAccess && (
+            <div
+              style={{
+                ...classes.bodyContainer,
+                backgroundColor: backgroundColor ?? "#FFF",
+              }}
+            >
+              {children}
+            </div>
           )}
+        </>
+      ) : (
+        <>
+          <div style={classes.container}>
+            <Head>
+              <title>{getPageTitle()}</title>
+            </Head>
+            {isMobileScreen ? (
+              <div></div>
+            ) : (
+              <LeftSideLayout customGap={customGap} />
+            )}
 
-          <div
-            style={classes.rightContainer}
-            onMouseEnter={() => {
-              if (!isHover) {
-                setNavStatus({ isClosed: true });
-              }
-            }}
-          >
-            {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
+            <div
+              style={classes.rightContainer}
+              onMouseEnter={() => {
+                if (!isHover) {
+                  setNavStatus({ isClosed: true });
+                }
+              }}
+            >
+              {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
 
-            {canAccess && (
-              <div style={classes.bodyContainer} className={className}>
-                {children}
-              </div>
+              {canAccess && (
+                <div style={classes.bodyContainer} className={className}>
+                  {children}
+                </div>
+              )}
+            </div>
+            <FilesUploaderWidget />
+            {profile?.isShowOnBoardingMenu && !isMobileScreen ? (
+              <SetupSection />
+            ) : (
+              <></>
             )}
           </div>
-          <FilesUploaderWidget />
-          <GoMakeModal
-            insideStyle={{ height: "fit-content" }}
-            openModal={openModal}
-            onClose={onCloseModal}
-          >
-            <div
-              dangerouslySetInnerHTML={{ __html: htmlTour }}
-              style={{ padding: "10px" }}
-            />
-          </GoMakeModal>
-          <GoMakeAlertModal
-            openModal={openAlertModal}
-            onClose={() => setOpenAlertModal(false)}
-            subTitle={"modal.alertNewVersion"}
-            yesBtn={"modal.ok"}
-            onClickConfirm={() => setOpenAlertModal(false)}
-            withCancelBtn={false}
-          />
-          <GoMakeAlertModal
-            openModal={alertNewVersion.isOpen}
-            onClose={alertNewVersion.close}
-            onClickConfirm={() => {
-              alertNewVersion.close();
-              window.location.reload();
-            }}
-            subTitle="modal.alertNewAppVersion"
-            yesBtn="modal.reload"
-            withCancelBtn={false}
-          />
+        </>
+      )}
 
-          {isTokenExpired && (
-            <GoMakeAlertModal
-              openModal={isTokenExpired}
-              onClose={() => setIsTokenExpired(false)}
-              onClickConfirm={() => {
-                setIsTokenExpired(false);
-                window.open("/login", "_blank");
-                /*const currentPath =
-                  window.location.pathname + window.location.search;
-                const loginUrl =
-                  currentPath && currentPath !== "/"
-                    ? `/login?redirect=${encodeURIComponent(currentPath)}`
-                    : "/login";
-                navigate(loginUrl);*/
-              }}
-              subTitle="modal.alertTokenExpired"
-              yesBtn="login.login"
-              withCancelBtn={false}
-            />
-          )}
-
-          {profile?.isShowOnBoardingMenu && !isMobileScreen ? (
-            <SetupSection />
-          ) : (
-            <></>
-          )}
-        </div>
-      }
+      {/* Shared modals - always render regardless of disableHeaderSideMenu */}
+      <GoMakeModal
+        insideStyle={{ height: "fit-content" }}
+        openModal={openModal}
+        onClose={onCloseModal}
+      >
+        <div
+          dangerouslySetInnerHTML={{ __html: htmlTour }}
+          style={{ padding: "10px" }}
+        />
+      </GoMakeModal>
+      <GoMakeAlertModal
+        openModal={openAlertModal}
+        onClose={() => setOpenAlertModal(false)}
+        subTitle={"modal.alertNewVersion"}
+        yesBtn={"modal.ok"}
+        onClickConfirm={() => setOpenAlertModal(false)}
+        withCancelBtn={false}
+      />
+      <GoMakeAlertModal
+        openModal={alertNewVersion.isOpen}
+        onClose={alertNewVersion.close}
+        onClickConfirm={() => {
+          alertNewVersion.close();
+          window.location.reload();
+        }}
+        subTitle="modal.alertNewAppVersion"
+        yesBtn="modal.reload"
+        withCancelBtn={false}
+      />
+      {isTokenExpired && (
+        <GoMakeAlertModal
+          openModal={isTokenExpired}
+          onClose={() => setIsTokenExpired(false)}
+          onClickConfirm={() => {
+            setIsTokenExpired(false);
+            window.open("/login", "_blank");
+            /*const currentPath =
+              window.location.pathname + window.location.search;
+            const loginUrl =
+              currentPath && currentPath !== "/"
+                ? `/login?redirect=${encodeURIComponent(currentPath)}`
+                : "/login";
+            navigate(loginUrl);*/
+          }}
+          subTitle="modal.alertTokenExpired"
+          yesBtn="login.login"
+          withCancelBtn={false}
+        />
+      )}
     </>
   );
 };
