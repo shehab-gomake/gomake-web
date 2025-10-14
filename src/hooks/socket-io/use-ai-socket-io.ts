@@ -102,7 +102,7 @@ const useAISocketIO = (
           response?.message ||
           response?.msg ||
           `Request failed with status ${response.status}`;
-        alertFault(errorMessage);
+        //alertFault(errorMessage);
         setIsProcessing(false);
         throw new Error(errorMessage);
       }
@@ -132,7 +132,7 @@ const useAISocketIO = (
           response?.message ||
           response?.msg ||
           `Request failed with status ${response.status}`;
-        alertFault(errorMessage);
+        // alertFault(errorMessage);
         throw new Error(errorMessage);
       }
 
@@ -173,7 +173,7 @@ const useAISocketIO = (
           response?.message ||
           response?.msg ||
           `Request failed with status ${response.status}`;
-        alertFault(errorMessage);
+        // alertFault(errorMessage);
         throw new Error(errorMessage);
       }
 
