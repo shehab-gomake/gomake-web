@@ -306,12 +306,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     getMaterialCategories(materialType).then();
     getMaterialTableHeaders(materialType?.toString()).then();
   }, [materialType]);
-  useEffect(() => {
-    getPrintHouseMaterialCategorySuppliers(
-      materialType?.toString(),
-      materialCategory?.toString()
-    ).then();
-  }, [materialCategory]);
+
   const isLoadingMaterials = useRecoilValue(isLoadingMaterialsState);
 
   useEffect(() => {
@@ -319,31 +314,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       // Reset to page 1 when filters change
       resetPageNumber(1);
 
-      if (props.isAdmin) {
-        getMaterialCategoryData(
-          materialType?.toString(),
-          materialCategory?.toString(),
-          materialFilter,
-          supplierId,
-          1, // pageNumber
-          20 // pageSize
-        ).then();
-      } else {
-        // For non-admin, the API uses suppliersIds, so we can call it even without supplierId
-        getMaterialCategoryData(
-          materialType?.toString(),
-          materialCategory?.toString(),
-          materialFilter,
-          supplierId,
-          1, // pageNumber
-          20 // pageSize
-        ).then();
-      }
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        materialFilter,
+        supplierId,
+        1, // pageNumber
+        20 // pageSize
+      ).then();
     }
   }, [
     materialType,
     materialCategory,
-    supplierId,
     suppliersIds,
     activeFilter,
     materialFilter,
