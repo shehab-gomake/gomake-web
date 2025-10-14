@@ -76,7 +76,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `(${convertedPurchasePricingUnit.value.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `(${convertedPurchasePricingUnit?.value?.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput

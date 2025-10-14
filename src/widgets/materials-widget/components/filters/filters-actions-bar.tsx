@@ -36,6 +36,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   const [selectedOption, setSelectedOptions] = useState([]);
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
@@ -72,7 +75,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   const hasMoreFilters = materialTableFilters && materialTableFilters.length > INITIAL_FILTERS_COUNT;
 
   return (
-    <Stack direction={"row"} gap={2} alignItems={"center"} flexWrap={"wrap"}>
+    <Stack direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
       {displayedFilters && materialTableFilters?.length > 0 &&
         displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
@@ -149,7 +152,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v, unit)}
-                style={{ width: "200px" }}
+                style={{ width: "180px" }}
                 value={getFilterValue(key)}
                 options={convertedUnit}
                 placeholder={
@@ -191,7 +194,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       )}
       {!props.isAdmin ? (
         <GoMakeAutoComplate
-          style={{ width: "150px" }}
+          style={!hasMoreFilters ? {
+            width: "100px",
+            [isRTL ? 'marginLeft' : 'marginRight']: "32px"
+          } : { width: "100px" }
+          }
           options={activeFilterOptions}
           value={activeFilterLabel()}
           onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
@@ -205,7 +212,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         <Box
           onClick={() => setShowMore(!showMore)}
           sx={{
-            padding: "6px 12px",
+            padding: "3px 6px",
             backgroundColor: "#f8f9fa",
             borderRadius: "6px",
             cursor: "pointer",
@@ -218,6 +225,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             gap: "4px",
             minHeight: "32px",
             whiteSpace: "nowrap",
+            [isRTL ? 'marginLeft' : 'marginRight']: "32px",
             "&:hover": {
               backgroundColor: "#e9ecef",
             },
@@ -249,7 +257,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"} sx={{ marginLeft: "10px", marginRight: "5px" }}>
+      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
         {<ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>

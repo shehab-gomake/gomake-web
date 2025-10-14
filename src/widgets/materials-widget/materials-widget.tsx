@@ -20,7 +20,6 @@ import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supp
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import EditIcon from "@mui/icons-material/Edit";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
@@ -53,7 +52,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
   const navStatus = useRecoilValue(navStatusState);
-  const sidebarOffset = navStatus.isClosed ? 140 : 280;
+  const sidebarOffset = navStatus.isClosed ? 135 : 270;
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(
@@ -352,7 +351,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {t("materials.buttons.back")}
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? "Choose Category"}</h4>
+          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? t("materials.chooseCategory")}</h4>
           <IconButton
             size="small"
             onClick={() => setIsSidebarOpen(true)}
@@ -417,7 +416,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       )}
 
       {/* Full width content */}
-      <div style={{ width: '100%', padding: '10px 20px' }}>
+      <div style={{ width: '100%', padding: '10px 10px' }}>
         {
           isLoadingMaterials ?
             <div style={{ height: 795, width: "100%" }}>

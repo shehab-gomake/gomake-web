@@ -158,7 +158,7 @@ const ActionMenu = (props: IActionMenuProps) => {
 
   return (
     <>
-      <IconButton data-tour={'materialsActions'} onClick={handleMoreOptionIconClick}>
+      <IconButton data-tour={'materialsActions'} onClick={handleMoreOptionIconClick} style={{ padding: 0 }}>
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
       <input
