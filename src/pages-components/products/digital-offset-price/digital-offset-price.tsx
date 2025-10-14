@@ -570,7 +570,7 @@ const PriceListPageWidget = ({
               </div>
             )}
 
-            {!isMobileScreen  || (isMobileScreen && isProductCalculated) &&(
+            {(!isMobileScreen  || (isMobileScreen && isProductCalculated)) &&(
               <div
                 style={{
                   width: 220,
