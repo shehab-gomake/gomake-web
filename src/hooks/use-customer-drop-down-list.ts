@@ -98,7 +98,7 @@ const useCustomerDropDownList = ({
   }, 1200);
 
   const checkWhatRenderArray = (e: any) => {
-    const value = e.target.value.trim();
+    const value = e?.target?.value?.trim();
     if (value === "") {
       debouncedGetAllClients.cancel();
       getRecentClients();

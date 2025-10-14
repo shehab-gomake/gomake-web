@@ -79,7 +79,7 @@ const rowInputs = (
                 text: value.value,
               }))
               : [],
-            value: "",
+            value: state[header?.key] || [],
             isValid: true,
             unit: header?.unit,
             isPriceObject: header?.isPriceObject,
@@ -96,7 +96,7 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            values:
+            value:
               state?.machine || state?.machines
                 ? state?.machine || state?.machines
                 : [],
@@ -116,9 +116,10 @@ const rowInputs = (
             parameterKey: header?.key,
             options: clientsCategories.map((client) => ({
               value: client.id,
-              text: `${client.name} - ${client.code}`,
+              text: client.isInfo ? client.name : `${client.name} - ${client.code}`,
+              isInfo: client.isInfo,
             })),
-            values: state?.clients ? state?.clients : [],
+            value: state?.clients ? state?.clients : [],
             isValid: true,
             multiple: true,
             loading: isFetching,
@@ -135,7 +136,7 @@ const rowInputs = (
             required: header?.isRequired,
             parameterKey: header?.key,
             options: [],
-            value: "",
+            value: state[header?.key] || [],
             isValid: true,
             unit: header?.unit,
             isPriceObject: header?.isPriceObject,

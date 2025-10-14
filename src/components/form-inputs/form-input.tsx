@@ -62,7 +62,8 @@ const FormInput = ({
   const clientsOptions = clientsCategories.map((client) => ({
     ...client,
     value: client.id,
-    label: `${client.name} - ${client.code}`,
+    label: client.isInfo ? client.name : `${client.name} - ${client.code}`,
+    isInfo: client.isInfo,
   }));
   const parameterOptions = parametersCategories.map((parameter) => ({
     ...parameter,
@@ -156,7 +157,11 @@ const FormInput = ({
       setOptionsUrl(input.optionsUrl);
     } else if (input.options && input.options.length > 0) {
       setOptions(
-        input.options.map(({ value, text }) => ({ label: text, value }))
+        input.options.map((option: any) => ({
+          label: option.text,
+          value: option.value,
+          isInfo: option.isInfo
+        }))
       );
     } else if (
       input.options?.length === 0 &&
@@ -371,7 +376,10 @@ const FormInput = ({
                       setInputValue(newInputValue);
                     }
                     : input.parameterKey === "clients"
-                      ? checkWhatRenderArray
+                      ? (event: any, newInputValue: string) => {
+                        // Convert MUI Autocomplete's onInputChange signature to match checkWhatRenderArray
+                        checkWhatRenderArray({ target: { value: newInputValue } });
+                      }
                       : undefined
                 }
                 // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
@@ -400,16 +408,32 @@ const FormInput = ({
                       ]
                       : options
                 }
-                onChangeTextField={
-                  input.parameterKey === "clients"
-                    ? checkWhatRenderArray
-                    : undefined
-                }
+                onChangeTextField={undefined}
                 multiple={!!input.multiple}
                 disableClearable={input?.disableClearable || false}
+                getOptionDisabled={(option: any) => option.isInfo === true}
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
+                      // Check if this is an informational option (non-selectable)
+                      if (option.isInfo) {
+                        return (
+                          <Stack
+                            style={{
+                              ...classes.multiSelectOption,
+                              pointerEvents: 'none',
+                              cursor: 'default',
+                              opacity: 0.7,
+                              paddingLeft: '16px'
+                            }}
+                          >
+                            <div style={{ fontStyle: 'italic', color: '#666' }}>
+                              {option.label}
+                            </div>
+                          </Stack>
+                        );
+                      }
+
                       return (
                         <Stack style={classes.multiSelectOption}>
                           <div>
@@ -417,15 +441,17 @@ const FormInput = ({
                               onChange={(e, checked) => {
                                 if (option.value === "all") {
                                   if (checked) {
-                                    const allValues = options.map(
-                                      (o) => o.value
-                                    );
+                                    const allValues = options
+                                      .filter((o) => !o.isInfo)
+                                      .map((o) => o.value);
                                     setValues(allValues);
                                     setSelectedOptions(
-                                      options.map((o) => ({
-                                        label: o.label,
-                                        value: o.value,
-                                      }))
+                                      options
+                                        .filter((o) => !o.isInfo)
+                                        .map((o) => ({
+                                          label: o.label,
+                                          value: o.value,
+                                        }))
                                     );
                                     changeState(
                                       input.parameterKey,
@@ -463,8 +489,8 @@ const FormInput = ({
                               checkedIcon={<CheckboxCheckedIcon />}
                               checked={
                                 option.value === "all"
-                                  ? values.length === options.length &&
-                                  options.length > 0
+                                  ? values.length === options.filter((o) => !o.isInfo).length &&
+                                  options.filter((o) => !o.isInfo).length > 0
                                   : values?.length > 0
                                     ? values?.includes(option?.value)
                                     : input?.value?.includes(option?.value)
