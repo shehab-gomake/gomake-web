@@ -184,6 +184,7 @@ const useDigitalOffsetPrice = ({
   const [productTemplate, setProductTemplate] = useState<any>([]);
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>();
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
+  const [isProductCalculated, setIsProductCalculated] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
@@ -480,6 +481,7 @@ const useDigitalOffsetPrice = ({
       setCalculationExceptionsLogs(null);
       setCurrentProductItemValueTotalWorkFlows(null);
       setcalculationServerErrorState(true);
+      setIsProductCalculated(false);
       return;
     }
     setLoading(false);
@@ -496,7 +498,7 @@ const useDigitalOffsetPrice = ({
       stIsFlowChanged(result.isFlowChanged);
       setAdditionalProductItems(result.additionalProductItems);
       setDeliveryPrice(result.deliveryPrice);
-
+      setIsProductCalculated(true);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -3046,6 +3048,7 @@ const useDigitalOffsetPrice = ({
     setBillingMethod(null);
     setGraphicDesigner(null);
     setIncludeVAT(null);
+    setIsProductCalculated(false);
   };
   const getGraphicsTypeValue = (billingMethod?: GraphicsTypesParam) => {
     if (billingMethod && billingMethod === GraphicsTypesParam.PriceHour) {
@@ -5642,6 +5645,7 @@ const useDigitalOffsetPrice = ({
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
+      setIsProductCalculated(false)
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -7733,6 +7737,7 @@ const useDigitalOffsetPrice = ({
             return;
           }
           setLoading(true);
+          setIsProductCalculated(false)
           setErrorMsg("");
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
@@ -8908,6 +8913,7 @@ const useDigitalOffsetPrice = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
+    isProductCalculated
   };
 };
 

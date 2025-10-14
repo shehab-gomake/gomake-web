@@ -10,7 +10,7 @@ interface AIChatInterfaceProps {
     message: string;
     timestamp: string;
     messageType?: "text" | "list";
-    options?: string[];
+    list?: string[];
   }>;
   isProcessing?: boolean;
   onOptionClick?: (option: string) => void;
@@ -72,10 +72,10 @@ const AIChatInterface = ({
             <div style={classes.messageContent}>
               {message.message}
               {message.messageType === "list" &&
-                message.options &&
-                message.options.length > 0 && (
+                message.list &&
+                message.list.length > 0 && (
                   <div style={classes.optionsContainer}>
-                    {message.options.map((option, index) => (
+                    {message.list.map((option, index) => (
                       <button
                         key={index}
                         style={classes.optionButton}
