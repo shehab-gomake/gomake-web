@@ -5,12 +5,11 @@ import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
 import { openChildTableState, isLoadingInventoryState, isLoadingPurchasePricingState, openJobsModalState, materialCategoryDataState } from "../../state";
 import { useInventoryData } from "../../hooks/use-inventory-data";
 import { usePurchasePricingData } from "../../hooks/use-purchase-pricing-data";
-import { AddSupplierModal } from "../add-supplier/add-supplier-modal";
 import { GomakePrimaryButton, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { deletePrintHouseMaterialSupplierApi, addSupplierInventoryApi, deleteSupplierInventoryApi, reorderPrintHouseMaterialSupplierApi, getSupplierInventoryUsageApi, reorderPrintHouseSupplierInventoriesApi, addPrintHouseMaterialSupplierApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { TableCellData } from "../table-cell-data/table-cell";
-import { ModalType, UNIT_TYPE } from "@/enums";
+import { ModalType } from "@/enums";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStyle } from "./style";
@@ -21,8 +20,6 @@ import { useTranslation } from "react-i18next";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { AddPurchasePricingModal } from "../add-purchase-pricing-modal/add-purchase-pricing-modal";
 import { AddInventoryModal } from "../add-inventory-modal/add-inventory-modal";
-import { userState } from "@/store/user";
-import { convertTitleUnits } from "@/utils/helpers";
 
 
 interface IChildTableRowProps {
@@ -343,20 +340,27 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.purchasePrice")}
                                         <br />
-                                        {convertedPricingUnit && convertedPricingUnit.value}
+                                        <span style={classes.headerCellPriceUnitText}>{convertedPricingUnit && convertedPricingUnit?.value}</span>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.purchaseCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
                                         {t("materials.childTable.saleCost")}
                                         <br />
-                                        {convertedPricingUnit && convertedPricingUnit.value}
+                                        <span style={classes.headerCellPriceUnitText}>{convertedPricingUnit && convertedPricingUnit?.value}</span>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.saleCurrency")}</TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.inventory")} ({convertedInventoryUnit && convertedInventoryUnit.value})
+                                        {t("materials.childTable.inventory")}{" "}
+                                        <span style={classes.headerCellUnitText} >
+                                            ({convertedInventoryUnit && convertedInventoryUnit.value})
+                                        </span>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>
-                                        {t("materials.childTable.quantity")} ({convertedInventoryUnit && convertedInventoryUnit.value})
+                                        {t("materials.childTable.quantity")}
+                                        {" "}
+                                        <span style={classes.headerCellUnitText} >
+                                            ({convertedInventoryUnit && convertedInventoryUnit.value})
+                                        </span>
                                     </TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                     <TableCell sx={classes.headerCell}>{t("materials.childTable.client")}</TableCell>
