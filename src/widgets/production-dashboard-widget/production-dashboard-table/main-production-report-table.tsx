@@ -11,6 +11,8 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DownloadIcon from "@mui/icons-material/Download";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import { useStyle } from "../style";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -36,6 +38,38 @@ const MainProductionReportTable = () => {
     formatPercentage,
     formatCurrency,
   } = useMainProductionReport();
+
+  // Helper function to render growth with trending icons
+  const renderGrowthWithIcon = (
+    growthValue: number | null,
+    isSummary: boolean = false
+  ) => {
+    if (growthValue === null) {
+      return <span style={{ fontWeight: "bold" }}>-</span>;
+    }
+
+    const isPositive = growthValue > 0;
+    const isNegative = growthValue < 0;
+    const color = isPositive ? "#4CAF50" : isNegative ? "#F44336" : "#757575";
+
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.5,
+          color,
+          justifyContent: "center",
+        }}
+      >
+        {isPositive && <TrendingUpIcon fontSize="small" />}
+        {isNegative && <TrendingDownIcon fontSize="small" />}
+        <span style={{ fontWeight: isSummary ? "bold" : "normal" }}>
+          {formatPercentage(Math.abs(growthValue))}
+        </span>
+      </Box>
+    );
+  };
 
   // Generate flat table data with expand/collapse functionality
   const generateTableData = () => {
@@ -82,6 +116,9 @@ const MainProductionReportTable = () => {
           />
         </Box>,
         <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalEstimatedWorkingHours)}
+        </span>,
+        <span style={{ fontWeight: "bold" }}>
           {formatTime(department.summary.totalEstimatedHours)} /{" "}
           {department.summary.totalJobs}
         </span>,
@@ -98,25 +135,46 @@ const MainProductionReportTable = () => {
           {department.summary.totalReportedJobs}
         </span>,
         <Box>
-          {department.summary.averageGrowth !== null && (
-            <span style={{ fontWeight: "bold" }}>
-              {formatPercentage(department.summary.averageGrowth)}
-            </span>
+          {department.summary.averageCapacity !== null && (
+            <>
+              <span style={{ fontWeight: "bold" }}>
+                {formatPercentage(department.summary.averageCapacity)}
+              </span>
+              <br />
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
+                {renderGrowthWithIcon(
+                  department.summary.averageCapacityGrowth,
+                  true
+                )}
+              </Box>
+            </>
           )}
-          {department.summary.averageGrowth === null && (
+          {department.summary.averageCapacity === null && (
             <span style={{ fontWeight: "bold" }}>-</span>
           )}
         </Box>,
         <Box>
           {department.summary.averagePerformance !== null && (
-            <span style={{ fontWeight: "bold" }}>
-              {formatPercentage(department.summary.averagePerformance)}
-            </span>
+            <>
+              <span style={{ fontWeight: "bold" }}>
+                {formatPercentage(department.summary.averagePerformance)}
+              </span>
+              <br />
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
+                {renderGrowthWithIcon(
+                  department.summary.averagePerformanceGrowth,
+                  true
+                )}
+              </Box>
+            </>
           )}
           {department.summary.averagePerformance === null && (
             <span style={{ fontWeight: "bold" }}>-</span>
           )}
         </Box>,
+        <span style={{ fontWeight: "bold" }}>
+          {formatTime(department.summary.totalWorkingHours)}
+        </span>,
         <Box>
           <span style={{ fontWeight: "bold" }}>
             {formatCurrency(department.summary.jobsTotalEstimatedCost)}
@@ -126,12 +184,6 @@ const MainProductionReportTable = () => {
             {formatCurrency(department.summary.jobsEstimatedPrice)}
           </Typography>
         </Box>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatPercentage(department.summary.averageSLA)}
-        </span>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatTime(department.summary.totalWorkingHours)}
-        </span>,
       ]);
 
       // Station rows (only if expanded)
@@ -139,6 +191,7 @@ const MainProductionReportTable = () => {
         department.stations.forEach((station: StationPerformanceDTO) => {
           tableData.push([
             <Box sx={{ pl: 4 }}>{station.stationName}</Box>,
+            formatTime(station.totalEstimatedWorkingHours),
             `${formatTime(station.totalEstimated.time)} / ${
               station.totalEstimated.jobs
             }`,
@@ -161,17 +214,18 @@ const MainProductionReportTable = () => {
             <Box>
               {formatPercentage(station.capacity.capacity)}
               <br />
-              <Typography variant="caption" color="textSecondary">
-                ({formatPercentage(station.capacity.growth)})
-              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
+                {renderGrowthWithIcon(station.capacity.growth)}
+              </Box>
             </Box>,
             <Box>
               {formatPercentage(station.performance.productivity)}
               <br />
-              <Typography variant="caption" color="textSecondary">
-                ({formatPercentage(station.performance.growth)})
-              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
+                {renderGrowthWithIcon(station.performance.growth)}
+              </Box>
             </Box>,
+            formatTime(station.averageProductionTime),
             <Box>
               {formatCurrency(station.jobAnalytics.jobsTotalEstimatedCost)}
               <br />
@@ -179,14 +233,6 @@ const MainProductionReportTable = () => {
                 {formatCurrency(station.jobAnalytics.jobsEstimatedPrice)}
               </Typography>
             </Box>,
-            <Box>
-              {formatPercentage(station.sla?.sla)}
-              <br />
-              <Typography variant="caption" color="textSecondary">
-                ({formatPercentage(station.sla?.growth)})
-              </Typography>
-            </Box>,
-            formatTime(station.averageProductionTime),
           ]);
         });
       }
@@ -198,16 +244,86 @@ const MainProductionReportTable = () => {
   const tableData = generateTableData();
 
   const tableHeaders = [
-    t("productionReport.stationDetails"),
-    t("productionReport.totalEstimated"),
-    t("productionReport.done"),
-    t("productionReport.inProcess"),
-    t("productionReport.reported"),
-    t("productionReport.capacity"),
-    t("productionReport.performance"),
-    t("productionReport.jobAnalytics"),
-    t("productionReport.sla"),
-    t("productionReport.avgTime"),
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.stationDetails")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.departmentStation")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.totalEstimatedWorkingHours")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.hoursPerDay")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.totalEstimated")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.done")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.inProcess")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobs")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.reported")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.timeJobsPercentage")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.capacity")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.capacityGrowth") || "Capacity/Growth"}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.performance")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.productivityGrowth")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.avgTime")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.dailyProductivity")}
+      </Typography>
+    </Box>,
+    <Box>
+      <Typography variant="body2" fontWeight="bold">
+        {t("productionReport.jobAnalytics")}
+      </Typography>
+      <Typography variant="caption" color="textSecondary">
+        {t("productionReport.costPrice")}
+      </Typography>
+    </Box>,
   ];
 
   // Export to Excel handler
@@ -272,6 +388,23 @@ const MainProductionReportTable = () => {
               {t("productionReport.generatedAt")}:{" "}
               {format(new Date(data.reportGeneratedAt), "MMM d, yyyy HH:mm")}
             </Typography>
+          )}
+          {data.sla !== undefined && (
+            <Box sx={{ mt: 1.5 }}>
+              <Chip
+                label={`SLA: ${formatPercentage(data.sla)}`}
+                sx={{
+                  backgroundColor: "#e3f2fd",
+                  color: "#495057",
+                  fontSize: "0.9rem",
+                  height: "28px",
+                  px: 1,
+                  "& .MuiChip-label": {
+                    px: 1.5,
+                  },
+                }}
+              />
+            </Box>
           )}
         </Box>
         <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>

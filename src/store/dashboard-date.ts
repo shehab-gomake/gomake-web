@@ -11,35 +11,15 @@ export enum DashboardActions {
   DATE_RANGE_BOARDS,
 }
 
-// Calculate last 30 days for production dashboard default
-const today = new Date();
-const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(today.getDate() - 30);
-
 const dashboardDateState = atom<{
   dates: IDateRange;
   action: DashboardActions;
 }>({
   key: "dashboardSelectedDate", // unique ID (with respect to other atoms/selectors)
   default: {
-    dates: {
-      startDate: thirtyDaysAgo,
-      endDate: today,
-    },
+    dates: THIS_MONTH_DATE_RANGE,
     action: DashboardActions.LATE_TODAY_BOARDS_MISSIONS,
   }, // default value (aka initial value)
 });
 
-const productionCreationDateState = atom<{
-  dates: IDateRange;
-}>({
-  key: "productionCreationDate",
-  default: {
-    dates: {
-      startDate: undefined,
-      endDate: undefined,
-    },
-  },
-});
-
-export { dashboardDateState, productionCreationDateState };
+export { dashboardDateState };
