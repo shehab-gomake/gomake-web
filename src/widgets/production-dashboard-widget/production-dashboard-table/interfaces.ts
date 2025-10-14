@@ -1,6 +1,7 @@
 export interface MainProductionReportResponseDTO {
   reportGeneratedAt: string;
   departments: DepartmentPerformanceDTO[];
+  sla: number;
 }
 
 export interface DepartmentPerformanceDTO {
@@ -70,4 +71,5 @@ export interface DepartmentSummaryDTO {
   totalReportedJobs: number;
   totalReportedHours: number;
   averagePerformance: number | null;
+  averagePerformanceGrowth: number | null;
 }

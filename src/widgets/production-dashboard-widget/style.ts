@@ -12,7 +12,6 @@ const useStyle = () => {
       subContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: 8,
         padding: "16px 21px 24px 32px",
         backgroundColor: "#fff",
         boxShadow: "0px 4px 20px rgba(238, 238, 238, 0.501967)",
