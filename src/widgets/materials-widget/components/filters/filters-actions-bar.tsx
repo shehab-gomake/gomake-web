@@ -207,7 +207,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         <GoMakeAutoComplate
           style={!hasMoreFilters ? {
             width: "100px",
-            [isRTL ? 'marginLeft' : 'marginRight']: "32px"
+            [isRTL ? 'marginLeft' : 'marginRight']: "38px"
           } : { width: "100px" }
           }
           options={activeFilterOptions}
