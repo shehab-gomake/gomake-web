@@ -13,13 +13,15 @@ import { MessageNotificationItem } from '@/widgets/frontdesk-notifications/compo
 import { TicketNotificationItem } from '@/widgets/frontdesk-notifications/components/ticket-notification-item';
 import { InfiniteScrollObserver } from '@/widgets/frontdesk-notifications/components/infinite-scroll-observer';
 import { useFrontdeskNotifications } from '@/widgets/frontdesk-notifications/hooks/use-frontdesk-notifications';
+import {Permissions} from "@/components/CheckPermission/enum";
+import {useUserPermission} from "@/hooks/use-permission";
 
 const FrontdeskNav = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
   const open = Boolean(anchorEl);
-
+  const { CheckPermission } = useUserPermission();
   const {
     messageNotifications,
     ticketNotifications,
@@ -290,7 +292,7 @@ const FrontdeskNav = () => {
     </GoMakeMenu>
   );
 
-  return counts.total > 0 ? (
+  return !CheckPermission(Permissions.SHOW_FRONT_DESK) ? <div></div> : counts.total > 0 ? (
     <Badge
       style={{ padding: '2px' }}
       badgeContent={counts.total}

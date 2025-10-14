@@ -78,6 +78,7 @@ export enum Permissions {
   ADD_HOT_FOLDER_TO_PRODUCT = "AddHotFolderToProduct",
   SHOW_CPA_CODE = "showCpaCode",
   SHOW_GROUPS = "showGroups",
+  SHOW_FRONT_DESK = "ShowFrontDesk",
 
   //orders group
   SHOW_ORDERS = "ShowOrders",
