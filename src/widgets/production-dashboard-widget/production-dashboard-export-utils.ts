@@ -37,6 +37,7 @@ export const exportProductionDashboardToExcel = (
   // Add headers
   excelData.push([
     t("productionReport.stationDetails"),
+    t("productionReport.totalEstimatedWorkingHours"),
     t("productionReport.totalEstimated") + " (Time)",
     t("productionReport.totalEstimated") + " (Jobs)",
     t("productionReport.done") + " (Time)",
@@ -50,11 +51,9 @@ export const exportProductionDashboardToExcel = (
     t("productionReport.capacity") + " (Growth %)",
     t("productionReport.performance") + " (%)",
     t("productionReport.performance") + " (Growth %)",
+    t("productionReport.avgTime"),
     t("productionReport.jobAnalytics") + " (Cost)",
     t("productionReport.jobAnalytics") + " (Price)",
-    t("productionReport.sla") + " (%)",
-    t("productionReport.sla") + " (Growth %)",
-    t("productionReport.avgTime"),
   ]);
 
   // Add data rows
@@ -64,6 +63,7 @@ export const exportProductionDashboardToExcel = (
       `${department.departmentName} (${department.summary.totalStations} ${t(
         "productionReport.stations"
       )})`,
+      formatTime(department.summary.totalEstimatedWorkingHours),
       formatTime(department.summary.totalEstimatedHours),
       department.summary.totalJobs,
       formatTime(department.summary.totalDoneHours),
@@ -73,19 +73,21 @@ export const exportProductionDashboardToExcel = (
       formatTime(department.summary.totalReportedHours),
       department.summary.totalReportedJobs,
       "-",
-      "-",
-      department.summary.averageGrowth !== null
-        ? department.summary.averageGrowth.toFixed(2)
+      department.summary.averageCapacity !== null
+        ? department.summary.averageCapacity.toFixed(2)
+        : "-",
+      department.summary.averageCapacityGrowth !== null
+        ? department.summary.averageCapacityGrowth.toFixed(2)
         : "-",
       department.summary.averagePerformance !== null
         ? department.summary.averagePerformance.toFixed(2)
         : "-",
-      "-",
+      department.summary.averagePerformanceGrowth !== null
+        ? department.summary.averagePerformanceGrowth.toFixed(2)
+        : "-",
+      formatTime(department.summary.totalWorkingHours),
       department.summary.jobsTotalEstimatedCost.toFixed(2),
       department.summary.jobsEstimatedPrice.toFixed(2),
-      department.summary.averageSLA.toFixed(2),
-      "-",
-      formatTime(department.summary.totalWorkingHours),
     ]);
 
     // Station rows
@@ -100,6 +102,7 @@ export const exportProductionDashboardToExcel = (
 
       excelData.push([
         `  ${station.stationName}`,
+        formatTime(station.totalEstimatedWorkingHours),
         formatTime(station.totalEstimated.time),
         station.totalEstimated.jobs,
         formatTime(station.done.time),
@@ -113,11 +116,9 @@ export const exportProductionDashboardToExcel = (
         station.capacity.growth.toFixed(2),
         station.performance.productivity.toFixed(2),
         station.performance.growth.toFixed(2),
+        formatTime(station.averageProductionTime),
         station.jobAnalytics.jobsTotalEstimatedCost.toFixed(2),
         station.jobAnalytics.jobsEstimatedPrice.toFixed(2),
-        station.sla?.sla.toFixed(2) || "0",
-        station.sla?.growth.toFixed(2) || "0",
-        formatTime(station.averageProductionTime),
       ]);
     });
 
@@ -131,6 +132,7 @@ export const exportProductionDashboardToExcel = (
   // Set column widths
   ws["!cols"] = [
     { wch: 30 }, // Station Details
+    { wch: 20 }, // Total Estimated Working Hours
     { wch: 15 }, // Total Estimated Time
     { wch: 12 }, // Total Estimated Jobs
     { wch: 15 }, // Done Time
@@ -141,14 +143,12 @@ export const exportProductionDashboardToExcel = (
     { wch: 12 }, // Reported Jobs
     { wch: 12 }, // Reported %
     { wch: 12 }, // Capacity %
-    { wch: 15 }, // Capacity Growth
+    { wch: 15 }, // Capacity Growth %
     { wch: 12 }, // Performance %
-    { wch: 15 }, // Performance Growth
+    { wch: 15 }, // Performance Growth %
+    { wch: 15 }, // Avg Time
     { wch: 15 }, // Job Analytics Cost
     { wch: 15 }, // Job Analytics Price
-    { wch: 12 }, // SLA %
-    { wch: 15 }, // SLA Growth
-    { wch: 15 }, // Avg Time
   ];
 
   // Create workbook and add worksheet
