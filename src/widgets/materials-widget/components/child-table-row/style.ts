@@ -1,4 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -118,9 +119,15 @@ const useStyle = () => {
         backgroundColor: '#EBECFF',
          width: 'fit-content',
         minWidth: 'fit-content',
-        textTransform: 'capitalize',
+        // textTransform: 'capitalize',
       },
-      
+      headerCellUnitText:{
+        ...FONT_FAMILY.Inter(700, 12)
+      },
+      headerCellPriceUnitText:{
+        textTransform: 'capitalize' as 'capitalize',
+
+      },
       headerCellText:{
         color:"#2E3092"
 
