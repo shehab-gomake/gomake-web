@@ -124,6 +124,7 @@ const PriceListPageWidget = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
+    isProductCalculated
   } = useDigitalOffsetPrice({ clasess, widgetType, productId, sessionId,interactionId });
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
@@ -475,7 +476,7 @@ const PriceListPageWidget = ({
                 : clasess.buttonsContainer
             }
           >
-            {isMobileScreen ? (
+            {isMobileScreen  ? (
               <div
                 style={{
                   ...clasess.addPreviousContainer,
@@ -510,7 +511,7 @@ const PriceListPageWidget = ({
                     </div>
                   )}
                 </div>
-                {activeIndex !== 0 && (
+                {activeIndex !== 0 && !isProductCalculated && (
                   <SecondaryButton
                     variant="outlined"
                     onClick={handlePreviousClick}
@@ -526,7 +527,7 @@ const PriceListPageWidget = ({
                     : []),
                 ].length -
                   1 !==
-                  activeIndex && (
+                  activeIndex && !isProductCalculated && (
                   <div data-tour="next-button">
                     <SecondaryButton
                       variant="contained"
@@ -569,13 +570,13 @@ const PriceListPageWidget = ({
               </div>
             )}
 
-            {!isMobileScreen && (
+            {!isMobileScreen  || (isMobileScreen && isProductCalculated) &&(
               <div
                 style={{
                   width: 220,
                   height: 40,
-                  marginLeft: 55,
-                  marginRight: 55,
+                  marginLeft: !isMobileScreen ? 55 : 10,
+                  marginRight: !isMobileScreen ? 55 : 10,
                 }}
               >
                 {widgetType === EWidgetProductType.EDIT ? (
