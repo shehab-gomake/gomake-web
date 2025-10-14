@@ -29,12 +29,16 @@ export const useFrontDeskRouter = () => {
   // Parse current route from URL
   const parsed = useMemo(() => {
     if (!router.isReady) {
+      console.log('[FrontDesk Router] Router not ready, using default inbox route');
       return {
         route: RouteBuilder.inbox(),
         queryParams: {},
       };
     }
-    return parseRoute(router.query);
+    console.log('[FrontDesk Router] Parsing route from query:', router.query);
+    const result = parseRoute(router.query);
+    console.log('[FrontDesk Router] Parsed route:', result);
+    return result;
   }, [router.query, router.isReady]);
 
   const currentRoute = parsed.route;
@@ -54,15 +58,30 @@ export const useFrontDeskRouter = () => {
     (route: FrontDeskRoute, options: NavigationOptions = {}) => {
       const built = buildRoute(route, options);
 
+      // Debug logging
+      console.log('[FrontDesk Router] Navigate called:', {
+        route,
+        builtPath: built.path,
+        options: built.options,
+        newTab: options.newTab
+      });
+
       if (options.newTab) {
+        console.log('[FrontDesk Router] Opening in new tab:', built.path);
         window.open(built.path, '_blank');
         return;
       }
 
-      if (options.replace) {
-        router.replace(built.path, undefined, { scroll: options.scroll });
-      } else {
-        router.push(built.path, undefined, { scroll: options.scroll });
+      try {
+        if (options.replace) {
+          console.log('[FrontDesk Router] Replacing route:', built.path);
+          router.replace(built.path, undefined, { scroll: options.scroll });
+        } else {
+          console.log('[FrontDesk Router] Pushing route:', built.path);
+          router.push(built.path, undefined, { scroll: options.scroll });
+        }
+      } catch (error) {
+        console.error('[FrontDesk Router] Navigation error:', error);
       }
     },
     [router]

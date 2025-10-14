@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { Box, Typography, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useRecoilValue, useRecoilState } from "recoil";
 
 // Three-column layout components
-import { ThreeColumnLayout } from './layouts/three-column';
-import { NavigationSidebar, Channel, Section, TicketView as LegacyTicketView } from './layouts/components/NavigationSidebar';
-import { DynamicListPanel } from './layouts/components/DynamicListPanel';
-import { ContentArea } from './layouts/components/ContentArea';
+import { ThreeColumnLayout } from "./layouts/three-column";
+import { NavigationSidebar, Channel, Section, TicketView as LegacyTicketView } from "./layouts/components/NavigationSidebar";
+import { DynamicListPanel } from "./layouts/components/DynamicListPanel";
+import { ContentArea } from "./layouts/components/ContentArea";
 
 // Provider components
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
@@ -15,12 +15,12 @@ import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/wha
 import DirectMessagesProviderView from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
 
 // Ticket components
-import { TicketListPanel } from './providers/tickets/components/ticket-list-panel';
-import { TicketDetailView } from './providers/tickets/components/ticket-detail-view';
+import { TicketListPanel } from "./providers/tickets/components/ticket-list-panel";
+import { TicketDetailView } from "./providers/tickets/components/ticket-detail-view";
 
 // For unified view placeholder
-import { UnifiedProvider } from './providers/unified/UnifiedProvider';
-import { unreadCountByProviderSelector, sidebarCollapsedAtom } from '@/store/frontdesk';
+import { UnifiedProvider } from "./providers/unified/UnifiedProvider";
+import { unreadCountByProviderSelector, sidebarCollapsedAtom } from "@/store/frontdesk";
 
 // Ticket state
 import {
@@ -30,17 +30,17 @@ import {
   ticketsAtom,
   ticketsLoadingAtom,
   ticketsErrorAtom,
-  activeFilterCountSelector
-} from '@/store/frontdesk/atoms/tickets.atoms';
+  activeFilterCountSelector,
+} from "@/store/frontdesk/atoms/tickets.atoms";
 
 // Ticket provider hook
-import { useTicketsProvider } from './providers/tickets/hooks/use-tickets-provider';
+import { useTicketsProvider } from "./providers/tickets/hooks/use-tickets-provider";
 
 // Direct messages state (for conversation navigation)
-import { dmActiveConversationIdState } from '@/store/direct-messages';
+import { dmActiveConversationIdState } from "@/store/direct-messages";
 
 // NEW: Centralized routing system
-import { useFrontDeskRouter, RouteType, TicketView } from './routing';
+import { useFrontDeskRouter, RouteType, TicketView } from "./routing";
 
 const FrontdeskWidget: React.FC = () => {
   // NEW: Use centralized routing system
@@ -59,7 +59,7 @@ const FrontdeskWidget: React.FC = () => {
   } = useFrontDeskRouter();
 
   // UI state
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
 
   // UI state from Recoil (with automatic localStorage persistence)
@@ -95,34 +95,50 @@ const FrontdeskWidget: React.FC = () => {
     if (currentTicketView) {
       // Convert TicketView enum to legacy string
       const legacyViewMap: Record<TicketView, LegacyTicketView> = {
-        [TicketView.MY_TICKETS]: 'my-tickets',
-        [TicketView.UNASSIGNED]: 'unassigned',
-        [TicketView.ALL_TICKETS]: 'all-tickets',
-        [TicketView.DONE]: 'done',
-        [TicketView.ARCHIVED]: 'archived'
+        [TicketView.MY_TICKETS]: "my-tickets",
+        [TicketView.UNASSIGNED]: "unassigned",
+        [TicketView.ALL_TICKETS]: "all-tickets",
+        [TicketView.DONE]: "done",
+        [TicketView.ARCHIVED]: "archived",
       };
 
       const legacyView = legacyViewMap[currentTicketView];
-      setSelectedTicketView(legacyView as any);
 
-      // Apply filters for the view
+      // Only update if different to prevent infinite loop
+      if (selectedTicketView !== legacyView) {
+        console.log("[FrontDesk Widget] Setting ticket view from route:", legacyView);
+        setSelectedTicketView(legacyView as any);
+      }
+
+      // Apply filters for the view (only update filters, don't fetch yet)
       const viewFilters: Record<LegacyTicketView, Partial<typeof ticketsProvider.filters>> = {
-        'my-tickets': { assigneeId: 'me', status: undefined },
-        'unassigned': { assigneeId: undefined, status: 'OPEN' },
-        'all-tickets': { assigneeId: undefined, status: undefined },
-        'done': { assigneeId: undefined, status: 'RESOLVED' },
-        'archived': { assigneeId: undefined, status: 'CLOSED' }
+        "my-tickets": { assigneeId: "me", status: undefined },
+        unassigned: { assigneeId: undefined, status: "OPEN" },
+        "all-tickets": { assigneeId: undefined, status: undefined },
+        done: { assigneeId: undefined, status: "RESOLVED" },
+        archived: { assigneeId: undefined, status: "CLOSED" },
       };
 
       const newFilters = {
         ...ticketsProvider.filters,
         ...viewFilters[legacyView],
-        page: 1
+        page: 1,
       };
 
-      ticketsProvider.setFilters(newFilters);
+      // Only update filters if they've actually changed
+      const currentFilters = ticketsProvider.filters;
+      const filtersChanged =
+        currentFilters.assigneeId !== newFilters.assigneeId ||
+        currentFilters.status !== newFilters.status ||
+        currentFilters.page !== newFilters.page;
+
+      if (filtersChanged) {
+        console.log("[FrontDesk Widget] Updating filters for view:", legacyView, newFilters);
+        ticketsProvider.setFilters(newFilters);
+      }
     }
-  }, [currentTicketView, isInitialized]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTicketView, isInitialized, selectedTicketView]);
 
   // Initialize ticket ID from route
   useEffect(() => {
@@ -130,27 +146,37 @@ const FrontdeskWidget: React.FC = () => {
 
     if (currentRoute.type === RouteType.TICKET_DETAIL) {
       const ticketId = currentRoute.ticketId;
-      setSelectedTicketId(ticketId);
+
+      // Only update if different to prevent infinite loop
+      if (selectedTicketId !== ticketId) {
+        console.log("[FrontDesk Widget] Setting ticket ID from route:", ticketId);
+        setSelectedTicketId(ticketId);
+      }
 
       // Add to open tabs if not already there
       if (!openTicketTabs.includes(ticketId)) {
+        console.log("[FrontDesk Widget] Adding ticket to open tabs:", ticketId);
         setOpenTicketTabs([...openTicketTabs, ticketId]);
       }
 
       // Set default view if not set
-      if (!currentTicketView) {
-        setSelectedTicketView('all-tickets' as any);
+      if (!currentTicketView && selectedTicketView !== "all-tickets") {
+        console.log("[FrontDesk Widget] Setting default ticket view");
+        setSelectedTicketView("all-tickets" as any);
       }
     }
-  }, [currentRoute, isInitialized]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoute, isInitialized, selectedTicketId, currentTicketView]);
 
   // Initialize conversation ID from query params (from notifications)
   useEffect(() => {
     if (!isInitialized) return;
 
-    if (queryParams.conversation) {
+    if (queryParams.conversation && activeConversationId !== queryParams.conversation) {
+      console.log("[FrontDesk Widget] Setting conversation ID from query params:", queryParams.conversation);
       setActiveConversationId(queryParams.conversation);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams.conversation, isInitialized]);
 
   // Synchronize selectedTicketView with routing state
@@ -161,9 +187,10 @@ const FrontdeskWidget: React.FC = () => {
     // Clear ticket view when navigating to non-ticket routes
     // Prevents stale ticket view from interfering with channel selection highlighting
     if (!isInTicketMode && selectedTicketView !== null) {
+      console.log("[FrontDesk Widget] Clearing ticket view (navigated away from tickets)");
       setSelectedTicketView(null);
     }
-  }, [isInTicketMode, isInitialized, selectedTicketView]);
+  }, [isInTicketMode, isInitialized, selectedTicketView, setSelectedTicketView]);
 
   // Ticket-specific handlers
   const handleTicketViewChangeWithFetch = (view: LegacyTicketView) => {
@@ -172,17 +199,17 @@ const FrontdeskWidget: React.FC = () => {
 
     // Fetch tickets with appropriate filters
     const viewFilters: Record<LegacyTicketView, Partial<typeof ticketsProvider.filters>> = {
-      'my-tickets': { assigneeId: 'me', status: undefined },
-      'unassigned': { assigneeId: undefined, status: 'OPEN' },
-      'all-tickets': { assigneeId: undefined, status: undefined },
-      'done': { assigneeId: undefined, status: 'RESOLVED' },
-      'archived': { assigneeId: undefined, status: 'CLOSED' }
+      "my-tickets": { assigneeId: "me", status: undefined },
+      unassigned: { assigneeId: undefined, status: "OPEN" },
+      "all-tickets": { assigneeId: undefined, status: undefined },
+      done: { assigneeId: undefined, status: "RESOLVED" },
+      archived: { assigneeId: undefined, status: "CLOSED" },
     };
 
     const newFilters = {
       ...ticketsProvider.filters,
       ...viewFilters[view],
-      page: 1
+      page: 1,
     };
 
     ticketsProvider.setFilters(newFilters);
@@ -190,11 +217,11 @@ const FrontdeskWidget: React.FC = () => {
 
     // Navigate using routing system (convert to TicketView enum)
     const viewMap: Record<LegacyTicketView, TicketView> = {
-      'my-tickets': TicketView.MY_TICKETS,
-      'unassigned': TicketView.UNASSIGNED,
-      'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE,
-      'archived': TicketView.ARCHIVED
+      "my-tickets": TicketView.MY_TICKETS,
+      unassigned: TicketView.UNASSIGNED,
+      "all-tickets": TicketView.ALL_TICKETS,
+      done: TicketView.DONE,
+      archived: TicketView.ARCHIVED,
     };
     handleTicketViewChange(viewMap[view]);
   };
@@ -221,7 +248,7 @@ const FrontdeskWidget: React.FC = () => {
   };
 
   const handleTicketTabClose = (ticketId: string) => {
-    const newTabs = openTicketTabs.filter(id => id !== ticketId);
+    const newTabs = openTicketTabs.filter((id) => id !== ticketId);
     setOpenTicketTabs(newTabs);
 
     // If we're closing the currently selected ticket, switch to another tab or clear selection
@@ -232,7 +259,7 @@ const FrontdeskWidget: React.FC = () => {
       } else {
         // No more tabs open, clear selection and go back to list
         setSelectedTicketId(null);
-        handleTicketViewChange(currentTicketView || ('all-tickets' as any));
+        handleTicketViewChange(currentTicketView || ("all-tickets" as any));
       }
     }
   };
@@ -248,9 +275,9 @@ const FrontdeskWidget: React.FC = () => {
 
   // Render list content based on selection (kept for compatibility but not displayed)
   const renderListContent = () => {
-    if (currentSection !== 'inbox') {
+    if (currentSection !== "inbox") {
       switch (currentSection) {
-        case 'assigned':
+        case "assigned":
           return (
             <Box sx={{ p: 2 }}>
               <Typography variant="body2" color="text.secondary">
@@ -258,7 +285,7 @@ const FrontdeskWidget: React.FC = () => {
               </Typography>
             </Box>
           );
-        case 'admin':
+        case "admin":
           return (
             <Box sx={{ p: 2 }}>
               <Typography variant="body2" color="text.secondary">
@@ -266,7 +293,7 @@ const FrontdeskWidget: React.FC = () => {
               </Typography>
             </Box>
           );
-        case 'settings':
+        case "settings":
           return (
             <Box sx={{ p: 2 }}>
               <Typography variant="body2" color="text.secondary">
@@ -281,7 +308,7 @@ const FrontdeskWidget: React.FC = () => {
 
     // For inbox, show conversation lists
     switch (currentChannel) {
-      case 'all':
+      case "all":
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
@@ -289,7 +316,7 @@ const FrontdeskWidget: React.FC = () => {
             </Typography>
           </Box>
         );
-      case 'email':
+      case "email":
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
@@ -297,7 +324,7 @@ const FrontdeskWidget: React.FC = () => {
             </Typography>
           </Box>
         );
-      case 'whatsapp':
+      case "whatsapp":
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
@@ -305,7 +332,7 @@ const FrontdeskWidget: React.FC = () => {
             </Typography>
           </Box>
         );
-      case 'internal':
+      case "internal":
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
@@ -320,27 +347,33 @@ const FrontdeskWidget: React.FC = () => {
 
   // Render main content based on selection
   const renderMainContent = () => {
-    if (currentSection !== 'inbox') {
+    if (currentSection !== "inbox") {
       switch (currentSection) {
-        case 'assigned':
+        case "assigned":
           return (
             <Box sx={{ p: 3 }}>
               <Typography variant="h4">Assigned to Me</Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>Work board coming soon</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Work board coming soon
+              </Typography>
             </Box>
           );
-        case 'admin':
+        case "admin":
           return (
             <Box sx={{ p: 3 }}>
               <Typography variant="h4">Admin</Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>Provider accounts management</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                Provider accounts management
+              </Typography>
             </Box>
           );
-        case 'settings':
+        case "settings":
           return (
             <Box sx={{ p: 3 }}>
               <Typography variant="h4">Settings</Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>User settings</Typography>
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                User settings
+              </Typography>
             </Box>
           );
         default:
@@ -350,13 +383,13 @@ const FrontdeskWidget: React.FC = () => {
 
     // For inbox, show provider content
     switch (currentChannel) {
-      case 'all':
+      case "all":
         return <UnifiedProvider />;
-      case 'email':
+      case "email":
         return <EmailProviderView />;
-      case 'whatsapp':
+      case "whatsapp":
         return <WhatsAppProviderView />;
-      case 'internal':
+      case "internal":
         return <DirectMessagesProviderView />;
       default:
         return null;
@@ -366,27 +399,30 @@ const FrontdeskWidget: React.FC = () => {
   // Helper to get ticket view title
   const getTicketViewTitle = (view: TicketView | LegacyTicketView): string => {
     // Handle both enum and string formats
-    const viewStr = typeof view === 'string' ? view : {
-      [TicketView.MY_TICKETS]: 'my-tickets',
-      [TicketView.UNASSIGNED]: 'unassigned',
-      [TicketView.ALL_TICKETS]: 'all-tickets',
-      [TicketView.DONE]: 'done',
-      [TicketView.ARCHIVED]: 'archived'
-    }[view];
+    const viewStr =
+      typeof view === "string"
+        ? view
+        : {
+            [TicketView.MY_TICKETS]: "my-tickets",
+            [TicketView.UNASSIGNED]: "unassigned",
+            [TicketView.ALL_TICKETS]: "all-tickets",
+            [TicketView.DONE]: "done",
+            [TicketView.ARCHIVED]: "archived",
+          }[view];
 
     switch (viewStr) {
-      case 'my-tickets':
-        return 'My Tickets';
-      case 'unassigned':
-        return 'Unassigned';
-      case 'all-tickets':
-        return 'All Tickets';
-      case 'done':
-        return 'Done';
-      case 'archived':
-        return 'Archived';
+      case "my-tickets":
+        return "My Tickets";
+      case "unassigned":
+        return "Unassigned";
+      case "all-tickets":
+        return "All Tickets";
+      case "done":
+        return "Done";
+      case "archived":
+        return "Archived";
       default:
-        return 'Tickets';
+        return "Tickets";
     }
   };
 
@@ -403,11 +439,11 @@ const FrontdeskWidget: React.FC = () => {
           onTicketViewSelect={(view) => {
             // Convert legacy string to enum
             const viewMap: Record<LegacyTicketView, TicketView> = {
-              'my-tickets': TicketView.MY_TICKETS,
-              'unassigned': TicketView.UNASSIGNED,
-              'all-tickets': TicketView.ALL_TICKETS,
-              'done': TicketView.DONE,
-              'archived': TicketView.ARCHIVED
+              "my-tickets": TicketView.MY_TICKETS,
+              unassigned: TicketView.UNASSIGNED,
+              "all-tickets": TicketView.ALL_TICKETS,
+              done: TicketView.DONE,
+              archived: TicketView.ARCHIVED,
             };
             handleTicketViewChange(viewMap[view]);
           }}
@@ -436,7 +472,7 @@ const FrontdeskWidget: React.FC = () => {
               ticketsProvider.fetchTickets(newFilters);
             }}
             onClearFilters={() => {
-              const defaultFilters = { page: 1, limit: 20, sortBy: 'createdAt' as const, sortOrder: 'desc' as const };
+              const defaultFilters = { page: 1, limit: 20, sortBy: "createdAt" as const, sortOrder: "desc" as const };
               ticketsProvider.setFilters(defaultFilters);
               ticketsProvider.fetchTickets(defaultFilters);
             }}
@@ -453,7 +489,7 @@ const FrontdeskWidget: React.FC = () => {
             popularTags={ticketsProvider.popularTags}
             onFetchPopularTags={() => ticketsProvider.fetchPopularTags({ limit: 10 })}
           />
-        ) : currentSection === 'inbox' ? (
+        ) : currentSection === "inbox" ? (
           <DynamicListPanel
             channel={currentChannel}
             content={renderListContent()}
@@ -470,33 +506,33 @@ const FrontdeskWidget: React.FC = () => {
               {openTicketTabs.length > 0 && (
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 0.5,
                     px: 2,
                     py: 1,
-                    backgroundColor: 'white',
-                    borderBottom: '1px solid #E5E7EB',
-                    overflowX: 'auto',
-                    overflowY: 'hidden',
+                    backgroundColor: "white",
+                    borderBottom: "1px solid #E5E7EB",
+                    overflowX: "auto",
+                    overflowY: "hidden",
                     minHeight: 48,
-                    '&::-webkit-scrollbar': {
-                      height: 6
+                    "&::-webkit-scrollbar": {
+                      height: 6,
                     },
-                    '&::-webkit-scrollbar-track': {
-                      backgroundColor: 'transparent'
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
                     },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: '#CBD5E0',
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#CBD5E0",
                       borderRadius: 3,
-                      '&:hover': {
-                        backgroundColor: '#A0AEC0'
-                      }
-                    }
+                      "&:hover": {
+                        backgroundColor: "#A0AEC0",
+                      },
+                    },
                   }}
                 >
                   {openTicketTabs.map((tabTicketId) => {
-                    const tabTicket = allTickets.find(t => t.id === tabTicketId);
+                    const tabTicket = allTickets.find((t) => t.id === tabTicketId);
                     if (!tabTicket) return null;
 
                     const isActive = selectedTicketId === tabTicketId;
@@ -506,44 +542,44 @@ const FrontdeskWidget: React.FC = () => {
                         key={tabTicketId}
                         onClick={() => handleTicketTabChange(tabTicketId)}
                         sx={{
-                          display: 'flex',
-                          alignItems: 'center',
+                          display: "flex",
+                          alignItems: "center",
                           gap: 1,
                           px: 1.5,
                           py: 0.75,
-                          backgroundColor: isActive ? '#3B82F6' : '#F3F4F6',
+                          backgroundColor: isActive ? "#3B82F6" : "#F3F4F6",
                           borderRadius: 1.5,
-                          cursor: 'pointer',
+                          cursor: "pointer",
                           minWidth: 140,
                           maxWidth: 220,
-                          border: isActive ? 'none' : '1px solid #E5E7EB',
-                          transition: 'all 0.15s ease',
-                          '&:hover': {
-                            backgroundColor: isActive ? '#2563EB' : '#E5E7EB',
-                            '& .close-button': {
-                              opacity: 1
-                            }
-                          }
+                          border: isActive ? "none" : "1px solid #E5E7EB",
+                          transition: "all 0.15s ease",
+                          "&:hover": {
+                            backgroundColor: isActive ? "#2563EB" : "#E5E7EB",
+                            "& .close-button": {
+                              opacity: 1,
+                            },
+                          },
                         }}
                       >
                         <Box
                           sx={{
-                            display: 'flex',
-                            alignItems: 'center',
+                            display: "flex",
+                            alignItems: "center",
                             gap: 1,
                             flex: 1,
-                            minWidth: 0
+                            minWidth: 0,
                           }}
                         >
                           <Typography
                             variant="body2"
                             sx={{
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
                               fontWeight: isActive ? 600 : 500,
-                              fontSize: '0.875rem',
-                              color: isActive ? 'white' : '#374151'
+                              fontSize: "0.875rem",
+                              color: isActive ? "white" : "#374151",
                             }}
                           >
                             {tabTicket.ticketNumber}
@@ -552,20 +588,20 @@ const FrontdeskWidget: React.FC = () => {
                             sx={{
                               width: 4,
                               height: 4,
-                              borderRadius: '50%',
-                              backgroundColor: isActive ? 'rgba(255, 255, 255, 0.5)' : '#9CA3AF',
-                              flexShrink: 0
+                              borderRadius: "50%",
+                              backgroundColor: isActive ? "rgba(255, 255, 255, 0.5)" : "#9CA3AF",
+                              flexShrink: 0,
                             }}
                           />
                           <Typography
                             variant="body2"
                             sx={{
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              fontSize: '0.813rem',
-                              color: isActive ? 'rgba(255, 255, 255, 0.9)' : '#6B7280',
-                              flex: 1
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              fontSize: "0.813rem",
+                              color: isActive ? "rgba(255, 255, 255, 0.9)" : "#6B7280",
+                              flex: 1,
                             }}
                           >
                             {tabTicket.conversation?.name || `Ticket #${tabTicket.ticketNumber}`}
@@ -584,16 +620,16 @@ const FrontdeskWidget: React.FC = () => {
                             p: 0,
                             ml: 0.5,
                             opacity: isActive ? 0.8 : 0,
-                            transition: 'all 0.15s ease',
+                            transition: "all 0.15s ease",
                             flexShrink: 0,
-                            '&:hover': {
+                            "&:hover": {
                               opacity: 1,
-                              backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
-                              transform: 'scale(1.1)'
-                            }
+                              backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.1)",
+                              transform: "scale(1.1)",
+                            },
                           }}
                         >
-                          <CloseIcon sx={{ fontSize: 14, color: isActive ? 'white' : '#6B7280' }} />
+                          <CloseIcon sx={{ fontSize: 14, color: isActive ? "white" : "#6B7280" }} />
                         </IconButton>
                       </Box>
                     );
@@ -610,7 +646,7 @@ const FrontdeskWidget: React.FC = () => {
                     if (ticketsProvider.selectedTicket && conversationId) {
                       await ticketsProvider.replyToTicket(ticketsProvider.selectedTicket.id, content, conversationId);
                     } else {
-                      console.error('[FrontDeskWidget] Cannot send reply: missing ticket or conversationId');
+                      console.error("[FrontDeskWidget] Cannot send reply: missing ticket or conversationId");
                     }
                   }}
                   onStatusChange={async (status) => {
@@ -649,7 +685,7 @@ const FrontdeskWidget: React.FC = () => {
                   }}
                 />
               ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
                   <Typography variant="h6" color="text.secondary">
                     Select a ticket to view details
                   </Typography>

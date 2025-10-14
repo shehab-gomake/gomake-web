@@ -5,7 +5,15 @@
  * Handles all URL patterns and query parameters for deep linking.
  */
 
-import { ParsedRoute, FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, RouteQueryParams } from './types';
+import {
+  ParsedRoute,
+  FrontDeskRoute,
+  RouteType,
+  FrontDeskChannel,
+  FrontDeskSection,
+  TicketView,
+  RouteQueryParams,
+} from "./types";
 
 /**
  * Next.js router query interface
@@ -35,7 +43,7 @@ const normalizeParam = (param: string | string[] | undefined): string | undefine
  */
 const isTicketId = (value: string): boolean => {
   // Format 1: TICKET-XXXXX (legacy display format)
-  if (value.startsWith('TICKET-')) return true;
+  if (value.startsWith("TICKET-")) return true;
 
   // Format 2: Pure numeric ID
   if (/^\d+$/.test(value)) return true;
@@ -52,23 +60,23 @@ const isTicketId = (value: string): boolean => {
  * Parse frontdeskRoute segment to determine route type and parameters
  */
 const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> => {
-  if (!frontdeskRoute || frontdeskRoute === 'inbox') {
+  if (!frontdeskRoute || frontdeskRoute === "inbox") {
     return { type: RouteType.INBOX };
   }
 
   // Check if it's a ticket route
-  if (frontdeskRoute === 'tickets') {
+  if (frontdeskRoute === "tickets") {
     return { type: RouteType.TICKET_LIST };
   }
 
   // Check if it's a section route
-  if (frontdeskRoute === 'assigned') {
+  if (frontdeskRoute === "assigned") {
     return { type: RouteType.SECTION, section: FrontDeskSection.ASSIGNED };
   }
-  if (frontdeskRoute === 'admin') {
+  if (frontdeskRoute === "admin") {
     return { type: RouteType.SECTION, section: FrontDeskSection.ADMIN };
   }
-  if (frontdeskRoute === 'settings') {
+  if (frontdeskRoute === "settings") {
     return { type: RouteType.SECTION, section: FrontDeskSection.SETTINGS };
   }
 
@@ -94,11 +102,11 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 
     // Otherwise it's a ticket view
     const ticketViewMap: Record<string, TicketView> = {
-      'my-tickets': TicketView.MY_TICKETS,
-      'unassigned': TicketView.UNASSIGNED,
-      'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE,
-      'archived': TicketView.ARCHIVED,
+      "my-tickets": TicketView.MY_TICKETS,
+      unassigned: TicketView.UNASSIGNED,
+      "all-tickets": TicketView.ALL_TICKETS,
+      done: TicketView.DONE,
+      archived: TicketView.ARCHIVED,
     };
 
     const view = ticketViewMap[provider];
@@ -112,10 +120,10 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 
   // Check if provider is a channel
   const channelMap: Record<string, FrontDeskChannel> = {
-    'unified': FrontDeskChannel.ALL,
-    'email': FrontDeskChannel.EMAIL,
-    'whatsapp': FrontDeskChannel.WHATSAPP,
-    'internal': FrontDeskChannel.INTERNAL,
+    unified: FrontDeskChannel.ALL,
+    email: FrontDeskChannel.EMAIL,
+    whatsapp: FrontDeskChannel.WHATSAPP,
+    internal: FrontDeskChannel.INTERNAL,
   };
 
   const channel = channelMap[provider];
@@ -144,17 +152,14 @@ const parseQueryParams = (query: NextRouterQuery): RouteQueryParams => {
  * Apply query parameter overrides to route
  * Query params (from notifications) take precedence
  */
-const applyQueryParamOverrides = (
-  route: Partial<FrontDeskRoute>,
-  queryParams: RouteQueryParams
-): FrontDeskRoute => {
+const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams): FrontDeskRoute => {
   // Handle view query param (from notifications)
   if (queryParams.view) {
     // Check if it's a channel view
     const channelMap: Record<string, FrontDeskChannel> = {
-      'internal': FrontDeskChannel.INTERNAL,
-      'email': FrontDeskChannel.EMAIL,
-      'whatsapp': FrontDeskChannel.WHATSAPP,
+      internal: FrontDeskChannel.INTERNAL,
+      email: FrontDeskChannel.EMAIL,
+      whatsapp: FrontDeskChannel.WHATSAPP,
     };
 
     if (channelMap[queryParams.view]) {
@@ -168,11 +173,11 @@ const applyQueryParamOverrides = (
 
     // Check if it's a ticket view
     const ticketViewMap: Record<string, TicketView> = {
-      'my-tickets': TicketView.MY_TICKETS,
-      'unassigned': TicketView.UNASSIGNED,
-      'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE,
-      'archived': TicketView.ARCHIVED,
+      "my-tickets": TicketView.MY_TICKETS,
+      unassigned: TicketView.UNASSIGNED,
+      "all-tickets": TicketView.ALL_TICKETS,
+      done: TicketView.DONE,
+      archived: TicketView.ARCHIVED,
     };
 
     if (ticketViewMap[queryParams.view]) {
@@ -232,7 +237,7 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
   if (route.type === RouteType.TICKET_DETAIL) {
     return {
       type: RouteType.TICKET_DETAIL,
-      ticketId: (route as any).ticketId || '',
+      ticketId: (route as any).ticketId || "",
       view: (route as any).view,
     };
   }
@@ -261,18 +266,29 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
  * - /frontdesk/inbox?view=email&conversation=456 → Deep link from notification
  */
 export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
+  console.log("[FrontDesk Router Parser] Input query:", query);
+
   const frontdeskRoute = normalizeParam(query.frontdeskRoute);
   const provider = normalizeParam(query.provider);
   const queryParams = parseQueryParams(query);
 
+  console.log("[FrontDesk Router Parser] Normalized params:", {
+    frontdeskRoute,
+    provider,
+    queryParams,
+  });
+
   // Parse base route from frontdeskRoute segment
   let route = parseFrontDeskRoute(frontdeskRoute);
+  console.log("[FrontDesk Router Parser] Base route:", route);
 
   // Parse provider segment if present
   route = parseProvider(provider, route);
+  console.log("[FrontDesk Router Parser] After provider parse:", route);
 
   // Apply query parameter overrides (from notifications)
   const finalRoute = applyQueryParamOverrides(route, queryParams);
+  console.log("[FrontDesk Router Parser] Final route:", finalRoute);
 
   return {
     route: finalRoute,
@@ -283,25 +299,25 @@ export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
 /**
  * Helper: Get current section from route (for backward compatibility)
  */
-export const getSectionFromRoute = (route: FrontDeskRoute): 'inbox' | 'assigned' | 'admin' | 'settings' => {
+export const getSectionFromRoute = (route: FrontDeskRoute): "inbox" | "assigned" | "admin" | "settings" => {
   if (route.type === RouteType.SECTION) {
     return route.section as any;
   }
-  return 'inbox';
+  return "inbox";
 };
 
 /**
  * Helper: Get current channel from route (for backward compatibility)
  */
-export const getChannelFromRoute = (route: FrontDeskRoute): 'all' | 'email' | 'whatsapp' | 'internal' => {
+export const getChannelFromRoute = (route: FrontDeskRoute): "all" | "email" | "whatsapp" | "internal" => {
   if (route.type === RouteType.CHANNEL) {
     return route.channel as any;
   }
   if (route.type === RouteType.INBOX) {
-    return 'all';
+    return "all";
   }
   // For ticket routes or other sections, return 'all'
-  return 'all';
+  return "all";
 };
 
 /**
@@ -324,4 +340,4 @@ export const isTicketRoute = (route: FrontDeskRoute): boolean => {
   return route.type === RouteType.TICKET_LIST || route.type === RouteType.TICKET_DETAIL;
 };
 
-import { InboxRoute, ChannelRoute, TicketListRoute, TicketDetailRoute } from './types';
+import { InboxRoute, ChannelRoute, TicketListRoute, TicketDetailRoute } from "./types";

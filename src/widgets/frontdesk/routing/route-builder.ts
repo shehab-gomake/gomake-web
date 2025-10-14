@@ -18,38 +18,49 @@ import {
  * Build URL path from route
  */
 export const buildRoutePath = (route: FrontDeskRoute): string => {
+  console.log('[FrontDesk Route Builder] Building path for route:', route);
+  
+  let path: string;
+  
   switch (route.type) {
     case RouteType.INBOX:
-      return '/frontdesk/inbox';
+      path = '/frontdesk/inbox';
+      break;
 
     case RouteType.CHANNEL: {
       const channelPath = mapChannelToPath(route.channel);
-      let path = `/frontdesk/inbox/${channelPath}`;
+      path = `/frontdesk/inbox/${channelPath}`;
 
       // Add conversation as query param if present
       if (route.conversationId) {
         path += `?conversation=${route.conversationId}`;
       }
-
-      return path;
+      break;
     }
 
     case RouteType.TICKET_LIST: {
       const viewPath = mapTicketViewToPath(route.view);
-      return `/frontdesk/tickets/${viewPath}`;
+      path = `/frontdesk/tickets/${viewPath}`;
+      break;
     }
 
     case RouteType.TICKET_DETAIL: {
-      return `/frontdesk/tickets/${route.ticketId}`;
+      path = `/frontdesk/tickets/${route.ticketId}`;
+      break;
     }
 
     case RouteType.SECTION: {
-      return `/frontdesk/${route.section}`;
+      path = `/frontdesk/${route.section}`;
+      break;
     }
 
     default:
-      return '/frontdesk/inbox';
+      path = '/frontdesk/inbox';
+      break;
   }
+  
+  console.log('[FrontDesk Route Builder] Built path:', path);
+  return path;
 };
 
 /**
