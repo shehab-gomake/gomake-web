@@ -39,16 +39,19 @@ const JobComponent = ({
     }
   };
 
+  const defaultColor = "#6C757D";
+  const bgColor = item.bgColor || defaultColor;
+
   const {
     onMouseDown: originalMouseDown,
     onClick: originalClick,
     ...restProps
   } = getItemProps({
     style: {
-      background: isEditable ? toRgba(item.bgColor, 0.6) : "#6C757D",
+      background: isEditable ? toRgba(bgColor, 0.6) : defaultColor,
       color: "white",
       borderRadius: "8px",
-      border: `2px solid ${isEditable ? item.bgColor : "#6C757D"}`,
+      border: `2px solid ${isEditable ? bgColor : defaultColor}`,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
