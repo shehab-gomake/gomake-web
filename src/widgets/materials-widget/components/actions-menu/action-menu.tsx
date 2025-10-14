@@ -80,8 +80,11 @@ const ActionMenu = (props: IActionMenuProps) => {
     isFetchingSupplier,
     setOpenSupplierModal,
     openSupplierModal,
+    materialType,
+    materialCategory
   } = useMaterialsActions(props.isAdmin);
-
+  console.log("materialType", materialType);
+  console.log("materialCategory", materialCategory);
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState<null | HTMLElement>(null);
   const [currentSubmenuAction, setCurrentSubmenuAction] = useState<any>(null);
   const [supplier, setSupplier] = useState<any>([]);
@@ -99,18 +102,9 @@ const ActionMenu = (props: IActionMenuProps) => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
-      // return [...materialActions, {
-      //   "key": "UpdateNumbering",
-      //   "isUnderLine": false,
-      //   "icon": "purchaseOrderIcon",
-      //   "action": 16
-      // }];
+
       return materialActions;
     }
-    /*else {
-      return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
-    }*/
-
   };
 
   const handleMenuItemClick = (action: any, event: React.MouseEvent<HTMLLIElement>) => {
@@ -139,16 +133,17 @@ const ActionMenu = (props: IActionMenuProps) => {
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
 
+
   const getTranslationKey = (actionItem: any) => {
     const isImperial = unitType === UNIT_TYPE.IMPERIAL;
 
     // Special keys for action 4 (UpdatePricePerUnit) when Imperial
-    if (actionItem.action === EMaterialsActions.UpdatePricePerUnit && isImperial) {
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnit && isImperial && materialType === "sheets") {
       return "materialsActions." + "UpdateUnitPriceImperial";
     }
 
     // Special keys for action 6 (UpdatePricePerTonPercents) when Imperial
-    if (actionItem.action === EMaterialsActions.UpdatePricePerUnitPercents && isImperial) {
+    if (actionItem.action === EMaterialsActions.UpdatePricePerUnitPercents && isImperial && materialType === "sheets") {
       return "materialsActions." + "AddPercentToUnitPriceImperial";
     }
 
