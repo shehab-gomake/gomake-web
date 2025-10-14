@@ -68,8 +68,8 @@ const MultiSelectInput = ({
         isClearable={false}
         closeMenuOnSelect={false}
         hideSelectedOptions={false}
-        minWidth={180}
-        maxWidth={220}
+        minWidth={200}
+        maxWidth={200}
       />
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}

@@ -1334,6 +1334,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleDeleteSelectedMaterials,
     handleCloseDuplicatesModal,
     handleRefreshMaterialData,
+    materialType,
+    materialCategory
   };
 };
 
