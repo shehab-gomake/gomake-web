@@ -8479,6 +8479,11 @@ const useDigitalOffsetPrice = ({
         updatedParameters.push(param);
         continue;
       }
+      // Special case for parameterType 12
+      if (matchingTemplateParam?.parameterType === 12) {
+        updatedParameters.push(param);
+        continue;
+      }
 
       // Check if the parameter is a setting parameter controlled by another parameter
       const isSettingParameter = matchingTemplateParam.settingParameters?.some(
