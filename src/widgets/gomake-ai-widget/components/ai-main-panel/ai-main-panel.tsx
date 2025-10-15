@@ -2,32 +2,49 @@ import React, { useState } from "react";
 import { AIChatInterface } from "../ai-chat-interface/ai-chat-interface";
 import { useStyle } from "./style";
 import SendIcon from "@mui/icons-material/Send";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-const jobCards = [
+const getJobCards = (isMobile: boolean) => [
   {
     title: "Start a Book Job",
     description: "Design covers, layouts, and more.",
-    icon: <MenuBookOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
+    icon: (
+      <MenuBookOutlinedIcon
+        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
+      />
+    ),
   },
   {
     title: "Start a Package Job",
     description: "Create packaging for a new product.",
-    icon: <Inventory2OutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
+    icon: (
+      <Inventory2OutlinedIcon
+        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
+      />
+    ),
   },
   {
     title: "Start a Commercial Product Job",
     description: "Develop branding for a commercial item.",
-    icon: <AssignmentOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
+    icon: (
+      <AssignmentOutlinedIcon
+        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
+      />
+    ),
   },
   {
     title: "Start a Labels Job",
     description: "Design and print custom labels.",
-    icon: <LocalOfferOutlinedIcon style={{ fontSize: 24, color: "#ed028c" }} />,
+    icon: (
+      <LocalOfferOutlinedIcon
+        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
+      />
+    ),
   },
 ];
 
@@ -51,6 +68,7 @@ const AIMainPanel = ({
   isLoadingConversation,
 }: AIMainPanelProps) => {
   const { classes } = useStyle({ isFullWidth });
+  const isMobile = useIsMobile();
   const [jobDescription, setJobDescription] = useState("");
 
   const handleSendMessage = async () => {
@@ -206,24 +224,42 @@ const AIMainPanel = ({
   if (isLoadingConversation) {
     return <div style={classes.mainPanelContainer} />;
   }
+
+  const jobCards = getJobCards(isMobile);
+
   return (
     <div style={classes.mainPanelContainer}>
-      <div style={classes.newJobContainer}>
+      <div
+        style={{
+          ...classes.newJobContainer,
+          ...(isMobile ? classes.newJobContainerMobile : {}),
+        }}
+      >
         {/* Header - Only show when no chat messages */}
         {chatMessages.length === 0 && (
           <div style={classes.header}>
             <div style={classes.headerIcon}>
               <AutoAwesomeRoundedIcon
                 style={{
-                  fontSize: 32,
+                  fontSize: isMobile ? 24 : 32,
                   color: "linear-gradient(135deg, #9333ea, #ec4899)",
                 }}
               />
             </div>
-            <div style={classes.headerTitle}>
+            <div
+              style={{
+                ...classes.headerTitle,
+                ...(isMobile ? classes.headerTitleMobile : {}),
+              }}
+            >
               Start a New Job with GoMake AI
             </div>
-            <div style={classes.headerSubtitle}>
+            <div
+              style={{
+                ...classes.headerSubtitle,
+                ...(isMobile ? classes.headerSubtitleMobile : {}),
+              }}
+            >
               Describe your project, and our intelligent assistant will guide
               you through the creation process.
             </div>
@@ -231,17 +267,44 @@ const AIMainPanel = ({
         )}
 
         {chatMessages.length === 0 && (
-          <div style={classes.jobTypeCardsContainer}>
+          <div
+            style={{
+              ...classes.jobTypeCardsContainer,
+              ...(isMobile ? classes.jobTypeCardsContainerMobile : {}),
+            }}
+          >
             {jobCards.map((card, index) => (
               <div
                 key={index}
-                style={classes.jobTypeCard}
+                style={{
+                  ...classes.jobTypeCard,
+                  ...(isMobile ? classes.jobTypeCardMobile : {}),
+                }}
                 onClick={() => handleJobCardClick(card.title, card.description)}
               >
-                <div style={classes.jobTypeIconWrapper}>{card.icon}</div>
+                <div
+                  style={{
+                    ...classes.jobTypeIconWrapper,
+                    ...(isMobile ? classes.jobTypeIconWrapperMobile : {}),
+                  }}
+                >
+                  {card.icon}
+                </div>
                 <div style={classes.jobTypeTextContainer}>
-                  <div style={classes.jobTypeTitle}>{card.title}</div>
-                  <div style={classes.jobTypeDescription}>
+                  <div
+                    style={{
+                      ...classes.jobTypeTitle,
+                      ...(isMobile ? classes.jobTypeTitleMobile : {}),
+                    }}
+                  >
+                    {card.title}
+                  </div>
+                  <div
+                    style={{
+                      ...classes.jobTypeDescription,
+                      ...(isMobile ? classes.jobTypeDescriptionMobile : {}),
+                    }}
+                  >
                     {card.description}
                   </div>
                 </div>
@@ -251,7 +314,12 @@ const AIMainPanel = ({
         )}
 
         {/* Chat Interface */}
-        <div style={classes.chatContainer}>
+        <div
+          style={{
+            ...classes.chatContainer,
+            ...(isMobile ? classes.chatContainerMobile : {}),
+          }}
+        >
           <AIChatInterface
             messages={chatMessages}
             isProcessing={isProcessing}
@@ -263,7 +331,10 @@ const AIMainPanel = ({
         <div style={classes.bottomFormContainer}>
           <div style={classes.bottomFormWrapper}>
             <textarea
-              style={classes.bottomTextArea}
+              style={{
+                ...classes.bottomTextArea,
+                ...(isMobile ? classes.bottomTextAreaMobile : {}),
+              }}
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               onKeyDown={handleKeyPress}
@@ -275,6 +346,7 @@ const AIMainPanel = ({
               className={`send-button ${isProcessing ? "disabled" : ""}`}
               style={{
                 ...classes.sendButton,
+                ...(isMobile ? classes.sendButtonMobile : {}),
                 ...(isProcessing ? classes.sendButtonDisabled : {}),
               }}
               onClick={handleSendMessage}
