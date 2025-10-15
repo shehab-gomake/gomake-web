@@ -262,3 +262,33 @@
 .ai-conversation-item:hover::after {
   transform: translateX(100%);
 }
+
+/* FAB Toggle Button Animation */
+.ai-fab-toggle {
+  animation: fabPulseGlow 2s ease-in-out infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fabPulseGlow {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(147, 51, 234, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3),
+      0 0 0 8px rgba(147, 51, 234, 0);
+  }
+}
+
+.ai-fab-toggle:hover {
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.4) !important;
+}
+
+.ai-fab-toggle:active {
+  transform: scale(0.95) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.1s ease !important;
+  animation: none !important;
+}

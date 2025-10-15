@@ -39,6 +39,7 @@ const GoMakeAIComponent = () => {
     email: string;
     country: string;
   } | null>(null);
+  const [isFabAnimating, setIsFabAnimating] = useState(true); // ✅ Track FAB animation state
 
   const handleRealTimeMessage = (message: any) => {
     setChatMessages((prev) => [...prev, message]);
@@ -53,6 +54,7 @@ const GoMakeAIComponent = () => {
 
   const handleProductIdReceived = (productId: string) => {
     setProductId(productId);
+    setIsFabAnimating(true); // ✅ Restart animation when new product is created
 
     if (selectedConversation) {
       setSelectedConversation((prev) => ({
@@ -457,7 +459,11 @@ const GoMakeAIComponent = () => {
       {/* ✅ Floating Toggle FAB */}
       {showFab && (
         <IconButton
-          onClick={() => setIsChatView((prev) => !prev)}
+          onClick={() => {
+            setIsChatView((prev) => !prev);
+            setIsFabAnimating(false); // ✅ Stop animation on click
+          }}
+          className={isFabAnimating ? "ai-fab-toggle" : ""}
           style={{
             position: "fixed",
             top: 16,
