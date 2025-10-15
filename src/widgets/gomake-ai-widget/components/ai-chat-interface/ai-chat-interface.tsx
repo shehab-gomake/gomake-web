@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { useStyle } from "./style";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface AIChatInterfaceProps {
   messages: Array<{
@@ -16,13 +17,13 @@ interface AIChatInterfaceProps {
   onOptionClick?: (option: string) => void;
 }
 
-//!here
 const AIChatInterface = ({
   messages,
   isProcessing,
   onOptionClick,
 }: AIChatInterfaceProps) => {
   const { classes } = useStyle();
+  const isMobile = useIsMobile();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -43,19 +44,30 @@ const AIChatInterface = ({
 
   return (
     <div style={classes.chatContainer}>
-      <div style={classes.messagesContainer}>
+      <div
+        style={{
+          ...classes.messagesContainer,
+          ...(isMobile ? classes.messagesContainerMobile : {}),
+        }}
+      >
         {messages.map((message) => (
           <div
             key={message.id}
             style={{
               ...classes.messageContainer,
+              ...(isMobile ? classes.messageContainerMobile : {}),
               ...(message.type === "user"
                 ? classes.userMessage
                 : classes.aiMessage),
             }}
           >
             <div style={classes.messageHeader}>
-              <div style={classes.messageAvatar}>
+              <div
+                style={{
+                  ...classes.messageAvatar,
+                  ...(isMobile ? classes.messageAvatarMobile : {}),
+                }}
+              >
                 {message.type === "user" ? "👤" : "🤖"}
               </div>
               <div style={classes.messageInfo}>
@@ -67,9 +79,12 @@ const AIChatInterface = ({
                 </div>
               </div>
             </div>
-            {/* <div style={classes.messageContent}>{message.message}</div> */}
-            {/* here new */}
-            <div style={classes.messageContent}>
+            <div
+              style={{
+                ...classes.messageContent,
+                ...(isMobile ? classes.messageContentMobile : {}),
+              }}
+            >
               {message.message}
               {message.messageType === "list" &&
                 message.list &&
@@ -78,7 +93,10 @@ const AIChatInterface = ({
                     {message.list.map((option, index) => (
                       <button
                         key={index}
-                        style={classes.optionButton}
+                        style={{
+                          ...classes.optionButton,
+                          ...(isMobile ? classes.optionButtonMobile : {}),
+                        }}
                         onClick={() => onOptionClick?.(option)}
                       >
                         {option}
@@ -93,7 +111,14 @@ const AIChatInterface = ({
         {isProcessing && (
           <div style={classes.processingMessage}>
             <div style={classes.messageHeader}>
-              <div style={classes.messageAvatar}>🤖</div>
+              <div
+                style={{
+                  ...classes.messageAvatar,
+                  ...(isMobile ? classes.messageAvatarMobile : {}),
+                }}
+              >
+                🤖
+              </div>
               <div style={classes.messageInfo}>
                 <div style={classes.messageSender}>GoMake AI</div>
                 <div style={classes.messageTime}>Now</div>

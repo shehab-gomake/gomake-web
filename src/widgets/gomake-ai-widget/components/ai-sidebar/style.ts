@@ -1,11 +1,8 @@
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
-  const { primaryColor } = useGomakeTheme();
-
   const classes = useMemo(() => {
     return {
       sidebarContainer: {
@@ -98,7 +95,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         display: "flex",
         flexDirection: "row" as "row",
         alignItems: "center",
-        gap: convertWidthToVW(12),
+        gap: "8px",
         padding: "8px 12px",
         borderRadius: 12,
         cursor: "pointer",
