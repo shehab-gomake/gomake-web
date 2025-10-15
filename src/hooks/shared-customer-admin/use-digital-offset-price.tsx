@@ -8319,7 +8319,13 @@ const useDigitalOffsetPrice = ({
 
         // Special case for parameterType 12
         if (matchingTemplateParam?.parameterType === 12) {
-          return true;
+          const selectedParam1 = allParams.find(p => p.parameterCode === "Foiloptions")
+          if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+            return false;
+          }
+          else {
+            return true;
+          }
         }
 
         // Check if the parameter is a setting parameter controlled by another parameter
@@ -8450,6 +8456,7 @@ const useDigitalOffsetPrice = ({
     parameters,
     productTemplate
   ) {
+    console.log("parametersparametersparameters", parameters);
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 
@@ -8481,8 +8488,15 @@ const useDigitalOffsetPrice = ({
       }
       // Special case for parameterType 12
       if (matchingTemplateParam?.parameterType === 12) {
-        updatedParameters.push(param);
-        continue;
+        const selectedParam1 = parameters.find(p => p.parameterCode === "Foiloptions")
+        if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+          continue;
+        }
+
+        else {
+          updatedParameters.push(param);
+          continue;
+        }
       }
 
       // Check if the parameter is a setting parameter controlled by another parameter
