@@ -10,11 +10,19 @@ import { LandingModal } from "../landing-modal/landing-modal";
 import { getUserToken, updateTokenStorage } from "@/services/storage-data";
 import { useGomakeAxios } from "@/hooks";
 import { createGuestUserForGomakeAIApi } from "@/services/api-service/customers/employees-api";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz"; // ✅ toggle icon
+import MenuIcon from "@mui/icons-material/Menu"; // ✅ hamburger menu
+import { IconButton } from "@mui/material"; // ✅ icon buttons
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const GoMakeAIComponent = () => {
   const { classes } = useStyle();
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const isMobile = useIsMobile(); // ✅
+  const [isChatView, setIsChatView] = useState(true); // ✅ controls which panel is visible
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // ✅ Start closed on mobile to show chat
+
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [conversationsHistory, setConversationsHistory] = useState<any[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
@@ -31,7 +39,7 @@ const GoMakeAIComponent = () => {
     email: string;
     country: string;
   } | null>(null);
-  // Handle real-time messages from socket
+
   const handleRealTimeMessage = (message: any) => {
     setChatMessages((prev) => [...prev, message]);
 
@@ -64,6 +72,7 @@ const GoMakeAIComponent = () => {
     setInteractionId(interactionId);
     setProductUpdateVersion((prev) => prev + 1);
   };
+
   const {
     isProcessing,
     sessionId,
@@ -79,7 +88,6 @@ const GoMakeAIComponent = () => {
     handleProductUpdated
   );
 
-  // Load conversations history on mount
   useEffect(() => {
     const loadHistory = async () => {
       try {
@@ -88,19 +96,17 @@ const GoMakeAIComponent = () => {
         setIsHistoryLoaded(true);
       } catch (error) {
         console.error("Error loading conversations history:", error);
-        setIsHistoryLoaded(true); // Set to true even on error to prevent infinite loading
+        setIsHistoryLoaded(true);
       }
     };
     loadHistory();
   }, []);
 
-  // Handle token from URL redirect
   useEffect(() => {
     if (router.isReady && router.query.token) {
       const token = router.query.token as string;
       updateTokenStorage(token);
 
-      // Remove token from URL
       const { token: _, ...restQuery } = router.query;
       router.replace(
         {
@@ -113,7 +119,6 @@ const GoMakeAIComponent = () => {
     }
   }, [router.isReady, router.query.token]);
 
-  // Check if landing modal should be shown
   useEffect(() => {
     if (router.isReady) {
       const hasToken = !!getUserToken();
@@ -125,8 +130,6 @@ const GoMakeAIComponent = () => {
     }
   }, [router.isReady, router.query.onboarding]);
 
-  // Initialize only once — handles page load or refresh
-  // Wait for both router to be ready AND conversations history to be loaded
   useEffect(() => {
     if (!router.isReady || !isHistoryLoaded || hasInitialized.current) return;
     hasInitialized.current = true;
@@ -183,12 +186,16 @@ const GoMakeAIComponent = () => {
     initializeSession();
   }, [router.isReady, isHistoryLoaded]);
 
-  // Handle new job creation
   const handleNewJobClick = async () => {
     setChatMessages([]);
     setSelectedConversation(null);
     setProductId(null);
     resetProcessingState();
+
+    // ✅ Close sidebar on mobile when new job is clicked
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
 
     try {
       const newSession = await startSession();
@@ -211,6 +218,11 @@ const GoMakeAIComponent = () => {
     try {
       setProductId(null);
       setIsConversationLoading(true);
+
+      // ✅ Close sidebar on mobile when conversation is selected
+      if (isMobile) {
+        setIsSidebarOpen(false);
+      }
 
       const messages = await getConversation(selectedSessionId);
       setChatMessages(messages);
@@ -247,7 +259,6 @@ const GoMakeAIComponent = () => {
     }
   };
 
-  // Refresh conversation history
   const refreshConversationsHistory = async () => {
     try {
       const conversations = await getConversationsHistory();
@@ -265,10 +276,7 @@ const GoMakeAIComponent = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
-  // Prevent closing modal - it should only close after successful API call
-  const handleLandingModalClose = () => {
-    // Do nothing - modal can't be closed manually
-  };
+  const handleLandingModalClose = () => {};
 
   const handleLandingModalContinue = async (email: string, country: string) => {
     try {
@@ -278,8 +286,6 @@ const GoMakeAIComponent = () => {
         if (res.success) {
           const redirectUrl = res?.data?.redirectUrl;
           if (redirectUrl) {
-            // Redirect to the URL which will contain the token
-            // The useEffect will handle extracting and saving the token
             window.location.href = redirectUrl;
           }
         }
@@ -297,12 +303,39 @@ const GoMakeAIComponent = () => {
   if (isInitializing) {
     return (
       <div style={classes.initializationContainer}>
-        <div style={classes.initializationCard}>
-          <div style={classes.initializationLogo}>
-            <div style={classes.initializationSpinner} />
+        <div
+          style={{
+            ...classes.initializationCard,
+            ...(isMobile ? classes.initializationCardMobile : {}),
+          }}
+        >
+          <div
+            style={{
+              ...classes.initializationLogo,
+              ...(isMobile ? classes.initializationLogoMobile : {}),
+            }}
+          >
+            <div
+              style={{
+                ...classes.initializationSpinner,
+                ...(isMobile ? classes.initializationSpinnerMobile : {}),
+              }}
+            />
           </div>
-          <div style={classes.initializationTitle}>GoMake AI</div>
-          <div style={classes.initializationSubtitle}>
+          <div
+            style={{
+              ...classes.initializationTitle,
+              ...(isMobile ? classes.initializationTitleMobile : {}),
+            }}
+          >
+            GoMake AI
+          </div>
+          <div
+            style={{
+              ...classes.initializationSubtitle,
+              ...(isMobile ? classes.initializationSubtitleMobile : {}),
+            }}
+          >
             Initializing your intelligent assistant...
           </div>
           <div style={classes.initializationDotsContainer}>
@@ -311,6 +344,7 @@ const GoMakeAIComponent = () => {
                 key={i}
                 style={{
                   ...classes.initializationDot,
+                  ...(isMobile ? classes.initializationDotMobile : {}),
                   animation: `ai-pulse 1.5s infinite ${i * 0.2}s`,
                 }}
               />
@@ -321,40 +355,124 @@ const GoMakeAIComponent = () => {
     );
   }
 
+  const showFab = isMobile && !!productId && !!sessionId;
+
   return (
     <div style={classes.container}>
-      <AISidebar
-        onNewJobClick={handleNewJobClick}
-        conversationsHistory={conversationsHistory}
-        onConversationSelect={handleConversationSelect}
-        onRefreshHistory={refreshConversationsHistory}
-        selectedConversation={selectedConversation}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={toggleSidebar}
-      />
+      {/* ✅ Backdrop for mobile sidebar */}
+      {isMobile && isSidebarOpen && (
+        <div style={classes.backdrop} onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* ✅ Sidebar wrapper with mobile drawer support */}
+      {(!isMobile || isSidebarOpen) && (
+        <div
+          style={
+            isMobile ? classes.sidebarWrapperMobile : classes.sidebarWrapper
+          }
+        >
+          <AISidebar
+            onNewJobClick={handleNewJobClick}
+            conversationsHistory={conversationsHistory}
+            onConversationSelect={handleConversationSelect}
+            onRefreshHistory={refreshConversationsHistory}
+            selectedConversation={selectedConversation}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={toggleSidebar}
+            onClose={isMobile ? () => setIsSidebarOpen(false) : undefined}
+          />
+        </div>
+      )}
+
+      {/* ✅ Menu button to open sidebar on mobile - hide when viewing price */}
+      {isMobile && !isSidebarOpen && isChatView && (
+        <IconButton
+          onClick={() => setIsSidebarOpen(true)}
+          style={classes.menuButton}
+        >
+          <MenuIcon style={{ color: "#9333ea" }} />
+        </IconButton>
+      )}
+
       <div style={classes.mainContentContainer}>
-        <AIMainPanel
-          sendMessage={sendMessage}
-          isProcessing={isProcessing}
-          sessionId={sessionId}
-          chatMessages={chatMessages}
-          onChatMessagesUpdate={handleChatMessagesUpdate}
-          isFullWidth={!productId}
-          isLoadingConversation={isConversationLoading}
-        />
+        {/* Chat panel */}
+        <div
+          style={{
+            flex: 1,
+            transition: "all 0.3s ease",
+            transform: isMobile
+              ? isChatView
+                ? "translateX(0)"
+                : "translateX(-100%)"
+              : "none",
+            opacity: isMobile && !isChatView ? 0 : 1,
+            display: isMobile && !isChatView ? "none" : "flex",
+          }}
+        >
+          <AIMainPanel
+            sendMessage={sendMessage}
+            isProcessing={isProcessing}
+            sessionId={sessionId}
+            chatMessages={chatMessages}
+            onChatMessagesUpdate={handleChatMessagesUpdate}
+            isFullWidth={isMobile || !productId}
+            isLoadingConversation={isConversationLoading}
+          />
+        </div>
+
+        {/* Price panel */}
         {productId && sessionId && (
-          <div style={classes.priceWidgetContainer}>
-            <PriceListPageWidget
-              key={productUpdateVersion}
-              widgetType={EWidgetProductType.CREATE}
-              isMobileScreen={true}
-              productId={productId}
-              sessionId={sessionId}
-              interactionId={interactionId}
-            />
+          <div
+            style={{
+              flex: 1,
+              transition: "all 0.3s ease",
+              transform: isMobile
+                ? isChatView
+                  ? "translateX(100%)"
+                  : "translateX(0)"
+                : "none",
+              opacity: isMobile && isChatView ? 0 : 1,
+              display: isMobile && isChatView ? "none" : "flex",
+            }}
+          >
+            <div
+              style={{
+                ...classes.priceWidgetContainer,
+                ...(isMobile ? { width: "100%", maxWidth: "100%" } : {}),
+              }}
+            >
+              <PriceListPageWidget
+                key={productUpdateVersion}
+                widgetType={EWidgetProductType.CREATE}
+                isMobileScreen={true}
+                productId={productId}
+                sessionId={sessionId}
+                interactionId={interactionId}
+              />
+            </div>
           </div>
         )}
       </div>
+
+      {/* ✅ Floating Toggle FAB */}
+      {showFab && (
+        <IconButton
+          onClick={() => setIsChatView((prev) => !prev)}
+          style={{
+            position: "fixed",
+            top: 16,
+            right: 16,
+            zIndex: 100,
+            backgroundColor: "#FFF",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+            width: 42,
+            height: 42,
+          }}
+        >
+          <SwapHorizIcon style={{ color: "#9333ea", fontSize: 24 }} />
+        </IconButton>
+      )}
+
       <LandingModal
         open={showLandingModal}
         onClose={handleLandingModalClose}

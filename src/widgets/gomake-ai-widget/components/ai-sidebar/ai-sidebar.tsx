@@ -5,8 +5,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
+import { useIsMobile } from "@/hooks/use-responsive";
+
 interface AISidebarProps {
   onNewJobClick: () => void;
   conversationsHistory?: any[];
@@ -15,6 +18,7 @@ interface AISidebarProps {
   selectedConversation?: any;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  onClose?: () => void;
 }
 
 const AISidebar = ({
@@ -25,8 +29,10 @@ const AISidebar = ({
   selectedConversation,
   isCollapsed = false,
   onToggleCollapse,
+  onClose,
 }: AISidebarProps) => {
   const { classes } = useStyle({ isCollapsed });
+  const isMobile = useIsMobile();
 
   return (
     <div style={classes.sidebarContainer}>
@@ -43,13 +49,41 @@ const AISidebar = ({
             </div>
           )}
         </div>
-        <div style={(classes as any).toggleButton} onClick={onToggleCollapse}>
-          {isCollapsed ? (
-            <ChevronRightIcon style={(classes as any).toggleIcon} />
-          ) : (
-            <ChevronLeftIcon style={(classes as any).toggleIcon} />
-          )}
-        </div>
+        {/* Arrow back button on mobile, toggle button on desktop */}
+        {isMobile ? (
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              borderRadius: "50%",
+              backgroundColor: "transparent",
+              transition: "background-color 0.2s",
+            }}
+            onClick={onClose}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#F3F4F6";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            <ArrowForwardRoundedIcon
+              style={{ fontSize: 24, color: "#6B7280" }}
+            />
+          </div>
+        ) : (
+          <div style={(classes as any).toggleButton} onClick={onToggleCollapse}>
+            {isCollapsed ? (
+              <ChevronRightIcon style={(classes as any).toggleIcon} />
+            ) : (
+              <ChevronLeftIcon style={(classes as any).toggleIcon} />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Navigation Buttons */}
