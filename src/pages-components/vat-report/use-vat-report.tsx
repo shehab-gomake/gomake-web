@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { startOfMonth, endOfMonth } from "date-fns";
+import {startOfMonth, endOfMonth, format} from "date-fns";
 import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { downloadPdf } from "@/utils/helpers";
@@ -34,15 +34,15 @@ const useVatReport = () => {
             return;
         }
 
-        // const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-        // const formattedEndDate = format(toDate, "yyyy-MM-dd");
+        const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+        const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
         const res = await callApi(
             EHttpMethod.POST,
             `/v1/erp-service/reports/get-vat-report`,
             {
-                startDate: fromDate,
-                endDate: toDate,
+                startDate: formattedStartDate,
+                endDate: formattedEndDate,
             }
         );
         if (res?.success) {
