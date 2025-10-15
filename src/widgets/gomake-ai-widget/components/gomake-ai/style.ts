@@ -23,7 +23,7 @@ const useStyle = () => {
         top: 0,
         left: 0,
         bottom: 0,
-        width: "85%",
+        // width: "85%",
         maxWidth: "320px",
         zIndex: 1001,
         backgroundColor: "#FFF",
