@@ -559,6 +559,24 @@ export const round2 = (n: number | string | undefined | null): number =>
 export const fmt2 = (n: number | string | undefined | null): string =>
   round2(n).toFixed(2);
 
+export const  removeDuplicateParameters = (generalParameters) => {
+  // Create a Map to track unique parameters
+  const uniqueMap = new Map();
+  
+  // Iterate through the parameters
+  generalParameters.forEach(param => {
+    // Create a unique key based on the 4 criteria
+    const uniqueKey = `${param.parameterId}_${param.sectionId}_${param.subSectionId}_${param.actionIndex}`;
+    
+    // Only add if we haven't seen this combination before
+    if (!uniqueMap.has(uniqueKey)) {
+      uniqueMap.set(uniqueKey, param);
+    }
+  });
+  
+  // Return the unique parameters as an array
+  return Array.from(uniqueMap.values());
+};
 /**
  * Filters out null and undefined values from arrays to prevent [null] being sent to API endpoints.
  * For non-array values, returns the value as-is.
