@@ -8,6 +8,7 @@ import {
   GomakeTextInput,
   SecondSwitch,
   PrimarySwitch,
+  GoMakeMultiSelect,
 } from "@/components";
 import { MuiColorInput } from "mui-color-input";
 import { ImageUploadComponent } from "./image-input";
@@ -342,6 +343,59 @@ const FormInput = ({
               <GoMakeImageFiled
                 selectedNameFile={selectedNameFile}
                 onChange={(value) => changeState(input.parameterKey, value)}
+              />
+            ) : input.parameterKey === "machines" && (input.type === "select" || input?.type === "products_list") ? (
+              <GoMakeMultiSelect
+                options={
+                  input.multiple
+                    ? [{ label: t("navigationButtons.all") || "all", value: "all" }, ...options]
+                    : options
+                }
+                value={(() => {
+                  const currentValue = Array.isArray(input.value) ? input.value : input.value ? [input.value] : [];
+                  // If all non-info options are selected, include "all" in the value
+                  if (input.multiple && currentValue.length === options.filter((o: any) => !o.isInfo).length && options.length > 0) {
+                    return ["all", ...currentValue];
+                  }
+                  return currentValue;
+                })()}
+                onChange={(values: string[]) => {
+                  if (input.multiple) {
+                    // Handle "all" option
+                    if (values.includes("all")) {
+                      const previousValues = Array.isArray(input.value) ? input.value : [];
+                      const wasAllSelected = previousValues.length === options.filter((o: any) => !o.isInfo).length;
+
+                      if (!wasAllSelected) {
+                        // Select all
+                        const allValues = options
+                          .filter((o: any) => !o.isInfo)
+                          .map((o: any) => o.value);
+                        changeState(input.parameterKey, allValues);
+                        setValues(allValues);
+                      } else {
+                        // Deselect all
+                        changeState(input.parameterKey, []);
+                        setValues([]);
+                      }
+                    } else {
+                      // Regular multi-select without "all"
+                      changeState(input.parameterKey, values);
+                      setValues(values);
+                    }
+                  } else {
+                    changeState(input.parameterKey, values[0] || "");
+                  }
+                }}
+                placeholder={t(input.placeholder)}
+                isDisabled={!!readonly}
+                isLoading={loading}
+                isClearable={!input?.disableClearable}
+                isSearchable={true}
+                closeMenuOnSelect={!input.multiple}
+                hideSelectedOptions={false}
+                minWidth={180}
+                maxHeight={80}
               />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
