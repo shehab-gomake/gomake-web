@@ -5,7 +5,6 @@ import { useState } from "react";
 import { DateRangePicker } from "rsuite";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
-import { EStatementCategory } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const ScheduleSendWidget = ({
@@ -37,7 +36,6 @@ const ScheduleSendWidget = ({
     const [scheduleType, setScheduleType] = useState<any>()
     const [dayOfMonth, setDayOfMonth] = useState<any>()
     const [dayOfWeek, setDayOfWeek] = useState<any>()
-    const [hourOfDay, setHourOfDay] = useState<any>()
     const [dateRange, setDateRange] = useState<any>(null)
 
     // Specific date fields for jobs table
@@ -52,11 +50,24 @@ const ScheduleSendWidget = ({
         setScheduleType(undefined);
         setDayOfMonth(undefined);
         setDayOfWeek(undefined);
-        setHourOfDay(undefined);
         setDateRange(null);
         setCreationDateRange(null);
         setDueDateRange(null);
         setReadyDateRange(null);
+    };
+
+    const EStatementCategory = {
+        Machine: 1,
+        "Machine category": 2,
+        "Client Type": 3,
+        Client: 4,
+        "Property input": 5,
+        "Property output": 6,
+        Products: 7,
+        Agent: 8,
+        Employee: 9,
+        ProductType: 10,
+        MATERIALTYPE: 11,
     };
 
     // Handle modal close with form reset
@@ -168,18 +179,7 @@ const ScheduleSendWidget = ({
     const _renderScheduleType = (type) => {
         switch (type) {
             case ScheduleFrequencyEnum.Daily:
-                return <div style={{ width: "50%" }}>
-                    <label style={classes.labelStyle}>{t("sales.list.hourOfDay")}</label>
-                    <GoMakeAutoComplate
-                        options={hoursArray}
-                        style={{ height: "40px", width: "100%", border: "none" }}
-                        placeholder={t("sales.list.selectHour")}
-                        onChange={(e: any, item: any) => {
-                            setHourOfDay(item)
-                        }}
-                        value={hourOfDay}
-                    />
-                </div>
+                return null;
             case ScheduleFrequencyEnum.Weekly:
                 return <div style={{ width: "50%" }}>
                     <GoMakeAutoComplate
@@ -332,12 +332,11 @@ const ScheduleSendWidget = ({
                                     frequency: scheduleType?.id,
                                     startDayOfWeek: dayOfWeek?.value,
                                     startDayOfMonth: dayOfMonth?.id,
-                                    startHourOfDay: hourOfDay?.id,
                                     reportConfiguration: {
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {
                                             return {
-                                                statementId: getStatementId(item),
+                                                statementId: getStatementId(item) ?? item.statement2.id,
                                                 // statementValue: item.statement2.id,
                                                 statementValue:
                                                     item?.category?.id === "MATERIALTYPE"
