@@ -5,7 +5,6 @@ import { useState } from "react";
 import { DateRangePicker } from "rsuite";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
-import { EStatementCategory } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const ScheduleSendWidget = ({
@@ -55,6 +54,20 @@ const ScheduleSendWidget = ({
         setCreationDateRange(null);
         setDueDateRange(null);
         setReadyDateRange(null);
+    };
+
+    const EStatementCategory = {
+        Machine: 1,
+        "Machine category": 2,
+        "Client Type": 3,
+        Client: 4,
+        "Property input": 5,
+        "Property output": 6,
+        Products: 7,
+        Agent: 8,
+        Employee: 9,
+        ProductType: 10,
+        MATERIALTYPE: 11,
     };
 
     // Handle modal close with form reset
@@ -323,7 +336,7 @@ const ScheduleSendWidget = ({
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {
                                             return {
-                                                statementId: getStatementId(item),
+                                                statementId: getStatementId(item) ?? item.statement2.id,
                                                 // statementValue: item.statement2.id,
                                                 statementValue:
                                                     item?.category?.id === "MATERIALTYPE"
