@@ -19,6 +19,8 @@ interface GoMakeDialogProps {
   description?: string;
   buttonText?: string;
   children?: React.ReactNode;
+  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
+  fullWidth?: boolean;
 }
 
 const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
@@ -28,6 +30,8 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
   description,
   buttonText = "modal.ok",
   children,
+  maxWidth = "md",
+  fullWidth = true,
 }) => {
   const { t } = useTranslation();
 
@@ -35,8 +39,8 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
-      fullWidth
+      maxWidth={maxWidth}
+      fullWidth={fullWidth}
       aria-labelledby="go-make-dialog-title"
       aria-describedby="go-make-dialog-description"
     >
@@ -54,11 +58,11 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent style={{ padding: "0" }}>
+      <DialogContent style={{ padding: "0px", backgroundColor: "#fafafa" }}>
         {description && (
           <DialogContentText
             id="go-make-dialog-description"
-            style={{ padding: "20px" }}
+            style={{ padding: "0px" }}
           >
             {description}
           </DialogContentText>

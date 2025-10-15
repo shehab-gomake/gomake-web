@@ -24,11 +24,19 @@ const useStyle = () => {
         gap: 16,
         overflowY: "auto" as "auto",
       },
+      messagesContainerMobile: {
+        padding: "12px 8px",
+        gap: 12,
+      },
       messageContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         gap: 8,
         maxWidth: "80%",
+      },
+      messageContainerMobile: {
+        maxWidth: "90%",
+        gap: 6,
       },
       userMessage: {
         alignSelf: "flex-end" as "flex-end",
@@ -52,6 +60,11 @@ const useStyle = () => {
         justifyContent: "center",
         fontSize: 16,
       },
+      messageAvatarMobile: {
+        width: 28,
+        height: 28,
+        fontSize: 14,
+      },
       messageInfo: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -74,6 +87,11 @@ const useStyle = () => {
         borderRadius: 12,
         border: "1px solid #E5E7EB",
         boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      },
+      messageContentMobile: {
+        fontSize: 13,
+        padding: "10px 12px",
+        borderRadius: 10,
       },
       processingMessage: {
         display: "flex",
@@ -121,7 +139,8 @@ const useStyle = () => {
       },
       optionsContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
+        flexWrap: "wrap" as "wrap",
         gap: 8,
         marginTop: 12,
       },
@@ -142,6 +161,11 @@ const useStyle = () => {
         "&:active": {
           backgroundColor: "#F9A8D4",
         },
+      },
+      optionButtonMobile: {
+        fontSize: 13,
+        padding: "10px 14px",
+        borderRadius: 10,
       },
     };
   }, []);

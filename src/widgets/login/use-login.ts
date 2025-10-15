@@ -48,14 +48,17 @@ const useGomakeLogin = () => {
         showLoginModal(false);
         updateTokenStorage(result?.data?.data?.customer?.token);
 
-        // result?.data?.data?.customer.isTermsAccepted
-        //   ? navigate("/")
-        //   : setIsModalOpen(true);
-
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get("redirect");
+        const customer = result?.data?.data?.customer;
 
-        if (result?.data?.data?.customer.isTermsAccepted) {
+        if (customer?.isGoAiUser) {
+          if (customer.isTermsAccepted) {
+            navigate("/gomake-ai");
+          } else {
+            setIsModalOpen(true);
+          }
+        } else if (customer.isTermsAccepted) {
           navigate(redirectPath || "/");
         } else {
           setIsModalOpen(true);

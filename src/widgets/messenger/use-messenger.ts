@@ -9,7 +9,7 @@ import {
     sendMessengerNotificationApi,
     updateApprovalRequestApi
 } from "@/services/api-service/chat/quick-blox-chat-endpoints";
-import {ChatMessageAttachment, QBChatNewMessage} from "quickblox";
+import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 import {useMediaQuery} from "@mui/material";
 import {useRecoilState} from "recoil";
@@ -138,7 +138,7 @@ const useMessenger = () => {
     }
     const sendTextMessage = async (text: string) => {
         try {
-            const message:QBChatNewMessage = {
+            const message = {
                 type: 'groupchat',
                 body: text,
                 extension: {
@@ -149,7 +149,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await sendMessage(message, false)
+            await sendMessage(message as unknown as QBChatNewMessage, false)
         } catch (e) {
             alertFaultUpdate();
         }
@@ -171,14 +171,14 @@ const useMessenger = () => {
             if (uploadedFile.uid) {
                 setUploadingFiles(false)
             }
-            const attachment:ChatMessageAttachment = {
+            const attachment = {
                 id: uploadedFile?.uid,
                 type: uploadedFile?.content_type,
-                size: uploadedFile?.size+"",
+                size: uploadedFile?.size,
                 name: uploadedFile?.name,
             };
 
-            const message:QBChatNewMessage = {
+            const message = {
                 type: 'groupchat',
                 body: uploadedFile.name,
                 extension: {
@@ -193,7 +193,7 @@ const useMessenger = () => {
             // await sendMessengerNotificationApi(callApi, () => {
             // }, selectedDialog.occupants_ids.map(a => a.toString()))
             // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
-            await sendMessage(message, true);
+            await sendMessage(message as unknown as QBChatNewMessage, true);
         } catch (e) {
             alertFaultUpdate();
         }
@@ -213,14 +213,14 @@ const useMessenger = () => {
             if (uploadedFile.uid) {
                 setUploadingFiles(false)
             }
-            const attachment:ChatMessageAttachment = {
+            const attachment = {
                 id: uploadedFile?.uid,
                 type: uploadedFile?.content_type,
-                size: uploadedFile?.size +"",
+                size: uploadedFile?.size,
                 name: uploadedFile?.name,
             };
 
-            const message:QBChatNewMessage = {
+            const message = {
                 type: 'groupchat',
                 body: uploadedFile.name,
                 extension: {
@@ -234,7 +234,7 @@ const useMessenger = () => {
             // await sendMessengerNotificationApi(callApi, () => {
             // }, selectedDialog.occupants_ids.map(a => a.toString()))
             // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
-            await sendMessage(message, false)
+            await sendMessage(message as unknown as QBChatNewMessage, false)
         } catch (e) {
             alertFaultUpdate();
         }

@@ -7,7 +7,6 @@ import {
   PanelContent,
 } from "@/widgets/frontdesk/design-system";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
 import { EmailSidebar } from "./components/email-sidebar";
 import { EmailConversationList } from "./components/email-conversation-list";
@@ -302,13 +301,13 @@ export const EmailProviderView: React.FC = () => {
       )}
 
       {/* Composer Modal - Only for new messages */}
-      <EmailComposer
+      {/*<EmailComposer
         open={showComposer}
         onClose={handleCloseComposer}
         onSend={handleSendEmail}
         draft={composerDraft || undefined}
         isSending={isSending}
-      />
+      />*/}
 
       <EmailAuthModal
         open={showAuthModal}

@@ -6,16 +6,15 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { ConvertIcon } from "@/pages-components/quotes/more-circle/icons/convert";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
-import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
-import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { filterState, materialCategorySuppliersState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
+import { filterState, materialCategorySuppliersState, materialHeadersState, openExtraParametersModalState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
 import { DfxIcon } from "@/components/icons/dfx-icon";
 import { PdfIcon } from "@/components/icons/pdf-icon";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const MaterialMenuWidget = ({
   dataRow,
@@ -37,7 +36,11 @@ const MaterialMenuWidget = ({
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const materialFilter = useRecoilValue(filterState);
   const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
-  const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
+  const materialHeaders = useRecoilValue(materialHeadersState);
+  const setOpenExtraParametersModal = useSetRecoilState(openExtraParametersModalState);
+
+  const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
 
 
   const [action, setAction] = useRecoilState<{
@@ -83,6 +86,27 @@ const MaterialMenuWidget = ({
             <Divider />
           </div> : <></>
         }
+        {hasExtraParameters && (
+          <>
+            <MenuItem
+              style={clasess.menuItemContainer}
+              onClick={() => {
+                setOpenExtraParametersModal({
+                  open: true,
+                  rowData: dataRow,
+                  rowId: dataRow.id,
+                });
+                handleClose();
+              }}
+            >
+              <VisibilityIcon sx={{ fontSize: 20, color: clasess.iconColor }} />
+              <div style={clasess.rowTextStyle}>
+                {t("materials.childTable.showDetails")}
+              </div>
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {

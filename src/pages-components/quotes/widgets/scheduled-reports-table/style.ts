@@ -7,13 +7,14 @@ const useStyle = () => {
     return {
       insideStyle: {
         width: "900px",
-        height: "620px",
+        height: "580px",
+        padding: "10px",
+        borderRadius: "4px",
       },
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "20px",
-        padding: "20px",
       },
       actionButtons: {
         display: "flex",
@@ -26,11 +27,11 @@ const useStyle = () => {
         justifyContent: "flex-end",
       },
       closeButton: {
-        backgroundColor: "#6c757d",
+        backgroundColor: "rgb(236,3,141)",
+        width:"fit-content",
+        minWidth:100,
+        height:40,
         color: "white",
-        "&:hover": {
-          backgroundColor: "#5a6268",
-        },
       },
     };
   }, [theme]);

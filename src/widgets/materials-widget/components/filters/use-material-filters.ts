@@ -8,6 +8,7 @@ import {
   materialsTablePageState,
   materialTableFiltersState,
   selectedSupplierIdState,
+  selectedSuppliersIdsState,
 } from "@/widgets/materials-widget/state";
 import {
   EFilterType,
@@ -28,6 +29,7 @@ const useMaterialFilters = () => {
   );
 
   const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
+  const [suppliersIds, setSuppliersIds] = useRecoilState(selectedSuppliersIdsState);
   const materialData = useRecoilValue(materialCategoryDataState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { query } = useRouter();
@@ -58,6 +60,12 @@ const useMaterialFilters = () => {
     setActiveFilter(value);
     setPageNumber(1);
   };
+  
+  const onSuppliersIdsChange = (supplierIds: string[]) => {
+    setSuppliersIds(supplierIds);
+    setPageNumber(1);
+  };
+  
   const onSelectSupplier = (supplierId: string) => {
     setSupplierId(supplierId);
   };
@@ -114,6 +122,8 @@ const useMaterialFilters = () => {
     setMaterialsSuppliers,
     onSelectSupplier,
     supplierId,
+    suppliersIds,
+    onSuppliersIdsChange,
     onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,

@@ -29,6 +29,7 @@ interface ClientAutocompleteProps {
   disableClearable?: boolean;
   withArrow?: boolean;
   isFromCartPage?: boolean;
+  customStyle?: any;
 }
 
 export const ClientAutocomplete = ({
@@ -74,11 +75,10 @@ export const ClientAutocomplete = ({
   };
   const mergedOptions = useMemo(() => {
     const addClientOption = {
-      name: `+ ${
-        clientType === CLIENT_TYPE.CUSTOMER
+      name: `+ ${clientType === CLIENT_TYPE.CUSTOMER
           ? t("customers.buttons.addCustomer")
           : t("suppliers.buttons.addSupplier")
-      } "${searchText}"`,
+        } "${searchText}"`,
       id: "addClient",
       isInfo: true,
     };
@@ -156,7 +156,7 @@ export const ClientAutocomplete = ({
           onChangeTextField={handleTextFieldChange}
           getOptionLabel={getOptionLabel}
           renderOption={renderOption}
-          style={props.style}
+          style={{ ...props.style, ...props.customStyle }}
           placeholder={
             isCustomer
               ? t("home.admin.selectCustomer")

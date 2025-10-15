@@ -29,7 +29,7 @@ export interface MessagingState {
 }
 
 // Connection state
-export const messagingConnectionState = atom<'connecting' | 'connected' | 'disconnected' | 'error'>({
+export const messagingConnectionState = atom<any>({
   key: 'messagingConnectionState',
   default: 'disconnected'
 });

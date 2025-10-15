@@ -31,7 +31,8 @@ const SideLeftMenuWidget = ({
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
           style={clasess.menuItemContainer}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setOpenAddCategoryModal(true);
             changeEditCategoryModalState(true)
             setSelectedCategoryModalState(category)
@@ -45,7 +46,8 @@ const SideLeftMenuWidget = ({
         </MenuItem>
         <MenuItem
           style={clasess.menuItemContainer}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setOpenAddCategoryModal(true);
             changeDuplicateCategoryModalState(true)
             setSelectedCategoryModalState(category)
@@ -60,12 +62,13 @@ const SideLeftMenuWidget = ({
         {
           category.isDeletable && <MenuItem
             style={clasess.menuItemContainer}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onClickOpenDeleteRowModal(category);
               handleClose();
             }}
           >
-            <DeleteIcon />
+            <DeleteIcon stroke="#2E3092" />
             <div style={clasess.rowTextStyle}>
               {t("navigationButtons.delete")}
             </div>

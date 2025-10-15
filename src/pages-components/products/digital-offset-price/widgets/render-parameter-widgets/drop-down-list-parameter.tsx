@@ -55,7 +55,6 @@ const DropDownListParameterWidget = ({
   setDeviceSize,
   multiParameterModal,
 }: any) => {
-  console.log("parameter", parameter);
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState(
     index !== -1
