@@ -8,13 +8,22 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import TermsPDF from "./TermsPDF";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
 
-const TermModal = ({ open, onClose, setIsTermsAccepted, setIsModalOpen, isQuickSetup = false }) => {
+const TermModal = ({
+  open,
+  onClose,
+  setIsTermsAccepted,
+  setIsModalOpen,
+  isQuickSetup = false,
+}) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
+  const user = useRecoilValue<any>(userState);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isAcceptButtonEnabled, setIsAcceptButtonEnabled] = useState(false);
@@ -26,7 +35,12 @@ const TermModal = ({ open, onClose, setIsTermsAccepted, setIsModalOpen, isQuickS
       setIsModalOpen(false);
       if (!isQuickSetup) {
         await callApi("POST", "/v1/crm-service/update-terms-accepted");
-        navigate("/");
+        // ✅ Check if user is GoAI user - redirect to AI page only
+        if (user?.isGoAiUser) {
+          navigate("/gomake-ai");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("Failed to accept terms", error);
@@ -50,8 +64,18 @@ const TermModal = ({ open, onClose, setIsTermsAccepted, setIsModalOpen, isQuickS
   }, [isScrolledToBottom, isChecked]);
 
   return (
-    <GoMakeModal openModal={open} modalTitle={t("Terms and Conditions")} onClose={onClose} insideStyle={classes.insideStyle}>
-      <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} height={"100%"}>
+    <GoMakeModal
+      openModal={open}
+      modalTitle={t("Terms and Conditions")}
+      onClose={onClose}
+      insideStyle={classes.insideStyle}
+    >
+      <Stack
+        display={"flex"}
+        direction={"column"}
+        justifyContent={"space-between"}
+        height={"100%"}
+      >
         <div
           className={"show-scrollbar"}
           ref={contentRef}
@@ -70,7 +94,15 @@ const TermModal = ({ open, onClose, setIsTermsAccepted, setIsModalOpen, isQuickS
         >
           <TermsPDF />
         </div>
-        <span style={{ marginTop: 5, textAlign: "right", color: "rgb(46, 48, 146)" }}>Scroll to accept terms.</span>
+        <span
+          style={{
+            marginTop: 5,
+            textAlign: "right",
+            color: "rgb(46, 48, 146)",
+          }}
+        >
+          Scroll to accept terms.
+        </span>
         <FormControlLabel
           control={
             <Checkbox
@@ -84,7 +116,11 @@ const TermModal = ({ open, onClose, setIsTermsAccepted, setIsModalOpen, isQuickS
           style={{ alignSelf: "center", marginTop: "10px" }}
         />
         <Stack direction={"row"} gap={"10px"} justifyContent={"end"}>
-          <PrimaryButton style={{ alignSelf: "center", width: "fit-content" }} variant="outlined" onClick={onClose}>
+          <PrimaryButton
+            style={{ alignSelf: "center", width: "fit-content" }}
+            variant="outlined"
+            onClick={onClose}
+          >
             {t("Decline")}
           </PrimaryButton>
           <PrimaryButton

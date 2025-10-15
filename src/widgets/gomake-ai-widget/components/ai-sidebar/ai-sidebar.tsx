@@ -9,6 +9,8 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
 
 interface AISidebarProps {
   onNewJobClick: () => void;
@@ -33,6 +35,7 @@ const AISidebar = ({
 }: AISidebarProps) => {
   const { classes } = useStyle({ isCollapsed });
   const isMobile = useIsMobile();
+  const user = useRecoilValue<any>(userState);
 
   return (
     <div style={classes.sidebarContainer}>
@@ -174,15 +177,17 @@ const AISidebar = ({
         {isCollapsed ? (
           // Collapsed footer - simplified version
           <div style={classes.collapsedFooter}>
-            <button
-              style={classes.collapsedBackButton}
-              onClick={() => {
-                window.location.href = "/";
-              }}
-              title="Back to GoMake"
-            >
-              <HomeIcon style={classes.collapsedBackButtonIcon} />
-            </button>
+            {!user?.isGoAiUser && (
+              <button
+                style={classes.collapsedBackButton}
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                title="Back to GoMake"
+              >
+                <HomeIcon style={classes.collapsedBackButtonIcon} />
+              </button>
+            )}
             <div style={classes.collapsedPoweredBy}>
               <GoMakeIcon
                 color="linear-gradient(135deg, #9333ea, #ec4899)"
@@ -194,25 +199,27 @@ const AISidebar = ({
         ) : (
           // Expanded footer - full version
           <>
-            <button
-              style={(classes as any).backButton}
-              onClick={() => {
-                window.location.href = "/";
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#FDF2F8";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#FDF2F8";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <HomeIcon style={(classes as any).backButtonIcon} />
-              <span style={(classes as any).backButtonText}>
-                Back to GoMake
-              </span>
-            </button>
+            {!user?.isGoAiUser && (
+              <button
+                style={(classes as any).backButton}
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#FDF2F8";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#FDF2F8";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <HomeIcon style={(classes as any).backButtonIcon} />
+                <span style={(classes as any).backButtonText}>
+                  Back to GoMake
+                </span>
+              </button>
+            )}
             <div style={(classes as any).poweredByContainer}>
               <div style={classes.poweredByLbl}>Powered by</div>
               <GoMakeIcon

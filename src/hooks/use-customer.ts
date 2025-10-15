@@ -125,6 +125,16 @@ const useCustomer = (
           )
           .then();
       }
+
+      // ✅ Check if user is GoAI user - restrict to AI page only
+      if (user?.isGoAiUser) {
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/gomake-ai") {
+          navigate("/gomake-ai");
+          return true;
+        }
+      }
+
       if (!!user?.redirectTo) {
         navigate(user?.redirectTo);
       }
