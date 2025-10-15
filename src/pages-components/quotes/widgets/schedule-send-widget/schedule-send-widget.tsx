@@ -37,7 +37,6 @@ const ScheduleSendWidget = ({
     const [scheduleType, setScheduleType] = useState<any>()
     const [dayOfMonth, setDayOfMonth] = useState<any>()
     const [dayOfWeek, setDayOfWeek] = useState<any>()
-    const [hourOfDay, setHourOfDay] = useState<any>()
     const [dateRange, setDateRange] = useState<any>(null)
 
     // Specific date fields for jobs table
@@ -52,7 +51,6 @@ const ScheduleSendWidget = ({
         setScheduleType(undefined);
         setDayOfMonth(undefined);
         setDayOfWeek(undefined);
-        setHourOfDay(undefined);
         setDateRange(null);
         setCreationDateRange(null);
         setDueDateRange(null);
@@ -168,18 +166,7 @@ const ScheduleSendWidget = ({
     const _renderScheduleType = (type) => {
         switch (type) {
             case ScheduleFrequencyEnum.Daily:
-                return <div style={{ width: "50%" }}>
-                    <label style={classes.labelStyle}>{t("sales.list.hourOfDay")}</label>
-                    <GoMakeAutoComplate
-                        options={hoursArray}
-                        style={{ height: "40px", width: "100%", border: "none" }}
-                        placeholder={t("sales.list.selectHour")}
-                        onChange={(e: any, item: any) => {
-                            setHourOfDay(item)
-                        }}
-                        value={hourOfDay}
-                    />
-                </div>
+                return null;
             case ScheduleFrequencyEnum.Weekly:
                 return <div style={{ width: "50%" }}>
                     <GoMakeAutoComplate
@@ -332,7 +319,6 @@ const ScheduleSendWidget = ({
                                     frequency: scheduleType?.id,
                                     startDayOfWeek: dayOfWeek?.value,
                                     startDayOfMonth: dayOfMonth?.id,
-                                    startHourOfDay: hourOfDay?.id,
                                     reportConfiguration: {
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {

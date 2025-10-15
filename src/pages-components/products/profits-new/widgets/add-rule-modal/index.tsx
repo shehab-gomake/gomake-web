@@ -50,6 +50,11 @@ const AddRuleModal = ({
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
+  const [selectedCategories, setSelectedCategories] = useState<any>("");
+  const [selectedStatment2, setSelectedStatment2] = useState<any>("");
+  const [openScheduleOrDownloadModal, setOpenScheduleOrDownloadModal] = useState(false);
+  const [detailsOption, setDetailsOption] = useState<number | null>(null);
+
   const {
     rules,
     propertieValue,
@@ -108,10 +113,9 @@ const AddRuleModal = ({
     filterData,
     openModal,
     getProductHotFolderRules,
+    documentType,
+    detailsOption,
   });
-  const [selectedCategories, setSelectedCategories] = useState<any>("");
-  const [selectedStatment2, setSelectedStatment2] = useState<any>("");
-  const [openScheduleOrDownloadModal, setOpenScheduleOrDownloadModal] = useState(false);
 
   // Fetch hot folder names when modal opens
   useEffect(() => {
@@ -439,21 +443,99 @@ const AddRuleModal = ({
   };
 
   const _renderInptsForQuotes = () => {
+    // Check document type
+    const isInvoice = documentType === 3; // 3 = invoice (based on DOCUMENT_TYPE enum: quote=0, order=1, deliveryNote=2, invoice=3)
+    const isDeliveryNote = documentType === 2; // 2 = deliveryNote
+
+    // For invoices, show the 4 extended export options
+    if (isInvoice) {
+      return (
+        <div style={clasess.inputsForQuotesContainer}>
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.detailsOption")}
+            </div>
+            <GoMakeAutoComplate
+              options={[
+                { label: t("products.profits.exceptions.withoutDetails"), id: 2 },
+                { label: t("sales.list.exportExtendedTableExcel"), id: 3 }, // ExtendedExcel
+                { label: t("sales.list.exportExtendedTableTxt"), id: 4 }, // ExtendedTxt
+                { label: t("sales.list.exportSummeryExcelWithoutVat"), id: 5 }, // SummeryExcelWithoutVat
+                { label: t("sales.list.exportSummeryExcelWithVat"), id: 6 }, // SummeryExcelWithVat
+
+              ]}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectDetailsOption")}
+              onChange={(e, value) => {
+                setDetailsOption(value?.id);
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // For delivery notes, only show "Without Details"
+    if (isDeliveryNote) {
+      return (
+        <div style={clasess.inputsForQuotesContainer}>
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.detailsOption")}
+            </div>
+            <GoMakeAutoComplate
+              options={[
+                { label: t("products.profits.exceptions.withoutDetails"), id: 2 }, // withoutDetails = 2
+              ]}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectDetailsOption")}
+              onChange={(e, value) => {
+                setDetailsOption(value?.id);
+                setPropertieValue(null);
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // For quotes, orders, and other documents, show with/without details options
     return (
       <div style={clasess.inputsForQuotesContainer}>
         <div>
           <div style={clasess.selectTypeStyle}>
-            {t("products.profits.exceptions.groupBy")}
+            {t("products.profits.exceptions.detailsOption")}
           </div>
           <GoMakeAutoComplate
-            options={GroupByOptions}
+            options={[
+              { label: t("products.profits.exceptions.withDetails"), id: 1 }, // withDetails = 1
+              { label: t("products.profits.exceptions.withoutDetails"), id: 2 }, // withoutDetails = 2
+            ]}
             style={clasess.dropDownListContainer}
-            placeholder={t("products.profits.exceptions.selectGroupBy")}
+            placeholder={t("products.profits.exceptions.selectDetailsOption")}
             onChange={(e, value) => {
-              setPropertieValue(value?.id);
+              setDetailsOption(value?.id);
+              if (value?.id === 2) { // withoutDetails
+                setPropertieValue(null);
+              }
             }}
           />
         </div>
+        {detailsOption && detailsOption === 1 && ( // withDetails
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.groupBy")}
+            </div>
+            <GoMakeAutoComplate
+              options={GroupByOptions}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectGroupBy")}
+              onChange={(e, value) => {
+                setPropertieValue(value?.id);
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   };
