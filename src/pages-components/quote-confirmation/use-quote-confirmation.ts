@@ -106,35 +106,38 @@ const useQuoteConfirmation = ({
   };
 
   const getDebtsPaymentById = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        const quote = res?.data;
-        const modifiedDebts =
-          quote.debtsToPay?.map((item) => ({
-            ...item,
-            isChecked: true,
-          })) || [];
+    if(router.isReady && router?.query?.recordId){
+      const callBack = (res) => {
+        if (res?.success) {
+          const quote = res?.data;
+          const modifiedDebts =
+              quote.debtsToPay?.map((item) => ({
+                ...item,
+                isChecked: true,
+              })) || [];
 
-        const modifiedQuote = {
-          ...quote,
-          id: quote.customerID || quote?.id,
-          debtsToPay: modifiedDebts,
-          documentContacts: [
-            {
-              email: quote.contactEmail,
-              name: quote.contactName,
-              phone: quote.contactPhone,
-            },
-          ],
-        };
-        setQuoteConfirm(modifiedQuote);
-        const clientLanguage = quote?.client?.clientLang;
-        clientLanguage && i18n.changeLanguage(clientLanguage);
-      }
-    };
-    await getDebtsPaymentByIdApi(callApi, callBack, {
-      recordId: router?.query?.recordId,
-    });
+          const modifiedQuote = {
+            ...quote,
+            id: quote.customerID || quote?.id,
+            debtsToPay: modifiedDebts,
+            documentContacts: [
+              {
+                email: quote.contactEmail,
+                name: quote.contactName,
+                phone: quote.contactPhone,
+              },
+            ],
+          };
+          setQuoteConfirm(modifiedQuote);
+          const clientLanguage = quote?.client?.clientLang;
+          clientLanguage && i18n.changeLanguage(clientLanguage);
+        }
+      };
+      await getDebtsPaymentByIdApi(callApi, callBack, {
+        recordId: router?.query?.recordId,
+      });
+    }
+    
   };
 
   const [counter, setCounter] = useState(0);
