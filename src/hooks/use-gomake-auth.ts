@@ -2,6 +2,7 @@ import { canAccessState } from "@/store/access";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useCustomer } from "./use-customer";
+import { getUserToken } from "@/services/storage-data";
 
 const useGomakeAuth = (permissionEnumValue, allowAnonymous?: boolean) => {
   const { user, validate, isLanguageUpdated, getPrintHouseSetupSteps } =
@@ -12,6 +13,10 @@ const useGomakeAuth = (permissionEnumValue, allowAnonymous?: boolean) => {
 
   const check = useCallback(async () => {
     if (allowAnonymous) {
+      if (!!getUserToken()) {
+        await validate();
+      }
+
       setCanAccessvalue(true);
       setIsAuth(true);
       return;

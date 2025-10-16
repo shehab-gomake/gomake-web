@@ -72,9 +72,9 @@ const useCustomer = (
   }, []);
 
   const validate = useCallback(async () => {
-    if (allowAnonymous) {
-      return true;
-    }
+    // if (allowAnonymous ) {
+    //   return true;
+    // }
     const validate: any = await callApi("GET", "/v1/auth/validate");
     if (validate?.success) {
       const user = validate?.data?.data?.customer;
@@ -144,7 +144,8 @@ const useCustomer = (
           const isPermission: boolean =
             !!userPermissions?.includes(permissionEnumValue);
           if (!isPermission) {
-            navigate("/login");
+            //navigate("/login");
+            redirectToLogin(false);
           }
 
           return isPermission;
@@ -154,15 +155,14 @@ const useCustomer = (
       }
       return true;
     }
-    setIsLoggedIn(false);
     clearStorage();
+
+    if (allowAnonymous) {
+      return;
+    }
+    setIsLoggedIn(false);
     // navigate("/login");
-    const currentPath = window.location.pathname + window.location.search;
-    const loginUrl =
-      currentPath && currentPath !== "/"
-        ? `/login?redirect=${encodeURIComponent(currentPath)}`
-        : "/login";
-    navigate(loginUrl);
+    redirectToLogin(true);
 
     return false;
   }, []);
@@ -238,6 +238,24 @@ const useCustomer = (
     await getPrintHouseSetupStepsApi(callApi, callBack);
   };
 
+  const redirectToLogin = (withReturnUrl: boolean) => {
+    //let domain = window.location.origin;
+    let domain = window.location.hostname;
+    let loginPageName = "login";
+    if (domain === "trial.gomake.net" || domain === "guest.gomake.net") {
+      loginPageName = "gomake-ai";
+    }
+    if (withReturnUrl) {
+      const currentPath = window.location.pathname + window.location.search;
+      const loginUrl =
+        currentPath && currentPath !== "/"
+          ? `/${loginPageName}?redirect=${encodeURIComponent(currentPath)}`
+          : `/${loginPageName}`;
+      navigate(loginUrl);
+    } else {
+      navigate(`/${loginPageName}`);
+    }
+  };
   return {
     adminsAutoComplate,
     user,
