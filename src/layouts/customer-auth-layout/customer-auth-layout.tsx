@@ -74,6 +74,21 @@ const CustomerAuthLayout = ({
     }
   }, [appVersion]);*/
 
+  // Show nothing while authentication is being checked to prevent flash
+  if (canAccess === null) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "#f6f6f6",
+        }}
+      >
+        {/* Empty div - prevents flash of content while checking auth */}
+      </div>
+    );
+  }
+
   return (
     <>
       {disableHeaderSideMenu ? (

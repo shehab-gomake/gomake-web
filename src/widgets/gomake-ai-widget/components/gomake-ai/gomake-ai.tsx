@@ -122,6 +122,7 @@ const GoMakeAIComponent = () => {
   }, [router.isReady, router.query.token]);
 
   useEffect(() => {
+    debugger;
     if (router.isReady) {
       const hasToken = !!getUserToken();
       if (!hasToken) {
