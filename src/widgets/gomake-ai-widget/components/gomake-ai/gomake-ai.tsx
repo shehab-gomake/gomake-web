@@ -124,13 +124,11 @@ const GoMakeAIComponent = () => {
   useEffect(() => {
     if (router.isReady) {
       const hasToken = !!getUserToken();
-      const isOnboarding = router.query.onboarding === "true";
-
-      if (!hasToken && isOnboarding) {
+      if (!hasToken) {
         setShowLandingModal(true);
       }
     }
-  }, [router.isReady, router.query.onboarding]);
+  }, [router.isReady]);
 
   useEffect(() => {
     if (!router.isReady || !isHistoryLoaded || hasInitialized.current) return;

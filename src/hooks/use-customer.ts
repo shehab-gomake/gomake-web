@@ -144,7 +144,8 @@ const useCustomer = (
           const isPermission: boolean =
             !!userPermissions?.includes(permissionEnumValue);
           if (!isPermission) {
-            navigate("/login");
+            //navigate("/login");
+            redirectToLogin(false);
           }
 
           return isPermission;
@@ -157,12 +158,8 @@ const useCustomer = (
     setIsLoggedIn(false);
     clearStorage();
     // navigate("/login");
-    const currentPath = window.location.pathname + window.location.search;
-    const loginUrl =
-      currentPath && currentPath !== "/"
-        ? `/login?redirect=${encodeURIComponent(currentPath)}`
-        : "/login";
-    navigate(loginUrl);
+    redirectToLogin(true);
+    
 
     return false;
   }, []);
@@ -237,7 +234,25 @@ const useCustomer = (
 
     await getPrintHouseSetupStepsApi(callApi, callBack);
   };
-
+  const redirectToLogin = (withReturnUrl:boolean) =>{
+    debugger
+    //let domain = window.location.origin;
+    let domain = window.location.hostname
+    let loginPageName = "login";
+    if(domain === "trial.gomake.net" || domain === "guest.gomake.net"){
+      loginPageName = "gomake-ai";
+    }
+    if(withReturnUrl){
+      const currentPath = window.location.pathname + window.location.search;
+      const loginUrl =
+          currentPath && currentPath !== "/"
+              ? `/${loginPageName}?redirect=${encodeURIComponent(currentPath)}`
+              : `/${loginPageName}`;
+      navigate(loginUrl);
+    }else{
+      navigate(`/${loginPageName}`)
+    }
+  }
   return {
     adminsAutoComplate,
     user,
