@@ -22,6 +22,7 @@ import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
 import { AIIcon } from "@/icons/side-list-icons/ai";
+import { getUserToken } from "@/services/storage-data";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -525,7 +526,7 @@ const useAuthLayoutHook = (
   }, []);
 
   useEffect(() => {
-    if (allowAnonymous) {
+    if (allowAnonymous && !getUserToken()) {
       setCanAccess(true);
       return;
     }

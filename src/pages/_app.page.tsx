@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   // Pages where the chat widget should be hidden
-  const hiddenChatWidgetPages = ["/gomake-ai"];
+  const hiddenChatWidgetPages = ["/gomake-ai", "/login"];
   const shouldShowChatWidget = !hiddenChatWidgetPages.includes(router.pathname);
 
   return (

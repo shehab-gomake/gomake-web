@@ -11,6 +11,7 @@ import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/store";
+import { getUserToken } from "@/services/storage-data";
 
 interface AISidebarProps {
   onNewJobClick: () => void;
@@ -36,6 +37,7 @@ const AISidebar = ({
   const { classes } = useStyle({ isCollapsed });
   const isMobile = useIsMobile();
   const user = useRecoilValue<any>(userState);
+  const hasToken = !!getUserToken();
 
   return (
     <div style={classes.sidebarContainer}>
@@ -199,7 +201,7 @@ const AISidebar = ({
         ) : (
           // Expanded footer - full version
           <>
-            {!user?.isGoAiUser && (
+            {!user?.isGoAiUser && hasToken && (
               <button
                 style={(classes as any).backButton}
                 onClick={() => {

@@ -7,7 +7,7 @@ export enum DebitLimitTypes {
 export enum EnumVATStatus {
   //  Must18Percents = 0,
   MustXPercents = 0,
-  Exempt = 3,
+  Exempt = 1,
 }
 
 export enum EnumInvoiceClosureMethod {
