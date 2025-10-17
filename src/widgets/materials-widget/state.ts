@@ -28,6 +28,9 @@ export const materialHeadersState = atom<
     inputType: number;
     values: [];
     isHideInDuplicate?: boolean;
+    isShowInExtraParameters?: boolean;
+    isForAdmin?: boolean;
+    isPriceObject?: boolean;
   }[]
 >({
   key: "materialHeadersState",
@@ -40,6 +43,7 @@ export const materialActionState = atom<
     action: EMaterialsActions;
     icon: string;
     isUnderLine: boolean;
+    isShowSubMenu?: boolean;
   }[]
 >({
   key: "materialActionState",
@@ -50,6 +54,7 @@ export const materialCategoriesState = atom<
     categoryKey: string;
     categoryName: string;
     isDeletable: boolean;
+    imageURL?: string | null;
     additionalAttributes?: any;
   }[]
 >({
@@ -96,6 +101,11 @@ export const materialCategorySuppliersState = atom<
 export const selectedSupplierIdState = atom<string>({
   key: "selectedSupplierIdState",
   default: "",
+});
+
+export const selectedSuppliersIdsState = atom<string[]>({
+  key: "selectedSuppliersIdsState",
+  default: [],
 });
 
 export const activeFilterState = atom<EMaterialActiveFilter>({
@@ -179,4 +189,90 @@ export const selectedMaterialIdForUpdateState = atom<string>({
 export const materialTypeTableState = atom<any>({
   key: "materialTypeTableState",
   default: {},
+});
+
+export const openChildTableState = atom<{ rowId: string; tableType: 'inventory' | 'purchasePricing' | null }>({
+  key: "openChildTableState",
+  default: { rowId: '', tableType: null },
+});
+
+export const inventoryDataState = atom<any[]>({
+  key: "inventoryDataState",
+  default: [],
+});
+
+export const purchasePricingDataState = atom<any[]>({
+  key: "purchasePricingDataState",
+  default: [],
+});
+
+export const isLoadingInventoryState = atom<boolean>({
+  key: "isLoadingInventoryState",
+  default: false,
+});
+
+export const isLoadingPurchasePricingState = atom<boolean>({
+  key: "isLoadingPurchasePricingState",
+  default: false,
+});
+
+export const openJobsModalState = atom<{ 
+  open: boolean; 
+  supplierName?: string; 
+  materialCode?: string; 
+  materialName?: string; 
+}>({
+  key: "openJobsModalState",
+  default: { open: false },
+});
+
+export const inventoryTableHeadingUnitsState = atom<{
+  inventoryUnit?: {key: string; value: string};
+  pricingUnit?: {key: string; value: string};
+}>({
+  key: "inventoryTableHeadingUnitsState",
+  default: {
+    inventoryUnit: {key: '', value: ''},
+    pricingUnit: {key: '', value: ''},
+  },
+});
+
+export const purchasePricingTableHeadingUnitsState = atom<{
+  inventoryUnit?: {key: string; value: string};
+  pricingUnit?: {key: string; value: string};
+}>({
+  key: "purchasePricingTableHeadingUnitsState",
+  default: {
+    inventoryUnit: {key: '', value: ''},
+    pricingUnit: {key: '', value: ''},
+  },
+});
+
+export const showMoreFiltersState = atom<boolean>({
+  key: "showMoreFiltersState",
+  default: false,
+});
+
+export const hasMoreDataState = atom<boolean>({
+  key: "hasMoreDataState",
+  default: true,
+});
+
+export const isLoadingMoreState = atom<boolean>({
+  key: "isLoadingMoreState",
+  default: false,
+});
+
+export const totalItemsCountState = atom<number>({
+  key: "totalItemsCountState",
+  default: 0,
+});
+
+export const openExtraParametersModalState = atom<{
+  open: boolean;
+  rowData?: any;
+  rowId?: string;
+}>({
+  key: "openExtraParametersModalState",
+  default: { open: false },
 });

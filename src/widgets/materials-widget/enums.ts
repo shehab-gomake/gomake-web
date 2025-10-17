@@ -35,3 +35,8 @@ export enum MaterialStockUnit {
   Meter,
   SquareMeter,
 }
+
+export enum ExistingSupplierActionEnum {
+  ActivateOnly = 0,
+  ActivateAndOverride = 1,
+}

@@ -1,140 +1,48 @@
 import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import { useEffect, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
-import Button from "@mui/material/Button";
-import { Menu, MenuItem } from "@mui/material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   materialsClientsState,
   materialsMachinesState,
-  openAddSupplierModalState,
+  showMoreFiltersState,
 } from "@/widgets/materials-widget/state";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useGomakeAxios } from "@/hooks";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { productsForDropDownList, userState } from "@/store";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
-import { SortIcon } from "@/icons";
 import { UNIT_TYPE } from "@/enums";
 import { convertTitleUnits, convertValueToImperial } from "@/utils/helpers";
 
 interface FiltersActionsBarProps {
   isAdmin: boolean;
   subCategory?: string;
+  isFetchingSupplier?: boolean;
+  renderOptionsSupplier?: any;
+  checkWhatRenderArraySupplier?: any;
+  onHeightChange?: (height: number) => void;
 }
 
 const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-  const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
-  const { primaryColor, secondColor } = useGomakeTheme();
   const {
     onActiveFilterChange,
     activeFilterLabel,
     activeFilterOptions,
     materialSuppliers,
-    setMaterialsSuppliers,
-    supplierId,
-    onSelectSupplier,
+    onSuppliersIdsChange,
     materialTableFilters,
     setFilterValue,
     getFilterValue,
     materialCategory,
-    materialType,
   } = useMaterialFilters();
 
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   const [selectedOption, setSelectedOptions] = useState([]);
-  const [items, setItems] = useState(materialSuppliers);
-  const [supplierName, setSupplierName] = useState<{
-    value: string;
-    label: string;
-    isDefault: boolean;
-    name?: string;
-    id?: string;
-  } | null>({ value: "", label: "", isDefault: false });
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const updateMaterialsImages = async (list) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const updatedList = materialSuppliers.map((item) => {
-          // Find the corresponding new list entry
-          const match = list.find(
-            (newItem) => newItem?.supplierId === item.value
-          );
-          // Update the order if a match is found
-          return match ? { ...item, order: match.order } : item;
-        });
-
-        setMaterialsSuppliers(updatedList);
-      }
-    };
-    await updateSupplierPriorityApi(callApi, callBack, {
-      materialTypeKey: materialType,
-      categoryKey: materialCategory,
-      suppliers: list,
-    });
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const sortedItems = [...items].sort((a, b) => a.order - b.order);
-    const reorderedItems = [...sortedItems];
-
-    const movedItem = reorderedItems[result.source.index];
-
-    reorderedItems.splice(result.source.index, 1);
-
-    reorderedItems.splice(result.destination.index, 0, movedItem);
-
-    const updatedItems = reorderedItems.map((item, index) => ({
-      ...item,
-      order: index + 1,
-    }));
-
-    updateMaterialsImages(
-      updatedItems.map((item) => ({
-        supplierId: item.value,
-        order: item?.order,
-      }))
-    );
-
-    // Update the local state
-    setItems(updatedItems);
-  };
-
-  useEffect(() => {
-    if (materialSuppliers?.length > 0) {
-      setItems(materialSuppliers);
-    } else {
-      setItems([]);
-    }
-  }, [materialSuppliers]);
-
-  useEffect(() => {
-    if (materialSuppliers?.length > 0) {
-      const firstSupplier =
-        materialSuppliers.find((s) => s.order === 1) || materialSuppliers[0];
-
-      setSupplierName(firstSupplier);
-      onSelectSupplier(firstSupplier?.value || firstSupplier?.id);
-    } else {
-      setSupplierName(null);
-      onSelectSupplier("");
-    }
-  }, [materialSuppliers]);
+  const [selectedSuppliers, setSelectedSuppliers] = useState([]);
+  const [showMore, setShowMore] = useRecoilState(showMoreFiltersState);
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
@@ -160,10 +68,27 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   }));
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
+
+  const INITIAL_FILTERS_COUNT = 2;
+  const displayedFilters = showMore
+    ? materialTableFilters
+    : materialTableFilters?.slice(0, INITIAL_FILTERS_COUNT);
+  const hasMoreFilters = materialTableFilters && materialTableFilters.length > INITIAL_FILTERS_COUNT;
+
+  const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  // Measure and report filter bar height changes
+  useEffect(() => {
+    if (filterContainerRef.current && props.onHeightChange) {
+      const height = filterContainerRef.current.offsetHeight;
+      props.onHeightChange(height);
+    }
+  }, [showMore, materialTableFilters, props.onHeightChange]);
+
   return (
-    <Stack direction={"row"} gap={2} alignItems={"center"}>
-      {materialTableFilters &&
-        materialTableFilters.map(({ key, values, unit }) => {
+    <Stack ref={filterContainerRef} direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
+      {displayedFilters && materialTableFilters?.length > 0 &&
+        displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
           const convertedValues = unit
@@ -229,7 +154,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 })}
                 style={{ width: "300px", height: 40, overflow: "scroll" }}
                 options={options}
-                placeholder={key}
+                placeholder={name}
                 multiple={true}
               />
             );
@@ -238,21 +163,53 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v, unit)}
-                style={{ width: "200px" }}
+                style={{ width: "180px" }}
                 value={getFilterValue(key)}
                 options={convertedUnit}
                 placeholder={
                   convertedUnitText
-                    ? key + " " + "(" + convertedUnitText + ")"
-                    : key
+                    ? name + " " + "(" + convertedUnitText + ")"
+                    : name
                 }
               />
             );
           }
         })}
+
+      {!props.isAdmin && materialSuppliers?.length > 0 && (
+        <GoMakeAutoComplate
+          key={`${materialCategory}-suppliers-${selectedSuppliers?.length || 0}`}
+          onChange={(e, v) => {
+            if (!v) {
+              setSelectedSuppliers([]);
+              onSuppliersIdsChange([]);
+            } else {
+              const validSuppliers = Array.isArray(v) ? v : [v];
+              setSelectedSuppliers(validSuppliers);
+              onSuppliersIdsChange(validSuppliers.map((item) => item.value || item.id));
+            }
+          }}
+          onChangeTextField={props.checkWhatRenderArraySupplier}
+          value={selectedSuppliers || []}
+          style={{ width: "180px", height: 40, overflow: "scroll", }}
+          options={props.renderOptionsSupplier || []}
+          placeholder={t("home.admin.pleaseSelectSupplier")}
+          multiple={true}
+          loading={props.isFetchingSupplier}
+          getOptionLabel={(option: any) => {
+            if (!option) return "";
+            return option?.label || option?.name || "";
+          }}
+          defaultFiltering={false}
+        />
+      )}
       {!props.isAdmin ? (
         <GoMakeAutoComplate
-          style={{ width: "150px" }}
+          style={!hasMoreFilters ? {
+            width: "100px",
+            [isRTL ? 'marginLeft' : 'marginRight']: "38px"
+          } : { width: "100px" }
+          }
           options={activeFilterOptions}
           value={activeFilterLabel()}
           onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
@@ -261,95 +218,58 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       ) : (
         <></>
       )}
-      <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
-        {props.isAdmin === false ? (
-          <button
-            onClick={(e) => handleOpen(e)}
-            style={{
-              width: "fit-content",
-              height: "40px",
-              border: "1px solid #E0E0E0",
-              borderRadius: "5px",
-              padding: "5px",
-              backgroundColor: "#FFF",
-              minWidth: "140px",
-              boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-              borderBottom: "2px solid rgb(237, 2, 140)",
-              paddingLeft: "12px",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-          >
-            <div style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
-              {supplierName?.name || supplierName?.label
-                ? supplierName?.name || supplierName?.label
-                : t("materials.sheetPaper.selectSupplier")}
-            </div>
-          </button>
-        ) : (
-          <></>
-        )}
-        <ActionMenu isAdmin={props.isAdmin} />
-        <Menu
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={handleClose}
+
+      {hasMoreFilters && (
+        <Box
+          onClick={() => setShowMore(!showMore)}
+          sx={{
+            padding: "3px 6px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "12px",
+            color: "#374151",
+            fontWeight: 500,
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            minHeight: "32px",
+            whiteSpace: "nowrap",
+            [isRTL ? 'marginLeft' : 'marginRight']: "32px",
+            "&:hover": {
+              backgroundColor: "#e9ecef",
+            },
+          }}
         >
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="menu-droppable">
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {items
-                    .slice()
-                    .sort((a, b) => a?.order - b?.order)
-                    .map((item, index) => (
-                      <Draggable
-                        key={item.value || item.id}
-                        draggableId={item.value || item.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <MenuItem
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            onClick={() => {
-                              setSupplierName(item); //?new
-                              onSelectSupplier(item?.value || item?.id);
-                              handleClose();
-                            }}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              ...provided.draggableProps.style,
-                            }}
-                          >
-                            <SortIcon />
-                            {item.name || item.label}
-                          </MenuItem>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-          <Button
-            sx={{
-              width: "100%",
-              backgroundColor: primaryColor(10),
-              color: secondColor(500),
-              ...FONT_FAMILY.Lexend(500, 16),
-            }}
-            onMouseDown={() => {
-              setOpenAddSupplierModal(true);
-            }}
-          >
-            {t("materials.sheetPaper.chooseNewSupplier")}
-          </Button>
-        </Menu>
+          {showMore ? (
+            <>
+              <span>{t("sales.quote.showLess")}</span>
+              <span style={{ fontSize: 10 }}>▲</span>
+            </>
+          ) : (
+            <>
+              <span>{t("sales.quote.showMore")}</span>
+              <span
+                style={{
+                  fontSize: 10,
+                  backgroundColor: "#d1d5db",
+                  color: "#6b7280",
+                  padding: "1px 4px",
+                  borderRadius: 3,
+                  fontWeight: 500,
+                }}
+              >
+                +{materialTableFilters.length - INITIAL_FILTERS_COUNT}
+              </span>
+              <span style={{ fontSize: 10 }}>▼</span>
+            </>
+          )}
+        </Box>
+      )}
+
+      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
+        {<ActionMenu isAdmin={props.isAdmin} />}
       </Stack>
     </Stack>
   );

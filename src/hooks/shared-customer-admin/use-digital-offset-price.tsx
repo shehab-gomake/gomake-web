@@ -4224,7 +4224,7 @@ const useDigitalOffsetPrice = ({
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "flex-end",
-                  gap: 15,
+                  // gap: 15,
                 }}
               >
                 <div

@@ -27,6 +27,16 @@ export interface IInput {
   note?: string;
   dropdownStyle?: React.CSSProperties;
 }
+export interface ICustomStyles {
+  textInput?: React.CSSProperties;
+  select?: React.CSSProperties;
+  autocomplete?: React.CSSProperties;
+  colorInput?: React.CSSProperties;
+  phoneInput?: React.CSSProperties;
+  imageInput?: React.CSSProperties;
+  container?: React.CSSProperties;
+}
+
 export interface IFormInput {
   input: IInput;
   changeState: (key: string, value: any) => void;
@@ -37,6 +47,7 @@ export interface IFormInput {
   loading?: any; // loading while fetching data in DropDownList
   keyItem?: any;
   hideLabel?: boolean;
+  customStyles?: ICustomStyles;
 }
 
 export interface IFormArrayInputsProps {

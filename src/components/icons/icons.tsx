@@ -93,14 +93,14 @@ const EditIcon = () => {
     >
       <path
         d="M7.33325 1.3335H5.99992C2.66659 1.3335 1.33325 2.66683 1.33325 6.00016V10.0002C1.33325 13.3335 2.66659 14.6668 5.99992 14.6668H9.99992C13.3333 14.6668 14.6666 13.3335 14.6666 10.0002V8.66683"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M10.6933 2.0135L5.43992 7.26684C5.23992 7.46684 5.03992 7.86017 4.99992 8.14684L4.71325 10.1535C4.60659 10.8802 5.11992 11.3868 5.84659 11.2868L7.85325 11.0002C8.13325 10.9602 8.52659 10.7602 8.73325 10.5602L13.9866 5.30684C14.8933 4.40017 15.3199 3.34684 13.9866 2.0135C12.6533 0.680168 11.5999 1.10684 10.6933 2.0135Z"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-miterlimit="10"
         stroke-linecap="round"
@@ -108,7 +108,7 @@ const EditIcon = () => {
       />
       <path
         d="M9.93994 2.7666C10.3866 4.35993 11.6333 5.6066 13.2333 6.05993"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-miterlimit="10"
         stroke-linecap="round"
@@ -129,42 +129,42 @@ const DuplicateIcon = () => {
     >
       <path
         d="M12.75 10.05V12.3C12.75 15.3 11.55 16.5 8.55 16.5H5.7C2.7 16.5 1.5 15.3 1.5 12.3V9.45C1.5 6.45 2.7 5.25 5.7 5.25H7.95"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M12.75 10.05H10.35C8.54995 10.05 7.94995 9.45 7.94995 7.65V5.25L12.75 10.05Z"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M8.69995 1.5H11.7"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M5.25 3.75C5.25 2.505 6.255 1.5 7.5 1.5H9.465"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M16.5001 6V10.6425C16.5001 11.805 15.5551 12.75 14.3926 12.75"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M16.5 6H14.25C12.5625 6 12 5.4375 12 3.75V1.5L16.5 6Z"
-        stroke="#8283BE"
+        stroke="#2E3092"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

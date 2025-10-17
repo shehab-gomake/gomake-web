@@ -281,7 +281,14 @@
       "speralSize": "Speral size",
       "noData": "No Data",
       "addCategory": "add category",
-      "unitPrice": "Unit Price"
+      "unitPrice": "Unit Price",
+      "chooseCurrency": "Choose Currency",
+      "enterPrice": "Enter Price",
+      "updatePrices": "Update Prices",
+      "errorCurrencyMsg": "All selected materials must have the same currency"
+    },
+    "errors": {
+      "pleaseSelectSupplier": "Please select a supplier"
     },
     "buttons": {
       "cancel": "Cancel",
@@ -303,8 +310,76 @@
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
-      "uploadImage": "Upload image"
+      "uploadImage": "Upload image",
+      "existingSupplierTitle": "Supplier Already Exists",
+      "existingSupplierSubTitle": "This supplier already exists for this material. How would you like to proceed?",
+      "activateOnly": "Activate Only",
+      "activateAndOverride": "Activate and Override"
     },
+    "addInventory": "Add Inventory",
+    "addPurchasePricing": "Add Purchase Pricing",
+    "childTable": {
+      "addNewInventory": "Add New Inventory",
+      "noInventoryData": "No inventory data available,",
+      "addNew": "add new?",
+      "supplierName": "Supplier Name",
+      "code": "Code",
+      "purchasePrice": "Purchase Price",
+      "purchaseCurrency": "Purchase Currency",
+      "saleCost": "Sale Cost",
+      "saleCurrency": "Sale Currency",
+      "inventory": "Inventory",
+      "quantity": "Quantity",
+      "status": "Status",
+      "client": "Client",
+      "jobs": "Jobs",
+      "actions": "Actions",
+      "show": "Show",
+      "noPurchasePricingData": "No purchase pricing data available",
+      "currency": "Currency",
+      "quantityInPackage": "Quantity in Package",
+      "supplementTimeWorkingDays": "Supplement Time (working days)",
+      "addPurchasePricing": "Add Purchase Pricing",
+      "supplier": "Supplier",
+      "supplementTimeDays": "Supplement Time (days)",
+      "cancel": "Cancel",
+      "salePrice": "Sale Price",
+      "clients": "Clients",
+      "addInventory": "Add Inventory",
+      "selectSupplier": "Select a supplier",
+      "selectClient": "Select a client",
+      "enterCode": "Enter code",
+      "enterQuantity": "Enter quantity",
+      "enterPurchasePrice": "Enter purchase price",
+      "enterSalePrice": "Enter sale price",
+      "enterPurchaseRollPrice": "Enter purchase roll price",
+      "enterSupplementTime": "Enter supplement time",
+      "scrollToSeeMoreColumns": "Scroll to see more columns",
+      "price": "Price"
+    },
+    "tableHeaders": {
+      "sku": "SKU",
+      "weight": "Weight",
+      "thickness": "Thickness",
+      "directions": "Directions",
+      "width": "Width",
+      "length": "Length",
+      "color": "Color",
+      "priceUnitPerTon": "Unit price / ton",
+      "currency": "Currency",
+      "active": "Active",
+      "isOutSource": "isOutSource",
+      "storageLocation": "Storage Location",
+      "minStock": "Min Stock",
+      "optimalStock": "Optimal Stock",
+      "totalInventory": "Total Inventory",
+      "purchasePricing": "Suppliers",
+      "internal": "internal",
+      "outSource": "out source",
+      "long": "Long",
+      "short": "Short"
+    }
+  },
     "sheetPaper": {
       "inputs": {
         "size": "Size (cm)",
@@ -334,6 +409,7 @@
       "settings": "Settings",
       "supplierSheet": "Supplier",
       "selectSupplier": "Select supplier",
+      "selectSuppliers": "Select suppliers",
       "unitPrice": "Unit price",
       "pricePerUnit": "price per unit",
       "selectCurrency": "Select Currency",
@@ -1048,8 +1124,7 @@
       "selectSupplier": "Select supplier",
       "selectCurrency": "Select currency"
     },
-    "listSales": "List sales"
-  },
+    "listSales": "List sales",
   "machineAttributes": {
     "manufacturer": "Manufacturer",
     "model": "Model",
@@ -2237,7 +2312,12 @@
     "UpdatePricePerTon": "Update price per ton",
     "UpdateUnitPrice": "Update price per unit",
     "AddPercentToPricePerTon": "Update price per ton percents",
-    "AddPercentToUnitPrice": "Update price per unit percents"
+    "AddPercentToUnitPrice": "Update price per unit percents",
+    "submenu": {
+      "updateDefaultSaleCost": "Update Default Sale Cost",
+      "updateInventorySaleCost": "Update Inventory Sale Cost",
+      "updateSupplierPurchasePrice": "Update Supplier Purchase Price"
+    }
   },
   "materialsStatus": {
     "all": "All",
