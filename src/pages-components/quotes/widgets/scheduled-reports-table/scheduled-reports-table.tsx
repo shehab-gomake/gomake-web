@@ -96,17 +96,17 @@ const ScheduledReportsTable = ({
         <>
             <GoMakeModal
                 openModal={openModal}
-                onCloseModal={onCloseModal}
+                onClick={onCloseModal}
                 modalTitle={t("sales.list.scheduledReports")}
                 insideStyle={classes.insideStyle}
-                withClose={false}
+            // withClose={false}
             >
                 <div style={classes.mainContainer}>
                     <div style={{ minHeight: "432px" }}>
                         <PrimaryTable
                             key={`scheduled-reports-table-${pageNumber}-${scheduledReports.length}`}
                             stickyHeader={true}
-                            maxHeight={"370px"}
+                            maxHeight={"395px"}
                             rows={rows}
                             headers={headers}
                             variant="OddEvenTable"

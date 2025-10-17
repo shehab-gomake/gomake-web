@@ -15,7 +15,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
-import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
@@ -44,6 +43,8 @@ const useAddRuleModal = ({
   filterData,
   openModal,
   getProductHotFolderRules,
+  documentType,
+  detailsOption,
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -620,26 +621,18 @@ const useAddRuleModal = ({
   //   setToDate(toDate);
   // };
   const createForQuoteWidget = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/documents/generate-document-report`,
-      {
-        filterDTO: {
-          statusId: filterData?.statusId,
-          closeStatus: filterData?.closeStatus,
-          productionStatus: filterData?.productionStatus,
-          patternSearch: filterData?.patternSearch,
-          customerId: filterData?.customerId,
-          dateRange: filterData?.dateRange,
-          agentId: filterData?.agentId,
-          minPrice: filterData?.minPrice,
-          maxPrice: filterData?.maxPrice,
-          productList: filterData?.productList,
-          fromDate,
-          toDate,
-        },
-        groupBy: propertieValue,
-        exceptionConditionProperties: rules.map((item) => {
+    // Filter out empty/invalid rules
+    const validRules = rules.filter((item) => {
+      return (
+        item?.category?.id &&
+        item?.statement2?.id &&
+        item?.condition?.id
+      );
+    });
+
+    // Build exception condition properties only if there are valid rules
+    const exceptionConditionProperties = validRules.length > 0
+      ? validRules.map((item) => {
           return {
             statementValue:
               typeof item?.statement === "object"
@@ -652,28 +645,62 @@ const useAddRuleModal = ({
               : "",
             statementCategory: EStatementCategory[item?.category?.id],
           };
-        }),
-      },
-      true,
-      null,
-      "blob"
-    );
+        })
+      : [];
+
     try {
-      const downloadLink = document.createElement("a");
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link;
-      downloadLink.download = "Reports Rule engine.xlsx";
-      downloadLink.click();
-      if (res?.success) {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/generate-document-report`,
+        {
+          documentType: documentType,
+          exportType: detailsOption,
+            filterDTO: {
+              statusId: filterData?.statusId,
+              closeStatus: filterData?.closeStatus,
+              productionStatus: filterData?.productionStatus,
+              patternSearch: filterData?.patternSearch,
+              customerId: filterData?.customerId,
+              dateRange: filterData?.dateRange,
+              agentId: filterData?.agentId,
+              minPrice: filterData?.minPrice,
+              maxPrice: filterData?.maxPrice,
+              productList: filterData?.productList,
+              fromDate: filterData?.fromDate,
+              toDate: filterData?.toDate,
+            },
+            groupBy: propertieValue,
+            exceptionConditionProperties: exceptionConditionProperties,
+        }
+      );
+
+      if (res?.success && res?.data) {
+        // If the response contains a URL string, download it
+        if (typeof res.data === 'string' && res.data.startsWith('http')) {
+          const downloadLink = document.createElement("a");
+          downloadLink.href = res.data;
+          downloadLink.download = "Reports Rule engine.xlsx";
+          downloadLink.target = "_blank";
+          downloadLink.click();
+        } else {
+          // If it's a blob, create object URL
+          const downloadLink = document.createElement("a");
+          const link = URL?.createObjectURL(res.data);
+          downloadLink.href = link;
+          downloadLink.download = "Reports Rule engine.xlsx";
+          downloadLink.click();
+          URL.revokeObjectURL(link);
+        }
         onCloseModal();
         setRules([initialRule]);
       } else {
         alertFaultAdded();
       }
-    } catch {
+    } catch (error) {
+      console.error("Error generating report:", error);
       alertFaultAdded();
     }
-  }, [propertieValue, EStatementCategory, rules, filterData]);
+  }, [propertieValue, EStatementCategory, rules, filterData, detailsOption, documentType, onCloseModal, setRules, initialRule, callApi, alertFaultAdded]);
 
   const getConditionText = (label) => {
     switch (label) {
