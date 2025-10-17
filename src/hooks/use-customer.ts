@@ -242,7 +242,7 @@ const useCustomer = (
     //let domain = window.location.origin;
     let domain = window.location.hostname;
     let loginPageName = "login";
-    if (domain === "trial.gomake.net" || domain === "guest.gomake.net") {
+    if (domain === "ai.gomake.net") {
       loginPageName = "gomake-ai";
     }
     if (withReturnUrl) {
