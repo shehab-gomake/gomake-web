@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { useStyle } from "./style";
@@ -17,6 +18,18 @@ interface AIChatInterfaceProps {
   onOptionClick?: (option: string) => void;
 }
 
+// Translation keys for processing steps
+const PROCESSING_STEP_KEYS = [
+  { key: "aiChat.processing.analyzingMessage", duration: 3000 },
+  { key: "aiChat.processing.locatingContext", duration: 3500 },
+  { key: "aiChat.processing.identifyingCharacteristics", duration: 3200 },
+  { key: "aiChat.processing.buildingFlowChart", duration: 4000 },
+  { key: "aiChat.processing.checkingResources", duration: 3500 },
+  { key: "aiChat.processing.analyzingCosts", duration: 3800 },
+  { key: "aiChat.processing.finalizingResponse", duration: 3500 },
+  { key: "aiChat.processing.gettingPrice", duration: 3000 },
+];
+
 const AIChatInterface = ({
   messages,
   isProcessing,
@@ -24,6 +37,7 @@ const AIChatInterface = ({
 }: AIChatInterfaceProps) => {
   const { classes } = useStyle();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -41,6 +55,28 @@ const AIChatInterface = ({
       minute: "2-digit",
     });
   };
+
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // Reset step to 0 when processing starts
+  useEffect(() => {
+    if (isProcessing) {
+      setCurrentStep(0);
+    }
+  }, [isProcessing]);
+
+  // Cycle through processing steps
+  useEffect(() => {
+    if (!isProcessing) return;
+
+    const currentDuration = PROCESSING_STEP_KEYS[currentStep].duration;
+
+    const timer = setTimeout(() => {
+      setCurrentStep((prev) => (prev + 1) % PROCESSING_STEP_KEYS.length);
+    }, currentDuration);
+
+    return () => clearTimeout(timer);
+  }, [currentStep, isProcessing]);
 
   return (
     <div style={classes.chatContainer}>
@@ -130,7 +166,9 @@ const AIChatInterface = ({
                 <div style={classes.typingDot}></div>
                 <div style={classes.typingDot}></div>
               </div>
-              <div style={classes.processingText}>AI is thinking...</div>
+              <div style={classes.processingText}>
+                {t(PROCESSING_STEP_KEYS[currentStep].key)}
+              </div>
             </div>
           </div>
         )}

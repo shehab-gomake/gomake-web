@@ -153,7 +153,7 @@ const QuickSetupFlow: React.FC = () => {
     }
   };
 
-  // Mark products setup as in progress when component mounts
+  // Mark machines setup as in progress when component mounts
   useEffect(() => {
     updatePrintHouseSetupSteps(
       SetupStep.SETUP_YOUR_MACHINES,
@@ -803,7 +803,6 @@ const QuickSetupFlow: React.FC = () => {
 
       const callBack = async (res: any) => {
         if (res.success) {
-          // Update the products setup step to completed
           await updatePrintHouseSetupSteps(
             SetupStep.SETUP_YOUR_MACHINES,
             StepStatus.DONE
@@ -811,6 +810,7 @@ const QuickSetupFlow: React.FC = () => {
 
           // Navigate to the next setup step (Company Profile Logo)
           alertSuccessAdded();
+        //  navigate("/materials-setup");
           // navigate("/");
           navigate("/settings/company-profile?tab=company");
         } else {

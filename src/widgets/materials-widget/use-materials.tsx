@@ -10,7 +10,7 @@ import {
 import {
   deletePrintHouseMaterialCategoryApi,
   getPrintHouseMaterialCategoriesApi,
-  uploadPrintHouseMaterialExcelFileApi,
+  uploadPrintHouseMaterial1RowExcelFileApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -37,8 +37,9 @@ import {
   materialsMachinesState,
   materialsTablePageState,
   materialsUnCheckedState,
+  materialTableFiltersState,
   materialTypeTableState,
-  openAddRowModalState,
+  openChildTableState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
@@ -64,13 +65,15 @@ const useMaterials = (isAdmin: boolean) => {
 
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<
-      { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
+      { key: string; value: string; unit?: string; isShowInExtraParameters?: boolean; isForAdmin?: boolean }[]
     >(materialHeadersState);
+
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
       categoryName: string;
       isDeletable: boolean;
+      imageURL?: string | null;
     }[]
   >(materialCategoriesState);
 
@@ -101,6 +104,10 @@ const useMaterials = (isAdmin: boolean) => {
     openDeleteTableRowWhenHaveMoreSupplierModal,
     setOpenDeleteTableRowWhenHaveMoreSupplierModal,
   ] = useState<boolean>(false);
+
+  // Duplicates/Deleted materials modal state
+  const [openDuplicatesModal, setOpenDuplicatesModal] = useState<boolean>(false);
+  const [duplicatesData, setDuplicatesData] = useState<any[]>([]);
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -141,7 +148,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
-  const { alertSuccessDelete, alertFaultDelete, alertFault } = useSnackBar();
+  const { alertSuccessDelete, alertFaultDelete, alertFault, alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
@@ -152,13 +159,18 @@ const useMaterials = (isAdmin: boolean) => {
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const setIsLoadingMaterials = useSetRecoilState<boolean>(isLoadingMaterialsState);
+  const setOpenChildTable = useSetRecoilState(openChildTableState);
+  const setMaterialTableFilters = useSetRecoilState(materialTableFiltersState);
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
+    setMaterialTableFilters([]);
     if (category != materialCategory) {
       setMaterialCategoryData([]);
       setIsLoadingMaterials(true);
     }
+    // Reset child table state when changing categories
+    setOpenChildTable({ rowId: '', tableType: null });
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
@@ -196,7 +208,12 @@ const useMaterials = (isAdmin: boolean) => {
   const getMaterialCategories = async (material) => {
     const callBack = (res) => {
       if (res?.success) {
-        setMaterialCategories(res?.data);
+        // Map the response to include imageURL
+        const categoriesWithImages = res?.data?.map((category) => ({
+          ...category,
+          imageURL: category.imageURL || null
+        }));
+        setMaterialCategories(categoriesWithImages);
       } else {
         // push("/materials");
       }
@@ -214,21 +231,91 @@ const useMaterials = (isAdmin: boolean) => {
       text: category.categoryName,
       value: category.categoryKey,
       icon: () => (
-        <SideLeftMenuWidget
-          onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-          category={category}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Category Image - only show container if image exists */}
+          {category.imageURL && category.imageURL !== "" && (
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '4px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f5f5f5',
+              border: '1px solid #e0e0e0'
+            }}>
+              <img
+                src={category.imageURL}
+                alt={category.categoryName}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            </div>
+          )}
+
+          {/* Action Menu */}
+          <SideLeftMenuWidget
+            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+            category={category}
+          />
+        </div>
       ),
     }));
   }, [materialCategories]);
+
+  // Helper function to translate header values
+  const translateHeaderValue = (key: string, originalValue: string, header?: any) => {
+    const convertedUnit =
+      unitType === UNIT_TYPE.IMPERIAL
+        ? convertTitleUnits(key)
+        : key;
+    // Special case for headers with isPriceObject = true
+    if (header?.isPriceObject === true) {
+      return <div>
+        {t("materials.childTable.priceUnitPerTon")}
+        <br />
+        {originalValue}
+      </div>;
+    }
+
+    // Convert key to camelCase for translation lookup
+    const translationKey = key
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[^a-zA-Z0-9]/g, '');
+
+    // Try to get translation, fallback to original value
+    const translationPath = `materials.tableHeaders.${translationKey}`;
+    const translatedValue = t(translationPath);
+
+    // If translation key doesn't exist, t() returns the key itself, so we check if it's different
+    return translatedValue !== translationPath ? translatedValue : originalValue;
+  };
+
+  // Helper function to translate values array
+  const translateValuesArray = (values: any[]) => {
+    return values.map(item => ({
+      ...item,
+      value: translateHeaderValue(item.key, item.value)
+    }));
+  };
 
   const getMaterialTableHeaders = async (materialType: string) => {
     const callBack = (res) => {
       if (res.success) {
         const tableHeaders = res.data?.tableHeaders;
-        const updatedArray = tableHeaders.filter(
-          (item) => item.key !== "Active"
-        );
+        // Translate header values
+        const translatedHeaders = tableHeaders.map(header => ({
+          ...header,
+          value: translateHeaderValue(header.key, header.value, header),
+          values: header.values ? translateValuesArray(header.values) : header.values
+        }));
+
+        const updatedArray = translatedHeaders
         setMaterialHeaders(updatedArray);
         setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
@@ -272,11 +359,12 @@ const useMaterials = (isAdmin: boolean) => {
         materialsUnChecked.filter((materialId) => materialId != id)
       );
     }
-    setMaterialCategoryData(
-      materialCategoryData.map((row) =>
-        id === row.id ? { ...row, checked: checked } : row
-      )
+
+    const updatedData = materialCategoryData.map((row) =>
+      id === row.id ? { ...row, checked: checked } : row
     );
+
+    setMaterialCategoryData(updatedData);
   };
 
   const tableHeaders = useCallback(() => {
@@ -298,28 +386,33 @@ const useMaterials = (isAdmin: boolean) => {
         checked={isAllSelected()}
       />,
       ...(isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin)
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters)
       ).map((header) => {
         const convertedUnit =
           unitType === UNIT_TYPE.IMPERIAL
             ? convertTitleUnits(header.unit)
             : header.unit;
 
+
+
         return header.unit ? (
           <div>
             {" "}
             <div key={header.key}>
-              <span>{header.value}</span>
-              {convertedUnit && <small> ({convertedUnit})</small>}
+              <span> {header.value} </span>
+              {convertedUnit &&
+                <small>
+                  ({t(`measurementUnits.${convertedUnit}`)})
+                </small>}
             </div>
           </div>
         ) : (
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
-      t("usersSettings.isActive"),
-      t("properties.more"),
+      // t("usersSettings.isActive"),
+      " ",
     ];
   }, [materialHeaders, materialCategoryData]);
 
@@ -354,40 +447,52 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
 
   const tableRowsNew = useMemo(() => {
-    return materialCategoryData.map((dataRow) => {
+    const rows = [];
+
+    materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock")
-        : materialHeaders.filter((header) => !header.isForAdmin);
-      return [
-        <Checkbox
-          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
-          checked={dataRow.checked}
-        />,
-        ...filteredHeaders.map((header) => (
-          <TableCellData
-            {...dataRow.rowData[header.key]}
-            id={dataRow.id}
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters);
+
+      // Main row
+      rows.push({
+        id: dataRow.id,
+        cells: [
+          <Checkbox
+            onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+            checked={dataRow.checked}
+          />,
+          ...filteredHeaders.map((header) => (
+            <TableCellData
+              {...dataRow.rowData[header.key]}
+              id={dataRow.id}
+              isAdmin={isAdmin}
+              unit={header.unit}
+              parameterKey={header.key}
+              onChangeRowCheckBox={onChangeRowCheckBox}
+              rowData={dataRow.rowData}
+            />
+          )),
+          // Add suppliers column manually since it's now static
+          // dataRow?.isActive
+          //   ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+          //   : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+
+          <MaterialMenuWidget
+            dataRow={dataRow}
             isAdmin={isAdmin}
-            unit={header.unit}
-            parameterKey={header.key}
+            onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
             onChangeRowCheckBox={onChangeRowCheckBox}
-          />
-        )),
-        dataRow?.isActive
-          ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
-          : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
-        <MaterialMenuWidget
-          dataRow={dataRow}
-          isAdmin={isAdmin}
-          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onChangeRowCheckBox={onChangeRowCheckBox}
-          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
-            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
-          }
-          toggleIsActive={toggleIsActive}
-        />,
-      ];
+            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
+              onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
+            }
+            toggleIsActive={toggleIsActive}
+          />,
+        ]
+      });
     });
+
+    return rows;
   }, [
     materialHeaders,
     materialCategoryData,
@@ -463,12 +568,10 @@ const useMaterials = (isAdmin: boolean) => {
   const uploadExcelFile = async (e) => {
     if (!materialType || !materialCategory) {
       alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
+      e.target.value = ""; // Reset input to allow same file upload
       return;
     }
-    if (!supplierId) {
-      alertFault("materials.inputs.errorNoSupplierId");
-      return;
-    }
+
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -481,24 +584,48 @@ const useMaterials = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        let callBack = () => {
-          getMaterialCategories(materialType).then(x => {
-            getMaterialCategoryData(
-              materialType?.toString(),
-              materialCategory?.toString(),
-              [],
-              supplierId
-            ).then();
-          });
+        let callBack = (res) => {
+          if (res.success) {
+            alertSuccessAdded();
 
-        }
+            if (res?.data?.length > 0) {
+              // Open modal with duplicates/deleted materials
+              setDuplicatesData(res.data);
+              setOpenDuplicatesModal(true);
+            }
+          } else {
+            const error = res?.errors;
+
+            let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
+
+            if (res?.statusCode === 515) {
+              if (error?.errorParams?.length > 0) {
+                const row = error.errorParams.find(p => p.key === "row")?.value;
+                const fieldKey = error.errorParams.find(p => p.key !== "row")?.key;
+
+                // localized message with params
+                userMessage = t("materials.inputs.uploadMissingField", { field: fieldKey, row });
+              }
+              else if (error?.ErrorMessage) {
+                userMessage = error.ErrorMessage;
+              }
+
+              alertFault(userMessage);
+
+            }
+            alertFault(userMessage);
+          }
+
+          // Reset input to allow same file upload again
+          e.target.value = "";
+        };
         if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
         } else {
-          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+          uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             supplierId: supplierId,
             base64: base64String,
@@ -508,6 +635,60 @@ const useMaterials = (isAdmin: boolean) => {
       };
       reader.readAsArrayBuffer(file);
     }
+    // Reset input value after reading to prevent caching
+    e.target.value = "";
+  };
+
+  const handleRefreshMaterialData = () => {
+    // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
+    if (materialType && materialCategory) {
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        materialFilter,
+        supplierId,
+        1, // pageNumber
+        20, // pageSize
+        false // appendMode
+      ).then();
+    }
+  };
+
+  const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {
+    if (selectedIds.length === 0) return;
+
+    const deleteCallBack = (res) => {
+      if (res.success) {
+        alertSuccessDelete();
+        // Close modal and refresh data
+        setOpenDuplicatesModal(false);
+        setDuplicatesData([]);
+        handleRefreshMaterialData();
+      } else {
+        alertFaultDelete();
+      }
+    };
+
+    // Use the delete API endpoint
+    if (isAdmin) {
+      // For admin, delete directly
+      // You may need to implement the admin delete API call here
+      // For now, just close the modal and refresh
+      setOpenDuplicatesModal(false);
+      setDuplicatesData([]);
+      handleRefreshMaterialData();
+    } else {
+      // For print house, use the existing delete endpoint
+      // Note: You'll need to implement the actual delete API call based on your backend
+      setOpenDuplicatesModal(false);
+      setDuplicatesData([]);
+      handleRefreshMaterialData();
+    }
+  };
+
+  const handleCloseDuplicatesModal = () => {
+    setOpenDuplicatesModal(false);
+    setDuplicatesData([]);
   };
 
   return {
@@ -545,6 +726,16 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedMaterialCategory,
     uploadExcelFile,
     elementRef,
+    onChangeRowCheckBox,
+    onClickOpenDeleteTableRowModal,
+    onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
+    // Duplicates/Deleted modal
+    openDuplicatesModal,
+    duplicatesData,
+    handleDeleteSelectedMaterials,
+    handleCloseDuplicatesModal,
+    handleRefreshMaterialData,
+    materialHeaders,
   };
 };
 

@@ -308,32 +308,98 @@ export const convertTitleUnits = (unit: string | null) => {
   if (!unit) return null;
 
   switch (unit) {
+    // LENGTH
     case "cm":
-      return "inch"; // Convert cm to inches
-    case "gram":
-      return "LB"; // Convert grams to LB
-    case "g":
-      return "LB"; // Convert grams to LB
-    case "gsm":
-      return "lbs"; // Convert grams to LB
-    case "um":
-      return "pt"; // Convert microns to points
-    case "liter":
-      return "gallon"; // Convert liters to gallons
     case "mm":
-      return "inch"; // Convert millimeters to inches
+      return "inch"; // cm/mm -> inch
     case "m":
-      return "yd"; // Convert meters to yards
-    case "Gram/m^2":
-      return "lb/yd^2"; // Convert grams per square meter to ounces per square yard
-    case "kg":
-      return "LB"; // Convert kilograms to pounds
-    case "Kg":
-      return "LB"; // Convert kilograms to pounds
+      return "yd"; // meters -> yards
+    case "cm-sec":
+    case "mmPerSecond":
+      return "inch/sec"; // cm/sec or mm/sec -> inch/sec
+    case "meterPerMin":
+    case "meterPerHour":
+      return "yd/min"; // meter/min or meter/hour -> yards/min (adjust if needed)
+
+    // AREA
+    case "squareMeter":
     case "m²":
-      return "yd²"; // Convert square meters to square yards
+      return "yd²"; // square meters -> square yards
+    case "squareCM":
+      return "in²"; // square centimeters -> square inches
+    case "squareMeterPerMin":
+      return "yd²/min"; 
+    case "squareMeterPerHour":
+      return "yd²/hour";
+    case "squareCMPerHour":
+    case "squareCMPerH":
+      return "in²/hour";
+
+    // WEIGHT
+    case "gram":
+    case "g":
+    case "gsm":
+      return "LB"; // grams -> pounds
+    case "kg":
+    case "Kg":
+      return "LB"; // kilograms -> pounds
+    case "Gram/m^2":
+      return "lb/yd²"; // grams per m² -> lb per yd²
+
+    // VOLUME
+    case "liter":
+      return "gallon"; // liters -> gallons
+
+    // TIME
+    case "minute":
+    case "min":
+    case "shortMinute":
+      return "min"; // no change, just normalize
+    case "second":
+    case "sec":
+      return "sec"; 
+    case "shortHours":
+      return "h"; // hours abbreviation
+
+    // PRODUCTION RATES / COUNT
+    case "profileHour":
+    case "lettersHour":
+    case "cupsPerHour":
+    case "setsHour":
+    case "sph":
+    case "bookPh":
+    case "pph":
+    case "chicksPM":
+    case "cutsPH":
+    case "staplesPerMin":
+    case "mmPerMin":
+    case "PiercingPMin":
+    case "bendingPH":
+    case "bookletsPMin":
+    case "booksPerMinute":
+    case "setsPerMinute":
+    case "coversPH":
+    case "packagePH":
+    case "cutsPMIN":
+    case "paperSetsPerHour":
+      return unit; // No imperial conversion needed, just keep as is
+
+    // PRICE / UNIT
+    case "price":
+    case "price Roll / M^2":
+    case "price unit/pack":
+    case "Price unit / per meter":
+    case "Price Unit/pack":
+    case "Price Piercing / pack":
+    case "CostPerRollPerSquareMeterPerTon":
+    case "price unit / M^2":
+    case "price Unit / ton":
+    case " Unit price / ton":
+      return unit; // Prices usually stay the same
+
+    // FALLBACK
     default:
-      return unit; // Return as is if not supported
+      return unit; // Return as is if not mapped
   }
 };
 
@@ -510,4 +576,15 @@ export const  removeDuplicateParameters = (generalParameters) => {
   
   // Return the unique parameters as an array
   return Array.from(uniqueMap.values());
+};
+/**
+ * Filters out null and undefined values from arrays to prevent [null] being sent to API endpoints.
+ * For non-array values, returns the value as-is.
+ * @param value - The value to process (can be array or any other type)
+ * @returns The processed value with null/undefined filtered out if it's an array
+ */
+export const filterNullFromArrays = (value: any): any => {
+  return Array.isArray(value) 
+    ? value.filter(item => item !== null && item !== undefined)
+    : value;
 };

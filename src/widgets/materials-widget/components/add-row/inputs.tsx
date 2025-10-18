@@ -29,6 +29,7 @@ const rowInputs = (
             value: state?.parameterKey,
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "ARRAY_INPUT":
           return {
@@ -42,6 +43,7 @@ const rowInputs = (
             value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "LIST":
           return {
@@ -60,6 +62,7 @@ const rowInputs = (
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "MULTI_SELECATION_LIST":
           return {
@@ -76,9 +79,10 @@ const rowInputs = (
                 text: value.value,
               }))
               : [],
-            value: "",
+            value: state[header?.key] || [],
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "MACHINES_LIST":
           return {
@@ -92,13 +96,14 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            values:
+            value:
               state?.machine || state?.machines
                 ? state?.machine || state?.machines
                 : [],
             isValid: true,
             multiple: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
 
         case "CLIENTS_LIST":
@@ -111,13 +116,15 @@ const rowInputs = (
             parameterKey: header?.key,
             options: clientsCategories.map((client) => ({
               value: client.id,
-              text: `${client.name} - ${client.code}`,
+              text: client.isInfo ? client.name : `${client.name} - ${client.code}`,
+              isInfo: client.isInfo,
             })),
-            values: state?.clients ? state?.clients : [],
+            value: state?.clients ? state?.clients : [],
             isValid: true,
             multiple: true,
             loading: isFetching,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         case "NOTE_BOOK_TYPES":
           return {
@@ -129,9 +136,74 @@ const rowInputs = (
             required: header?.isRequired,
             parameterKey: header?.key,
             options: [],
+            value: state[header?.key] || [],
+            isValid: true,
+            unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
+          };
+        case "SUPPLIERS":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "text",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Fares, mohand, Aous",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+            isPriceObject: header?.isPriceObject,
+          };
+        case "INVENTORY":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "button",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Open",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+            isPriceObject: header?.isPriceObject,
+          };
+        case "PURCHASE_PRICING":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "button",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: [],
+            value: "Open",
+            isValid: true,
+            unit: header?.unit,
+            disabled: true,
+            isPriceObject: header?.isPriceObject,
+          };
+        case "SELECT_FIXED_VALUES_ADD_NEW":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            placeholder: header?.value,
+            required: header?.isRequired,
+            parameterKey: header?.key,
+            options: header.values
+              ? header.values.map((value) => ({
+                value: value.key,
+                text: value.value,
+              }))
+              : [],
             value: "",
             isValid: true,
             unit: header?.unit,
+            isPriceObject: header?.isPriceObject,
           };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
@@ -150,11 +222,12 @@ const rowInputs = (
               value: state[header?.key],
               isValid: true,
               unit: header?.unit,
-
+              isPriceObject: header?.isPriceObject,
             };
       }
     })
     .filter((input) => input !== null);
+
 
   const imageCase = newHeaders.find(
     (header) => header.inputType === EDataTypeEnum.IMAGE
@@ -169,6 +242,7 @@ const rowInputs = (
       options: [],
       value: state?.[imageCase.key],
       isValid: true,
+      isPriceObject: imageCase?.isPriceObject,
     });
   }
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { GoMakeModal } from "@/components";
+import { GoMakeDialog } from "@/components";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -16,7 +16,6 @@ import {
 import { rowInputs } from "./inputs";
 import { useStyle } from "./style";
 import { Stack } from "@mui/material";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddCategoryRow } from "./use-add-row";
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { GetParameterValuesByIdAi } from "@/services/api-service/parameters/parameters-outputs";
@@ -83,7 +82,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
     rowData: Record<string, any>
   ) => {
     let filterheaders = headers?.filter(
-      (header) => (header.key !== "price Unit / ton"
+      (header) => (
+        header.key !== "price Unit / ton"
         && header.key !== "price m^2 / Pack"
         && header.key !== "price Roll / M^2"
         && header.key !== "Price Staple / pack"
@@ -94,6 +94,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
         && header.key !== "CostPerRollPerSquareMeterPerTon"
         && header.key !== "price unit / M^2"
         && header.key !== "price unit/pack"
+        && header.inputType !== 2  // Exclude switch 
+        // fields (type 2) from validation
       )
     );
     const missingFields: string[] = [];
@@ -120,17 +122,37 @@ const AddRowModal = (props: IAddRowModalProps) => {
     materialHeaders,
     rowData
   );
+
+  const handleAdd = () => {
+    if (validateRequiredFieldsResult.isValid) {
+      onAddCategoryRow(rowData, materialHeaders);
+    } else {
+      alertFault(
+        `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(
+          ", "
+        )}`
+      );
+    }
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+    setRowData("");
+  };
+
   return (
-    <GoMakeModal
-      insideStyle={classes.insideStyle}
-      openModal={openModal}
-      onClose={() => {
-        setOpenModal(false), setRowData("");
-      }}
-      modalTitle={t("materials.buttons.addNewRow")}
+    <GoMakeDialog
+      open={openModal}
+      onClose={handleClose}
+      title={t("materials.buttons.addNewRow")}
+      primaryButtonLabel={t("materials.buttons.add")}
+      cancelButtonLabel={t("materials.childTable.cancel")}
+      onPrimaryAction={handleAdd}
+      maxWidth="sm"
+      fullWidth
     >
-      <Stack display={"flex"} direction={"column"} marginTop={"10px"}>
-        <Stack style={classes.inputsDivStyle}>
+      <Stack display={"flex"} direction={"column"} marginTop={"10px"} width={"100%"}>
+        <Stack style={classes.inputsDivStyle} className="custom-scrollbar" width={"100%"}>
           {rowInputs(
             rowData,
             isFetching,
@@ -138,9 +160,16 @@ const AddRowModal = (props: IAddRowModalProps) => {
             currencies,
             machinesCategories,
             clientsCategories
-          ).map((item) => {
+          ).map((item, index, array) => {
+            // Check if next item is a price object and current index is odd
+            const nextItem = array[index + 1];
+            const isNextItemPriceObject = nextItem?.isPriceObject === true;
+
+            // If next item is a price object and current index is odd, make current item full width
+            // This ensures price objects always start on an even index (same row with currency)
+            const shouldMakeFullWidth = isNextItemPriceObject && (index + 1) % 2 !== 0;
             return (
-              <Stack width={"47%"}>
+              <Stack width={shouldMakeFullWidth ? "100%" : "48%"} key={`input-${index}`}>
                 <FormInput
                   input={item as IInput}
                   changeState={onChangeInputs}
@@ -149,30 +178,19 @@ const AddRowModal = (props: IAddRowModalProps) => {
                   checkWhatRenderArray={checkWhatRenderArray}
                   loading={item?.loading || false}
                   keyItem={"item"}
+                  customStyles={{
+                    container: {
+                      maxWidth: 273,
+                    },
+
+                  }}
                 />
               </Stack>
             );
           })}
         </Stack>
-        <SecondaryButton
-          variant="contained"
-          onClick={() => {
-            if (validateRequiredFieldsResult.isValid) {
-              onAddCategoryRow(rowData);
-            } else {
-              alertFault(
-                `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(
-                  ", "
-                )}`
-              );
-            }
-          }}
-          style={classes.addBtnStyle}
-        >
-          {t("materials.buttons.add")}
-        </SecondaryButton>
       </Stack>
-    </GoMakeModal>
+    </GoMakeDialog>
   );
 };
 

@@ -15,26 +15,31 @@ import {
   materialsTablePageState,
   materialTableFiltersState,
   selectedSupplierIdState,
+  selectedSuppliersIdsState,
+  hasMoreDataState,
+  isLoadingMoreState,
+  totalItemsCountState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
+import { getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
   const { callApi } = useGomakeAxios();
-  const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
+  const [materialCategoryData, setMaterialCategoryData] = useRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
   );
   const setMaterialTableFilters = useSetRecoilState<IMaterialsTableFilter[]>(
     materialTableFiltersState
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
+  const suppliersIds = useRecoilValue(selectedSuppliersIdsState);
 
   const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
@@ -52,6 +57,10 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   );
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
   const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
+  const [hasMoreData, setHasMoreData] = useRecoilState(hasMoreDataState);
+  const [isLoadingMore, setIsLoadingMore] = useRecoilState(isLoadingMoreState);
+  const [totalItemsCount, setTotalItemsCount] = useRecoilState(totalItemsCountState);
+  const loadingRef = useState(() => ({ current: false }))[0];
   const getPrintHouseMaterialCategorySuppliers = async (
     materialType: string,
     materialCategory: string
@@ -94,21 +103,65 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     customFiltersKeyValueList: IMaterialTableFilteringValue[],
     supplierId: string,
     pageNumber?: number,
-    pageSize?: number
+    pageSize?: number,
+    appendMode: boolean = false
   ) => {
-    setIsLoadingMaterials(true);
+    if (appendMode) {
+      setIsLoadingMore(true);
+    } else {
+      setIsLoadingMaterials(true);
+    }
     if (requestAbortController) {
       requestAbortController.abort();
     }
     const newRequestAbortController = new AbortController();
     setRequestAbortController(newRequestAbortController);
     const callBack = (res) => {
-      setIsLoadingMaterials(false);
+      if (appendMode) {
+        setIsLoadingMore(false);
+      } else {
+        setIsLoadingMaterials(false);
+      }
       if (res.success) {
-        setMaterialCategoryData(
-          res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
-        );
-        setPagesCount(Math.ceil(res.data?.result?.totalItems / pageSize));
+        const newData = res.data?.result?.data?.map((row) => {
+          // Add mock data for new columns
+          const newRow = { ...row, checked: false };
+
+          // Handle SKU from API response (top level)
+          if (row.sku !== null && row.sku !== undefined && row.sku !== "") {
+            newRow.rowData.sku = {
+              value: row.sku,
+              isEditable: true,
+              type: 1 // NUMBER
+            };
+          }
+
+          // Handle isActive from API response (top level)
+          if (row.isActive !== null && row.isActive !== undefined) {
+            newRow.rowData.Active = {
+              value: row.isActive,
+              isEditable: true,
+              type: 2 // BOOLEAN
+            };
+          }
+
+          return newRow;
+        });
+
+        if (appendMode) {
+          setMaterialCategoryData([...materialCategoryData, ...newData]);
+        } else {
+          setMaterialCategoryData(newData);
+        }
+
+        const totalItems = res.data?.result?.totalItems || 0;
+        setTotalItemsCount(totalItems);
+        setPagesCount(Math.ceil(totalItems / pageSize));
+
+        // Check if there's more data to load
+        const currentDataLength = appendMode ? materialCategoryData.length + newData.length : newData.length;
+        setHasMoreData(currentDataLength < totalItems);
+
         const filters = res.data?.filters;
         setMaterialTableFilters(filters);
         setInActiveFilter(res.data?.setInActiveFilter);
@@ -120,10 +173,14 @@ const useMaterialsCategories = (isAdmin: boolean) => {
           ).then();
         }
       } else {
-        setMaterialCategoryData([]);
-        setPagesCount(0);
-        setMaterialTableFilters([]);
+        if (!appendMode) {
+          setMaterialCategoryData([]);
+          setPagesCount(0);
+          setMaterialTableFilters([]);
+          setHasMoreData(false);
+        }
         setIsLoadingMaterials(false);
+        setIsLoadingMore(false);
       }
     };
     const convertedCustomFiltersKeyValueList = customFiltersKeyValueList.map(filter => {
@@ -158,10 +215,11 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
       }).catch((e) => { });
     } else {
-      await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+      await getPrintHouseMaterialCategoryDataNewApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId: supplierId === "" ? null : supplierId,
+        supplierId: null,
+        suppliersIds: suppliersIds,
         pageNumber,
         pageSize,
         isActive,
@@ -179,11 +237,47 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   };
 
 
+  const loadMoreData = async (
+    materialType: string,
+    materialCategory: string,
+    customFiltersKeyValueList: IMaterialTableFilteringValue[],
+    supplierId: string,
+    pageSize: number = 20
+  ) => {
+    // Double check to prevent concurrent calls
+    if (isLoadingMore || !hasMoreData || loadingRef.current) return;
+
+    // Set ref immediately to block other calls
+    loadingRef.current = true;
+
+    const nextPage = pageNumber + 1;
+    setPageNumber(nextPage);
+
+    try {
+      await getMaterialCategoryData(
+        materialType,
+        materialCategory,
+        customFiltersKeyValueList,
+        supplierId,
+        nextPage,
+        pageSize,
+        true // appendMode
+      );
+    } finally {
+      // Reset the ref after completion
+      loadingRef.current = false;
+    }
+  };
+
   return {
     getMaterialCategoryData,
+    loadMoreData,
     pagesCount,
     pageNumber,
     setPageNumber,
+    hasMoreData,
+    isLoadingMore,
+    totalItemsCount,
   };
 };
 

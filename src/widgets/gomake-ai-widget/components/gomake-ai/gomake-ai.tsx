@@ -50,6 +50,19 @@ const GoMakeAIComponent = () => {
         messages: [...(prev?.messages || []), message],
       }));
     }
+
+    // // ✅ Update conversation history to reflect latest message
+    // setConversationsHistory((prev) =>
+    //   prev.map((conv) =>
+    //     conv.sessionId === sessionId
+    //       ? {
+    //           ...conv,
+    //           lastMessage: message.message,
+    //           timestamp: message.timestamp,
+    //         }
+    //       : conv
+    //   )
+    // );
   };
 
   const handleProductIdReceived = (productId: string) => {
@@ -122,7 +135,6 @@ const GoMakeAIComponent = () => {
   }, [router.isReady, router.query.token]);
 
   useEffect(() => {
-    debugger;
     if (router.isReady) {
       const hasToken = !!getUserToken();
       if (!hasToken) {
@@ -201,6 +213,9 @@ const GoMakeAIComponent = () => {
     try {
       const newSession = await startSession();
       if (newSession?.sessionId) {
+        // ✅ Refresh conversation history to include the new session
+        await refreshConversationsHistory();
+
         router.replace(
           {
             pathname: router.pathname,

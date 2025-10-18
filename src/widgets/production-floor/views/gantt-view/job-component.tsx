@@ -182,6 +182,9 @@ const JobTooltipComponent = ({
   const { classes } = useStyle();
   const { push } = useRouter();
 
+  const defaultColor = "#6C757D";
+  const safeColor = bgColor || defaultColor;
+
   const handleOpenMission = () => {
     push(
       `/production-floor?boardMissionsId=${boardMissionId}&productType=${
@@ -214,7 +217,7 @@ const JobTooltipComponent = ({
     );
   };
 
-  const statusInfo = getStatusInfo(bgColor);
+  const statusInfo = getStatusInfo(safeColor);
 
   return (
     <Stack
@@ -225,7 +228,7 @@ const JobTooltipComponent = ({
       onClick={handleOpenMission}
       style={{
         borderRadius: "12px",
-        border: `2px solid ${bgColor}`,
+        border: `2px solid ${safeColor}`,
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
         backgroundColor: "#FFFFFF",
         cursor: "pointer",
@@ -245,8 +248,8 @@ const JobTooltipComponent = ({
               width: "16px",
               height: "16px",
               borderRadius: "50%",
-              backgroundColor: bgColor,
-              boxShadow: `0 2px 8px ${toRgba(bgColor, 0.3)}`,
+              backgroundColor: safeColor,
+              boxShadow: `0 2px 8px ${toRgba(safeColor, 0.3)}`,
             }}
           />
           <span
@@ -257,8 +260,8 @@ const JobTooltipComponent = ({
         </Stack>
         <OrderJObNumbersComponent
           boardMission={{ boardMissionNumber: jobNumber, orderNumber }}
-          textColor={bgColor}
-          bgColor={toRgba(bgColor, 0.15)}
+          textColor={safeColor}
+          bgColor={toRgba(safeColor, 0.15)}
         />
       </Stack>
 
@@ -311,13 +314,15 @@ const JobTooltipComponent = ({
         gap="12px"
         sx={{
           padding: "12px",
-          backgroundColor: toRgba(bgColor, 0.05),
+          backgroundColor: toRgba(safeColor, 0.05),
           borderRadius: "8px",
-          border: `1px solid ${toRgba(bgColor, 0.2)}`,
+          border: `1px solid ${toRgba(safeColor, 0.2)}`,
         }}
       >
         <Stack alignItems="center" gap="4px">
-          <span style={{ fontSize: "28px", fontWeight: "700", color: bgColor }}>
+          <span
+            style={{ fontSize: "28px", fontWeight: "700", color: safeColor }}
+          >
             {formattedStartTime}
           </span>
           <span
@@ -331,13 +336,15 @@ const JobTooltipComponent = ({
           style={{
             width: "40px",
             height: "2px",
-            backgroundColor: bgColor,
+            backgroundColor: safeColor,
             borderRadius: "1px",
           }}
         />
 
         <Stack alignItems="center" gap="4px">
-          <span style={{ fontSize: "28px", fontWeight: "700", color: bgColor }}>
+          <span
+            style={{ fontSize: "28px", fontWeight: "700", color: safeColor }}
+          >
             {formattedEndTime}
           </span>
           <span

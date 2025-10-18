@@ -19,6 +19,11 @@ export interface IRowData {
   isAdmin: boolean;
   onChangeRowCheckBox?: any;
   unit?: string;
+  isInventoryTable?: boolean;
+  isPurchasePricingTable?: boolean;
+  rowData?: Record<string, any>;  
+  listClient?: any;
+  checkWhatRenderArrayCustomer?: any;
 }
 
 export interface IDynamicRowData {
@@ -28,6 +33,7 @@ export interface IMaterialsTableFilter {
   key: string;
   values: string[];
   unit?: string;
+  name?: string;
 }
 export interface IMaterialTableFilteringValue {
   key: string;

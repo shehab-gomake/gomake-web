@@ -36,7 +36,7 @@ const useExchangeRate = () => {
       }
     };
     await calculateExchangeRate(callApi, callBack, {
-      fromCurrency,
+      fromCurrency: fromCurrency ? fromCurrency : toCurrency,
       toCurrency,
     });
   };
