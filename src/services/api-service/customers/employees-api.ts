@@ -3,10 +3,10 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 const GET_EMPLOYEE_URL = "/v1/crm-service/employee/get-all-employees";
 const GET_ALL_USERS_URL = "/v1/crm-service/employee/get-all-users";
-
 const CREATE_GUEST_USER_FOR_GOMAKE_AI_URL =
   "/v1/crm-service/employee/create-guest-user-for-gomake-AI";
-
+const VALIDATE_GO_AI_VERIFICATION_CODE_URL =
+  "/v1/crm-service/employee/validate-go-ai-verification-code";
 const GET_EMPLOYEE_BY_ACTION_ID_URL =
   "/v1/crm-service/employee/get-employees-by-action-id";
 const GET_MACHINE_BY_ACTION_ID_URL = "/v1/machine/get-machine-by-action-id";
@@ -81,10 +81,25 @@ const createGuestUserForGomakeAIApi: ICallAndSetData = async (
   );
 };
 
+const validateGoAiVerificationCodeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    VALIDATE_GO_AI_VERIFICATION_CODE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getAndSetEmployees2,
   getEmployeesByActionIdApi,
   getMachineByActionIdNewApi,
   getAllUsersEmployeesApi,
   createGuestUserForGomakeAIApi,
+  validateGoAiVerificationCodeApi,
 };

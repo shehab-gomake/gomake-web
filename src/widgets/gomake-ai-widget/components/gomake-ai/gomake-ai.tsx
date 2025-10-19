@@ -9,7 +9,10 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 import { LandingModal } from "../landing-modal/landing-modal";
 import { getUserToken, updateTokenStorage } from "@/services/storage-data";
 import { useGomakeAxios } from "@/hooks";
-import { createGuestUserForGomakeAIApi } from "@/services/api-service/customers/employees-api";
+import {
+  createGuestUserForGomakeAIApi,
+  validateGoAiVerificationCodeApi,
+} from "@/services/api-service/customers/employees-api";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz"; // ✅ toggle icon
 import MenuIcon from "@mui/icons-material/Menu"; // ✅ hamburger menu
 import { IconButton } from "@mui/material"; // ✅ icon buttons
@@ -38,7 +41,9 @@ const GoMakeAIComponent = () => {
   const [onboardingData, setOnboardingData] = useState<{
     email: string;
     country: string;
+    userId?: string;
   } | null>(null);
+  const [isVerificationStep, setIsVerificationStep] = useState(false);
   const [isFabAnimating, setIsFabAnimating] = useState(true); // ✅ Track FAB animation state
 
   const handleRealTimeMessage = (message: any) => {
@@ -296,7 +301,38 @@ const GoMakeAIComponent = () => {
 
   const handleLandingModalContinue = async (email: string, country: string) => {
     try {
-      setOnboardingData({ email, country });
+      const callBack = (res: any) => {
+        if (res.success) {
+          const {
+            email: returnedEmail,
+            country: returnedCountry,
+            userId,
+          } = res?.data || {};
+
+          // Store the data for verification step
+          setOnboardingData({
+            email: returnedEmail || email,
+            country: returnedCountry || country,
+            userId,
+          });
+
+          // Switch to verification step
+          setIsVerificationStep(true);
+        }
+      };
+
+      await createGuestUserForGomakeAIApi(callApi, callBack, {
+        email,
+        country,
+      });
+    } catch (error) {
+      console.error("Error creating guest user:", error);
+    }
+  };
+
+  const handleVerificationCodeSubmit = async (code: string) => {
+    try {
+      if (!onboardingData) return;
 
       const callBack = (res: any) => {
         if (res.success) {
@@ -307,12 +343,14 @@ const GoMakeAIComponent = () => {
         }
       };
 
-      await createGuestUserForGomakeAIApi(callApi, callBack, {
-        email,
-        country,
+      await validateGoAiVerificationCodeApi(callApi, callBack, {
+        email: onboardingData.email,
+        country: onboardingData.country,
+        userId: onboardingData.userId,
+        code,
       });
     } catch (error) {
-      console.error("Error creating guest user:", error);
+      console.error("Error validating verification code:", error);
     }
   };
 
@@ -497,6 +535,9 @@ const GoMakeAIComponent = () => {
         open={showLandingModal}
         onClose={handleLandingModalClose}
         onContinue={handleLandingModalContinue}
+        isVerificationStep={isVerificationStep}
+        onVerifyCode={handleVerificationCodeSubmit}
+        userEmail={onboardingData?.email}
       />
     </div>
   );
