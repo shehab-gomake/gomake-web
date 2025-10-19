@@ -210,12 +210,12 @@ const rowInputs = (
           else
             return {
               name: header?.key,
-              label: newMaterialHeaders ? null : header?.value,
+              label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
               type:
                 EDataTypeEnum[header?.inputType] == "BOOLEAN"
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
-              placeholder: header?.value,
+              placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
               required: header?.isRequired,
               parameterKey: header?.key,
               options: [],
