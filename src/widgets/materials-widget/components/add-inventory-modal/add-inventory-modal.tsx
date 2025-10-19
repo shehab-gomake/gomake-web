@@ -87,7 +87,7 @@ const AddInventoryModal = ({
                     </div>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${convertedInventoryUnit.value})` : ''}`}
+                            {`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${convertedInventoryUnit?.value?.toLowerCase()})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -106,7 +106,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -140,7 +140,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
