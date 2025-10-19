@@ -76,7 +76,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `(${convertedPurchasePricingUnit?.value?.split('/')[0]})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPurchasePricingUnit ? `(${convertedPurchasePricingUnit?.value?.split('/')[0]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -110,7 +110,7 @@ const AddPurchasePricingModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${convertedPurchasePricingInventoryUnit.value})` : ''}`}
+                            {`${t("materials.childTable.quantityInPackage")} ${convertedPurchasePricingInventoryUnit ? `(${convertedPurchasePricingInventoryUnit.value?.toLowerCase()})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput

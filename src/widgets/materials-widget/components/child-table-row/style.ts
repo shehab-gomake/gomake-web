@@ -119,7 +119,7 @@ const useStyle = () => {
         backgroundColor: '#EBECFF',
          width: 'fit-content',
         minWidth: 'fit-content',
-        textTransform: 'lowercase',
+        textTransform: 'capitalize' as 'capitalize',
       },
       headerCellUnitText:{
         ...FONT_FAMILY.Inter(700, 12),
@@ -127,7 +127,7 @@ const useStyle = () => {
         
       },
       headerCellPriceUnitText:{
-        // textTransform: 'capitalize' as 'capitalize',
+        textTransform: 'capitalize' as 'capitalize',
 
       },
       headerCellText:{
