@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useEffect, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import {
   FrontDeskRoute,
   NavigationOptions,
@@ -26,18 +26,32 @@ export const useFrontDeskRouter = () => {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Parse current route from URL
+  // Cache previous query and result to prevent unnecessary re-parses
+  const cacheRef = useRef<{
+    queryString: string;
+    result: { route: FrontDeskRoute; queryParams: any };
+  } | null>(null);
+
+  // Parse current route from URL with caching
   const parsed = useMemo(() => {
     if (!router.isReady) {
-      console.log('[FrontDesk Router] Router not ready, using default inbox route');
       return {
         route: RouteBuilder.inbox(),
         queryParams: {},
       };
     }
-    console.log('[FrontDesk Router] Parsing route from query:', router.query);
+
+    // Serialize query to detect actual changes
+    const queryString = JSON.stringify(router.query);
+
+    // Return cached result if query hasn't changed
+    if (cacheRef.current && queryString === cacheRef.current.queryString) {
+      return cacheRef.current.result;
+    }
+
+    // Parse and cache new result
     const result = parseRoute(router.query);
-    console.log('[FrontDesk Router] Parsed route:', result);
+    cacheRef.current = { queryString, result };
     return result;
   }, [router.query, router.isReady]);
 
@@ -58,26 +72,15 @@ export const useFrontDeskRouter = () => {
     (route: FrontDeskRoute, options: NavigationOptions = {}) => {
       const built = buildRoute(route, options);
 
-      // Debug logging
-      console.log('[FrontDesk Router] Navigate called:', {
-        route,
-        builtPath: built.path,
-        options: built.options,
-        newTab: options.newTab
-      });
-
       if (options.newTab) {
-        console.log('[FrontDesk Router] Opening in new tab:', built.path);
         window.open(built.path, '_blank');
         return;
       }
 
       try {
         if (options.replace) {
-          console.log('[FrontDesk Router] Replacing route:', built.path);
           router.replace(built.path, undefined, { scroll: options.scroll });
         } else {
-          console.log('[FrontDesk Router] Pushing route:', built.path);
           router.push(built.path, undefined, { scroll: options.scroll });
         }
       } catch (error) {

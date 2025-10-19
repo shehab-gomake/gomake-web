@@ -266,29 +266,18 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
  * - /frontdesk/inbox?view=email&conversation=456 → Deep link from notification
  */
 export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
-  console.log("[FrontDesk Router Parser] Input query:", query);
-
   const frontdeskRoute = normalizeParam(query.frontdeskRoute);
   const provider = normalizeParam(query.provider);
   const queryParams = parseQueryParams(query);
 
-  console.log("[FrontDesk Router Parser] Normalized params:", {
-    frontdeskRoute,
-    provider,
-    queryParams,
-  });
-
   // Parse base route from frontdeskRoute segment
   let route = parseFrontDeskRoute(frontdeskRoute);
-  console.log("[FrontDesk Router Parser] Base route:", route);
 
   // Parse provider segment if present
   route = parseProvider(provider, route);
-  console.log("[FrontDesk Router Parser] After provider parse:", route);
 
   // Apply query parameter overrides (from notifications)
   const finalRoute = applyQueryParamOverrides(route, queryParams);
-  console.log("[FrontDesk Router Parser] Final route:", finalRoute);
 
   return {
     route: finalRoute,

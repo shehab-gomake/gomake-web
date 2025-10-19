@@ -7,6 +7,8 @@ export { messagingService, MessagingService } from './messaging-socket.service';
 export { ticketSocketService } from './ticket-socket.service';
 export { directMessagesWebSocketService, DirectMessagesWebSocketService } from './direct-messages-websocket.service';
 export { notificationsWebSocketService, NotificationsWebSocketService } from './notifications-websocket.service';
+export { emailWebSocketService } from './email-websocket.service';
+export type { EmailSocketEvent } from './email-websocket.service';
 
 // Re-export types for convenience
 export type {

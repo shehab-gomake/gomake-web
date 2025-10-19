@@ -8,6 +8,7 @@ import {
 } from "../store/email-store";
 import { emailApiClient } from "../utils/email-api-client";
 import { EmailConversation } from "../types/email.types";
+import { emailWebSocketService } from "@/services/frontdesk/websocket/email-websocket.service";
 
 interface UseEmailConversationsOptions {
   query?: string;
@@ -172,6 +173,99 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccountId, options.query]);
+
+  // Real-time email updates via WebSocket
+  useEffect(() => {
+    if (!selectedAccountId) return;
+
+    // Initialize WebSocket if not already done
+    if (!emailWebSocketService.isInitialized()) {
+      emailWebSocketService.initialize();
+    }
+
+    // Subscribe to email events
+    const unsubscribe = emailWebSocketService.subscribe((event) => {
+      // Only process events for the currently selected account
+      if (event.accountId !== selectedAccountId) return;
+
+      console.log('[Email Conversations] WebSocket event:', event.type, event.data);
+
+      switch (event.type) {
+        case 'NEW_EMAIL':
+          handleNewEmail(event.data);
+          break;
+        case 'EMAIL_UPDATED':
+          handleEmailUpdated(event.data);
+          break;
+        case 'EMAIL_READ':
+          handleEmailRead(event.data);
+          break;
+        case 'EMAIL_DELETED':
+          handleEmailDeleted(event.data);
+          break;
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAccountId]);
+
+  // Handler for new email
+  const handleNewEmail = useCallback((newConversation: EmailConversation) => {
+    setConversations((prev) => {
+      // Check for duplicates
+      const exists = prev.some((conv) => conv.id === newConversation.id);
+      if (exists) {
+        console.log('[Email Conversations] Duplicate email, skipping:', newConversation.id);
+        return prev;
+      }
+
+      // Add to the top (most recent first)
+      console.log('[Email Conversations] Adding new email:', newConversation.subject);
+      return [newConversation, ...prev];
+    });
+  }, []);
+
+  // Handler for email updated
+  const handleEmailUpdated = useCallback((updatedConversation: EmailConversation) => {
+    setConversations((prev) => {
+      const exists = prev.some((conv) => conv.id === updatedConversation.id);
+
+      if (!exists) {
+        // New conversation, add it
+        return [updatedConversation, ...prev];
+      }
+
+      // Update existing conversation
+      return prev
+        .map((conv) =>
+          conv.id === updatedConversation.id
+            ? { ...conv, ...updatedConversation }
+            : conv
+        )
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    });
+  }, []);
+
+  // Handler for email read
+  const handleEmailRead = useCallback((conversation: EmailConversation) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === conversation.id
+          ? { ...conv, isRead: true, unreadCount: 0 }
+          : conv
+      )
+    );
+  }, []);
+
+  // Handler for email deleted
+  const handleEmailDeleted = useCallback((conversation: EmailConversation) => {
+    setConversations((prev) =>
+      prev.filter((conv) => conv.id !== conversation.id)
+    );
+  }, []);
 
   return {
     conversations,

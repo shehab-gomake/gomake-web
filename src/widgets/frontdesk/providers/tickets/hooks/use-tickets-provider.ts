@@ -211,19 +211,15 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   useEffect(() => {
     const token = getUserToken();
     if (!token) {
-      console.warn("[TicketsProvider] No auth token, skipping WebSocket connection");
       setSocketError("No authentication token available");
       setSocketConnected(false);
       return;
     }
 
-    console.log("[TicketsProvider] Connecting WebSocket (backend extracts printHouseId from token)");
-
     const connectSocket = async () => {
       try {
         // Backend extracts printHouseId from JWT token automatically
         await ticketSocketService.connect(token);
-        console.log("[TicketsProvider] WebSocket connected successfully");
         setSocketConnected(true);
         setSocketError(null);
       } catch (error: any) {
@@ -236,7 +232,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     connectSocket();
 
     return () => {
-      console.log("[TicketsProvider] Disconnecting WebSocket");
       ticketSocketService.disconnect();
       setSocketConnected(false);
       eventHandlersSetupRef.current = false;
@@ -253,45 +248,31 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       return;
     }
 
-    console.log("[TicketsProvider] Setting up WebSocket event handlers");
     eventHandlersSetupRef.current = true;
 
     // 1. ticket.created - Inject ticket into list
     ticketSocketService.onTicketCreated((payload) => {
-      console.log("[TicketsProvider] New ticket created:", payload.ticket.ticketNumber);
       setTickets((prev) => [payload.ticket, ...prev]);
     });
 
     // 2. ticket.updated - Primary update handler for all field changes
     ticketSocketService.onTicketUpdated((payload) => {
-      console.log("[TicketsProvider] Ticket updated:", payload.ticketId);
-      console.log("[TicketsProvider] Changes made:", payload.changes.map(c => c.action).join(", "));
-
       // Update ticket in state with full details
       setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
-
-      // Optional: Show toast notification for significant changes
-      // For now, we'll just log the changes
-      payload.changes.forEach((change) => {
-        console.log(`  - ${change.comment}`);
-      });
     });
 
     // 3. ticket.assigned - Update assignee (fallback - also covered by ticket.updated)
     ticketSocketService.onTicketAssigned((payload) => {
-      console.log("[TicketsProvider] Ticket assigned:", payload.ticketId);
       setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
     });
 
     // 3. ticket.status.changed - Update status
     ticketSocketService.onTicketStatusChanged((payload) => {
-      console.log("[TicketsProvider] Status changed:", payload.ticketId, payload.newStatus);
       setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
     });
 
     // 4. ticket.reply.sent - Mark message as sent
     ticketSocketService.onTicketReplySent((payload) => {
-      console.log("[TicketsProvider] Reply sent:", payload.messageId);
       // Refresh ticket to get new message
       if (selectedTicketId === payload.ticketId) {
         fetchTicketById(payload.ticketId);
@@ -300,13 +281,11 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 5. ticket.reopened - Update status and show banner
     ticketSocketService.onTicketReopened((payload) => {
-      console.log("[TicketsProvider] Ticket reopened:", payload.ticketId);
       setTickets((prev) => prev.map((t) => (t.id === payload.ticketId ? payload.ticket : t)));
     });
 
     // 6. ticket.merged - Remove source ticket
     ticketSocketService.onTicketMerged((payload) => {
-      console.log("[TicketsProvider] Tickets merged:", payload.sourceTicketId, "->", payload.targetTicketId);
       setTickets((prev) => prev.filter((t) => t.id !== payload.sourceTicketId));
 
       // Refresh target ticket if it's selected
@@ -316,15 +295,13 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     });
 
     // 7. tickets.bulkAssigned - Batch update
-    ticketSocketService.onTicketsBulkAssigned((payload) => {
-      console.log("[TicketsProvider] Bulk assigned:", payload.ticketIds.length, "tickets");
+    ticketSocketService.onTicketsBulkAssigned(() => {
       // Refresh tickets list
       refreshTickets();
     });
 
     // 8. ticket.message.received - Append inbound message
     ticketSocketService.onTicketMessageReceived((payload) => {
-      console.log("[TicketsProvider] Inbound message:", payload.channel, payload.identifier);
 
       // Refresh ticket to show new message (if currently selected)
       if (selectedTicketId === payload.ticketId) {
@@ -365,13 +342,10 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
       // Increment unread count
       setUnreadTicketsCount((prev) => prev + 1);
-
-      console.log("[TicketsProvider] Marked ticket as unread after new message:", payload.ticketId);
     });
 
     // 9. ticket.customer.updated - Refresh customer info
     ticketSocketService.onTicketCustomerUpdated((payload) => {
-      console.log("[TicketsProvider] Customer updated:", payload.customerId);
       setTickets((prev) =>
         prev.map((t) => {
           if (t.id === payload.ticketId) {
@@ -390,7 +364,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 10. sla.breached - Show warning
     ticketSocketService.onSLABreached((payload) => {
-      console.warn("[TicketsProvider] SLA breached:", payload.ticketId, payload.type);
       // Update SLA in ticket
       setTickets((prev) =>
         prev.map((t) => {
@@ -410,14 +383,12 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     });
 
     // 11. ticket.autoResponse - Show indicator
-    ticketSocketService.onTicketAutoResponse((payload) => {
-      console.log("[TicketsProvider] Auto-response sent:", payload.ticketId);
+    ticketSocketService.onTicketAutoResponse(() => {
       // Could show a toast notification
     });
 
     // 12. webhook.message.processed - Admin notifications
     ticketSocketService.onWebhookMessageProcessed((payload) => {
-      console.log("[TicketsProvider] Webhook processed:", payload.webhookType, payload.status);
       if (payload.status === "error") {
         console.error("[TicketsProvider] Webhook error:", payload.error);
       }
@@ -425,7 +396,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 13. message.delivered - Update message delivery status
     ticketSocketService.onMessageDelivered((payload) => {
-      console.log("[TicketsProvider] Message delivered:", payload.messageId, payload.status);
 
       // Update message status in ticket
       if (selectedTicketId === payload.ticketId) {
@@ -499,26 +469,18 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 15. conversation.needs.review - Add to review queue
     ticketSocketService.onConversationNeedsReview((payload) => {
-      console.log("[TicketsProvider] Conversation needs review:", payload.identifier, payload.channel);
-
       // Add to review queue (prepend to show newest first)
       setReviewQueueConversations((prev) => [payload, ...prev]);
-
-      // TODO: Show notification
-      // toast.info(`New ${payload.channel} message from ${payload.identifier}`);
     });
 
     // 16. ticket.tags.added - Fetch updated ticket to get tags
     ticketSocketService.onTicketTagsAdded((payload) => {
-      console.log("[TicketsProvider] Tags added to ticket:", payload.ticketId, payload.tagIds);
-
       // Fetch updated ticket to get full tag objects
       fetchTicketById(payload.ticketId);
     });
 
     // 17. ticket.tag.removed - Remove tag from ticket
     ticketSocketService.onTicketTagRemoved((payload) => {
-      console.log("[TicketsProvider] Tag removed from ticket:", payload.ticketId, payload.tagId);
 
       // Remove tag from ticket in state
       setTickets((prev) =>
@@ -536,8 +498,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 18. tag.created - Add new tag to global tags list
     ticketSocketService.onTagCreated((payload) => {
-      console.log("[TicketsProvider] New tag created:", payload.tag.name);
-
       // Add to global tags list
       setTags((prev) => {
         // Avoid duplicates
@@ -558,8 +518,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 19. tag.deleted - Remove tag from global list and all tickets
     ticketSocketService.onTagDeleted((payload) => {
-      console.log("[TicketsProvider] Tag deleted:", payload.tagId);
-
       // Remove from global tags list
       setTags((prev) => prev.filter((t) => t.id !== payload.tagId));
 
@@ -578,11 +536,8 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       );
     });
 
-    console.log("[TicketsProvider] All 19 WebSocket event handlers registered");
-
     // Cleanup function
     return () => {
-      console.log("[TicketsProvider] Cleaning up WebSocket event handlers");
       // Note: ticketSocketService handles cleanup internally
     };
   }, [selectedTicketId, setTickets, setTags, setPopularTags, setTagSuggestions, setReviewQueueConversations]);
@@ -597,18 +552,11 @@ export function useTicketsProvider(): UseTicketsProviderResult {
       setError(null);
 
       try {
-        console.log("[TicketsProvider] Fetching tickets with filters:", customFilters || filters);
         const response = await ticketsService.listTickets(customFilters || filters);
-        console.log("[TicketsProvider] Tickets fetched successfully:", response?.tickets?.length || 0, "tickets");
         setTickets(response?.tickets || []);
         setPagination(response?.pagination || null);
       } catch (err: any) {
         console.error("[TicketsProvider] Fetch tickets error:", err);
-        console.error("[TicketsProvider] Error details:", {
-          message: err.message,
-          response: err.response?.data,
-          status: err.response?.status,
-        });
         setError(err.response?.data?.message || err.message || "Failed to fetch tickets");
       } finally {
         setIsLoading(false);
@@ -624,21 +572,11 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const fetchTicketById = useCallback(
     async (ticketId: string) => {
       try {
-        console.log("[TicketsProvider] Fetching ticket by ID:", ticketId);
         const ticket = await ticketsService.getTicketById(ticketId);
-        console.log("[TicketsProvider] Ticket fetched successfully:", {
-          id: ticket.id,
-          ticketNumber: ticket.ticketNumber,
-          hasConversations: !!ticket.conversations && ticket.conversations.length > 0,
-          conversationsCount: ticket.conversations?.length || 0,
-          totalMessagesCount: ticket.conversations?.reduce((sum, conv) => sum + (conv.messages?.length || 0), 0) || 0,
-          hasTags: Array.isArray(ticket.tags),
-          tagsCount: ticket.tags?.length || 0,
-        });
 
         // Validate ticket structure - Support multi-conversation tickets
         if (!ticket.conversations || ticket.conversations.length === 0) {
-          console.error("[TicketsProvider] ⚠️ Ticket missing conversations array:", ticket.id);
+          console.error("[TicketsProvider] Ticket missing conversations array:", ticket.id);
           setError(`Ticket #${ticket.ticketNumber} is missing conversation data`);
           return;
         }
@@ -648,7 +586,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
           conv => Array.isArray(conv.messages)
         );
         if (!hasValidMessages) {
-          console.error("[TicketsProvider] ⚠️ Ticket conversations have invalid messages:", ticket.id);
+          console.error("[TicketsProvider] Ticket conversations have invalid messages:", ticket.id);
           setError(`Ticket #${ticket.ticketNumber} has invalid messages data`);
           return;
         }
@@ -671,30 +609,18 @@ export function useTicketsProvider(): UseTicketsProviderResult {
             ...prev,
             [ticketId]: ticket.viewStatus!,
           }));
-          console.log("[TicketsProvider] Synced viewStatus from backend:", {
-            ticketId,
-            hasUnread: ticket.viewStatus.hasUnread,
-            lastViewedAt: ticket.viewStatus.lastViewedAt,
-          });
         }
 
         // Extract and set related data if included in response
         if (ticket.relatedTickets) {
-          console.log("[TicketsProvider] Related tickets included in response:", ticket.relatedTickets.length);
           setRelatedTickets(ticket.relatedTickets);
         }
 
         if (ticket.history) {
-          console.log("[TicketsProvider] History included in response:", ticket.history.length);
           setTicketHistory(ticket.history);
         }
       } catch (err: any) {
         console.error("[TicketsProvider] Fetch ticket by ID error:", err);
-        console.error("[TicketsProvider] Error details:", {
-          message: err.message,
-          response: err.response?.data,
-          status: err.response?.status,
-        });
         setError(err.response?.data?.message || err.message || `Failed to load ticket ${ticketId}`);
       }
     },
@@ -732,13 +658,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const replyToTicket = useCallback(
     async (ticketId: string, content: string, conversationId: string) => {
       try {
-        console.log("[TicketsProvider] Sending reply:", {
-          ticketId,
-          conversationId,
-          contentLength: content.length,
-        });
         await ticketsService.replyToTicket(ticketId, content, conversationId);
-        console.log("[TicketsProvider] Reply sent successfully to conversation:", conversationId);
         // Message will be updated via WebSocket event
       } catch (err: any) {
         console.error("[TicketsProvider] Reply error:", err);
@@ -757,13 +677,8 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   const updateTicket = useCallback(
     async (ticketId: string, updates: UpdateTicketDto) => {
       try {
-        console.log("[TicketsProvider] Updating ticket:", ticketId, updates);
-
         // Send to backend
-        const response = await ticketsService.updateTicket(ticketId, updates);
-        console.log("[TicketsProvider] Ticket updated successfully");
-        console.log("[TicketsProvider] Changes:", response.changes.map((c) => c.comment).join(", "));
-
+        await ticketsService.updateTicket(ticketId, updates);
         // WebSocket will send ticket.updated event with full ticket details
         // The WebSocket handler will update the state with complete data
       } catch (err: any) {
@@ -803,7 +718,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     async (ticketId: string, assigneeId: string) => {
       try {
         await ticketsService.assignTicket(ticketId, assigneeId);
-        console.log("[TicketsProvider] Ticket assigned successfully");
         // Assignment will be updated via WebSocket event
       } catch (err: any) {
         console.error("[TicketsProvider] Assign ticket error:", err);
@@ -818,7 +732,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     async (ticketIds: string[], assigneeId: string) => {
       try {
         await ticketsService.bulkAssignTickets({ ticketIds, assigneeId });
-        console.log("[TicketsProvider] Tickets bulk assigned successfully");
         // Updates will come via WebSocket event
         clearSelection();
       } catch (err: any) {
@@ -834,7 +747,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     async (ticketId: string) => {
       try {
         await ticketsService.reopenTicket(ticketId);
-        console.log("[TicketsProvider] Ticket reopened successfully");
         // Update will come via WebSocket event
       } catch (err: any) {
         console.error("[TicketsProvider] Reopen ticket error:", err);
@@ -849,7 +761,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     async (sourceId: string, targetId: string) => {
       try {
         await ticketsService.mergeTickets(sourceId, targetId);
-        console.log("[TicketsProvider] Tickets merged successfully");
         // Merge will be handled via WebSocket event
       } catch (err: any) {
         console.error("[TicketsProvider] Merge tickets error:", err);
@@ -1026,8 +937,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
             return t;
           })
         );
-
-        console.log("[TicketsProvider] Tags added successfully:", addedTags);
       } catch (err: any) {
         console.error("[TicketsProvider] Add tags error:", err);
         throw err;
@@ -1053,8 +962,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
             return t;
           })
         );
-
-        console.log("[TicketsProvider] Tag removed successfully");
       } catch (err: any) {
         console.error("[TicketsProvider] Remove tag error:", err);
         throw err;
@@ -1079,7 +986,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
           ...prev,
           [ticketId]: viewStatus,
         }));
-        console.log("[TicketsProvider] View status fetched:", ticketId, viewStatus);
       } catch (err: any) {
         console.error("[TicketsProvider] Fetch view status error:", err);
       }
@@ -1125,8 +1031,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
         // Decrement unread count
         setUnreadTicketsCount((prev) => Math.max(0, prev - 1));
-
-        console.log("[TicketsProvider] Ticket marked as read:", ticketId);
       } catch (err: any) {
         console.error("[TicketsProvider] Mark as read error:", err);
       }
@@ -1141,7 +1045,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     try {
       const response = await ticketsService.getUnreadTicketsCount();
       setUnreadTicketsCount(response.count);
-      console.log("[TicketsProvider] Unread count fetched:", response.count);
     } catch (err: any) {
       console.error("[TicketsProvider] Fetch unread count error:", err);
     }
@@ -1183,10 +1086,14 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // Auto-fetch on mount only
   // ============================================
 
+  const initialFetchRef = useRef(false);
+
   useEffect(() => {
-    console.log("[TicketsProvider] Initial fetch on mount");
-    fetchTickets();
-    fetchUnreadCount(); // Initialize unread count badge
+    if (!initialFetchRef.current) {
+      initialFetchRef.current = true;
+      fetchTickets();
+      fetchUnreadCount(); // Initialize unread count badge
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only fetch on mount - user must click "Apply Filters" to refetch
 
@@ -1194,14 +1101,28 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // Debounced Search Effect
   // ============================================
 
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const previousSearchRef = useRef<string>('');
+
   useEffect(() => {
+    // Clear any pending search timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
     // Validate search query
     const trimmedSearch = searchQuery.trim();
+
+    // Skip if search hasn't changed
+    if (trimmedSearch === previousSearchRef.current) {
+      return;
+    }
 
     // Skip if empty
     if (!trimmedSearch) {
       // If search was cleared, refetch without search param
-      if (filters.search) {
+      if (filters.search && previousSearchRef.current) {
+        previousSearchRef.current = '';
         const { search, ...filtersWithoutSearch } = filters;
         fetchTickets({ ...filtersWithoutSearch, page: 1 });
       }
@@ -1221,13 +1142,15 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     }
 
     // Debounce search - wait 500ms after user stops typing
-    const timeoutId = setTimeout(() => {
-      console.log("[TicketsProvider] Executing debounced search:", trimmedSearch);
+    searchTimeoutRef.current = setTimeout(() => {
+      previousSearchRef.current = trimmedSearch;
       fetchTickets({ ...filters, search: trimmedSearch, page: 1 });
     }, 500);
 
     return () => {
-      clearTimeout(timeoutId);
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]); // Only depend on searchQuery - filters handled separately
@@ -1236,8 +1159,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // Backend automatically marks ticket as viewed AND returns updated viewStatus
   useEffect(() => {
     if (selectedTicketId) {
-      console.log("[TicketsProvider] Ticket selected, fetching details:", selectedTicketId);
-
       // Fetch full ticket details - backend includes relatedTickets and history
       // Backend GET /tickets/:id automatically marks as viewed AND returns updated viewStatus
       // This optimizes from 3 API calls down to 1 call (no need for separate PATCH /mark-read)
