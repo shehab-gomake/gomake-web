@@ -101,6 +101,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const convertedPurchasePricingUnit = purchasePricingTableHeadingUnits.pricingUnit;
     const convertedPurchasePricingInventoryUnit = purchasePricingTableHeadingUnits.inventoryUnit;
 
+    console.log("convertedInventoryUnit", convertedInventoryUnit);
+
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
