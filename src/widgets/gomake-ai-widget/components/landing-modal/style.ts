@@ -19,7 +19,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "8px",
-        marginBottom: "24px",
+        marginBottom: "16px",
       },
       modalTitle: {
         ...FONT_FAMILY.Lexend(700, 28),
@@ -28,6 +28,10 @@ const useStyle = () => {
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         backgroundClip: "text",
+      },
+      modalTitle2: {
+        ...FONT_FAMILY.Lexend(700, 28),
+        color: "#000",
       },
       modalSubtitle: {
         ...FONT_FAMILY.Heebo(400, 15),
@@ -70,6 +74,22 @@ const useStyle = () => {
         width: "100%",
         height: 52,
         borderRadius: "8px",
+      },
+      verificationIconContainer: {
+        display: "flex",
+        justifyContent: "center",
+        marginBottom: "12px",
+      },
+      verificationIcon: {
+        width: "50px",
+        height: "50px",
+        borderRadius: "50%",
+        //   background: "linear-gradient(135deg, #9333ea 0%, #c084fc 100%)",
+        background:
+          "linear-gradient(135deg, rgb(237, 2, 140) 0%, rgb(147, 51, 234) 100%)",
+        display: "flex",
+        alignItems: "center" as "center",
+        justifyContent: "center",
       },
     };
   }, [primaryColor, secondColor]);
