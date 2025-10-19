@@ -50,12 +50,18 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   // to prevent XSS attacks. See: src/widgets/frontdesk/utils/html-sanitizer.ts
   const content = smartFormatContent(message.content, message.html);
 
+  // Only highlight outbound messages for email variant
+  // For tickets, don't highlight to avoid confusion between:
+  // - INBOUND email you received (ticket created from it)
+  // - OUTBOUND reply you sent
+  const shouldHighlight = variant === "email" && isOwn;
+
   return (
     <Box
       sx={{
         p: 2,
         borderBottom: isLast ? "none" : `1px solid ${neutralColor(200)}`,
-        backgroundColor: isOwn ? alpha(primaryColor(50), 0.3) : "transparent",
+        backgroundColor: shouldHighlight ? alpha(primaryColor(50), 0.3) : "transparent",
       }}
     >
       <Stack spacing={2}>
@@ -71,7 +77,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                   variant="body1"
                   sx={{
                     fontWeight: 600,
-                    color: isOwn ? primaryColor(700) : neutralColor(800),
+                    color: shouldHighlight ? primaryColor(700) : neutralColor(800),
                   }}
                 >
                   {message.author.name}

@@ -543,7 +543,7 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
                 <SystemEventMessage
                   type="ticket.created"
                   timestamp={ticket.createdAt}
-                  actor={{ name: ticket.customerName || ticket.customerEmail || 'Customer' }}
+                  actor={{ name: ticket.creator?.name || 'System' }}
                 />
 
                 {/* Render messages from ACTIVE conversation only */}
