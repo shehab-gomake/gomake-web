@@ -144,6 +144,36 @@ export const useFrontDeskRouter = () => {
   );
 
   /**
+   * Navigate to a specific email conversation
+   */
+  const goToEmailConversation = useCallback(
+    (conversationId: string) => {
+      navigate(RouteBuilder.email(conversationId));
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to a specific DM conversation
+   */
+  const goToDMConversation = useCallback(
+    (conversationId: string) => {
+      navigate(RouteBuilder.internal(conversationId));
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to a specific WhatsApp conversation
+   */
+  const goToWhatsAppConversation = useCallback(
+    (conversationId: string) => {
+      navigate(RouteBuilder.whatsapp(conversationId));
+    },
+    [navigate]
+  );
+
+  /**
    * Get route metadata for display
    */
   const metadata = useMemo(() => getRouteMetadata(currentRoute), [currentRoute]);
@@ -209,6 +239,11 @@ export const useFrontDeskRouter = () => {
     goToTicketList,
     goToTicket,
     goToSection,
+
+    // Conversation-specific navigation methods
+    goToEmailConversation,
+    goToDMConversation,
+    goToWhatsAppConversation,
 
     // Legacy handlers (for backward compatibility)
     handleSectionChange,

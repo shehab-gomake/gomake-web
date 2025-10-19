@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useEmailAccounts } from "./use-email-accounts";
 import { useEmailAuth } from "./use-email-auth";
@@ -9,9 +9,11 @@ import { useEmailComposer } from "./use-email-composer";
 import { useProviders } from "./use-providers";
 import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
 import { useTicketFormModal } from "../../tickets/hooks/use-ticket-form-modal";
+import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
 
 export const useEmailProvider = () => {
   const router = useRouter();
+  const { queryParams, isInitialized } = useFrontDeskRouter();
 
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -91,6 +93,37 @@ export const useEmailProvider = () => {
     },
     [emailAccounts.selectAccount]
   );
+
+  // Sync URL conversation parameter with email conversation selection
+  useEffect(() => {
+    if (!isInitialized || !queryParams.conversation) return;
+
+    const urlConversationId = queryParams.conversation;
+    const currentlySelected = conversationManager.selectedConversation?.id;
+
+    // If URL has a conversation ID and it's different from current selection
+    if (urlConversationId && urlConversationId !== currentlySelected) {
+      console.log('[Email Provider] URL changed, selecting conversation:', urlConversationId);
+
+      // Find the conversation in our list
+      const conversation = emailConversations.conversations.find(
+        (conv) => conv.id === urlConversationId
+      );
+
+      if (conversation) {
+        conversationManager.handleConversationSelect(conversation);
+      } else {
+        console.warn('[Email Provider] Conversation not found in list:', urlConversationId);
+        // TODO: Could fetch specific conversation by ID if needed
+      }
+    }
+  }, [
+    isInitialized,
+    queryParams.conversation,
+    conversationManager.selectedConversation?.id,
+    conversationManager.handleConversationSelect,
+    emailConversations.conversations,
+  ]);
 
   // State to store provider ID and conversation ID for modal
   const [pendingTicketData, setPendingTicketData] = useState<{ providerId: string; conversationId: string } | null>(null);

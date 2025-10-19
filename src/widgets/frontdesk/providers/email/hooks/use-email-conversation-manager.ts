@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { EmailConversation, EmailDraft } from "../types/email.types";
 import { emailApiClient } from "../utils/email-api-client";
 import { safeDecodeHtml } from "../utils/html-decode";
+import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
 
 interface UseEmailConversationManagerProps {
   selectedAccountId?: string;
@@ -10,14 +11,19 @@ interface UseEmailConversationManagerProps {
 
 export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: UseEmailConversationManagerProps) => {
   const [selectedConversation, setSelectedConversation] = useState<EmailConversation | null>(null);
+  const { goToEmailConversation, navigate, RouteBuilder } = useFrontDeskRouter();
 
   const handleConversationSelect = useCallback((conversation: EmailConversation) => {
     setSelectedConversation(conversation);
-  }, []);
+    // Update URL to reflect conversation selection
+    goToEmailConversation(conversation.id);
+  }, [goToEmailConversation]);
 
   const handleBack = useCallback(() => {
     setSelectedConversation(null);
-  }, []);
+    // Navigate back to email list (no conversation selected)
+    navigate(RouteBuilder.email());
+  }, [navigate, RouteBuilder]);
 
   const handleReply = useCallback(
     async (conversation: EmailConversation) => {

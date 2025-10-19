@@ -16,6 +16,8 @@ import {
   notificationsWebSocketService,
 } from '@/services/frontdesk';
 import { snackbarState } from '@/store/snackbar';
+import { useFrontDeskRouter } from '@/widgets/frontdesk/routing/hooks/use-frontdesk-router';
+import { TicketView } from '@/widgets/frontdesk/routing/types';
 
 /**
  * Hook for managing FrontDesk notifications
@@ -23,6 +25,12 @@ import { snackbarState } from '@/store/snackbar';
  */
 export const useFrontdeskNotifications = () => {
   const router = useRouter();
+  const {
+    goToTicket,
+    goToEmailConversation,
+    goToDMConversation,
+    RouteBuilder
+  } = useFrontDeskRouter();
 
   // State
   const [notifications, setNotifications] = useRecoilState(frontdeskNotificationsAtom);
@@ -169,7 +177,7 @@ export const useFrontdeskNotifications = () => {
   }, [setNotifications]);
 
   /**
-   * Handle notification click - mark as read and navigate
+   * Handle notification click - mark as read and navigate using RouteBuilder
    */
   const handleNotificationClick = useCallback(
     async (notification: BackendNotification) => {
@@ -179,19 +187,19 @@ export const useFrontdeskNotifications = () => {
           await markAsRead(notification.id);
         }
 
-        // Navigate based on entity type
+        // Navigate based on entity type using modern RouteBuilder
         if (notification.entityType === 'ticket' && notification.entityId) {
-          // Navigate to specific ticket
-          router.push(`/frontdesk/inbox?view=my-tickets&ticket=${notification.entityId}`);
+          // Navigate to specific ticket (default to MY_TICKETS view)
+          goToTicket(notification.entityId, TicketView.MY_TICKETS);
         } else if (notification.entityType === 'email' && notification.entityId) {
-          // Navigate to email provider view
-          router.push(`/frontdesk/inbox?view=email&emailId=${notification.entityId}`);
+          // Navigate to email conversation
+          goToEmailConversation(notification.entityId);
         } else if (notification.entityType === 'conversation' && notification.entityId) {
-          // Navigate to specific conversation
-          router.push(`/frontdesk/inbox?view=internal&conversation=${notification.entityId}`);
+          // Navigate to DM conversation
+          goToDMConversation(notification.entityId);
         } else if (notification.entityType === 'message' && notification.entityId) {
-          // Navigate to message's conversation
-          router.push(`/frontdesk/inbox?view=internal&message=${notification.entityId}`);
+          // Navigate to message's conversation (for DMs, the entityId should be the conversation ID)
+          goToDMConversation(notification.entityId);
         } else {
           // Default: navigate to frontdesk inbox
           router.push('/frontdesk/inbox');
@@ -200,7 +208,7 @@ export const useFrontdeskNotifications = () => {
         console.error('[useFrontdeskNotifications] Click handler error:', err);
       }
     },
-    [markAsRead, router]
+    [markAsRead, goToTicket, goToEmailConversation, goToDMConversation, router]
   );
 
   /**

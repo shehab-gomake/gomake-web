@@ -46,6 +46,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const initials = getInitials(message.author.name);
 
   // Smart format content - handles both HTML and plain text
+  // SECURITY: All HTML is sanitized by smartFormatContent using DOMPurify
+  // to prevent XSS attacks. See: src/widgets/frontdesk/utils/html-sanitizer.ts
   const content = smartFormatContent(message.content, message.html);
 
   return (
@@ -132,6 +134,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         </Stack>
 
         {/* Message Content */}
+        {/* SECURITY NOTE: HTML content is pre-sanitized by smartFormatContent() using DOMPurify.
+            All JavaScript, dangerous attributes, and unsafe tags are stripped before rendering.
+            See: src/widgets/frontdesk/utils/html-sanitizer.ts for security configuration. */}
         <Box
           sx={{
             pl: "56px", // Align with avatar
