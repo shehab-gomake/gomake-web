@@ -113,21 +113,32 @@ export const useEmailProvider = () => {
       );
 
       if (conversation) {
-        // Use selectConversation (state-only) to avoid URL update loop
+        // FOUND in list: Just select it (no fetch needed)
+        // The message viewer will fetch full details separately
+        console.log('[Email Provider] Conversation found in list, selecting (no fetch):', urlConversationId);
         conversationManager.selectConversation(conversation);
       } else {
-        // NOT FOUND: Fetch from API
-        console.log('[Email Provider] Conversation not in list, fetching:', urlConversationId);
+        // NOT FOUND in list: Need to fetch the conversation preview
+        // This happens when navigating directly via URL (e.g., from notification)
+        console.log('[Email Provider] Conversation not in list, fetching from API:', urlConversationId);
 
         if (emailAccounts.selectedAccountId) {
           fetchConversation(emailAccounts.selectedAccountId, urlConversationId)
             .then(fetchedConversation => {
               if (fetchedConversation) {
-                console.log('[Email Provider] Successfully fetched and selecting conversation');
+                console.log('[Email Provider] Successfully fetched conversation from API');
                 // Use selectConversation (state-only) to avoid URL update loop
                 conversationManager.selectConversation(fetchedConversation);
               } else {
                 console.error('[Email Provider] Failed to fetch conversation:', urlConversationId);
+                console.warn('[Email Provider] Conversation may have been deleted or is not accessible');
+              }
+            })
+            .catch(error => {
+              console.error('[Email Provider] Error fetching conversation:', error);
+              // If 404, conversation doesn't exist
+              if (error.message?.includes('404')) {
+                console.warn('[Email Provider] Conversation not found (404), clearing selection');
               }
             });
         } else {

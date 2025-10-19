@@ -192,8 +192,22 @@ export const useFrontdeskNotifications = () => {
           // Navigate to specific ticket (default to MY_TICKETS view)
           goToTicket(notification.entityId, TicketView.MY_TICKETS);
         } else if (notification.entityType === 'email' && notification.entityId) {
-          // Navigate to email conversation
-          goToEmailConversation(notification.entityId);
+          // Use conversationId from metadata (preferred) or fallback chain
+          // Priority: conversationId > threadId > entityId
+          const conversationId =
+            notification.metadata?.conversationId ||  // Option 3: Database conversation ID
+            notification.metadata?.threadId ||        // Fallback: Provider thread ID
+            notification.entityId;                    // Last resort: Message ID
+
+          console.log('[Notification] Navigating to email conversation:', {
+            conversationId,
+            source: notification.metadata?.conversationId ? 'metadata.conversationId' :
+                    notification.metadata?.threadId ? 'metadata.threadId' :
+                    'entityId (fallback)',
+            entityId: notification.entityId
+          });
+
+          goToEmailConversation(conversationId);
         } else if (notification.entityType === 'conversation' && notification.entityId) {
           // Navigate to DM conversation
           goToDMConversation(notification.entityId);

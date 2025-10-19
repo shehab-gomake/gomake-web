@@ -27,14 +27,18 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
   const isUnread = isNotificationUnread(notification);
 
   // Extract channel from notification metadata
-  const channel = extractChannel(notification) || 'DM';
+  const channelRaw = extractChannel(notification) || 'DM';
+
+  // Format channel for display (capitalize first letter only)
+  const channel = channelRaw === 'WHATSAPP' ? 'WhatsApp' :
+                  channelRaw.charAt(0) + channelRaw.slice(1).toLowerCase();
 
   // Extract sender info from metadata
   const senderName = notification.metadata?.senderName || notification.metadata?.userName || 'Unknown User';
   const senderAvatar = notification.metadata?.senderAvatar || notification.metadata?.userAvatar;
 
   const getChannelIcon = () => {
-    switch (channel) {
+    switch (channelRaw) {
       case 'EMAIL':
         return <EmailOutlinedIcon sx={{ fontSize: 14, color: '#2e3092' }} />;
       case 'WHATSAPP':
@@ -46,7 +50,7 @@ const MessageNotificationItem: React.FC<MessageNotificationItemProps> = ({
   };
 
   const getChannelColor = () => {
-    switch (channel) {
+    switch (channelRaw) {
       case 'EMAIL':
         return '#2e3092';
       case 'WHATSAPP':
