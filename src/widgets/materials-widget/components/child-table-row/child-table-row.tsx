@@ -623,10 +623,10 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                                         <TableCell sx={classes.headerCell}>
                                             {t("materials.childTable.purchasePrice")}
                                             <br />
-                                            {convertedPurchasePricingUnit && convertedPurchasePricingUnit.value}
+                                            <span style={classes.headerCellPriceUnitText}>{convertedPurchasePricingUnit && convertedPurchasePricingUnit.value}</span>
                                         </TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.currency")}</TableCell>
-                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  ({convertedPurchasePricingInventoryUnit && convertedPurchasePricingInventoryUnit.value})</TableCell>
+                                        <TableCell sx={classes.headerCell}>{t("materials.childTable.quantityInPackage")}  <span style={classes.headerCellUnitText}>({convertedPurchasePricingInventoryUnit && convertedPurchasePricingInventoryUnit.value})</span></TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.supplementTimeWorkingDays")}</TableCell>
                                         <TableCell sx={classes.headerCell}>{t("materials.childTable.status")}</TableCell>
                                         <TableCell sx={classes.headerCell}></TableCell>
