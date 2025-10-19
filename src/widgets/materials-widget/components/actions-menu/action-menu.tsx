@@ -25,6 +25,7 @@ import { Add as AddIcon } from "@mui/icons-material";
 
 interface IActionMenuProps {
   isAdmin: boolean;
+  subCategory?: string;
 }
 const ActionMenu = (props: IActionMenuProps) => {
   const { clasess } = useStyle();
@@ -99,12 +100,25 @@ const ActionMenu = (props: IActionMenuProps) => {
   };
 
   const getMaterialActions = () => {
-    if (props.isAdmin) {
-      return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
-    } else {
+    let filteredActions = materialActions;
 
-      return materialActions;
+    // Filter for admin users
+    if (props.isAdmin) {
+      filteredActions = filteredActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     }
+
+    // Always hide Upload Materials Pictures
+    filteredActions = filteredActions.filter(x => x.action !== EMaterialsActions.UploadMaterialsPictures);
+
+    // When no subCategory, show only Download Excel and Upload Excel
+    if (!props.subCategory) {
+      filteredActions = filteredActions.filter(x =>
+        x.action === EMaterialsActions.DownLoadExcel ||
+        x.action === EMaterialsActions.UploadExcel
+      );
+    }
+
+    return filteredActions;
   };
 
   const handleMenuItemClick = (action: any, event: React.MouseEvent<HTMLLIElement>) => {
@@ -185,34 +199,38 @@ const ActionMenu = (props: IActionMenuProps) => {
         transformOrigin={{ horizontal: isRTL ? "left" : "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
       >
-        {getMaterialActions()?.map((actionItem) => {
-          return (
-            <React.Fragment key={actionItem.action}>
-              <MenuItem
-                style={clasess.menuItemContainer}
-                onClick={(e) => handleMenuItemClick(actionItem, e)}
-              >
-                <div style={clasess.menuItemContainer1}>
-                  {actionItem.isShowSubMenu ? (
-                    <>
-                      {
-                        isRTL ? <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} /> : <ChevronLeftIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
-                      }
-                    </>
+        {(() => {
+          const filteredActions = getMaterialActions();
+          const hasAnySubmenu = filteredActions?.some(action => action.isShowSubMenu);
 
-                  ) : <div style={{ width: 24, height: 24 }} />}
-                  <div style={clasess.actionIconStyle}>
-                    {_renderIcons(actionItem.icon)}
+          return filteredActions?.map((actionItem) => {
+            return (
+              <React.Fragment key={actionItem.action}>
+                <MenuItem
+                  style={clasess.menuItemContainer}
+                  onClick={(e) => handleMenuItemClick(actionItem, e)}
+                >
+                  <div style={clasess.menuItemContainer1}>
+                    {actionItem.isShowSubMenu ? (
+                      <>
+                        {
+                          isRTL ? <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} /> : <ChevronLeftIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
+                        }
+                      </>
+                    ) : hasAnySubmenu ? <div style={{ width: 24, height: 24 }} /> : null}
+                    <div style={clasess.actionIconStyle}>
+                      {_renderIcons(actionItem.icon)}
+                    </div>
+                    <div style={clasess.rowTextStyle}>
+                      {t(getTranslationKey(actionItem))}
+                    </div>
                   </div>
-                  <div style={clasess.rowTextStyle}>
-                    {t(getTranslationKey(actionItem))}
-                  </div>
-                </div>
-              </MenuItem>
-              {actionItem?.isUnderLine && <Divider />}
-            </React.Fragment>
-          );
-        })}
+                </MenuItem>
+                {actionItem?.isUnderLine && <Divider />}
+              </React.Fragment>
+            );
+          });
+        })()}
       </Menu>
 
       {/* Submenu */}

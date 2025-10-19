@@ -57,10 +57,10 @@ const useMaterialsGrouped = (isAdmin: boolean) => {
     const [filterStatus, setFilterStatus] = useState<{
         label: string;
         value: EFilterStatus;
-    }>(filterStatusList[0]);
+    }>(filterStatusList[1]);
 
     useEffect(() => {
-        setFilterStatus(filterStatusList[0]);
+        setFilterStatus(filterStatusList[1]);
     }, [filterStatusList]);
 
     const getAllGroupedMaterials = async () => {
