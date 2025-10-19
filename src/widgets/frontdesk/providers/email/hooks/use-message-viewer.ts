@@ -19,7 +19,10 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
   useEffect(() => {
     const fetchConversationDetails = async () => {
       if (conversation && accountId) {
+        // Clear old messages immediately to prevent flash of previous content
+        setMessages([]);
         setLoading(true);
+
         try {
           const conversationDetail = await emailApiClient.getConversationDetail(accountId, conversation.id);
           setMessages(conversationDetail.messages);
@@ -47,11 +50,12 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
         }
       } else {
         setMessages([]);
+        setLoading(false);
       }
     };
 
     fetchConversationDetails();
-  }, [conversation, accountId]);
+  }, [conversation?.id, accountId]);  // Only depend on conversation.id, not the whole object
 
   const handleInlineReply = useCallback(async () => {
     const text = replyText.trim();

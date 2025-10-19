@@ -86,7 +86,19 @@ export function ticketToUnified(
 ): UnifiedMessage {
   const isInbound = message.direction === "INBOUND";
 
-  // Determine author based on direction
+  // 🐛 DEBUG: Log message transformation
+  console.log('[ticketToUnified] Transforming message:', {
+    messageId: message.id,
+    direction: message.direction,
+    fromIdentifier: message.fromIdentifier,
+    channel: message.channel,
+    customerEmail: ticket?.customerEmail,
+    assigneeEmail: ticket?.assignee?.email,
+  });
+
+  // Determine author based on direction and fromIdentifier
+  // For INBOUND: Use customer info (sender is external customer)
+  // For OUTBOUND: Use fromIdentifier if available (sender is agent/support), otherwise use assignee
   const author = isInbound
     ? {
         name: ticket?.customerName || ticket?.customerEmail || message.fromIdentifier || "Customer",
@@ -94,8 +106,21 @@ export function ticketToUnified(
         phone: ticket?.customerPhone,
       }
     : {
-        name: ticket?.assignee?.name || message.fromIdentifier || "Agent",
-        email: ticket?.assignee?.email || message.fromIdentifier,
+        // For outbound messages, prefer fromIdentifier (actual sender) over assignee
+        name: message.fromIdentifier || ticket?.assignee?.name || "Support Agent",
+        email: message.fromIdentifier || ticket?.assignee?.email,
+      };
+
+  // Determine recipient for better message context
+  const recipient = isInbound
+    ? {
+        name: ticket?.assignee?.name || "Support",
+        email: ticket?.assignee?.email,
+      }
+    : {
+        name: ticket?.customerName,
+        email: ticket?.customerEmail,
+        phone: ticket?.customerPhone,
       };
 
   // Map ticket channel to unified channel
@@ -121,6 +146,7 @@ export function ticketToUnified(
     html: hasHtml ? content : undefined,    // ✅ Always set html if HTML detected
     timestamp: message.createdAt,
     author,
+    recipient, // Now includes recipient info
     channel: channelMap[message.channel] || "email",
     direction: isInbound ? "inbound" : "outbound",
     status: message.status || "delivered",

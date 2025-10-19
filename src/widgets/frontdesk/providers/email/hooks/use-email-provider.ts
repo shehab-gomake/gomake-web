@@ -10,10 +10,12 @@ import { useProviders } from "./use-providers";
 import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
 import { useTicketFormModal } from "../../tickets/hooks/use-ticket-form-modal";
 import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
+import { useFetchEmailConversation } from "./use-fetch-email-conversation";
 
 export const useEmailProvider = () => {
   const router = useRouter();
   const { queryParams, isInitialized } = useFrontDeskRouter();
+  const { fetchConversation, isLoading: isFetchingConversation, error: fetchError, clearError: clearFetchError } = useFetchEmailConversation();
 
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -111,18 +113,36 @@ export const useEmailProvider = () => {
       );
 
       if (conversation) {
-        conversationManager.handleConversationSelect(conversation);
+        // Use selectConversation (state-only) to avoid URL update loop
+        conversationManager.selectConversation(conversation);
       } else {
-        console.warn('[Email Provider] Conversation not found in list:', urlConversationId);
-        // TODO: Could fetch specific conversation by ID if needed
+        // NOT FOUND: Fetch from API
+        console.log('[Email Provider] Conversation not in list, fetching:', urlConversationId);
+
+        if (emailAccounts.selectedAccountId) {
+          fetchConversation(emailAccounts.selectedAccountId, urlConversationId)
+            .then(fetchedConversation => {
+              if (fetchedConversation) {
+                console.log('[Email Provider] Successfully fetched and selecting conversation');
+                // Use selectConversation (state-only) to avoid URL update loop
+                conversationManager.selectConversation(fetchedConversation);
+              } else {
+                console.error('[Email Provider] Failed to fetch conversation:', urlConversationId);
+              }
+            });
+        } else {
+          console.warn('[Email Provider] Cannot fetch conversation - no account selected');
+        }
       }
     }
   }, [
     isInitialized,
     queryParams.conversation,
     conversationManager.selectedConversation?.id,
-    conversationManager.handleConversationSelect,
+    conversationManager.selectConversation,  // Changed from handleConversationSelect
     emailConversations.conversations,
+    emailAccounts.selectedAccountId,
+    fetchConversation,
   ]);
 
   // State to store provider ID and conversation ID for modal
@@ -276,5 +296,10 @@ export const useEmailProvider = () => {
 
     // Ticket modal
     ticketModal: createTicketModal,
+
+    // Conversation fetching (for deep linking)
+    isFetchingConversation,
+    fetchError,
+    clearFetchError,
   };
 };

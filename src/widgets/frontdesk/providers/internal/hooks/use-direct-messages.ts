@@ -4,6 +4,7 @@ import { directMessagesWebSocketService } from "@/services/frontdesk/websocket/d
 import { directMessagesService } from "@/services/frontdesk/api/direct-messages.service";
 import { parsePresenceResponse, parseStatusChangeEvent, isValidUserId } from "@/widgets/frontdesk/providers/internal/utils/presence-helpers";
 import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
+import { useFetchDMConversation } from "./use-fetch-dm-conversation";
 import {
   dmConnectionState,
   dmConnectedState,
@@ -66,6 +67,7 @@ import { internalDirectMessagesAtom } from "@/store/frontdesk";
 export const useDirectMessages = () => {
   const debug = process.env.NEXT_PUBLIC_DM_DEBUG === 'true';
   const { queryParams, isInitialized: isRouterInitialized, goToDMConversation } = useFrontDeskRouter();
+  const { fetchConversation, isLoading: isFetchingConversation, error: fetchError, clearError: clearFetchError } = useFetchDMConversation();
   const [connectionStatus, setConnectionStatus] = useRecoilState(dmConnectionState);
   const [connected, setConnected] = useRecoilState(dmConnectedState);
   const [currentUser, setCurrentUser] = useRecoilState(dmCurrentUserState);
@@ -1558,8 +1560,18 @@ export const useDirectMessages = () => {
       if (conversation) {
         selectConversation(conversation);
       } else {
-        console.warn('[DM Provider] Conversation not found in list:', urlConversationId);
-        // TODO: Could fetch specific conversation by ID if needed
+        // NOT FOUND: Fetch from API
+        console.log('[DM Provider] Conversation not in list, fetching:', urlConversationId);
+
+        fetchConversation(urlConversationId)
+          .then(fetchedConversation => {
+            if (fetchedConversation) {
+              console.log('[DM Provider] Successfully fetched and selecting conversation');
+              selectConversation(fetchedConversation);
+            } else {
+              console.error('[DM Provider] Failed to fetch conversation:', urlConversationId);
+            }
+          });
       }
     }
   }, [
@@ -1569,6 +1581,7 @@ export const useDirectMessages = () => {
     activeConversationId,
     conversations,
     selectConversation,
+    fetchConversation,
   ]);
 
   return {
@@ -1653,5 +1666,10 @@ export const useDirectMessages = () => {
     // Conversation filter
     conversationsFilter,
     setConversationFilter: setConversationsFilter,
+
+    // Conversation fetching (for deep linking)
+    isFetchingConversation,
+    fetchError,
+    clearFetchError,
   };
 };

@@ -13,11 +13,25 @@ export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: Us
   const [selectedConversation, setSelectedConversation] = useState<EmailConversation | null>(null);
   const { goToEmailConversation, navigate, RouteBuilder } = useFrontDeskRouter();
 
-  const handleConversationSelect = useCallback((conversation: EmailConversation) => {
+  /**
+   * Internal function to select a conversation (state update only, no URL change)
+   * Use this when the selection is triggered by URL changes to avoid circular updates
+   */
+  const selectConversation = useCallback((conversation: EmailConversation) => {
+    console.log('[Email Conversation Manager] Selecting conversation (state only):', conversation.id);
     setSelectedConversation(conversation);
+  }, []);
+
+  /**
+   * Public function to select a conversation (updates state AND URL)
+   * Use this when the selection is triggered by user clicks
+   */
+  const handleConversationSelect = useCallback((conversation: EmailConversation) => {
+    console.log('[Email Conversation Manager] User selected conversation:', conversation.id);
+    selectConversation(conversation);
     // Update URL to reflect conversation selection
     goToEmailConversation(conversation.id);
-  }, [goToEmailConversation]);
+  }, [selectConversation, goToEmailConversation]);
 
   const handleBack = useCallback(() => {
     setSelectedConversation(null);
@@ -94,7 +108,8 @@ export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: Us
 
   return {
     selectedConversation,
-    handleConversationSelect,
+    selectConversation,        // Internal: state-only update (for URL-triggered changes)
+    handleConversationSelect,  // Public: state + URL update (for user clicks)
     handleBack,
     handleReply,
     handleSendReply,

@@ -6,6 +6,8 @@ import {
   Tooltip,
   Snackbar,
   Alert,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -83,6 +85,9 @@ const DirectMessagesProviderView: React.FC = () => {
     setConversationSearchQuery,
     conversationsFilter,
     setConversationFilter,
+    isFetchingConversation,
+    fetchError,
+    clearFetchError,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
@@ -284,6 +289,17 @@ const DirectMessagesProviderView: React.FC = () => {
         isLoading={isLoading}
       />
 
+      {/* Error banner for conversation fetch failures */}
+      {fetchError && (
+        <Alert
+          severity="error"
+          onClose={clearFetchError}
+          sx={{ mx: 2, mt: 2 }}
+        >
+          Failed to load conversation: {fetchError}
+        </Alert>
+      )}
+
       {/* Three-pane layout */}
       <Stack direction="row" gap={2} sx={{
         width: "100%",
@@ -292,22 +308,50 @@ const DirectMessagesProviderView: React.FC = () => {
         mt: 2
       }}>
         {/* Left: Conversations sidebar */}
-        <ConversationSidebar
-          title="Conversations"
-          filter={conversationsFilter}
-          onFilterChange={setConversationFilter}
-          onSearch={openGlobalSearch}
-          onNewConversation={handleStartNewConversation}
-          width={280}
-        >
-          <ConversationList
-            conversations={conversations}
-            selectedId={activeConversationId}
-            currentUserId={currentUser?.userId}
-            onSelect={selectConversation}
-            loading={isLoadingConversations}
-          />
-        </ConversationSidebar>
+        <Box sx={{ position: "relative", width: 280 }}>
+          {/* Loading overlay when fetching conversation */}
+          {isFetchingConversation && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 10,
+                borderRadius: 2,
+              }}
+            >
+              <Stack alignItems="center" gap={1}>
+                <CircularProgress size={32} />
+                <Typography variant="body2" color="text.secondary">
+                  Loading conversation...
+                </Typography>
+              </Stack>
+            </Box>
+          )}
+
+          <ConversationSidebar
+            title="Conversations"
+            filter={conversationsFilter}
+            onFilterChange={setConversationFilter}
+            onSearch={openGlobalSearch}
+            onNewConversation={handleStartNewConversation}
+            width={280}
+          >
+            <ConversationList
+              conversations={conversations}
+              selectedId={activeConversationId}
+              currentUserId={currentUser?.userId}
+              onSelect={selectConversation}
+              loading={isLoadingConversations}
+            />
+          </ConversationSidebar>
+        </Box>
 
         {/* Center: Message area */}
         <Panel
