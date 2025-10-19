@@ -32,11 +32,23 @@ const useStyle = () => {
       modalTitle2: {
         ...FONT_FAMILY.Lexend(700, 28),
         color: "#000",
+        fontSize: { xs: "22px", sm: "28px" },
+        textAlign: "center",
       },
       modalSubtitle: {
         ...FONT_FAMILY.Heebo(400, 15),
         color: "#666",
         marginTop: "4px",
+        fontSize: { xs: "14px", sm: "15px" },
+        padding: { xs: "0 8px", sm: "0" },
+      },
+      userEmail: {
+        fontSize: { xs: "14px", sm: "16px" },
+        fontWeight: "600",
+        color: "#495057",
+        textAlign: "center",
+        wordBreak: "break-word",
+        padding: { xs: "0 8px", sm: "0" },
       },
       formContainer: {
         width: "100%",
@@ -81,8 +93,8 @@ const useStyle = () => {
         marginBottom: "12px",
       },
       verificationIcon: {
-        width: "50px",
-        height: "50px",
+        width: { xs: "44px", sm: "50px" },
+        height: { xs: "44px", sm: "50px" },
         borderRadius: "50%",
         //   background: "linear-gradient(135deg, #9333ea 0%, #c084fc 100%)",
         background:

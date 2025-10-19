@@ -179,7 +179,7 @@ const AISidebar = ({
         {isCollapsed ? (
           // Collapsed footer - simplified version
           <div style={classes.collapsedFooter}>
-            {!user?.isGoAiUser && (
+            {!user?.isGoAiUser && hasToken && (
               <button
                 style={classes.collapsedBackButton}
                 onClick={() => {
