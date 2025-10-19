@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import config from "@/config";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { HttpErrorCodes } from "@/enums/error-types";
 
 const useAISocketIO = (
   onMessageReceived?: (message: any) => void,
@@ -59,6 +60,11 @@ const useAISocketIO = (
         {},
         false
       );
+      if (response?.status === HttpErrorCodes.PAYMENT_REQUIRED) {
+        const error = new Error("Trial expired");
+        (error as any).status = HttpErrorCodes.PAYMENT_REQUIRED;
+        throw error;
+      }
 
       const responseData = response.data?.data?.data?.sessionId;
 

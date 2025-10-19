@@ -129,7 +129,18 @@ const useCustomer = (
       // ✅ Check if user is GoAI user - restrict to AI page only
       if (user?.isGoAiUser) {
         const currentPath = window.location.pathname;
-        if (currentPath !== "/gomake-ai") {
+
+        // If billing is required (not paid), redirect to billing page
+        if (
+          user?.isGoAiBillingRequired &&
+          currentPath !== "/gomake-ai/billing"
+        ) {
+          navigate("/gomake-ai/billing");
+          return true;
+        }
+
+        // If billing is not required (paid), restrict to AI page only
+        if (!user?.isGoAiBillingRequired && currentPath !== "/gomake-ai") {
           navigate("/gomake-ai");
           return true;
         }
