@@ -162,12 +162,37 @@ const sendMessage = async (content: string) => {
 
 ## 9. 🚀 AI Operational Mandates
 
+### Agent Orchestration
+
+**CRITICAL**: For complex FrontDesk tasks, use the `frontdesk-orchestrator` agent:
+
+**Auto-invoke orchestrator when:**
+1. User requests multi-task FrontDesk feature (3+ steps)
+2. User asks "What should I work on next?" or "What's the status?"
+3. Demo preparation or milestone planning
+4. Handling blockers during FrontDesk development
+
+**How to invoke:**
+```
+Use Task tool with subagent_type: "frontdesk-orchestrator"
+```
+
+**What it does:**
+- Loads state from `.claude/orchestrator-state/frontdesk-tasks.json`
+- Creates task graph with dependencies and acceptance criteria
+- Routes work to specialized agents (Explore/general-purpose)
+- Syncs with TodoWrite for progress tracking
+- Saves state for continuity across sessions
+
+**Golden Rule**: The orchestrator NEVER writes code directly - it only coordinates.
+
 ### Priority Order
-1.  **Tickets Provider**: ALWAYS consult backend docs first.
-2.  **Fix bugs**: Use existing patterns.
-3.  **Add features**: Follow the provider structure.
-4.  **Refactor**: Get user approval first.
-5.  **Document**: Only if explicitly asked.
+1.  **Complex FrontDesk tasks**: Use orchestrator agent for coordination.
+2.  **Tickets Provider**: ALWAYS consult backend docs first.
+3.  **Fix bugs**: Use existing patterns.
+4.  **Add features**: Follow the provider structure.
+5.  **Refactor**: Get user approval first.
+6.  **Document**: Only if explicitly asked.
 
 ### Tickets-Specific Rules
 - Match DTOs **exactly** as specified in backend `api-reference.md`.
