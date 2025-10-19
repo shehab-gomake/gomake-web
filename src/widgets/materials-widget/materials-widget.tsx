@@ -111,6 +111,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
+
   const handleFilterHeightChange = useCallback((height: number) => {
     setFilterBarHeight(height);
   }, []);

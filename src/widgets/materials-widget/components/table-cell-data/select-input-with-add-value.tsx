@@ -125,6 +125,7 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
         options={options}
         getOptionLabel={(option: any) => option?.label || ""}
         isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id}
+        noOptionsText={t("materials.inputs.noOptionsTextStorageLocation")}
       />
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}

@@ -37,6 +37,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
+  console.log("props.subCategory", props.subCategory);
+
+
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
@@ -87,7 +90,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
 
   return (
     <Stack ref={filterContainerRef} direction={"row"} gap={"10px"} alignItems={"center"} flexWrap={"wrap"}>
-      {displayedFilters && materialTableFilters?.length > 0 &&
+      {displayedFilters && materialTableFilters?.length > 0 && props.subCategory &&
         displayedFilters.map(({ key, values, unit, name }) => {
           const convertedUnitText =
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
@@ -176,7 +179,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           }
         })}
 
-      {!props.isAdmin && materialSuppliers?.length > 0 && (
+      {!props.isAdmin && materialSuppliers?.length > 0 && props.subCategory && (
         <GoMakeAutoComplate
           key={`${materialCategory}-suppliers-${selectedSuppliers?.length || 0}`}
           onChange={(e, v) => {
@@ -203,23 +206,26 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           defaultFiltering={false}
         />
       )}
-      {!props.isAdmin ? (
-        <GoMakeAutoComplate
-          style={!hasMoreFilters ? {
+      {!props.isAdmin && props.subCategory ? (
+        <Box
+          sx={{
             width: "100px",
-            [isRTL ? 'marginLeft' : 'marginRight']: "38px"
-          } : { width: "100px" }
-          }
-          options={activeFilterOptions}
-          value={activeFilterLabel()}
-          onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
-          disableClearable={true}
-        />
+            [isRTL ? 'marginLeft' : 'marginRight']: !hasMoreFilters ? "38px" : "0px"
+          }}
+        >
+          <GoMakeAutoComplate
+            style={{ width: "100%" }}
+            options={activeFilterOptions}
+            value={activeFilterLabel()}
+            onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
+            disableClearable={true}
+          />
+        </Box>
       ) : (
         <></>
       )}
 
-      {hasMoreFilters && (
+      {hasMoreFilters && props.subCategory && (
         <Box
           onClick={() => setShowMore(!showMore)}
           sx={{
@@ -269,7 +275,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       )}
 
       <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
-        {<ActionMenu isAdmin={props.isAdmin} />}
+        {<ActionMenu isAdmin={props.isAdmin} subCategory={props.subCategory} />}
       </Stack>
     </Stack>
   );

@@ -68,7 +68,7 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
 
     const getCategoryName = (categoryKey: string | null) => {
         if (!categoryKey) return "Uncategorized";
-        return `Category ${categoryKey}`;
+        return categoryKey
     };
 
     const getCategoryColor = (category: any, index: number) => {
@@ -126,6 +126,11 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
                 onChange={onFilterChange}
                 children={
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleClick}>
+                            <Filter2Icon />
+                            {t("navigationButtons.filterByStatus")}: {filterStatus?.label}
+                        </div>
                         <SecondaryButton
                             style={{
                                 height: '40px',
@@ -139,10 +144,6 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
                         >
                             {t("navigationButtons.manageProfits")}
                         </SecondaryButton>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleClick}>
-                            <Filter2Icon />
-                            {t("navigationButtons.filterByStatus")}: {filterStatus?.label}
-                        </div>
                     </div>
                 }
             />
