@@ -1,6 +1,12 @@
 import { useState, useRef, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, Stack, Box } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  Stack,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { GomakeTextInput } from "@/components/text-input/text-input";
 import { GoMakeAutoComplate } from "@/components/auto-complete/auto-complete";
 import { useStyle } from "./style";
@@ -21,9 +27,9 @@ const countriesWithCodes = allCountries.map(
 interface LandingModalProps {
   open: boolean;
   onClose: () => void;
-  onContinue: (email: string, country: string) => void;
+  onContinue: (email: string, country: string) => void | Promise<void>;
   isVerificationStep?: boolean;
-  onVerifyCode?: (code: string) => void;
+  onVerifyCode?: (code: string) => void | Promise<void>;
   userEmail?: string;
 }
 
@@ -44,6 +50,8 @@ export const LandingModal = ({
     Array(6).fill("")
   );
   const [codeError, setCodeError] = useState("");
+  const [isLoadingContinue, setIsLoadingContinue] = useState(false);
+  const [isLoadingVerify, setIsLoadingVerify] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const validateEmail = (email: string) => {
@@ -51,7 +59,7 @@ export const LandingModal = ({
     return emailRegex.test(email);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!email) {
       setEmailError(t("Email is required") || "Email is required");
       return;
@@ -64,7 +72,14 @@ export const LandingModal = ({
       return;
     }
 
-    onContinue(email, country.value);
+    setIsLoadingContinue(true);
+    try {
+      await onContinue(email, country.value);
+    } catch (error) {
+      console.error("Error in continue:", error);
+    } finally {
+      setIsLoadingContinue(false);
+    }
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +139,7 @@ export const LandingModal = ({
     }
   };
 
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     const code = verificationCode.join("");
 
     if (!code || code.length === 0) {
@@ -136,8 +151,15 @@ export const LandingModal = ({
       return;
     }
 
-    if (onVerifyCode) {
-      onVerifyCode(code);
+    setIsLoadingVerify(true);
+    try {
+      if (onVerifyCode) {
+        await onVerifyCode(code);
+      }
+    } catch (error) {
+      console.error("Error in verify:", error);
+    } finally {
+      setIsLoadingVerify(false);
     }
   };
 
@@ -204,11 +226,20 @@ export const LandingModal = ({
                 <SecondaryButton
                   variant="contained"
                   onClick={handleContinue}
-                  disabled={!email || !country}
+                  disabled={!email || !country || isLoadingContinue}
                   style={classes.button}
                   fullWidth
                 >
-                  {t("sales.documentDeliveries.continue")}
+                  {isLoadingContinue ? (
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: "8px" }}
+                    >
+                      <CircularProgress size={20} sx={{ color: "#fff" }} />
+                      <span>Loading...</span>
+                    </Box>
+                  ) : (
+                    t("sales.documentDeliveries.continue")
+                  )}
                 </SecondaryButton>
               </div>
             </Stack>
@@ -317,11 +348,22 @@ export const LandingModal = ({
                 <SecondaryButton
                   variant="contained"
                   onClick={handleVerifyCode}
-                  disabled={verificationCode.join("").length !== 6}
+                  disabled={
+                    verificationCode.join("").length !== 6 || isLoadingVerify
+                  }
                   style={classes.button}
                   fullWidth
                 >
-                  Verify Code
+                  {isLoadingVerify ? (
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: "8px" }}
+                    >
+                      <CircularProgress size={20} sx={{ color: "#fff" }} />
+                      <span>Verifying...</span>
+                    </Box>
+                  ) : (
+                    "Verify Code"
+                  )}
                 </SecondaryButton>
               </div>
             </Stack>
