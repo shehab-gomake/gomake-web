@@ -35,9 +35,12 @@ const TermModal = ({
       setIsModalOpen(false);
       if (!isQuickSetup) {
         await callApi("POST", "/v1/crm-service/update-terms-accepted");
-        // ✅ Check if user is GoAI user - redirect to AI page only
         if (user?.isGoAiUser) {
-          navigate("/gomake-ai");
+          if (user?.isGoAiBillingRequired) {
+            navigate("/gomake-ai/billing");
+          } else {
+            navigate("/gomake-ai");
+          }
         } else {
           navigate("/");
         }

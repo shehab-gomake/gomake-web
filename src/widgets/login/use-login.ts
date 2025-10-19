@@ -54,7 +54,12 @@ const useGomakeLogin = () => {
 
         if (customer?.isGoAiUser) {
           if (customer.isTermsAccepted) {
-            navigate("/gomake-ai");
+            // Check if billing is required (not paid)
+            if (customer?.isGoAiBillingRequired) {
+              navigate("/gomake-ai/billing");
+            } else {
+              navigate("/gomake-ai");
+            }
           } else {
             setIsModalOpen(true);
           }
