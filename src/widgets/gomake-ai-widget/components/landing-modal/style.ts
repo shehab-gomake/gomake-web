@@ -19,7 +19,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "8px",
-        marginBottom: "24px",
+        marginBottom: "16px",
       },
       modalTitle: {
         ...FONT_FAMILY.Lexend(700, 28),

@@ -219,7 +219,7 @@ export const LandingModal = ({
               style={{
                 ...classes.modalTitleContainer,
                 alignItems: "center",
-                marginBottom: "0px",
+                marginBottom: "24px",
               }}
             >
               <Box sx={classes.verificationIconContainer}>
