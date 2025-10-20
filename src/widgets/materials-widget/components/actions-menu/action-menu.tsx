@@ -366,7 +366,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                 {properties?.map((item, index) => {
                   return (
                     <div
-                      key={index}
+                      key={`duplicate-row-${index}-${item?.key?.key}`}  // Better key
                       style={{
                         display: "flex",
                         flexDirection: "row",
@@ -381,6 +381,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         <GoMakeAutoComplate
                           placeholder={"select property"}
                           getOptionLabel={(option: any) => option.value}
+                          value={item?.key || null}  // Add value prop
                           options={materialHeaders.filter(x =>
                             !x.isHideInDuplicate &&
                             x.key !== "Active" &&
@@ -392,9 +393,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                           }}
                         />
                       </div>
-                      <div
-                        style={{ width: "50%", height: "100%" }}
-                      >
+                      <div style={{ width: "50%", height: "100%" }}>
                         {properties[index].key &&
                           rowInputs(
                             properties[index].key,
@@ -404,18 +403,25 @@ const ActionMenu = (props: IActionMenuProps) => {
                             [],
                             [],
                             [item?.key]
-                          ).map((item, itemIndex) => (
-                            <FormInput
-                              key={itemIndex}
-                              input={item as IInput}
-                              changeState={(e, v) =>
-                                handleChange(index, "values", v)
-                              }
-                              error={false}
-                              readonly={false}
-                              hideLabel={true}
-                            />
-                          ))}
+                          ).map((formInputItem, itemIndex) => {
+                            console.log("formInputItemformInputItemformInputItem", properties[index].values)
+                            return (
+                              <FormInput
+                                key={`duplicate-input-${index}-${itemIndex}`}  // Better key with index
+                                input={{
+                                  ...formInputItem,
+                                  value: properties[index].values?.[properties[index].values.length - 1] || formInputItem.value,  // Get last item in array
+                                }}
+                                changeState={(paramKey, value) =>
+                                  handleChange(index, "values", value)
+                                }
+                                error={false}
+                                readonly={false}
+                                hideLabel={true}
+                              />
+                            )
+                          }
+                          )}
                       </div>
                       <div
                         style={{
