@@ -101,9 +101,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
     const convertedPurchasePricingUnit = purchasePricingTableHeadingUnits.pricingUnit;
     const convertedPurchasePricingInventoryUnit = purchasePricingTableHeadingUnits.inventoryUnit;
 
-
-    console.log("convertedPricingUnit", { convertedPricingUnit, convertedPurchasePricingUnit });
-
     const { callApi } = useGomakeAxios();
     const [materialCategoryData, setMaterialCategoryData] = useRecoilState(materialCategoryDataState);
 
@@ -129,12 +126,6 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
             if (mainTableContainer) {
                 const newScrollLeft = mainTableContainer.scrollLeft;
                 setScrollLeft(newScrollLeft);
-                console.log('Main table scroll position:', newScrollLeft);
-                console.log('Column positions will be:', {
-                    column1: `${isRTL ? 'right' : 'left'}: ${newScrollLeft}px`,
-                    column2: `${isRTL ? 'right' : 'left'}: ${newScrollLeft + 50}px`,
-                    isRTL: isRTL
-                });
             }
         };
 
