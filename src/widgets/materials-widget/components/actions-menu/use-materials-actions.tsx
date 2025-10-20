@@ -905,7 +905,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const flattenedValues = currentValueArray.flat();
 
       // Create a new object with the updated values
-      updatedProperties[index].key = { ...updatedProperties[index].key, values: flattenedValues };
+      // updatedProperties[index].key = { ...updatedProperties[index].key, values: flattenedValues };
 
       // Update the value array
       updatedProperties[index][field] = flattenedValues;
