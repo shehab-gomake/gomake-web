@@ -772,3 +772,60 @@ df-messenger {
     opacity: 1;
   }
 }
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Product Selector Dropdown Styles */
+.dropdown-item:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.dropdown-item.selected {
+  background-color: #faf5ff !important;
+}
+
+/* Product Dropdown List Scrollbar */
+.product-dropdown-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-dropdown-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.product-dropdown-list::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.product-dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Clear Selection Button */
+.clear-selection-btn:hover {
+  background-color: #e5e7eb !important;
+  color: #ef4444 !important;
+}
+
+/* Dropdown Trigger Border Fix */
+.product-dropdown-trigger {
+  border-color: #e5e7eb !important;
+}
+
+.product-dropdown-trigger:hover {
+  border-color: #d1d5db !important;
+}
+
+.product-dropdown-trigger.open {
+  border-color: #9333ea !important;
+}

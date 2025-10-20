@@ -197,6 +197,44 @@ const useAISocketIO = (
     }
   };
 
+  const selectProduct = async (productId: string) => {
+    try {
+      if (!sessionId) {
+        throw new Error("No active session. Please start a new job first.");
+      }
+
+      const response = await callApi(
+        "POST",
+        "/v1/gomake-ai-service/conversations/select-product",
+        {
+          sessionId: sessionId,
+          productId: productId,
+        },
+        false
+      );
+
+      // Check HTTP status code
+      if (response?.status && response.status !== 200) {
+        const errorMessage =
+          response?.message ||
+          response?.msg ||
+          `Request failed with status ${response.status}`;
+        throw new Error(errorMessage);
+      }
+
+      const responseData = response.data?.data?.data;
+      if (response?.success && responseData) {
+        return responseData;
+      } else {
+        const errorMessage = response?.message || "Failed to select product";
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error selecting product:", error);
+      throw error;
+    }
+  };
+
   // Function to manually set session ID (for continuing conversations)
   const setSessionIdManually = (newSessionId: string) => {
     setSessionId(newSessionId);
@@ -214,6 +252,7 @@ const useAISocketIO = (
     sendMessage,
     getConversationsHistory,
     getConversation,
+    selectProduct,
     setSessionIdManually,
     resetProcessingState,
   };
