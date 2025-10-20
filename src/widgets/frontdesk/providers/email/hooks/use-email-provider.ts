@@ -15,7 +15,12 @@ import { useFetchEmailConversation } from "./use-fetch-email-conversation";
 export const useEmailProvider = () => {
   const router = useRouter();
   const { queryParams, isInitialized } = useFrontDeskRouter();
-  const { fetchConversation, isLoading: isFetchingConversation, error: fetchError, clearError: clearFetchError } = useFetchEmailConversation();
+  const {
+    fetchConversation,
+    isLoading: isFetchingConversation,
+    error: fetchError,
+    clearError: clearFetchError,
+  } = useFetchEmailConversation();
 
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -87,13 +92,16 @@ export const useEmailProvider = () => {
     setSearchQuery(query);
   }, []);
 
-  // Clear search when account changes
+  // Clear search and conversation when account changes
   const handleAccountSelect = useCallback(
     (accountId: string) => {
       setSearchQuery("");
+      // Clear conversation selection when switching accounts
+      conversationManager.handleBack();
+      // Select the new account
       emailAccounts.selectAccount(accountId);
     },
-    [emailAccounts.selectAccount]
+    [emailAccounts.selectAccount, conversationManager]
   );
 
   // Sync URL conversation parameter with email conversation selection
@@ -105,44 +113,42 @@ export const useEmailProvider = () => {
 
     // If URL has a conversation ID and it's different from current selection
     if (urlConversationId && urlConversationId !== currentlySelected) {
-      console.log('[Email Provider] URL changed, selecting conversation:', urlConversationId);
+      console.log("[Email Provider] URL changed, selecting conversation:", urlConversationId);
 
       // Find the conversation in our list
-      const conversation = emailConversations.conversations.find(
-        (conv) => conv.id === urlConversationId
-      );
+      const conversation = emailConversations.conversations.find((conv) => conv.id === urlConversationId);
 
       if (conversation) {
         // FOUND in list: Just select it (no fetch needed)
         // The message viewer will fetch full details separately
-        console.log('[Email Provider] Conversation found in list, selecting (no fetch):', urlConversationId);
+        console.log("[Email Provider] Conversation found in list, selecting (no fetch):", urlConversationId);
         conversationManager.selectConversation(conversation);
       } else {
         // NOT FOUND in list: Need to fetch the conversation preview
         // This happens when navigating directly via URL (e.g., from notification)
-        console.log('[Email Provider] Conversation not in list, fetching from API:', urlConversationId);
+        console.log("[Email Provider] Conversation not in list, fetching from API:", urlConversationId);
 
         if (emailAccounts.selectedAccountId) {
           fetchConversation(emailAccounts.selectedAccountId, urlConversationId)
-            .then(fetchedConversation => {
+            .then((fetchedConversation) => {
               if (fetchedConversation) {
-                console.log('[Email Provider] Successfully fetched conversation from API');
+                console.log("[Email Provider] Successfully fetched conversation from API");
                 // Use selectConversation (state-only) to avoid URL update loop
                 conversationManager.selectConversation(fetchedConversation);
               } else {
-                console.error('[Email Provider] Failed to fetch conversation:', urlConversationId);
-                console.warn('[Email Provider] Conversation may have been deleted or is not accessible');
+                console.error("[Email Provider] Failed to fetch conversation:", urlConversationId);
+                console.warn("[Email Provider] Conversation may have been deleted or is not accessible");
               }
             })
-            .catch(error => {
-              console.error('[Email Provider] Error fetching conversation:', error);
+            .catch((error) => {
+              console.error("[Email Provider] Error fetching conversation:", error);
               // If 404, conversation doesn't exist
-              if (error.message?.includes('404')) {
-                console.warn('[Email Provider] Conversation not found (404), clearing selection');
+              if (error.message?.includes("404")) {
+                console.warn("[Email Provider] Conversation not found (404), clearing selection");
               }
             });
         } else {
-          console.warn('[Email Provider] Cannot fetch conversation - no account selected');
+          console.warn("[Email Provider] Cannot fetch conversation - no account selected");
         }
       }
     }
@@ -150,7 +156,7 @@ export const useEmailProvider = () => {
     isInitialized,
     queryParams.conversation,
     conversationManager.selectedConversation?.id,
-    conversationManager.selectConversation,  // Changed from handleConversationSelect
+    conversationManager.selectConversation, // Changed from handleConversationSelect
     emailConversations.conversations,
     emailAccounts.selectedAccountId,
     fetchConversation,
