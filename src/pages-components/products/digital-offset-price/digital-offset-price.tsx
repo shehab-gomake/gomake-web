@@ -41,13 +41,13 @@ const PriceListPageWidget = ({
   isMobileScreen = false,
   productId,
   sessionId,
-  interactionId
+  interactionId,
 }: {
   widgetType: any;
   isMobileScreen?: boolean;
   productId?: string;
   sessionId?: string;
-  interactionId? :string;
+  interactionId?: string;
 }) => {
   const { clasess } = useStyle({ isMobileScreen });
   const {
@@ -124,8 +124,14 @@ const PriceListPageWidget = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
-    isProductCalculated
-  } = useDigitalOffsetPrice({ clasess, widgetType, productId, sessionId,interactionId });
+    isProductCalculated,
+  } = useDigitalOffsetPrice({
+    clasess,
+    widgetType,
+    productId,
+    sessionId,
+    interactionId,
+  });
   const { alertFault } = useSnackBar();
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
@@ -476,7 +482,7 @@ const PriceListPageWidget = ({
                 : clasess.buttonsContainer
             }
           >
-            {isMobileScreen  ? (
+            {isMobileScreen ? (
               <div
                 style={{
                   ...clasess.addPreviousContainer,
@@ -527,16 +533,17 @@ const PriceListPageWidget = ({
                     : []),
                 ].length -
                   1 !==
-                  activeIndex && !isProductCalculated && (
-                  <div data-tour="next-button">
-                    <SecondaryButton
-                      variant="contained"
-                      onClick={handleNextClick}
-                    >
-                      {t("products.offsetPrice.admin.nextBtn")}
-                    </SecondaryButton>
-                  </div>
-                )}
+                  activeIndex &&
+                  !isProductCalculated && (
+                    <div data-tour="next-button">
+                      <SecondaryButton
+                        variant="contained"
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </SecondaryButton>
+                    </div>
+                  )}
               </div>
             ) : (
               <div style={{ width: "68%" }}>
@@ -570,7 +577,7 @@ const PriceListPageWidget = ({
               </div>
             )}
 
-            {(!isMobileScreen  || (isMobileScreen && isProductCalculated)) &&(
+            {(!isMobileScreen || (isMobileScreen && isProductCalculated)) && (
               <div
                 style={{
                   width: 220,
