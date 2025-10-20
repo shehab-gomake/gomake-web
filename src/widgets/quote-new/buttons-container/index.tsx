@@ -386,7 +386,7 @@ const ButtonsContainer = ({
             {t("sales.quote.print")}
           </GomakePrimaryButton>
         )}
-        {!isNewCreation && !isReceipt && handleExportToExcel && (
+        {!isReceipt && handleExportToExcel && (
           <GomakePrimaryButton
             leftIcon={<DownloadExcelSheet />}
             style={classes.btnSecondContainer}
