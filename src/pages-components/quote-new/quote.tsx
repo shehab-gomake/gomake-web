@@ -369,7 +369,8 @@ const QuoteNewPageWidget = ({
     openVatMismatchModal,
     onCloseVatMismatchModal,
     onConfirmVatMismatchModal,
-    estimatedProductionDate
+    estimatedProductionDate,
+    handleExportToExcel,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -895,6 +896,7 @@ const QuoteNewPageWidget = ({
                     : CLIENT_TYPE.CUSTOMER
                 }
                 deliveryDate={selectDate}
+                handleExportToExcel={handleExportToExcel}
               />
             </div>
           )}

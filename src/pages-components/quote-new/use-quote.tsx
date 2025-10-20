@@ -2609,6 +2609,18 @@ const useQuoteNew = ({
     });
   };
 
+  // Export to Excel handler
+  const handleExportToExcel = () => {
+    const { exportQuoteToExcel } = require("@/widgets/quote-new/utils/export-quote-to-excel");
+    exportQuoteToExcel({
+      documentItems: quoteItemValue?.documentItems || [],
+      documentType: docType,
+      documentNumber: quoteItemValue?.number,
+      clientName: quoteItemValue?.client?.name,
+      t,
+    });
+  };
+
   return {
     dateRef,
     taxDateRef,
@@ -2883,7 +2895,8 @@ const useQuoteNew = ({
     openVatMismatchModal,
     onCloseVatMismatchModal,
     onConfirmVatMismatchModal,
-    estimatedProductionDate
+    estimatedProductionDate,
+    handleExportToExcel,
   };
 };
 
