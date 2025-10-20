@@ -921,7 +921,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     const hasEmptyValues = validProperties.some(item =>
       !item.values ||
       item.values.length === 0 ||
-      item.values.every(value => !value || value.trim() === '')
+      item.values.every(value => !value || value.toString().trim() === '')
     );
     if (hasEmptyValues) {
       alertFault(t("materials.inputs.errorEmptyPropertyValue"));

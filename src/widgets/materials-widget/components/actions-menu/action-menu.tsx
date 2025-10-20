@@ -404,13 +404,14 @@ const ActionMenu = (props: IActionMenuProps) => {
                             [],
                             [item?.key]
                           ).map((formInputItem, itemIndex) => {
-                            console.log("formInputItemformInputItemformInputItem", properties[index].values)
                             return (
                               <FormInput
                                 key={`duplicate-input-${index}-${itemIndex}`}  // Better key with index
                                 input={{
                                   ...formInputItem,
-                                  value: properties[index].values?.[properties[index].values.length - 1] || formInputItem.value,  // Get last item in array
+                                  value: formInputItem.multiple
+                                    ? properties[index].values || formInputItem.value
+                                    : properties[index].values?.[properties[index].values.length - 1] || formInputItem.value,
                                 }}
                                 changeState={(paramKey, value) =>
                                   handleChange(index, "values", value)
