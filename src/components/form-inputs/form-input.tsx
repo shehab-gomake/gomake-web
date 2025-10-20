@@ -395,7 +395,7 @@ const FormInput = ({
                 closeMenuOnSelect={!input.multiple}
                 hideSelectedOptions={false}
                 minWidth={180}
-                maxHeight={80}
+                maxHeight={38}
               />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
