@@ -134,7 +134,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         width: "100%",
         maxWidth: isMobileScreen ? "unset" : screenWidth - 600,
       },
-      tabsContainerSkeleton:{
+      tabsContainerSkeleton: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
@@ -142,7 +142,9 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth: isMobileScreen ? "unset" : screenWidth - 600,
+        maxWidth: isMobileScreen ? "100%" : screenWidth - 600,
+        flexWrap: isMobileScreen ? ("wrap" as "wrap") : ("nowrap" as "nowrap"),
+        overflow: "hidden",
       },
       tabContainer: {
         display: "flex",
@@ -181,6 +183,9 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
+        width: "100%",
+        maxWidth: isMobileScreen ? "100%" : "unset",
+        overflow: "hidden",
       },
       subSectionContainer: {
         display: "flex",

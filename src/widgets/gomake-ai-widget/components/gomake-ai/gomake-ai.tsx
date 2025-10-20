@@ -102,6 +102,7 @@ const GoMakeAIComponent = () => {
     sendMessage,
     getConversationsHistory,
     getConversation,
+    selectProduct,
     setSessionIdManually,
     resetProcessingState,
   } = useAISocketIO(
@@ -485,6 +486,7 @@ const GoMakeAIComponent = () => {
         >
           <AIMainPanel
             sendMessage={sendMessage}
+            selectProduct={selectProduct}
             isProcessing={isProcessing}
             sessionId={sessionId}
             chatMessages={chatMessages}
