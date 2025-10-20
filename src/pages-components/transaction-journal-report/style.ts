@@ -69,12 +69,12 @@ const useStyle = () => {
       balanceInput: {
         width: "100%",
         border: "none",
-        height: "30px",
+        height:40
       },
       submitStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         width: "fit-content",
-        padding: "0px",
+        height:40
       },
       headerStyle: {
         display: "flex",
@@ -83,6 +83,26 @@ const useStyle = () => {
         justifyContent: "space-between",
         width: "100%",
       },
+      titlebalance:{
+        ...FONT_FAMILY.Lexend(500,14)
+      },
+      balanceInputContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap:"5px"
+      },
+      balanceInputMainContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-end",
+        gap:"8px"
+      },
+      balanceTotalContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        alignItems: "flex-end",
+      }
     };
   }, []);
   return {
