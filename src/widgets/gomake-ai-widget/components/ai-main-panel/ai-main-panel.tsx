@@ -1,55 +1,15 @@
 import React, { useState } from "react";
 import { AIChatInterface } from "../ai-chat-interface/ai-chat-interface";
+import { ProductSelector } from "../product-selector/product-selector";
 import { useStyle } from "./style";
 import SendIcon from "@mui/icons-material/Send";
 import { useIsMobile } from "@/hooks/use-responsive";
 
-import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-const getJobCards = (isMobile: boolean) => [
-  {
-    title: "Start a Book Job",
-    description: "Design covers, layouts, and more.",
-    icon: (
-      <MenuBookOutlinedIcon
-        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
-      />
-    ),
-  },
-  {
-    title: "Start a Package Job",
-    description: "Create packaging for a new product.",
-    icon: (
-      <Inventory2OutlinedIcon
-        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
-      />
-    ),
-  },
-  {
-    title: "Start a Commercial Product Job",
-    description: "Develop branding for a commercial item.",
-    icon: (
-      <AssignmentOutlinedIcon
-        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
-      />
-    ),
-  },
-  {
-    title: "Start a Labels Job",
-    description: "Design and print custom labels.",
-    icon: (
-      <LocalOfferOutlinedIcon
-        style={{ fontSize: isMobile ? 20 : 24, color: "#ed028c" }}
-      />
-    ),
-  },
-];
 
 interface AIMainPanelProps {
   sendMessage: (prompt: string) => Promise<any>;
+  selectProduct: (productId: string) => Promise<any>;
   isProcessing: boolean;
   sessionId: string | null;
   chatMessages: any[];
@@ -60,6 +20,7 @@ interface AIMainPanelProps {
 
 const AIMainPanel = ({
   sendMessage,
+  selectProduct,
   isProcessing,
   sessionId,
   chatMessages,
@@ -166,54 +127,34 @@ const AIMainPanel = ({
     }
   };
 
-  const handleJobCardClick = async (title: string, description: string) => {
-    // Clear the input immediately
-    setJobDescription("");
-
-    // Create the message directly without relying on state
-    const currentDescription = title;
-
-    // Add user message to chat
-    const newMessages = [
-      ...chatMessages,
-      {
-        id: Date.now().toString(),
-        type: "user",
-        message: currentDescription,
-        timestamp: new Date().toISOString(),
-      },
-    ];
-
-    onChatMessagesUpdate(newMessages);
-
+  const handleProductSelect = async (productId: string) => {
     try {
-      // If this is the first message and we have a session, create job entry
-      if (chatMessages.length === 0 && sessionId) {
-        const newJob = {
-          id: sessionId,
-          title:
-            currentDescription.substring(0, 50) +
-            (currentDescription.length > 50 ? "..." : ""),
-          description: currentDescription,
-          createdAt: new Date().toISOString(),
-          status: "processing" as const,
-        };
-      }
+      // Call the select product API
+      await selectProduct(productId);
 
-      // Send message to AI
-      await sendMessage(currentDescription);
-
-      // Note: AI response will come through socket.io, not here
-    } catch (error) {
-      console.error("Error sending message:", error);
-      // Add error message to chat (don't replace existing messages)
-      const errorMessages = [
-        ...newMessages,
+      // Add a system message to the chat
+      const newMessages = [
+        ...chatMessages,
         {
-          id: (Date.now() + 1).toString(),
+          id: Date.now().toString(),
+          type: "system",
+          message:
+            "Product selected successfully! You can now start customizing it.",
+          timestamp: new Date().toISOString(),
+        },
+      ];
+
+      onChatMessagesUpdate(newMessages);
+    } catch (error) {
+      console.error("Error selecting product:", error);
+      // Add error message to chat
+      const errorMessages = [
+        ...chatMessages,
+        {
+          id: Date.now().toString(),
           type: "ai",
           message:
-            "Sorry, I encountered an error processing your message. Please try again.",
+            "Sorry, I encountered an error selecting the product. Please try again.",
           timestamp: new Date().toISOString(),
         },
       ];
@@ -225,8 +166,6 @@ const AIMainPanel = ({
     return <div style={classes.mainPanelContainer} />;
   }
 
-  const jobCards = getJobCards(isMobile);
-
   return (
     <div style={classes.mainPanelContainer}>
       <div
@@ -235,82 +174,12 @@ const AIMainPanel = ({
           ...(isMobile ? classes.newJobContainerMobile : {}),
         }}
       >
-        {/* Header - Only show when no chat messages */}
+        {/* Product Selector - Only show when no chat messages */}
         {chatMessages.length === 0 && (
-          <div style={classes.header}>
-            <div style={classes.headerIcon}>
-              <AutoAwesomeRoundedIcon
-                style={{
-                  fontSize: isMobile ? 24 : 32,
-                  color: "linear-gradient(135deg, #9333ea, #ec4899)",
-                }}
-              />
-            </div>
-            <div
-              style={{
-                ...classes.headerTitle,
-                ...(isMobile ? classes.headerTitleMobile : {}),
-              }}
-            >
-              Start a New Job with GoMake AI
-            </div>
-            <div
-              style={{
-                ...classes.headerSubtitle,
-                ...(isMobile ? classes.headerSubtitleMobile : {}),
-              }}
-            >
-              Describe your project, and our intelligent assistant will guide
-              you through the creation process.
-            </div>
-          </div>
-        )}
-
-        {chatMessages.length === 0 && (
-          <div
-            style={{
-              ...classes.jobTypeCardsContainer,
-              ...(isMobile ? classes.jobTypeCardsContainerMobile : {}),
-            }}
-          >
-            {jobCards.map((card, index) => (
-              <div
-                key={index}
-                style={{
-                  ...classes.jobTypeCard,
-                  ...(isMobile ? classes.jobTypeCardMobile : {}),
-                }}
-                onClick={() => handleJobCardClick(card.title, card.description)}
-              >
-                <div
-                  style={{
-                    ...classes.jobTypeIconWrapper,
-                    ...(isMobile ? classes.jobTypeIconWrapperMobile : {}),
-                  }}
-                >
-                  {card.icon}
-                </div>
-                <div style={classes.jobTypeTextContainer}>
-                  <div
-                    style={{
-                      ...classes.jobTypeTitle,
-                      ...(isMobile ? classes.jobTypeTitleMobile : {}),
-                    }}
-                  >
-                    {card.title}
-                  </div>
-                  <div
-                    style={{
-                      ...classes.jobTypeDescription,
-                      ...(isMobile ? classes.jobTypeDescriptionMobile : {}),
-                    }}
-                  >
-                    {card.description}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ProductSelector
+            onProductSelect={handleProductSelect}
+            isProcessing={isProcessing}
+          />
         )}
 
         {/* Chat Interface */}
