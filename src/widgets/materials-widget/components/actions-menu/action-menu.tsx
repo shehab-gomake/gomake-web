@@ -84,8 +84,6 @@ const ActionMenu = (props: IActionMenuProps) => {
     materialType,
     materialCategory
   } = useMaterialsActions(props.isAdmin);
-  console.log("materialType", materialType);
-  console.log("materialCategory", materialCategory);
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState<null | HTMLElement>(null);
   const [currentSubmenuAction, setCurrentSubmenuAction] = useState<any>(null);
   const [supplier, setSupplier] = useState<any>([]);
@@ -383,7 +381,12 @@ const ActionMenu = (props: IActionMenuProps) => {
                         <GoMakeAutoComplate
                           placeholder={"select property"}
                           getOptionLabel={(option: any) => option.value}
-                          options={materialHeaders.filter(x => !x.isHideInDuplicate)}
+                          options={materialHeaders.filter(x =>
+                            !x.isHideInDuplicate &&
+                            x.key !== "Active" &&
+                            x.key !== "totalInventory" &&
+                            x.key !== "purchasePricing"
+                          )}
                           onChange={(event, value) => {
                             handleChange(index, "key", value);
                           }}
