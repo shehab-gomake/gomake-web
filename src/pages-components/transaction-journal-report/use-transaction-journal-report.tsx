@@ -101,6 +101,8 @@ const useTransactionJournalReport = ({
   );
   const [toDate, setToDate] = useState<Date>(defaultEndDate);
 
+  console.log("fromDate", { fromDate, toDate })
+
   const [dataTable, setDataTable] = useState<any>([]);
   const [dataTableStatistics, setDataTableStatistics] =
     useState<IDataTableStatistics | null>(null);
@@ -301,6 +303,7 @@ const useTransactionJournalReport = ({
   };
 
   const getTransactionJournalReportFilter = useCallback(async () => {
+
     if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
@@ -714,10 +717,11 @@ const useTransactionJournalReport = ({
     );
     if (res?.success) {
       alertSuccessUpdate();
+      getTransactionJournalReportFilter();
     } else {
       alertFaultUpdate();
     }
-  }, []);
+  }, [fromDate, toDate]);
 
   const [erpAccountsList, setErpAccountsList] = useState([]);
 
