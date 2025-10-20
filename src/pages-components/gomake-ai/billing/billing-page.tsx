@@ -108,7 +108,7 @@ const GoMakeAIBillingPage = () => {
             {/* Pricing Table Section */}
             <Box style={classes.pricingSection}>
               <StripePricingTable
-                pricingTableId="prctbl_1SA9FgP444riBeBrGcuI4KD7"
+                pricingTableId="prctbl_1SK1G4P444riBeBr1aSlLKNn"
                 publishableKey="pk_live_51RFtGmP444riBeBr18hRSoV5hPgPKmshvZYSHyfA3BiJTnWYR13qBa142UCJdlOMnwAyfAO1LhqO8tbW7nECanx4008dAKXic0"
                 clientReferenceId={printHouseProfileState?.stripeCustomerId}
                 className="custom-scrollbar"
