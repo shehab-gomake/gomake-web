@@ -20,6 +20,7 @@ import { FrontdeskNav } from "@/widgets/frontdesk-nav/frontdesk-nav";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
+import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -66,7 +67,8 @@ const HeaderWidget = () => {
         <div style={{ flex: 1 }} />
       </div>
       <div style={classes.rightSideContainer}>
-        <MessengerNotifications />
+        {/* <MessengerNotifications /> */}
+        {/* !here front desk */}
         <FrontdeskNav />
         <SystemNotifications />
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
@@ -77,6 +79,10 @@ const HeaderWidget = () => {
             <CartIcon />
           </IconButton>
         )}
+        <CustomTooltip title={t("Support Chat")} arrow placement="bottom">
+          <GoSupportChatWidget />
+        </CustomTooltip>
+
         <SystemHelp />
         <div style={classes.verticalDivider} />
         <div style={classes.profileContainer}>
