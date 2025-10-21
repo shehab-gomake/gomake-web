@@ -229,9 +229,9 @@ export function useQuickActions(options: UseQuickActionsOptions): UseQuickAction
                     phone: customerPhone,
                   });
                 }
-
+                debugger
                 // Navigate to gomake-ai page with sessionId
-                navigate(`/gomake-ai?sessionId=${response.data.sessionId}`);
+                navigate(`/gomake-ai?sessionId=${response.data?.data?.data?.sessionId}`);
                 onActionComplete?.(actionType);
               } catch (error: any) {
                 console.error('[useQuickActions] AI quote request error:', error);
