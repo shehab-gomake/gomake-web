@@ -20,6 +20,8 @@ import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
 import { useEffect } from "react";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -71,7 +73,12 @@ export const SetupGuideMenu = ({
     updatePrintHouseSetupSteps,
     handleOpenDemoVideo,
   });
-  const { classes } = useStyle(isRtl);
+
+  // Check FrontDesk permission for header spacing calculation
+  const { CheckPermission } = useUserPermission();
+  const hasFrontDeskPermission = CheckPermission(Permissions.SHOW_FRONT_DESK);
+
+  const { classes } = useStyle(isRtl, hasFrontDeskPermission);
   const nextStep = findNextStep(steps);
 
   useEffect(() => {

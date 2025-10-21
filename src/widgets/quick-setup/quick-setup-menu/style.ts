@@ -3,7 +3,7 @@ import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { useMemo } from "react";
 import { useRecoilState } from "recoil";
 
-const useStyle = (isRtl: boolean) => {
+const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
   const { primaryColor, theme, grayColor } = useGomakeTheme();
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
 
@@ -20,15 +20,27 @@ const useStyle = (isRtl: boolean) => {
         backgroundColor: "#ffffff",
         zIndex: 1300,
       },
+
       secondGuide: {
         color: grayColor(500),
         position: "fixed",
         top: 9,
         [isRtl ? "left" : "right"]: 1,
-        [isRtl ? "marginLeft" : "marginRight"]:
-          !QuoteIfExist || window.location.pathname === "/quote"
-            ? "215px"
-            : "260px",
+        [isRtl ? "marginLeft" : "marginRight"]: (() => {
+          let margin = 205; // Base margin for default header icons
+
+          // Add cart icon width if showing quote cart
+          if (QuoteIfExist && window.location.pathname !== "/quote") {
+            margin += 45;
+          }
+
+          // Add frontDesk icon width if user has permission
+          if (hasFrontDeskPermission) {
+            margin += 45;
+          }
+
+          return `${margin}px`;
+        })(),
         display: "flex",
         alignItems: "center",
         gap: 1.5,
@@ -94,7 +106,7 @@ const useStyle = (isRtl: boolean) => {
         },
       },
     };
-  }, [theme, isRtl, QuoteIfExist]);
+  }, [theme, isRtl, QuoteIfExist, hasFrontDeskPermission]);
 
   return {
     classes,
