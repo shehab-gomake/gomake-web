@@ -2,7 +2,13 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH } from "@/utils/adapter";
 
-const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
+const useStyle = ({
+  isCollapsed = false,
+  isMobile = false,
+}: {
+  isCollapsed?: boolean;
+  isMobile?: boolean;
+}) => {
   const classes = useMemo(() => {
     return {
       sidebarContainer: {
@@ -308,14 +314,14 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
-        gap: 8,
+        gap: isMobile ? 6 : 8,
       },
       poweredByLbl: {
-        ...FONT_FAMILY.Inter(400, 11),
+        ...FONT_FAMILY.Inter(400, isMobile ? 9 : 11),
         color: "#9CA3AF",
         textTransform: "uppercase" as "uppercase",
         letterSpacing: "0.05em",
-        marginBottom: 4,
+        marginBottom: isMobile ? 2 : 4,
       },
       toggleButton: {
         display: "flex",
@@ -385,7 +391,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         opacity: 0.7,
       },
     };
-  }, [isCollapsed]);
+  }, [isCollapsed, isMobile]);
 
   return {
     classes,
