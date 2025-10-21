@@ -237,12 +237,7 @@ const AISidebar = ({
                 </div>
               </div>
             ) : (
-              <div
-                style={{
-                  ...classes.jobHistoryList,
-                  ...classes.scrollableList,
-                }}
-              >
+              <div style={classes.scrollableList}>
                 {conversationsHistory.map((conversation, index) => (
                   <div
                     key={index}
