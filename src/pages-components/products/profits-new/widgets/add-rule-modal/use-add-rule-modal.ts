@@ -18,6 +18,7 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import {
   getAndSetEmployees2,
@@ -655,20 +656,40 @@ const useAddRuleModal = ({
         {
           documentType: documentType,
           exportType: detailsOption,
-            filterDTO: {
-              statusId: filterData?.statusId,
-              closeStatus: filterData?.closeStatus,
-              productionStatus: filterData?.productionStatus,
-              patternSearch: filterData?.patternSearch,
-              customerId: filterData?.customerId,
-              dateRange: filterData?.dateRange,
-              agentId: filterData?.agentId,
-              minPrice: filterData?.minPrice,
-              maxPrice: filterData?.maxPrice,
-              productList: filterData?.productList,
-              fromDate: filterData?.fromDate,
-              toDate: filterData?.toDate,
-            },
+            ...(documentType === DocumentTypeEnums.BoardMission
+              ? { 
+                boardMissionTableFilterDTO: {
+                    statusId: filterData?.statusId,
+                    closeStatus: filterData?.closeStatus,
+                    productionStatus: filterData?.productionStatus,
+                    patternSearch: filterData?.patternSearch,
+                    customerId: filterData?.customerId,
+                    dateRange: filterData?.dateRange,
+                    agentId: filterData?.agentId,
+                    minPrice: filterData?.minPrice,
+                    maxPrice: filterData?.maxPrice,
+                    productList: filterData?.productList,
+                    fromDate: filterData?.fromDate,
+                    toDate: filterData?.toDate,
+                  }
+                }
+              : { 
+                  filterDTO: {
+                    statusId: filterData?.statusId,
+                    closeStatus: filterData?.closeStatus,
+                    productionStatus: filterData?.productionStatus,
+                    patternSearch: filterData?.patternSearch,
+                    customerId: filterData?.customerId,
+                    dateRange: filterData?.dateRange,
+                    agentId: filterData?.agentId,
+                    minPrice: filterData?.minPrice,
+                    maxPrice: filterData?.maxPrice,
+                    productList: filterData?.productList,
+                    fromDate: filterData?.fromDate,
+                    toDate: filterData?.toDate,
+                  }
+                }
+            ),
             groupBy: propertieValue,
             exceptionConditionProperties: exceptionConditionProperties,
         }
