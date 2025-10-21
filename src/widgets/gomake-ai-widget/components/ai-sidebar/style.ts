@@ -85,6 +85,15 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         lineHeight: "16px",
         letterSpacing: "0.01em",
       },
+      conversationCounter: {
+        ...FONT_FAMILY.Inter(600, 12),
+        color: "#495057",
+        backgroundColor: "#d9d9d9",
+        padding: "6px 12px",
+        borderRadius: 6,
+        display: "inline-block",
+        textAlign: "center" as "center",
+      },
       navigationContainer: {
         display: "flex",
         flexDirection: "column" as "column",

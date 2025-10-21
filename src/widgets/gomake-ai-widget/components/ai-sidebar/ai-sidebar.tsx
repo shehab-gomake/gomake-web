@@ -22,6 +22,8 @@ interface AISidebarProps {
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
   onClose?: () => void;
+  conversationLimit?: number;
+  currentConversationCount?: number;
 }
 
 const AISidebar = ({
@@ -33,11 +35,19 @@ const AISidebar = ({
   isCollapsed = false,
   onToggleCollapse,
   onClose,
+  conversationLimit,
+  currentConversationCount,
 }: AISidebarProps) => {
   const { classes } = useStyle({ isCollapsed });
   const isMobile = useIsMobile();
   const user = useRecoilValue<any>(userState);
   const hasToken = !!getUserToken();
+
+  // Show counter for Go AI users (trial/limited users)
+  const showConversationCounter =
+    !user?.isGoAiUser &&
+    conversationLimit &&
+    currentConversationCount !== undefined;
 
   return (
     <div style={classes.sidebarContainer}>
@@ -115,7 +125,7 @@ const AISidebar = ({
           <div style={classes.jobHistorySection}>
             <div style={classes.sectionTitle}>
               <HistoryRoundedIcon style={classes.sectionIcon} />
-              Jobs History
+              <span>Jobs History</span>
               {onRefreshHistory && (
                 <button
                   onClick={onRefreshHistory}
@@ -128,6 +138,11 @@ const AISidebar = ({
                 </button>
               )}
             </div>
+            {showConversationCounter && (
+              <div style={classes.conversationCounter}>
+                {currentConversationCount}/{conversationLimit}
+              </div>
+            )}
             {conversationsHistory.length === 0 ? (
               <div className="ai-empty-state" style={classes.emptyState}>
                 <div style={classes.emptyStateIcon}>💬</div>
