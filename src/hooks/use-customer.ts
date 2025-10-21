@@ -10,6 +10,8 @@ import { userProfileState } from "@/store/user-profile";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
 import {
+  GOMAKE_AI_FEATURE_ID,
+  GOMAKE_MIS_FEATURE_ID,
   isUsPrintHouseState,
   printHouseProfile,
 } from "@/store/print-house-profile";
@@ -126,8 +128,17 @@ const useCustomer = (
           .then();
       }
 
-      // ✅ Check if user is GoAI user - restrict to AI page only
-      if (user?.isGoAiUser) {
+      const hasMISFeature =
+        user?.printHouseProfile?.allowedFeaturesId?.includes(
+          GOMAKE_MIS_FEATURE_ID
+        ) ?? false;
+
+      const hasAIFeature =
+        user?.printHouseProfile?.allowedFeaturesId?.includes(
+          GOMAKE_AI_FEATURE_ID
+        ) ?? false;
+
+      if (hasAIFeature && !hasMISFeature) {
         const currentPath = window.location.pathname;
 
         // If billing is required (not paid), redirect to billing page

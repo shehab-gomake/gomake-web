@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { Tab } from "./tab";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { adaptRight } from "@/utils/adapter";
 import { hoverStatusState } from "@/store";
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
+import { printHouseHasAIFeature } from "@/store/print-house-profile";
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ const LeftSideLayout = (customGap) => {
   const { classes } = useStyle({ navStatus, customGap });
   const [myProfileLogo, setMyProfileLogo] = useState("");
   const [hoverTimeout, setHoverTimeout] = useState(null);
+  const hasAIFeature = useRecoilValue(printHouseHasAIFeature);
 
   useEffect(() => {
     setMyProfileLogo(localStorage.getItem("systemLogo"));
@@ -57,6 +59,12 @@ const LeftSideLayout = (customGap) => {
     } else if (tab.Permission && !CheckPermission(tab.Permission)) {
       return false;
     }
+
+    // ✅ Special check for GomakeAI tab: requires both permission AND AI feature
+    if (tab.key === "goAI" && !hasAIFeature) {
+      return false;
+    }
+
     return true;
   };
 

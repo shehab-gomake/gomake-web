@@ -3,7 +3,6 @@ import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import HomeIcon from "@mui/icons-material/Home";
-import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
@@ -11,10 +10,15 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import BoltIcon from "@mui/icons-material/Bolt";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/store";
 import { getUserToken } from "@/services/storage-data";
+import {
+  printHouseHasCustomizeAIFeature,
+  printHouseHasMISFeature,
+} from "@/store/print-house-profile";
 
 interface AISidebarProps {
   onNewJobClick: () => void;
@@ -45,15 +49,16 @@ const AISidebar = ({
   const isMobile = useIsMobile();
   const user = useRecoilValue<any>(userState);
   const hasToken = !!getUserToken();
+  const hasCustomizeAIFeature = useRecoilValue(printHouseHasCustomizeAIFeature);
+  const hasMISFeature = useRecoilValue(printHouseHasMISFeature);
 
-  // Show counter for Go AI users (trial/limited users)
   const showConversationCounter =
     user?.isGoAiUser &&
     conversationLimit &&
     currentConversationCount !== undefined;
 
-  // Check if navigation buttons should be shown
-  const showNavButtons = !user?.isGoAiUser && hasToken;
+  const showNavButtons = hasCustomizeAIFeature;
+  const showHomeButton = hasMISFeature;
 
   // Collapsed button styles
   const collapsedButtonBase = {
@@ -70,7 +75,6 @@ const AISidebar = ({
 
   const collapsedGradientButton = {
     ...collapsedButtonBase,
-    // boxShadow: "0 4px 10px rgba(236, 72, 153, 0.25)",
   };
 
   const collapsedHomeButton = {
@@ -98,7 +102,6 @@ const AISidebar = ({
     ...expandedButtonBase,
     border: "none",
     color: "#FFF",
-    // boxShadow: "0 4px 10px rgba(236, 72, 153, 0.25)",
   };
 
   const expandedHomeButton = {
@@ -113,16 +116,13 @@ const AISidebar = ({
     e: React.MouseEvent<HTMLButtonElement>,
     isPrimary: boolean
   ) => {
-    // e.currentTarget.style.boxShadow = isPrimary
-    //   ? "0 0 10px rgba(236, 72, 153, 0.6)"
-    //   : "0 0 10px rgba(147, 51, 234, 0.6)";
     e.currentTarget.style.transform = "translateY(-2px)";
   };
 
-  const handleGradientLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // e.currentTarget.style.boxShadow = "0 4px 10px rgba(236, 72, 153, 0.25)";
-    e.currentTarget.style.transform = "translateY(0)";
-  };
+  const handleGradientLeave = // e.currentTarget.style.boxShadow = "0 4px 10px rgba(236, 72, 153, 0.25)";
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.currentTarget.style.transform = "translateY(0)";
+    };
 
   const handleHomeHover = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.currentTarget.style.backgroundColor = "#F3F4F6";
@@ -279,6 +279,7 @@ const AISidebar = ({
         {isCollapsed ? (
           <CollapsedFooter
             showNavButtons={showNavButtons}
+            showHomeButton={showHomeButton}
             collapsedGradientButton={collapsedGradientButton}
             collapsedHomeButton={collapsedHomeButton}
             handleGradientHover={handleGradientHover}
@@ -290,6 +291,7 @@ const AISidebar = ({
         ) : (
           <ExpandedFooter
             showNavButtons={showNavButtons}
+            showHomeButton={showHomeButton}
             expandedGradientButton={expandedGradientButton}
             expandedHomeButton={expandedHomeButton}
             handleGradientHover={handleGradientHover}
@@ -308,6 +310,7 @@ const AISidebar = ({
 // Collapsed Footer Component
 interface CollapsedFooterProps {
   showNavButtons: boolean;
+  showHomeButton: boolean;
   collapsedGradientButton: React.CSSProperties;
   collapsedHomeButton: React.CSSProperties;
   handleGradientHover: (
@@ -322,6 +325,7 @@ interface CollapsedFooterProps {
 
 const CollapsedFooter = ({
   showNavButtons,
+  showHomeButton,
   collapsedGradientButton,
   collapsedHomeButton,
   handleGradientHover,
@@ -340,47 +344,67 @@ const CollapsedFooter = ({
         width: "100%",
       }}
     >
-      {showNavButtons && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10,
-            width: "100%",
-          }}
-        >
-          {/* Machines Button */}
-          <button
-            style={{
-              ...collapsedGradientButton,
-              background: "linear-gradient(135deg, #9333EA, #EC4899)",
-            }}
-            onMouseEnter={(e) => handleGradientHover(e, true)}
-            onMouseLeave={handleGradientLeave}
-            onClick={() => (window.location.href = "/machines")}
-            title="Machines"
-          >
-            <PrecisionManufacturingIcon
-              style={{ fontSize: 18, color: "#FFF" }}
-            />
-          </button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 10,
+          width: "100%",
+        }}
+      >
+        {/* Machines and Materials Buttons - only show if hasCustomizeAIFeature */}
+        {showNavButtons && (
+          <>
+            {/* Machines Button */}
+            <button
+              style={{
+                ...collapsedGradientButton,
+                background: "linear-gradient(135deg, #9333EA, #EC4899)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, true)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/machines")}
+              title="Machines"
+            >
+              <PrecisionManufacturingIcon
+                style={{ fontSize: 18, color: "#FFF" }}
+              />
+            </button>
 
-          {/* Materials Button */}
-          <button
-            style={{
-              ...collapsedGradientButton,
-              background: "linear-gradient(135deg, #EC4899, #9333EA)",
-            }}
-            onMouseEnter={(e) => handleGradientHover(e, false)}
-            onMouseLeave={handleGradientLeave}
-            onClick={() => (window.location.href = "/materials")}
-            title="Materials"
-          >
-            <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
-          </button>
+            {/* Materials Button */}
+            <button
+              style={{
+                ...collapsedGradientButton,
+                background: "linear-gradient(135deg, #EC4899, #9333EA)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, false)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/materials")}
+              title="Materials"
+            >
+              <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+            </button>
 
-          {/* Home Button */}
+            {/* Actions Button */}
+            <button
+              style={{
+                ...collapsedGradientButton,
+                //  background: "linear-gradient(135deg, #F59E0B, #EF4444)",
+                background: "linear-gradient(135deg, #9333EA, #EC4899)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, false)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/actions")}
+              title="Actions"
+            >
+              <BoltIcon style={{ fontSize: 18, color: "#FFF" }} />
+            </button>
+          </>
+        )}
+
+        {/* Home Button - show separately based on showHomeButton */}
+        {showHomeButton && (
           <button
             style={collapsedHomeButton}
             onMouseEnter={handleHomeHover}
@@ -390,8 +414,8 @@ const CollapsedFooter = ({
           >
             <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Powered By */}
       <div style={collapsedPoweredBy}>
@@ -408,6 +432,7 @@ const CollapsedFooter = ({
 // Expanded Footer Component
 interface ExpandedFooterProps {
   showNavButtons: boolean;
+  showHomeButton: boolean;
   expandedGradientButton: React.CSSProperties;
   expandedHomeButton: React.CSSProperties;
   handleGradientHover: (
@@ -423,6 +448,7 @@ interface ExpandedFooterProps {
 
 const ExpandedFooter = ({
   showNavButtons,
+  showHomeButton,
   expandedGradientButton,
   expandedHomeButton,
   handleGradientHover,
@@ -434,47 +460,66 @@ const ExpandedFooter = ({
 }: ExpandedFooterProps) => {
   return (
     <>
-      {showNavButtons && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            width: "100%",
-            marginTop: 8,
-          }}
-        >
-          {/* Machines Button */}
-          <button
-            style={{
-              ...expandedGradientButton,
-              background: "linear-gradient(135deg, #9333EA, #EC4899)",
-            }}
-            onMouseEnter={(e) => handleGradientHover(e, true)}
-            onMouseLeave={handleGradientLeave}
-            onClick={() => (window.location.href = "/machines")}
-          >
-            <PrecisionManufacturingIcon
-              style={{ fontSize: 18, color: "#FFF" }}
-            />
-            Machines
-          </button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          width: "100%",
+          marginTop: 8,
+        }}
+      >
+        {/* Machines and Materials Buttons - only show if hasCustomizeAIFeature */}
+        {showNavButtons && (
+          <>
+            {/* Machines Button */}
+            <button
+              style={{
+                ...expandedGradientButton,
+                background: "linear-gradient(135deg, #9333EA, #EC4899)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, true)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/machines")}
+            >
+              <PrecisionManufacturingIcon
+                style={{ fontSize: 18, color: "#FFF" }}
+              />
+              Machines
+            </button>
 
-          {/* Materials Button */}
-          <button
-            style={{
-              ...expandedGradientButton,
-              background: "linear-gradient(135deg, #EC4899, #9333EA)",
-            }}
-            onMouseEnter={(e) => handleGradientHover(e, false)}
-            onMouseLeave={handleGradientLeave}
-            onClick={() => (window.location.href = "/materials")}
-          >
-            <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
-            Materials
-          </button>
+            {/* Materials Button */}
+            <button
+              style={{
+                ...expandedGradientButton,
+                background: "linear-gradient(135deg, #EC4899, #9333EA)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, false)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/materials")}
+            >
+              <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+              Materials
+            </button>
 
-          {/* Home Button */}
+            {/* Actions Button */}
+            <button
+              style={{
+                ...expandedGradientButton,
+                background: "linear-gradient(135deg, #9333EA, #EC4899)",
+              }}
+              onMouseEnter={(e) => handleGradientHover(e, false)}
+              onMouseLeave={handleGradientLeave}
+              onClick={() => (window.location.href = "/actions")}
+            >
+              <BoltIcon style={{ fontSize: 18, color: "#FFF" }} />
+              Actions
+            </button>
+          </>
+        )}
+
+        {/* Home Button - show separately based on showHomeButton */}
+        {showHomeButton && (
           <button
             style={expandedHomeButton}
             onMouseEnter={handleHomeHover}
@@ -484,8 +529,8 @@ const ExpandedFooter = ({
             <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
             Back to Home
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Powered By */}
       <div style={poweredByContainer}>
