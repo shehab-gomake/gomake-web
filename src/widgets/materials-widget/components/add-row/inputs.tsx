@@ -210,18 +210,18 @@ const rowInputs = (
           else
             return {
               name: header?.key,
-              label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
+              label: newMaterialHeaders ? null : typeof header?.value === "object" ? "materials.inputs.unitPrice" : header?.value || "",
               type:
                 EDataTypeEnum[header?.inputType] == "BOOLEAN"
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
-              placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
+              placeholder: typeof header?.value === "object" ? "materials.inputs.unitPrice" : header?.value || "",
               required: header?.isRequired,
               parameterKey: header?.key,
               options: [],
               value: state[header?.key],
               isValid: true,
-              unit: header?.unit,
+              unit: typeof header?.value === "object" ? header?.value?.props?.children[2] : header?.unit,
               isPriceObject: header?.isPriceObject,
             };
       }

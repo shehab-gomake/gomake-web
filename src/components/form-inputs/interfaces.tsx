@@ -26,6 +26,7 @@ export interface IInput {
   iconElement?: React.ReactNode;
   note?: string;
   dropdownStyle?: React.CSSProperties;
+  isPriceObject?: boolean;
 }
 export interface ICustomStyles {
   textInput?: React.CSSProperties;
