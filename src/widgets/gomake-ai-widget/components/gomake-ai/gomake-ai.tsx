@@ -455,6 +455,8 @@ const GoMakeAIComponent = () => {
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={toggleSidebar}
             onClose={isMobile ? () => setIsSidebarOpen(false) : undefined}
+            conversationLimit={10}
+            currentConversationCount={conversationsHistory.length}
           />
         </div>
       )}
