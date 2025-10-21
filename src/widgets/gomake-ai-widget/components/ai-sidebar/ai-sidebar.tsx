@@ -173,7 +173,7 @@ const AISidebar = ({
                           : "transparent",
                       cursor: "pointer",
                       marginBottom: "4px",
-                      padding: "12px",
+                      padding: "6px 12px",
                       borderRadius: "6px",
                       border: "1px solid #E5E7EB",
                     }}
