@@ -269,11 +269,15 @@ const FormInput = ({
               >
                 <span>{t(input.label)}</span>
 
-                {input.unit && (
+                {input.unit && !input.isPriceObject ? (
                   <small>
                     {`${t(
                       `measurementUnits.${convertedUnit}`
                     )}`}
+                  </small>
+                ) : (
+                  <small>
+                    {input.unit}
                   </small>
                 )}
 
