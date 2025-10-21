@@ -164,13 +164,12 @@ export const TicketDetailView: React.FC<TicketDetailViewProps> = ({
     customerName: ticket.customerName,
     customerEmail: ticket.customerEmail,
     customerPhone: ticket.customerPhone,
+    activeConversation: activeConversation,
     onActionComplete: (actionType) => {
       console.log('[TicketDetailView] Quick action completed:', actionType);
     },
     onActionError: (actionType, error) => {
       console.error('[TicketDetailView] Quick action error:', actionType, error);
-      // TODO: Show toast notification
-      alert(`Cannot execute action: ${error}`);
     },
   });
 
