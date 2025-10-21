@@ -1,3 +1,4 @@
+import React from "react";
 import { useStyle } from "./style";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
@@ -8,6 +9,8 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/store";
@@ -48,6 +51,88 @@ const AISidebar = ({
     user?.isGoAiUser &&
     conversationLimit &&
     currentConversationCount !== undefined;
+
+  // Check if navigation buttons should be shown
+  const showNavButtons = !user?.isGoAiUser && hasToken;
+
+  // Collapsed button styles
+  const collapsedButtonBase = {
+    width: 40,
+    height: 40,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+    border: "none",
+  };
+
+  const collapsedGradientButton = {
+    ...collapsedButtonBase,
+    // boxShadow: "0 4px 10px rgba(236, 72, 153, 0.25)",
+  };
+
+  const collapsedHomeButton = {
+    ...collapsedButtonBase,
+    border: "1px solid #E5E7EB",
+    backgroundColor: "#F9FAFB",
+  };
+
+  // Expanded button styles
+  const expandedButtonBase = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    padding: "10px 16px",
+    borderRadius: 9999,
+    fontFamily: "Inter, sans-serif",
+    fontSize: 13,
+    fontWeight: 500,
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+  };
+
+  const expandedGradientButton = {
+    ...expandedButtonBase,
+    border: "none",
+    color: "#FFF",
+    // boxShadow: "0 4px 10px rgba(236, 72, 153, 0.25)",
+  };
+
+  const expandedHomeButton = {
+    ...expandedButtonBase,
+    border: "1px solid #E5E7EB",
+    backgroundColor: "#F9FAFB",
+    color: "#374151",
+  };
+
+  // Hover handlers
+  const handleGradientHover = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    isPrimary: boolean
+  ) => {
+    // e.currentTarget.style.boxShadow = isPrimary
+    //   ? "0 0 10px rgba(236, 72, 153, 0.6)"
+    //   : "0 0 10px rgba(147, 51, 234, 0.6)";
+    e.currentTarget.style.transform = "translateY(-2px)";
+  };
+
+  const handleGradientLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // e.currentTarget.style.boxShadow = "0 4px 10px rgba(236, 72, 153, 0.25)";
+    e.currentTarget.style.transform = "translateY(0)";
+  };
+
+  const handleHomeHover = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = "#F3F4F6";
+    e.currentTarget.style.transform = "translateY(-2px)";
+  };
+
+  const handleHomeLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = "#F9FAFB";
+    e.currentTarget.style.transform = "translateY(0)";
+  };
 
   return (
     <div style={classes.sidebarContainer}>
@@ -192,64 +277,226 @@ const AISidebar = ({
       {/* Footer */}
       <div style={classes.footer}>
         {isCollapsed ? (
-          // Collapsed footer - simplified version
-          <div style={classes.collapsedFooter}>
-            {!user?.isGoAiUser && hasToken && (
-              <button
-                style={classes.collapsedBackButton}
-                onClick={() => {
-                  window.location.href = "/";
-                }}
-                title="Back to GoMake"
-              >
-                <HomeIcon style={classes.collapsedBackButtonIcon} />
-              </button>
-            )}
-            <div style={classes.collapsedPoweredBy}>
-              <GoMakeIcon
-                color="linear-gradient(135deg, #9333ea, #ec4899)"
-                height={16}
-                width={56}
-              />
-            </div>
-          </div>
+          <CollapsedFooter
+            showNavButtons={showNavButtons}
+            collapsedGradientButton={collapsedGradientButton}
+            collapsedHomeButton={collapsedHomeButton}
+            handleGradientHover={handleGradientHover}
+            handleGradientLeave={handleGradientLeave}
+            handleHomeHover={handleHomeHover}
+            handleHomeLeave={handleHomeLeave}
+            collapsedPoweredBy={classes.collapsedPoweredBy}
+          />
         ) : (
-          // Expanded footer - full version
-          <>
-            {!user?.isGoAiUser && hasToken && (
-              <button
-                style={(classes as any).backButton}
-                onClick={() => {
-                  window.location.href = "/";
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#FDF2F8";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#FDF2F8";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                <HomeIcon style={(classes as any).backButtonIcon} />
-                <span style={(classes as any).backButtonText}>
-                  Back to GoMake
-                </span>
-              </button>
-            )}
-            <div style={(classes as any).poweredByContainer}>
-              <div style={classes.poweredByLbl}>Powered by</div>
-              <GoMakeIcon
-                color="linear-gradient(135deg, #9333ea, #ec4899)"
-                //color="#2E3092"
-                height={20}
-                width={100}
-              />
-            </div>
-          </>
+          <ExpandedFooter
+            showNavButtons={showNavButtons}
+            expandedGradientButton={expandedGradientButton}
+            expandedHomeButton={expandedHomeButton}
+            handleGradientHover={handleGradientHover}
+            handleGradientLeave={handleGradientLeave}
+            handleHomeHover={handleHomeHover}
+            handleHomeLeave={handleHomeLeave}
+            poweredByContainer={(classes as any).poweredByContainer}
+            poweredByLbl={classes.poweredByLbl}
+          />
         )}
       </div>
     </div>
+  );
+};
+
+// Collapsed Footer Component
+interface CollapsedFooterProps {
+  showNavButtons: boolean;
+  collapsedGradientButton: React.CSSProperties;
+  collapsedHomeButton: React.CSSProperties;
+  handleGradientHover: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    isPrimary: boolean
+  ) => void;
+  handleGradientLeave: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleHomeHover: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleHomeLeave: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  collapsedPoweredBy: React.CSSProperties;
+}
+
+const CollapsedFooter = ({
+  showNavButtons,
+  collapsedGradientButton,
+  collapsedHomeButton,
+  handleGradientHover,
+  handleGradientLeave,
+  handleHomeHover,
+  handleHomeLeave,
+  collapsedPoweredBy,
+}: CollapsedFooterProps) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 8,
+        width: "100%",
+      }}
+    >
+      {showNavButtons && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+            width: "100%",
+          }}
+        >
+          {/* Machines Button */}
+          <button
+            style={{
+              ...collapsedGradientButton,
+              background: "linear-gradient(135deg, #9333EA, #EC4899)",
+            }}
+            onMouseEnter={(e) => handleGradientHover(e, true)}
+            onMouseLeave={handleGradientLeave}
+            onClick={() => (window.location.href = "/machines")}
+            title="Machines"
+          >
+            <PrecisionManufacturingIcon
+              style={{ fontSize: 18, color: "#FFF" }}
+            />
+          </button>
+
+          {/* Materials Button */}
+          <button
+            style={{
+              ...collapsedGradientButton,
+              background: "linear-gradient(135deg, #EC4899, #9333EA)",
+            }}
+            onMouseEnter={(e) => handleGradientHover(e, false)}
+            onMouseLeave={handleGradientLeave}
+            onClick={() => (window.location.href = "/materials")}
+            title="Materials"
+          >
+            <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+          </button>
+
+          {/* Home Button */}
+          <button
+            style={collapsedHomeButton}
+            onMouseEnter={handleHomeHover}
+            onMouseLeave={handleHomeLeave}
+            onClick={() => (window.location.href = "/")}
+            title="Back to Home"
+          >
+            <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
+          </button>
+        </div>
+      )}
+
+      {/* Powered By */}
+      <div style={collapsedPoweredBy}>
+        <GoMakeIcon
+          color="linear-gradient(135deg, #9333ea, #ec4899)"
+          height={16}
+          width={56}
+        />
+      </div>
+    </div>
+  );
+};
+
+// Expanded Footer Component
+interface ExpandedFooterProps {
+  showNavButtons: boolean;
+  expandedGradientButton: React.CSSProperties;
+  expandedHomeButton: React.CSSProperties;
+  handleGradientHover: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    isPrimary: boolean
+  ) => void;
+  handleGradientLeave: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleHomeHover: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleHomeLeave: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  poweredByContainer: React.CSSProperties;
+  poweredByLbl: React.CSSProperties;
+}
+
+const ExpandedFooter = ({
+  showNavButtons,
+  expandedGradientButton,
+  expandedHomeButton,
+  handleGradientHover,
+  handleGradientLeave,
+  handleHomeHover,
+  handleHomeLeave,
+  poweredByContainer,
+  poweredByLbl,
+}: ExpandedFooterProps) => {
+  return (
+    <>
+      {showNavButtons && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            width: "100%",
+            marginTop: 8,
+          }}
+        >
+          {/* Machines Button */}
+          <button
+            style={{
+              ...expandedGradientButton,
+              background: "linear-gradient(135deg, #9333EA, #EC4899)",
+            }}
+            onMouseEnter={(e) => handleGradientHover(e, true)}
+            onMouseLeave={handleGradientLeave}
+            onClick={() => (window.location.href = "/machines")}
+          >
+            <PrecisionManufacturingIcon
+              style={{ fontSize: 18, color: "#FFF" }}
+            />
+            Machines
+          </button>
+
+          {/* Materials Button */}
+          <button
+            style={{
+              ...expandedGradientButton,
+              background: "linear-gradient(135deg, #EC4899, #9333EA)",
+            }}
+            onMouseEnter={(e) => handleGradientHover(e, false)}
+            onMouseLeave={handleGradientLeave}
+            onClick={() => (window.location.href = "/materials")}
+          >
+            <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+            Materials
+          </button>
+
+          {/* Home Button */}
+          <button
+            style={expandedHomeButton}
+            onMouseEnter={handleHomeHover}
+            onMouseLeave={handleHomeLeave}
+            onClick={() => (window.location.href = "/")}
+          >
+            <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
+            Back to Home
+          </button>
+        </div>
+      )}
+
+      {/* Powered By */}
+      <div style={poweredByContainer}>
+        <div style={poweredByLbl}>Powered by</div>
+        <GoMakeIcon
+          color="linear-gradient(135deg, #9333ea, #ec4899)"
+          height={20}
+          width={100}
+        />
+      </div>
+    </>
   );
 };
 
