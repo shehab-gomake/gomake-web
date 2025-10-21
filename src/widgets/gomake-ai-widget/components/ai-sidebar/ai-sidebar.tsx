@@ -45,7 +45,7 @@ const AISidebar = ({
 
   // Show counter for Go AI users (trial/limited users)
   const showConversationCounter =
-    !user?.isGoAiUser &&
+    user?.isGoAiUser &&
     conversationLimit &&
     currentConversationCount !== undefined;
 
