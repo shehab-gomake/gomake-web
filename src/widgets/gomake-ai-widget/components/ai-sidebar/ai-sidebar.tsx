@@ -45,10 +45,10 @@ const AISidebar = ({
   conversationLimit,
   currentConversationCount,
 }: AISidebarProps) => {
-  const { classes } = useStyle({ isCollapsed });
   const isMobile = useIsMobile();
+  const { classes } = useStyle({ isCollapsed, isMobile });
   const user = useRecoilValue<any>(userState);
-  const hasToken = !!getUserToken();
+  // const hasToken = !!getUserToken();
   const hasCustomizeAIFeature = useRecoilValue(printHouseHasCustomizeAIFeature);
   const hasMISFeature = useRecoilValue(printHouseHasMISFeature);
 
@@ -62,8 +62,8 @@ const AISidebar = ({
 
   // Collapsed button styles
   const collapsedButtonBase = {
-    width: 40,
-    height: 40,
+    width: isMobile ? 32 : 40,
+    height: isMobile ? 32 : 40,
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
@@ -88,11 +88,11 @@ const AISidebar = ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    padding: "10px 16px",
+    gap: isMobile ? 6 : 8,
+    padding: isMobile ? "8px 12px" : "10px 16px",
     borderRadius: 9999,
     fontFamily: "Inter, sans-serif",
-    fontSize: 13,
+    fontSize: isMobile ? 12 : 13,
     fontWeight: 500,
     cursor: "pointer",
     transition: "all 0.25s ease",
@@ -329,13 +329,16 @@ const CollapsedFooter = ({
   handleHomeLeave,
   collapsedPoweredBy,
 }: CollapsedFooterProps) => {
+  const isMobile = useIsMobile();
+  const iconSize = isMobile ? 16 : 18;
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 8,
+        gap: isMobile ? 6 : 8,
         width: "100%",
       }}
     >
@@ -344,7 +347,7 @@ const CollapsedFooter = ({
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 10,
+          gap: isMobile ? 8 : 10,
           width: "100%",
         }}
       >
@@ -363,7 +366,7 @@ const CollapsedFooter = ({
               title="Machines"
             >
               <PrecisionManufacturingIcon
-                style={{ fontSize: 18, color: "#FFF" }}
+                style={{ fontSize: iconSize, color: "#FFF" }}
               />
             </button>
 
@@ -378,7 +381,7 @@ const CollapsedFooter = ({
               onClick={() => (window.location.href = "/materials")}
               title="Materials"
             >
-              <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+              <InventoryIcon style={{ fontSize: iconSize, color: "#FFF" }} />
             </button>
 
             {/* Actions Button */}
@@ -393,7 +396,7 @@ const CollapsedFooter = ({
               onClick={() => (window.location.href = "/actions")}
               title="Actions"
             >
-              <BoltIcon style={{ fontSize: 18, color: "#FFF" }} />
+              <BoltIcon style={{ fontSize: iconSize, color: "#FFF" }} />
             </button>
           </>
         )}
@@ -407,7 +410,7 @@ const CollapsedFooter = ({
             onClick={() => (window.location.href = "/")}
             title="Back to Home"
           >
-            <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
+            <HomeIcon style={{ fontSize: iconSize, color: "#374151" }} />
           </button>
         )}
       </div>
@@ -416,8 +419,8 @@ const CollapsedFooter = ({
       <div style={collapsedPoweredBy}>
         <GoMakeIcon
           color="linear-gradient(135deg, #9333ea, #ec4899)"
-          height={16}
-          width={56}
+          height={isMobile ? 12 : 16}
+          width={isMobile ? 42 : 56}
         />
       </div>
     </div>
@@ -453,15 +456,18 @@ const ExpandedFooter = ({
   poweredByContainer,
   poweredByLbl,
 }: ExpandedFooterProps) => {
+  const isMobile = useIsMobile();
+  const iconSize = isMobile ? 16 : 18;
+
   return (
     <>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: 10,
+          gap: isMobile ? 8 : 10,
           width: "100%",
-          marginTop: 8,
+          // marginTop: isMobile ? 6 : 8,
         }}
       >
         {/* Machines and Materials Buttons - only show if hasCustomizeAIFeature */}
@@ -478,7 +484,7 @@ const ExpandedFooter = ({
               onClick={() => (window.location.href = "/machines")}
             >
               <PrecisionManufacturingIcon
-                style={{ fontSize: 18, color: "#FFF" }}
+                style={{ fontSize: iconSize, color: "#FFF" }}
               />
               Machines
             </button>
@@ -493,7 +499,7 @@ const ExpandedFooter = ({
               onMouseLeave={handleGradientLeave}
               onClick={() => (window.location.href = "/materials")}
             >
-              <InventoryIcon style={{ fontSize: 18, color: "#FFF" }} />
+              <InventoryIcon style={{ fontSize: iconSize, color: "#FFF" }} />
               Materials
             </button>
 
@@ -507,7 +513,7 @@ const ExpandedFooter = ({
               onMouseLeave={handleGradientLeave}
               onClick={() => (window.location.href = "/actions")}
             >
-              <BoltIcon style={{ fontSize: 18, color: "#FFF" }} />
+              <BoltIcon style={{ fontSize: iconSize, color: "#FFF" }} />
               Actions
             </button>
           </>
@@ -521,7 +527,7 @@ const ExpandedFooter = ({
             onMouseLeave={handleHomeLeave}
             onClick={() => (window.location.href = "/")}
           >
-            <HomeIcon style={{ fontSize: 18, color: "#374151" }} />
+            <HomeIcon style={{ fontSize: iconSize, color: "#374151" }} />
             Back to Home
           </button>
         )}
@@ -532,8 +538,8 @@ const ExpandedFooter = ({
         <div style={poweredByLbl}>Powered by</div>
         <GoMakeIcon
           color="linear-gradient(135deg, #9333ea, #ec4899)"
-          height={20}
-          width={100}
+          height={isMobile ? 16 : 20}
+          width={isMobile ? 80 : 100}
         />
       </div>
     </>
