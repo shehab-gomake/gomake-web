@@ -61,7 +61,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         justifyContent: "center",
         minWidth: 24,
         minHeight: 24,
-        boxShadow: "0 6px 12px rgba(147, 51, 234, 0.35)", // pink shadow
+        // boxShadow: "0 6px 12px rgba(147, 51, 234, 0.35)", // pink shadow
       },
       chatIcon: {
         fontSize: 16,
@@ -120,7 +120,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
       activeNavItem: {
         backgroundColor: "#FDF2F8",
         border: "1px solid #FCE7F3",
-        boxShadow: "0 2px 4px rgba(236, 72, 153, 0.1)",
+        boxShadow: "0 2px 4px rgba(138, 236, 72, 0.1)",
         "&::before": {
           content: '""',
           position: "absolute" as "absolute",
@@ -249,6 +249,36 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
           : "20px -20px -20px -20px",
         padding: isCollapsed ? "12px 10px 10px 10px" : "16px 20px 20px 20px",
       },
+      navigationButtonsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 8,
+        width: "100%",
+      },
+      navButton: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        gap: 8,
+        padding: "10px 16px",
+        backgroundColor: "#FFF",
+        border: "1px solid #E5E7EB",
+        borderRadius: 8,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        width: "100%",
+        justifyContent: "flex-start",
+        outline: "none",
+      },
+      navButtonIcon: {
+        fontSize: 18,
+        color: "#6B7280",
+      },
+      navButtonText: {
+        ...FONT_FAMILY.Inter(500, 13),
+        color: "#374151",
+        letterSpacing: "-0.01em",
+      },
       backButton: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -313,6 +343,23 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         gap: 8,
         width: "100%",
       },
+      collapsedNavButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 32,
+        height: 32,
+        backgroundColor: "#F9FAFB",
+        border: "1px solid #E5E7EB",
+        borderRadius: 8,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        outline: "none",
+      },
+      collapsedNavButtonIcon: {
+        fontSize: 16,
+        color: "#6B7280",
+      },
       collapsedBackButton: {
         display: "flex",
         alignItems: "center",
@@ -324,7 +371,7 @@ const useStyle = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
         borderRadius: 8,
         cursor: "pointer",
         transition: "all 0.2s ease",
-        boxShadow: "0 1px 3px rgba(236, 72, 153, 0.1)",
+        boxShadow: "0 1px 3px rgba(75, 72, 236, 0.1)",
         outline: "none",
       },
       collapsedBackButtonIcon: {
