@@ -38,7 +38,7 @@ const AddPurchasePricingModal = ({
         <GoMakeDialog
             open={isAddPurchasePricingModalOpen}
             onClose={handleCloseAddPurchasePricingModal}
-            title={t("materials.sheetPaper.addNewSupplier")}
+            title={t("materials.childTable.addNewSupplierForMaterial")}
             primaryButtonLabel={t("materials.sheetPaper.addNewSupplier")}
             cancelButtonLabel={t("materials.childTable.cancel")}
             onPrimaryAction={() => handleAddPurchasePricing(null)}
