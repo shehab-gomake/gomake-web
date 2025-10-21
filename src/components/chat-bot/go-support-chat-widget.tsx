@@ -29,7 +29,7 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
     const loadChatWidget = async () => {
       try {
         setIsLoading(true);
-
+        debugger
         // Get user token from API
         const callBack = (res: { success: boolean; data: any }) => {
           if (res?.success && res?.data) {
@@ -54,6 +54,7 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
       // Configure the chat widget
       (window as any).GoMakeChat = (window as any).GoMakeChat || {};
       (window as any).GoMakeChat.config = {
+        apiUrl: "https://know-base-qassamat.replit.app",
         apiKey: apiKey,
         position: position,
         userToken: token,
