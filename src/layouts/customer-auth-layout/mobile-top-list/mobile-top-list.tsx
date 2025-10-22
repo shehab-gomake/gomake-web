@@ -5,6 +5,9 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Stack } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { printHouseHasAIFeature } from "@/store/print-house-profile";
+
 const TopListLayout = () => {
   const { tabs1, tabs2, tabs3, tabs4, handleLogout } = useAuthLayoutHook(
     null,
@@ -13,6 +16,7 @@ const TopListLayout = () => {
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const hasAIFeature = useRecoilValue(printHouseHasAIFeature);
 
   const checkTabPermissions = (tab) => {
     if (tab.isList && tab.list) {
@@ -28,6 +32,12 @@ const TopListLayout = () => {
     } else if (tab.Permission && !CheckPermission(tab.Permission)) {
       return false;
     }
+
+    // ✅ Special check for GomakeAI tab: requires both permission AND AI feature
+    if (tab.key === "goAI" && !hasAIFeature) {
+      return false;
+    }
+
     return true;
   };
 
