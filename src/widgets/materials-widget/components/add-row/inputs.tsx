@@ -34,7 +34,7 @@ const rowInputs = (
         case "ARRAY_INPUT":
           return {
             name: "Unit price",
-            label: newMaterialHeaders ? null : "materials.inputs.unitPrice",
+            label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
             type: "number",
             placeholder: "materials.inputs.unitPrice",
             required: header?.isRequired,
@@ -42,7 +42,7 @@ const rowInputs = (
             options: [],
             value: state["unitPrice"],
             isValid: true,
-            unit: header?.unit,
+            unit: typeof header?.value === "object" ? header?.value?.props?.children[2]?.split("/")[0] : header?.unit,
             isPriceObject: header?.isPriceObject,
           };
         case "LIST":
