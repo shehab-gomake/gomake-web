@@ -40,8 +40,8 @@ import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import {
   currentStationOrderingState,
-  deliveryDateOrderingState,
-  creationDateOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
 } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
@@ -109,8 +109,8 @@ const StatusTableComponent = ({
       await setFilters({
         ...filtersState,
         currentStationOrdering: direction,
-        deliveryDateOrdering: null,
-        creationDateOrdering: null,
+        deliveryTimeOrdering: null,
+        createDateOrdering: null,
       });
     },
     [setFilters, filtersState]
@@ -121,8 +121,8 @@ const StatusTableComponent = ({
       await setFilters({
         ...filtersState,
         currentStationOrdering: null,
-        deliveryDateOrdering: direction,
-        creationDateOrdering: null,
+        deliveryTimeOrdering: direction,
+        createDateOrdering: null,
       });
     },
     [setFilters, filtersState]
@@ -133,8 +133,8 @@ const StatusTableComponent = ({
       await setFilters({
         ...filtersState,
         currentStationOrdering: null,
-        deliveryDateOrdering: null,
-        creationDateOrdering: direction,
+        deliveryTimeOrdering: null,
+        createDateOrdering: direction,
       });
     },
     [setFilters, filtersState]
@@ -194,12 +194,12 @@ const StatusTableComponent = ({
     currentStationOrderingState
   );
 
-  const [deliveryDateOrdering, setDeliveryDateOrdering] = useRecoilState(
-    deliveryDateOrderingState
+  const [deliveryTimeOrdering, setDeliveryTimeOrdering] = useRecoilState(
+    deliveryTimeOrderingState
   );
 
-  const [creationDateOrdering, setCreationDateOrdering] = useRecoilState(
-    creationDateOrderingState
+  const [createDateOrdering, setCreateDateOrdering] = useRecoilState(
+    createDateOrderingState
   );
 
   const dropRef = useRef<HTMLDivElement>(null);
@@ -373,12 +373,12 @@ const StatusTableComponent = ({
                 width,
                 ...(isMobileScreen &&
                   index <= 1 && {
-                  position: "sticky",
-                  top: 0,
-                  [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
-                  zIndex: 3, //  raise above body cells
-                  background: "#f2f2f5",
-                }),
+                    position: "sticky",
+                    top: 0,
+                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                    zIndex: 3, //  raise above body cells
+                    background: "#f2f2f5",
+                  }),
               }}
               key={"statusTable" + status.id + index}
               align="center"
@@ -386,14 +386,14 @@ const StatusTableComponent = ({
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE
                     ? {
-                      "& .sort-icon": { opacity: 0 },
-                      "&:hover .sort-icon": { opacity: 1 },
-                    }
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
                     : {
                         "& .sort-icon": { opacity: 1 },
                       }
                   : header === t("sales.quote.deliveryDate")
-                  ? deliveryDateOrdering === CurrentStationOrderingEnum.NONE
+                  ? deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
                     ? {
                         "& .sort-icon": { opacity: 0 },
                         "&:hover .sort-icon": { opacity: 1 },
@@ -402,7 +402,7 @@ const StatusTableComponent = ({
                         "& .sort-icon": { opacity: 1 },
                       }
                   : header === t("sales.quote.creationDate")
-                  ? creationDateOrdering === CurrentStationOrderingEnum.NONE
+                  ? createDateOrdering === CurrentStationOrderingEnum.NONE
                     ? {
                         "& .sort-icon": { opacity: 0 },
                         "&:hover .sort-icon": { opacity: 1 },
@@ -447,8 +447,8 @@ const StatusTableComponent = ({
                         direction: newDirection,
                       });
                       setCurrentStationOrdering(newDirection);
-                      setDeliveryDateOrdering(CurrentStationOrderingEnum.NONE);
-                      setCreationDateOrdering(CurrentStationOrderingEnum.NONE);
+                      setDeliveryTimeOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreateDateOrdering(CurrentStationOrderingEnum.NONE);
                       reSortingCurrentStation(newDirection);
                     }}
                   >
@@ -478,9 +478,9 @@ const StatusTableComponent = ({
                     }}
                     onClick={() => {
                       const newDirection =
-                        deliveryDateOrdering === CurrentStationOrderingEnum.NONE
+                        deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
                           ? CurrentStationOrderingEnum.ASC
-                          : deliveryDateOrdering ===
+                          : deliveryTimeOrdering ===
                             CurrentStationOrderingEnum.ASC
                           ? CurrentStationOrderingEnum.DESC
                           : CurrentStationOrderingEnum.NONE;
@@ -492,8 +492,8 @@ const StatusTableComponent = ({
                       setCurrentStationOrdering(
                         CurrentStationOrderingEnum.NONE
                       );
-                      setDeliveryDateOrdering(newDirection);
-                      setCreationDateOrdering(CurrentStationOrderingEnum.NONE);
+                      setDeliveryTimeOrdering(newDirection);
+                      setCreateDateOrdering(CurrentStationOrderingEnum.NONE);
                       reSortingDeliveryDate(newDirection);
                     }}
                   >
@@ -501,10 +501,10 @@ const StatusTableComponent = ({
                       sx={{
                         fontSize: "14px",
                         transform:
-                          deliveryDateOrdering ===
+                          deliveryTimeOrdering ===
                           CurrentStationOrderingEnum.ASC
                             ? "rotate(0deg)"
-                            : deliveryDateOrdering ===
+                            : deliveryTimeOrdering ===
                               CurrentStationOrderingEnum.DESC
                             ? "rotate(180deg)"
                             : "rotate(0deg)",
@@ -523,9 +523,9 @@ const StatusTableComponent = ({
                     }}
                     onClick={() => {
                       const newDirection =
-                        creationDateOrdering === CurrentStationOrderingEnum.NONE
+                        createDateOrdering === CurrentStationOrderingEnum.NONE
                           ? CurrentStationOrderingEnum.ASC
-                          : creationDateOrdering ===
+                          : createDateOrdering ===
                             CurrentStationOrderingEnum.ASC
                           ? CurrentStationOrderingEnum.DESC
                           : CurrentStationOrderingEnum.NONE;
@@ -537,8 +537,8 @@ const StatusTableComponent = ({
                       setCurrentStationOrdering(
                         CurrentStationOrderingEnum.NONE
                       );
-                      setDeliveryDateOrdering(CurrentStationOrderingEnum.NONE);
-                      setCreationDateOrdering(newDirection);
+                      setDeliveryTimeOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreateDateOrdering(newDirection);
                       reSortingCreationDate(newDirection);
                     }}
                   >
@@ -546,10 +546,9 @@ const StatusTableComponent = ({
                       sx={{
                         fontSize: "14px",
                         transform:
-                          creationDateOrdering ===
-                          CurrentStationOrderingEnum.ASC
+                          createDateOrdering === CurrentStationOrderingEnum.ASC
                             ? "rotate(0deg)"
-                            : creationDateOrdering ===
+                            : createDateOrdering ===
                               CurrentStationOrderingEnum.DESC
                             ? "rotate(180deg)"
                             : "rotate(0deg)",
@@ -576,11 +575,11 @@ const StatusTableComponent = ({
     setSortConfig,
     setCurrentStationOrdering,
     reSortingCurrentStation,
-    deliveryDateOrdering,
-    setDeliveryDateOrdering,
+    deliveryTimeOrdering,
+    setDeliveryTimeOrdering,
     reSortingDeliveryDate,
-    creationDateOrdering,
-    setCreationDateOrdering,
+    createDateOrdering,
+    setCreateDateOrdering,
     reSortingCreationDate,
   ]);
 
@@ -648,23 +647,24 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${!status.isGroup
-            ? t("productionStatuses." + status.name)
-            : status.name
-            } (${getBoards().length})`}
+          {`${
+            !status.isGroup
+              ? t("productionStatuses." + status.name)
+              : status.name
+          } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
           <Tooltip
             title={
               heightMultiplier === 1
                 ? t("productionFloor.increaseItemsTo50", {
-                  count: 50,
-                  defaultValue: `Increase items to ${50}`,
-                })
+                    count: 50,
+                    defaultValue: `Increase items to ${50}`,
+                  })
                 : t("productionFloor.decreaseItemsTo10", {
-                  count: 10,
-                  defaultValue: `Decrease items to ${10}`,
-                })
+                    count: 10,
+                    defaultValue: `Decrease items to ${10}`,
+                  })
             }
             arrow
           >
@@ -717,7 +717,7 @@ const StatusTableComponent = ({
             }}
           >
             {getBoards().length >
-              (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
+            (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
               <TableVirtuoso
                 key={`virtuoso-${status.id}-${sortedBoards.length}`}
                 ref={virtuosoRef}
@@ -829,12 +829,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -868,10 +868,10 @@ const StatusTableComponent = ({
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-              productType:
-                selectedMission?.productTypeName ||
-                selectedMission?.productType,
-            })
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -880,12 +880,13 @@ const StatusTableComponent = ({
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-              productType:
-                selectedMission?.productTypeName ||
-                selectedMission?.productType,
-              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+                defaultValue: `Mark ${
+                  selectedMission?.productType || "Product Type"
                 } Only`,
-            })
+              })
             : undefined
         }
         openModal={openDoneScopeModal}
@@ -930,12 +931,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

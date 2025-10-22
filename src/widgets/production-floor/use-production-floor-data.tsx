@@ -50,8 +50,8 @@ import { useRouter } from "next/router";
 import {
   agentsState,
   currentStationOrderingState,
-  deliveryDateOrderingState,
-  creationDateOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
 } from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
@@ -93,8 +93,8 @@ const useProductionFloorData = () => {
   const setPath = useSetRecoilState(productionFloorPathsState);
   const setJobsStatuses = useSetRecoilState(jobsStatusesState);
   const setStationOrdering = useSetRecoilState(currentStationOrderingState);
-  const setDeliveryDateOrdering = useSetRecoilState(deliveryDateOrderingState);
-  const setCreationDateOrdering = useSetRecoilState(creationDateOrderingState);
+  const setDeliveryTimeOrdering = useSetRecoilState(deliveryTimeOrderingState);
+  const setCreateDateOrdering = useSetRecoilState(createDateOrderingState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
@@ -124,17 +124,17 @@ const useProductionFloorData = () => {
           }
           setStationOrdering(currentStationOrdering);
 
-          let deliveryDateOrdering = res?.data?.filter?.deliveryDateOrdering;
-          if (!deliveryDateOrdering) {
-            deliveryDateOrdering = CurrentStationOrderingEnum.NONE;
+          let deliveryTimeOrdering = res?.data?.filter?.deliveryTimeOrdering;
+          if (!deliveryTimeOrdering) {
+            deliveryTimeOrdering = CurrentStationOrderingEnum.NONE;
           }
-          setDeliveryDateOrdering(deliveryDateOrdering);
+          setDeliveryTimeOrdering(deliveryTimeOrdering);
 
-          let creationDateOrdering = res?.data?.filter?.creationDateOrdering;
-          if (!creationDateOrdering) {
-            creationDateOrdering = CurrentStationOrderingEnum.NONE;
+          let createDateOrdering = res?.data?.filter?.createDateOrdering;
+          if (!createDateOrdering) {
+            createDateOrdering = CurrentStationOrderingEnum.NONE;
           }
-          setCreationDateOrdering(creationDateOrdering);
+          setCreateDateOrdering(createDateOrdering);
 
           setSelectedGroupId(res?.data?.filter?.groupId);
           setTags(res?.data?.automatedTagsFilter);
@@ -176,8 +176,8 @@ const useProductionFloorData = () => {
       setData,
       setFilters,
       setStationOrdering,
-      setDeliveryDateOrdering,
-      setCreationDateOrdering,
+      setDeliveryTimeOrdering,
+      setCreateDateOrdering,
       setSelectedGroupId,
       setTags,
       setUserGroups,
