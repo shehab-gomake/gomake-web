@@ -267,6 +267,7 @@ const FilesGroupComponent = ({
                     key={`${file.fileName}-${file.uploadId || index}`}
                     {...file}
                     filePath={filePath}
+                    bucketKey={file.bucketKey}
                     orderItemId={orderItemId}
                     productType={productType}
                     onFileDeleted={onFileDeleted}
@@ -347,6 +348,7 @@ const FilesGroupComponent = ({
                     key={`${file.fileName}-${file.uploadId || index}`}
                     {...file}
                     filePath={filePath}
+                    bucketKey={file.bucketKey}
                     orderItemId={orderItemId}
                     productType={productType}
                     onFileDeleted={onFileDeleted}

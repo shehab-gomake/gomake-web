@@ -29,8 +29,7 @@ import {
 import { useGomakeAxios } from "@/hooks";
 import { quoteItemState } from "@/store";
 
-const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
-  console.log("file name component", { fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath });
+const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath, bucketKey }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
   const { successColor, errorColor, primaryColor, grayColor, warningColor } =
     useGomakeTheme();
   const { t } = useTranslation();
@@ -240,7 +239,7 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
           >
             <MenuItem onClick={() => {
               if (fileStatus === EUploadingFileStatus.UploadedToGoogleCloud) {
-                handleDownloadFile(fileName);
+                handleDownloadFile(bucketKey);
 
               }
               else {
