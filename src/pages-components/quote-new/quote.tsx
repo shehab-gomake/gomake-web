@@ -691,7 +691,8 @@ const QuoteNewPageWidget = ({
                     estimatedProductionDate && (
                       <DateField
                         label={t("sales.quote.estimatedProductionDate")}
-                        date={estimatedProductionDate}
+                        // date={estimatedProductionDate}
+                        date={convertUtcToLocalIsoString(estimatedProductionDate)}
                         handleChange={handleChangeCreationDate}
                         isEditable={false}
                         inputRef={creationDateRef}
