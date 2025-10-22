@@ -350,6 +350,9 @@ export const convertTitleUnits = (unit: string | null) => {
     case "liter":
       return "gallon"; // liters -> gallons
 
+    case "um":
+      return "pt"; // micrometers -> points
+
     // TIME
     case "minute":
     case "min":
@@ -360,42 +363,6 @@ export const convertTitleUnits = (unit: string | null) => {
       return "sec"; 
     case "shortHours":
       return "h"; // hours abbreviation
-
-    // PRODUCTION RATES / COUNT
-    case "profileHour":
-    case "lettersHour":
-    case "cupsPerHour":
-    case "setsHour":
-    case "sph":
-    case "bookPh":
-    case "pph":
-    case "chicksPM":
-    case "cutsPH":
-    case "staplesPerMin":
-    case "mmPerMin":
-    case "PiercingPMin":
-    case "bendingPH":
-    case "bookletsPMin":
-    case "booksPerMinute":
-    case "setsPerMinute":
-    case "coversPH":
-    case "packagePH":
-    case "cutsPMIN":
-    case "paperSetsPerHour":
-      return unit; // No imperial conversion needed, just keep as is
-
-    // PRICE / UNIT
-    case "price":
-    case "price Roll / M^2":
-    case "price unit/pack":
-    case "Price unit / per meter":
-    case "Price Unit/pack":
-    case "Price Piercing / pack":
-    case "CostPerRollPerSquareMeterPerTon":
-    case "price unit / M^2":
-    case "price Unit / ton":
-    case " Unit price / ton":
-      return unit; // Prices usually stay the same
 
     // FALLBACK
     default:
