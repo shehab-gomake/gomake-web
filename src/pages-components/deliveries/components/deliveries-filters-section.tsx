@@ -78,6 +78,11 @@ const DeliveriesFiltersSection = ({
             const trimmedValue = e.target.value.trimStart();
             onChangeDocumentSearch(trimmedValue);
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onClickSearchFilter();
+            }
+          }}
           sx={{
             "& .MuiInputAdornment-root": {
               marginRight: "0px",
