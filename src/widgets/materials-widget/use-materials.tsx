@@ -566,12 +566,6 @@ const useMaterials = (isAdmin: boolean) => {
   }, []);
 
   const uploadExcelFile = async (e) => {
-    if (!materialType || !materialCategory) {
-      alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
-      e.target.value = ""; // Reset input to allow same file upload
-      return;
-    }
-
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
