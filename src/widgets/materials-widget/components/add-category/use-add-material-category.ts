@@ -145,6 +145,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
       displayName: newCategory,
+      newCategoryKey:newCategory,
       defaultAttributeValues,
     });
   };

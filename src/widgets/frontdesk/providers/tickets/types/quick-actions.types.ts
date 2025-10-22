@@ -14,6 +14,7 @@ import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
 export type QuickActionType =
   // Sales Documents
   | 'create_quote'
+  | 'create_quote_with_ai'
   | 'create_invoice'
   | 'create_order'
   | 'create_receipt'

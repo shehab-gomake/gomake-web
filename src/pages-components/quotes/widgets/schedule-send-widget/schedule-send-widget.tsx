@@ -5,7 +5,6 @@ import { useState } from "react";
 import { DateRangePicker } from "rsuite";
 import { predefinedRanges } from "@/utils/dateRanges";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
-import { EStatementCategory } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const ScheduleSendWidget = ({
@@ -57,6 +56,20 @@ const ScheduleSendWidget = ({
         setReadyDateRange(null);
     };
 
+    const EStatementCategory = {
+        Machine: 1,
+        "Machine category": 2,
+        "Client Type": 3,
+        Client: 4,
+        "Property input": 5,
+        "Property output": 6,
+        Products: 7,
+        Agent: 8,
+        Employee: 9,
+        ProductType: 10,
+        MATERIALTYPE: 11,
+    };
+
     // Handle modal close with form reset
     const handleCloseModal = () => {
         clearFormValues();
@@ -80,6 +93,13 @@ const ScheduleSendWidget = ({
         label: k + 1,
         id: k + 1
     }));
+
+    // Generate hours array (0-23)
+    const hoursArray = Array.from({ length: 24 }, (v, k) => ({
+        label: `${k.toString().padStart(2, '0')}:00`,
+        id: k
+    }));
+
     const getStatementId = (item) => {
         if (typeof item?.statement === "object") {
             //material input
@@ -159,7 +179,7 @@ const ScheduleSendWidget = ({
     const _renderScheduleType = (type) => {
         switch (type) {
             case ScheduleFrequencyEnum.Daily:
-                return null
+                return null;
             case ScheduleFrequencyEnum.Weekly:
                 return <div style={{ width: "50%" }}>
                     <GoMakeAutoComplate
@@ -316,7 +336,7 @@ const ScheduleSendWidget = ({
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {
                                             return {
-                                                statementId: getStatementId(item),
+                                                statementId: getStatementId(item) ?? item.statement2.id,
                                                 // statementValue: item.statement2.id,
                                                 statementValue:
                                                     item?.category?.id === "MATERIALTYPE"

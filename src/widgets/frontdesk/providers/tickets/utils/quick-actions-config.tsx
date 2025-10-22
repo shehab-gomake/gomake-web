@@ -20,6 +20,7 @@ import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 
 /**
  * All available quick actions
@@ -35,6 +36,17 @@ export const QUICK_ACTIONS_CONFIG: Record<QuickActionType, QuickActionConfig> = 
     requiresCustomerId: true,
     group: 'sales',
     tooltip: 'Create a new quote for this customer',
+    enabled: true,
+  },
+
+  create_quote_with_ai: {
+    type: 'create_quote_with_ai',
+    label: 'Create Quote with AI',
+    icon: <AutoAwesomeOutlinedIcon fontSize="small" />,
+    route: '/quote',
+    requiresCustomerId: true,
+    group: 'sales',
+    tooltip: 'Generate a quote using AI based on the last message',
     enabled: true,
   },
 

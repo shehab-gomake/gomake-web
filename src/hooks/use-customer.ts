@@ -10,6 +10,8 @@ import { userProfileState } from "@/store/user-profile";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
 import {
+  GOMAKE_AI_FEATURE_ID,
+  GOMAKE_MIS_FEATURE_ID,
   isUsPrintHouseState,
   printHouseProfile,
 } from "@/store/print-house-profile";
@@ -126,10 +128,30 @@ const useCustomer = (
           .then();
       }
 
-      // ✅ Check if user is GoAI user - restrict to AI page only
-      if (user?.isGoAiUser) {
+      const hasMISFeature =
+        user?.printHouseProfile?.allowedFeaturesId?.includes(
+          GOMAKE_MIS_FEATURE_ID
+        ) ?? false;
+
+      const hasAIFeature =
+        user?.printHouseProfile?.allowedFeaturesId?.includes(
+          GOMAKE_AI_FEATURE_ID
+        ) ?? false;
+
+      if (hasAIFeature && !hasMISFeature) {
         const currentPath = window.location.pathname;
-        if (currentPath !== "/gomake-ai") {
+
+        // If billing is required (not paid), redirect to billing page
+        if (
+          user?.isGoAiBillingRequired &&
+          currentPath !== "/gomake-ai/billing"
+        ) {
+          navigate("/gomake-ai/billing");
+          return true;
+        }
+
+        // If billing is not required (paid), restrict to AI page only
+        if (!user?.isGoAiBillingRequired && currentPath !== "/gomake-ai") {
           navigate("/gomake-ai");
           return true;
         }
@@ -242,7 +264,7 @@ const useCustomer = (
     //let domain = window.location.origin;
     let domain = window.location.hostname;
     let loginPageName = "login";
-    if (domain === "trial.gomake.net" || domain === "guest.gomake.net") {
+    if (domain === "ai.gomake.net") {
       loginPageName = "gomake-ai";
     }
     if (withReturnUrl) {

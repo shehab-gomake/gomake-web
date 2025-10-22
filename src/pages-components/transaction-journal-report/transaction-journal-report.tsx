@@ -20,7 +20,7 @@ import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustmen
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { TransactionSummaryCards } from "./widgets/transction-report-summery/transction-report-summery";
 import { Stack } from "@mui/material";
-import { GomakeTextInput } from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { PrimaryButton } from "@/components/button/primary-button";
 
 interface TransactionJournalReportWidgetProps {
@@ -226,7 +226,7 @@ const TransactionJournalReportWidget = ({
       {!isAccountingTransaction && !isAdjustmentsReport && (
         <div style={{ width: "100%", height: "100%" }}>
           {documentType?.id !== DocumentsTypeReportList.Payments &&
-          reportType !== EReportType.DailyPayments ? (
+            reportType !== EReportType.DailyPayments ? (
             <div>
               {showTable &&
                 dataTable?.map((item) => {
@@ -273,25 +273,34 @@ const TransactionJournalReportWidget = ({
                         }
                       >
                         {isCashAccount && (
-                          <Stack direction={"row"} gap={"8px"}>
-                            <GomakeTextInput
-                              value={balanceInput}
-                              style={classes.balanceInput}
-                              placeholder={t("payment.balance")}
-                              type="number"
-                              onChange={(e: any) =>
-                                setBalanceInput(e.target.value)
-                              }
-                            />
-                            <PrimaryButton
-                              style={classes.submitStyle}
-                              onClick={() => submitBalance(balanceInput)}
-                            >
-                              {t("reports.submit")}
-                            </PrimaryButton>
-                          </Stack>
+                          <div style={classes.balanceInputMainContainer}>
+                            <div style={classes.balanceInputContainer}>
+                              <div style={classes.titlebalance}>{t("payment.openingBalance")}</div>
+                              <GomakeTextInput
+                                value={balanceInput}
+                                style={classes.balanceInput}
+                                placeholder={t("payment.balance")}
+                                type="number"
+                                onChange={(e: any) =>
+                                  setBalanceInput(e.target.value)
+                                }
+                              />
+                            </div>
+                            <div>
+                              <GomakePrimaryButton
+                                style={classes.submitStyle}
+                                onClick={() => submitBalance(balanceInput)}
+                              >
+                                {t("reports.submit")}
+                              </GomakePrimaryButton>
+                            </div>
+                          </div>
                         )}
-                        {t("deposits.total")} : {item.total.toFixed(2)}
+                        <div style={classes.balanceTotalContainer}>
+                          {isCashAccount && <div>{t("payment.openingBalance")} : {item.openBalance.toFixed(2)}</div>}
+                          <div>{t("deposits.total")} : {item.total.toFixed(2)}</div>
+                        </div>
+
                       </div>
                     </div>
                   );

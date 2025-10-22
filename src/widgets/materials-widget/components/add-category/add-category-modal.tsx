@@ -1,11 +1,14 @@
-import { GoMakeModal, GomakeTextInput } from "@/components";
-import { SecondaryButton } from "@/components/button/secondary-button";
+import { GomakeTextInput } from "@/components";
+import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { useAddMaterialCategory } from "./use-add-material-category";
-import { FormControlLabel, MenuItem, Stack, TextField } from "@mui/material";
+import { FormControlLabel, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { ImageUploadComponent } from "@/components/form-inputs/image-input";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/store";
+import { UNIT_TYPE } from "@/enums";
 
 interface IAddCategoryModalProps {
   isAdmin: boolean;
@@ -56,6 +59,9 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
     additionalAttributes,
   } = useAddMaterialCategory(props.isAdmin);
 
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0;
+
   const actionLabel = duplicateCategoryModalState
     ? t("navigationButtons.duplicate")
     : editCategoryModalState
@@ -83,28 +89,36 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
   };
 
   return (
-    <GoMakeModal
-      insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
-      openModal={openModal}
+    <GoMakeDialog
+      open={openModal}
       onClose={handleClose}
-      modalTitle={modalTitle}
+      title={modalTitle}
+      onPrimaryAction={actionHandler}
+      primaryButtonLabel={actionLabel}
+      maxWidth="sm"
+      fullWidth
+      customStyles={{
+        paper: { width: 400 },
+      }}
     >
       <Stack
         gap={5}
         justifyContent={"flex-start"}
-        height={"100%"}
-        width={"90%"}
-        margin={"auto"}
-        marginTop={"20px"}
+        width={"100%"}
+        paddingTop={"10px"}
       >
-        <GomakeTextInput
-          value={newCategory}
-          onChange={onSetCategory}
-          placeholder={t("materials.inputs.addCategory")}
-          style={{ width: "100%", height: "40px" }}
-        />
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>{t("materials.inputs.newCategory")}</div>
+          <GomakeTextInput
+            value={newCategory}
+            onChange={onSetCategory}
+            placeholder={t("materials.inputs.addCategory")}
+            style={{ width: "100%", height: "40px" }}
+          />
+        </div>
 
-        {!duplicateCategoryModalState &&
+
+        {!duplicateCategoryModalState && unitType === UNIT_TYPE.IMPERIAL &&
           additionalAttributes?.map((attr, index) => {
             const value = attr?.defaultValue ?? "";
             const isRequired = attr?.isRequired;
@@ -264,17 +278,8 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
               value={imgUrl}
             />
           )}
-        {
-          <SecondaryButton
-            onClick={actionHandler}
-            variant={"contained"}
-            sx={{ width: "100%" }}
-          >
-            {actionLabel}
-          </SecondaryButton>
-        }
       </Stack>
-    </GoMakeModal>
+    </GoMakeDialog>
   );
 };
 

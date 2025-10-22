@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
@@ -79,7 +79,7 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
         value={value ? options.find((x) => x.id == value)?.label : undefined}
         style={{
           border: 0,
-          width:
+          minWidth:
             parameterKey === "productId" || parameterKey === "printed product"
               ? 200
               : 150,

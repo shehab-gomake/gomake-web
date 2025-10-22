@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { useGomakeRouter } from '@/hooks/use-gomake-router';
 import { useSetRecoilState } from 'recoil';
 import { selectedClientState } from '@/pages-components/quotes/states';
+import { postApiRequest } from '@/services/api-request';
+import { message } from 'antd';
 import {
   QuickActionType,
   QuickActionConfig,
@@ -29,6 +31,17 @@ export interface UseQuickActionsOptions {
   /** Customer phone */
   customerPhone?: string | null;
 
+  /** Active conversation (for accessing messages) */
+  activeConversation?: {
+    id: string;
+    messages?: Array<{
+      id: string;
+      content: string;
+      createdAt: string;
+      [key: string]: any;
+    }>;
+  } | null;
+
   /** Callback when action is about to execute */
   onBeforeAction?: (actionType: QuickActionType) => void;
 
@@ -52,6 +65,7 @@ export function useQuickActions(options: UseQuickActionsOptions): UseQuickAction
     customerName,
     customerEmail,
     customerPhone,
+    activeConversation,
     onBeforeAction,
     onActionComplete,
     onActionError,
@@ -165,6 +179,68 @@ export function useQuickActions(options: UseQuickActionsOptions): UseQuickAction
             onActionError?.(actionType, 'Export conversation not yet implemented');
             break;
 
+          case 'create_quote_with_ai':
+            // Get the last message from active conversation
+            const messages = activeConversation?.messages || [];
+            if (messages.length === 0) {
+              console.warn('[useQuickActions] No messages available in conversation');
+              onActionError?.(actionType, 'No messages available in this conversation');
+              return;
+            }
+
+            const lastMessage = messages[messages.length - 1];
+            const messageContent = lastMessage?.content;
+
+            if (!messageContent) {
+              console.warn('[useQuickActions] Last message has no content');
+              onActionError?.(actionType, 'Last message has no content');
+              return;
+            }
+
+            console.log('[useQuickActions] Creating quote with AI using last message:', {
+              messageLength: messageContent.length,
+              ticketId,
+              customerId,
+            });
+
+            // Send POST request to AI endpoint
+            const sendToAI = async () => {
+              try {
+                const endpoint = '/v1/gomake-ai-service/start-session-with-message';
+
+                const response = await postApiRequest(endpoint, {
+                  message: messageContent,
+                });
+
+                if (!response || !response.success) {
+                  console.error('[useQuickActions] AI quote request failed:', response);
+                  onActionError?.(actionType, response?.message || response?.msg || 'Failed to create AI quote session');
+                  return;
+                }
+
+                console.log('[useQuickActions] AI quote request successful:', response.data);
+
+                // Set customer in state before navigating
+                if (customerId) {
+                  setSelectedClient({
+                    id: customerId,
+                    name: customerName || customerEmail || customerPhone || 'Unknown Customer',
+                    email: customerEmail,
+                    phone: customerPhone,
+                  });
+                }
+                // Navigate to gomake-ai page with sessionId
+                navigate(`/gomake-ai?sessionId=${response.data?.data?.data?.sessionId}`);
+                onActionComplete?.(actionType);
+              } catch (error: any) {
+                console.error('[useQuickActions] AI quote request error:', error);
+                onActionError?.(actionType, error?.message || 'An error occurred');
+              }
+            };
+
+            sendToAI();
+            break;
+
           default:
             // Handle document creation actions
             if (config.requiresCustomerId && customerId) {
@@ -203,6 +279,7 @@ export function useQuickActions(options: UseQuickActionsOptions): UseQuickAction
       customerName,
       customerEmail,
       customerPhone,
+      activeConversation,
       navigate,
       setSelectedClient,
       onBeforeAction,

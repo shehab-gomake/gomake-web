@@ -373,12 +373,12 @@ const StatusTableComponent = ({
                 width,
                 ...(isMobileScreen &&
                   index <= 1 && {
-                    position: "sticky",
-                    top: 0,
-                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
-                    zIndex: 3, //  raise above body cells
-                    background: "#f2f2f5",
-                  }),
+                  position: "sticky",
+                  top: 0,
+                  [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                  zIndex: 3, //  raise above body cells
+                  background: "#f2f2f5",
+                }),
               }}
               key={"statusTable" + status.id + index}
               align="center"
@@ -386,9 +386,9 @@ const StatusTableComponent = ({
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE
                     ? {
-                        "& .sort-icon": { opacity: 0 },
-                        "&:hover .sort-icon": { opacity: 1 },
-                      }
+                      "& .sort-icon": { opacity: 0 },
+                      "&:hover .sort-icon": { opacity: 1 },
+                    }
                     : {
                         "& .sort-icon": { opacity: 1 },
                       }
@@ -648,24 +648,23 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${
-            !status.isGroup
-              ? t("productionStatuses." + status.name)
-              : status.name
-          } (${getBoards().length})`}
+          {`${!status.isGroup
+            ? t("productionStatuses." + status.name)
+            : status.name
+            } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
           <Tooltip
             title={
               heightMultiplier === 1
                 ? t("productionFloor.increaseItemsTo50", {
-                    count: 50,
-                    defaultValue: `Increase items to ${50}`,
-                  })
+                  count: 50,
+                  defaultValue: `Increase items to ${50}`,
+                })
                 : t("productionFloor.decreaseItemsTo10", {
-                    count: 10,
-                    defaultValue: `Decrease items to ${10}`,
-                  })
+                  count: 10,
+                  defaultValue: `Decrease items to ${10}`,
+                })
             }
             arrow
           >
@@ -718,7 +717,7 @@ const StatusTableComponent = ({
             }}
           >
             {getBoards().length >
-            (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
+              (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
               <TableVirtuoso
                 key={`virtuoso-${status.id}-${sortedBoards.length}`}
                 ref={virtuosoRef}
@@ -830,12 +829,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -869,10 +868,10 @@ const StatusTableComponent = ({
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-              })
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -881,13 +880,12 @@ const StatusTableComponent = ({
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-                defaultValue: `Mark ${
-                  selectedMission?.productType || "Product Type"
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
                 } Only`,
-              })
+            })
             : undefined
         }
         openModal={openDoneScopeModal}
@@ -932,12 +930,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

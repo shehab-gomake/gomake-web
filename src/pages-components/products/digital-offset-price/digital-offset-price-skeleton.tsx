@@ -7,82 +7,264 @@ const PriceListPageSkeletonWidget = ({ isMobileScreen }) => {
   return (
     <div style={clasess.skeletonContainer}>
       {/* Skeleton for the Title */}
-      <Skeleton variant="text" width={300} height={40} />
+      <Skeleton
+        variant="text"
+        width={isMobileScreen ? "80%" : 300}
+        height={40}
+      />
 
       {/* Skeleton for the Tabs */}
-      <div style={clasess.tabsContainer}>
-        <Skeleton variant="rectangular" width={150} height={35} />
-        <Skeleton variant="rectangular" width={150} height={35} />
-        <Skeleton variant="rectangular" width={150} height={35} />
+      <div style={clasess.tabsContainerSkeleton}>
+        <Skeleton
+          variant="rectangular"
+          width={isMobileScreen ? "30%" : 150}
+          height={35}
+        />
+        <Skeleton
+          variant="rectangular"
+          width={isMobileScreen ? "30%" : 150}
+          height={35}
+        />
+        <Skeleton
+          variant="rectangular"
+          width={isMobileScreen ? "30%" : 150}
+          height={35}
+        />
       </div>
 
       {/* Skeleton for the Section with parameters */}
       <div style={clasess.sectionsContainer}>
-        <Skeleton variant="text" width={200} height={40} />
-        <div style={clasess.parametersContainer}>
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
           <Skeleton
             variant="rectangular"
-            width={220}
+            width={isMobileScreen ? "45%" : 200}
             height={40}
-            style={{ marginBottom: 40 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
           />
         </div>
 
-        <Skeleton variant="text" width={200} height={40} />
-        <div style={clasess.parametersContainer}>
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
           <Skeleton
             variant="rectangular"
-            width={220}
+            width={isMobileScreen ? "45%" : 200}
             height={40}
-            style={{ marginBottom: 40 }}
           />
-        </div>
-        <Skeleton variant="text" width={200} height={40} />
-        <div style={clasess.parametersContainer}>
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
           <Skeleton
             variant="rectangular"
-            width={220}
+            width={isMobileScreen ? "45%" : 200}
             height={40}
-            style={{ marginBottom: 40 }}
           />
-        </div>
-        <Skeleton variant="text" width={200} height={40} />
-        <div style={clasess.parametersContainer}>
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
           <Skeleton
             variant="rectangular"
-            width={220}
+            width={isMobileScreen ? "45%" : 200}
             height={40}
-            style={{ marginBottom: 40 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
           />
         </div>
 
-        <Skeleton variant="text" width={200} height={40} />
-        <div style={clasess.parametersContainer}>
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
-          <Skeleton variant="rectangular" width={220} height={40} />
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
           <Skeleton
             variant="rectangular"
-            width={220}
+            width={isMobileScreen ? "45%" : 200}
             height={40}
-            style={{ marginBottom: 40 }}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+        </div>
+
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+        </div>
+
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+        </div>
+
+        <Skeleton
+          variant="text"
+          width={isMobileScreen ? "70%" : 250}
+          height={40}
+          style={{ marginBottom: 20 }}
+        />
+        <div style={clasess.tabsContainerSkeleton}>
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
+          />
+          <Skeleton
+            variant="rectangular"
+            width={isMobileScreen ? "45%" : 200}
+            height={40}
           />
         </div>
       </div>

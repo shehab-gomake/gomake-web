@@ -1,5 +1,6 @@
 import { useStyle } from "./style";
 import { ArrowDownNewIcon, EditIcon, PlusIcon, WastebasketNew2 } from "@/icons";
+import { DownloadExcelSheet } from "@/icons/material-tabs/download-excel-sheet";
 import { useTranslation } from "react-i18next";
 import {
   GoMakeDeleteModal,
@@ -61,6 +62,7 @@ const ButtonsContainer = ({
   openReceiptModal,
   clientType,
   deliveryDate,
+  handleExportToExcel,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -384,6 +386,15 @@ const ButtonsContainer = ({
             {t("sales.quote.print")}
           </GomakePrimaryButton>
         )}
+        {!isReceipt && handleExportToExcel && (
+          <GomakePrimaryButton
+            leftIcon={<DownloadExcelSheet />}
+            style={classes.btnSecondContainer}
+            onClick={handleExportToExcel}
+          >
+            {t("sales.quote.exportToExcel")}
+          </GomakePrimaryButton>
+        )}
         {isReceipt && quoteItemValue.isShowPrintReceiptChecksButton && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
@@ -470,7 +481,7 @@ const ButtonsContainer = ({
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
         )}
-        {isQuote && !isNewCreation  && (
+        {isQuote && !isNewCreation && (
           <SecondaryButton
             variant="outlined"
             startIcon={<AttachIcon />}

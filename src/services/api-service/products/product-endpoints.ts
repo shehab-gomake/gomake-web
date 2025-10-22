@@ -12,6 +12,8 @@ const GET_PRODUCT_PROFIT_RULES_URL =
   "/v1/printhouse-config/products/get-product-profit-rules/";
 const GET_ALL_PRODUCT_AND_MATERIALS_URL =
   "/v1/printhouse-config/products/get-all-products-and-materials-for-dropdownlist";
+const GET_ALL_PRODUCTS_FOR_GO_AI_URL =
+  "/v1/printhouse-config/products/get-all-products-for-go-ai";
 const GET_ALL_PRICING_PROFILE_SETTING_FOR_DROP_DOWN_LIST_URL =
   "/v1/printhouse-config/pricing-profile-settings/get-all-pricing-profile-setting-for-drop-down-list";
 const GET_ALL_PROFIT_PROFILE_PRODUCT_BY_PRODUCT_ID_URL =
@@ -40,17 +42,23 @@ const RESET_PRINT_HOUSE_PRICE_URL =
 const GET_PROFITS_PROFILE_PDF_URL =
   "/v1/printhouse-config/profit-profile-products/get-profits-profile-pdf";
 
-const GET_PRODUCT_SIZES_URL = "/v1/printhouse-config/products/get-product-sizes";
+const GET_PRODUCT_SIZES_URL =
+  "/v1/printhouse-config/products/get-product-sizes";
 
-const GET_PRODUCT_HOT_FOLDER_RULES_URL = "/v1/printhouse-config/products/get-product-hot-folder-rules";
+const GET_PRODUCT_HOT_FOLDER_RULES_URL =
+  "/v1/printhouse-config/products/get-product-hot-folder-rules";
 
-const REORDER_PRODUCT_HOT_FOLDER_PROFIT_RULES_URL = "/v1/printhouse-config/products/reorder-product-hot-folder-profit-rules"
+const REORDER_PRODUCT_HOT_FOLDER_PROFIT_RULES_URL =
+  "/v1/printhouse-config/products/reorder-product-hot-folder-profit-rules";
 
-const DELETE_PRODUCT_HOT_FOLDER_RULE_URL = "/v1/printhouse-config/products/delete-product-hot-folder-rule";
+const DELETE_PRODUCT_HOT_FOLDER_RULE_URL =
+  "/v1/printhouse-config/products/delete-product-hot-folder-rule";
 
-const COPY_PRODUCT_HOT_FOLDER_RULES_URL = "/v1/printhouse-config/products/copy-product-hot-folder-rules"
+const COPY_PRODUCT_HOT_FOLDER_RULES_URL =
+  "/v1/printhouse-config/products/copy-product-hot-folder-rules";
 
-const ADD_PRODUCT_HOT_FOLDER_RULE_URL = "/v1/printhouse-config/products/add-product-hot-folder-rule"
+const ADD_PRODUCT_HOT_FOLDER_RULE_URL =
+  "/v1/printhouse-config/products/add-product-hot-folder-rule";
 
 const RE_CALCULATE_PRICE_URL =
   "/v1/printhouse-config/products/calculate-products";
@@ -72,7 +80,8 @@ const GET_PRODUCT_ACTIONS_URL =
 const UPDATE_PRODUCT_PARAMETERS_VALUES_EXTERNAL_VALUES_URL =
   "/v1/printhouse-config/products/update-product-parameters-values-external-values";
 
-const UPDATE_SECTION_NAME_URL = "/v1/printhouse-config/products/update-product-section-name";
+const UPDATE_SECTION_NAME_URL =
+  "/v1/printhouse-config/products/update-product-section-name";
 
 const addProductProfitRuleApi: ICallAndSetData = async (
   callApi,
@@ -135,6 +144,20 @@ const getAllProductAndMaterialsApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.GET,
     GET_ALL_PRODUCT_AND_MATERIALS_URL,
+    setState,
+    data
+  );
+};
+
+const getALLProductsForGoAiApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_PRODUCTS_FOR_GO_AI_URL,
     setState,
     data
   );
@@ -450,7 +473,11 @@ const getProductSizesApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-const getProductHotFolderRulesApi: ICallAndSetData = async (callApi, setState, data) => {
+const getProductHotFolderRulesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -508,10 +535,10 @@ const updateProductSectionNameApi: ICallAndSetData = async (
   data
 ) => {
   return await getSetApiData(
-    callApi, 
-    EHttpMethod.PUT, 
-    UPDATE_SECTION_NAME_URL, 
-    setState, 
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SECTION_NAME_URL,
+    setState,
     data
   );
 };
@@ -522,6 +549,7 @@ export {
   deleteProductProfitRuleApi,
   orderProductProfitRuleApi,
   getAllProductAndMaterialsApi,
+  getALLProductsForGoAiApi,
   getAllPricingProfileSettingForDropDownListApi,
   getAllProfitProfileProductByProductIdApi,
   updateProfitProfileProductParameterApi,
@@ -549,5 +577,5 @@ export {
   deleteProductHotFolderRuleApi,
   reOrderProductHotFolderProfitRulesApi,
   copyProductHotFolderRulesApi,
-  addProductHotFolderRuleApi
+  addProductHotFolderRuleApi,
 };

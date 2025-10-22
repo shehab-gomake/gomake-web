@@ -10,14 +10,18 @@ import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import { useSnackBar } from "@/hooks";
 
-const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowData) => {
+const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInventoryTable, isPurchasePricingTable }: IRowData) => {
   const { classes } = useStyle();
   const [isUpdate, setIsUpdate] = useState<number | null>(null);
   const [updateValue, setUpdateValue] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
   const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
   const { t } = useTranslation();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
 
@@ -29,7 +33,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
     setOpenDeleteTableRowModal(true);
   };
 
-  const { updateCellData, } = useTableCellData(isAdmin);
+  const { updateCellData, } = useTableCellData(isAdmin, isInventoryTable, isPurchasePricingTable);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -43,23 +47,37 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
 
   const onBlur = async () => {
     if (updateValue !== valueArray[isUpdate]) {
-      // if(parameterKey.includes("price")){
-      //   onClickOpenPriceModal()
-      // }
-      // else{
-      if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-        onClickOpenDeleteTableRowModal()
+      setIsLoading(true);
+
+      try {
+        if (isInventoryTable) {
+          // Determine pricingType based on the parameter key for inventory
+          let pricingType = 1; // Default to PurchasePrice
+          if (parameterKey.includes('sale') || parameterKey.toLowerCase().includes('sale')) {
+            pricingType = 2; // SalesPrice
+          }
+
+          await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate, pricingType);
+          setIsUpdate(null);
+        } else {
+          // Use original logic for main table
+          if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+            setIsLoading(false);
+            onClickOpenDeleteTableRowModal()
+          } else {
+            await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
+            setIsUpdate(null);
+            alertSuccessUpdate();
+          }
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setIsLoading(false);
       }
-      else {
-        await updateCellData(id, parameterKey, updateValue, isUpdate);
-        setIsUpdate(null);
-      }
-    }
-    // }
-    else {
+    } else {
       setIsUpdate(null);
     }
-
   };
   return (
     <>
@@ -69,51 +87,63 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         gap={"2px"}
         alignItems={"center"}
       >
-        {valueArray?.flatMap((value, index, array) => {
-          if (index < array.length - 1) {
-            return [
-              isUpdate === index ? (
-                <UpdateValueInput
-                  clickedOut={() => onBlur()?.then()}
-                  onInputChange={onInputChange}
-                  onCancel={() => setIsUpdate(null)}
-                  onUpdate={() => onBlur()?.then()}
-                  value={updateValue}
-                />
-              ) : (
-                <PrimaryButton
-                  sx={classes.clickableData}
-                  onClick={() => onClick(index)}
-                  variant={"text"}
-                >
-                  {value}
-                </PrimaryButton>
-              ),
-              <span>/</span>,
-            ];
-          } else {
-            return [
-              isUpdate === index ? (
-                <UpdateValueInput
-                  clickedOut={onBlur}
-                  onInputChange={onInputChange}
-                  onUpdate={onBlur}
-                  onCancel={() => setIsUpdate(null)}
-                  value={updateValue}
-                />
-              ) : (
-                <PrimaryButton
-                  sx={classes.clickableData}
-                  onClick={() => onClick(index)}
-                  variant={"text"}
-                  style={{ minWidth: "max-content" }}
-                >
-                  {value}
-                </PrimaryButton>
-              ),
-            ];
-          }
-        })}
+        {isLoading ? (
+          <DotsLoader />
+        ) : (
+          valueArray?.flatMap((value, index, array) => {
+            if (index < array.length - 1) {
+              return [
+                isUpdate === index ? (
+                  isLoading ? (
+                    <DotsLoader />
+                  ) : (
+                    <UpdateValueInput
+                      clickedOut={() => onBlur()?.then()}
+                      onInputChange={onInputChange}
+                      onCancel={() => setIsUpdate(null)}
+                      onUpdate={() => onBlur()?.then()}
+                      value={updateValue}
+                    />
+                  )
+                ) : (
+                  <PrimaryButton
+                    sx={classes.clickableData}
+                    onClick={() => onClick(index)}
+                    variant={"text"}
+                  >
+                    {value}
+                  </PrimaryButton>
+                ),
+                <span>/</span>,
+              ];
+            } else {
+              return [
+                isUpdate === index ? (
+                  isLoading ? (
+                    <DotsLoader />
+                  ) : (
+                    <UpdateValueInput
+                      clickedOut={onBlur}
+                      onInputChange={onInputChange}
+                      onUpdate={onBlur}
+                      onCancel={() => setIsUpdate(null)}
+                      value={updateValue}
+                    />
+                  )
+                ) : (
+                  <PrimaryButton
+                    sx={classes.clickableData}
+                    onClick={() => onClick(index)}
+                    variant={"text"}
+                    style={{ minWidth: "max-content" }}
+                  >
+                    {value}
+                  </PrimaryButton>
+                ),
+              ];
+            }
+          })
+        )}
       </Stack>
       <GoMakeDeleteModal
         modalType={ModalType.EDIT}
@@ -123,8 +153,28 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={async () => {
-          await updateCellData(id, parameterKey, updateValue, isUpdate);
-          setIsUpdate(null);
+          setIsLoading(true);
+
+          try {
+            if (isInventoryTable) {
+              // Determine pricingType based on the parameter key for inventory
+              let pricingType = 1; // Default to PurchasePrice
+              if (parameterKey.includes('sale') || parameterKey.toLowerCase().includes('sale')) {
+                pricingType = 2; // SalesPrice
+              }
+
+              await updateCellData(id, "price Unit / ton", updateValue, isUpdate, pricingType);
+            } else {
+              await updateCellData(id, parameterKey, updateValue, isUpdate);
+            }
+            setIsUpdate(null);
+            alertSuccessUpdate();
+          } catch (error) {
+            alertFaultUpdate();
+            console.error("Error updating array input:", error);
+          } finally {
+            setIsLoading(false);
+          }
         }}
       />
 

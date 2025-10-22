@@ -8,6 +8,7 @@ import { Collapse, Divider, Stack } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 import CircularProgress from "@mui/material/CircularProgress";
 import { adaptMarginRight } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -130,6 +131,8 @@ const GoMakeAutoComplate = ({
   noOptionsText,
   componentsProps,
   isOptionEqualToValue,
+  labelText,
+  getOptionDisabled
 }: {
   value?: any;
   onChange?: any;
@@ -162,6 +165,8 @@ const GoMakeAutoComplate = ({
   noOptionsText?: string;
   componentsProps?: any;
   isOptionEqualToValue?: (option: any, value: any) => boolean;
+  labelText?: string;
+  getOptionDisabled?: (option: any) => boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -169,7 +174,7 @@ const GoMakeAutoComplate = ({
   const isRTL = dir === "rtl";
 
   useEffect(() => {
-    if (value) {
+    if ((Array.isArray(value) && value.length > 0) || !Array.isArray(value)) {
       setSelectedOption(value);
     } else {
       setSelectedOption(null);
@@ -194,86 +199,94 @@ const GoMakeAutoComplate = ({
   const lastGroup = uniqueGroups[uniqueGroups.length - 1];
 
   return (
-    <StyledAutocomplete
-      {...(value && { value })}
-      {...(selectedOption && { selectedOption })}
-      direction={dir}
-      onChange={(e: any, value: any) => {
-        onChange(e, value);
-        setSelectedOption(value);
-      }}
-      onInputChange={onInputChange}
-      onKeyDown={onKeyDown}
-      open={open} // Pass the `open` prop to Autocomplete
-      onOpen={onOpen} // Pass the `onOpen` callback to Autocomplete
-      onClose={onClose}
-      style={style}
-      options={options}
-      disabled={disabled}
-      popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
-      groupBy={groupBy}
-      renderGroup={(params) => (
-        <div key={params.key}>
-          <GroupHeader onClick={() => toggleGroup(params.group)}>
-            {params.group}
-            {expandedGroups[params.group] ? <UpIcon /> : <DownIcon />}
-          </GroupHeader>
-          {params.group !== lastGroup && (
-            <Divider
-              sx={{
-                width: "97%",
-                margin: "0 auto",
-                borderColor: "#ECECEC",
-                my: 1,
-              }}
-            />
-          )}
-          <Collapse in={expandedGroups[params.group]}>
-            <GroupItems>{params.children}</GroupItems>
-          </Collapse>
-        </div>
-      )}
-      renderInput={(params: any) => (
-        <TextField
-          {...params}
-          placeholder={defaultValue?.label || placeholder}
-          onChange={onChangeTextField || params.onChange}
-          InputProps={{
-            ...params.InputProps,
-            ...(startIcon && {
-              startAdornment: (
-                <div style={{ display: "flex", marginLeft: "10px" }}>
-                  {startIcon}
-                </div>
-              ),
-            }),
-            ...(loading && {
-              endAdornment: (
-                <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-              ),
-            }),
-          }}
-        />
-      )}
-      loading={loading} // Pass loading prop to show spinner
-      defaultValue={defaultValue}
-      autoHighlight={autoHighlight}
-      getOptionLabel={getOptionLabel}
-      renderOption={renderOption}
-      error={error}
-      disableClearable={disableClearable}
-      placeholder="Enter"
-      multiple={multiple}
-      getOptionSelected={(option: any, value: any) => option?.id === value?.id}
-      PaperComponent={PaperComponent}
-      filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
-      noOptionsText={noOptionsText}
-      componentsProps={componentsProps}
-      isOptionEqualToValue={
-        isOptionEqualToValue ??
-        ((option: any, value: any) => String(option?.id) === String(value?.id))
+    < >
+      {
+        labelText &&
+        <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
       }
-    />
+      <StyledAutocomplete
+        {...(value && { value })}
+        {...(selectedOption && { selectedOption })}
+        direction={dir}
+        onChange={(e: any, value: any) => {
+          onChange(e, value);
+          setSelectedOption(value);
+        }}
+        onInputChange={onInputChange}
+        onKeyDown={onKeyDown}
+        open={open} // Pass the `open` prop to Autocomplete
+        onOpen={onOpen} // Pass the `onOpen` callback to Autocomplete
+        onClose={onClose}
+        style={style}
+        options={options}
+        disabled={disabled}
+        popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
+        groupBy={groupBy}
+        renderGroup={(params) => (
+          <div key={params.key}>
+            <GroupHeader onClick={() => toggleGroup(params.group)}>
+              {params.group}
+              {expandedGroups[params.group] ? <UpIcon /> : <DownIcon />}
+            </GroupHeader>
+            {params.group !== lastGroup && (
+              <Divider
+                sx={{
+                  width: "97%",
+                  margin: "0 auto",
+                  borderColor: "#ECECEC",
+                  my: 1,
+                }}
+              />
+            )}
+            <Collapse in={expandedGroups[params.group]}>
+              <GroupItems>{params.children}</GroupItems>
+            </Collapse>
+          </div>
+        )}
+        renderInput={(params: any) => (
+          <TextField
+            {...params}
+            placeholder={defaultValue?.label || placeholder}
+            onChange={onChangeTextField || params.onChange}
+            InputProps={{
+              ...params.InputProps,
+              ...(startIcon && {
+                startAdornment: (
+                  <div style={{ display: "flex", marginLeft: "10px" }}>
+                    {startIcon}
+                  </div>
+                ),
+              }),
+              ...(loading && {
+                endAdornment: (
+                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+                ),
+              }),
+            }}
+          />
+        )}
+        loading={loading} // Pass loading prop to show spinner
+        defaultValue={defaultValue}
+        autoHighlight={autoHighlight}
+        getOptionLabel={getOptionLabel}
+        renderOption={renderOption}
+        error={error}
+        disableClearable={disableClearable}
+        placeholder="Enter"
+        multiple={multiple}
+        getOptionSelected={(option: any, value: any) => option?.id === value?.id}
+        PaperComponent={PaperComponent}
+        filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
+        noOptionsText={noOptionsText}
+        componentsProps={componentsProps}
+        isOptionEqualToValue={
+          isOptionEqualToValue ??
+          ((option: any, value: any) => String(option?.id) === String(value?.id))
+        }
+        getOptionDisabled={getOptionDisabled}
+      />
+    </>
+
   );
 };
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AISidebar } from "../ai-sidebar/ai-sidebar";
 import { AIMainPanel } from "../ai-main-panel/ai-main-panel";
@@ -7,22 +7,26 @@ import { useAISocketIO } from "@/hooks/socket-io/use-ai-socket-io";
 import { PriceListPageWidget } from "@/pages-components/products/digital-offset-price/digital-offset-price";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { LandingModal } from "../landing-modal/landing-modal";
+import { TrialExpiredModal } from "../trial-expired-modal/trial-expired-modal";
 import { getUserToken, updateTokenStorage } from "@/services/storage-data";
 import { useGomakeAxios } from "@/hooks";
-import { createGuestUserForGomakeAIApi } from "@/services/api-service/customers/employees-api";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz"; // ✅ toggle icon
-import MenuIcon from "@mui/icons-material/Menu"; // ✅ hamburger menu
-import { IconButton } from "@mui/material"; // ✅ icon buttons
+import {
+  createGuestUserForGomakeAIApi,
+  validateGoAiVerificationCodeApi,
+} from "@/services/api-service/customers/employees-api";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import MenuIcon from "@mui/icons-material/Menu";
+import { IconButton } from "@mui/material";
+import { HttpErrorCodes } from "@/enums/error-types";
 import { useIsMobile } from "@/hooks/use-responsive";
 
 const GoMakeAIComponent = () => {
   const { classes } = useStyle();
   const router = useRouter();
   const { callApi } = useGomakeAxios();
-  const isMobile = useIsMobile(); // ✅
-  const [isChatView, setIsChatView] = useState(true); // ✅ controls which panel is visible
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // ✅ Start closed on mobile to show chat
-
+  const isMobile = useIsMobile();
+  const [isChatView, setIsChatView] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [conversationsHistory, setConversationsHistory] = useState<any[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
@@ -35,11 +39,14 @@ const GoMakeAIComponent = () => {
   const hasInitialized = useRef(false);
   const [interactionId, setInteractionId] = useState("");
   const [showLandingModal, setShowLandingModal] = useState(false);
+  const [showTrialExpiredModal, setShowTrialExpiredModal] = useState(false);
   const [onboardingData, setOnboardingData] = useState<{
     email: string;
     country: string;
+    userId?: string;
   } | null>(null);
-  const [isFabAnimating, setIsFabAnimating] = useState(true); // ✅ Track FAB animation state
+  const [isVerificationStep, setIsVerificationStep] = useState(false);
+  const [isFabAnimating, setIsFabAnimating] = useState(true);
 
   const handleRealTimeMessage = (message: any) => {
     setChatMessages((prev) => [...prev, message]);
@@ -50,6 +57,19 @@ const GoMakeAIComponent = () => {
         messages: [...(prev?.messages || []), message],
       }));
     }
+
+    // // ✅ Update conversation history to reflect latest message
+    // setConversationsHistory((prev) =>
+    //   prev.map((conv) =>
+    //     conv.sessionId === sessionId
+    //       ? {
+    //           ...conv,
+    //           lastMessage: message.message,
+    //           timestamp: message.timestamp,
+    //         }
+    //       : conv
+    //   )
+    // );
   };
 
   const handleProductIdReceived = (productId: string) => {
@@ -82,6 +102,7 @@ const GoMakeAIComponent = () => {
     sendMessage,
     getConversationsHistory,
     getConversation,
+    selectProduct,
     setSessionIdManually,
     resetProcessingState,
   } = useAISocketIO(
@@ -122,7 +143,6 @@ const GoMakeAIComponent = () => {
   }, [router.isReady, router.query.token]);
 
   useEffect(() => {
-    debugger;
     if (router.isReady) {
       const hasToken = !!getUserToken();
       if (!hasToken) {
@@ -172,12 +192,25 @@ const GoMakeAIComponent = () => {
             );
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error initializing session:", error);
+
+        // Check if error is 402 (trial expired)
+        if (error?.status === HttpErrorCodes.PAYMENT_REQUIRED) {
+          setShowTrialExpiredModal(true);
+          setIsInitializing(false);
+          return;
+        }
+
         try {
           await startSession();
-        } catch (fallbackError) {
+        } catch (fallbackError: any) {
           console.error("Fallback session start failed:", fallbackError);
+
+          // Check if fallback error is also 402
+          if (fallbackError?.status === HttpErrorCodes.PAYMENT_REQUIRED) {
+            setShowTrialExpiredModal(true);
+          }
         }
       } finally {
         setIsInitializing(false);
@@ -201,6 +234,9 @@ const GoMakeAIComponent = () => {
     try {
       const newSession = await startSession();
       if (newSession?.sessionId) {
+        // ✅ Refresh conversation history to include the new session
+        await refreshConversationsHistory();
+
         router.replace(
           {
             pathname: router.pathname,
@@ -210,8 +246,13 @@ const GoMakeAIComponent = () => {
           { shallow: true }
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error starting new session:", error);
+
+      // Check if error is 402 (trial expired)
+      if (error?.status === HttpErrorCodes.PAYMENT_REQUIRED) {
+        setShowTrialExpiredModal(true);
+      }
     }
   };
 
@@ -281,7 +322,38 @@ const GoMakeAIComponent = () => {
 
   const handleLandingModalContinue = async (email: string, country: string) => {
     try {
-      setOnboardingData({ email, country });
+      const callBack = (res: any) => {
+        if (res.success) {
+          const {
+            email: returnedEmail,
+            country: returnedCountry,
+            userId,
+          } = res?.data || {};
+
+          // Store the data for verification step
+          setOnboardingData({
+            email: returnedEmail || email,
+            country: returnedCountry || country,
+            userId,
+          });
+
+          // Switch to verification step
+          setIsVerificationStep(true);
+        }
+      };
+
+      await createGuestUserForGomakeAIApi(callApi, callBack, {
+        email,
+        country,
+      });
+    } catch (error) {
+      console.error("Error creating guest user:", error);
+    }
+  };
+
+  const handleVerificationCodeSubmit = async (code: string) => {
+    try {
+      if (!onboardingData) return;
 
       const callBack = (res: any) => {
         if (res.success) {
@@ -292,12 +364,14 @@ const GoMakeAIComponent = () => {
         }
       };
 
-      await createGuestUserForGomakeAIApi(callApi, callBack, {
-        email,
-        country,
+      await validateGoAiVerificationCodeApi(callApi, callBack, {
+        email: onboardingData.email,
+        country: onboardingData.country,
+        userId: onboardingData.userId,
+        code,
       });
     } catch (error) {
-      console.error("Error creating guest user:", error);
+      console.error("Error validating verification code:", error);
     }
   };
 
@@ -360,12 +434,12 @@ const GoMakeAIComponent = () => {
 
   return (
     <div style={classes.container}>
-      {/* ✅ Backdrop for mobile sidebar */}
+      {/*  Backdrop for mobile sidebar */}
       {isMobile && isSidebarOpen && (
         <div style={classes.backdrop} onClick={() => setIsSidebarOpen(false)} />
       )}
 
-      {/* ✅ Sidebar wrapper with mobile drawer support */}
+      {/*  Sidebar wrapper with mobile drawer support */}
       {(!isMobile || isSidebarOpen) && (
         <div
           style={
@@ -381,11 +455,13 @@ const GoMakeAIComponent = () => {
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={toggleSidebar}
             onClose={isMobile ? () => setIsSidebarOpen(false) : undefined}
+            conversationLimit={10}
+            currentConversationCount={conversationsHistory.length}
           />
         </div>
       )}
 
-      {/* ✅ Menu button to open sidebar on mobile - hide when viewing price */}
+      {/*  Menu button to open sidebar on mobile - hide when viewing price */}
       {isMobile && !isSidebarOpen && isChatView && (
         <IconButton
           onClick={() => setIsSidebarOpen(true)}
@@ -412,6 +488,7 @@ const GoMakeAIComponent = () => {
         >
           <AIMainPanel
             sendMessage={sendMessage}
+            selectProduct={selectProduct}
             isProcessing={isProcessing}
             sessionId={sessionId}
             chatMessages={chatMessages}
@@ -454,13 +531,11 @@ const GoMakeAIComponent = () => {
           </div>
         )}
       </div>
-
-      {/* ✅ Floating Toggle FAB */}
       {showFab && (
         <IconButton
           onClick={() => {
             setIsChatView((prev) => !prev);
-            setIsFabAnimating(false); // ✅ Stop animation on click
+            setIsFabAnimating(false);
           }}
           className={isFabAnimating ? "ai-fab-toggle" : ""}
           style={{
@@ -477,11 +552,17 @@ const GoMakeAIComponent = () => {
           <SwapHorizIcon style={{ color: "#9333ea", fontSize: 24 }} />
         </IconButton>
       )}
-
       <LandingModal
         open={showLandingModal}
         onClose={handleLandingModalClose}
         onContinue={handleLandingModalContinue}
+        isVerificationStep={isVerificationStep}
+        onVerifyCode={handleVerificationCodeSubmit}
+        userEmail={onboardingData?.email}
+      />
+      <TrialExpiredModal
+        open={showTrialExpiredModal}
+        onClose={() => setShowTrialExpiredModal(false)}
       />
     </div>
   );

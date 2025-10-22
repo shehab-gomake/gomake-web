@@ -4,6 +4,7 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
+  GoMakeDeleteModal,
 } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
@@ -14,7 +15,7 @@ import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
-import { DocumentTypeEnums, EAdditionType, EParameterTypes } from "@/enums";
+import { DocumentTypeEnums, EAdditionType, EParameterTypes, ModalType } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
@@ -48,6 +49,11 @@ const AddRuleModal = ({
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
+
+  const [selectedCategories, setSelectedCategories] = useState<any>("");
+  const [selectedStatment2, setSelectedStatment2] = useState<any>("");
+  const [openScheduleOrDownloadModal, setOpenScheduleOrDownloadModal] = useState(false);
+  const [detailsOption, setDetailsOption] = useState<number | null>(null);
 
   const {
     rules,
@@ -107,9 +113,9 @@ const AddRuleModal = ({
     filterData,
     openModal,
     getProductHotFolderRules,
+    documentType,
+    detailsOption,
   });
-  const [selectedCategories, setSelectedCategories] = useState<any>("");
-  const [selectedStatment2, setSelectedStatment2] = useState<any>("");
 
   // Fetch hot folder names when modal opens
   useEffect(() => {
@@ -181,19 +187,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: `${value?.nickName}`,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: `${value?.nickName}`,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -437,21 +443,99 @@ const AddRuleModal = ({
   };
 
   const _renderInptsForQuotes = () => {
+    // Check document type
+    const isInvoice = documentType === 3; // 3 = invoice (based on DOCUMENT_TYPE enum: quote=0, order=1, deliveryNote=2, invoice=3)
+    const isDeliveryNote = documentType === 2; // 2 = deliveryNote
+
+    // For invoices, show the 4 extended export options
+    if (isInvoice) {
+      return (
+        <div style={clasess.inputsForQuotesContainer}>
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.detailsOption")}
+            </div>
+            <GoMakeAutoComplate
+              options={[
+                { label: t("products.profits.exceptions.withoutDetails"), id: 2 },
+                { label: t("sales.list.exportExtendedTableExcel"), id: 3 }, // ExtendedExcel
+                { label: t("sales.list.exportExtendedTableTxt"), id: 4 }, // ExtendedTxt
+                { label: t("sales.list.exportSummeryExcelWithoutVat"), id: 5 }, // SummeryExcelWithoutVat
+                { label: t("sales.list.exportSummeryExcelWithVat"), id: 6 }, // SummeryExcelWithVat
+
+              ]}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectDetailsOption")}
+              onChange={(e, value) => {
+                setDetailsOption(value?.id);
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // For delivery notes, only show "Without Details"
+    if (isDeliveryNote) {
+      return (
+        <div style={clasess.inputsForQuotesContainer}>
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.detailsOption")}
+            </div>
+            <GoMakeAutoComplate
+              options={[
+                { label: t("products.profits.exceptions.withoutDetails"), id: 2 }, // withoutDetails = 2
+              ]}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectDetailsOption")}
+              onChange={(e, value) => {
+                setDetailsOption(value?.id);
+                setPropertieValue(null);
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // For quotes, orders, and other documents, show with/without details options
     return (
       <div style={clasess.inputsForQuotesContainer}>
         <div>
           <div style={clasess.selectTypeStyle}>
-            {t("products.profits.exceptions.groupBy")}
+            {t("products.profits.exceptions.detailsOption")}
           </div>
           <GoMakeAutoComplate
-            options={GroupByOptions}
+            options={[
+              { label: t("products.profits.exceptions.withDetails"), id: 1 }, // withDetails = 1
+              { label: t("products.profits.exceptions.withoutDetails"), id: 2 }, // withoutDetails = 2
+            ]}
             style={clasess.dropDownListContainer}
-            placeholder={t("products.profits.exceptions.selectGroupBy")}
+            placeholder={t("products.profits.exceptions.selectDetailsOption")}
             onChange={(e, value) => {
-              setPropertieValue(value?.id);
+              setDetailsOption(value?.id);
+              if (value?.id === 2) { // withoutDetails
+                setPropertieValue(null);
+              }
             }}
           />
         </div>
+        {detailsOption && detailsOption === 1 && ( // withDetails
+          <div>
+            <div style={clasess.selectTypeStyle}>
+              {t("products.profits.exceptions.groupBy")}
+            </div>
+            <GoMakeAutoComplate
+              options={GroupByOptions}
+              style={clasess.dropDownListContainer}
+              placeholder={t("products.profits.exceptions.selectGroupBy")}
+              onChange={(e, value) => {
+                setPropertieValue(value?.id);
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   };
@@ -511,9 +595,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -662,19 +746,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.nickName}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.nickName}`,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.nickName}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.nickName}`,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -726,19 +810,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.nickName}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.nickName}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.nickName}`,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -874,11 +958,11 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                      rules[index]?.statement2?.type === 5 ||
-                      rules[index]?.statement2?.type === 4 ||
-                      rules[index]?.statement2?.type === 10 ||
-                      rules[index]?.statement2?.type === 13 ||
-                      rules[index]?.statement2?.type === 11 ? (
+                        rules[index]?.statement2?.type === 5 ||
+                        rules[index]?.statement2?.type === 4 ||
+                        rules[index]?.statement2?.type === 10 ||
+                        rules[index]?.statement2?.type === 13 ||
+                        rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -1128,12 +1212,12 @@ const AddRuleModal = ({
           <div style={clasess.btnContainer}>
             {isQuoteWidge && (
               <>
-                <GomakePrimaryButton
+                {/* <GomakePrimaryButton
                   style={clasess.sendBtn}
                   onClick={onOpenScheduleModal}
                 >
                   {t("properties.scheduleSend")}
-                </GomakePrimaryButton>
+                </GomakePrimaryButton> */}
                 <GomakePrimaryButton
                   style={clasess.sendBtn}
                   onClick={onShowScheduledReports}
@@ -1152,10 +1236,11 @@ const AddRuleModal = ({
                     expression: expression,
                   });
                 } else {
-                  if (isPropertiesWidge) {
+                  if (isQuoteWidge) {
+                    // Open the schedule or download modal
+                    setOpenScheduleOrDownloadModal(true);
+                  } else if (isPropertiesWidge) {
                     createProperties();
-                  } else if (isQuoteWidge) {
-                    createForQuoteWidget();
                   } else if (isHotFolderWidget) {
                     createForHotFolderWidget();
                   } else {
@@ -1199,6 +1284,28 @@ const AddRuleModal = ({
           propertieValue={propertieValue}
         />
       </GoMakeModal>
+
+      {/* Schedule or Download Modal */}
+      {isQuoteWidge && (
+        <GoMakeDeleteModal
+          hideIcon
+          modalType={ModalType.WARNING}
+          openModal={openScheduleOrDownloadModal}
+          onClose={() => setOpenScheduleOrDownloadModal(false)}
+          title={t("sales.list.scheduleOrDownloadTitle")}
+          subTitle={t("sales.list.scheduleOrDownloadSubtitle")}
+          yesBtn={t("sales.list.download")}
+          cancelBtn={t("sales.list.schedule")}
+          onClickDelete={() => {
+            createForQuoteWidget();
+            setOpenScheduleOrDownloadModal(false);
+          }}
+          onClickCancel={() => {
+            setOpenScheduleOrDownloadModal(false);
+            onOpenScheduleModal();
+          }}
+        />
+      )}
     </>
   );
 };
