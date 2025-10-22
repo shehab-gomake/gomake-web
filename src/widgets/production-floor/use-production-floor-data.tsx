@@ -47,7 +47,12 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { agentsState, currentStationOrderingState } from "@/store/agents-state";
+import {
+  agentsState,
+  currentStationOrderingState,
+  deliveryDateOrderingState,
+  creationDateOrderingState,
+} from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
@@ -88,6 +93,8 @@ const useProductionFloorData = () => {
   const setPath = useSetRecoilState(productionFloorPathsState);
   const setJobsStatuses = useSetRecoilState(jobsStatusesState);
   const setStationOrdering = useSetRecoilState(currentStationOrderingState);
+  const setDeliveryDateOrdering = useSetRecoilState(deliveryDateOrderingState);
+  const setCreationDateOrdering = useSetRecoilState(creationDateOrderingState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
@@ -116,6 +123,19 @@ const useProductionFloorData = () => {
             currentStationOrdering = CurrentStationOrderingEnum.NONE;
           }
           setStationOrdering(currentStationOrdering);
+
+          let deliveryDateOrdering = res?.data?.filter?.deliveryDateOrdering;
+          if (!deliveryDateOrdering) {
+            deliveryDateOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setDeliveryDateOrdering(deliveryDateOrdering);
+
+          let creationDateOrdering = res?.data?.filter?.creationDateOrdering;
+          if (!creationDateOrdering) {
+            creationDateOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setCreationDateOrdering(creationDateOrdering);
+
           setSelectedGroupId(res?.data?.filter?.groupId);
           setTags(res?.data?.automatedTagsFilter);
           setUserGroups(res?.data?.groups);
@@ -156,6 +176,8 @@ const useProductionFloorData = () => {
       setData,
       setFilters,
       setStationOrdering,
+      setDeliveryDateOrdering,
+      setCreationDateOrdering,
       setSelectedGroupId,
       setTags,
       setUserGroups,
