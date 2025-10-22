@@ -38,7 +38,11 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
-import { currentStationOrderingState } from "@/store/agents-state";
+import {
+  currentStationOrderingState,
+  deliveryDateOrderingState,
+  creationDateOrderingState,
+} from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 import {
@@ -105,6 +109,32 @@ const StatusTableComponent = ({
       await setFilters({
         ...filtersState,
         currentStationOrdering: direction,
+        deliveryDateOrdering: null,
+        creationDateOrdering: null,
+      });
+    },
+    [setFilters, filtersState]
+  );
+
+  const reSortingDeliveryDate = useCallback(
+    async (direction: CurrentStationOrderingEnum) => {
+      await setFilters({
+        ...filtersState,
+        currentStationOrdering: null,
+        deliveryDateOrdering: direction,
+        creationDateOrdering: null,
+      });
+    },
+    [setFilters, filtersState]
+  );
+
+  const reSortingCreationDate = useCallback(
+    async (direction: CurrentStationOrderingEnum) => {
+      await setFilters({
+        ...filtersState,
+        currentStationOrdering: null,
+        deliveryDateOrdering: null,
+        creationDateOrdering: direction,
       });
     },
     [setFilters, filtersState]
@@ -162,6 +192,14 @@ const StatusTableComponent = ({
 
   const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(
     currentStationOrderingState
+  );
+
+  const [deliveryDateOrdering, setDeliveryDateOrdering] = useRecoilState(
+    deliveryDateOrderingState
+  );
+
+  const [creationDateOrdering, setCreationDateOrdering] = useRecoilState(
+    creationDateOrderingState
   );
 
   const dropRef = useRef<HTMLDivElement>(null);
@@ -354,6 +392,24 @@ const StatusTableComponent = ({
                     : {
                         "& .sort-icon": { opacity: 1 },
                       }
+                  : header === t("sales.quote.deliveryDate")
+                  ? deliveryDateOrdering === CurrentStationOrderingEnum.NONE
+                    ? {
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
+                    : {
+                        "& .sort-icon": { opacity: 1 },
+                      }
+                  : header === t("sales.quote.creationDate")
+                  ? creationDateOrdering === CurrentStationOrderingEnum.NONE
+                    ? {
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
+                    : {
+                        "& .sort-icon": { opacity: 1 },
+                      }
                   : undefined
               }
             >
@@ -364,37 +420,142 @@ const StatusTableComponent = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: "5px",
+                  gap: "2px",
                 }}
               >
                 {header}
                 {header === t("productionFloor.currentStation") && (
                   <IconButton
                     className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
                     onClick={() => {
+                      const newDirection =
+                        currentStationOrdering ===
+                        CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : currentStationOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
                       setSortConfig({
                         key: t("productionFloor.currentStation"),
-                        direction:
-                          currentStationOrdering ===
-                          CurrentStationOrderingEnum.NONE
-                            ? CurrentStationOrderingEnum.ASC
-                            : CurrentStationOrderingEnum.NONE,
+                        direction: newDirection,
                       });
-                      setCurrentStationOrdering(
-                        currentStationOrdering ===
-                          CurrentStationOrderingEnum.NONE
-                          ? CurrentStationOrderingEnum.ASC
-                          : CurrentStationOrderingEnum.NONE
-                      );
-                      reSortingCurrentStation(
-                        currentStationOrdering ===
-                          CurrentStationOrderingEnum.NONE
-                          ? CurrentStationOrderingEnum.ASC
-                          : CurrentStationOrderingEnum.NONE
-                      );
+                      setCurrentStationOrdering(newDirection);
+                      setDeliveryDateOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreationDateOrdering(CurrentStationOrderingEnum.NONE);
+                      reSortingCurrentStation(newDirection);
                     }}
                   >
-                    <ArrowUpward sx={{ fontSize: "18px" }} />
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          currentStationOrdering ===
+                          CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : currentStationOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
+                  </IconButton>
+                )}
+                {header === t("sales.quote.deliveryDate") && (
+                  <IconButton
+                    className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
+                    onClick={() => {
+                      const newDirection =
+                        deliveryDateOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : deliveryDateOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
+                      setSortConfig({
+                        key: t("sales.quote.deliveryDate"),
+                        direction: newDirection,
+                      });
+                      setCurrentStationOrdering(
+                        CurrentStationOrderingEnum.NONE
+                      );
+                      setDeliveryDateOrdering(newDirection);
+                      setCreationDateOrdering(CurrentStationOrderingEnum.NONE);
+                      reSortingDeliveryDate(newDirection);
+                    }}
+                  >
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          deliveryDateOrdering ===
+                          CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : deliveryDateOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
+                  </IconButton>
+                )}
+                {header === t("sales.quote.creationDate") && (
+                  <IconButton
+                    className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
+                    onClick={() => {
+                      const newDirection =
+                        creationDateOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : creationDateOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
+                      setSortConfig({
+                        key: t("sales.quote.creationDate"),
+                        direction: newDirection,
+                      });
+                      setCurrentStationOrdering(
+                        CurrentStationOrderingEnum.NONE
+                      );
+                      setDeliveryDateOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreationDateOrdering(newDirection);
+                      reSortingCreationDate(newDirection);
+                    }}
+                  >
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          creationDateOrdering ===
+                          CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : creationDateOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
                   </IconButton>
                 )}
               </div>
@@ -415,6 +576,12 @@ const StatusTableComponent = ({
     setSortConfig,
     setCurrentStationOrdering,
     reSortingCurrentStation,
+    deliveryDateOrdering,
+    setDeliveryDateOrdering,
+    reSortingDeliveryDate,
+    creationDateOrdering,
+    setCreationDateOrdering,
+    reSortingCreationDate,
   ]);
 
   const TABLE_CONFIG = {
@@ -452,7 +619,11 @@ const StatusTableComponent = ({
   };
 
   return (
-    <Stack ref={dropRef} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
+    <Stack
+      ref={dropRef}
+      border={isOver ? "1px solid black" : "none"}
+      gap={"5px"}
+    >
       <Stack
         direction="row"
         alignItems="center"
