@@ -36,7 +36,7 @@ const rowInputs = (
             name: "Unit price",
             label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
             type: "number",
-            placeholder: "materials.inputs.unitPrice",
+            placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
             required: header?.isRequired,
             parameterKey: "unitPrice",
             options: [],
@@ -210,18 +210,18 @@ const rowInputs = (
           else
             return {
               name: header?.key,
-              label: newMaterialHeaders ? null : typeof header?.value === "object" ? "materials.inputs.unitPrice" : header?.value || "",
+              label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
               type:
                 EDataTypeEnum[header?.inputType] == "BOOLEAN"
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
-              placeholder: typeof header?.value === "object" ? "materials.inputs.unitPrice" : header?.value || "",
+              placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
               required: header?.isRequired,
               parameterKey: header?.key,
               options: [],
               value: state[header?.key],
               isValid: true,
-              unit: typeof header?.value === "object" ? header?.value?.props?.children[2] : header?.unit,
+              unit: typeof header?.value === "object" ? header?.value?.props?.children[2]?.split("/")[0] : header?.unit,
               isPriceObject: header?.isPriceObject,
             };
       }
