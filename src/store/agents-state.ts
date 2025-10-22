@@ -19,13 +19,13 @@ const currentStationOrderingState = atom<CurrentStationOrderingEnum>({
   default: CurrentStationOrderingEnum.NONE,
 });
 
-const deliveryDateOrderingState = atom<CurrentStationOrderingEnum>({
-  key: "deliveryDateOrderingState",
+const deliveryTimeOrderingState = atom<CurrentStationOrderingEnum>({
+  key: "deliveryTimeOrderingState",
   default: CurrentStationOrderingEnum.NONE,
 });
 
-const creationDateOrderingState = atom<CurrentStationOrderingEnum>({
-  key: "creationDateOrderingState",
+const createDateOrderingState = atom<CurrentStationOrderingEnum>({
+  key: "createDateOrderingState",
   default: CurrentStationOrderingEnum.NONE,
 });
 
@@ -33,6 +33,6 @@ export {
   agentsState,
   selectedAgentsState,
   currentStationOrderingState,
-  deliveryDateOrderingState,
-  creationDateOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
 };
