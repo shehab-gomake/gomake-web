@@ -42,4 +42,20 @@ const productionCreationDateState = atom<{
   },
 });
 
-export { productionDeliveryDateState, productionCreationDateState };
+const productionActivityDateState = atom<{
+  dates: IDateRange;
+}>({
+  key: "productionActivityDate",
+  default: {
+    dates: {
+      startDate: undefined,
+      endDate: undefined,
+    },
+  },
+});
+
+export {
+  productionDeliveryDateState,
+  productionCreationDateState,
+  productionActivityDateState,
+};
