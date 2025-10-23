@@ -627,7 +627,7 @@ const useMaterials = (isAdmin: boolean) => {
         } else {
           uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
-            supplierId: supplierId,
+            supplierId: supplierId || null,
             base64: base64String,
           });
         }
