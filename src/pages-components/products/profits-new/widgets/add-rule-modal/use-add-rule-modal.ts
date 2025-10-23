@@ -88,10 +88,10 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
-      {
-        label: t("products.profits.exceptions.materialType"),
-        id: "MATERIALTYPE",
-      },
+      // {
+      //   label: t("products.profits.exceptions.materialType"),
+      //   id: "MATERIALTYPE",
+      // },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -654,7 +654,7 @@ const useAddRuleModal = ({
         `/v1/erp-service/documents/generate-document-report`,
         {
           documentType: documentType,
-          exportType: detailsOption,
+          exportType: detailsOption?.id,
             filterDTO: {
               statusId: filterData?.statusId,
               closeStatus: filterData?.closeStatus,

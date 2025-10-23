@@ -33,6 +33,12 @@ const useStyle = () => {
         height:40,
         color: "white",
       },
+      noDataContainer: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "432px",
+      },
     };
   }, [theme]);
   return {
