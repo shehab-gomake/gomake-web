@@ -655,7 +655,7 @@ const useAddRuleModal = ({
         `/v1/erp-service/documents/generate-document-report`,
         {
           documentType: documentType,
-          exportType: detailsOption,
+          exportType: detailsOption?.id,
             ...(documentType === DocumentTypeEnums.BoardMission
               ? { 
                 boardMissionTableFilterDTO: {
