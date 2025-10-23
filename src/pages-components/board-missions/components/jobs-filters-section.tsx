@@ -312,6 +312,7 @@ const JobsFiltersSection = ({
     {
       id: "products",
       label: t("boardMissions.products"),
+      width: "md", //or lg
       component: (
         <ProductMultiSelect
           products={productsList}
