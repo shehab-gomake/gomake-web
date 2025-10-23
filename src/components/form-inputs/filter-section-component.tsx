@@ -39,29 +39,56 @@ const FilterSectionComponent = ({
         {/* First Column: Filters and Action Buttons (90% width) */}
         <Grid item xs={12} sm={10.8} md={10.8} lg={10.8}>
           <Grid container spacing={0.5}>
-            {visibleFilters.map((filter) => (
-              <Grid item xs={12} sm={4} md={2} lg={1.5} key={filter.id}>
-                <Box
-                  style={{
-                    padding: 6,
-                    height: "100%",
-                  }}
+            {visibleFilters.map((filter) => {
+              // Map width prop to grid sizes
+              const getGridSize = (width?: string) => {
+                switch (width) {
+                  case "xs":
+                    return 1.5;
+                  case "sm":
+                    return 2;
+                  case "md":
+                    return 2.5;
+                  case "lg":
+                    return 3;
+                  case "xl":
+                    return 4;
+                  default:
+                    return 1.5;
+                }
+              };
+
+              return (
+                <Grid
+                  item
+                  xs={12}
+                  sm={4}
+                  md={2}
+                  lg={getGridSize(filter.width)}
+                  key={filter.id}
                 >
-                  <Typography
-                    variant="body2"
+                  <Box
                     style={{
-                      marginBottom: 4,
-                      fontWeight: 500,
-                      color: "#374151",
-                      fontSize: 13,
+                      padding: 6,
+                      height: "100%",
                     }}
                   >
-                    {filter.label}
-                  </Typography>
-                  {filter.component}
-                </Box>
-              </Grid>
-            ))}
+                    <Typography
+                      variant="body2"
+                      style={{
+                        marginBottom: 4,
+                        fontWeight: 500,
+                        color: "#374151",
+                        fontSize: 13,
+                      }}
+                    >
+                      {filter.label}
+                    </Typography>
+                    {filter.component}
+                  </Box>
+                </Grid>
+              );
+            })}
 
             {/* Action buttons at the end of filters */}
             {actionButtons && (
@@ -70,10 +97,21 @@ const FilterSectionComponent = ({
                   style={{
                     padding: 6,
                     height: "100%",
-                    display: "flex",
-                    alignItems: "end",
                   }}
                 >
+                  {/* Empty label space to align with other filters */}
+                  <Typography
+                    variant="body2"
+                    style={{
+                      marginBottom: 4,
+                      fontWeight: 500,
+                      color: "transparent",
+                      fontSize: 13,
+                      height: "20px",
+                    }}
+                  >
+                    &nbsp;
+                  </Typography>
                   <Box
                     style={{
                       display: "flex",
