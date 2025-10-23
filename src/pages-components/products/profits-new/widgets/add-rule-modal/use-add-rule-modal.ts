@@ -89,10 +89,10 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
-      {
-        label: t("products.profits.exceptions.materialType"),
-        id: "MATERIALTYPE",
-      },
+      // {
+      //   label: t("products.profits.exceptions.materialType"),
+      //   id: "MATERIALTYPE",
+      // },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),

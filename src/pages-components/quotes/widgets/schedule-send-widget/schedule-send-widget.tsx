@@ -8,6 +8,7 @@ import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/sch
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 const ScheduleSendWidget = ({
+    detailsOption,
     openModal,
     onCloseModal,
     documentType,
@@ -28,6 +29,7 @@ const ScheduleSendWidget = ({
     boardMissionTableFilterDTO?: any;
     rules?: any;
     propertieValue?: any;
+    detailsOption?: { label: string; id: number };
 }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
@@ -332,6 +334,7 @@ const ScheduleSendWidget = ({
                                     frequency: scheduleType?.id,
                                     startDayOfWeek: dayOfWeek?.value,
                                     startDayOfMonth: dayOfMonth?.id,
+                                    exportType: detailsOption?.id,
                                     reportConfiguration: {
                                         groupBy: propertieValue, // Default group by
                                         exceptionConditionProperties: rules.map((item) => {
