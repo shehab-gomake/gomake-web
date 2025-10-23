@@ -226,6 +226,11 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
             const trimmedValue = e.target.value.trimStart();
             onChangeDocumentSearch(trimmedValue);
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onClickSearchFilter();
+            }
+          }}
           sx={{
             "& .MuiInputAdornment-root": {
               marginRight: "0px",

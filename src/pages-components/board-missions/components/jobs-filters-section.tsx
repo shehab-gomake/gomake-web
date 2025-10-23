@@ -163,6 +163,11 @@ const JobsFiltersSection = ({
             const trimmedValue = e.target.value.trimStart();
             onChangeMissionsSearch(trimmedValue);
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onClickSearchFilter();
+            }
+          }}
           sx={{
             "& .MuiInputAdornment-root": {
               marginRight: "0px",
@@ -307,6 +312,7 @@ const JobsFiltersSection = ({
     {
       id: "products",
       label: t("boardMissions.products"),
+      width: "md", //or lg
       component: (
         <ProductMultiSelect
           products={productsList}

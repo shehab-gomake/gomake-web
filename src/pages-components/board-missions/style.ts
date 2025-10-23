@@ -107,7 +107,7 @@ const useStyle = () => {
         height: 40,
       },
       textInputForProductsStyle: {
-        width: 350,
+        width: "100%",
         border: "none",
       },
       searchInputStyle: {

@@ -59,6 +59,7 @@ const GoMakeTextInputIcon = ({
   bgColor,
   inputRef,
   sx,
+  onKeyDown,
 }: {
   labelText?: string;
   placeholder?: any;
@@ -72,6 +73,7 @@ const GoMakeTextInputIcon = ({
   bgColor?: any;
   inputRef?: any;
   sx?: any;
+  onKeyDown?: any;
 }) => {
   return (
     <StyledTextField
@@ -87,6 +89,7 @@ const GoMakeTextInputIcon = ({
       inputRef={inputRef}
       id={"searchInput"}
       sx={sx}
+      onKeyDown={onKeyDown}
     />
   );
 };
