@@ -151,7 +151,7 @@ const ScheduledReportsTable = ({
                                         page={pageNumber}
                                         setPage={onPageChange || (() => { })}
                                         pageSize={pageSize}
-                                        pagesCount={Math.max(pagesCount, 2)} // Force at least 2 pages for testing
+                                        pagesCount={pagesCount}
                                         initialPageSize={initialPageSize}
                                     />
                                 </div>
