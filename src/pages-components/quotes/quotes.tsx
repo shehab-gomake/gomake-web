@@ -50,7 +50,6 @@ import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
 import CloseOrderNote from "./widgets/general/close-order-note";
 import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
-import { predefinedRanges } from "@/utils/dateRanges";
 import { DocumentsColumnSettingsMenu } from "./widgets/document-column-settings-menu/document-column-settings-menu";
 import {
   documentColumnKeys,
@@ -342,25 +341,6 @@ const QuotesListPageWidget = ({
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
 
-  const pickerRef = useRef(null);
-
-  const handleSelect = (date) => {
-    if (!fromDate) {
-      setFromDate(date);
-    } else if (!toDate) {
-      // Ensure fromDate is always the earlier date and toDate is always the later date
-      if (fromDate <= date) {
-        setToDate(date);
-        onSelectDeliveryTimeDates([fromDate, date]);
-      } else {
-        setToDate(fromDate);
-        setFromDate(date);
-        onSelectDeliveryTimeDates([date, fromDate]);
-      }
-      pickerRef.current.close();
-    }
-  };
-
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -562,9 +542,6 @@ const QuotesListPageWidget = ({
               fromDate={fromDate}
               toDate={toDate}
               onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-              handleSelect={handleSelect}
-              pickerRef={pickerRef}
-              predefinedRanges={predefinedRanges}
               patternSearch={patternSearch}
               onChangeDocumentSearch={onChangeDocumentSearch}
               onClickClearFilter={onClickClearFilter}
