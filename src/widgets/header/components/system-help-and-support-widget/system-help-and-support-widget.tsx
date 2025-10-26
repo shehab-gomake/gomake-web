@@ -53,29 +53,32 @@ const SystemHelp = () => {
     whatsNewModal.open();
   };
 
-  const handleGoSupportClick = async () => {
-    await generateCustomerLoginLinkApi(callApi, (res) => {
-      if (res?.success && res?.data) {
-        window.open(res.data, "_blank");
-      }
-    });
+  const handleGoSupportClick = async (redirect?: "tickets" | "articles") => {
+    await generateCustomerLoginLinkApi(
+      callApi,
+      (res) => {
+        if (res?.success && res?.data) {
+          window.open(res.data, "_blank");
+        }
+      },
+      redirect ? { redirect } : undefined
+    );
   };
 
   const helpMenuList = [
+    // {
+    //   name: t("header.customerSupport"),
+    //   onclick: () =>
+    //     navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
+    // },
     {
-      name: t("header.customerSupport"),
-      onclick: () =>
-        navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
-    },
-    {
-      name: t("header.goSupport"),
-      onclick: handleGoSupportClick,
+      // name: t("header.support") ,
+      name: t("quickSetup.steps.customerService"),
+      onclick: () => handleGoSupportClick("tickets"),
     },
     {
       name: t("header.guideAndTutorial"),
-      onclick: () => {
-        window.open("https://know-base-qassamat.replit.app/customer", "_blank");
-      },
+      onclick: () => handleGoSupportClick("articles"),
     },
     {
       name: t("header.whatsNew"),

@@ -13,11 +13,12 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
-import { useGomakeRouter } from "@/hooks";
+import { useGomakeRouter, useGomakeAxios } from "@/hooks";
 import { useRouter } from "next/router";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { generateCustomerLoginLinkApi } from "@/services/api-service/support/support-endpoints";
 
 const useSetupGuideMenu = ({
   handleOpenModal,
@@ -36,6 +37,20 @@ const useSetupGuideMenu = ({
   const { navigate } = useGomakeRouter();
   const router = useRouter();
   const { getClientTypesCategories } = useClientTypesList();
+  const { callApi } = useGomakeAxios();
+
+  // Handler for support links
+  const handleGoSupportClick = async (redirect?: "tickets" | "articles") => {
+    await generateCustomerLoginLinkApi(
+      callApi,
+      (res) => {
+        if (res?.success && res?.data) {
+          window.open(res.data, "_blank");
+        }
+      },
+      redirect ? { redirect } : undefined
+    );
+  };
 
   // Modal states for customer/supplier
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
@@ -372,10 +387,7 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            window.open(
-              "https://know-base-qassamat.replit.app/customer",
-              "_blank"
-            );
+            handleGoSupportClick("articles");
             setIsExpanded(false);
           },
         },
@@ -393,7 +405,7 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            navigate("/customer-service");
+            handleGoSupportClick("tickets");
             setIsExpanded(false);
           },
         },
