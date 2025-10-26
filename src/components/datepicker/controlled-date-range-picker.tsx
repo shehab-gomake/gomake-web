@@ -285,6 +285,7 @@ const ControlledDateRangePicker = ({
       startDate && endDate ? "rgba(52, 64, 84, 1)" : "rgba(150, 150, 150, 1)",
     flex: 1,
     textAlign: isRTL ? "right" : "left",
+    direction: "ltr" as const,
   };
 
   const buttonTextStyle: React.CSSProperties = {
@@ -293,7 +294,7 @@ const ControlledDateRangePicker = ({
   };
 
   const modalContainerStyle = {
-    direction: "ltr" as const,
+    direction: dir,
     position: "absolute" as const,
     top: "50%",
     left: "50%",
@@ -365,6 +366,7 @@ const ControlledDateRangePicker = ({
           <Box
             sx={{
               display: "flex",
+              flexDirection: isRTL ? "row-reverse" : "row",
               justifyContent: "space-between",
               alignItems: "center",
               marginBottom: "16px",
@@ -454,9 +456,16 @@ const ControlledDateRangePicker = ({
                   }
                   size="small"
                   fullWidth
+                  InputLabelProps={{
+                    style: { textAlign: isRTL ? "right" : "left" },
+                  }}
                   sx={{
                     "& .MuiInputBase-root": {
                       backgroundColor: "#fff",
+                      direction: dir,
+                    },
+                    "& .MuiInputBase-input": {
+                      textAlign: isRTL ? "right" : "left",
                     },
                   }}
                 />
@@ -475,9 +484,16 @@ const ControlledDateRangePicker = ({
                   }
                   size="small"
                   fullWidth
+                  InputLabelProps={{
+                    style: { textAlign: isRTL ? "right" : "left" },
+                  }}
                   sx={{
                     "& .MuiInputBase-root": {
                       backgroundColor: "#fff",
+                      direction: dir,
+                    },
+                    "& .MuiInputBase-input": {
+                      textAlign: isRTL ? "right" : "left",
                     },
                   }}
                 />
@@ -517,6 +533,7 @@ const ControlledDateRangePicker = ({
           <Box
             sx={{
               display: "flex",
+              flexDirection: isRTL ? "row-reverse" : "row",
               justifyContent: "flex-end",
               gap: "12px",
               marginTop: "16px",
