@@ -2124,7 +2124,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isPausedOrders) query.isPaused = isPausedOrders;
     else delete query.isPaused;
 
-    //!here
     const trimmedSearch = patternSearch?.trim() || "";
     setFinalPatternSearch(trimmedSearch);
 
@@ -2565,15 +2564,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setActiveCard(null);
   };
 
-  // const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-  //   setResetDatePicker(false);
-  //   setFromDate(fromDate);
-  //   setToDate(toDate);
-  // };
-
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
       const [firstDate, secondDate] = value;
+
+      // Handle null values
+      if (!firstDate || !secondDate) {
+        setFromDate(null);
+        setToDate(null);
+        return;
+      }
 
       // Ensure fromDate is always the earlier date and toDate is always the later date
       if (firstDate <= secondDate) {
@@ -3168,7 +3168,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   //  opening the path in new tab when closing order as invoice/delivery note after opening package slip modal
-  //!here
   const openPathAfterPackageModal = () => {
     if (!triggeredFromMoveOrderToReady) return;
 
@@ -3802,7 +3801,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           onOpenPackagesModal(
             selectedDocument,
             closeOrderAsInvoiceOrDeliveryNote ? true : false
-          ); //!here
+          );
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {

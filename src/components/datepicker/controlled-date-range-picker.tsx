@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IconButton, Modal, Button, Box } from "@mui/material";
+import { IconButton, Modal, Button, Box, TextField } from "@mui/material";
 import { DateRangePicker } from "react-date-range";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -16,6 +16,8 @@ import {
   endOfMonth,
   subWeeks,
   subDays,
+  parse,
+  isValid,
 } from "date-fns";
 import { CalendarIcon } from "./icons";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -23,20 +25,28 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 interface IControlledDateRangePicker {
-  label: string;
+  label?: string;
   startDate: Date | null;
   endDate: Date | null;
   onChange: (startDate: Date | null, endDate: Date | null) => void;
   allowClear?: boolean;
+  allowManualInput?: boolean;
+  dateFormat?: string;
+  buttonStyle?: React.CSSProperties;
+  textStyle?: React.CSSProperties;
 }
 
 // ? new component DATE RANGE PICKER USE THIS COMPONENT INSTEAD OF THE DATEPICKER COMPONENT
 const ControlledDateRangePicker = ({
-  label,
+  label = "",
   startDate,
   endDate,
   onChange,
   allowClear = true,
+  allowManualInput = false,
+  dateFormat = "dd-MM-yyyy",
+  buttonStyle,
+  textStyle,
 }: IControlledDateRangePicker) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -48,16 +58,87 @@ const ControlledDateRangePicker = ({
     key: "selection",
   });
 
+  // State for manual input
+  const [startDateInput, setStartDateInput] = useState("");
+  const [endDateInput, setEndDateInput] = useState("");
+  const [startDateError, setStartDateError] = useState(false);
+  const [endDateError, setEndDateError] = useState(false);
+
   const handleOpenPicker = () => {
+    const initialStartDate = startDate || new Date();
+    const initialEndDate = endDate || new Date();
+
     setTempRange({
-      startDate: startDate || new Date(),
-      endDate: endDate || new Date(),
+      startDate: initialStartDate,
+      endDate: initialEndDate,
       key: "selection",
     });
+
+    // Set input values when opening picker
+    if (startDate && isValid(startDate)) {
+      setStartDateInput(format(startDate, dateFormat));
+    } else {
+      setStartDateInput("");
+    }
+    if (endDate && isValid(endDate)) {
+      setEndDateInput(format(endDate, dateFormat));
+    } else {
+      setEndDateInput("");
+    }
+
+    setStartDateError(false);
+    setEndDateError(false);
     setOpenPicker(true);
   };
 
+  const parseDate = (dateString: string): Date | null => {
+    if (!dateString.trim()) return null;
+
+    try {
+      const parsedDate = parse(dateString, dateFormat, new Date());
+      return isValid(parsedDate) ? parsedDate : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleStartDateChange = (value: string) => {
+    setStartDateInput(value);
+    const parsedDate = parseDate(value);
+
+    if (value.trim() && !parsedDate) {
+      setStartDateError(true);
+    } else {
+      setStartDateError(false);
+      if (parsedDate) {
+        setTempRange((prev) => ({
+          ...prev,
+          startDate: parsedDate,
+        }));
+      }
+    }
+  };
+
+  const handleEndDateChange = (value: string) => {
+    setEndDateInput(value);
+    const parsedDate = parseDate(value);
+
+    if (value.trim() && !parsedDate) {
+      setEndDateError(true);
+    } else {
+      setEndDateError(false);
+      if (parsedDate) {
+        setTempRange((prev) => ({
+          ...prev,
+          endDate: parsedDate,
+        }));
+      }
+    }
+  };
+
   const handleSelectDates = () => {
+    // Always use tempRange as the source of truth
+    // tempRange gets updated from both calendar selection and manual input
     onChange(tempRange.startDate, tempRange.endDate);
     setOpenPicker(false);
   };
@@ -172,7 +253,7 @@ const ControlledDateRangePicker = ({
     // },
   ];
 
-  const dateButtonStyle = {
+  const defaultButtonStyle = {
     textTransform: "none" as const,
     border: "1px solid rgba(208, 213, 221, 1)",
     padding: "10px 16px",
@@ -189,7 +270,12 @@ const ControlledDateRangePicker = ({
     },
   };
 
-  const buttonTextStyle: React.CSSProperties = {
+  const dateButtonStyle = {
+    ...defaultButtonStyle,
+    ...buttonStyle,
+  };
+
+  const defaultTextStyle: React.CSSProperties = {
     lineHeight: "20px",
     whiteSpace: "nowrap",
     overflow: "hidden",
@@ -199,6 +285,11 @@ const ControlledDateRangePicker = ({
       startDate && endDate ? "rgba(52, 64, 84, 1)" : "rgba(150, 150, 150, 1)",
     flex: 1,
     textAlign: isRTL ? "right" : "left",
+  };
+
+  const buttonTextStyle: React.CSSProperties = {
+    ...defaultTextStyle,
+    ...textStyle,
   };
 
   const modalContainerStyle = {
@@ -219,15 +310,17 @@ const ControlledDateRangePicker = ({
 
   return (
     <div>
-      <label
-        style={{
-          display: "block",
-          marginBottom: 8,
-          ...FONT_FAMILY.Lexend(500, 15),
-        }}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          style={{
+            display: "block",
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
+        >
+          {label}
+        </label>
+      )}
       <Box sx={{ position: "relative", width: "100%", maxWidth: "280px" }}>
         <Button
           onClick={handleOpenPicker}
@@ -239,15 +332,15 @@ const ControlledDateRangePicker = ({
           }}
         >
           <span style={buttonTextStyle}>
-            {startDate && endDate
+            {startDate && endDate && isValid(startDate) && isValid(endDate)
               ? isRTL
-                ? `${format(endDate, "MMM d, yyyy")} - ${format(
+                ? `${format(endDate, dateFormat)} - ${format(
                     startDate,
-                    "MMM d, yyyy"
+                    dateFormat
                   )}`
-                : `${format(startDate, "MMM d, yyyy")} - ${format(
+                : `${format(startDate, dateFormat)} - ${format(
                     endDate,
-                    "MMM d, yyyy"
+                    dateFormat
                   )}`
               : t("general.chooseDate")}
           </span>
@@ -334,8 +427,84 @@ const ControlledDateRangePicker = ({
               },
             }}
           >
+            {allowManualInput && (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "12px",
+                  marginBottom: "16px",
+                  padding: "12px",
+                  backgroundColor: "#f9fafb",
+                  borderRadius: "8px",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <TextField
+                  label={t("general.startDate") || "Start Date"}
+                  value={startDateInput}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
+                  error={startDateError}
+                  helperText={
+                    startDateError
+                      ? `${
+                          t("general.invalidDateFormat") ||
+                          "Invalid date format"
+                        }. ${t("general.use") || "Use"}: ${dateFormat}`
+                      : `${t("general.format") || "Format"}: ${dateFormat}`
+                  }
+                  size="small"
+                  fullWidth
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      backgroundColor: "#fff",
+                    },
+                  }}
+                />
+                <TextField
+                  label={t("general.endDate") || "End Date"}
+                  value={endDateInput}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  error={endDateError}
+                  helperText={
+                    endDateError
+                      ? `${
+                          t("general.invalidDateFormat") ||
+                          "Invalid date format"
+                        }. ${t("general.use") || "Use"}: ${dateFormat}`
+                      : `${t("general.format") || "Format"}: ${dateFormat}`
+                  }
+                  size="small"
+                  fullWidth
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      backgroundColor: "#fff",
+                    },
+                  }}
+                />
+              </Box>
+            )}
+
             <DateRangePicker
-              onChange={(item: any) => setTempRange(item.selection)}
+              onChange={(item: any) => {
+                const newRange = item.selection;
+                setTempRange(newRange);
+
+                // Update input fields when calendar selection changes
+                if (
+                  allowManualInput &&
+                  newRange.startDate &&
+                  newRange.endDate
+                ) {
+                  if (isValid(newRange.startDate)) {
+                    setStartDateInput(format(newRange.startDate, dateFormat));
+                    setStartDateError(false);
+                  }
+                  if (isValid(newRange.endDate)) {
+                    setEndDateInput(format(newRange.endDate, dateFormat));
+                    setEndDateError(false);
+                  }
+                }
+              }}
               months={1}
               direction="vertical"
               scroll={{ enabled: false }}
