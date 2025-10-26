@@ -17,7 +17,7 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
-import { EGroupByEnum } from "@/enums";
+import { DocumentTypeEnums, EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import {
   getAndSetEmployees2,
@@ -46,6 +46,7 @@ const useAddRuleModal = ({
   documentType,
   detailsOption,
 }) => {
+  console.log("filterData", filterData);
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -655,20 +656,66 @@ const useAddRuleModal = ({
         {
           documentType: documentType,
           exportType: detailsOption?.id,
-            filterDTO: {
-              statusId: filterData?.statusId,
-              closeStatus: filterData?.closeStatus,
-              productionStatus: filterData?.productionStatus,
-              patternSearch: filterData?.patternSearch,
-              customerId: filterData?.customerId,
-              dateRange: filterData?.dateRange,
-              agentId: filterData?.agentId,
-              minPrice: filterData?.minPrice,
-              maxPrice: filterData?.maxPrice,
-              productList: filterData?.productList,
-              fromDate: filterData?.fromDate,
-              toDate: filterData?.toDate,
-            },
+          ...(documentType === DocumentTypeEnums.BoardMission
+            ? { 
+              boardMissionTableFilterDTO: {
+                statusId: filterData?.statusId,
+                closeStatus: filterData?.closeStatus,
+                productionStatus: filterData?.productionStatus,
+                patternSearch: filterData?.patternSearch,
+                customerId: filterData?.customerId,
+                dateRange: filterData?.dateRange,
+                agentId: filterData?.agentId,
+                minPrice: filterData?.minPrice,
+                maxPrice: filterData?.maxPrice,
+                productList: filterData?.productList,
+                fromDate: filterData?.fromDate,
+                toDate: filterData?.toDate,
+                clientId: filterData?.clientId,
+                search: filterData?.patternSearch,
+                orderNumber: filterData?.orderNumber,
+                fromDueDate: filterData?.fromDueDate,
+                toDueDate: filterData?.toDueDate,
+                fromReadyDate: filterData?.fromReadyDate,
+                toReadyDate: filterData?.toReadyDate,
+                orderStatus: filterData?.orderStatus,
+                productsIds: filterData?.productIds,
+                supplierId: filterData?.supplierId,
+                isPrinted: filterData?.isPrinted,
+                isPurchaseJobs: filterData?.isPurchaseJobs,
+                exampleTypes: filterData?.proofTypes,
+                }
+              }
+            : { 
+                filterDTO: {
+                  statusId: filterData?.statusId,
+                  closeStatus: filterData?.closeStatus,
+                  productionStatus: filterData?.productionStatus,
+                  patternSearch: filterData?.patternSearch,
+                  customerId: filterData?.customerId,
+                  dateRange: filterData?.dateRange,
+                  agentId: filterData?.agentId,
+                  minPrice: filterData?.minPrice,
+                  maxPrice: filterData?.maxPrice,
+                  productList: filterData?.productList,
+                  fromDate: filterData?.fromDate,
+                  toDate: filterData?.toDate,
+                  clientId: filterData?.clientId,
+                  search: filterData?.patternSearch,
+                  orderNumber: filterData?.orderNumber,
+                  fromDueDate: filterData?.fromDueDate,
+                  toDueDate: filterData?.toDueDate,
+                  fromReadyDate: filterData?.fromReadyDate,
+                  toReadyDate: filterData?.toReadyDate,
+                  orderStatus: filterData?.orderStatus,
+                  productsIds: filterData?.productIds,
+                  supplierId: filterData?.supplierId,
+                  isPrinted: filterData?.isPrinted,
+                  isPurchaseJobs: filterData?.isPurchaseJobs,
+                  exampleTypes: filterData?.proofTypes,
+                }
+              }
+          ),
             groupBy: propertieValue,
             exceptionConditionProperties: exceptionConditionProperties,
         }
