@@ -99,7 +99,7 @@ const FilterSectionComponent = ({
                     <Typography
                       variant="body2"
                       style={{
-                        marginBottom: 4,
+                        marginBottom: 6,
                         fontWeight: 500,
                         color: "#374151",
                         fontSize: 13,

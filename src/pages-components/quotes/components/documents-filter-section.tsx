@@ -535,10 +535,11 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
           }}
           allowClear={true}
           allowManualInput={true}
-          dateFormat="dd-MM-yyyy"
           buttonStyle={{
             borderRadius: "4px",
-            height: "42px",
+            border: "none",
+            boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+            WebkitBoxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
           }}
           textStyle={{
             ...FONT_FAMILY.Heebo(500, 13),
