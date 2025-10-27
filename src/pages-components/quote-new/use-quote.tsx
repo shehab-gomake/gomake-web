@@ -176,7 +176,6 @@ const useQuoteNew = ({
   const {
     isEmailComposerOpen,
     emailData,
-    isLoadingEmailData,
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: docType });
@@ -1789,7 +1788,7 @@ const useQuoteNew = ({
 
     const contacts = quoteItemValue?.documentContacts;
     const emailValid = checkArrayNotEmptyOrEmailNotEmpty(contacts);
-    
+
     if (!emailValid) {
       alertFault("sales.quote.mailContectErrorMsg");
       return;
@@ -1798,7 +1797,7 @@ const useQuoteNew = ({
     // Get first valid email from contacts
     const contactEmail = contacts?.find(c => c.contactMail)?.contactMail;
     const contactPhone = contacts?.find(c => c.contactPhone)?.contactPhone;
-    
+
     await openEmailComposer(quoteItemValue?.id, contactEmail, contactPhone);
   };
 

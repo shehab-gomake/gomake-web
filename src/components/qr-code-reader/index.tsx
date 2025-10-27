@@ -20,6 +20,8 @@ import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useFrontDeskEmailIntegration } from '@/pages-components/quotes/hooks/use-frontdesk-email-integration';
+import { FrontDeskEmailComposerWrapper } from '@/pages-components/quotes/components/frontdesk-email-composer-wrapper';
 
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
@@ -161,6 +163,14 @@ const QrCodeReader = (props: IProps) => {
             router.push(url);
         }
     };
+
+    const {
+        isEmailComposerOpen,
+        emailData,
+        openEmailComposer,
+        closeEmailComposer,
+    } = useFrontDeskEmailIntegration({ documentType: null });
+
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
         const callBack = (res) => {
             setOpenMoveToReadyModal(false);
@@ -168,6 +178,9 @@ const QrCodeReader = (props: IProps) => {
                 alertSuccessUpdate();
                 setOpenPackagesModal(true);
                 // handleRemoveBoardMission(selectedMissionId);
+                if (sendMessage) {
+                    openEmailComposer(selectedMission.id);
+                }
             } else {
                 alertFaultUpdate();
             }
@@ -236,6 +249,15 @@ const QrCodeReader = (props: IProps) => {
                 errorMessage={qrErrorMessage}
                 errorKey={qrErrorKey}
             />
+            {isEmailComposerOpen && (
+                <FrontDeskEmailComposerWrapper
+                    open={isEmailComposerOpen}
+                    onClose={closeEmailComposer}
+                    emailData={emailData}
+                    documentId={selectedMission?.id}
+                    documentType={null}
+                />
+            )}
         </div>
     )
 }

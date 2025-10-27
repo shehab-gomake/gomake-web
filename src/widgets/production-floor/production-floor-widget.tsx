@@ -41,6 +41,7 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -68,6 +69,10 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups,
     setSelectedGroupId,
     onClickMoveBoardMissionToDone,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     onOpenMarkReadyModalForHasJobs,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
@@ -358,6 +363,15 @@ const ProductionFloorWidget = () => {
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
       />
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedMission?.id}
+          documentType={null}
+        />
+      )}
     </Stack>
   );
 };
