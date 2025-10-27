@@ -139,10 +139,17 @@ const useProductionFloorFilters = ({
   );
 
   const router = useRouter();
+
   const setFilters = async (
     filters: IProductionFloorFilter,
     selectedView: EProductionFloorView
   ) => {
+    // NEVER call setFilters API when in Gantt/Timeline view
+    if (selectedView === EProductionFloorView.GANTT) {
+      console.warn("setFilters should not be called in Gantt view");
+      return;
+    }
+
     if (selectedView === EProductionFloorView.FILTER_GROUPS) {
       setFiltersState(filters);
       getDataByGroups(connectionId, filters).then();
@@ -204,15 +211,19 @@ const useProductionFloorFilters = ({
   };
 
   const onTagsChange = async (tag: string) => {
-    await setFilters(
-      {
-        ...filtersState,
-        automatedTags: filtersState?.automatedTags?.includes(tag)
-          ? filtersState.automatedTags.filter((t) => t !== tag)
-          : [...filtersState.automatedTags, tag],
-      },
-      view
-    );
+    const newFilters = {
+      ...filtersState,
+      automatedTags: filtersState?.automatedTags?.includes(tag)
+        ? filtersState.automatedTags.filter((t) => t !== tag)
+        : [...filtersState.automatedTags, tag],
+    };
+
+    // For Gantt/Timeline view, just update state without calling API
+    if (view === EProductionFloorView.GANTT) {
+      setFiltersState(newFilters);
+    } else {
+      await setFilters(newFilters, view);
+    }
   };
 
   const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
@@ -224,14 +235,18 @@ const useProductionFloorFilters = ({
     if (toDate) {
       toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    await setFilters(
-      {
-        ...filtersState,
-        fromDeliveryTime: fromDateMom,
-        toDeliveryTime: toDateMom,
-      },
-      view
-    );
+    const newFilters = {
+      ...filtersState,
+      fromDeliveryTime: fromDateMom,
+      toDeliveryTime: toDateMom,
+    };
+
+    // For Gantt/Timeline view, just update state without calling API
+    if (view === EProductionFloorView.GANTT) {
+      setFiltersState(newFilters);
+    } else {
+      await setFilters(newFilters, view);
+    }
   };
 
   const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
@@ -243,14 +258,18 @@ const useProductionFloorFilters = ({
     if (toDate) {
       toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    await setFilters(
-      {
-        ...filtersState,
-        fromCreateDate: fromDateMom,
-        toCreateDate: toDateMom,
-      },
-      view
-    );
+    const newFilters = {
+      ...filtersState,
+      fromCreateDate: fromDateMom,
+      toCreateDate: toDateMom,
+    };
+
+    // For Gantt/Timeline view, just update state without calling API
+    if (view === EProductionFloorView.GANTT) {
+      setFiltersState(newFilters);
+    } else {
+      await setFilters(newFilters, view);
+    }
   };
 
   const handleGroupsFilterChange = (groupId, value, valueId) => {
@@ -324,16 +343,28 @@ const useProductionFloorFilters = ({
   const onStationsChange = ({
     stations,
     groupId = null,
-    view,
+    view: passedView,
   }: onStationsChangeProps) => {
-    setFilters(
-      {
+    // Use passed view or fallback to current view state (for cases like DepartmentModal)
+    const currentView = passedView !== undefined ? passedView : view;
+
+    // For Gantt/Timeline view, just update the filters state without calling setFilters API
+    if (currentView === EProductionFloorView.GANTT) {
+      setFiltersState({
         ...filtersState,
         stations,
         groupId,
-      },
-      view
-    );
+      });
+    } else {
+      setFilters(
+        {
+          ...filtersState,
+          stations,
+          groupId,
+        },
+        currentView
+      );
+    }
   };
 
   const getColorByMachineId = (machineId) => {
@@ -407,11 +438,20 @@ const useProductionFloorFilters = ({
   const onClickCloseModalEditGroup = () => {
     setOpenModalEditGroup(false);
   };
+
   const handleSelectGroup = (groupId: string) => {
     let selectedView = EProductionFloorView.TABLE;
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      onStationsChange({ stations: [], groupId: null, view: view });
+      // For Gantt view, just update the filters state without calling setFilters API
+      if (view === EProductionFloorView.GANTT) {
+        setFiltersState({
+          ...filtersState,
+          groupId: null,
+        });
+      } else {
+        onStationsChange({ stations: [], groupId: null, view: view });
+      }
     } else {
       if (
         (selectedGroupId === "all" || selectedGroupId === "doneJobs") &&
@@ -446,7 +486,15 @@ const useProductionFloorFilters = ({
         selectedView = EProductionFloorView.DONE_JOBS;
       }
       setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId, selectedView).then();
+      // For Timeline view, just update the filters state without calling setFilters API
+      if (view === EProductionFloorView.GANTT) {
+        setFiltersState({
+          ...filtersState,
+          groupId: groupId,
+        });
+      } else {
+        getStationFilterGroupById(groupId, selectedView).then();
+      }
     }
   };
 
@@ -574,13 +622,17 @@ const useProductionFloorFilters = ({
   const [actions, setActions] = useRecoilState(actionsListState);
   const sourceOfActionsList = useRecoilValue(sourceOfActionsListState);
   const handleAgentChange = (selectedAgents) => {
-    setFilters(
-      {
-        ...filtersState,
-        agentIds: selectedAgents,
-      },
-      view
-    );
+    const newFilters = {
+      ...filtersState,
+      agentIds: selectedAgents,
+    };
+
+    // For Gantt/Timeline view, just update state without calling API
+    if (view === EProductionFloorView.GANTT) {
+      setFiltersState(newFilters);
+    } else {
+      setFilters(newFilters, view);
+    }
   };
   useEffect(() => {
     if (selectedGroupId && openModalEditGroup && isFetching) {

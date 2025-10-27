@@ -5,6 +5,7 @@ import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { useEffect, useState } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
@@ -44,6 +45,7 @@ import { statusesListState } from "./state/boards";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
+  const [, setFiltersState] = useRecoilState(productionFloorFiltersState);
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
@@ -118,7 +120,19 @@ const ProductionFloorWidget = () => {
       ).find((key) => key.toLowerCase() === viewQuery);
 
       if (viewEnum) {
-        setView(EProductionFloorView[viewEnum]);
+        const newView = EProductionFloorView[viewEnum];
+
+        // On page refresh/load, if view is Gantt, reset filters immediately
+        if (newView === EProductionFloorView.GANTT) {
+          setFiltersState((prev) => ({
+            ...prev,
+            stations: [],
+            groupId: null,
+          }));
+          setSelectedGroupId(null);
+        }
+
+        setView(newView);
       }
     }
   }, [query, setView]);
@@ -173,7 +187,6 @@ const ProductionFloorWidget = () => {
       { boardId: boardMissionId, stationId: null, productType }
     );
   };
-
 
   const handleScan = (data: { text: string } | null) => {
     //if (!data) return;
@@ -286,7 +299,6 @@ const ProductionFloorWidget = () => {
           width={"100vw"}
           height={`calc(${mobileHeight} - 50px)`}
         >
-
           <IconButton
             onClick={onClose}
             sx={{
@@ -341,10 +353,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
