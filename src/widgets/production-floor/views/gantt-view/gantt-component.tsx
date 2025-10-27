@@ -96,9 +96,13 @@ const TimelineWidget = () => {
     clearAllLocalChanges,
   } = reschedulingHook;
 
-  useEffect(() => {
-    getData(currentMonth.clone().month());
-  }, [currentMonth.valueOf()]);
+  // No need for this useEffect - getGanttData already handles initial load
+  // useEffect(() => {
+  //   getData(currentMonth.clone().month(), {
+  //     stations: [],
+  //     groupId: null,
+  //   });
+  // }, [currentMonth.valueOf()]);
 
   const getGroupColor = (title: string) => {
     // Generate a consistent color based on the title string hash
