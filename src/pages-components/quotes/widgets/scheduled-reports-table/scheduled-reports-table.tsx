@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakePrimaryButton, SecondSwitch, GoMakeDeleteModal } from "@/components";
+import { GomakePrimaryButton, SecondSwitch, GoMakeDeleteModal } from "@/components";
+import { GoMakeDialog } from "@/components/dialog";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
@@ -8,6 +9,7 @@ import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-men
 import { ScheduledReport } from "@/hooks/use-scheduled-reports";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { ModalType } from "@/enums";
+import { NoDataComponent } from "@/widgets/quote-new/receipts-table/Payment-methods-details/no-data-component";
 
 interface ScheduledReportsTableProps {
     openModal: boolean;
@@ -48,6 +50,7 @@ const ScheduledReportsTable = ({
 
     const headers = [
         t("sales.list.reportName"),
+        t("products.profits.exceptions.detailsOption"),
         t("sales.list.status"),
         t("sales.list.actions"),
     ];
@@ -78,8 +81,9 @@ const ScheduledReportsTable = ({
         setReportToDelete(null);
     };
 
-    const rows = (scheduledReports || []).map((report) => [
+    const rows = (scheduledReports || []).map((report: any) => [
         report.reportName,
+        report.exportType === 1 ? t("products.profits.exceptions.withDetails") : report.exportType === 2 ? t("products.profits.exceptions.withoutDetails") : report.exportType === 3 ? t("sales.list.exportExtendedTableExcel") : report.exportType === 4 ? t("sales.list.exportExtendedTableTxt") : report.exportType === 5 ? t("sales.list.exportSummeryExcelWithoutVat") : t("sales.list.exportSummeryExcelWithVat"),
         <SecondSwitch
             key={`switch-${report.id}`}
             checked={report.isActive}
@@ -94,48 +98,68 @@ const ScheduledReportsTable = ({
 
     return (
         <>
-            <GoMakeModal
-                openModal={openModal}
-                onClick={onCloseModal}
-                modalTitle={t("sales.list.scheduledReports")}
-                insideStyle={classes.insideStyle}
-            // withClose={false}
+            <GoMakeDialog
+                open={openModal}
+                onClose={onCloseModal}
+                title={t("sales.list.scheduledReports")}
+                maxWidth="md"
+                hidePrimaryButton
+                fullWidth
+                // customFooter={
+                //     <div style={classes.buttonContainer}>
+                //         <GomakePrimaryButton
+                //             style={classes.closeButton}
+                //             onClick={onCloseModal}
+                //         >
+                //             {t("modal.close")}
+                //         </GomakePrimaryButton>
+                //     </div>
+                // }
+                customStyles={{
+                    paper: {
+                        borderRadius: "4px",
+                        maxHeight: "90vh",
+                    },
+                    content: {
+                        padding: "10px",
+                        backgroundColor: "#fafafa",
+                    },
+                }}
             >
                 <div style={classes.mainContainer}>
-                    <div style={{ minHeight: "432px" }}>
-                        <PrimaryTable
-                            key={`scheduled-reports-table-${pageNumber}-${scheduledReports.length}`}
-                            stickyHeader={true}
-                            maxHeight={"395px"}
-                            rows={rows}
-                            headers={headers}
-                            variant="OddEvenTable"
-                        />
-                        {scheduledReports.length > 0 && (
-                            <div>
-                                <GoMakePagination
-                                    onChangePageNumber={handlePageChange}
-                                    onChangePageSize={handlePageSizeChange}
-                                    page={pageNumber}
-                                    setPage={onPageChange || (() => { })}
-                                    pageSize={pageSize}
-                                    pagesCount={Math.max(pagesCount, 2)} // Force at least 2 pages for testing
-                                    initialPageSize={initialPageSize}
+                    <div style={{ minHeight: "432px", marginTop: "10px" }}>
+                        {scheduledReports.length === 0 ? (
+                            <div style={classes.noDataContainer}>
+                                <NoDataComponent
+                                    subNoDataText={t("sales.list.scheduledReports")}
                                 />
                             </div>
+                        ) : (
+                            <>
+                                <PrimaryTable
+                                    key={`scheduled-reports-table-${pageNumber}-${scheduledReports.length}`}
+                                    stickyHeader={true}
+                                    maxHeight={"395px"}
+                                    rows={rows}
+                                    headers={headers}
+                                    variant="OddEvenTable"
+                                />
+                                <div>
+                                    <GoMakePagination
+                                        onChangePageNumber={handlePageChange}
+                                        onChangePageSize={handlePageSizeChange}
+                                        page={pageNumber}
+                                        setPage={onPageChange || (() => { })}
+                                        pageSize={pageSize}
+                                        pagesCount={pagesCount}
+                                        initialPageSize={initialPageSize}
+                                    />
+                                </div>
+                            </>
                         )}
                     </div>
-                    <div style={classes.buttonContainer}>
-                        <GomakePrimaryButton
-                            style={classes.closeButton}
-                            onClick={onCloseModal}
-                        >
-                            {t("modal.close")}
-                        </GomakePrimaryButton>
-                    </div>
                 </div>
-
-            </GoMakeModal>
+            </GoMakeDialog>
             <GoMakeDeleteModal
                 title={t("sales.list.deleteReport")}
                 yesBtn={t("modal.yes")}

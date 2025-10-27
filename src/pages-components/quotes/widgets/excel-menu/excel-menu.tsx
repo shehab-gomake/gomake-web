@@ -77,7 +77,7 @@ const ExcelMenu = ({
             </MenuItem>
           </PermissionCheck>
         )}
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             handleMenuClose();
             onExportTableClick();
@@ -86,7 +86,7 @@ const ExcelMenu = ({
           <div style={classes.rowTextStyle}>
             {t("sales.list.exportTableExcel")}
           </div>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           onClick={() => {
             handleMenuClose();
