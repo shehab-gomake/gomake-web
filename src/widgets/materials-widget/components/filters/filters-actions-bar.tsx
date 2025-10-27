@@ -37,9 +37,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
-  console.log("props.subCategory", props.subCategory);
-
-
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 

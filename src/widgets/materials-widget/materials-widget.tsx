@@ -112,6 +112,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   )?.categoryName;
 
 
+
   const handleFilterHeightChange = useCallback((height: number) => {
     setFilterBarHeight(height);
   }, []);
@@ -129,19 +130,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   }, [materialType, materialCategory, materialFilter, supplierId, isLoadingMore, hasMoreData, loadMoreData]);
 
   useEffect(() => {
-    if (!subCategory) {
+    if (!materialCategory) {
       // Wait 2 seconds before opening sidebar if no category selected
       const timer = setTimeout(() => {
         setIsSidebarOpen(true);
       }, 2000);
 
-      // Cleanup timer if component unmounts or subCategory changes
       return () => clearTimeout(timer);
     }
     else {
       setIsSidebarOpen(false);
     }
-  }, [materialCategory, subCategory]);
+  }, [materialCategory]);
 
   const { callApi } = useGomakeAxios();
   const [listClient, setListClient] = useState([]);
@@ -357,7 +357,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             {t("materials.buttons.back")}
           </PrimaryButton>
           <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {subCategory ?? t("materials.chooseCategory")}</h4>
+          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {materialCategory ?? t("materials.chooseCategory")}</h4>
           <IconButton
             size="small"
             onClick={() => setIsSidebarOpen(true)}
@@ -380,7 +380,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         }}>
           <FiltersActionsBar
             isAdmin={props.isAdmin}
-            subCategory={subCategory}
+            subCategory={materialCategory?.toString()}
             isFetchingSupplier={isFetchingSupplier}
             renderOptionsSupplier={listSupplier}
             checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
