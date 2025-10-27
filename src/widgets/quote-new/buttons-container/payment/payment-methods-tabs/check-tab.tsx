@@ -21,12 +21,12 @@ const CheckTab = () => {
 
   useEffect(() => {
     if (checksAccountsOptions?.length > 0 && !checkAccountCode) {
-      const defaultOption = checksAccountsOptions.find(
+      const selectedOption = checksAccountsOptions.find(
         (option) => option.isSelected
-      ).value;
-      if (defaultOption) {
-        setCheckAccountCode(defaultOption);
-      } else {
+      );
+      if (selectedOption) {
+        setCheckAccountCode(selectedOption.value);
+      } else if (checksAccountsOptions[0]) {
         setCheckAccountCode(checksAccountsOptions[0].value);
       }
     }
@@ -42,7 +42,7 @@ const CheckTab = () => {
     >
       <Stack direction={"row"} gap={"7px"} padding={"0 5px"} width={"100%"}>
         <span style={classes.selectLbl}>{t("payment.accountCode")}</span>
-        {checkAccountCode && (
+        {checkAccountCode && checksAccountsOptions?.length > 0 && (
           <GoMakeAutoComplate
             style={{ height: "30px", width: 180, border: 0 }}
             value={checksAccountsOptions.find(
