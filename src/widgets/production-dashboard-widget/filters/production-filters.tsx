@@ -1,22 +1,20 @@
 import { useStyle } from "../style";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { DateRangePicker } from "rsuite";
-import { useEffect, useRef, useState } from "react";
-import { predefinedRanges } from "@/utils/dateRanges";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { useEffect, useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { PrimaryButton } from "@/components/button/primary-button";
 import {
   productionCreationDateState,
   productionDeliveryDateState,
+  productionActivityDateState,
 } from "@/store/production-dashboard-dates";
+import { ControlledDateRangePicker } from "@/components/datepicker";
+import { subMonths, startOfDay, endOfDay } from "date-fns";
 
 const ProductionDashboardFilters = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
-  const isRTL = dir === "rtl";
   const { alertFault } = useSnackBar();
 
   // Recoil state
@@ -26,73 +24,74 @@ const ProductionDashboardFilters = () => {
   const [creationDate, setCreationDate] = useRecoilState(
     productionCreationDateState
   );
+  const [activityDate, setActivityDate] = useRecoilState(
+    productionActivityDateState
+  );
 
-  // Local state for delivery date
-  const deliveryPickerRef = useRef(null);
+  // Default date range: Last month to today
+  const defaultStartDate = startOfDay(subMonths(new Date(), 1));
+  const defaultEndDate = endOfDay(new Date());
+
+  // Local state for dates
   const [deliveryFromDate, setDeliveryFromDate] = useState<Date | null>(null);
   const [deliveryToDate, setDeliveryToDate] = useState<Date | null>(null);
-
-  // Local state for creation date
-  const creationPickerRef = useRef(null);
-  const [creationFromDate, setCreationFromDate] = useState<Date | null>(null);
-  const [creationToDate, setCreationToDate] = useState<Date | null>(null);
-
-  // Error state
+  const [creationFromDate, setCreationFromDate] = useState<Date | null>(
+    defaultStartDate
+  );
+  const [creationToDate, setCreationToDate] = useState<Date | null>(
+    defaultEndDate
+  );
+  const [fromInDate, setFromInDate] = useState<Date | null>(null);
+  const [toInDate, setToInDate] = useState<Date | null>(null);
 
   // Initialize local state from Recoil on mount
   useEffect(() => {
-    if (creationDate.dates.startDate && creationDate.dates.endDate) {
+    // Set default creation date if not already set in Recoil
+    if (!creationDate.dates.startDate || !creationDate.dates.endDate) {
+      setCreationDate({
+        dates: {
+          startDate: defaultStartDate,
+          endDate: defaultEndDate,
+        },
+      });
+    } else {
       setCreationFromDate(creationDate.dates.startDate);
       setCreationToDate(creationDate.dates.endDate);
     }
+
     if (deliveryDate.dates.startDate && deliveryDate.dates.endDate) {
       setDeliveryFromDate(deliveryDate.dates.startDate);
       setDeliveryToDate(deliveryDate.dates.endDate);
     }
+    if (activityDate.dates.startDate && activityDate.dates.endDate) {
+      setFromInDate(activityDate.dates.startDate);
+      setToInDate(activityDate.dates.endDate);
+    }
   }, []);
 
-  // Delivery date handlers
-  const handleDeliveryDateChange = (dateRange: [Date, Date] | null) => {
-    if (dateRange && dateRange.length === 2) {
-      setDeliveryFromDate(dateRange[0]);
-      setDeliveryToDate(dateRange[1]);
-    } else if (dateRange === null) {
-      // Allow clearing the date
-      setDeliveryFromDate(null);
-      setDeliveryToDate(null);
-    }
+  // Date change handlers
+  const handleCreationDateChange = (
+    startDate: Date | null,
+    endDate: Date | null
+  ) => {
+    setCreationFromDate(startDate);
+    setCreationToDate(endDate);
   };
 
-  const handleDeliverySelect = (date: Date) => {
-    if (!deliveryFromDate) {
-      setDeliveryFromDate(date);
-    } else if (!deliveryToDate) {
-      setDeliveryToDate(date);
-      handleDeliveryDateChange([deliveryFromDate, date]);
-      deliveryPickerRef.current?.close();
-    }
+  const handleDeliveryDateChange = (
+    startDate: Date | null,
+    endDate: Date | null
+  ) => {
+    setDeliveryFromDate(startDate);
+    setDeliveryToDate(endDate);
   };
 
-  // Creation date handlers
-  const handleCreationDateChange = (dateRange: [Date, Date] | null) => {
-    if (dateRange && dateRange.length === 2) {
-      setCreationFromDate(dateRange[0]);
-      setCreationToDate(dateRange[1]);
-    } else if (dateRange === null) {
-      // Allow clearing the date
-      setCreationFromDate(null);
-      setCreationToDate(null);
-    }
-  };
-
-  const handleCreationSelect = (date: Date) => {
-    if (!creationFromDate) {
-      setCreationFromDate(date);
-    } else if (!creationToDate) {
-      setCreationToDate(date);
-      handleCreationDateChange([creationFromDate, date]);
-      creationPickerRef.current?.close();
-    }
+  const handleActivityDateChange = (
+    startDate: Date | null,
+    endDate: Date | null
+  ) => {
+    setFromInDate(startDate);
+    setToInDate(endDate);
   };
 
   // Search button handler
@@ -100,8 +99,9 @@ const ProductionDashboardFilters = () => {
     // Validate: at least one date range must be selected
     const hasDeliveryDates = deliveryFromDate && deliveryToDate;
     const hasCreationDates = creationFromDate && creationToDate;
+    const hasActivityDates = fromInDate && toInDate;
 
-    if (!hasDeliveryDates && !hasCreationDates) {
+    if (!hasDeliveryDates && !hasCreationDates && !hasActivityDates) {
       alertFault(t("productionReport.selectAtLeastOneDate"));
       return;
     }
@@ -122,58 +122,39 @@ const ProductionDashboardFilters = () => {
         endDate: creationToDate || undefined,
       },
     });
+
+    // Update activity date state
+    setActivityDate({
+      dates: {
+        startDate: fromInDate || undefined,
+        endDate: toInDate || undefined,
+      },
+    });
   };
 
   return (
     <div style={classes.datesContainer}>
-      <div>
-        <label
-          style={{
-            display: "block",
-            marginBottom: 8,
-            ...FONT_FAMILY.Lexend(500, 15),
-          }}
-        >
-          {t("sales.quote.creationDate") || "Creation Date"}
-        </label>
-        <DateRangePicker
-          ref={creationPickerRef}
-          onChange={handleCreationDateChange}
-          onSelect={handleCreationSelect}
-          value={
-            creationFromDate && creationToDate
-              ? [creationFromDate, creationToDate]
-              : null
-          }
-          ranges={predefinedRanges}
-          placement={isRTL ? "bottomEnd" : "bottomStart"}
-          style={{ direction: dir }}
-        />
-      </div>
-      <div>
-        <label
-          style={{
-            display: "block",
-            marginBottom: 8,
-            ...FONT_FAMILY.Lexend(500, 15),
-          }}
-        >
-          {t("sales.quote.deliveryDate") || "Delivery Date"}
-        </label>
-        <DateRangePicker
-          ref={deliveryPickerRef}
-          onChange={handleDeliveryDateChange}
-          onSelect={handleDeliverySelect}
-          value={
-            deliveryFromDate && deliveryToDate
-              ? [deliveryFromDate, deliveryToDate]
-              : null
-          }
-          ranges={predefinedRanges}
-          placement={isRTL ? "bottomEnd" : "bottomStart"}
-          style={{ direction: dir }}
-        />
-      </div>
+      <ControlledDateRangePicker
+        label={t("sales.quote.creationDate") || "Creation Date"}
+        startDate={creationFromDate}
+        endDate={creationToDate}
+        onChange={handleCreationDateChange}
+      />
+
+      <ControlledDateRangePicker
+        label={t("sales.quote.deliveryDate") || "Delivery Date"}
+        startDate={deliveryFromDate}
+        endDate={deliveryToDate}
+        onChange={handleDeliveryDateChange}
+      />
+
+      <ControlledDateRangePicker
+        label={t("productionReport.activityDate") || "Activity Date"}
+        startDate={fromInDate}
+        endDate={toInDate}
+        onChange={handleActivityDateChange}
+      />
+
       <PrimaryButton
         variant="contained"
         onClick={handleSearch}
