@@ -7,17 +7,19 @@ const GENERATE_CUSTOMER_LOGIN_LINK_URL =
 const GET_GO_SUPPORT_USER_TOKEN_URL =
   "/v1/crm-service/go-support/get-go-support-user-token";
 
-const generateCustomerLoginLinkApi: ICallAndSetData = async (
-  callApi,
-  setState
+interface IGenerateCustomerLoginLinkParams {
+  redirect?: "tickets" | "articles";
+}
+
+const generateCustomerLoginLinkApi = async (
+  callApi: any,
+  setState: any,
+  params?: IGenerateCustomerLoginLinkParams
 ) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.GET,
-    GENERATE_CUSTOMER_LOGIN_LINK_URL,
-    setState,
-    {}
-  );
+  const queryParams = params?.redirect ? `?redirect=${params.redirect}` : "";
+  const url = `${GENERATE_CUSTOMER_LOGIN_LINK_URL}${queryParams}`;
+
+  return await getSetApiData(callApi, EHttpMethod.GET, url, setState, {});
 };
 
 const getGoSupportUserTokenApi: ICallAndSetData = async (callApi, setState) => {
