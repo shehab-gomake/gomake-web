@@ -139,22 +139,22 @@ const ProductionDashboardFilters = () => {
         startDate={creationFromDate}
         endDate={creationToDate}
         onChange={handleCreationDateChange}
+        dateFormat="MMM d, yyyy"
       />
-
       <ControlledDateRangePicker
         label={t("sales.quote.deliveryDate") || "Delivery Date"}
         startDate={deliveryFromDate}
         endDate={deliveryToDate}
         onChange={handleDeliveryDateChange}
+        dateFormat="MMM d, yyyy"
       />
-
       <ControlledDateRangePicker
         label={t("productionReport.activityDate") || "Activity Date"}
         startDate={fromInDate}
         endDate={toInDate}
         onChange={handleActivityDateChange}
+        dateFormat="MMM d, yyyy"
       />
-
       <PrimaryButton
         variant="contained"
         onClick={handleSearch}
