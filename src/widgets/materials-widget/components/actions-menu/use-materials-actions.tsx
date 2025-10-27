@@ -768,7 +768,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         } else {
           uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
-            supplierId: supplierId,
+            supplierId: supplierId || null,
             base64: base64String,
           });
         }
@@ -930,8 +930,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
           value
       );
       const key = item?.key?.key;
-      const value = convertedValues[convertedValues.length - 1];
-      const uniqueValues = Array.from(new Set(convertedValues));
+      const value = convertedValues[convertedValues.length - 1].toString();
+      const uniqueValues = Array.from(new Set(convertedValues)).map(value => value.toString());
 
       return {
         key,
