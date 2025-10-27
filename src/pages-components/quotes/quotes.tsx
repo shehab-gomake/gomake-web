@@ -65,6 +65,7 @@ import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
+import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -295,6 +296,10 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
+    documentForEmail
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -433,7 +438,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -498,8 +503,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => {
+                        ? () => navigate(`/${documentPath}`)
+                        : () => {
                           setSelectedItems([]);
                           navigate(`/${documentPath}?isNewCreation=true`);
                         }
@@ -787,6 +792,7 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
+        hideCheckboxes={true}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}
@@ -1042,6 +1048,16 @@ const QuotesListPageWidget = ({
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={documentForEmail?.id}
+          documentType={documentType}
+        />
+      )}
     </>
   );
 };

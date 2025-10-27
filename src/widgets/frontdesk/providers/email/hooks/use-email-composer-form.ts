@@ -20,7 +20,7 @@ export const useEmailComposerForm = ({ draft, replyToMessage, onSend }: UseEmail
   const [cc, setCc] = useState(draft?.cc?.map((r) => r.email).join(", ") || "");
   const [bcc, setBcc] = useState(draft?.bcc?.map((r) => r.email).join(", ") || "");
   const [subject, setSubject] = useState(replyToMessage ? formatReplySubject(replyToMessage.subject) : draft?.subject || "");
-  const [message, setMessage] = useState(draft?.text || "");
+  const [message, setMessage] = useState(draft?.text || draft?.body || draft?.message || "");
   const [attachments, setAttachments] = useState<EmailAttachment[]>(draft?.attachments || []);
 
   const [showCc, setShowCc] = useState(false);

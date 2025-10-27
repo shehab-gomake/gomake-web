@@ -67,12 +67,14 @@ export interface EmailFolder {
 }
 
 export interface EmailDraft {
-  to: EmailRecipient[];
-  cc: EmailRecipient[];
-  bcc: EmailRecipient[];
-  subject: string;
-  text: string;
-  html: string;
+  to?: EmailRecipient[];
+  cc?: EmailRecipient[];
+  bcc?: EmailRecipient[];
+  subject?: string;
+  text?: string;
+  html?: string;
+  message?: string;
+  body?: string;
   replyToMessageId?: string;
   threadId?: string;
   attachments?: EmailAttachment[];

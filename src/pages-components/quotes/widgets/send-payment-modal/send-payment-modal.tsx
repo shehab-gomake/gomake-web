@@ -30,6 +30,8 @@ interface ISendPaymentProps {
   isSendToClient?: boolean;
   isSendOrderReadyToClient?: boolean;
   showAlertModal: (params: { message: string; onConfirm?: () => void }) => void;
+  hideCheckboxes?: boolean;
+  preSelectedMethod?: "sms" | "whatsapp" | null;
 }
 
 const SendPaymentModal = ({
@@ -40,6 +42,8 @@ const SendPaymentModal = ({
   isSendToClient,
   isSendOrderReadyToClient,
   showAlertModal,
+  hideCheckboxes = false,
+  preSelectedMethod = null,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
@@ -235,12 +239,11 @@ const SendPaymentModal = ({
       modalTitle={
         isSendToClient
           ? t(
-              `sales.quote.${
-                isSendOrderReadyToClient
-                  ? "sendOrderReadyToClientTitle"
-                  : "sendToClient"
-              }`
-            )
+            `sales.quote.${isSendOrderReadyToClient
+              ? "sendOrderReadyToClientTitle"
+              : "sendToClient"
+            }`
+          )
           : paymentModalTitle
       }
     >
@@ -313,39 +316,41 @@ const SendPaymentModal = ({
                 )}
               </Stack>
             ))}
-        <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
-          <div style={classes.inputLbl}>
-            <SecondaryCheckBox
-              sx={{ padding: "2px" }}
-              checked={payState?.sendBySms || false}
-              onChange={(event) =>
-                handleCheckBoxChange("sendBySms", event.target.checked)
-              }
-            />
-            SMS
-          </div>
-          <div style={classes.inputLbl}>
-            <SecondaryCheckBox
-              sx={{ padding: "2px" }}
-              checked={payState?.sendByMail || false}
-              onChange={(event) =>
-                handleCheckBoxChange("sendByMail", event.target.checked)
-              }
-            />
-            {t("sales.quote.email")}
-          </div>
-          {/* !here */}
-          <div style={classes.inputLbl}>
-            <SecondaryCheckBox
-              sx={{ padding: "2px" }}
-              checked={payState?.sendByWhatsapp || false}
-              onChange={(event) =>
-                handleCheckBoxChange("sendByWhatsapp", event.target.checked)
-              }
-            />
-            {t("sales.quote.whatsApp")}
-          </div>
-        </Stack>
+        {!hideCheckboxes && (
+          <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
+            <div style={classes.inputLbl}>
+              <SecondaryCheckBox
+                sx={{ padding: "2px" }}
+                checked={payState?.sendBySms || false}
+                onChange={(event) =>
+                  handleCheckBoxChange("sendBySms", event.target.checked)
+                }
+              />
+              SMS
+            </div>
+            <div style={classes.inputLbl}>
+              <SecondaryCheckBox
+                sx={{ padding: "2px" }}
+                checked={payState?.sendByMail || false}
+                onChange={(event) =>
+                  handleCheckBoxChange("sendByMail", event.target.checked)
+                }
+              />
+              {t("sales.quote.email")}
+            </div>
+            {/* !here */}
+            <div style={classes.inputLbl}>
+              <SecondaryCheckBox
+                sx={{ padding: "2px" }}
+                checked={payState?.sendByWhatsapp || false}
+                onChange={(event) =>
+                  handleCheckBoxChange("sendByWhatsapp", event.target.checked)
+                }
+              />
+              {t("sales.quote.whatsApp")}
+            </div>
+          </Stack>
+        )}
         {/* Third section */}
         <Stack
           direction={"row"}
@@ -360,11 +365,11 @@ const SendPaymentModal = ({
                 isSendToClient
                   ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
                   : async () => {
-                      const shouldSendWhatsApp = await handleSendPaymentPage();
-                      if (shouldSendWhatsApp) {
-                        handleSendUsingWhatsAppWeb(false);
-                      }
+                    const shouldSendWhatsApp = await handleSendPaymentPage();
+                    if (shouldSendWhatsApp) {
+                      handleSendUsingWhatsAppWeb(false);
                     }
+                  }
               }
               style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
             >
@@ -381,14 +386,14 @@ const SendPaymentModal = ({
                 onClick={
                   isSendToClient
                     ? () =>
-                        onClickSendQuoteToClient(isSendOrderReadyToClient, true)
+                      onClickSendQuoteToClient(isSendOrderReadyToClient, true)
                     : async () => {
-                        const shouldSendWhatsApp =
-                          await handleSendPaymentPage();
-                        if (shouldSendWhatsApp) {
-                          handleSendUsingWhatsAppWeb(true);
-                        }
+                      const shouldSendWhatsApp =
+                        await handleSendPaymentPage();
+                      if (shouldSendWhatsApp) {
+                        handleSendUsingWhatsAppWeb(true);
                       }
+                    }
                 }
                 style={{
                   width: "50%",
@@ -404,12 +409,12 @@ const SendPaymentModal = ({
                   isSendToClient
                     ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
                     : async () => {
-                        const shouldSendWhatsApp =
-                          await handleSendPaymentPage();
-                        if (shouldSendWhatsApp) {
-                          handleSendUsingWhatsAppWeb(false);
-                        }
+                      const shouldSendWhatsApp =
+                        await handleSendPaymentPage();
+                      if (shouldSendWhatsApp) {
+                        handleSendUsingWhatsAppWeb(false);
                       }
+                    }
                 }
                 style={{
                   width: "50%",
