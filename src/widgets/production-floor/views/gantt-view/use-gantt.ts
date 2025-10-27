@@ -98,17 +98,21 @@ const useGantt = (reschedulingHook?: any) => {
     };
 
     try {
+      const finalGroupId =
+        groupIdOverride !== undefined
+          ? groupIdOverride
+          : filtersState.groupId || null;
+
+      const finalStations =
+        stationsOverride !== undefined
+          ? stationsOverride
+          : filtersState.stations || [];
+
       await getTimeLineJobsApi(callApi, callBack, {
         filter: {
           ...filtersState,
-          stations:
-            stationsOverride !== undefined
-              ? stationsOverride
-              : filtersState.stations || [],
-          groupId:
-            groupIdOverride !== undefined
-              ? groupIdOverride
-              : filtersState.groupId || null,
+          stations: finalStations,
+          groupId: finalGroupId,
         },
         startDate: startOfMonth,
         endDate: endOfMonth,

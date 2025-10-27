@@ -443,11 +443,12 @@ const useProductionFloorFilters = ({
     let selectedView = EProductionFloorView.TABLE;
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      // For Gantt view, just update the filters state without calling setFilters API
+      // For Gantt view, clear both groupId and stations without calling setFilters API
       if (view === EProductionFloorView.GANTT) {
         setFiltersState({
           ...filtersState,
           groupId: null,
+          stations: [],
         });
       } else {
         onStationsChange({ stations: [], groupId: null, view: view });
@@ -486,12 +487,10 @@ const useProductionFloorFilters = ({
         selectedView = EProductionFloorView.DONE_JOBS;
       }
       setSelectedGroupId(groupId);
-      // For Timeline view, just update the filters state without calling setFilters API
+      // For Gantt view, fetch stations but don't call setFilters API
+      // getStationFilterGroupById will call onStationsChange which handles Gantt view correctly
       if (view === EProductionFloorView.GANTT) {
-        setFiltersState({
-          ...filtersState,
-          groupId: groupId,
-        });
+        getStationFilterGroupById(groupId, EProductionFloorView.GANTT).then();
       } else {
         getStationFilterGroupById(groupId, selectedView).then();
       }
