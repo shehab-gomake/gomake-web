@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import moment, { Moment } from "moment";
 import { getTimeLineJobsApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import { useGomakeAxios } from "@/hooks";
@@ -20,6 +20,10 @@ const useGantt = (reschedulingHook?: any) => {
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
+  const isInitialLoad = useRef(true);
+  const isFetching = useRef(false);
+  const prevStationsRef = useRef(null);
+  const prevGroupIdRef = useRef(null);
 
   // Modal state
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -48,12 +52,22 @@ const useGantt = (reschedulingHook?: any) => {
   const [openGroups, setOpenGroups] = useState({});
   const [groups, setGroups] = useState<IGanttGroup[]>([]);
   const [items, setItems] = useState<IGanttJob[]>([]);
-  const [filtersState] = useRecoilState(productionFloorFiltersState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const [, setLoadingItemId] = useRecoilState<string>(loadingGanttItemId);
   const [currentDate, setCurrentDate] = useState(moment());
   const [currentMonth, setCurrentMonth] = useState(moment());
 
-  const getData = async (month) => {
+  const getData = async (month, stationsOverride?, groupIdOverride?) => {
+    // Prevent concurrent API calls
+    if (isFetching.current) {
+      console.log("Already fetching, skipping duplicate call");
+      return;
+    }
+
+    isFetching.current = true;
+
     // Calculate start and end dates for the selected month in UTC
     const startOfMonth = moment()
       .year(currentMonth.year()) // Ensure the year aligns with the selected month
@@ -80,12 +94,29 @@ const useGantt = (reschedulingHook?: any) => {
           }))
         );
       }
+      isFetching.current = false;
     };
 
-    await getTimeLineJobsApi(callApi, callBack, {
-      startDate: startOfMonth,
-      endDate: endOfMonth,
-    });
+    try {
+      await getTimeLineJobsApi(callApi, callBack, {
+        filter: {
+          ...filtersState,
+          stations:
+            stationsOverride !== undefined
+              ? stationsOverride
+              : filtersState.stations || [],
+          groupId:
+            groupIdOverride !== undefined
+              ? groupIdOverride
+              : filtersState.groupId || null,
+        },
+        startDate: startOfMonth,
+        endDate: endOfMonth,
+      });
+    } catch (error) {
+      console.error("Error fetching timeline data:", error);
+      isFetching.current = false;
+    }
   };
 
   const handleItemResize = async (itemId, time, edge) => {
@@ -149,7 +180,6 @@ const useGantt = (reschedulingHook?: any) => {
 
   //!here most important
   const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
-    debugger;
     const updatedItem = items.find((j) => j.id === itemId);
 
     if (!updatedItem) {
@@ -412,12 +442,41 @@ const useGantt = (reschedulingHook?: any) => {
   };
 
   const getGanttData = useCallback(() => {
+    // Use current filter values (stations and groupId from filtersState)
     getData(currentMonth.month()).then();
-  }, [currentMonth]);
+  }, [currentMonth, filtersState.stations, filtersState.groupId]);
 
+  // Initial load: Call API once with stations = [] and groupId = null
+  // Note: filtersState is already reset by production-floor-widget.tsx before mounting
   useEffect(() => {
-    getGanttData();
-  }, [filtersState.stations]);
+    if (isInitialLoad.current) {
+      // Call API with empty stations and null groupId
+      getData(currentMonth.month(), [], null).then();
+      isInitialLoad.current = false;
+
+      // Store current filter values to prevent subsequent triggers
+      prevStationsRef.current = JSON.stringify(filtersState.stations || []);
+      prevGroupIdRef.current = filtersState.groupId || null;
+    }
+  }, []);
+
+  // Subsequent updates: call API when filters actually change (after initial load)
+  useEffect(() => {
+    if (!isInitialLoad.current && !isFetching.current) {
+      const currentStations = JSON.stringify(filtersState.stations);
+      const currentGroupId = filtersState.groupId;
+
+      // Only call API if values actually changed
+      const stationsChanged = prevStationsRef.current !== currentStations;
+      const groupIdChanged = prevGroupIdRef.current !== currentGroupId;
+
+      if (stationsChanged || groupIdChanged) {
+        prevStationsRef.current = currentStations;
+        prevGroupIdRef.current = currentGroupId;
+        getGanttData();
+      }
+    }
+  }, [filtersState.stations, filtersState.groupId, getGanttData]);
 
   const [activeTab, setActiveTab] = useState(TimeFrameTabs.DAY);
 
@@ -587,6 +646,7 @@ const useGantt = (reschedulingHook?: any) => {
       if (!newCenterDate.isSame(currentMonth, "month")) {
         const newMonthStart = newCenterDate.clone().startOf("month");
         setCurrentMonth(newMonthStart);
+        // Use current filter values (stations and groupId from filtersState)
         getData(newMonthStart.month());
       }
     }
