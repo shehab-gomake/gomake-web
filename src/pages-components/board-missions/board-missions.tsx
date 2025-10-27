@@ -401,7 +401,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             fromReadyDate={fromReadyDate}
             toReadyDate={toReadyDate}
             onSelectReadyTimeDates={onSelectReadyTimeDates}
-            predefinedRanges={predefinedRanges}
             // Search props
             patternSearch={patternSearch}
             onChangeMissionsSearch={onChangeMissionsSearch}
@@ -833,7 +832,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         modalTitle={t("boardMissions.exportToExcel")}
         insideStyle={{ width: "400px", height: "fit-content" }}
       >
-        <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div
+          style={{
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
+        >
           <div>
             <h4>{t("boardMissions.enterEmailForExport")}</h4>
             <GomakeTextInput
@@ -844,11 +850,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               style={{ width: "100%" }}
             />
           </div>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-            <PrimaryButton
-              variant="outlined"
-              onClick={handleEmailModalClose}
-            >
+          <div
+            style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}
+          >
+            <PrimaryButton variant="outlined" onClick={handleEmailModalClose}>
               {t("modal.cancel")}
             </PrimaryButton>
             <PrimaryButton

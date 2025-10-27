@@ -143,15 +143,36 @@ const FormInput = ({
   };
 
   useEffect(() => {
-    const selectedValue = options?.find(
-      (option) => option.value === input.value
-    );
-    if (selectedValue !== undefined && selectedValue !== null) {
-      setSelectedLabel(selectedValue.label);
+    // For storageLocation, the value is a label (or array of labels), not the option value
+    if (input.parameterKey === "storageLocation") {
+      const labelToFind = Array.isArray(input.value)
+        ? input.value[0]
+        : input.value;
+
+      const selectedValue = options?.find(
+        (option) => option.label === labelToFind
+      );
+
+      if (selectedValue !== undefined && selectedValue !== null) {
+        setSelectedLabel(selectedValue.label);
+      } else if (labelToFind) {
+        // If not found in options, it might be a custom value - show it anyway
+        setSelectedLabel(labelToFind);
+      } else {
+        setSelectedLabel("");
+      }
     } else {
-      setSelectedLabel("");
+      // Normal behavior for other fields
+      const selectedValue = options?.find(
+        (option) => option.value === input.value
+      );
+      if (selectedValue !== undefined && selectedValue !== null) {
+        setSelectedLabel(selectedValue.label);
+      } else {
+        setSelectedLabel("");
+      }
     }
-  }, [options]);
+  }, [options, input.value, input.parameterKey]);
 
   useEffect(() => {
     if (input.optionsUrl) {
@@ -269,11 +290,15 @@ const FormInput = ({
               >
                 <span>{t(input.label)}</span>
 
-                {input.unit && (
+                {input.unit && !input.isPriceObject ? (
                   <small>
                     {`${t(
                       `measurementUnits.${convertedUnit}`
                     )}`}
+                  </small>
+                ) : (
+                  <small>
+                    {input.unit}
                   </small>
                 )}
 
@@ -422,7 +447,14 @@ const FormInput = ({
 
                       changeState(input.parameterKey, valueStrings);
                     }
-                    : selectChange
+                    : input.parameterKey === "storageLocation" ? (event: any, newValue: any) => {
+                      const valueStrings = Array.isArray(newValue)
+                        ? newValue.map((item: any) => item.label)
+                        : newValue
+                          ? newValue.label
+                          : [];
+                      changeState(input.parameterKey, valueStrings);
+                    } : selectChange
                 }
                 onInputChange={
                   input.parameterKey === "storageLocation"

@@ -13,10 +13,11 @@ import { InputAdornment } from "@mui/material";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { DateRangePicker } from "rsuite";
+import { ControlledDateRangePicker } from "@/components/datepicker/controlled-date-range-picker";
 import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 import { BoardMissionsColumnSettingsMenu } from "../widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ExcelMenu } from "@/pages-components/quotes/widgets/excel-menu/excel-menu";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IJobsFiltersSectionProps {
   // Customer/Supplier filter
@@ -69,8 +70,6 @@ interface IJobsFiltersSectionProps {
   fromReadyDate: any;
   toReadyDate: any;
   onSelectReadyTimeDates: (value: any) => void;
-
-  predefinedRanges: any[];
 
   // Search
   patternSearch: string;
@@ -134,7 +133,6 @@ const JobsFiltersSection = ({
   fromReadyDate,
   toReadyDate,
   onSelectReadyTimeDates,
-  predefinedRanges,
   // Search
   patternSearch,
   onChangeMissionsSearch,
@@ -327,47 +325,66 @@ const JobsFiltersSection = ({
       id: "dateRange",
       label: t("boardMissions.dateRange"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectDeliveryTimeDates}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromDate}
+          endDate={toDate}
+          onChange={(start, end) => {
+            onSelectDeliveryTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
     {
       id: "dueDate",
       label: t("boardMissions.dueDate"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectDueTimeDates}
-            value={fromDueDate && toDueDate ? [fromDueDate, toDueDate] : null}
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromDueDate}
+          endDate={toDueDate}
+          onChange={(start, end) => {
+            onSelectDueTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
     {
       id: "readyDate",
       label: t("boardMissions.readyDate"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectReadyTimeDates}
-            value={
-              fromReadyDate && toReadyDate ? [fromReadyDate, toReadyDate] : null
-            }
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromReadyDate}
+          endDate={toReadyDate}
+          onChange={(start, end) => {
+            onSelectReadyTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
   ];
