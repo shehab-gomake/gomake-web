@@ -6,7 +6,7 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
 import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
@@ -42,15 +42,19 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
-  const [, setFiltersState] = useRecoilState(productionFloorFiltersState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+  const prevViewRef = useRef<EProductionFloorView | null>(null);
 
   const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<
     string | null
@@ -169,6 +173,31 @@ const ProductionFloorWidget = () => {
 
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
+
+  // Handle transition FROM Gantt TO other views (Table/Kanban)
+  // Always call setFilters with current filters to sync data
+  useEffect(() => {
+    const previousView = prevViewRef.current;
+
+    // Detect transition FROM Gantt TO another view (except initial mount)
+    if (
+      previousView === EProductionFloorView.GANTT &&
+      view !== EProductionFloorView.GANTT &&
+      previousView !== null
+    ) {
+      // Always call setBoardFiltersApi with current filters from Gantt
+      const callBack = (res) => {
+        if (res?.success) {
+          console.log("Synced data after leaving Gantt view");
+        }
+      };
+
+      setBoardFiltersApi(callApi, callBack, filtersState, true);
+    }
+
+    // Update previous view ref
+    prevViewRef.current = view;
+  }, [view, filtersState, callApi]);
 
   const onUpdateToNextStation = async (
     boardMissionId: string,
