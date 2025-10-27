@@ -76,8 +76,8 @@ export const ClientAutocomplete = ({
   const mergedOptions = useMemo(() => {
     const addClientOption = {
       name: `+ ${clientType === CLIENT_TYPE.CUSTOMER
-          ? t("customers.buttons.addCustomer")
-          : t("suppliers.buttons.addSupplier")
+        ? t("customers.buttons.addCustomer")
+        : t("suppliers.buttons.addSupplier")
         } "${searchText}"`,
       id: "addClient",
       isInfo: true,
@@ -160,7 +160,7 @@ export const ClientAutocomplete = ({
           placeholder={
             isCustomer
               ? t("home.admin.selectCustomer")
-              : t("materials.sheetPaper.selectASupplier")
+              : t("materials.childTable.searchOrSelectSupplier")
           }
           onChange={handleChange}
           value={props.value}

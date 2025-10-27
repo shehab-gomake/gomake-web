@@ -574,9 +574,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 transform: 'translateZ(0)',
-                width: '200px', // Exact same as columns: 50px + 150px
+                width: 'fit-content', // Exact same as columns: 50px + 150px
                 minWidth: '200px',
-                maxWidth: '200px',
                 margin: 0,
                 boxSizing: 'border-box',
             }}>
@@ -585,7 +584,8 @@ const ChildTableRow = ({ rowId, isVisible, materialType, materialCategory, rende
                     style={classes.addInventoryButton}
                     startIcon={<AddIcon />}
                 >
-                    {t("materials.sheetPaper.addNewSupplier")}
+                    {t("materials.childTable.addNewSupplierForMaterial")}
+
                 </GomakePrimaryButton>
             </Box>
             {isLoadingPurchasePricing ? (
