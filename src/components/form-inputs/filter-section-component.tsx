@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-responsive";
@@ -25,7 +25,30 @@ const FilterSectionComponent = ({
 }: IEnhancedFilterSectionProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const [showAll, setShowAll] = useState(false);
+
+  // Check URL parameters on initial mount to determine if filters are active
+  const hasUrlFilters = () => {
+    if (typeof window === "undefined") return false;
+    const urlParams = new URLSearchParams(window.location.search);
+    const excludedParams = ["pageNumber", "pageSize", "page", "limit"];
+
+    // Convert to array and check if any non-excluded params exist
+    const params = Array.from(urlParams.keys());
+    return params.some((key) => !excludedParams.includes(key));
+  };
+
+  const [showAll, setShowAll] = useState(hasUrlFilters());
+  const isInitialMount = useRef(true);
+
+  // Only expand automatically on initial mount if there are filters in URL
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (hasUrlFilters()) {
+        setShowAll(true);
+      }
+    }
+  }, []);
 
   const renderFilterGrid = () => {
     const maxVisibleFilters = isMobile ? 1 : 5;
@@ -76,7 +99,7 @@ const FilterSectionComponent = ({
                     <Typography
                       variant="body2"
                       style={{
-                        marginBottom: 4,
+                        marginBottom: 6,
                         fontWeight: 500,
                         color: "#374151",
                         fontSize: 13,

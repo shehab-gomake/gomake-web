@@ -60,7 +60,7 @@ const AddInventoryModal = ({
                         clientType={CLIENT_TYPE.SUPPLIER}
                         onChange={handleSupplierSelect}
                         options={renderOptionsSupplier || []}
-                        placeholder={t("materials.childTable.selectSupplier")}
+                        placeholder={t("materials.childTable.searchAndSelectSupplier")}
                         style={{ width: '100%' }}
                         value={selectedSupplier}
                         onChangeTextField={checkWhatRenderArraySupplier}
@@ -87,7 +87,7 @@ const AddInventoryModal = ({
                     </div>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${convertedInventoryUnit?.value?.toLowerCase()})` : ''}`}
+                            {`${t("materials.childTable.quantity")} ${convertedInventoryUnit ? `(${convertedInventoryUnit.value})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -106,7 +106,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')})` : ''}`}
+                            {`${t("materials.childTable.purchasePrice")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
@@ -140,7 +140,7 @@ const AddInventoryModal = ({
                 <div style={classes.modalInputContainer}>
                     <div style={classes.modalInputContainerItem}>
                         <div style={classes.modalLabelText2}>
-                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]?.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')})` : ''}`}
+                            {`${t("materials.childTable.saleCost")} ${convertedPricingUnit ? `(${convertedPricingUnit?.value?.split('/')[0]})` : ''}`}
                             <div style={{ color: "red" }}>*</div>
                         </div>
                         <GomakeTextInput
