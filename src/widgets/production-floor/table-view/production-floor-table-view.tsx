@@ -345,7 +345,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={"calc(100vh - 250px)"}
+            maxHeight={"calc(100vh - 400px)"}
             rows={allBoardMissions}
             headers={tableHeader}
             columnWidths={[
@@ -487,12 +487,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

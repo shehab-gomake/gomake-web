@@ -23,6 +23,21 @@ import {
   openPrintTypeModalState,
   pendingPrintParamsState,
 } from "@/widgets/production-floor/state/boards";
+import {
+  doneJobsCustomerState,
+  doneJobsAgentState,
+  doneJobsProductionStatusState,
+  doneJobsOrderStatusState,
+  doneJobsProofTypesState,
+  doneJobsIsPrintedState,
+  doneJobsProductIdsState,
+  doneJobsFromDateState,
+  doneJobsToDateState,
+  doneJobsFromDueDateState,
+  doneJobsToDueDateState,
+  doneJobsFromReadyDateState,
+  doneJobsToReadyDateState,
+} from "@/widgets/production-floor/state/done-jobs-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
@@ -122,7 +137,6 @@ const useProductionFloorData = () => {
         return await getDataByGroups(connectionId, filtersState);
       }
 
-      //!here 2
       if (view === EProductionFloorView.DONE_JOBS) {
         return await getAllBoardMissions();
       }
@@ -378,6 +392,20 @@ const useProductionFloorData = () => {
   const pageSize = useRecoilValue<number>(pageSizeState);
   const [patternSearch, setPatternSearch] =
     useRecoilState<any>(patternSearchState);
+
+  // Done jobs filters
+  const doneJobsCustomer = useRecoilValue(doneJobsCustomerState);
+  const doneJobsAgent = useRecoilValue(doneJobsAgentState);
+  const doneJobsProductIds = useRecoilValue(doneJobsProductIdsState);
+  const doneJobsFromDate = useRecoilValue(doneJobsFromDateState);
+  const doneJobsToDate = useRecoilValue(doneJobsToDateState);
+  const doneJobsFromDueDate = useRecoilValue(doneJobsFromDueDateState);
+  const doneJobsToDueDate = useRecoilValue(doneJobsToDueDateState);
+  const doneJobsFromReadyDate = useRecoilValue(doneJobsFromReadyDateState);
+  const doneJobsToReadyDate = useRecoilValue(doneJobsToReadyDateState);
+  const doneJobsProofTypes = useRecoilValue(doneJobsProofTypesState);
+  const doneJobsIsPrinted = useRecoilValue(doneJobsIsPrintedState);
+  const doneJobsOrderStatus = useRecoilValue(doneJobsOrderStatusState);
   const searchInputFilterRef = useRef(null);
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
@@ -431,7 +459,6 @@ const useProductionFloorData = () => {
     return "";
   };
 
-  //!here 6 most important for filters
   const getAllBoardMissions = useCallback(
     async (
       pageNumberInput?: number,
@@ -570,14 +597,14 @@ const useProductionFloorData = () => {
       };
 
       const data = {
-        fromDate: null,
-        toDate: null,
-        fromDueDate: null,
-        toDueDate: null,
-        fromReadyDate: null,
-        toReadyDate: null,
-        productsIds: [],
-        productionStatus: "6",
+        fromDate: doneJobsFromDate,
+        toDate: doneJobsToDate,
+        fromDueDate: doneJobsFromDueDate,
+        toDueDate: doneJobsToDueDate,
+        fromReadyDate: doneJobsFromReadyDate,
+        toReadyDate: doneJobsToReadyDate,
+        productsIds: doneJobsProductIds,
+        productionStatus: "6", // Always "Done" for done jobs view
         pageNumber: pageNumberInput ?? pageNumber,
         pageSize: pageSizeInput ?? pageSize,
         search:
@@ -586,6 +613,11 @@ const useProductionFloorData = () => {
           patternSearchInput !== ""
             ? patternSearchInput
             : "",
+        customerId: doneJobsCustomer?.id || null,
+        agentId: doneJobsAgent?.id || null,
+        proofTypes: doneJobsProofTypes?.map((pt) => pt.value) || [],
+        isPrinted: doneJobsIsPrinted,
+        orderStatus: doneJobsOrderStatus?.value || null,
       };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     },
@@ -599,6 +631,18 @@ const useProductionFloorData = () => {
       router,
       t,
       CheckPermission,
+      doneJobsCustomer,
+      doneJobsAgent,
+      doneJobsProductIds,
+      doneJobsFromDate,
+      doneJobsToDate,
+      doneJobsFromDueDate,
+      doneJobsToDueDate,
+      doneJobsFromReadyDate,
+      doneJobsToReadyDate,
+      doneJobsProofTypes,
+      doneJobsIsPrinted,
+      doneJobsOrderStatus,
     ]
   );
 

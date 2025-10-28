@@ -146,6 +146,7 @@ const JobsFiltersSection = ({
   tableKey,
   // Styles
   classes,
+  hideActionButtons = false,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -222,21 +223,25 @@ const JobsFiltersSection = ({
         />
       ),
     },
-    {
-      id: "productionStatus",
-      label: t("boardMissions.productionStatus"),
-      component: (
-        <GoMakeAutoComplate
-          key={status?.value}
-          options={productionStatuses}
-          style={classes.textInputStyle}
-          placeholder={t("boardMissions.productionStatus")}
-          onChange={handleStatusChange}
-          value={status}
-          withArrow={true}
-        />
-      ),
-    },
+    ...(productionStatuses.length > 1
+      ? [
+          {
+            id: "productionStatus",
+            label: t("boardMissions.productionStatus"),
+            component: (
+              <GoMakeAutoComplate
+                key={status?.value}
+                options={productionStatuses}
+                style={classes.textInputStyle}
+                placeholder={t("boardMissions.productionStatus")}
+                onChange={handleStatusChange}
+                value={status}
+                withArrow={true}
+              />
+            ),
+          },
+        ]
+      : []),
     {
       id: "orderStatus",
       label: t("boardMissions.orderStatus"),
@@ -422,7 +427,7 @@ const JobsFiltersSection = ({
     <FilterSectionComponent
       filters={filters}
       actionButtons={actionButtons}
-      tableActionButtons={tableActionButtons}
+      tableActionButtons={hideActionButtons ? null : tableActionButtons}
     />
   );
 };
