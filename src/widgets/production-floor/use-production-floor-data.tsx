@@ -20,6 +20,8 @@ import {
   jobsStatusesState,
   selectedMissionsState,
   openReturnToProdModalState,
+  openPrintTypeModalState,
+  pendingPrintParamsState,
 } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
@@ -61,6 +63,7 @@ import { CurrentStationOrderingEnum } from "@/enums";
 import {
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
+  printJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { EWorkSource } from "../product-pricing-widget/enums";
@@ -86,6 +89,12 @@ const useProductionFloorData = () => {
   );
   const [openReturnToProdModal, setOpenReturnToProdModalModal] =
     useRecoilState<boolean>(openReturnToProdModalState);
+  const [openPrintTypeModal, setOpenPrintTypeModal] = useRecoilState<boolean>(
+    openPrintTypeModalState
+  );
+  const [pendingPrintParams, setPendingPrintParams] = useRecoilState<any>(
+    pendingPrintParamsState
+  );
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -281,6 +290,65 @@ const useProductionFloorData = () => {
     setOpenReturnToProdModalModal(false);
   };
 
+  const processPrintNodeRequest = async (
+    jobId: string,
+    productType: string
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // Handle success
+      }
+    };
+
+    let data = jobId;
+    if (productType) {
+      // data = data + "?productType=" + productType;
+    }
+
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
+  };
+
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string,
+    productTypeName?: string
+  ) => {
+    if (productType) {
+      // Has productType - show modal
+      setPendingPrintParams({
+        type: "printNode",
+        jobId,
+        productType,
+        productTypeName,
+      });
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - print full job directly
+      await processPrintNodeRequest(jobId, "");
+    }
+  };
+
+  const onClosePrintTypeModal = () => {
+    setOpenPrintTypeModal(false);
+    setPendingPrintParams(null);
+  };
+
+  const handlePrintTypeChoice = async (printAllJobs: boolean) => {
+    if (!pendingPrintParams) return;
+
+    const { jobId, productType } = pendingPrintParams;
+
+    if (printAllJobs) {
+      // Print all jobs - don't pass productType
+      await processPrintNodeRequest(jobId, "");
+    } else {
+      // Print product type only
+      await processPrintNodeRequest(jobId, productType);
+    }
+
+    onClosePrintTypeModal();
+  };
+
   const onClickBackToProcess = async () => {
     const callBack = async (res) => {
       if (res?.success) {
@@ -457,6 +525,7 @@ const useProductionFloorData = () => {
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
                 onClickReturnToProduction={onOpenReturnToProdModal}
+                printJobUsingPrintNode={printJobUsingPrintNode}
               />,
             ];
           });
@@ -1007,6 +1076,11 @@ const useProductionFloorData = () => {
     onOpenReturnToProdModal,
     onCloseReturnToProdModal,
     onClickBackToProcess,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
+    printJobUsingPrintNode,
   };
 };
 

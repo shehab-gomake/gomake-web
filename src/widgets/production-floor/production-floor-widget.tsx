@@ -80,6 +80,10 @@ const ProductionFloorWidget = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickBackToProcess,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -410,6 +414,30 @@ const ProductionFloorWidget = () => {
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
         onClickDelete={onClickBackToProcess}
+      />
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectPrintContent")}
+        subTitle={
+          pendingPrintParams?.productType
+            ? t("boardMissions.askPrintType", {
+                productType:
+                  pendingPrintParams?.productTypeName ||
+                  pendingPrintParams?.productName ||
+                  pendingPrintParams?.productType,
+              })
+            : ""
+        }
+        yesBtn={"boardMissions.printAllJobs"}
+        noBtn={t("boardMissions.printProductTypeOnly", {
+          productType:
+            pendingPrintParams?.productTypeName ||
+            pendingPrintParams?.productType,
+        })}
+        openModal={openPrintTypeModal}
+        onClose={onClosePrintTypeModal}
+        onClickYes={() => handlePrintTypeChoice(true)}
+        onClickNo={() => handlePrintTypeChoice(false)}
       />
     </Stack>
   );

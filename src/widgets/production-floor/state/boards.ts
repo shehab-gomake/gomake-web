@@ -61,3 +61,13 @@ export const openReturnToProdModalState = atom<boolean>({
   key: "openReturnToProdModalState",
   default: false,
 });
+
+export const openPrintTypeModalState = atom<boolean>({
+  key: "openPrintTypeModalState",
+  default: false,
+});
+
+export const pendingPrintParamsState = atom<any>({
+  key: "pendingPrintParamsState",
+  default: null,
+});
