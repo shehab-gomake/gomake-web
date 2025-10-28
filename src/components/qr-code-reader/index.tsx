@@ -22,6 +22,7 @@ import {
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useFrontDeskEmailIntegration } from '@/pages-components/quotes/hooks/use-frontdesk-email-integration';
 import { FrontDeskEmailComposerWrapper } from '@/pages-components/quotes/components/frontdesk-email-composer-wrapper';
+import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
 
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
@@ -169,7 +170,7 @@ const QrCodeReader = (props: IProps) => {
         emailData,
         openEmailComposer,
         closeEmailComposer,
-    } = useFrontDeskEmailIntegration({ documentType: null });
+    } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
         const callBack = (res) => {
@@ -255,7 +256,7 @@ const QrCodeReader = (props: IProps) => {
                     onClose={closeEmailComposer}
                     emailData={emailData}
                     documentId={selectedMission?.id}
-                    documentType={null}
+                    documentType={DOCUMENT_TYPE.boardMission}
                 />
             )}
         </div>

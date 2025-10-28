@@ -65,6 +65,7 @@ import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table
 import { JobsFiltersSection } from "./components/jobs-filters-section";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -872,7 +873,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           onClose={closeEmailComposer}
           emailData={emailData}
           documentId={selectedMission?.id}
-          documentType={null}
+          documentType={DOCUMENT_TYPE.boardMission}
         />
       )}
     </>

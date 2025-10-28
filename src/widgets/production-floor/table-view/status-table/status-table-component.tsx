@@ -49,6 +49,7 @@ import {
 import React from "react";
 import { TableVirtuoso } from "react-virtuoso";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IProps {
   status: IProductionStatus;
@@ -816,7 +817,7 @@ const StatusTableComponent = ({
           onClose={closeEmailComposer}
           emailData={emailData}
           documentId={selectedMission?.id}
-          documentType={null}
+          documentType={DOCUMENT_TYPE.boardMission}
         />
       )}
     </Stack>

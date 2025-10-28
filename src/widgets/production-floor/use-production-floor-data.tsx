@@ -64,6 +64,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-circle";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -689,7 +690,7 @@ const useProductionFloorData = () => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: null });
+  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {

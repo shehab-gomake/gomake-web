@@ -1477,7 +1477,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: null });
+  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {

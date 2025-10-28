@@ -25,6 +25,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { adaptPaddingRight } from "@/utils/adapter";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -178,7 +179,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: null });
+  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {
@@ -369,7 +370,7 @@ const DocumentsButton = ({ isMobile = false }) => {
           onClose={closeEmailComposer}
           emailData={emailData}
           documentId={boardMissions?.boardMissionId}
-          documentType={null}
+          documentType={DOCUMENT_TYPE.boardMission}
         />
       )}
     </div>

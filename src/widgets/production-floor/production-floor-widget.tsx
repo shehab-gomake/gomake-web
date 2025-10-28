@@ -42,6 +42,7 @@ import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigat
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -369,7 +370,7 @@ const ProductionFloorWidget = () => {
           onClose={closeEmailComposer}
           emailData={emailData}
           documentId={selectedMission?.id}
-          documentType={null}
+          documentType={DOCUMENT_TYPE.boardMission}
         />
       )}
     </Stack>
