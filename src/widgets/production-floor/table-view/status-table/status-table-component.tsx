@@ -38,7 +38,11 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
-import { currentStationOrderingState } from "@/store/agents-state";
+import {
+  currentStationOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
+} from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 import {
@@ -105,6 +109,32 @@ const StatusTableComponent = ({
       await setFilters({
         ...filtersState,
         currentStationOrdering: direction,
+        deliveryTimeOrdering: null,
+        createDateOrdering: null,
+      });
+    },
+    [setFilters, filtersState]
+  );
+
+  const reSortingDeliveryDate = useCallback(
+    async (direction: CurrentStationOrderingEnum) => {
+      await setFilters({
+        ...filtersState,
+        currentStationOrdering: null,
+        deliveryTimeOrdering: direction,
+        createDateOrdering: null,
+      });
+    },
+    [setFilters, filtersState]
+  );
+
+  const reSortingCreationDate = useCallback(
+    async (direction: CurrentStationOrderingEnum) => {
+      await setFilters({
+        ...filtersState,
+        currentStationOrdering: null,
+        deliveryTimeOrdering: null,
+        createDateOrdering: direction,
       });
     },
     [setFilters, filtersState]
@@ -162,6 +192,14 @@ const StatusTableComponent = ({
 
   const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(
     currentStationOrderingState
+  );
+
+  const [deliveryTimeOrdering, setDeliveryTimeOrdering] = useRecoilState(
+    deliveryTimeOrderingState
+  );
+
+  const [createDateOrdering, setCreateDateOrdering] = useRecoilState(
+    createDateOrderingState
   );
 
   const dropRef = useRef<HTMLDivElement>(null);
@@ -335,12 +373,12 @@ const StatusTableComponent = ({
                 width,
                 ...(isMobileScreen &&
                   index <= 1 && {
-                  position: "sticky",
-                  top: 0,
-                  [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
-                  zIndex: 3, //  raise above body cells
-                  background: "#f2f2f5",
-                }),
+                    position: "sticky",
+                    top: 0,
+                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                    zIndex: 3, //  raise above body cells
+                    background: "#f2f2f5",
+                  }),
               }}
               key={"statusTable" + status.id + index}
               align="center"
@@ -348,12 +386,30 @@ const StatusTableComponent = ({
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE
                     ? {
-                      "& .sort-icon": { opacity: 0 },
-                      "&:hover .sort-icon": { opacity: 1 },
-                    }
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
                     : {
-                      "& .sort-icon": { opacity: 1 },
-                    }
+                        "& .sort-icon": { opacity: 1 },
+                      }
+                  : header === t("sales.quote.deliveryDate")
+                  ? deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
+                    ? {
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
+                    : {
+                        "& .sort-icon": { opacity: 1 },
+                      }
+                  : header === t("sales.quote.creationDate")
+                  ? createDateOrdering === CurrentStationOrderingEnum.NONE
+                    ? {
+                        "& .sort-icon": { opacity: 0 },
+                        "&:hover .sort-icon": { opacity: 1 },
+                      }
+                    : {
+                        "& .sort-icon": { opacity: 1 },
+                      }
                   : undefined
               }
             >
@@ -364,37 +420,141 @@ const StatusTableComponent = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: "5px",
+                  gap: "2px",
                 }}
               >
                 {header}
                 {header === t("productionFloor.currentStation") && (
                   <IconButton
                     className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
                     onClick={() => {
+                      const newDirection =
+                        currentStationOrdering ===
+                        CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : currentStationOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
                       setSortConfig({
                         key: t("productionFloor.currentStation"),
-                        direction:
-                          currentStationOrdering ===
-                            CurrentStationOrderingEnum.NONE
-                            ? CurrentStationOrderingEnum.ASC
-                            : CurrentStationOrderingEnum.NONE,
+                        direction: newDirection,
                       });
-                      setCurrentStationOrdering(
-                        currentStationOrdering ===
-                          CurrentStationOrderingEnum.NONE
-                          ? CurrentStationOrderingEnum.ASC
-                          : CurrentStationOrderingEnum.NONE
-                      );
-                      reSortingCurrentStation(
-                        currentStationOrdering ===
-                          CurrentStationOrderingEnum.NONE
-                          ? CurrentStationOrderingEnum.ASC
-                          : CurrentStationOrderingEnum.NONE
-                      );
+                      setCurrentStationOrdering(newDirection);
+                      setDeliveryTimeOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreateDateOrdering(CurrentStationOrderingEnum.NONE);
+                      reSortingCurrentStation(newDirection);
                     }}
                   >
-                    <ArrowUpward sx={{ fontSize: "18px" }} />
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          currentStationOrdering ===
+                          CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : currentStationOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
+                  </IconButton>
+                )}
+                {header === t("sales.quote.deliveryDate") && (
+                  <IconButton
+                    className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
+                    onClick={() => {
+                      const newDirection =
+                        deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : deliveryTimeOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
+                      setSortConfig({
+                        key: t("sales.quote.deliveryDate"),
+                        direction: newDirection,
+                      });
+                      setCurrentStationOrdering(
+                        CurrentStationOrderingEnum.NONE
+                      );
+                      setDeliveryTimeOrdering(newDirection);
+                      setCreateDateOrdering(CurrentStationOrderingEnum.NONE);
+                      reSortingDeliveryDate(newDirection);
+                    }}
+                  >
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          deliveryTimeOrdering ===
+                          CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : deliveryTimeOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
+                  </IconButton>
+                )}
+                {header === t("sales.quote.creationDate") && (
+                  <IconButton
+                    className="sort-icon"
+                    size="small"
+                    sx={{
+                      padding: "2px",
+                      minWidth: "auto",
+                    }}
+                    onClick={() => {
+                      const newDirection =
+                        createDateOrdering === CurrentStationOrderingEnum.NONE
+                          ? CurrentStationOrderingEnum.ASC
+                          : createDateOrdering ===
+                            CurrentStationOrderingEnum.ASC
+                          ? CurrentStationOrderingEnum.DESC
+                          : CurrentStationOrderingEnum.NONE;
+
+                      setSortConfig({
+                        key: t("sales.quote.creationDate"),
+                        direction: newDirection,
+                      });
+                      setCurrentStationOrdering(
+                        CurrentStationOrderingEnum.NONE
+                      );
+                      setDeliveryTimeOrdering(CurrentStationOrderingEnum.NONE);
+                      setCreateDateOrdering(newDirection);
+                      reSortingCreationDate(newDirection);
+                    }}
+                  >
+                    <ArrowUpward
+                      sx={{
+                        fontSize: "14px",
+                        transform:
+                          createDateOrdering === CurrentStationOrderingEnum.ASC
+                            ? "rotate(0deg)"
+                            : createDateOrdering ===
+                              CurrentStationOrderingEnum.DESC
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.2s",
+                      }}
+                    />
                   </IconButton>
                 )}
               </div>
@@ -415,6 +575,12 @@ const StatusTableComponent = ({
     setSortConfig,
     setCurrentStationOrdering,
     reSortingCurrentStation,
+    deliveryTimeOrdering,
+    setDeliveryTimeOrdering,
+    reSortingDeliveryDate,
+    createDateOrdering,
+    setCreateDateOrdering,
+    reSortingCreationDate,
   ]);
 
   const TABLE_CONFIG = {
@@ -452,7 +618,11 @@ const StatusTableComponent = ({
   };
 
   return (
-    <Stack ref={dropRef} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
+    <Stack
+      ref={dropRef}
+      border={isOver ? "1px solid black" : "none"}
+      gap={"5px"}
+    >
       <Stack
         direction="row"
         alignItems="center"
@@ -477,23 +647,24 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${!status.isGroup
-            ? t("productionStatuses." + status.name)
-            : status.name
-            } (${getBoards().length})`}
+          {`${
+            !status.isGroup
+              ? t("productionStatuses." + status.name)
+              : status.name
+          } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
           <Tooltip
             title={
               heightMultiplier === 1
                 ? t("productionFloor.increaseItemsTo50", {
-                  count: 50,
-                  defaultValue: `Increase items to ${50}`,
-                })
+                    count: 50,
+                    defaultValue: `Increase items to ${50}`,
+                  })
                 : t("productionFloor.decreaseItemsTo10", {
-                  count: 10,
-                  defaultValue: `Decrease items to ${10}`,
-                })
+                    count: 10,
+                    defaultValue: `Decrease items to ${10}`,
+                  })
             }
             arrow
           >
@@ -546,7 +717,7 @@ const StatusTableComponent = ({
             }}
           >
             {getBoards().length >
-              (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
+            (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
               <TableVirtuoso
                 key={`virtuoso-${status.id}-${sortedBoards.length}`}
                 ref={virtuosoRef}
@@ -658,12 +829,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -697,10 +868,10 @@ const StatusTableComponent = ({
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-              productType:
-                selectedMission?.productTypeName ||
-                selectedMission?.productType,
-            })
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -709,12 +880,13 @@ const StatusTableComponent = ({
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-              productType:
-                selectedMission?.productTypeName ||
-                selectedMission?.productType,
-              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+                defaultValue: `Mark ${
+                  selectedMission?.productType || "Product Type"
                 } Only`,
-            })
+              })
             : undefined
         }
         openModal={openDoneScopeModal}
@@ -759,12 +931,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

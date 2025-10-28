@@ -34,15 +34,15 @@ const rowInputs = (
         case "ARRAY_INPUT":
           return {
             name: "Unit price",
-            label: newMaterialHeaders ? null : "materials.inputs.unitPrice",
+            label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
             type: "number",
-            placeholder: "materials.inputs.unitPrice",
+            placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
             required: header?.isRequired,
             parameterKey: "unitPrice",
             options: [],
             value: state["unitPrice"],
             isValid: true,
-            unit: header?.unit,
+            unit: typeof header?.value === "object" ? header?.value?.props?.children[2]?.split("/")[0] : header?.unit,
             isPriceObject: header?.isPriceObject,
           };
         case "LIST":
@@ -210,18 +210,18 @@ const rowInputs = (
           else
             return {
               name: header?.key,
-              label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
+              label: newMaterialHeaders ? null : typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
               type:
                 EDataTypeEnum[header?.inputType] == "BOOLEAN"
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
-              placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value || "",
+              placeholder: typeof header?.value === "object" ? header?.value?.props?.children[0] : header?.value,
               required: header?.isRequired,
               parameterKey: header?.key,
               options: [],
               value: state[header?.key],
               isValid: true,
-              unit: header?.unit,
+              unit: typeof header?.value === "object" ? header?.value?.props?.children[2]?.split("/")[0] : header?.unit,
               isPriceObject: header?.isPriceObject,
             };
       }

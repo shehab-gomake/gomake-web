@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-responsive";
@@ -25,7 +25,30 @@ const FilterSectionComponent = ({
 }: IEnhancedFilterSectionProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const [showAll, setShowAll] = useState(false);
+
+  // Check URL parameters on initial mount to determine if filters are active
+  const hasUrlFilters = () => {
+    if (typeof window === "undefined") return false;
+    const urlParams = new URLSearchParams(window.location.search);
+    const excludedParams = ["pageNumber", "pageSize", "page", "limit"];
+
+    // Convert to array and check if any non-excluded params exist
+    const params = Array.from(urlParams.keys());
+    return params.some((key) => !excludedParams.includes(key));
+  };
+
+  const [showAll, setShowAll] = useState(hasUrlFilters());
+  const isInitialMount = useRef(true);
+
+  // Only expand automatically on initial mount if there are filters in URL
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (hasUrlFilters()) {
+        setShowAll(true);
+      }
+    }
+  }, []);
 
   const renderFilterGrid = () => {
     const maxVisibleFilters = isMobile ? 1 : 5;
@@ -39,29 +62,56 @@ const FilterSectionComponent = ({
         {/* First Column: Filters and Action Buttons (90% width) */}
         <Grid item xs={12} sm={10.8} md={10.8} lg={10.8}>
           <Grid container spacing={0.5}>
-            {visibleFilters.map((filter) => (
-              <Grid item xs={12} sm={4} md={2} lg={1.5} key={filter.id}>
-                <Box
-                  style={{
-                    padding: 6,
-                    height: "100%",
-                  }}
+            {visibleFilters.map((filter) => {
+              // Map width prop to grid sizes
+              const getGridSize = (width?: string) => {
+                switch (width) {
+                  case "xs":
+                    return 1.5;
+                  case "sm":
+                    return 2;
+                  case "md":
+                    return 2.5;
+                  case "lg":
+                    return 3;
+                  case "xl":
+                    return 4;
+                  default:
+                    return 1.5;
+                }
+              };
+
+              return (
+                <Grid
+                  item
+                  xs={12}
+                  sm={4}
+                  md={2}
+                  lg={getGridSize(filter.width)}
+                  key={filter.id}
                 >
-                  <Typography
-                    variant="body2"
+                  <Box
                     style={{
-                      marginBottom: 4,
-                      fontWeight: 500,
-                      color: "#374151",
-                      fontSize: 13,
+                      padding: 6,
+                      height: "100%",
                     }}
                   >
-                    {filter.label}
-                  </Typography>
-                  {filter.component}
-                </Box>
-              </Grid>
-            ))}
+                    <Typography
+                      variant="body2"
+                      style={{
+                        marginBottom: 6,
+                        fontWeight: 500,
+                        color: "#374151",
+                        fontSize: 13,
+                      }}
+                    >
+                      {filter.label}
+                    </Typography>
+                    {filter.component}
+                  </Box>
+                </Grid>
+              );
+            })}
 
             {/* Action buttons at the end of filters */}
             {actionButtons && (
@@ -70,10 +120,21 @@ const FilterSectionComponent = ({
                   style={{
                     padding: 6,
                     height: "100%",
-                    display: "flex",
-                    alignItems: "end",
                   }}
                 >
+                  {/* Empty label space to align with other filters */}
+                  <Typography
+                    variant="body2"
+                    style={{
+                      marginBottom: 4,
+                      fontWeight: 500,
+                      color: "transparent",
+                      fontSize: 13,
+                      height: "20px",
+                    }}
+                  >
+                    &nbsp;
+                  </Typography>
                   <Box
                     style={{
                       display: "flex",

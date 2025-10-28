@@ -47,7 +47,12 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { agentsState, currentStationOrderingState } from "@/store/agents-state";
+import {
+  agentsState,
+  currentStationOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
+} from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
@@ -88,6 +93,8 @@ const useProductionFloorData = () => {
   const setPath = useSetRecoilState(productionFloorPathsState);
   const setJobsStatuses = useSetRecoilState(jobsStatusesState);
   const setStationOrdering = useSetRecoilState(currentStationOrderingState);
+  const setDeliveryTimeOrdering = useSetRecoilState(deliveryTimeOrderingState);
+  const setCreateDateOrdering = useSetRecoilState(createDateOrderingState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
@@ -109,14 +116,36 @@ const useProductionFloorData = () => {
       const callBack = (res) => {
         if (res.success) {
           setData(res?.data?.boardMissionsCollections);
-          setFilters(res?.data?.filter);
+
+          // Don't restore filters from API when in Gantt view
+          // Gantt view manages its own filters (stations=[], groupId=null)
+          // Check router query directly to avoid stale closure value
+          const currentViewQuery = router.query.view as string;
+          const isGanttView = currentViewQuery?.toLowerCase() === "gantt";
+
+          if (!isGanttView) {
+            setFilters(res?.data?.filter);
+            setSelectedGroupId(res?.data?.filter?.groupId);
+          }
+
           let currentStationOrdering =
             res?.data?.filter?.currentStationOrdering;
           if (!currentStationOrdering) {
             currentStationOrdering = CurrentStationOrderingEnum.NONE;
           }
           setStationOrdering(currentStationOrdering);
-          setSelectedGroupId(res?.data?.filter?.groupId);
+
+          let deliveryTimeOrdering = res?.data?.filter?.deliveryTimeOrdering;
+          if (!deliveryTimeOrdering) {
+            deliveryTimeOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setDeliveryTimeOrdering(deliveryTimeOrdering);
+
+          let createDateOrdering = res?.data?.filter?.createDateOrdering;
+          if (!createDateOrdering) {
+            createDateOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setCreateDateOrdering(createDateOrdering);
           setTags(res?.data?.automatedTagsFilter);
           setUserGroups(res?.data?.groups);
           setPath(res?.data?.path ? res?.data?.path : []);
@@ -156,6 +185,8 @@ const useProductionFloorData = () => {
       setData,
       setFilters,
       setStationOrdering,
+      setDeliveryTimeOrdering,
+      setCreateDateOrdering,
       setSelectedGroupId,
       setTags,
       setUserGroups,

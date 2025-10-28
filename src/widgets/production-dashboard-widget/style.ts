@@ -1,3 +1,4 @@
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -55,6 +56,29 @@ const useStyle = () => {
         "&:hover": {
           backgroundColor: "#f0f8ff",
         },
+      },
+      dateButton: {
+        width: "fit-content",
+        height: "40px",
+        borderRadius: "8px",
+        border: "1px solid rgba(208, 213, 221, 1)",
+        backgroundColor: "#FFF",
+        ...FONT_FAMILY.Lexend(500, 16),
+        cursor: "pointer",
+        color: "rgba(52, 64, 84, 1)",
+        display: "flex",
+        alignItems: "center" as "center",
+        justifyContent: "center" as "center",
+        gap: "8px",
+        textTransform: "none" as "none",
+      },
+      buttonText: {
+        lineHeight: "20px",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "rgba(52, 64, 84, 1)",
       },
     };
   }, []);

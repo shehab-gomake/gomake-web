@@ -13,7 +13,8 @@ import { InputAdornment } from "@mui/material";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { DateRangePicker } from "rsuite";
+import { ControlledDateRangePicker } from "@/components/datepicker/controlled-date-range-picker";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IDocumentsFilterSectionProps {
   // Customer/Supplier filter
@@ -97,9 +98,6 @@ interface IDocumentsFilterSectionProps {
   fromDate: Date | null;
   toDate: Date | null;
   onSelectDeliveryTimeDates: (dates: any) => void;
-  handleSelect: (dates: any) => void;
-  pickerRef: any;
-  predefinedRanges: any[];
 
   // Search
   patternSearch: string;
@@ -177,9 +175,6 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   fromDate,
   toDate,
   onSelectDeliveryTimeDates,
-  handleSelect,
-  pickerRef,
-  predefinedRanges,
   patternSearch,
   onChangeDocumentSearch,
   onClickSearchFilter,
@@ -225,6 +220,11 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
           onChange={(e) => {
             const trimmedValue = e.target.value.trimStart();
             onChangeDocumentSearch(trimmedValue);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onClickSearchFilter();
+            }
           }}
           sx={{
             "& .MuiInputAdornment-root": {
@@ -527,17 +527,24 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
       id: "dateRange",
       label: t("boardMissions.dateRange"),
       component: (
-        <div>
-          <DateRangePicker
-            ref={pickerRef}
-            onChange={onSelectDeliveryTimeDates}
-            onSelect={handleSelect}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromDate}
+          endDate={toDate}
+          onChange={(start, end) => {
+            onSelectDeliveryTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          buttonStyle={{
+            borderRadius: "4px",
+            border: "none",
+            boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+            WebkitBoxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
   ];

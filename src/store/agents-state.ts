@@ -1,8 +1,10 @@
 import { CurrentStationOrderingEnum } from "@/enums";
-import {atom, selector} from "recoil";
-const agentsState = atom<{id: string; name: string; code: string; checked: boolean;}[]>({
-    key: 'agentsState', // unique ID (with respect to other atoms/selectors)
-    default: [], // default value (aka initial value)
+import { atom, selector } from "recoil";
+const agentsState = atom<
+  { id: string; name: string; code: string; checked: boolean }[]
+>({
+  key: "agentsState", // unique ID (with respect to other atoms/selectors)
+  default: [], // default value (aka initial value)
 });
 
 const selectedAgentsState = selector<string[]>({
@@ -13,7 +15,24 @@ const selectedAgentsState = selector<string[]>({
   },
 });
 const currentStationOrderingState = atom<CurrentStationOrderingEnum>({
-    key: 'currentStationOrderingState',
-    default: CurrentStationOrderingEnum.NONE,
+  key: "currentStationOrderingState",
+  default: CurrentStationOrderingEnum.NONE,
 });
-export {agentsState,selectedAgentsState,currentStationOrderingState}
+
+const deliveryTimeOrderingState = atom<CurrentStationOrderingEnum>({
+  key: "deliveryTimeOrderingState",
+  default: CurrentStationOrderingEnum.NONE,
+});
+
+const createDateOrderingState = atom<CurrentStationOrderingEnum>({
+  key: "createDateOrderingState",
+  default: CurrentStationOrderingEnum.NONE,
+});
+
+export {
+  agentsState,
+  selectedAgentsState,
+  currentStationOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
+};

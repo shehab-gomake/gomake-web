@@ -79,11 +79,20 @@ const usePaymentMethodsTabs = () => {
 
   const addRow = () => {
     if (isOutgoingPayments) {
-      const lastRow = data[data.length - 1];
-      const newRow = {
-        ...lastRow,
-        checkNumber: Number(checkNumberBase) + data.length,
-      };
+      const lastRow = data.length > 0 ? data[data.length - 1] : null;
+      const newRow = lastRow
+        ? {
+            ...lastRow,
+            checkNumber: Number(checkNumberBase) + data.length,
+          }
+        : {
+            dueDate: new Date().toISOString().split("T")[0],
+            checkNumber: Number(checkNumberBase),
+            bankCode: "",
+            branch: "",
+            accountNum: "",
+            checkSum: 0,
+          };
       setData((prevData) => [...prevData, newRow]);
     } else {
       const newRow = {
@@ -100,6 +109,8 @@ const usePaymentMethodsTabs = () => {
 
   const duplicateRow = (index) => {
     const rowToDuplicate = data[index];
+    if (!rowToDuplicate) return; // Guard against undefined row
+
     if (isOutgoingPayments) {
       const duplicatedRow = {
         ...rowToDuplicate,
@@ -205,13 +216,13 @@ const usePaymentMethodsTabs = () => {
     setTotalCash(value);
     setTotalPayment(
       Number(value) +
-      Number(totalBit) +
-      Number(totalTransfer) +
-      Number(totalChecks) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalBit) +
+        Number(totalTransfer) +
+        Number(totalChecks) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -223,10 +234,10 @@ const usePaymentMethodsTabs = () => {
     resetTransferTabState();
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      Number(totalCreditCard) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        Number(totalCreditCard) +
+        Number(taxDeduction)
     );
   };
 
@@ -239,12 +250,12 @@ const usePaymentMethodsTabs = () => {
     resetTotalBit();
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -255,10 +266,10 @@ const usePaymentMethodsTabs = () => {
     setTotalSupplierCreditCard(value);
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      Number(totalTransfer) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -269,11 +280,11 @@ const usePaymentMethodsTabs = () => {
     setTotalTotalCreditCard(Number(value));
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalBit) +
-      Number(totalChecks) +
-      Number(totalTransfer) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalBit) +
+        Number(totalChecks) +
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -285,13 +296,13 @@ const usePaymentMethodsTabs = () => {
     setTotalChecks(newTotalChecks);
     setTotalPayment(
       Number(newTotalChecks) +
-      Number(totalCash) +
-      Number(totalBit) +
-      Number(totalTransfer) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalBit) +
+        Number(totalTransfer) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   }, [
     data,
@@ -304,34 +315,44 @@ const usePaymentMethodsTabs = () => {
 
   /************************ Account code ************************/
 
-  const cashAccountsOptions = quoteItemValue?.cashAccounts?.map((account) => ({
-    label: `${account.name} - ${account.code}`,
-    value: account.code,
-    isSelected: account.isSelected,
-  }));
-
-  const checksAccountsOptions = quoteItemValue?.checksAccounts?.map(
-    (account) => ({
-      label: `${account.name} - ${account.code}`,
-      value: account.code,
-      isSelected: account.isSelected,
-    })
+  const cashAccountsOptions = useMemo(
+    () =>
+      quoteItemValue?.cashAccounts?.map((account) => ({
+        label: `${account.name} - ${account.code}`,
+        value: account.code,
+        isSelected: account.isSelected,
+      })),
+    [quoteItemValue?.cashAccounts]
   );
 
-  const transferAccountsOptions = quoteItemValue?.transferAccounts?.map(
-    (account) => ({
-      text: `${account.name} - ${account.code}`,
-      value: account.code,
-      isSelected: account.isSelected,
-    })
+  const checksAccountsOptions = useMemo(
+    () =>
+      quoteItemValue?.checksAccounts?.map((account) => ({
+        label: `${account.name} - ${account.code}`,
+        value: account.code,
+        isSelected: account.isSelected,
+      })),
+    [quoteItemValue?.checksAccounts]
   );
 
-  const creditCardAccountsOptions = quoteItemValue?.creditCardAccounts?.map(
-    (account) => ({
-      text: `${account?.name} - ${account?.code}`,
-      value: account?.code,
-      isSelected: account?.isSelected,
-    })
+  const transferAccountsOptions = useMemo(
+    () =>
+      quoteItemValue?.transferAccounts?.map((account) => ({
+        text: `${account.name} - ${account.code}`,
+        value: account.code,
+        isSelected: account.isSelected,
+      })),
+    [quoteItemValue?.transferAccounts]
+  );
+
+  const creditCardAccountsOptions = useMemo(
+    () =>
+      quoteItemValue?.creditCardAccounts?.map((account) => ({
+        text: `${account?.name} - ${account?.code}`,
+        value: account?.code,
+        isSelected: account?.isSelected,
+      })),
+    [quoteItemValue?.creditCardAccounts]
   );
 
   /************************ CREDIT CARD ************************/
@@ -497,7 +518,6 @@ const usePaymentMethodsTabs = () => {
     const newErrors: any = {};
     const messages: string[] = [];
 
-    debugger;
     if (creditCard.transactionSum <= 0) {
       newErrors.transactionSumSec = "alerts.totalPaymentZero";
       messages.push("alerts.totalPaymentZero");

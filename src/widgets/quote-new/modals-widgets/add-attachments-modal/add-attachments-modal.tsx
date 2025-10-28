@@ -90,9 +90,8 @@ const AddAttachmentsModal = ({
                               aria-label="File Upload Drop Area"
                               aria-describedby={`upload-instruction-${index}`}
                               tabIndex={0}
-                              className={`drop-area ${
-                                isDragging ? "dragging" : ""
-                              }`}
+                              className={`drop-area ${isDragging ? "dragging" : ""
+                                }`}
                               style={{
                                 ...classes.attachmentsContainer,
                                 border: "2px dashed #ccc",
@@ -200,9 +199,8 @@ const AddAttachmentsModal = ({
                               aria-label="File Upload Drop Area"
                               aria-describedby={`upload-instruction-${index}`}
                               tabIndex={0}
-                              className={`drop-area ${
-                                isDragging ? "dragging" : ""
-                              }`}
+                              className={`drop-area ${isDragging ? "dragging" : ""
+                                }`}
                               style={{
                                 ...classes.attachmentsContainer,
                                 border: "2px dashed #ccc",

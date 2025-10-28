@@ -4,6 +4,7 @@ import { systemCurrencyState } from "@/store";
 import {
   productionCreationDateState,
   productionDeliveryDateState,
+  productionActivityDateState,
 } from "@/store/production-dashboard-dates";
 import { useGomakeAxios } from "@/hooks";
 import { MainProductionReportResponseDTO } from "./interfaces";
@@ -12,6 +13,7 @@ export const useMainProductionReport = () => {
   const { callApi } = useGomakeAxios();
   const { dates: deliveryDates } = useRecoilValue(productionDeliveryDateState);
   const { dates: creationDates } = useRecoilValue(productionCreationDateState);
+  const { dates: activityDates } = useRecoilValue(productionActivityDateState);
   const systemCurrency = useRecoilValue(systemCurrencyState);
 
   // State management
@@ -29,10 +31,11 @@ export const useMainProductionReport = () => {
     // Require at least one date range to be filled
     const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
     const hasCreationDates = creationDates.startDate && creationDates.endDate;
+    const hasActivityDates = activityDates.startDate && activityDates.endDate;
 
-    if (!hasDeliveryDates && !hasCreationDates) {
+    if (!hasDeliveryDates && !hasCreationDates && !hasActivityDates) {
       setError(
-        "Please select at least one date range (Delivery Date or Creation Date)"
+        "Please select at least one date range (Delivery Date, Creation Date, or Activity Date)"
       );
       return;
     }
@@ -56,6 +59,12 @@ export const useMainProductionReport = () => {
             : undefined,
           toCreationDate: creationDates.endDate
             ? creationDates.endDate.toISOString()
+            : undefined,
+          fromInDate: activityDates.startDate
+            ? activityDates.startDate.toISOString()
+            : undefined,
+          toInDate: activityDates.endDate
+            ? activityDates.endDate.toISOString()
             : undefined,
         },
         false
@@ -151,9 +160,10 @@ export const useMainProductionReport = () => {
   useEffect(() => {
     const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
     const hasCreationDates = creationDates.startDate && creationDates.endDate;
+    const hasActivityDates = activityDates.startDate && activityDates.endDate;
 
     // Only fetch if at least one date range is set
-    if (hasDeliveryDates || hasCreationDates) {
+    if (hasDeliveryDates || hasCreationDates || hasActivityDates) {
       fetchData();
     }
   }, [
@@ -161,6 +171,8 @@ export const useMainProductionReport = () => {
     deliveryDates.endDate,
     creationDates.startDate,
     creationDates.endDate,
+    activityDates.startDate,
+    activityDates.endDate,
   ]);
 
   return {

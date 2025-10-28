@@ -26,6 +26,7 @@ const useStyle = () => {
       },
       messagesContainerMobile: {
         padding: "12px 8px",
+        paddingTop: "50px",
         gap: 12,
       },
       messageContainer: {
