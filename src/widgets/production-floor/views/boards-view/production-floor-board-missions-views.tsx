@@ -30,7 +30,7 @@ const ProductionFloorBoardMissionsViews = ({
   connectionId: string;
 }) => {
   const [view] = useRecoilState(productionFloorViewState);
-  const { getData, updateStatus, getAllBoardMissions, getStationFilterGroups } =
+  const { getData, updateStatus, getAllBoardMissions } =
     useProductionFloorData();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -68,7 +68,7 @@ const ProductionFloorBoardMissionsViews = ({
         try {
           const res = await getProductionFloorTableSettingsApi(
             callApi,
-            () => { }
+            () => {}
           );
           const saved: ColumnSetting[] = res?.data;
 

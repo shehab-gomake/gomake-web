@@ -8,6 +8,7 @@ import {
   updateJobDueDateApi,
   updateProductionFloorNotesApi,
   ungroupJobsApi,
+  backToProcessApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -18,7 +19,25 @@ import {
   boardsMissionsState,
   jobsStatusesState,
   selectedMissionsState,
+  openReturnToProdModalState,
+  openPrintTypeModalState,
+  pendingPrintParamsState,
 } from "@/widgets/production-floor/state/boards";
+import {
+  doneJobsCustomerState,
+  doneJobsAgentState,
+  doneJobsProductionStatusState,
+  doneJobsOrderStatusState,
+  doneJobsProofTypesState,
+  doneJobsIsPrintedState,
+  doneJobsProductIdsState,
+  doneJobsFromDateState,
+  doneJobsToDateState,
+  doneJobsFromDueDateState,
+  doneJobsToDueDateState,
+  doneJobsFromReadyDateState,
+  doneJobsToReadyDateState,
+} from "@/widgets/production-floor/state/done-jobs-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
@@ -59,6 +78,7 @@ import { CurrentStationOrderingEnum } from "@/enums";
 import {
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
+  printJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { EWorkSource } from "../product-pricing-widget/enums";
@@ -81,6 +101,14 @@ const useProductionFloorData = () => {
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
   const [selectedMission, setSelectedMission] = useRecoilState<any>(
     selectedMissionsState
+  );
+  const [openReturnToProdModal, setOpenReturnToProdModalModal] =
+    useRecoilState<boolean>(openReturnToProdModalState);
+  const [openPrintTypeModal, setOpenPrintTypeModal] = useRecoilState<boolean>(
+    openPrintTypeModalState
+  );
+  const [pendingPrintParams, setPendingPrintParams] = useRecoilState<any>(
+    pendingPrintParamsState
   );
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
@@ -266,6 +294,91 @@ const useProductionFloorData = () => {
     ]
   );
 
+  const onOpenReturnToProdModal = (mission) => {
+    setSelectedMission(mission);
+    setOpenReturnToProdModalModal(true);
+  };
+
+  const onCloseReturnToProdModal = () => {
+    setSelectedMission(null);
+    setOpenReturnToProdModalModal(false);
+  };
+
+  const processPrintNodeRequest = async (
+    jobId: string,
+    productType: string
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // Handle success
+      }
+    };
+
+    let data = jobId;
+    if (productType) {
+      // data = data + "?productType=" + productType;
+    }
+
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
+  };
+
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string,
+    productTypeName?: string
+  ) => {
+    if (productType) {
+      // Has productType - show modal
+      setPendingPrintParams({
+        type: "printNode",
+        jobId,
+        productType,
+        productTypeName,
+      });
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - print full job directly
+      await processPrintNodeRequest(jobId, "");
+    }
+  };
+
+  const onClosePrintTypeModal = () => {
+    setOpenPrintTypeModal(false);
+    setPendingPrintParams(null);
+  };
+
+  const handlePrintTypeChoice = async (printAllJobs: boolean) => {
+    if (!pendingPrintParams) return;
+
+    const { jobId, productType } = pendingPrintParams;
+
+    if (printAllJobs) {
+      // Print all jobs - don't pass productType
+      await processPrintNodeRequest(jobId, "");
+    } else {
+      // Print product type only
+      await processPrintNodeRequest(jobId, productType);
+    }
+
+    onClosePrintTypeModal();
+  };
+
+  const onClickBackToProcess = async () => {
+    const callBack = async (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        await getAllData(pageNumber, pageSize, patternSearch);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await backToProcessApi(callApi, callBack, {
+      boardMissionId: selectedMission?.id,
+      sendMessage: false,
+      productType: selectedMission?.productType ?? "",
+    });
+  };
+
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { formatISODateTime } = useDateFormat();
@@ -279,6 +392,20 @@ const useProductionFloorData = () => {
   const pageSize = useRecoilValue<number>(pageSizeState);
   const [patternSearch, setPatternSearch] =
     useRecoilState<any>(patternSearchState);
+
+  // Done jobs filters
+  const doneJobsCustomer = useRecoilValue(doneJobsCustomerState);
+  const doneJobsAgent = useRecoilValue(doneJobsAgentState);
+  const doneJobsProductIds = useRecoilValue(doneJobsProductIdsState);
+  const doneJobsFromDate = useRecoilValue(doneJobsFromDateState);
+  const doneJobsToDate = useRecoilValue(doneJobsToDateState);
+  const doneJobsFromDueDate = useRecoilValue(doneJobsFromDueDateState);
+  const doneJobsToDueDate = useRecoilValue(doneJobsToDueDateState);
+  const doneJobsFromReadyDate = useRecoilValue(doneJobsFromReadyDateState);
+  const doneJobsToReadyDate = useRecoilValue(doneJobsToReadyDateState);
+  const doneJobsProofTypes = useRecoilValue(doneJobsProofTypesState);
+  const doneJobsIsPrinted = useRecoilValue(doneJobsIsPrintedState);
+  const doneJobsOrderStatus = useRecoilValue(doneJobsOrderStatusState);
   const searchInputFilterRef = useRef(null);
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
@@ -367,6 +494,7 @@ const useProductionFloorData = () => {
               </a>,
               formatISODateTime(mission?.createdDate),
               formatISODateTime(mission?.dueDate),
+              formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
                 ? `${mission?.number} / ${
@@ -424,6 +552,8 @@ const useProductionFloorData = () => {
                 isDoneJobs={true}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onClickReturnToProduction={onOpenReturnToProdModal}
+                printJobUsingPrintNode={printJobUsingPrintNode}
               />,
             ];
           });
@@ -468,14 +598,14 @@ const useProductionFloorData = () => {
       };
 
       const data = {
-        fromDate: null,
-        toDate: null,
-        fromDueDate: null,
-        toDueDate: null,
-        fromReadyDate: null,
-        toReadyDate: null,
-        productsIds: [],
-        productionStatus: "6",
+        fromDate: doneJobsFromDate,
+        toDate: doneJobsToDate,
+        fromDueDate: doneJobsFromDueDate,
+        toDueDate: doneJobsToDueDate,
+        fromReadyDate: doneJobsFromReadyDate,
+        toReadyDate: doneJobsToReadyDate,
+        productsIds: doneJobsProductIds,
+        productionStatus: "6", // Always "Done" for done jobs view
         pageNumber: pageNumberInput ?? pageNumber,
         pageSize: pageSizeInput ?? pageSize,
         search:
@@ -484,6 +614,11 @@ const useProductionFloorData = () => {
           patternSearchInput !== ""
             ? patternSearchInput
             : "",
+        customerId: doneJobsCustomer?.id || null,
+        agentId: doneJobsAgent?.id || null,
+        proofTypes: doneJobsProofTypes?.map((pt) => pt.value) || [],
+        isPrinted: doneJobsIsPrinted,
+        orderStatus: doneJobsOrderStatus?.value || null,
       };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     },
@@ -497,6 +632,18 @@ const useProductionFloorData = () => {
       router,
       t,
       CheckPermission,
+      doneJobsCustomer,
+      doneJobsAgent,
+      doneJobsProductIds,
+      doneJobsFromDate,
+      doneJobsToDate,
+      doneJobsFromDueDate,
+      doneJobsToDueDate,
+      doneJobsFromReadyDate,
+      doneJobsToReadyDate,
+      doneJobsProofTypes,
+      doneJobsIsPrinted,
+      doneJobsOrderStatus,
     ]
   );
 
@@ -970,6 +1117,15 @@ const useProductionFloorData = () => {
     onCloseDoneScopeModal,
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
+    openReturnToProdModal,
+    onOpenReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickBackToProcess,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
+    printJobUsingPrintNode,
   };
 };
 

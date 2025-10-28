@@ -106,7 +106,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertFaultGetData,
     alertFaultUpdate,
     alertSuccessUpdate,
-    alertSuccess
+    alertSuccess,
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -819,6 +819,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ),
             creationDate: formatISODateTime(mission?.createdDate),
             dueDate: formatISODateTime(mission?.dueDate),
+            readyDate: mission?.readyDate
+              ? formatISODateTime(mission?.readyDate)
+              : "-",
             clientName: (
               <div
                 style={{ cursor: "pointer" }}
@@ -2264,4 +2267,3 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 };
 
 export { useBoardMissions };
-

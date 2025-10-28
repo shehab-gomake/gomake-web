@@ -177,6 +177,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         t("boardMissions.image"),
         t("boardMissions.creationDate"),
         t("boardMissions.dueDate"),
+        t("boardMissions.readyDate"),
         t("boardMissions.clientName"),
         t("boardMissions.missionNumber"),
         t("mailingSettings.orderNumber"),
@@ -362,12 +363,13 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={"calc(100vh - 250px)"}
+            maxHeight={"calc(100vh - 400px)"}
             rows={allBoardMissions}
             headers={tableHeader}
             columnWidths={[
               "7%",
               "5%",
+              "6%",
               "6%",
               "7%",
               "6%",
@@ -504,12 +506,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
