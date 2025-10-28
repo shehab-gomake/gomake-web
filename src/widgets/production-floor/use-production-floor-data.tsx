@@ -116,7 +116,18 @@ const useProductionFloorData = () => {
       const callBack = (res) => {
         if (res.success) {
           setData(res?.data?.boardMissionsCollections);
-          setFilters(res?.data?.filter);
+
+          // Don't restore filters from API when in Gantt view
+          // Gantt view manages its own filters (stations=[], groupId=null)
+          // Check router query directly to avoid stale closure value
+          const currentViewQuery = router.query.view as string;
+          const isGanttView = currentViewQuery?.toLowerCase() === "gantt";
+
+          if (!isGanttView) {
+            setFilters(res?.data?.filter);
+            setSelectedGroupId(res?.data?.filter?.groupId);
+          }
+
           let currentStationOrdering =
             res?.data?.filter?.currentStationOrdering;
           if (!currentStationOrdering) {
@@ -135,8 +146,6 @@ const useProductionFloorData = () => {
             createDateOrdering = CurrentStationOrderingEnum.NONE;
           }
           setCreateDateOrdering(createDateOrdering);
-
-          setSelectedGroupId(res?.data?.filter?.groupId);
           setTags(res?.data?.automatedTagsFilter);
           setUserGroups(res?.data?.groups);
           setPath(res?.data?.path ? res?.data?.path : []);

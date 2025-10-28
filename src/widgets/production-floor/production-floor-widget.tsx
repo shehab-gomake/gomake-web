@@ -5,7 +5,8 @@ import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
-import { useEffect, useState } from "react";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { useEffect, useState, useRef } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
 import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
@@ -41,14 +42,19 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+  const prevViewRef = useRef<EProductionFloorView | null>(null);
 
   const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<
     string | null
@@ -118,7 +124,19 @@ const ProductionFloorWidget = () => {
       ).find((key) => key.toLowerCase() === viewQuery);
 
       if (viewEnum) {
-        setView(EProductionFloorView[viewEnum]);
+        const newView = EProductionFloorView[viewEnum];
+
+        // On page refresh/load, if view is Gantt, reset filters immediately
+        if (newView === EProductionFloorView.GANTT) {
+          setFiltersState((prev) => ({
+            ...prev,
+            stations: [],
+            groupId: null,
+          }));
+          setSelectedGroupId(null);
+        }
+
+        setView(newView);
       }
     }
   }, [query, setView]);
@@ -156,6 +174,31 @@ const ProductionFloorWidget = () => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
 
+  // Handle transition FROM Gantt TO other views (Table/Kanban)
+  // Always call setFilters with current filters to sync data
+  useEffect(() => {
+    const previousView = prevViewRef.current;
+
+    // Detect transition FROM Gantt TO another view (except initial mount)
+    if (
+      previousView === EProductionFloorView.GANTT &&
+      view !== EProductionFloorView.GANTT &&
+      previousView !== null
+    ) {
+      // Always call setBoardFiltersApi with current filters from Gantt
+      const callBack = (res) => {
+        if (res?.success) {
+          console.log("Synced data after leaving Gantt view");
+        }
+      };
+
+      setBoardFiltersApi(callApi, callBack, filtersState, true);
+    }
+
+    // Update previous view ref
+    prevViewRef.current = view;
+  }, [view, filtersState, callApi]);
+
   const onUpdateToNextStation = async (
     boardMissionId: string,
     productType: string
@@ -173,7 +216,6 @@ const ProductionFloorWidget = () => {
       { boardId: boardMissionId, stationId: null, productType }
     );
   };
-
 
   const handleScan = (data: { text: string } | null) => {
     //if (!data) return;
@@ -286,7 +328,6 @@ const ProductionFloorWidget = () => {
           width={"100vw"}
           height={`calc(${mobileHeight} - 50px)`}
         >
-
           <IconButton
             onClick={onClose}
             sx={{
@@ -341,10 +382,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
