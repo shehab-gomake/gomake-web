@@ -73,6 +73,14 @@ export const isPrintNodeModalOpenState = atom({
   default: false,
 });
 
+export const jobsToPrintState = atom<{ boardMissionId: string; productType: string }> ({
+  key: "jobsToPrintState",
+  default: {
+    boardMissionId: "",
+    productType: "",
+  },
+});
+
 export const isPackagingModalOpenState = atom({
   key: "isPackagingModalOpenState",
   default: false,
