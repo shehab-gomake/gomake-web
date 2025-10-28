@@ -8223,6 +8223,35 @@ const useDigitalOffsetPrice = ({
     const allParameters = subProducts.flatMap((product) => product.parameters);
     const updatedTemplate = { ...productTemplate };
     updatedTemplate.sections.forEach((section) => {
+      // First, handle subsection visibility based on parameters
+      if (section.subSections && Array.isArray(section.subSections)) {
+        section.subSections.forEach((subSection) => {
+          if (subSection.parameters && Array.isArray(subSection.parameters)) {
+            // Check if all parameters in this subsection have isHidden = true AND isHiddenInSetting = true
+            const allParametersHidden = subSection.parameters.every(
+              (param) => param.isHidden === true && param.isHiddenInSetting === true
+            );
+
+            // If all parameters are hidden with both flags, hide the subsection
+            if (allParametersHidden && subSection.parameters.length > 0) {
+              subSection.isHidden = true;
+            }
+          }
+        });
+
+        // Check if all subsections in this section are hidden
+        const allSubSectionsHidden = section.subSections.every(
+          (subSection) => subSection.isHidden === true
+        );
+
+        // If all subsections are hidden, hide the section
+        if (allSubSectionsHidden && section.subSections.length > 0) {
+          section.isHidden = true;
+          return; // Skip further processing for this section
+        }
+      }
+
+      // Then handle section visibility based on relatedToParameters
       if (
         section.relatedToParameters &&
         section.relatedToParameters.length === 0
