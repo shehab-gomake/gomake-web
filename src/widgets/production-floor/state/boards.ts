@@ -4,7 +4,7 @@ import {
   IBoardMissions,
   IBoardMissionsDetails,
 } from "@/widgets/production-floor/interfaces/board-missions";
-import {IProductionStatus} from "@/widgets/production-floor/interfaces/production-floor-status";
+import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
 
 export const boardsMissionsState = atom<IStatusesBoardsMissions[]>({
   key: "boardsMissionsState",
@@ -24,7 +24,7 @@ export const productionFloorStatusesState = selector({
   key: "productionFloorStatusesState",
   get: ({ get }) => {
     const statues = get(jobsStatusesState);
-    if(statues && statues.length > 0) {
+    if (statues && statues.length > 0) {
       return statues;
     }
     const data = get(boardsMissionsState);
@@ -55,4 +55,9 @@ export const storageListState = atom<any[]>({
 export const selectedMissionsState = atom<any>({
   key: "selectedMissionsState",
   default: null,
+});
+
+export const openReturnToProdModalState = atom<boolean>({
+  key: "openReturnToProdModalState",
+  default: false,
 });

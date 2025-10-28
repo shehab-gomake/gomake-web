@@ -8,6 +8,7 @@ import {
   updateJobDueDateApi,
   updateProductionFloorNotesApi,
   ungroupJobsApi,
+  backToProcessApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -18,6 +19,7 @@ import {
   boardsMissionsState,
   jobsStatusesState,
   selectedMissionsState,
+  openReturnToProdModalState,
 } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
@@ -82,6 +84,8 @@ const useProductionFloorData = () => {
   const [selectedMission, setSelectedMission] = useRecoilState<any>(
     selectedMissionsState
   );
+  const [openReturnToProdModal, setOpenReturnToProdModalModal] =
+    useRecoilState<boolean>(openReturnToProdModalState);
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -109,6 +113,7 @@ const useProductionFloorData = () => {
         return await getDataByGroups(connectionId, filtersState);
       }
 
+      //!here 2
       if (view === EProductionFloorView.DONE_JOBS) {
         return await getAllBoardMissions();
       }
@@ -266,6 +271,32 @@ const useProductionFloorData = () => {
     ]
   );
 
+  const onOpenReturnToProdModal = (mission) => {
+    setSelectedMission(mission);
+    setOpenReturnToProdModalModal(true);
+  };
+
+  const onCloseReturnToProdModal = () => {
+    setSelectedMission(null);
+    setOpenReturnToProdModalModal(false);
+  };
+
+  const onClickBackToProcess = async () => {
+    const callBack = async (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        await getAllData(pageNumber, pageSize, patternSearch);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await backToProcessApi(callApi, callBack, {
+      boardMissionId: selectedMission?.id,
+      sendMessage: false,
+      productType: selectedMission?.productType ?? "",
+    });
+  };
+
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { formatISODateTime } = useDateFormat();
@@ -332,6 +363,7 @@ const useProductionFloorData = () => {
     return "";
   };
 
+  //!here 6 most important for filters
   const getAllBoardMissions = useCallback(
     async (
       pageNumberInput?: number,
@@ -424,6 +456,7 @@ const useProductionFloorData = () => {
                 isDoneJobs={true}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onClickReturnToProduction={onOpenReturnToProdModal}
               />,
             ];
           });
@@ -970,6 +1003,10 @@ const useProductionFloorData = () => {
     onCloseDoneScopeModal,
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
+    openReturnToProdModal,
+    onOpenReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickBackToProcess,
   };
 };
 
