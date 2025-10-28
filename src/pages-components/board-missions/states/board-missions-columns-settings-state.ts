@@ -6,6 +6,7 @@ export const jobsColumnKeys: Record<string, string[]> = {
     "image",
     "creationDate",
     "dueDate",
+    "readyDate",
     "clientName",
     "missionNumber",
     "relatedDocuments",
@@ -47,8 +48,9 @@ export const jobsColumnWidthsMap: Record<string, Record<string, string>> = {
     image: "7%", // 1
     creationDate: "7%", // 2
     dueDate: "6%", // 3
-    clientName: "6%", // 4
-    missionNumber: "7%", // 5
+    readyDate: "6%", // 4
+    clientName: "6%", // 5
+    missionNumber: "7%", // 6
     relatedDocuments: "7%", // 6
     purchaseNumber: "7%", // 6
     sampleType: "7%", // 7

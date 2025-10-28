@@ -494,6 +494,7 @@ const useProductionFloorData = () => {
               </a>,
               formatISODateTime(mission?.createdDate),
               formatISODateTime(mission?.dueDate),
+              formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
                 ? `${mission?.number} / ${

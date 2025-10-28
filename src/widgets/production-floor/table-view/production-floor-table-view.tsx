@@ -160,6 +160,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         t("boardMissions.image"),
         t("boardMissions.creationDate"),
         t("boardMissions.dueDate"),
+        t("boardMissions.readyDate"),
         t("boardMissions.clientName"),
         t("boardMissions.missionNumber"),
         t("mailingSettings.orderNumber"),
@@ -351,6 +352,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
             columnWidths={[
               "7%",
               "5%",
+              "6%",
               "6%",
               "7%",
               "6%",
