@@ -38,7 +38,7 @@ export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const HeaderWidget = () => {
+const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) => {
   const { classes } = useStyle();
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
@@ -61,7 +61,7 @@ const HeaderWidget = () => {
   };
 
   return (
-    <div style={classes.container}>
+    <div style={{ ...classes.container, ...customStyle }}>
       <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
         <TrialIndicator />
         <div style={{ flex: 1 }} />

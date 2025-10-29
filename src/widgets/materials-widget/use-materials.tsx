@@ -174,7 +174,7 @@ const useMaterials = (isAdmin: boolean) => {
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
-    push(path + `/${materialType}?materialCategory=${category}`);
+    push(path + `/${materialType}?materialCategory=${encodeURIComponent(category)}`);
     setFlagState(false);
     setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false);
