@@ -1,7 +1,8 @@
 import React from "react";
+import { ThreeColumnLayout } from "./layouts";
 
 const FrontdeskV2Widget = () => {
-  return <div>FrontDesk V2</div>;
+  return <ThreeColumnLayout />;
 };
 
 export default FrontdeskV2Widget;
