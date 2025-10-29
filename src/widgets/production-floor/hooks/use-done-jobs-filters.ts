@@ -18,12 +18,14 @@ import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 import { useAgentsList } from "@/hooks/use-agent-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
-import { exampleTypeState } from "@/store/example-type";
 import { ORDER_STATUSES } from "@/enums/document-type-enum";
 import { useTranslation } from "react-i18next";
+
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import { exampleTypeState } from "@/store/example-type";
 
 export const useDoneJobsFilters = () => {
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
   const [customer, setCustomer] = useRecoilState(doneJobsCustomerState);
@@ -33,7 +35,6 @@ export const useDoneJobsFilters = () => {
     doneJobsOrderStatusState
   );
   const [proofTypes, setProofTypes] = useRecoilState(doneJobsProofTypesState);
-  const exampleTypeValues = useRecoilValue(exampleTypeState);
 
   const [isPrintedState, setIsPrintedState] = useRecoilState(
     doneJobsIsPrintedState
