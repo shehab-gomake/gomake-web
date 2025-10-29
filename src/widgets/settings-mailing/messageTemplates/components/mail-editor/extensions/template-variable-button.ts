@@ -9,7 +9,7 @@ export interface TemplateVariableButtonOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     templateVariableButton: {
-      setTemplateVariableButton: (options: { marker: string; title: string }) => ReturnType;
+      setTemplateVariableButton: (options: { marker: string; title: string; displayText?: string }) => ReturnType;
     };
   }
 }
@@ -53,6 +53,18 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
           };
         },
       },
+      displayText: {
+        default: null,
+        parseHTML: element => element.getAttribute('data-display-text'),
+        renderHTML: attributes => {
+          if (!attributes.displayText) {
+            return {};
+          }
+          return {
+            'data-display-text': attributes.displayText,
+          };
+        },
+      },
     };
   },
 
@@ -65,13 +77,15 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
+          const displayText = element.getAttribute('data-display-text');
           
-          console.log('Parsing anchor templateVariableButton:', { marker, title });
+          console.log('Parsing anchor templateVariableButton:', { marker, title, displayText });
           
           if (marker && title) {
             return {
               marker: marker,
               title: title,
+              displayText: displayText || null,
             };
           }
           return false;
@@ -84,13 +98,15 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
+          const displayText = element.getAttribute('data-display-text');
           
-          console.log('Parsing span templateVariableButton:', { marker, title });
+          console.log('Parsing span templateVariableButton:', { marker, title, displayText });
           
           if (marker && title) {
             return {
               marker: marker,
               title: title,
+              displayText: displayText || null,
             };
           }
           return false;
@@ -103,13 +119,15 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
+          const displayText = element.getAttribute('data-display-text');
           
-          console.log('Parsing anchor badgeVariable:', { marker, title });
+          console.log('Parsing anchor badgeVariable:', { marker, title, displayText });
           
           if (marker && title) {
             return {
               marker: marker,
               title: title,
+              displayText: displayText || null,
             };
           }
           return false;
@@ -122,13 +140,15 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
+          const displayText = element.getAttribute('data-display-text');
           
-          console.log('Parsing span badgeVariable:', { marker, title });
+          console.log('Parsing span badgeVariable:', { marker, title, displayText });
           
           if (marker && title) {
             return {
               marker: marker,
               title: title,
+              displayText: displayText || null,
             };
           }
           return false;
@@ -138,7 +158,7 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
   },
 
   renderHTML({ node }) {
-    const { marker, title } = node.attrs;
+    const { marker, title, displayText } = node.attrs;
     
     // Check if this is a link-type variable (contains "link" in title or marker)
     const isLinkVariable = (title && title.toLowerCase().includes('link')) || 
@@ -148,31 +168,33 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
     // This ensures email clients properly display them as clickable links
     if (isLinkVariable) {
       // Link variables: render as anchor tag with button styling
+      const buttonText = displayText || title || marker;
       return [
         'a',
         {
           'href': marker, // Use marker as the actual href for email clients
           'data-marker': marker,
-          'data-title': marker,
+          'data-title': title,
+          'data-display-text': displayText,
           'data-node-type': 'templateVariableButton',
           'class': 'badgeVariable',
           'style': 'display: inline-block; padding: 8px 16px; background-color: #5048ED; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 4px; cursor: pointer;',
           'target': '_blank',
           'rel': 'noopener noreferrer',
         },
-        marker, // Display text is the title (what user sees)
+        buttonText, // Display text is customizable
       ];
     }
     
-    // For non-link variables (template variables): gray badge styling as span
+    // For non-link variables (template variables): render as plain text
     return [
       'span',
       {
-        'class': 'badgeVariable',
+        'class': 'templateVariable',
         'data-marker': marker,
         'data-title': title,
         'data-node-type': 'templateVariableButton',
-        'style': 'display: inline-block; padding: 4px 10px; background-color: #f0f0f0; color: #333333; border-radius: 4px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 2px;',
+        'style': 'font-family: Inter, sans-serif; font-weight: 400; font-size: 14px; color: #666666;',
       },
       title, // innerHTML is the title
     ];
