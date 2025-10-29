@@ -81,7 +81,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       const callBack = (res) => {
         if (res.success) {
           const path = isAdmin ? "/materials-admin" : "/materials";
-          push(path + `/${materialType}?materialCategory=${newCategory}`);
+          push(path + `/${materialType}?materialCategory=${encodeURIComponent(newCategory)}`);
           alertSuccessAdded();
           setActiveFilter(EMaterialActiveFilter.ALL);
           getMaterialCategories(materialType).then();
@@ -154,7 +154,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         const path = isAdmin ? "/materials-admin" : "/materials";
-        push(path + `/${materialType}?materialCategory=${newCategory}`);
+        push(path + `/${materialType}?materialCategory=${encodeURIComponent(newCategory)}`);
         alertSuccessAdded();
         setActiveFilter(EMaterialActiveFilter.ALL);
         getMaterialCategories(materialType).then();

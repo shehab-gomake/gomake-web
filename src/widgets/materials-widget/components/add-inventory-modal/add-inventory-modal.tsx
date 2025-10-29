@@ -92,7 +92,7 @@ const AddInventoryModal = ({
                         </div>
                         <GomakeTextInput
                             value={inventoryFormData?.quantity?.toString() || ''}
-                            onChange={(e) => handleInventoryFormChange('quantity', parseInt(e.target.value))}
+                            onChange={(e) => handleInventoryFormChange('quantity', e.target.value)}
                             type="number"
                             placeholder={t("materials.childTable.enterQuantity")}
                             style={{
@@ -111,7 +111,7 @@ const AddInventoryModal = ({
                         </div>
                         <GomakeTextInput
                             value={inventoryFormData?.purchasePrice?.toString() || ''}
-                            onChange={(e) => handleInventoryFormChange('purchasePrice', parseFloat(e.target.value))}
+                            onChange={(e) => handleInventoryFormChange('purchasePrice', e.target.value)}
                             type="number"
                             placeholder={t("materials.childTable.enterPurchasePrice")}
                             style={{
@@ -145,7 +145,7 @@ const AddInventoryModal = ({
                         </div>
                         <GomakeTextInput
                             value={inventoryFormData?.salePrice?.toString() || ''}
-                            onChange={(e) => handleInventoryFormChange('salePrice', parseFloat(e.target.value))}
+                            onChange={(e) => handleInventoryFormChange('salePrice', e.target.value)}
                             type="number"
                             placeholder={t("materials.childTable.enterSalePrice")}
                             style={{
