@@ -21,6 +21,7 @@ import { SystemNotifications } from "@/widgets/system-notifications-widget/syste
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
 import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
+import BugReportIcon from "@mui/icons-material/BugReport";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -70,6 +71,15 @@ const HeaderWidget = () => {
         {/* <MessengerNotifications /> */}
         {/* !here front desk */}
         <FrontdeskNav />
+        {/* Chatwoot Test Button */}
+        <CustomTooltip title="Chatwoot Test" arrow>
+          <IconButton
+            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+            onClick={() => navigate("/frontdesk/chatwoot-test")}
+          >
+            <BugReportIcon style={{ color: "#ff6b6b", width: 22, height: 22 }} />
+          </IconButton>
+        </CustomTooltip>
         <SystemNotifications />
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
