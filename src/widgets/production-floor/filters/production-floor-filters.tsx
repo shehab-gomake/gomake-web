@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import {
   Box,
   Stack,
@@ -184,10 +184,23 @@ const ProductionFloorFilters = ({
   // If DONE_JOBS view, show the board missions-style filters
   if (view === EProductionFloorView.DONE_JOBS) {
     return (
-      <DoneJobsFiltersSection
-        getAllData={getAllData}
-        onChangeMissionsSearch={onChangeMissionsSearch}
-      />
+      <Suspense
+        fallback={
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            padding={4}
+          >
+            <CircularProgress />
+          </Box>
+        }
+      >
+        <DoneJobsFiltersSection
+          getAllData={getAllData}
+          onChangeMissionsSearch={onChangeMissionsSearch}
+        />
+      </Suspense>
     );
   }
 
