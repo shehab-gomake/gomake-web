@@ -59,14 +59,52 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
   parseHTML() {
     return [
       {
-        tag: 'span[data-node-type="templateVariableButton"]',
+        tag: 'a[data-node-type="templateVariableButton"]',
         priority: 100,
         getAttrs: (dom) => {
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
           
-          console.log('Parsing templateVariableButton node:', { marker, title });
+          console.log('Parsing anchor templateVariableButton:', { marker, title });
+          
+          if (marker && title) {
+            return {
+              marker: marker,
+              title: title,
+            };
+          }
+          return false;
+        },
+      },
+      {
+        tag: 'span[data-node-type="templateVariableButton"]',
+        priority: 95,
+        getAttrs: (dom) => {
+          const element = dom as HTMLElement;
+          const marker = element.getAttribute('data-marker');
+          const title = element.getAttribute('data-title') || element.textContent?.trim();
+          
+          console.log('Parsing span templateVariableButton:', { marker, title });
+          
+          if (marker && title) {
+            return {
+              marker: marker,
+              title: title,
+            };
+          }
+          return false;
+        },
+      },
+      {
+        tag: 'a.badgeVariable',
+        priority: 90,
+        getAttrs: (dom) => {
+          const element = dom as HTMLElement;
+          const marker = element.getAttribute('data-marker');
+          const title = element.getAttribute('data-title') || element.textContent?.trim();
+          
+          console.log('Parsing anchor badgeVariable:', { marker, title });
           
           if (marker && title) {
             return {
@@ -79,30 +117,13 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
       },
       {
         tag: 'span.badgeVariable',
-        priority: 90,
+        priority: 85,
         getAttrs: (dom) => {
           const element = dom as HTMLElement;
           const marker = element.getAttribute('data-marker');
           const title = element.getAttribute('data-title') || element.textContent?.trim();
           
-          console.log('Parsing badgeVariable:', { marker, title });
-          
-          if (marker && title) {
-            return {
-              marker: marker,
-              title: title,
-            };
-          }
-          return false;
-        },
-      },
-      {
-        tag: 'span[data-marker]',
-        priority: 80,
-        getAttrs: (dom) => {
-          const element = dom as HTMLElement;
-          const marker = element.getAttribute('data-marker');
-          const title = element.getAttribute('data-title') || element.textContent?.trim();
+          console.log('Parsing span badgeVariable:', { marker, title });
           
           if (marker && title) {
             return {
@@ -123,23 +144,27 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
     const isLinkVariable = (title && title.toLowerCase().includes('link')) || 
                           (marker && marker.toLowerCase().includes('link'));
     
-    // For link variables, render as a styled span with badgeVariable class
-    // Backend will convert this to an actual <a> tag with the real URL
+    // CRITICAL FIX: For link variables, render as an actual <a> tag, not a <span>
+    // This ensures email clients properly display them as clickable links
     if (isLinkVariable) {
+      // Link variables: render as anchor tag with button styling
       return [
-        'span',
+        'a',
         {
-          'class': 'badgeVariable',
+          'href': marker, // Use marker as the actual href for email clients
           'data-marker': marker,
-          'data-title': title,
+          'data-title': marker,
           'data-node-type': 'templateVariableButton',
-          'style': 'display: inline-block; padding: 8px 16px; background-color: #5048ED; color: #ffffff; text-decoration: none; border-radius: 6px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 4px; cursor: pointer;',
+          'class': 'badgeVariable',
+          'style': 'display: inline-block; padding: 8px 16px; background-color: #5048ED; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 4px; cursor: pointer;',
+          'target': '_blank',
+          'rel': 'noopener noreferrer',
         },
-        title, // Show the title (e.g., "Payment Link")
+        marker, // Display text is the title (what user sees)
       ];
     }
     
-    // For non-link variables
+    // For non-link variables (template variables): gray badge styling as span
     return [
       'span',
       {
@@ -149,7 +174,7 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
         'data-node-type': 'templateVariableButton',
         'style': 'display: inline-block; padding: 4px 10px; background-color: #f0f0f0; color: #333333; border-radius: 4px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 2px;',
       },
-      title, // Show the title
+      title, // innerHTML is the title
     ];
   },
 
@@ -170,4 +195,3 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
     };
   },
 });
-
