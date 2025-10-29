@@ -10,13 +10,14 @@ import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { Stack, IconButton, Divider, Tooltip, Select, MenuItem } from '@mui/material';
+import { Stack, IconButton, Divider, Tooltip, Select, MenuItem, FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
 import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 import { TemplateVariableButton } from './extensions/template-variable-button';
+import { FontSize } from './extensions/font-size';
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -29,6 +30,7 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import LinkIcon from '@mui/icons-material/Link';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { FONT_FAMILY } from '@/utils/font-family';
@@ -44,7 +46,9 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
     const { classes } = useAdvancedEmailEditorStyles();
     const { t } = useTranslation();
     const [selectedColor, setSelectedColor] = React.useState('#000000');
+    const [selectedBgColor, setSelectedBgColor] = React.useState('#ffff00');
     const [selectedFontSize, setSelectedFontSize] = React.useState('14px');
+    const [selectedFontFamily, setSelectedFontFamily] = React.useState('Inter');
 
     type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
@@ -81,6 +85,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                 multicolor: true,
             }),
             FontFamily,
+            FontSize,
             Subscript,
             Superscript,
             TemplateVariableButton,
@@ -130,10 +135,26 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
         }
     };
 
-    const handleFontSizeChange = (size: string) => {
+    const handleBgColorChange = (color: string) => {
+        setSelectedBgColor(color);
+        if (editor) {
+            editor.chain().focus().toggleHighlight({ color }).run();
+        }
+    };
+
+    const handleFontSizeChange = (event: any) => {
+        const size = event.target.value;
         setSelectedFontSize(size);
         if (editor) {
-            editor.chain().focus().setMark('textStyle', { fontSize: size }).run();
+            editor.chain().focus().setFontSize(size).run();
+        }
+    };
+
+    const handleFontFamilyChange = (event: any) => {
+        const family = event.target.value;
+        setSelectedFontFamily(family);
+        if (editor) {
+            editor.chain().focus().setFontFamily(family).run();
         }
     };
 
@@ -229,6 +250,113 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                         }}
                     >
                         <StrikethroughSIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+
+                <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+
+                {/* Font Size */}
+                <Tooltip title="Font Size">
+                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                        <Select
+                            value={selectedFontSize}
+                            onChange={handleFontSizeChange}
+                            sx={{
+                                height: '32px',
+                                fontSize: '13px',
+                                backgroundColor: '#fff',
+                                '& .MuiSelect-select': {
+                                    padding: '4px 8px',
+                                },
+                            }}
+                        >
+                            <MenuItem value="10px">10</MenuItem>
+                            <MenuItem value="12px">12</MenuItem>
+                            <MenuItem value="14px">14</MenuItem>
+                            <MenuItem value="16px">16</MenuItem>
+                            <MenuItem value="18px">18</MenuItem>
+                            <MenuItem value="20px">20</MenuItem>
+                            <MenuItem value="24px">24</MenuItem>
+                            <MenuItem value="28px">28</MenuItem>
+                            <MenuItem value="32px">32</MenuItem>
+                            <MenuItem value="36px">36</MenuItem>
+                            <MenuItem value="48px">48</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Tooltip>
+
+                {/* Font Family */}
+                <Tooltip title="Font Family">
+                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                        <Select
+                            value={selectedFontFamily}
+                            onChange={handleFontFamilyChange}
+                            sx={{
+                                height: '32px',
+                                fontSize: '13px',
+                                backgroundColor: '#fff',
+                                '& .MuiSelect-select': {
+                                    padding: '4px 8px',
+                                },
+                            }}
+                        >
+                            <MenuItem value="Inter" style={{ fontFamily: 'Inter' }}>Inter</MenuItem>
+                            <MenuItem value="Arial" style={{ fontFamily: 'Arial' }}>Arial</MenuItem>
+                            <MenuItem value="Times New Roman" style={{ fontFamily: 'Times New Roman' }}>Times New Roman</MenuItem>
+                            <MenuItem value="Courier New" style={{ fontFamily: 'Courier New' }}>Courier New</MenuItem>
+                            <MenuItem value="Georgia" style={{ fontFamily: 'Georgia' }}>Georgia</MenuItem>
+                            <MenuItem value="Verdana" style={{ fontFamily: 'Verdana' }}>Verdana</MenuItem>
+                            <MenuItem value="Helvetica" style={{ fontFamily: 'Helvetica' }}>Helvetica</MenuItem>
+                            <MenuItem value="Comic Sans MS" style={{ fontFamily: 'Comic Sans MS' }}>Comic Sans MS</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Tooltip>
+
+                <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+
+                {/* Headings */}
+                <Tooltip title="Heading 1">
+                    <IconButton
+                        size="small"
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                        sx={{
+                            backgroundColor: editor.isActive('heading', { level: 1 }) ? '#5048ED' : 'transparent',
+                            color: editor.isActive('heading', { level: 1 }) ? '#fff' : '#666',
+                            '&:hover': { backgroundColor: editor.isActive('heading', { level: 1 }) ? '#3d38c4' : '#e0e0e0' },
+                            ...FONT_FAMILY.Inter(600, 13),
+                        }}
+                    >
+                        H1
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Heading 2">
+                    <IconButton
+                        size="small"
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                        sx={{
+                            backgroundColor: editor.isActive('heading', { level: 2 }) ? '#5048ED' : 'transparent',
+                            color: editor.isActive('heading', { level: 2 }) ? '#fff' : '#666',
+                            '&:hover': { backgroundColor: editor.isActive('heading', { level: 2 }) ? '#3d38c4' : '#e0e0e0' },
+                            ...FONT_FAMILY.Inter(600, 13),
+                        }}
+                    >
+                        H2
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Heading 3">
+                    <IconButton
+                        size="small"
+                        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                        sx={{
+                            backgroundColor: editor.isActive('heading', { level: 3 }) ? '#5048ED' : 'transparent',
+                            color: editor.isActive('heading', { level: 3 }) ? '#fff' : '#666',
+                            '&:hover': { backgroundColor: editor.isActive('heading', { level: 3 }) ? '#3d38c4' : '#e0e0e0' },
+                            ...FONT_FAMILY.Inter(600, 13),
+                        }}
+                    >
+                        H3
                     </IconButton>
                 </Tooltip>
 
@@ -352,6 +480,24 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                                 width: '32px',
                                 height: '32px',
                                 border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                            }}
+                        />
+                    </div>
+                </Tooltip>
+
+                {/* Background/Highlight Color */}
+                <Tooltip title="Background Color">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <input
+                            type="color"
+                            value={selectedBgColor}
+                            onChange={(e) => handleBgColorChange(e.target.value)}
+                            style={{
+                                width: '32px',
+                                height: '32px',
+                                border: '2px solid #e0e0e0',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
                             }}
