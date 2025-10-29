@@ -21,11 +21,11 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
 
   inline: true,
 
-  selectable: false,
+  selectable: true,
 
   atom: true,
 
-  draggable: false,
+  draggable: true,
 
   addAttributes() {
     return {

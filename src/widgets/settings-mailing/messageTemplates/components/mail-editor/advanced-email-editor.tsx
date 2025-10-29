@@ -29,7 +29,6 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import LinkIcon from '@mui/icons-material/Link';
-import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { FONT_FAMILY } from '@/utils/font-family';
