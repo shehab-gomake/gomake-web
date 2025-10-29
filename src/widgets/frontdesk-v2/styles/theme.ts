@@ -1,28 +1,35 @@
 /**
- * FrontDesk V2 - Dark Theme Configuration
+ * FrontDesk V2 - Light Theme Configuration
  * Centralized theme constants for consistent styling across components
  */
 
 export const frontdeskV2Theme = {
   colors: {
     background: {
-      primary: "#000000", // CenterPanel
-      secondary: "#0d0d0d", // MiddlePanel, RightSidebar
-      tertiary: "#1a1a1a", // LeftSidebar
-      hover: "#262626",
+      primary: "#ffffff", // CenterPanel - Pure white
+      secondary: "#f9fafb", // MiddlePanel, RightSidebar - Light gray
+      tertiary: "#f3f4f6", // LeftSidebar - Slightly darker gray
+      hover: "#f0f1f3",
     },
     text: {
-      primary: "#ffffff",
-      secondary: "#a0a0a0",
-      tertiary: "#666666",
+      primary: "#111827", // Dark gray, almost black
+      secondary: "#6b7280", // Medium gray
+      tertiary: "#9ca3af", // Light gray
     },
     border: {
-      default: "rgba(255, 255, 255, 0.1)",
-      strong: "rgba(255, 255, 255, 0.2)",
+      default: "#e5e7eb",
+      strong: "#d1d5db",
     },
     brand: {
       primary: "#2e3092", // Blue (selected states)
       secondary: "#5a5fc7",
+    },
+    interactive: {
+      hover: "#f9fafb",
+      active: "#f3f4f6",
+      selected: "#eff6ff",
+      selectedHover: "#dbeafe",
+      disabled: "#f9fafb",
     },
     status: {
       online: "#10b981",
@@ -74,10 +81,10 @@ export const frontdeskV2Theme = {
     10: "40px",
   },
   shadows: {
-    sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
-    base: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    md: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
+    sm: "0 1px 2px rgba(0, 0, 0, 0.03)",
+    base: "0 1px 3px rgba(0, 0, 0, 0.08)",
+    md: "0 4px 6px rgba(0, 0, 0, 0.07)",
+    lg: "0 10px 15px rgba(0, 0, 0, 0.08)",
   },
   layout: {
     leftSidebarWidth: 240,
@@ -97,4 +104,3 @@ export const frontdeskV2Theme = {
 } as const;
 
 export type FrontdeskV2Theme = typeof frontdeskV2Theme;
-

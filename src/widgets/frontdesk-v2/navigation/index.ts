@@ -10,4 +10,4 @@ export * from "./teams-list/team-item";
 export * from "./channels-list/channels-list";
 export * from "./channels-list/channel-item";
 export * from "./user-profile-card/user-profile-card";
-
+export * from "./navigation-sidebar";

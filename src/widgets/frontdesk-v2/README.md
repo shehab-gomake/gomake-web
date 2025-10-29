@@ -1,393 +1,274 @@
-# FrontDesk V2
+# FrontDesk V2 - Next Generation Messaging Hub
 
-A modern, Chatwoot-inspired messaging hub built with React, TypeScript, and Recoil.
+## Overview
 
-## 📋 Project Status
+FrontDesk V2 is a complete redesign of the messaging hub with a modern, light theme and a fully reusable component architecture.
 
-✅ **Completed:**
+## Key Features
 
-- Complete folder structure (76 files)
-- Comprehensive TypeScript type definitions based on Chatwoot DTOs
-- All enums matching Chatwoot backend models
+✅ **Light Theme** - Clean, modern design with excellent readability  
+✅ **Modular Components** - Reusable UI primitives and navigation components  
+✅ **TypeScript First** - Fully typed with comprehensive interfaces  
+✅ **Theme System** - Centralized design tokens for consistency  
+✅ **Composable Architecture** - Build complex UIs from simple building blocks  
+✅ **Accessibility** - ARIA labels and keyboard navigation support  
 
-🚧 **In Progress:**
+## Quick Start
 
-- Component implementation
-- State management with Recoil
-- WebSocket integration
-- API service layer
+### Using the Navigation Sidebar
 
----
+```tsx
+import { NavigationSidebar } from "@/widgets/frontdesk-v2/navigation";
 
-## 🏗️ Architecture Overview
-
-### Three-Column Layout
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  [Left Sidebar]  [Middle Panel]  [Center Panel]  [Right] │
-│   Navigation      Conversations    Messages    Details    │
-│   240px           380px           flex-1        340px     │
-└─────────────────────────────────────────────────────────┘
-```
-
-### State Management (Recoil)
-
-- **Atoms**: Primitive state units (conversations, messages, filters)
-- **Selectors**: Derived state (filtered conversations, unread counts)
-- **AtomFamily**: Per-conversation/per-message state
-
-### Data Flow
-
-```
-API/WebSocket → Recoil Atoms → React Components → UI
-                    ↓
-              Selectors (computed state)
-```
-
----
-
-## 📁 Folder Structure
-
-```
-src/widgets/frontdesk-v2/
-├── layouts/                    # Layout components
-│   └── three-column/          # Main 3-column layout
-├── navigation/                # Left sidebar navigation
-│   ├── workspace-selector/
-│   ├── search-bar/
-│   ├── nav-tree/
-│   ├── teams-list/
-│   ├── channels-list/
-│   └── user-profile-card/
-├── conversations/             # Middle & Center panels
-│   ├── list/                 # Conversation list (middle)
-│   │   ├── conversation-card/
-│   │   └── hooks/
-│   └── thread/               # Message thread (center)
-│       ├── message-list/
-│       ├── message-composer/
-│       └── hooks/
-├── contact-details/          # Right sidebar
-│   ├── contact-card/
-│   └── accordion-sections/
-├── components/               # Shared UI components
-│   └── ui/
-├── hooks/                    # Global hooks
-├── types/                    # TypeScript definitions
-│   ├── enums.ts             ✅ COMPLETE
-│   ├── conversation.types.ts ✅ COMPLETE
-│   ├── message.types.ts      ✅ COMPLETE
-│   ├── contact.types.ts      ✅ COMPLETE
-│   ├── agent.types.ts        ✅ COMPLETE
-│   ├── inbox.types.ts        ✅ COMPLETE
-│   ├── team.types.ts         ✅ COMPLETE
-│   └── index.ts              ✅ COMPLETE
-└── frontdesk-v2-widget.tsx   # Main entry point
-```
-
----
-
-## 🎯 Type Definitions
-
-### Core Enums
-
-#### Conversation Status
-
-```typescript
-enum ConversationStatus {
-  OPEN = "open",
-  RESOLVED = "resolved",
-  PENDING = "pending",
-  SNOOZED = "snoozed",
+function App() {
+  return (
+    <NavigationSidebar
+      selectedChannel="email"
+      channelBadges={{ email: 5 }}
+      onChannelSelect={(channel) => console.log(channel)}
+    />
+  );
 }
 ```
 
-#### Conversation Priority
+### Using Individual Components
 
-```typescript
-enum ConversationPriority {
-  NONE = "none",
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
+```tsx
+import { Badge, IconButton, Tooltip } from "@/widgets/frontdesk-v2/components";
+import { NavItem, NavTree } from "@/widgets/frontdesk-v2/navigation";
+
+// Badge with icon
+<Badge count={5} variant="error">
+  <EmailIcon />
+</Badge>
+
+// Icon button with tooltip
+<Tooltip title="Settings">
+  <IconButton onClick={handleClick}>
+    <SettingsIcon />
+  </IconButton>
+</Tooltip>
+
+// Navigation item
+<NavItem
+  id="inbox"
+  label="Inbox"
+  icon={<InboxIcon />}
+  badge={5}
+  isSelected={true}
+  onClick={handleClick}
+/>
+```
+
+## Project Structure
+
+```
+frontdesk-v2/
+├── components/              # Reusable UI components
+│   ├── ui/                 # Primitives (Badge, Button, Tooltip, etc.)
+│   └── index.ts            # Component exports
+├── conversations/          # Conversation list components
+│   └── list/
+├── layouts/                # Layout components
+│   └── three-column/       # Three-column layout system
+├── navigation/             # Navigation components
+│   ├── nav-tree/          # Tree-based navigation (NavItem, NavSection, NavTree)
+│   ├── navigation-sidebar.tsx  # Complete sidebar
+│   └── NAVIGATION_GUIDE.md     # Navigation documentation
+├── styles/                 # Theme and styling
+│   ├── theme.ts           # Theme configuration
+│   ├── utils.ts           # Style utilities
+│   └── layout.styles.ts   # Layout styled components
+└── README.md              # This file
+```
+
+## Component Library
+
+### UI Primitives
+- **Badge** - Notification badges with variants
+- **IconButton** - Clickable icon buttons
+- **Tooltip** - Hover tooltips
+- **Divider** - Visual separators
+- **Avatar** - User avatars (placeholder)
+- **Dropdown** - Dropdown menus (placeholder)
+- **Tag** - Content tags (placeholder)
+
+### Navigation Components
+- **NavItem** - Single navigation item with icon and badge
+- **NavSection** - Collapsible group of navigation items
+- **NavTree** - Complete navigation tree
+- **NavigationSidebar** - Full-featured navigation sidebar
+
+### Layout Components
+- **ThreeColumnLayout** - Three-column messaging layout
+- **LeftSidebar** - Navigation sidebar container
+- **MiddlePanel** - Conversation list panel
+- **CenterPanel** - Message thread panel
+- **RightSidebar** - Contact details panel
+
+## Theme System
+
+The v2 theme provides:
+
+- **Colors**: Semantic color system with light theme
+- **Typography**: Font families, sizes, weights, and line heights
+- **Spacing**: Consistent spacing scale (4px base)
+- **Shadows**: Elevation system
+- **Layout**: Width constants for panels
+- **Transitions**: Animation timing functions
+
+Access via:
+```tsx
+import { frontdeskV2Theme } from "@/widgets/frontdesk-v2/styles";
+
+frontdeskV2Theme.colors.brand.primary    // "#2563eb"
+frontdeskV2Theme.spacing[4]              // "16px"
+frontdeskV2Theme.typography.fontSize.sm  // "13px"
+```
+
+## Documentation
+
+- **[Navigation Guide](./navigation/NAVIGATION_GUIDE.md)** - Complete navigation system documentation
+- **[Theme Reference](./styles/theme.ts)** - Theme configuration and tokens
+
+## Examples
+
+### Custom Navigation
+
+```tsx
+import { NavTree } from "@/widgets/frontdesk-v2/navigation";
+import { frontdeskV2Theme } from "@/widgets/frontdesk-v2/styles";
+
+const sections = [
+  {
+    id: "tickets",
+    label: "Support Tickets",
+    items: [
+      {
+        id: "open",
+        label: "Open Tickets",
+        icon: <InboxIcon />,
+        badge: 12,
+        badgeVariant: "error"
+      },
+      {
+        id: "closed",
+        label: "Closed Tickets",
+        icon: <CheckIcon />
+      }
+    ]
+  }
+];
+
+<NavTree
+  sections={sections}
+  selectedItemId="open"
+  onItemClick={(id) => navigate(id)}
+/>
+```
+
+### Custom Sidebar with Collapse
+
+```tsx
+import { useState } from "react";
+import { NavigationSidebar } from "@/widgets/frontdesk-v2/navigation";
+
+function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <NavigationSidebar
+      isCollapsed={collapsed}
+      onToggleCollapse={() => setCollapsed(!collapsed)}
+      selectedChannel="email"
+      channelBadges={{
+        email: 5,
+        whatsapp: 2,
+        internal: 3
+      }}
+      onChannelSelect={(channel) => {
+        console.log("Selected:", channel);
+      }}
+    />
+  );
 }
 ```
 
-#### Message Type
+## Design Principles
 
-```typescript
-enum MessageType {
-  INCOMING = 0, // From contact
-  OUTGOING = 1, // From agent
-  ACTIVITY = 2, // System message
-  TEMPLATE = 3, // Template message
-}
+1. **Reusability** - Build once, use everywhere
+2. **Composability** - Combine simple components for complex UIs
+3. **Type Safety** - TypeScript for compile-time guarantees
+4. **Consistency** - Use theme tokens for uniform styling
+5. **Accessibility** - ARIA labels and semantic HTML
+6. **Performance** - Optimized rendering with React best practices
+
+## Migration Guide
+
+### From FrontDesk v1
+
+1. **Update imports**:
+   ```tsx
+   // Old
+   import { NavigationSidebar } from "@/widgets/frontdesk/layouts/components";
+   
+   // New
+   import { NavigationSidebar } from "@/widgets/frontdesk-v2/navigation";
+   ```
+
+2. **Use new theme**:
+   ```tsx
+   // Old
+   import { useTheme } from "@mui/material/styles";
+   const theme = useTheme();
+   
+   // New
+   import { frontdeskV2Theme } from "@/widgets/frontdesk-v2/styles";
+   ```
+
+3. **Replace MUI components** with v2 components where available
+
+4. **Update color references** to use light theme colors
+
+## Contributing
+
+When adding new components:
+
+1. Follow the existing component structure
+2. Use TypeScript with proper types
+3. Reference `frontdeskV2Theme` for styling
+4. Add documentation to component files
+5. Update this README and navigation guide
+6. Ensure accessibility (ARIA labels, keyboard support)
+
+## Development
+
+```bash
+# Start dev server
+npm run dev
+
+# Access FrontDesk V2
+http://localhost:3004/frontdesk/inbox
+
+# Run linting
+npm run lint
+
+# Run tests
+npm run test
 ```
 
-#### Message Status
+## Status
 
-```typescript
-enum MessageStatus {
-  SENT = "sent",
-  DELIVERED = "delivered",
-  READ = "read",
-  FAILED = "failed",
-}
-```
+- ✅ Theme system
+- ✅ UI primitives (Badge, IconButton, Tooltip, Divider)
+- ✅ Navigation components (NavItem, NavSection, NavTree)
+- ✅ Navigation sidebar
+- ✅ Layout system
+- 🟡 Conversation components (in progress)
+- 🟡 Message components (in progress)
+- ⬜ Settings panel
+- ⬜ Search functionality
 
-### Core Interfaces
+## License
 
-#### Conversation
-
-```typescript
-interface Conversation {
-  id: number;
-  uuid: string;
-  status: ConversationStatus;
-  priority: ConversationPriority | null;
-  inbox_id: number;
-  unread_count: number;
-  messages: Message[];
-  labels: string[];
-  custom_attributes: Record<string, any>;
-  can_reply: boolean;
-  muted: boolean;
-  // ... timestamps, meta, SLA
-}
-```
-
-#### Message
-
-```typescript
-interface Message {
-  id: number;
-  content: string;
-  message_type: MessageType;
-  status: MessageStatus;
-  sender_type: SenderType;
-  conversation_id: number;
-  created_at: number;
-  attachments?: Attachment[];
-  // ... additional fields
-}
-```
-
-#### Contact
-
-```typescript
-interface Contact {
-  id: number;
-  name: string;
-  email: string | null;
-  phone_number: string | null;
-  thumbnail: string | null;
-  availability_status: "online" | "offline";
-  custom_attributes: Record<string, any>;
-  // ... additional fields
-}
-```
-
----
-
-## 🚀 Next Steps
-
-### Phase 1: Layout & Navigation (Week 1)
-
-- [ ] Implement `ThreeColumnLayout`
-- [ ] Build `LeftSidebar` with navigation tree
-- [ ] Create `WorkspaceSelector` dropdown
-- [ ] Add `SearchBar` functionality
-
-### Phase 2: Conversation List (Week 2)
-
-- [ ] Create `ConversationList` with virtualization
-- [ ] Build `ConversationCard` component
-- [ ] Implement `ConversationTabs` (Mine/Unassigned/All)
-- [ ] Add filtering and sorting
-- [ ] Set up Recoil atoms for conversations
-
-### Phase 3: Message Thread (Week 3)
-
-- [ ] Implement `MessageList` with virtualization
-- [ ] Build `MessageBubble` (incoming/outgoing)
-- [ ] Create `MessageComposer` with rich text
-- [ ] Add file upload support
-- [ ] Implement typing indicators
-- [ ] Set up Recoil atoms for messages
-
-### Phase 4: Contact Details (Week 4)
-
-- [ ] Build `ContactCard` with profile info
-- [ ] Implement accordion sections
-- [ ] Add conversation actions
-- [ ] Show previous conversations
-
-### Phase 5: Real-time & Polish (Week 5)
-
-- [ ] Integrate WebSocket for real-time updates
-- [ ] Implement optimistic updates
-- [ ] Add keyboard shortcuts
-- [ ] Performance optimization
-- [ ] Error handling & loading states
-
----
-
-## 🔧 Development Guidelines
-
-### Component Structure
-
-```typescript
-// Use Composition API with TypeScript
-interface Props {
-  conversationId: number;
-}
-
-export const ConversationCard: React.FC<Props> = ({ conversationId }) => {
-  // Recoil hooks
-  const conversation = useRecoilValue(conversationAtom(conversationId));
-
-  // Component logic
-  return <div>{/* UI */}</div>;
-};
-```
-
-### State Management Pattern
-
-```typescript
-// Atom for primitive state
-export const conversationsAtom = atom<Conversation[]>({
-  key: "frontdeskV2.conversations",
-  default: [],
-});
-
-// Selector for derived state
-export const unreadConversationsSelector = selector({
-  key: "frontdeskV2.unreadConversations",
-  get: ({ get }) => {
-    const conversations = get(conversationsAtom);
-    return conversations.filter((c) => c.unread_count > 0);
-  },
-});
-
-// AtomFamily for per-item state
-export const messagesByConversationAtom = atomFamily<Message[], number>({
-  key: "frontdeskV2.messagesByConversation",
-  default: [],
-});
-```
-
-### API Integration
-
-```typescript
-// services/frontdesk-v2/api/conversations.service.ts
-export const conversationsService = {
-  getAll: (filters: ConversationFilters) => apiClient.get("/conversations", { params: filters }),
-
-  getById: (id: number) => apiClient.get(`/conversations/${id}`),
-
-  updateStatus: (id: number, status: ConversationStatus) => apiClient.patch(`/conversations/${id}`, { status }),
-};
-```
-
-### WebSocket Pattern
-
-```typescript
-// Real-time event handlers
-socket.on("message.created", (data: Message) => {
-  // Add message to Recoil state
-  setMessages((prev) => [...prev, data]);
-});
-
-socket.on("conversation.status_changed", (data) => {
-  // Update conversation status
-  updateConversation(data.id, { status: data.status });
-});
-```
-
----
-
-## 📊 Data Models Reference
-
-All type definitions are based on Chatwoot's Swagger DTOs:
-
-- **Source**: `/Users/omarsabbah/Desktop/chatwoot/swagger/definitions/resource/`
-- **Files**: `conversation.yml`, `message.yml`, `contact.yml`, `inbox.yml`, `agent.yml`
-
-### Key Relationships
-
-```
-Conversation
-  ├── has many Messages
-  ├── belongs to Contact
-  ├── belongs to Inbox
-  ├── belongs to Agent (assignee)
-  └── belongs to Team
-
-Message
-  ├── belongs to Conversation
-  ├── belongs to Sender (Contact or Agent)
-  └── has many Attachments
-
-Contact
-  └── has many ContactInboxes
-```
-
----
-
-## 🎨 UI Component Mapping
-
-| Component           | Description                       | Priority |
-| ------------------- | --------------------------------- | -------- |
-| `ThreeColumnLayout` | Main app shell                    | P0       |
-| `ConversationList`  | Virtualized list of conversations | P0       |
-| `ConversationCard`  | Individual conversation preview   | P0       |
-| `MessageList`       | Virtualized message thread        | P0       |
-| `MessageBubble`     | Individual message display        | P0       |
-| `MessageComposer`   | Rich text message input           | P0       |
-| `ContactCard`       | Contact profile details           | P1       |
-| `NavTree`           | Collapsible navigation            | P1       |
-| `SearchBar`         | Global search                     | P2       |
-| `WorkspaceSelector` | Account/workspace switcher        | P2       |
-
----
-
-## 📝 Notes
-
-- All components return `null` or `{}` - ready for implementation
-- TypeScript types are production-ready
-- Follow Material-UI design system (already in project)
-- Use Recoil for state management (already in project)
-- Integrate with existing `@/services` pattern
-
----
-
-## 🔗 Resources
-
-- **Chatwoot Source**: `/Users/omarsabbah/Desktop/chatwoot`
-- **Swagger DTOs**: `/Users/omarsabbah/Desktop/chatwoot/swagger/definitions/`
-- **Vue Frontend**: `/Users/omarsabbah/Desktop/chatwoot/app/javascript/dashboard/`
-- **Rails Backend**: `/Users/omarsabbah/Desktop/chatwoot/app/models/`
-
----
-
-## 🎯 Success Criteria
-
-- [ ] All 53 components implemented
-- [ ] Real-time messaging via WebSocket
-- [ ] Conversation filtering and sorting
-- [ ] Message composer with file upload
-- [ ] Contact details panel
-- [ ] Typing indicators
-- [ ] Optimistic UI updates
-- [ ] Keyboard navigation
-- [ ] Mobile responsive
-- [ ] Performance: <100ms interaction time
-- [ ] Accessibility: WCAG 2.1 AA compliant
-
----
-
-**Last Updated**: 2025-01-29
-**Version**: 0.1.0
-**Status**: Foundation Complete ✅
+Part of the GoMake Web project.
