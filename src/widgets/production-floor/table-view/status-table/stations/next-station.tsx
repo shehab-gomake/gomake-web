@@ -99,6 +99,7 @@ const NextStationComponent = ({
           onUpdateToNextStation(boardMissionId, productType);
         }}
       />
+
     </Stack>
   );
 };

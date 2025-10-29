@@ -18,6 +18,7 @@ import { IconButton, Stack } from "@mui/material";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
 import { TableFilter } from "./components/table-filter";
@@ -615,26 +616,38 @@ const CustomerCardWidget = ({
             </PrimaryTabsComponent>
           </div>
           <div style={classes.footerStyle}>
-            {isFromHomePage && !showTable ? (
+            {isFromHomePage && showAddButton && (
+              <Stack direction="row" gap={2}>
+                <PrimaryButton
+                  variant="contained"
+                  style={{ width: "fit-content" }}
+                  onClick={handleShowTable}
+                >
+                  {t("customers.buttons.search")}
+                </PrimaryButton>
+                {showTable && (
+                  <SecondaryButton
+                    variant="contained"
+                    style={{ width: "fit-content" }}
+                    onClick={handleAddCustomer}
+                  >
+                    {isCustomer
+                      ? t("customers.buttons.addCustomer")
+                      : t("suppliers.buttons.addSupplier")}
+                  </SecondaryButton>
+                )}
+              </Stack>
+            )}
+            {!isFromHomePage && showAddButton && (
               <SecondaryButton
                 variant="contained"
                 style={{ width: "fit-content" }}
-                onClick={handleShowTable}
+                onClick={handleAddCustomer}
               >
-                {t("customers.buttons.search")}
+                {isCustomer
+                  ? t("customers.buttons.addCustomer")
+                  : t("suppliers.buttons.addSupplier")}
               </SecondaryButton>
-            ) : (
-              showAddButton && (
-                <SecondaryButton
-                  variant="contained"
-                  style={{ width: "fit-content" }}
-                  onClick={handleAddCustomer}
-                >
-                  {isCustomer
-                    ? t("customers.buttons.addCustomer")
-                    : t("suppliers.buttons.addSupplier")}
-                </SecondaryButton>
-              )
             )}
             <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
               {showUpdateButton && (

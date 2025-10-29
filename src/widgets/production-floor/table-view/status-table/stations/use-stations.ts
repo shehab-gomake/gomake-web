@@ -9,6 +9,8 @@ import { IBoardMissionStation } from "@/widgets/production-floor/interfaces/boar
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isPrintNodeModalOpenState, jobsToPrintState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 const useStations = () => {
   const { callApi } = useGomakeAxios();
@@ -24,6 +26,10 @@ const useStations = () => {
   const canMoveStation = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
+  const setIsPrintNodeModalOpen = useSetRecoilState(isPrintNodeModalOpenState);
+  const setJobsToPrint = useSetRecoilState(jobsToPrintState);
+
+
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
   const getActions = async (boardMissionId: string, productType) => {
@@ -61,8 +67,14 @@ const useStations = () => {
     await updateBoardMissionCurrentStationApi(
       callApi,
       (res) => {
+        setJobsToPrint({
+          boardMissionId,
+          productType,
+        });
         if (res?.success) {
           alertSuccessUpdate();
+          setIsPrintNodeModalOpen(res?.data?.showPrintNodeModal);
+          
           getData().then();
         } else {
           alertFaultUpdate();
@@ -80,8 +92,13 @@ const useStations = () => {
     await updateBoardMissionCurrentStationApi(
       callApi,
       (res) => {
+        setJobsToPrint({
+          boardMissionId,
+          productType,
+        });
         if (res?.success) {
           alertSuccessUpdate();
+          setIsPrintNodeModalOpen(res?.data?.showPrintNodeModal);
           getData().then();
         } else {
           alertFaultUpdate();
@@ -100,6 +117,7 @@ const useStations = () => {
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
+
 
   return {
     anchorEl,

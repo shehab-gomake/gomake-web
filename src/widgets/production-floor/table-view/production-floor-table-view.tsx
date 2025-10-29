@@ -37,6 +37,8 @@ import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-moda
 import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { isPrintNodeModalOpenState, jobsToPrintState } from "../views/board-missions-view/stations/state";
+import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
 
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
@@ -75,6 +77,8 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     setInputValue,
   } = useStorageList();
   const { employeesCategories } = useEmployeeList();
+  const [isPrintNodeModalOpen, setIsPrintNodeModalOpen] = useRecoilState(isPrintNodeModalOpenState);
+  const jobsToPrint = useRecoilValue(jobsToPrintState);
 
   useEffect(() => {
     if (initialPageSize && initialPageSize !== pageSize) {
@@ -100,6 +104,19 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
       };
     });
   }, [data, selectedChipId]);
+
+
+  const printJobUsingPrintNode = async (jobId: string, productType?: string) => {
+    const callBack = (res) => {
+      if (res.success) {
+      }
+    };
+    let data = jobId;
+    if (productType) {
+      //data = data + "?productType=" + productType;
+    }
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
+  };
 
   // Optimized search matching function
   const matchSearch = useCallback(
@@ -540,6 +557,23 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         onClickDelete={() => {
           handleGroupJobs(selectedIds);
         }}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.printOrderJobsModalTitle")}
+        subTitle={" "}
+        yesBtn={t("sales.quote.print")}
+        openModal={isPrintNodeModalOpen}
+        onClose={() => { setIsPrintNodeModalOpen(false) }}
+        style={{
+          zIndex: 999999999999999,
+        }}
+        onClickDelete={() => {
+          setIsPrintNodeModalOpen(false);
+          printJobUsingPrintNode(jobsToPrint?.boardMissionId as string, jobsToPrint?.productType as string).then();
+        }}
+
+        cancelBtn={t("modal.cancel")}
       />
     </Stack>
     // </ZoomWrapper>
