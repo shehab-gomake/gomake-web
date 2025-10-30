@@ -24,4 +24,5 @@ export enum BoardMissionStatusForFilter {
   APPROVAL_REQUIRED,
   DONE,
   NotReady,
+  NoStations
 }

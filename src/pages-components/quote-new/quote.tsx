@@ -1038,6 +1038,7 @@ const QuoteNewPageWidget = ({
         whatsappMassage={whatsappMassage}
         documentType={documentType}
       />
+
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
