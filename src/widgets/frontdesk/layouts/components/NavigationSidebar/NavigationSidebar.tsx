@@ -1,27 +1,39 @@
-import React, { useState } from 'react';
-import { Box, IconButton, Tooltip, Badge, Divider, Typography, Collapse, List, ListItemButton, ListItemText } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import EmailIcon from '@mui/icons-material/Email';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ChatIcon from '@mui/icons-material/Chat';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import InboxIcon from '@mui/icons-material/Inbox';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import CommentIcon from '@mui/icons-material/Comment';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import NotInterestedIcon from '@mui/icons-material/NotInterested';
-import ForumIcon from '@mui/icons-material/Forum';
+import React, { useState } from "react";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  Badge,
+  Divider,
+  Typography,
+  Collapse,
+  List,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import EmailIcon from "@mui/icons-material/Email";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import ChatIcon from "@mui/icons-material/Chat";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import InboxIcon from "@mui/icons-material/Inbox";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import CommentIcon from "@mui/icons-material/Comment";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import ForumIcon from "@mui/icons-material/Forum";
+import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
 
 /**
  * Legacy type exports for backward compatibility
@@ -29,9 +41,9 @@ import ForumIcon from '@mui/icons-material/Forum';
  *
  * For new code, use the types from @/widgets/frontdesk/routing instead.
  */
-export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
-export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketView = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done' | 'archived';
+export type Channel = "all" | "email" | "whatsapp" | "internal" | "chatwoot";
+export type Section = "inbox" | "assigned" | "admin" | "settings";
+export type TicketView = "my-tickets" | "unassigned" | "all-tickets" | "done" | "archived";
 
 interface NavigationSidebarProps {
   selectedChannel: Channel;
@@ -47,11 +59,11 @@ interface NavigationSidebarProps {
     internal?: number;
   };
   ticketCounts?: {
-    'my-tickets'?: number;
-    'unassigned'?: number;
-    'all-tickets'?: number;
-    'done'?: number;
-    'archived'?: number;
+    "my-tickets"?: number;
+    unassigned?: number;
+    "all-tickets"?: number;
+    done?: number;
+    archived?: number;
   };
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -67,58 +79,49 @@ interface NavItemProps {
   color?: string;
 }
 
-const NavItem: React.FC<NavItemProps> = ({
-  icon,
-  label,
-  isSelected,
-  onClick,
-  badge = 0,
-  color
-}) => {
+const NavItem: React.FC<NavItemProps> = ({ icon, label, isSelected, onClick, badge = 0, color }) => {
   const theme = useTheme();
-  
+
   return (
     <Tooltip title={label} placement="right">
       <IconButton
         onClick={onClick}
         sx={{
-          width: '100%',
+          width: "100%",
           height: 56,
           borderRadius: 0,
-          position: 'relative',
-          color: isSelected ? (color || theme.palette.primary.main) : theme.palette.text.secondary,
-          backgroundColor: isSelected ? `${theme.palette.primary.main}10` : 'transparent',
-          '&:hover': {
-            backgroundColor: isSelected 
-              ? `${theme.palette.primary.main}20` 
-              : theme.palette.action.hover
+          position: "relative",
+          color: isSelected ? color || theme.palette.primary.main : theme.palette.text.secondary,
+          backgroundColor: isSelected ? `${theme.palette.primary.main}10` : "transparent",
+          "&:hover": {
+            backgroundColor: isSelected ? `${theme.palette.primary.main}20` : theme.palette.action.hover,
           },
-          '&::before': {
+          "&::before": {
             content: '""',
-            position: 'absolute',
+            position: "absolute",
             left: 0,
-            top: '50%',
-            transform: 'translateY(-50%)',
+            top: "50%",
+            transform: "translateY(-50%)",
             width: 3,
             height: 24,
             backgroundColor: theme.palette.primary.main,
             opacity: isSelected ? 1 : 0,
-            transition: 'opacity 0.2s ease'
-          }
+            transition: "opacity 0.2s ease",
+          },
         }}
       >
         <Badge
           badgeContent={badge}
           color="error"
           sx={{
-            '& .MuiBadge-badge': {
+            "& .MuiBadge-badge": {
               right: -3,
               top: 3,
-              fontSize: '0.625rem',
+              fontSize: "0.625rem",
               height: 16,
               minWidth: 16,
-              padding: '0 4px'
-            }
+              padding: "0 4px",
+            },
           }}
         >
           {icon}
@@ -139,7 +142,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   ticketCounts = {},
   isCollapsed = false,
   onToggleCollapse,
-  className
+  className,
 }) => {
   const theme = useTheme();
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
@@ -148,34 +151,32 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
 
   const channelItems = [
-    { id: 'email' as Channel, icon: <EmailIcon />, label: 'Email' },
-    { id: 'whatsapp' as Channel, icon: <WhatsAppIcon />, label: 'WhatsApp' },
-    { id: 'internal' as Channel, icon: <ChatIcon />, label: 'Direct Messages' }
+    { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
+    { id: "whatsapp" as Channel, icon: <WhatsAppIcon />, label: "WhatsApp" },
+    { id: "internal" as Channel, icon: <ChatIcon />, label: "Direct Messages" },
   ];
 
   const ticketViewItems = [
-    { id: 'my-tickets' as TicketView, icon: <InboxIcon fontSize="small" />, label: 'My Tickets' },
-    { id: 'unassigned' as TicketView, icon: <PersonOutlineIcon fontSize="small" />, label: 'Unassigned' },
-    { id: 'all-tickets' as TicketView, icon: <ViewListIcon fontSize="small" />, label: 'All Tickets' },
-    { id: 'done' as TicketView, icon: <AssignmentIcon fontSize="small" />, label: 'Done' },
-    { id: 'archived' as TicketView, icon: <ArchiveIcon fontSize="small" />, label: 'Archived' }
+    { id: "my-tickets" as TicketView, icon: <InboxIcon fontSize="small" />, label: "My Tickets" },
+    { id: "unassigned" as TicketView, icon: <PersonOutlineIcon fontSize="small" />, label: "Unassigned" },
+    { id: "all-tickets" as TicketView, icon: <ViewListIcon fontSize="small" />, label: "All Tickets" },
+    { id: "done" as TicketView, icon: <AssignmentIcon fontSize="small" />, label: "Done" },
+    { id: "archived" as TicketView, icon: <ArchiveIcon fontSize="small" />, label: "Archived" },
   ];
 
-  const systemItems = [
-    { id: 'settings' as Section, icon: <SettingsIcon />, label: 'Settings' }
-  ];
+  const systemItems = [{ id: "settings" as Section, icon: <SettingsIcon />, label: "Settings" }];
 
   return (
     <Box
       className={className}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
         backgroundColor: theme.palette.background.paper,
         width: isCollapsed ? 64 : 220,
         minWidth: isCollapsed ? 64 : 220,
-        transition: 'width 0.3s ease-in-out'
+        transition: "width 0.3s ease-in-out",
       }}
     >
       {/* Toggle Collapse Button - Top */}
@@ -184,8 +185,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           sx={{
             p: 1,
             borderBottom: `1px solid ${theme.palette.divider}`,
-            display: 'flex',
-            justifyContent: 'flex-end'
+            display: "flex",
+            justifyContent: "flex-end",
           }}
         >
           <Tooltip title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"} placement="right">
@@ -194,10 +195,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               size="small"
               sx={{
                 color: theme.palette.text.secondary,
-                '&:hover': {
+                "&:hover": {
                   backgroundColor: theme.palette.action.hover,
-                  color: theme.palette.primary.main
-                }
+                  color: theme.palette.primary.main,
+                },
               }}
             >
               {isCollapsed ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />}
@@ -211,38 +212,41 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         <List disablePadding>
           <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
             <ListItemButton
-              selected={selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView}
+              selected={selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView}
               onClick={() => {
-                onSectionSelect('inbox');
-                onChannelSelect('all');
+                onSectionSelect("inbox");
+                onChannelSelect("all");
               }}
               sx={{
                 py: 1,
                 px: isCollapsed ? 1.5 : 2,
-                justifyContent: isCollapsed ? 'center' : 'flex-start',
-                '&.Mui-selected': {
-                  backgroundColor: theme.palette.primary.main + '10',
+                justifyContent: isCollapsed ? "center" : "flex-start",
+                "&.Mui-selected": {
+                  backgroundColor: theme.palette.primary.main + "10",
                   borderLeft: `3px solid ${theme.palette.primary.main}`,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.main + '20'
-                  }
-                }
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.main + "20",
+                  },
+                },
               }}
             >
               {isCollapsed ? (
-                <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                   <DashboardIcon />
                 </Box>
               ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                   <Box sx={{ color: theme.palette.text.secondary }}>
                     <DashboardIcon />
                   </Box>
                   <ListItemText
                     primary="Dashboard"
                     primaryTypographyProps={{
-                      variant: 'body2',
-                      sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === 'all' && !selectedTicketView ? 600 : 400 }
+                      variant: "body2",
+                      sx: {
+                        fontSize: "0.875rem",
+                        fontWeight: selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
+                      },
                     }}
                   />
                 </Box>
@@ -259,13 +263,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         {!isCollapsed && (
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               px: 2,
               py: 1,
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: theme.palette.action.hover }
+              cursor: "pointer",
+              "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
             onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
           >
@@ -274,9 +278,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               sx={{
                 color: theme.palette.text.secondary,
                 fontWeight: 600,
-                fontSize: '0.688rem',
-                textTransform: 'uppercase',
-                letterSpacing: 0.5
+                fontSize: "0.688rem",
+                textTransform: "uppercase",
+                letterSpacing: 0.5,
               }}
             >
               TICKET VIEWS
@@ -286,7 +290,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         )}
         <Collapse in={isCollapsed || ticketViewsExpanded}>
           <List disablePadding>
-            {ticketViewItems.map(item => (
+            {ticketViewItems.map((item) => (
               <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
                 <ListItemButton
                   selected={selectedTicketView === item.id}
@@ -294,14 +298,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   sx={{
                     py: 1,
                     px: isCollapsed ? 1.5 : 2,
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    '&.Mui-selected': {
-                      backgroundColor: theme.palette.primary.main + '10',
+                    justifyContent: isCollapsed ? "center" : "flex-start",
+                    "&.Mui-selected": {
+                      backgroundColor: theme.palette.primary.main + "10",
                       borderLeft: `3px solid ${theme.palette.primary.main}`,
-                      '&:hover': {
-                        backgroundColor: theme.palette.primary.main + '20'
-                      }
-                    }
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main + "20",
+                      },
+                    },
                   }}
                 >
                   {isCollapsed ? (
@@ -309,26 +313,26 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       badgeContent={ticketCounts[item.id] || 0}
                       color="default"
                       sx={{
-                        '& .MuiBadge-badge': {
-                          fontSize: '0.625rem',
+                        "& .MuiBadge-badge": {
+                          fontSize: "0.625rem",
                           height: 16,
                           minWidth: 16,
                           backgroundColor: theme.palette.grey[200],
-                          color: theme.palette.text.primary
-                        }
+                          color: theme.palette.text.primary,
+                        },
                       }}
                       invisible={!ticketCounts[item.id] || ticketCounts[item.id]! <= 0}
                     >
-                      <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>{item.icon}</Box>
+                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
                     </Badge>
                   ) : (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                       <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
                       <ListItemText
                         primary={item.label}
                         primaryTypographyProps={{
-                          variant: 'body2',
-                          sx: { fontSize: '0.875rem', fontWeight: selectedTicketView === item.id ? 600 : 400 }
+                          variant: "body2",
+                          sx: { fontSize: "0.875rem", fontWeight: selectedTicketView === item.id ? 600 : 400 },
                         }}
                       />
                       {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
@@ -336,13 +340,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           badgeContent={ticketCounts[item.id]}
                           color="default"
                           sx={{
-                            '& .MuiBadge-badge': {
-                              fontSize: '0.688rem',
+                            "& .MuiBadge-badge": {
+                              fontSize: "0.688rem",
                               height: 18,
                               minWidth: 18,
                               backgroundColor: theme.palette.grey[200],
-                              color: theme.palette.text.primary
-                            }
+                              color: theme.palette.text.primary,
+                            },
                           }}
                         />
                       )}
@@ -362,13 +366,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         {!isCollapsed && (
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               px: 2,
               py: 1,
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: theme.palette.action.hover }
+              cursor: "pointer",
+              "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
             onClick={() => setChatsExpanded(!chatsExpanded)}
           >
@@ -377,9 +381,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               sx={{
                 color: theme.palette.text.secondary,
                 fontWeight: 600,
-                fontSize: '0.688rem',
-                textTransform: 'uppercase',
-                letterSpacing: 0.5
+                fontSize: "0.688rem",
+                textTransform: "uppercase",
+                letterSpacing: 0.5,
               }}
             >
               LIVE CHATS
@@ -389,25 +393,25 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         )}
         <Collapse in={isCollapsed || chatsExpanded}>
           <List disablePadding>
-            {channelItems.map(item => (
+            {channelItems.map((item) => (
               <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
                 <ListItemButton
-                  selected={selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView}
+                  selected={selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView}
                   onClick={() => {
-                    onSectionSelect('inbox');
+                    onSectionSelect("inbox");
                     onChannelSelect(item.id);
                   }}
                   sx={{
                     py: 1,
                     px: isCollapsed ? 1.5 : 2,
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    '&.Mui-selected': {
-                      backgroundColor: theme.palette.primary.main + '10',
+                    justifyContent: isCollapsed ? "center" : "flex-start",
+                    "&.Mui-selected": {
+                      backgroundColor: theme.palette.primary.main + "10",
                       borderLeft: `3px solid ${theme.palette.primary.main}`,
-                      '&:hover': {
-                        backgroundColor: theme.palette.primary.main + '20'
-                      }
-                    }
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main + "20",
+                      },
+                    },
                   }}
                 >
                   {isCollapsed ? (
@@ -415,24 +419,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       badgeContent={channelBadges[item.id] || 0}
                       color="error"
                       sx={{
-                        '& .MuiBadge-badge': {
-                          fontSize: '0.625rem',
+                        "& .MuiBadge-badge": {
+                          fontSize: "0.625rem",
                           height: 16,
-                          minWidth: 16
-                        }
+                          minWidth: 16,
+                        },
                       }}
                       invisible={!channelBadges[item.id] || channelBadges[item.id]! <= 0}
                     >
-                      <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>{item.icon}</Box>
+                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
                     </Badge>
                   ) : (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                       <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
                       <ListItemText
                         primary={item.label}
                         primaryTypographyProps={{
-                          variant: 'body2',
-                          sx: { fontSize: '0.875rem', fontWeight: selectedSection === 'inbox' && selectedChannel === item.id && !selectedTicketView ? 600 : 400 }
+                          variant: "body2",
+                          sx: {
+                            fontSize: "0.875rem",
+                            fontWeight:
+                              selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView ? 600 : 400,
+                          },
                         }}
                       />
                       {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
@@ -440,11 +448,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           badgeContent={channelBadges[item.id]}
                           color="error"
                           sx={{
-                            '& .MuiBadge-badge': {
-                              fontSize: '0.688rem',
+                            "& .MuiBadge-badge": {
+                              fontSize: "0.688rem",
                               height: 18,
-                              minWidth: 18
-                            }
+                              minWidth: 18,
+                            },
                           }}
                         />
                       )}
@@ -464,13 +472,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         {!isCollapsed && (
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
               px: 2,
               py: 1,
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: theme.palette.action.hover }
+              cursor: "pointer",
+              "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
             onClick={() => setChatwootExpanded(!chatwootExpanded)}
           >
@@ -479,9 +487,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               sx={{
                 color: theme.palette.text.secondary,
                 fontWeight: 600,
-                fontSize: '0.688rem',
-                textTransform: 'uppercase',
-                letterSpacing: 0.5
+                fontSize: "0.688rem",
+                textTransform: "uppercase",
+                letterSpacing: 0.5,
               }}
             >
               CHATWOOT
@@ -490,42 +498,47 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           </Box>
         )}
         <Collapse in={isCollapsed || chatwootExpanded}>
-          <List disablePadding>
+          <List disablePadding sx={{ pointerEvents: "auto" }}>
             {/* My Inbox */}
             <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
-                selected={selectedChannel === 'chatwoot' && selectedSection === 'inbox'}
-                onClick={() => {
-                  onSectionSelect('inbox');
-                  onChannelSelect('chatwoot' as Channel);
+                selected={selectedChannel === "chatwoot" && selectedSection === "inbox"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSectionSelect("inbox");
+                  onChannelSelect("chatwoot" as Channel);
                 }}
                 sx={{
                   py: 1,
                   px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? 'center' : 'flex-start',
-                  '&.Mui-selected': {
-                    backgroundColor: theme.palette.primary.main + '10',
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
                     borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.main + '20'
-                    }
-                  }
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
                 }}
               >
                 {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                     <InboxIcon />
                   </Box>
                 ) : (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                     <Box sx={{ color: theme.palette.text.secondary }}>
                       <InboxIcon fontSize="small" />
                     </Box>
                     <ListItemText
                       primary="My Inbox"
                       primaryTypographyProps={{
-                        variant: 'body2',
-                        sx: { fontSize: '0.875rem', fontWeight: selectedChannel === 'chatwoot' && selectedSection === 'inbox' ? 600 : 400 }
+                        variant: "body2",
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: selectedChannel === "chatwoot" && selectedSection === "inbox" ? 600 : 400,
+                        },
                       }}
                     />
                   </Box>
@@ -541,53 +554,55 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   sx={{
                     py: 0.75,
                     px: 2,
-                    '&:hover': { backgroundColor: theme.palette.action.hover }
+                    "&:hover": { backgroundColor: theme.palette.action.hover },
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                     <Box sx={{ color: theme.palette.text.secondary }}>
                       <CommentIcon fontSize="small" />
                     </Box>
                     <ListItemText
                       primary="Conversations"
                       primaryTypographyProps={{
-                        variant: 'body2',
-                        sx: { fontSize: '0.875rem' }
+                        variant: "body2",
+                        sx: { fontSize: "0.875rem" },
                       }}
                     />
                     {chatwootConversationsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
                   </Box>
                 </ListItemButton>
                 <Collapse in={chatwootConversationsExpanded}>
-                  <List disablePadding>
+                  <List disablePadding sx={{ pointerEvents: "auto" }}>
                     {/* All Conversations */}
                     <Tooltip title="All Conversations" placement="right">
                       <ListItemButton
-                        selected={false}
-                        onClick={() => {
-                          onSectionSelect('inbox');
-                          onChannelSelect('chatwoot' as Channel);
+                        selected={selectedChannel === "chatwoot" && selectedSection === "inbox"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSectionSelect("inbox");
+                          onChannelSelect("chatwoot" as Channel);
                         }}
                         sx={{
                           py: 0.75,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
-                          justifyContent: isCollapsed ? 'center' : 'flex-start',
-                          '&:hover': {
-                            backgroundColor: theme.palette.action.hover
-                          }
+                          justifyContent: isCollapsed ? "center" : "flex-start",
+                          pointerEvents: "auto",
+                          "&:hover": {
+                            backgroundColor: theme.palette.action.hover,
+                          },
                         }}
                       >
                         {isCollapsed ? (
-                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                          <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                             <CommentIcon fontSize="small" />
                           </Box>
                         ) : (
                           <ListItemText
                             primary="All conversations"
                             primaryTypographyProps={{
-                              variant: 'body2',
-                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                              variant: "body2",
+                              sx: { fontSize: "0.813rem", color: theme.palette.text.secondary },
                             }}
                           />
                         )}
@@ -598,30 +613,32 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     <Tooltip title="Mentions" placement="right">
                       <ListItemButton
                         selected={false}
-                        onClick={() => {
-                          onSectionSelect('inbox');
-                          onChannelSelect('chatwoot' as Channel);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSectionSelect("inbox");
+                          onChannelSelect("chatwoot" as Channel);
                         }}
                         sx={{
                           py: 0.75,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
-                          justifyContent: isCollapsed ? 'center' : 'flex-start',
-                          '&:hover': {
-                            backgroundColor: theme.palette.action.hover
-                          }
+                          justifyContent: isCollapsed ? "center" : "flex-start",
+                          pointerEvents: "auto",
+                          "&:hover": {
+                            backgroundColor: theme.palette.action.hover,
+                          },
                         }}
                       >
                         {isCollapsed ? (
-                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                          <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                             <AlternateEmailIcon fontSize="small" />
                           </Box>
                         ) : (
                           <ListItemText
                             primary="Mentions"
                             primaryTypographyProps={{
-                              variant: 'body2',
-                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                              variant: "body2",
+                              sx: { fontSize: "0.813rem", color: theme.palette.text.secondary },
                             }}
                           />
                         )}
@@ -632,30 +649,32 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     <Tooltip title="Unattended" placement="right">
                       <ListItemButton
                         selected={false}
-                        onClick={() => {
-                          onSectionSelect('inbox');
-                          onChannelSelect('chatwoot' as Channel);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSectionSelect("inbox");
+                          onChannelSelect("chatwoot" as Channel);
                         }}
                         sx={{
                           py: 0.75,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
-                          justifyContent: isCollapsed ? 'center' : 'flex-start',
-                          '&:hover': {
-                            backgroundColor: theme.palette.action.hover
-                          }
+                          justifyContent: isCollapsed ? "center" : "flex-start",
+                          pointerEvents: "auto",
+                          "&:hover": {
+                            backgroundColor: theme.palette.action.hover,
+                          },
                         }}
                       >
                         {isCollapsed ? (
-                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                          <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                             <NotInterestedIcon fontSize="small" />
                           </Box>
                         ) : (
                           <ListItemText
                             primary="Unattended"
                             primaryTypographyProps={{
-                              variant: 'body2',
-                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                              variant: "body2",
+                              sx: { fontSize: "0.813rem", color: theme.palette.text.secondary },
                             }}
                           />
                         )}
@@ -670,33 +689,35 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             <Tooltip title="Channels" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={false}
-                onClick={() => {
-                  onSectionSelect('inbox');
-                  onChannelSelect('chatwoot' as Channel);
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSectionSelect("inbox");
+                  onChannelSelect("chatwoot" as Channel);
                 }}
                 sx={{
                   py: 1,
                   px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? 'center' : 'flex-start',
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.hover
-                  }
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
                 }}
               >
                 {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
                     <ForumIcon />
                   </Box>
                 ) : (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                     <Box sx={{ color: theme.palette.text.secondary }}>
                       <ForumIcon fontSize="small" />
                     </Box>
                     <ListItemText
                       primary="Channels"
                       primaryTypographyProps={{
-                        variant: 'body2',
-                        sx: { fontSize: '0.875rem', fontWeight: 400 }
+                        variant: "body2",
+                        sx: { fontSize: "0.875rem", fontWeight: 400 },
                       }}
                     />
                   </Box>
@@ -709,6 +730,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       <Divider sx={{ my: 1 }} />
 
+      {/* Chatwoot Profile Card */}
+      {selectedChannel === "chatwoot" && <ChatwootProfileCard isCollapsed={isCollapsed} />}
+
       {/* Spacer */}
       <Box sx={{ flex: 1 }} />
 
@@ -716,11 +740,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       <Box
         sx={{
           p: 1,
-          borderTop: `1px solid ${theme.palette.divider}`
+          borderTop: `1px solid ${theme.palette.divider}`,
         }}
       >
         <List disablePadding>
-          {systemItems.map(item => (
+          {systemItems.map((item) => (
             <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={selectedSection === item.id}
@@ -728,30 +752,26 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 sx={{
                   py: 1,
                   px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? 'center' : 'flex-start',
-                  '&.Mui-selected': {
-                    backgroundColor: theme.palette.primary.main + '10',
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
                     borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.main + '20'
-                    }
-                  }
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
                 }}
               >
                 {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
-                    {item.icon}
-                  </Box>
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
                 ) : (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
-                    <Box sx={{ color: theme.palette.text.secondary }}>
-                      {item.icon}
-                    </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
                     <ListItemText
                       primary={item.label}
                       primaryTypographyProps={{
-                        variant: 'body2',
-                        sx: { fontSize: '0.875rem', fontWeight: selectedSection === item.id ? 600 : 400 }
+                        variant: "body2",
+                        sx: { fontSize: "0.875rem", fontWeight: selectedSection === item.id ? 600 : 400 },
                       }}
                     />
                   </Box>

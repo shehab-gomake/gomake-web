@@ -13,6 +13,7 @@ import { ContentArea } from "./layouts/components/ContentArea";
 import { EmailProviderView } from "@/widgets/frontdesk/providers/email/email-provider-view";
 import { WhatsAppProviderView } from "@/widgets/frontdesk/providers/whatsapp/whatsapp-provider-view";
 import DirectMessagesProviderView from "@/widgets/frontdesk/providers/internal/direct-messages-provider-view";
+import { ChatwootProviderView } from "@/widgets/frontdesk/providers/chatwoot/chatwoot-provider-view";
 
 // Ticket components
 import { TicketListPanel } from "./providers/tickets/components/ticket-list-panel";
@@ -340,6 +341,14 @@ const FrontdeskWidget: React.FC = () => {
             </Typography>
           </Box>
         );
+      case "chatwoot":
+        return (
+          <Box sx={{ p: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Chatwoot conversations
+            </Typography>
+          </Box>
+        );
       default:
         return null;
     }
@@ -391,6 +400,8 @@ const FrontdeskWidget: React.FC = () => {
         return <WhatsAppProviderView />;
       case "internal":
         return <DirectMessagesProviderView />;
+      case "chatwoot":
+        return <ChatwootProviderView />;
       default:
         return null;
     }

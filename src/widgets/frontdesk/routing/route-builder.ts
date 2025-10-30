@@ -301,6 +301,7 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
         [FrontDeskChannel.EMAIL]: "Email",
         [FrontDeskChannel.WHATSAPP]: "WhatsApp",
         [FrontDeskChannel.INTERNAL]: "Direct Messages",
+        [FrontDeskChannel.CHATWOOT]: "Chatwoot",
       };
       return {
         title: channelNames[route.channel],

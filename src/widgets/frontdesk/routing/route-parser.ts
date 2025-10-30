@@ -124,6 +124,7 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
     email: FrontDeskChannel.EMAIL,
     whatsapp: FrontDeskChannel.WHATSAPP,
     internal: FrontDeskChannel.INTERNAL,
+    chatwoot: FrontDeskChannel.CHATWOOT,
   };
 
   const channel = channelMap[provider];
@@ -298,9 +299,12 @@ export const getSectionFromRoute = (route: FrontDeskRoute): "inbox" | "assigned"
 /**
  * Helper: Get current channel from route (for backward compatibility)
  */
-export const getChannelFromRoute = (route: FrontDeskRoute): "all" | "email" | "whatsapp" | "internal" => {
+export const getChannelFromRoute = (route: FrontDeskRoute): "all" | "email" | "whatsapp" | "internal" | "chatwoot" => {
   if (route.type === RouteType.CHANNEL) {
     return route.channel as any;
+  }
+  if (route.type === RouteType.CHATWOOT) {
+    return "chatwoot";
   }
   if (route.type === RouteType.INBOX) {
     return "all";

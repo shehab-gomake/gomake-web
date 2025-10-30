@@ -16,7 +16,7 @@ export class ChatwootProfileService extends BaseChatwootService {
 
   /**
    * Get User Profile
-   * GET /api/v1/profile
+   * GET /api/accounts/profile
    * 
    * Retrieves the current user's profile information from Chatwoot.
    * Returns complete user details including accounts, role, and custom attributes.
@@ -29,11 +29,9 @@ export class ChatwootProfileService extends BaseChatwootService {
    * const user = await profileService.getProfile();
    * console.log(user.name, user.email, user.accounts);
    * ```
-   * 
-   * @see ProfileApi.md - fetchProfile endpoint
    */
   async getProfile(): Promise<ChatwootUser> {
-    return await this.get<ChatwootUser>(this.globalUrl("profile"));
+    return await this.get<ChatwootUser>("/api/accounts/profile");
   }
 }
 

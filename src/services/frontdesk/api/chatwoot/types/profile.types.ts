@@ -25,8 +25,7 @@ export interface ChatwootUserAccount {
 
 /**
  * Chatwoot User Profile
- * GET /api/v1/profile
- * @see ProfileApi.md - fetchProfile endpoint
+ * GET /api/accounts/profile
  * @see User.md
  */
 export interface ChatwootUser {

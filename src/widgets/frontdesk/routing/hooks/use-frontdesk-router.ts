@@ -203,6 +203,7 @@ export const useFrontDeskRouter = () => {
         email: FrontDeskChannel.EMAIL,
         whatsapp: FrontDeskChannel.WHATSAPP,
         internal: FrontDeskChannel.INTERNAL,
+        chatwoot: FrontDeskChannel.CHATWOOT,
       };
       goToChannel(channelMap[channel]);
     },
