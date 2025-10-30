@@ -100,3 +100,33 @@ export const chatwootInboxesErrorAtom = atom<string | null>({
   default: null,
 });
 
+// Notifications
+export const chatwootNotificationsAtom = atom<any[]>({
+  key: "frontdesk.chatwoot.notifications",
+  default: [],
+});
+
+export const chatwootNotificationsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.notificationsLoading",
+  default: false,
+});
+
+export const chatwootNotificationsErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.notificationsError",
+  default: null,
+});
+
+export const chatwootNotificationsFiltersAtom = atom<{
+  includes?: string[];
+  snoozed?: boolean;
+  read?: boolean;
+  page?: number;
+  sort_order?: string;
+}>({
+  key: "frontdesk.chatwoot.notificationsFilters",
+  default: {
+    page: 1,
+    sort_order: "desc",
+  },
+});
+

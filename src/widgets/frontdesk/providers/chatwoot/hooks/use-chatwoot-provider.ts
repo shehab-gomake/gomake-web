@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useEffect, useState } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
 import {
   ConversationListParams,
   ConversationStatus,
+  ConversationAssigneeType,
   ConversationSortBy,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import {
@@ -12,21 +13,15 @@ import {
   chatwootSelectedAccountAtom,
   chatwootProfileAtom,
   chatwootProfileLoadingAtom,
+  chatwootSelectedInboxIdAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const useChatwootProvider = () => {
   const [selectedAccountId, setSelectedAccountId] = useRecoilState(chatwootSelectedAccountAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+  const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
   const profile = useRecoilValue(chatwootProfileAtom);
   const profileLoading = useRecoilValue(chatwootProfileLoadingAtom);
-
-  // Filter state
-  const [filters, setFilters] = useState<Partial<ConversationListParams>>({
-    sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
-  });
-
-  // Use conversations hook with filters
-  const conversations = useChatwootConversations(filters);
 
   // Get account from user profile
   const availableAccounts = useMemo(() => {
@@ -41,6 +36,31 @@ export const useChatwootProvider = () => {
     }
     return null;
   }, [selectedAccountId, availableAccounts]);
+
+  // Build filters based on selected inbox
+  // When an inbox is selected, apply: status=open, assignee_type=me, sort_by=last_activity_at_desc
+  const filters = useMemo<Partial<ConversationListParams>>(() => {
+    const baseFilters: Partial<ConversationListParams> = {
+      sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
+    };
+
+    // If an inbox is selected, apply the required filters
+    if (selectedInboxId) {
+      return {
+        ...baseFilters,
+        inbox_id: selectedInboxId,
+        status: ConversationStatus.OPEN,
+        assignee_type: ConversationAssigneeType.ME,
+        page: 1,
+        sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
+      };
+    }
+
+    return baseFilters;
+  }, [selectedInboxId]);
+
+  // Use conversations hook with accountId and filters
+  const conversations = useChatwootConversations(currentAccountId, filters);
 
   useEffect(() => {
     if (!selectedAccountId && currentAccountId) {
@@ -68,8 +88,12 @@ export const useChatwootProvider = () => {
     [setSelectedAccountId, setSelectedConversation]
   );
 
+  // Note: Filters are now automatically computed based on selectedInboxId
+  // To change filters, update the selectedInboxId atom or modify this hook to support custom filters
   const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
+    // This is a no-op for now since filters are computed from selectedInboxId
+    // If custom filters are needed in the future, implement a filter override state
+    console.warn("handleFiltersChange: Filters are now computed from selectedInboxId. Use selectInbox instead.");
   }, []);
 
   return {

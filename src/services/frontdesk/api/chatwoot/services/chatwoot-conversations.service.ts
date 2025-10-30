@@ -68,26 +68,31 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * - team_id: Filter by specific team ID
    * - labels: Filter by conversation labels (can be array)
    *
+   * @param accountId - The numeric ID of the account (optional, not used in URL but kept for compatibility)
    * @param params - Query parameters (page, status, inbox_id, etc.)
    * @returns Promise with conversation list
    *
    * @example
    * ```typescript
-   * // Get open conversations assigned to me
-   * const conversations = await service.listConversations({
+   * // Get open conversations assigned to me for a specific inbox
+   * const conversations = await service.listConversations(accountId, {
    *   status: ConversationStatus.OPEN,
    *   assignee_type: ConversationAssigneeType.ME,
    *   sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
-   *   page: 1
+   *   page: 1,
+   *   inbox_id: 123
    * });
    *
    * // Get all conversations with labels
-   * const conversations = await service.listConversations({
+   * const conversations = await service.listConversations(accountId, {
    *   labels: ["urgent", "follow-up"]
    * });
    * ```
    */
-  async listConversations(params?: ConversationListParams): Promise<ConversationListResponse> {
+  async listConversations(
+    accountId: number | null,
+    params?: ConversationListParams
+  ): Promise<ConversationListResponse> {
     const queryParams = new URLSearchParams();
 
     if (params) {
@@ -146,7 +151,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
     }
 
     const queryString = queryParams.toString();
-    const url = `${this.API_BASE}/accounts/conversations${queryString ? `?${queryString}` : ""}`;
+    // Use /api/accounts/conversations (without /v1)
+    const url = `/api/accounts/conversations${queryString ? `?${queryString}` : ""}`;
     return await this.get<ConversationListResponse>(url);
   }
 
@@ -159,7 +165,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @returns Promise with conversation details
    */
   async getConversationDetails(accountId: number, conversationId: number): Promise<ConversationDetailResponse> {
-    return await this.get<ConversationDetailResponse>(this.globalUrl(`accounts/conversations/${conversationId}`));
+    // Use /api/accounts/conversations/{id} (without /v1)
+    return await this.get<ConversationDetailResponse>(`/api/accounts/conversations/${conversationId}`);
   }
 
   /**

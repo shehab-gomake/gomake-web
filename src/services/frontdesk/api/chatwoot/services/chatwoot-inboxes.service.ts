@@ -54,7 +54,8 @@ export class ChatwootInboxesService extends BaseChatwootService {
    * ```
    */
   async listAllInboxes(): Promise<InboxListResponse> {
-    return await this.get<InboxListResponse>(this.globalUrl("accounts/inboxes"));
+    // Use /api/accounts/inboxes (without /v1)
+    return await this.get<InboxListResponse>("/api/accounts/inboxes");
   }
 
   /**

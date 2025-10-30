@@ -22,6 +22,9 @@
  *
  * // Message operations
  * const messages = await chatwootService.messages.listMessages(accountId, conversationId);
+ *
+ * // Notification operations
+ * const notifications = await chatwootService.notifications.listNotifications({ page: 1, sort_order: 'desc' });
  * ```
  */
 
@@ -30,6 +33,7 @@ import { ChatwootConversationsService } from "./services/chatwoot-conversations.
 import { ChatwootInboxesService } from "./services/chatwoot-inboxes.service";
 import { ChatwootContactsService } from "./services/chatwoot-contacts.service";
 import { ChatwootMessagesService } from "./services/chatwoot-messages.service";
+import { ChatwootNotificationsService } from "./services/chatwoot-notifications.service";
 
 /**
  * ChatwootService
@@ -69,6 +73,12 @@ export class ChatwootService {
   public readonly messages: ChatwootMessagesService;
 
   /**
+   * Notifications service
+   * Handles all notification-related endpoints
+   */
+  public readonly notifications: ChatwootNotificationsService;
+
+  /**
    * Base URL for Chatwoot API (default: http://localhost:8080)
    */
   private readonly baseUrl: string;
@@ -82,6 +92,7 @@ export class ChatwootService {
     this.inboxes = new ChatwootInboxesService(this.baseUrl);
     this.contacts = new ChatwootContactsService(this.baseUrl);
     this.messages = new ChatwootMessagesService(this.baseUrl);
+    this.notifications = new ChatwootNotificationsService(this.baseUrl);
   }
 }
 

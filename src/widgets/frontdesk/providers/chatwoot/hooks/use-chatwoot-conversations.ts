@@ -14,7 +14,10 @@ import {
   chatwootConversationCountsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
-export const useChatwootConversations = (options: Partial<ConversationListParams> = {}) => {
+export const useChatwootConversations = (
+  accountId: number | null,
+  options: Partial<ConversationListParams> = {}
+) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loading, setLoading] = useRecoilState(chatwootConversationsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
@@ -24,6 +27,12 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
 
   const fetchConversations = useCallback(
     async (page: number = 1, append: boolean = false) => {
+      if (!accountId) {
+        setConversations([]);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -40,7 +49,7 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
           ...(options.labels && { labels: options.labels }),
         };
 
-        const response = await chatwootService.conversations.listConversations(listParams);
+        const response = await chatwootService.conversations.listConversations(accountId, listParams);
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
@@ -72,7 +81,7 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
         setLoading(false);
       }
     },
-    [options.limit, options.status, options.inbox_id, options.assignee_type, options.sort_by, options.q, options.team_id, options.labels, setConversations, setLoading, setError, setCounts]
+    [accountId, options.limit, options.status, options.inbox_id, options.assignee_type, options.sort_by, options.q, options.team_id, options.labels, setConversations, setLoading, setError, setCounts]
   );
 
   const loadMore = useCallback(() => {
@@ -86,9 +95,11 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
   }, [fetchConversations]);
 
   useEffect(() => {
-    fetchConversations(1, false);
+    if (accountId) {
+      fetchConversations(1, false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.status, options.assignee_type, options.sort_by, options.q, options.inbox_id, options.team_id, options.labels]);
+  }, [accountId, options.status, options.assignee_type, options.sort_by, options.q, options.inbox_id, options.team_id, options.labels]);
 
   return {
     conversations,

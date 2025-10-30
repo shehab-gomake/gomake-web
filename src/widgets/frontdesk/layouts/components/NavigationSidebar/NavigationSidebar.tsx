@@ -36,6 +36,9 @@ import ForumIcon from "@mui/icons-material/Forum";
 import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useRouter } from "next/router";
+import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useRecoilValue } from "recoil";
 
 /**
  * Legacy type exports for backward compatibility
@@ -147,6 +150,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   className,
 }) => {
   const theme = useTheme();
+  const router = useRouter();
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootExpanded, setChatwootExpanded] = useState(true);
@@ -513,6 +517,16 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   e.stopPropagation();
                   onSectionSelect("inbox");
                   onChannelSelect("chatwoot" as Channel);
+                  
+                  // Navigate to My Inbox notifications view
+                  router.push({
+                    pathname: router.pathname,
+                    query: {
+                      ...router.query,
+                      view: "notifications",
+                      provider: "chatwoot",
+                    },
+                  });
                 }}
                 sx={{
                   py: 1,
@@ -582,11 +596,21 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     {/* All Conversations */}
                     <Tooltip title="All Conversations" placement="right">
                       <ListItemButton
-                        selected={selectedChannel === "chatwoot" && selectedSection === "inbox"}
+                        selected={selectedChannel === "chatwoot" && selectedSection === "inbox" && router.query.view !== "notifications"}
                         onClick={(e) => {
                           e.stopPropagation();
                           onSectionSelect("inbox");
                           onChannelSelect("chatwoot" as Channel);
+                          
+                          // Navigate to conversations view (clear notifications view)
+                          router.push({
+                            pathname: router.pathname,
+                            query: {
+                              ...router.query,
+                              view: "conversations",
+                              provider: "chatwoot",
+                            },
+                          });
                         }}
                         sx={{
                           py: 0.75,

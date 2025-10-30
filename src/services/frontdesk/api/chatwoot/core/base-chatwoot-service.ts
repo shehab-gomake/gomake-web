@@ -10,7 +10,7 @@
 import { ChatwootHttpClient } from "../chatwoot-http-client";
 
 export abstract class BaseChatwootService extends ChatwootHttpClient {
-  protected readonly API_BASE = "/api";
+  protected readonly API_BASE = "/api/v1";
 
   constructor(baseUrl?: string) {
     super(baseUrl);
@@ -18,7 +18,7 @@ export abstract class BaseChatwootService extends ChatwootHttpClient {
 
   /**
    * Build account-scoped endpoint URL
-   * Chatwoot endpoints follow: /api/accounts/{account_id}/...
+   * Chatwoot endpoints follow: /api/v1/accounts/{account_id}/...
    * 
    * @param accountId - The numeric ID of the account
    * @param path - The endpoint path (e.g., "conversations", "contacts/{id}")
@@ -27,10 +27,10 @@ export abstract class BaseChatwootService extends ChatwootHttpClient {
    * @example
    * ```typescript
    * this.accountScopedUrl(123, "conversations") 
-   * // => "/api/accounts/123/conversations"
+   * // => "/api/v1/accounts/123/conversations"
    * 
    * this.accountScopedUrl(123, "conversations/456/messages")
-   * // => "/api/accounts/123/conversations/456/messages"
+   * // => "/api/v1/accounts/123/conversations/456/messages"
    * ```
    */
   protected accountScopedUrl(accountId: number, path: string): string {
@@ -48,7 +48,7 @@ export abstract class BaseChatwootService extends ChatwootHttpClient {
    * @example
    * ```typescript
    * this.globalUrl("accounts/profile")
-   * // => "/api/accounts/profile"
+   * // => "/api/v1/accounts/profile"
    * ```
    */
   protected globalUrl(path: string): string {
