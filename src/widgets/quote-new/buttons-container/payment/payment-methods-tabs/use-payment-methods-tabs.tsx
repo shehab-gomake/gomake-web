@@ -56,6 +56,7 @@ const usePaymentMethodsTabs = () => {
   // const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [quoteItemValue, setQuoteItemValue]: any =
     useRecoilState(quoteItemState);
+  const [dateErrors, setDateErrors] = useState<{ [key: number]: string }>({});
 
   const resetTotalBit = useResetRecoilState(totalBitState);
   const resetTotalTransfer = useResetRecoilState(totalTransferState);
@@ -133,9 +134,63 @@ const usePaymentMethodsTabs = () => {
       }
       return newData;
     });
+    // Clear date error for deleted row
+    setDateErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[index];
+      // Reindex remaining errors
+      const reindexedErrors = {};
+      Object.keys(newErrors).forEach((key) => {
+        const numKey = Number(key);
+        if (numKey > index) {
+          reindexedErrors[numKey - 1] = newErrors[numKey];
+        } else {
+          reindexedErrors[numKey] = newErrors[numKey];
+        }
+      });
+      return reindexedErrors;
+    });
+  };
+
+  const validateDate = (dateString: string): boolean => {
+    // Empty date is invalid
+    if (!dateString || dateString.trim() === "") return false;
+
+    // Parse the date string (format: YYYY-MM-DD)
+    const date = new Date(dateString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) return false;
+
+    // Check if the date string matches what we get back from the Date object
+    // This catches cases like 2025-02-31 which gets auto-corrected to 2025-03-03
+    const [year, month, day] = dateString.split("-").map(Number);
+    return (
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 && // JS months are 0-indexed
+      date.getDate() === day
+    );
   };
 
   const handleInputChange = (index, fieldName, value) => {
+    // Validate date if the field is dueDate
+    if (fieldName === "dueDate") {
+      // Validate date - empty dates and invalid dates will both fail
+      if (!validateDate(value)) {
+        setDateErrors((prev) => ({
+          ...prev,
+          [index]: t("payment.invalidDate") || "Invalid date",
+        }));
+      } else {
+        // Valid date - clear error
+        setDateErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[index];
+          return newErrors;
+        });
+      }
+    }
+
     setData((prevData) => {
       const newData = [...prevData];
       newData[index] = {
@@ -159,12 +214,68 @@ const usePaymentMethodsTabs = () => {
   ];
 
   const getTableRow = (row, index) => [
-    <input
-      style={{ width: "100px" }}
-      type="date"
-      value={row.dueDate}
-      onChange={(e) => handleInputChange(index, "dueDate", e.target.value)}
-    />,
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      <input
+        style={{
+          width: "100px",
+          border: dateErrors[index] ? "2px solid #f44336" : undefined,
+          borderRadius: dateErrors[index] ? "4px" : undefined,
+        }}
+        type="date"
+        value={row.dueDate}
+        onChange={(e) => {
+          // Check if browser detected invalid input (e.g., 31/11/2025)
+          if (e.target.validity.badInput) {
+            setDateErrors((prev) => ({
+              ...prev,
+              [index]: t("payment.invalidDate") || "Invalid date",
+            }));
+          }
+          handleInputChange(index, "dueDate", e.target.value);
+        }}
+        onInput={(e) => {
+          // onInput fires as user types, check validity
+          const target = e.target as HTMLInputElement;
+          if (target.validity.badInput) {
+            setDateErrors((prev) => ({
+              ...prev,
+              [index]: t("payment.invalidDate") || "Invalid date",
+            }));
+          }
+        }}
+        onBlur={(e) => {
+          // On blur, validate the current value (including empty dates)
+          const target = e.target as HTMLInputElement;
+
+          // Validate date - empty dates and invalid dates will both fail
+          if (!validateDate(target.value)) {
+            setDateErrors((prev) => ({
+              ...prev,
+              [index]: t("payment.invalidDate") || "Invalid date",
+            }));
+          } else {
+            // Valid date - clear any errors
+            setDateErrors((prev) => {
+              const newErrors = { ...prev };
+              delete newErrors[index];
+              return newErrors;
+            });
+          }
+        }}
+        title={dateErrors[index] || ""}
+      />
+      {dateErrors[index] && (
+        <span
+          style={{
+            color: "#f44336",
+            fontSize: "10px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {dateErrors[index]}
+        </span>
+      )}
+    </div>,
     <input
       style={{ width: "100px" }}
       type="number"
@@ -638,6 +749,27 @@ const usePaymentMethodsTabs = () => {
     await createAccountCodeApi(callApi, callBack, account);
   };
 
+  const hasDateErrors = () => {
+    return Object.keys(dateErrors).length > 0;
+  };
+
+  const validateAllDates = () => {
+    // Re-validate all dates from scratch (don't trust existing errors state)
+    const newErrors: { [key: number]: string } = {};
+    data.forEach((row, index) => {
+      // Validate all dates - empty and invalid dates will both fail validateDate
+      if (!validateDate(row.dueDate)) {
+        newErrors[index] = t("payment.invalidDate") || "Invalid date";
+      }
+    });
+
+    // Update state with new errors (or clear all errors if valid)
+    setDateErrors(newErrors);
+
+    // Return true if no errors found
+    return Object.keys(newErrors).length === 0;
+  };
+
   return {
     t,
     data,
@@ -683,6 +815,9 @@ const usePaymentMethodsTabs = () => {
     addNewAccountCode,
     alertExistTransactionModal,
     existingTransactionId,
+    dateErrors,
+    hasDateErrors,
+    validateAllDates,
   };
 };
 
