@@ -38,24 +38,26 @@ export const useChatwootProvider = () => {
   }, [selectedAccountId, availableAccounts]);
 
   // Build filters based on selected inbox
-  // When an inbox is selected, apply: status=open, assignee_type=me, sort_by=last_activity_at_desc
+  // When an inbox is selected, apply: status=open, assignee_type=me, sort_by=last_activity_at_desc, inbox_id
+  // When "All Conversations" (no inbox selected), apply: status=open, assignee_type=me, sort_by=last_activity_at_desc (no inbox_id)
   const filters = useMemo<Partial<ConversationListParams>>(() => {
     const baseFilters: Partial<ConversationListParams> = {
+      status: ConversationStatus.OPEN,
+      assignee_type: ConversationAssigneeType.ME,
       sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
+      page: 1,
     };
 
-    // If an inbox is selected, apply the required filters
+    // If an inbox is selected, add inbox_id filter to show only that inbox's conversations
     if (selectedInboxId) {
       return {
         ...baseFilters,
         inbox_id: selectedInboxId,
-        status: ConversationStatus.OPEN,
-        assignee_type: ConversationAssigneeType.ME,
-        page: 1,
-        sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
       };
     }
 
+    // For "All Conversations" - return base filters without inbox_id
+    // This will fetch conversations from all channels/inboxes
     return baseFilters;
   }, [selectedInboxId]);
 
@@ -68,6 +70,18 @@ export const useChatwootProvider = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccountId, currentAccountId]);
+
+  // Auto-select first conversation when inbox is selected and conversations are loaded
+  useEffect(() => {
+    if (selectedInboxId && conversations.conversations.length > 0 && !selectedConversation) {
+      // Auto-select the first conversation from the filtered list
+      const firstConversation = conversations.conversations[0];
+      if (firstConversation) {
+        setSelectedConversation(firstConversation);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedInboxId, conversations.conversations, selectedConversation]);
 
   const handleConversationSelect = useCallback(
     (conversation: any) => {

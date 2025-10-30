@@ -599,18 +599,24 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         selected={selectedChannel === "chatwoot" && selectedSection === "inbox" && router.query.view !== "notifications"}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onSectionSelect("inbox");
-                          onChannelSelect("chatwoot" as Channel);
+                          e.preventDefault();
                           
-                          // Navigate to conversations view (clear notifications view)
-                          router.push({
-                            pathname: router.pathname,
-                            query: {
-                              ...router.query,
-                              view: "conversations",
-                              provider: "chatwoot",
+                          // Clear selected inbox immediately to show ALL conversations
+                          selectInbox(null);
+                          
+                          // Navigate directly to chatwoot channel with conversations view
+                          // Do NOT call onSectionSelect or onChannelSelect as they trigger navigation
+                          // that conflicts with router.replace. Let router.replace handle everything.
+                          router.replace(
+                            {
+                              pathname: '/frontdesk/inbox/chatwoot',
+                              query: {
+                                view: "conversations",
+                              },
                             },
-                          });
+                            '/frontdesk/inbox/chatwoot?view=conversations',
+                            { shallow: true }
+                          );
                         }}
                         sx={{
                           py: 0.75,
@@ -782,9 +788,20 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                             selected={selectedInboxId === inbox.id && selectedChannel === "chatwoot"}
                             onClick={(e) => {
                               e.stopPropagation();
+                              
+                              // Update state first - this will trigger conversations view automatically
+                              // ChatwootProviderView checks selectedInboxId to determine if conversations should be shown
                               selectInbox(inbox.id);
-                              onSectionSelect("inbox");
-                              onChannelSelect("chatwoot" as Channel);
+                              
+                              // Only navigate if we're not already on the chatwoot channel
+                              // This prevents unnecessary page refreshes
+                              if (selectedChannel !== "chatwoot") {
+                                onSectionSelect("inbox");
+                                onChannelSelect("chatwoot" as Channel);
+                              } else if (selectedSection !== "inbox") {
+                                // If channel is already selected but section is wrong, just update section
+                                onSectionSelect("inbox");
+                              }
                             }}
                             sx={{
                               py: 0.75,

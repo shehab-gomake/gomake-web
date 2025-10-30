@@ -27,12 +27,10 @@ export const useChatwootConversations = (
 
   const fetchConversations = useCallback(
     async (page: number = 1, append: boolean = false) => {
-      if (!accountId) {
-        setConversations([]);
-        setLoading(false);
-        return;
-      }
-
+      // Note: accountId can be null - the API endpoint /api/accounts/conversations 
+      // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
+      // So we allow the call even if accountId is null
+      
       setLoading(true);
       setError(null);
 
@@ -49,6 +47,7 @@ export const useChatwootConversations = (
           ...(options.labels && { labels: options.labels }),
         };
 
+        // Pass accountId (can be null) - the service will handle it
         const response = await chatwootService.conversations.listConversations(accountId, listParams);
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
@@ -95,9 +94,9 @@ export const useChatwootConversations = (
   }, [fetchConversations]);
 
   useEffect(() => {
-    if (accountId) {
-      fetchConversations(1, false);
-    }
+    // Fetch conversations even if accountId is null
+    // The API endpoint uses authenticated user's account automatically
+    fetchConversations(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountId, options.status, options.assignee_type, options.sort_by, options.q, options.inbox_id, options.team_id, options.labels]);
 

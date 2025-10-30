@@ -10,6 +10,7 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import {
   chatwootProfileAtom,
   chatwootProfileLoadingAtom,
+  chatwootSelectedInboxIdAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useRouter } from "next/router";
 
@@ -19,9 +20,13 @@ export const ChatwootProviderView: React.FC = () => {
   const setProfileLoading = useSetRecoilState(chatwootProfileLoadingAtom);
   
   // Determine if we're showing notifications (My Inbox) or conversations
-  // Show notifications by default when in inbox section with chatwoot provider
-  // Only show conversations when explicitly set to "conversations" view
-  const isConversationsView = router.query.view === "conversations";
+  // Show conversations when:
+  // 1. view query param is explicitly set to "conversations"
+  // 2. An inbox is selected (channels/inboxes) - this indicates we want to see conversations
+  const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
+  // Check router.query.view first - this is the most reliable indicator
+  // selectedInboxId is secondary (when clicking a specific channel)
+  const isConversationsView = router.query.view === "conversations" || selectedInboxId !== null;
   const isNotificationsView = !isConversationsView; // Default to notifications unless explicitly conversations
 
   const {
