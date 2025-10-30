@@ -10,7 +10,7 @@
 import { ChatwootHttpClient } from "../chatwoot-http-client";
 
 export abstract class BaseChatwootService extends ChatwootHttpClient {
-  protected readonly API_V1_BASE = "/api/v1";
+  protected readonly API_BASE = "/api";
 
   constructor(baseUrl?: string) {
     super(baseUrl);
@@ -18,7 +18,7 @@ export abstract class BaseChatwootService extends ChatwootHttpClient {
 
   /**
    * Build account-scoped endpoint URL
-   * Most Chatwoot endpoints follow: /api/v1/accounts/{account_id}/...
+   * Chatwoot endpoints follow: /api/accounts/{account_id}/...
    * 
    * @param accountId - The numeric ID of the account
    * @param path - The endpoint path (e.g., "conversations", "contacts/{id}")
@@ -27,33 +27,33 @@ export abstract class BaseChatwootService extends ChatwootHttpClient {
    * @example
    * ```typescript
    * this.accountScopedUrl(123, "conversations") 
-   * // => "/api/v1/accounts/123/conversations"
+   * // => "/api/accounts/123/conversations"
    * 
    * this.accountScopedUrl(123, "conversations/456/messages")
-   * // => "/api/v1/accounts/123/conversations/456/messages"
+   * // => "/api/accounts/123/conversations/456/messages"
    * ```
    */
   protected accountScopedUrl(accountId: number, path: string): string {
     const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
-    return `${this.API_V1_BASE}/accounts/${accountId}/${normalizedPath}`;
+    return `${this.API_BASE}/accounts/${accountId}/${normalizedPath}`;
   }
 
   /**
    * Build non-account-scoped endpoint URL
    * Some endpoints like profile don't require account_id
    * 
-   * @param path - The endpoint path (e.g., "profile")
+   * @param path - The endpoint path (e.g., "accounts/profile")
    * @returns Full endpoint URL
    * 
    * @example
    * ```typescript
-   * this.globalUrl("profile")
-   * // => "/api/v1/profile"
+   * this.globalUrl("accounts/profile")
+   * // => "/api/accounts/profile"
    * ```
    */
   protected globalUrl(path: string): string {
     const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
-    return `${this.API_V1_BASE}/${normalizedPath}`;
+    return `${this.API_BASE}/${normalizedPath}`;
   }
 }
 

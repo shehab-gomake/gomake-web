@@ -73,7 +73,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
               border: `2px solid ${neutralColor(200)}`,
             }}
           >
-            {displayName.charAt(0).toUpperCase()}
+            {String(displayName).charAt(0).toUpperCase()}
           </Avatar>
         </Box>
       ) : (
@@ -88,7 +88,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                 border: `2px solid ${neutralColor(200)}`,
               }}
             >
-              {displayName.charAt(0).toUpperCase()}
+              {String(displayName).charAt(0).toUpperCase()}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography

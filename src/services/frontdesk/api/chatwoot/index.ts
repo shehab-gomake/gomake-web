@@ -32,3 +32,14 @@ export * from "./chatwoot-http-client";
 // Core base classes
 export * from "./core";
 
+// Re-export commonly used enums and types for convenience
+export {
+  ConversationStatus,
+  ConversationAssigneeType,
+  ConversationSortBy,
+  type ConversationListParams,
+  type ChatwootConversation,
+  type ConversationListResponse,
+  type ConversationDetailResponse,
+} from "./types/conversations.types";
+

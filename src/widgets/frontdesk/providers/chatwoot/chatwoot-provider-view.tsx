@@ -23,6 +23,8 @@ export const ChatwootProviderView: React.FC = () => {
     hasMore,
     loadMore,
     refresh,
+    filters,
+    handleFiltersChange,
     selectedConversation,
     handleConversationSelect,
     handleBack,
@@ -70,6 +72,8 @@ export const ChatwootProviderView: React.FC = () => {
           hasMore={hasMore}
           onLoadMore={loadMore}
           onRefresh={refresh}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
         />
       </Panel>
 

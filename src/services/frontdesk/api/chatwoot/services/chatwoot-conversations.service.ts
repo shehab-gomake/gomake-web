@@ -8,10 +8,19 @@
  */
 
 import { BaseChatwootService } from "../core/base-chatwoot-service";
+import {
+  ConversationListParams,
+  ConversationListResponse,
+  ConversationDetailResponse,
+  ChatwootConversation,
+  ConversationStatus,
+  ConversationAssigneeType,
+  ConversationSortBy,
+} from "../types/conversations.types";
 
 /**
  * ConversationFilterRequest payload
- * Used for filtering conversations with custom filters
+ * Used for filtering conversations with custom filters (POST endpoint)
  */
 export interface ConversationFilterRequest {
   payload?: {
@@ -47,56 +56,115 @@ export class ChatwootConversationsService extends BaseChatwootService {
   }
   /**
    * List Conversations
-   * GET /api/v1/accounts/{account_id}/conversations
+   * GET /api/accounts/conversations
    *
-   * @param accountId - The numeric ID of the account
+   * Supported query parameters:
+   * - status: Filter by conversation status (all, open, resolved, pending, snoozed)
+   * - assignee_type: Filter by assignee (me, unassigned, all, assigned)
+   * - sort_by: Sort order (last_activity_at_desc, last_activity_at_asc, created_at_desc, created_at_asc)
+   * - page: Page number for pagination (default: 1)
+   * - q: Search query string
+   * - inbox_id: Filter by specific inbox ID
+   * - team_id: Filter by specific team ID
+   * - labels: Filter by conversation labels (can be array)
+   *
    * @param params - Query parameters (page, status, inbox_id, etc.)
    * @returns Promise with conversation list
+   *
+   * @example
+   * ```typescript
+   * // Get open conversations assigned to me
+   * const conversations = await service.listConversations({
+   *   status: ConversationStatus.OPEN,
+   *   assignee_type: ConversationAssigneeType.ME,
+   *   sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
+   *   page: 1
+   * });
+   *
+   * // Get all conversations with labels
+   * const conversations = await service.listConversations({
+   *   labels: ["urgent", "follow-up"]
+   * });
+   * ```
    */
-  async listConversations(
-    accountId: number,
-    params?: {
-      page?: number;
-      status?: string[];
-      inbox_id?: number[];
-      assignee_type?: string;
-      labels?: string[];
-      [key: string]: any;
-    }
-  ): Promise<any> {
+  async listConversations(params?: ConversationListParams): Promise<ConversationListResponse> {
     const queryParams = new URLSearchParams();
+
     if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, String(v)));
-          } else {
-            queryParams.append(key, String(value));
-          }
+      // Handle status - can be single value or array
+      if (params.status !== undefined) {
+        if (Array.isArray(params.status)) {
+          params.status.forEach((status) => queryParams.append("status", status));
+        } else {
+          queryParams.append("status", params.status);
         }
-      });
+      }
+
+      // Handle assignee_type (single value)
+      if (params.assignee_type !== undefined) {
+        queryParams.append("assignee_type", params.assignee_type);
+      }
+
+      // Handle sort_by
+      if (params.sort_by !== undefined) {
+        queryParams.append("sort_by", String(params.sort_by));
+      }
+
+      // Handle page
+      if (params.page !== undefined) {
+        queryParams.append("page", String(params.page));
+      }
+
+      // Handle search query
+      if (params.q !== undefined && params.q !== "") {
+        queryParams.append("q", params.q);
+      }
+
+      // Handle inbox_id (single value in query params)
+      if (params.inbox_id !== undefined) {
+        queryParams.append("inbox_id", String(params.inbox_id));
+      }
+
+      // Handle team_id
+      if (params.team_id !== undefined) {
+        queryParams.append("team_id", String(params.team_id));
+      }
+
+      // Handle labels - can be single string or array
+      if (params.labels !== undefined) {
+        if (Array.isArray(params.labels)) {
+          params.labels.forEach((label) => queryParams.append("labels", label));
+        } else {
+          queryParams.append("labels", params.labels);
+        }
+      }
+
+      // Handle limit
+      if (params.limit !== undefined) {
+        queryParams.append("limit", String(params.limit));
+      }
     }
 
     const queryString = queryParams.toString();
-    const url = this.accountScopedUrl(accountId, `conversations${queryString ? `?${queryString}` : ""}`);
-    return await this.get<any>(url);
+    const url = `${this.API_BASE}/accounts/conversations${queryString ? `?${queryString}` : ""}`;
+    return await this.get<ConversationListResponse>(url);
   }
 
   /**
    * Get Conversation Details
-   * GET /api/v1/accounts/{account_id}/conversations/{conversation_id}
+   * GET /api/accounts/{account_id}/conversations/{conversation_id}
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with conversation details
    */
-  async getConversationDetails(accountId: number, conversationId: number): Promise<any> {
-    return await this.get<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}`));
+  async getConversationDetails(accountId: number, conversationId: number): Promise<ConversationDetailResponse> {
+    return await this.get<ConversationDetailResponse>(this.accountScopedUrl(accountId, `conversations/${conversationId}`));
   }
 
   /**
    * Filter Conversations
-   * POST /api/v1/accounts/{account_id}/conversations/filter
+   * POST /api/accounts/{account_id}/conversations/filter
    *
    * @param accountId - The numeric ID of the account
    * @param filterRequest - Filter criteria and pagination
@@ -108,32 +176,35 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Create New Conversation
-   * POST /api/v1/accounts/{account_id}/conversations
+   * POST /api/accounts/{account_id}/conversations
    *
    * @param accountId - The numeric ID of the account
    * @param payload - Conversation creation payload
    * @returns Promise with created conversation
    */
-  async createConversation(accountId: number, payload: any): Promise<any> {
-    return await this.post<any>(this.accountScopedUrl(accountId, "conversations"), payload);
+  async createConversation(accountId: number, payload: any): Promise<ConversationDetailResponse> {
+    return await this.post<ConversationDetailResponse>(this.accountScopedUrl(accountId, "conversations"), payload);
   }
 
   /**
    * Update Conversation
-   * PATCH /api/v1/accounts/{account_id}/conversations/{conversation_id}
+   * PATCH /api/accounts/{account_id}/conversations/{conversation_id}
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
    * @param payload - Update payload
    * @returns Promise with updated conversation
    */
-  async updateConversation(accountId: number, conversationId: number, payload: any): Promise<any> {
-    return await this.patch<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}`), payload);
+  async updateConversation(accountId: number, conversationId: number, payload: any): Promise<ConversationDetailResponse> {
+    return await this.patch<ConversationDetailResponse>(
+      this.accountScopedUrl(accountId, `conversations/${conversationId}`),
+      payload
+    );
   }
 
   /**
    * Toggle Conversation Status
-   * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_status
+   * POST /api/accounts/{account_id}/conversations/{conversation_id}/toggle_status
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
@@ -145,7 +216,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Toggle Conversation Priority
-   * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_priority
+   * POST /api/accounts/{account_id}/conversations/{conversation_id}/toggle_priority
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
@@ -157,7 +228,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Add Labels to Conversation
-   * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/labels
+   * POST /api/accounts/{account_id}/conversations/{conversation_id}/labels
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
@@ -170,7 +241,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * List Conversation Labels
-   * GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/labels
+   * GET /api/accounts/{account_id}/conversations/{conversation_id}/labels
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
@@ -182,7 +253,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Update Conversation Custom Attributes
-   * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/custom_attributes
+   * POST /api/accounts/{account_id}/conversations/{conversation_id}/custom_attributes
    *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
@@ -202,7 +273,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Get Conversation Counts/Meta
-   * GET /api/v1/accounts/{account_id}/conversations/meta
+   * GET /api/accounts/{account_id}/conversations/meta
    *
    * @param accountId - The numeric ID of the account
    * @returns Promise with conversation metadata (counts, etc.)

@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Box, Paper, List, Alert } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ConversationListHeader } from "../../email/components/conversation/conversation-list-header";
 import { ConversationListEmpty } from "../../email/components/conversation/conversation-list-empty";
 import { ConversationListLoading } from "../../email/components/conversation/conversation-list-loading";
 import { ChatwootConversationListItem } from "./chatwoot-conversation-list-item";
+import { ChatwootConversationListHeader } from "./chatwoot-conversation-list-header";
+import { ChatwootConversationFilters } from "./chatwoot-conversation-filters";
 import { useInfiniteScroll } from "@/widgets/frontdesk/hooks/use-infinite-scroll";
 import { InfiniteScrollLoader } from "@/widgets/frontdesk/components/shared";
+import {
+  ConversationListParams,
+  ConversationStatus,
+  ConversationAssigneeType,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
 interface ChatwootConversationListProps {
   conversations: any[];
@@ -20,6 +26,8 @@ interface ChatwootConversationListProps {
   onSearch?: (query: string) => void;
   searchQuery?: string;
   searchDisabled?: boolean;
+  filters?: Partial<ConversationListParams>;
+  onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
 }
 
 export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = ({
@@ -34,8 +42,23 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   onSearch,
   searchQuery,
   searchDisabled = false,
+  filters = {},
+  onFiltersChange = () => {},
 }) => {
   const { neutralColor } = useGomakeTheme();
+
+  // Calculate counts
+  const counts = useMemo(() => {
+    const mine = conversations.filter((c) => c.meta?.assignee?.id).length;
+    const unassigned = conversations.filter((c) => !c.meta?.assignee?.id).length;
+    const all = conversations.length;
+    return { mine, unassigned, all };
+  }, [conversations]);
+
+  // Get current status from filters
+  const currentStatus = filters.status 
+    ? (Array.isArray(filters.status) ? filters.status[0] : filters.status)
+    : undefined;
 
   // Infinite scroll setup
   const sentinelRef = useInfiniteScroll({
@@ -58,15 +81,28 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         flexDirection: "column",
       }}
     >
-      <ConversationListHeader
-        selectedLabel={null}
-        onSearch={onSearch}
-        searchQuery={searchQuery}
-        searchDisabled={searchDisabled}
+      {/* Custom Header */}
+      <ChatwootConversationListHeader
+        status={currentStatus as ConversationStatus}
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        onFilterClick={() => setFilterMenuOpen(true)}
+        onSortClick={() => setSortMenuOpen(true)}
+        conversations={conversations}
+        mineCount={counts.mine}
+        unassignedCount={counts.unassigned}
+        allCount={counts.all}
       />
 
       {/* Content */}
-      <Box sx={{ flex: 1, overflow: "auto", px: 1 }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "auto",
+          backgroundColor: neutralColor(0), // Light background
+          px: 1,
+        }}
+      >
         {error ? (
           <Box sx={{ p: 2 }}>
             <Alert severity="error">{error}</Alert>
@@ -76,7 +112,12 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         ) : conversations.length === 0 ? (
           <ConversationListEmpty selectedLabel={null} />
         ) : (
-          <List sx={{ py: 1 }}>
+          <List
+            sx={{
+              py: 1,
+              backgroundColor: neutralColor(0), // Light background
+            }}
+          >
             {conversations.map((conversation) => (
               <ChatwootConversationListItem
                 key={conversation.id}

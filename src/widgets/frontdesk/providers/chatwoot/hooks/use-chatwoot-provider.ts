@@ -1,7 +1,12 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
+import {
+  ConversationListParams,
+  ConversationStatus,
+  ConversationSortBy,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -15,10 +20,13 @@ export const useChatwootProvider = () => {
   const profile = useRecoilValue(chatwootProfileAtom);
   const profileLoading = useRecoilValue(chatwootProfileLoadingAtom);
 
-  // Use conversations hook
-  const conversations = useChatwootConversations({
-    accountId: selectedAccountId,
+  // Filter state
+  const [filters, setFilters] = useState<Partial<ConversationListParams>>({
+    sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
   });
+
+  // Use conversations hook with filters
+  const conversations = useChatwootConversations(filters);
 
   // Get account from user profile
   const availableAccounts = useMemo(() => {
@@ -60,6 +68,10 @@ export const useChatwootProvider = () => {
     [setSelectedAccountId, setSelectedConversation]
   );
 
+  const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  }, []);
+
   return {
     // Account management
     accounts: availableAccounts,
@@ -77,6 +89,10 @@ export const useChatwootProvider = () => {
     hasMore: conversations.hasMore,
     loadMore: conversations.loadMore,
     refresh: conversations.refresh,
+
+    // Filters
+    filters,
+    handleFiltersChange,
 
     // Selected conversation
     selectedConversation,

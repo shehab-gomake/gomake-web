@@ -63,7 +63,9 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   onClick,
   status,
 }) => {
-  const participantName = Array.isArray(participants) ? participants[0] || '' : participants;
+  const participantName = Array.isArray(participants) 
+    ? String(participants[0] || '') 
+    : String(participants || '');
   const extraCount = Array.isArray(participants) && participants.length > 1 ? participants.length - 1 : 0;
 
   return (

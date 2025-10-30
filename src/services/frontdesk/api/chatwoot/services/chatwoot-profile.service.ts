@@ -1,8 +1,8 @@
 /**
  * Chatwoot Profile Service
- * 
+ *
  * Handles user profile endpoints that don't require account_id
- * 
+ *
  * @see ProfileApi.md
  */
 
@@ -17,12 +17,12 @@ export class ChatwootProfileService extends BaseChatwootService {
   /**
    * Get User Profile
    * GET /api/accounts/profile
-   * 
+   *
    * Retrieves the current user's profile information from Chatwoot.
    * Returns complete user details including accounts, role, and custom attributes.
-   * 
+   *
    * @returns Promise<ChatwootUser> - User profile data
-   * 
+   *
    * @example
    * ```typescript
    * const profileService = new ChatwootProfileService();
@@ -34,4 +34,3 @@ export class ChatwootProfileService extends BaseChatwootService {
     return await this.get<ChatwootUser>("/api/accounts/profile");
   }
 }
-

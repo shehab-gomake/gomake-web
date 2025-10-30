@@ -2,48 +2,44 @@ import { useState, useEffect, useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
+  ConversationListParams,
+  ConversationStatus,
+  ConversationAssigneeType,
+  ConversationSortBy,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
   chatwootConversationsAtom,
   chatwootConversationsLoadingAtom,
   chatwootConversationsErrorAtom,
   chatwootSelectedConversationAtom,
-  chatwootSelectedAccountAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
-interface UseChatwootConversationsOptions {
-  accountId?: number;
-  status?: string[];
-  inboxId?: number[];
-  page?: number;
-  limit?: number;
-}
-
-export const useChatwootConversations = (options: UseChatwootConversationsOptions = {}) => {
+export const useChatwootConversations = (options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loading, setLoading] = useRecoilState(chatwootConversationsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
-  const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const accountId = options.accountId || selectedAccountId;
-
   const fetchConversations = useCallback(
     async (page: number = 1, append: boolean = false) => {
-      if (!accountId) {
-        setError("No account selected");
-        return;
-      }
-
       setLoading(true);
       setError(null);
 
       try {
-        const response = await chatwootService.conversations.listConversations(accountId, {
+        const listParams: ConversationListParams = {
           page,
           limit: options.limit || 20,
-          status: options.status,
-          inbox_id: options.inboxId,
-        });
+          ...(options.status && { status: options.status }),
+          ...(options.inbox_id && { inbox_id: options.inbox_id }),
+          ...(options.assignee_type && { assignee_type: options.assignee_type }),
+          ...(options.sort_by && { sort_by: options.sort_by }),
+          ...(options.q && { q: options.q }),
+          ...(options.team_id && { team_id: options.team_id }),
+          ...(options.labels && { labels: options.labels }),
+        };
+
+        const response = await chatwootService.conversations.listConversations(listParams);
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
@@ -68,7 +64,7 @@ export const useChatwootConversations = (options: UseChatwootConversationsOption
         setLoading(false);
       }
     },
-    [accountId, options.limit, options.status, options.inboxId, setConversations, setLoading, setError]
+    [options.limit, options.status, options.inbox_id, options.assignee_type, options.sort_by, options.q, options.team_id, options.labels, setConversations, setLoading, setError]
   );
 
   const loadMore = useCallback(() => {
@@ -82,13 +78,9 @@ export const useChatwootConversations = (options: UseChatwootConversationsOption
   }, [fetchConversations]);
 
   useEffect(() => {
-    if (accountId) {
-      fetchConversations(1, false);
-    } else {
-      setConversations([]);
-    }
+    fetchConversations(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountId]);
+  }, [options.status, options.assignee_type, options.sort_by, options.q, options.inbox_id, options.team_id, options.labels]);
 
   return {
     conversations,

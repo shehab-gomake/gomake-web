@@ -23,20 +23,15 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   const sender = conversation.meta?.sender;
   const lastMessage = conversation.last_non_activity_message || conversation.messages?.[0];
   
-  const title = sender?.name || sender?.email || "Unknown";
+  const title = String(sender?.name || sender?.email || "Unknown");
   const snippet = lastMessage?.content 
     ? (typeof lastMessage.content === 'string' ? lastMessage.content : JSON.stringify(lastMessage.content))
     : "";
 
   // Extract participants - Chatwoot has contact info in meta
+  // ConversationListItem expects participants to be string[], not objects
   const participants = sender
-    ? [
-        {
-          name: sender.name || sender.email || "Unknown",
-          email: sender.email || "",
-          avatar: sender.avatar_url,
-        },
-      ]
+    ? [String(sender.name || sender.email || "Unknown")]
     : [];
 
   // Format timestamp - Chatwoot uses Unix timestamps (seconds)
@@ -55,7 +50,7 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
 
   return (
     <DSConversationListItem
-      id={conversation.id}
+      id={String(conversation.id)}
       title={title}
       participants={participants}
       snippet={snippet}
@@ -65,6 +60,7 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
       unreadCount={unreadCount}
       hasAttachments={false}
       isStarred={false}
+      avatarSrc={sender?.avatar_url}
       onClick={() => onSelect(conversation)}
     />
   );
