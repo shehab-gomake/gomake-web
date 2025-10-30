@@ -28,44 +28,40 @@ const ProductionDashboardFilters = () => {
     productionActivityDateState
   );
 
-  // Default date range: Last month to today
-  const defaultStartDate = startOfDay(subMonths(new Date(), 1));
+  // Default date range for Activity Date only: Today
+  const defaultStartDate = startOfDay(new Date());
   const defaultEndDate = endOfDay(new Date());
 
   // Local state for dates
   const [deliveryFromDate, setDeliveryFromDate] = useState<Date | null>(null);
   const [deliveryToDate, setDeliveryToDate] = useState<Date | null>(null);
-  const [creationFromDate, setCreationFromDate] = useState<Date | null>(
-    defaultStartDate
-  );
-  const [creationToDate, setCreationToDate] = useState<Date | null>(
-    defaultEndDate
-  );
-  const [fromInDate, setFromInDate] = useState<Date | null>(null);
-  const [toInDate, setToInDate] = useState<Date | null>(null);
+  const [creationFromDate, setCreationFromDate] = useState<Date | null>(null);
+  const [creationToDate, setCreationToDate] = useState<Date | null>(null);
+  const [fromInDate, setFromInDate] = useState<Date | null>(defaultStartDate);
+  const [toInDate, setToInDate] = useState<Date | null>(defaultEndDate);
 
   // Initialize local state from Recoil on mount
   useEffect(() => {
-    // Set default creation date if not already set in Recoil
-    if (!creationDate.dates.startDate || !creationDate.dates.endDate) {
-      setCreationDate({
+    // Set default activity date if not already set in Recoil
+    if (!activityDate.dates.startDate || !activityDate.dates.endDate) {
+      setActivityDate({
         dates: {
           startDate: defaultStartDate,
           endDate: defaultEndDate,
         },
       });
     } else {
-      setCreationFromDate(creationDate.dates.startDate);
-      setCreationToDate(creationDate.dates.endDate);
+      setFromInDate(activityDate.dates.startDate);
+      setToInDate(activityDate.dates.endDate);
     }
 
     if (deliveryDate.dates.startDate && deliveryDate.dates.endDate) {
       setDeliveryFromDate(deliveryDate.dates.startDate);
       setDeliveryToDate(deliveryDate.dates.endDate);
     }
-    if (activityDate.dates.startDate && activityDate.dates.endDate) {
-      setFromInDate(activityDate.dates.startDate);
-      setToInDate(activityDate.dates.endDate);
+    if (creationDate.dates.startDate && creationDate.dates.endDate) {
+      setCreationFromDate(creationDate.dates.startDate);
+      setCreationToDate(creationDate.dates.endDate);
     }
   }, []);
 
