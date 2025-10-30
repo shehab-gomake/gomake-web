@@ -30,7 +30,7 @@ const FilterSectionComponent = ({
   const hasUrlFilters = () => {
     if (typeof window === "undefined") return false;
     const urlParams = new URLSearchParams(window.location.search);
-    const excludedParams = ["pageNumber", "pageSize", "page", "limit"];
+    const excludedParams = ["pageNumber", "pageSize", "page", "limit", "view"];
 
     // Convert to array and check if any non-excluded params exist
     const params = Array.from(urlParams.keys());

@@ -155,10 +155,6 @@ const useProductionFloorFilters = ({
       getDataByGroups(connectionId, filters).then();
       return;
     }
-    // if(selectedView === EProductionFloorView.DONE_JOBS) {
-    //   getAllBoardMissions().then();
-    //   return;
-    // }
     if (abortController) {
       abortController.abort();
     }

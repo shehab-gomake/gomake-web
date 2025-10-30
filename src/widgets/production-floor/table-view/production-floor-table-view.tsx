@@ -14,14 +14,15 @@ import {
   pagesCountState,
   pageSizeState,
   pageNumberState,
+  currentSortOrderState,
 } from "../state/filter-group";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { EProductionFloorView } from "../state/production-floor-view";
-import { PrimaryTable } from "@/components/tables/primary-table";
+import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
 import { useRouter } from "next/router";
 import { useEmployeeList } from "@/hooks/use-employee-list";
 import { useVisibleOrderedColumns } from "@/hooks/use-visible-ordered-columns";
-
+import { JobsTableColumns } from "@/pages-components/quotes/enums/document-table-columns-enum";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { selectedBoardsMissionsState } from "../state/boards";
@@ -170,25 +171,44 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     getAllBoardMissionsFromSearch,
   ]);
 
-  // Memoized table headers
+  // Memoized table headers - using keys for DocumentPrimaryTable
   const tableHeader = useMemo(
-    () =>
-      [
-        t("boardMissions.image"),
-        t("boardMissions.creationDate"),
-        t("boardMissions.dueDate"),
-        t("boardMissions.clientName"),
-        t("boardMissions.missionNumber"),
-        t("mailingSettings.orderNumber"),
-        t("boardMissions.outSourceType"),
-        t("boardMissions.quantity"),
-        t("boardMissions.jobName"),
-        t("boardMissions.productName"),
-        t("boardMissions.currentBoardMissionStatus"),
-        t("properties.more"),
-      ].filter(Boolean),
-    [t]
+    () => [
+      "image",
+      "creationDate",
+      "dueDate",
+      "readyDate",
+      "clientName",
+      "missionNumber",
+      "orderNumber",
+      "outSourceType",
+      "quantity",
+      "jobName",
+      "productName",
+      "currentBoardMissionStatus",
+      "more",
+    ],
+    []
   );
+
+  // Transform array-based rows to object-based rows for DocumentPrimaryTable
+  const transformedRows = useMemo(() => {
+    return allBoardMissions.map((row) => ({
+      image: row[0],
+      creationDate: row[1],
+      dueDate: row[2],
+      readyDate: row[3],
+      clientName: row[4],
+      missionNumber: row[5],
+      orderNumber: row[6],
+      outSourceType: row[7],
+      quantity: row[8],
+      jobName: row[9],
+      productName: row[10],
+      currentBoardMissionStatus: row[11],
+      more: row[12],
+    }));
+  }, [allBoardMissions]);
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
@@ -201,6 +221,58 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     selectedBoardsMissionsState
   );
 
+  // Backend sorting state - default to readyDate descending for Done Jobs
+  const [isDescOrderBE, setIsDescOrderBE] = useState(true);
+
+  // Default sort order: Ready Date descending (useMemo to prevent re-creation)
+  const defaultSortOrder = useMemo(
+    () => [
+      {
+        column: JobsTableColumns.ReadyDate,
+        dir: "desc",
+      },
+    ],
+    []
+  );
+
+  // Track current active sort order (starts with default, updates when user sorts manually)
+  // Using Recoil state so it persists across component renders and can be accessed by filters
+  const [currentSortOrder, setCurrentSortOrder] = useRecoilState(
+    currentSortOrderState
+  );
+
+  // Column mappings for backend sorting (Done Jobs)
+  const columnMappings: Record<string, number> = {
+    creationDate: JobsTableColumns.CreationDate,
+    dueDate: JobsTableColumns.DueDate,
+    readyDate: JobsTableColumns.ReadyDate,
+  };
+
+  const isHeaderSortable = (docType: string, header: string): boolean => {
+    return columnMappings.hasOwnProperty(header);
+  };
+
+  const handleSortBE = (key: string) => {
+    const direction = isDescOrderBE ? "desc" : "asc";
+    const columnIndex = columnMappings[key];
+
+    if (columnIndex !== undefined) {
+      const sortOrder = [
+        {
+          column: columnIndex,
+          dir: direction,
+        },
+      ];
+
+      // Update the current sort order so it persists across searches/filters
+      setCurrentSortOrder(sortOrder);
+      getAllData(pageNumber, pageSize, undefined, sortOrder);
+      setIsDescOrderBE(!isDescOrderBE);
+    } else {
+      console.error("Invalid key for sorting:", key);
+    }
+  };
+
   // Memoized pagination handlers
   const handlePageChange = useCallback(
     (event, value) => {
@@ -209,18 +281,20 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         pathname: router.pathname,
         query: { ...router.query, pageNumber: value },
       });
-      getAllData(value, pageSize);
+      // Maintain current sort order when changing pages (user's choice or default)
+      getAllData(value, pageSize, undefined, currentSortOrder);
     },
-    [setPageNumber, router, getAllData, pageSize]
+    [setPageNumber, router, getAllData, pageSize, currentSortOrder]
   );
 
   const handlePageSizeChange = useCallback(
     (event) => {
       setPageNumber(1);
       setPageSize(event.target.value);
-      getAllData(1, event.target.value);
+      // Maintain current sort order when changing page size (user's choice or default)
+      getAllData(1, event.target.value, undefined, currentSortOrder);
     },
-    [setPageNumber, setPageSize, getAllData]
+    [setPageNumber, setPageSize, getAllData, currentSortOrder]
   );
 
   // Memoized bulk action handlers
@@ -359,15 +433,16 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     if (view === EProductionFloorView.DONE_JOBS) {
       return (
         <>
-          <PrimaryTable
+          <DocumentPrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={"calc(100vh - 250px)"}
-            rows={allBoardMissions}
+            maxHeight={"calc(100vh - 400px)"}
+            rows={transformedRows}
             headers={tableHeader}
             columnWidths={[
               "7%",
               "5%",
+              "6%",
               "6%",
               "7%",
               "6%",
@@ -378,10 +453,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               "8%",
               "5%",
               "5%",
-              "7%",
-              "8%",
-              "4%",
             ]}
+            withSortBE={true}
+            onClickSortBE={handleSortBE}
+            isDescOrderBE={isDescOrderBE}
+            isHeaderSortable={isHeaderSortable}
           />
           <GoMakePagination
             onChangePageNumber={handlePageChange}
@@ -439,7 +515,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     );
   }, [
     view,
-    allBoardMissions,
+    transformedRows,
     tableHeader,
     handlePageChange,
     handlePageSizeChange,
@@ -460,6 +536,8 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     setInputValue,
     employeesCategories,
     visibleColumns,
+    handleSortBE,
+    isDescOrderBE,
   ]);
 
   return (
@@ -504,12 +582,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

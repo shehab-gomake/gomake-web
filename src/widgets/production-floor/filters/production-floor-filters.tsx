@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import {
   Box,
   Stack,
@@ -10,7 +10,6 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useStyle } from "./style";
@@ -21,6 +20,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   filterGroupsState,
   patternSearchState,
+  pageSizeState,
 } from "@/widgets/production-floor/state/filter-group";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -32,6 +32,7 @@ import { EProductionFloorView } from "../state/production-floor-view";
 import { useDebounce } from "@/utils/use-debounce";
 import { GroupDropdownComponent } from "./components/group-dropdown";
 import { SearchMissionList } from "./components/search-mission-list";
+import { DoneJobsFiltersSection } from "./done-jobs-filters-section";
 
 const ProductionFloorFilters = ({
   getStationFilterGroups,
@@ -41,8 +42,8 @@ const ProductionFloorFilters = ({
 }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
-  const { tagsList } = filtersInputs();
   const filterGroups = useRecoilValue<IFilterGroupsList[]>(filterGroupsState);
+  const pageSize = useRecoilValue(pageSizeState);
   const { CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const {
@@ -173,12 +174,35 @@ const ProductionFloorFilters = ({
   useEffect(() => {
     if (view === EProductionFloorView.DONE_JOBS) {
       if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
-        getAllData(1, 10, debouncedPatternSearch);
+        getAllData(1, pageSize, debouncedPatternSearch);
       } else {
-        getAllData(1, 10);
+        getAllData(1, pageSize);
       }
     }
-  }, [debouncedPatternSearch]);
+  }, [debouncedPatternSearch, pageSize]);
+
+  // If DONE_JOBS view, show the board missions-style filters
+  if (view === EProductionFloorView.DONE_JOBS) {
+    return (
+      <Suspense
+        fallback={
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            padding={4}
+          >
+            <CircularProgress />
+          </Box>
+        }
+      >
+        <DoneJobsFiltersSection
+          getAllData={getAllData}
+          onChangeMissionsSearch={onChangeMissionsSearch}
+        />
+      </Suspense>
+    );
+  }
 
   return (
     <Stack style={classes.headerFilterContainer}>
