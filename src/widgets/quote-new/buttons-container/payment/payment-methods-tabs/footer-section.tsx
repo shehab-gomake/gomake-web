@@ -7,6 +7,7 @@ import { ModalType } from "@/enums";
 import { useRecoilValue } from "recoil";
 import { totalAllocatedDocumentsState } from "../../states";
 import { fmt2, round2 } from "@/utils/helpers";
+import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 
 const FooterSection = ({ onCloseModal }: any) => {
   const { classes } = useStyle();
@@ -32,6 +33,8 @@ const FooterSection = ({ onCloseModal }: any) => {
     validateRequiredAccountCodes,
   } = usePaymentsTable();
 
+  const { validateAllDates, alertFault } = usePaymentMethodsTabs();
+
   const totalAllocatedDocuments = useRecoilValue<number>(
     totalAllocatedDocumentsState
   );
@@ -40,6 +43,13 @@ const FooterSection = ({ onCloseModal }: any) => {
 
   const handleClickCancelTransactionModal = () => {
     if (!validateRequiredAccountCodes()) return;
+    if (!validateAllDates()) {
+      alertFault(
+        t("payment.invalidDateError") ||
+          "Please fix invalid dates before saving"
+      );
+      return;
+    }
 
     handleSave(null, true);
     // reset credit card total and state
@@ -56,6 +66,13 @@ const FooterSection = ({ onCloseModal }: any) => {
 
   const handleSaveAndClose = (transactionData) => {
     if (!validateRequiredAccountCodes()) return;
+    if (!validateAllDates()) {
+      alertFault(
+        t("payment.invalidDateError") ||
+          "Please fix invalid dates before saving"
+      );
+      return;
+    }
 
     handleSave(transactionData);
     onCloseModal();
@@ -71,6 +88,13 @@ const FooterSection = ({ onCloseModal }: any) => {
       handleOpenTransactionModal();
     } else {
       if (!validateRequiredAccountCodes()) return;
+      if (!validateAllDates()) {
+        alertFault(
+          t("payment.invalidDateError") ||
+            "Please fix invalid dates before saving"
+        );
+        return;
+      }
 
       handleSave();
       onCloseModal();
