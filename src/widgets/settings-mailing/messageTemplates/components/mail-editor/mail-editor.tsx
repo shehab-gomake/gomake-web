@@ -13,7 +13,7 @@ import { mailInputs, mailInputs1, mailInputs2, mailInputs3 } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { Checkbox, Stack } from "@mui/material";
-import { QuillEditor } from "./quill-editor";
+import { AdvancedEmailEditor } from "./advanced-email-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState } from "@/store/languages";
 import {
@@ -140,11 +140,11 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-        <QuillEditor value={subject} setValue={setSubject} />
+        <AdvancedEmailEditor value={subject} setValue={setSubject} />
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
-        <QuillEditor value={body} setValue={setBody} />
+        <AdvancedEmailEditor value={body} setValue={setBody} />
       </div>
       <div style={classes.subSection}>
         {/* <h3 style={classes.subSectionHeader}>
@@ -211,7 +211,7 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
                     ]?.toLowerCase()}Body`
                   )}
                 </h3>
-                <QuillEditor
+                <AdvancedEmailEditor
                   value={body.body || ""}
                   setValue={(content) =>
                     handleBodyContentChange(body.type, content)
@@ -225,7 +225,7 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
             <h3 style={classes.subSectionHeader}>
               {t(`mailingSettings.${BodyTypeEnum[type].toLowerCase()}Body`)}
             </h3>
-            <QuillEditor
+            <AdvancedEmailEditor
               value={bodyContents[type] || ""}
               setValue={(content) => handleBodyContentChange(type, content)}
             />
