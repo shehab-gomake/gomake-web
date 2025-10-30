@@ -1940,6 +1940,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     boardMissions: {
       creationDate: JobsTableColumns.CreationDate,
       dueDate: JobsTableColumns.DueDate,
+      readyDate: JobsTableColumns.ReadyDate,
     },
     purchaseJobs: {
       creationDate: JobsTableColumns.CreationDate,

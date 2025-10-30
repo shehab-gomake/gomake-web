@@ -23,8 +23,17 @@ import { useTranslation } from "react-i18next";
 
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import { exampleTypeState } from "@/store/example-type";
+import {
+  currentSortOrderState,
+  pageSizeState,
+  patternSearchState,
+} from "../state/filter-group";
 
 export const useDoneJobsFilters = () => {
+  const patternSearch = useRecoilValue(patternSearchState);
+  const pageSize = useRecoilValue(pageSizeState);
+  const currentSortOrder = useRecoilValue(currentSortOrderState);
+
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
@@ -174,5 +183,8 @@ export const useDoneJobsFilters = () => {
     onSelectReadyTimeDates,
     onClickClearFilter,
     isPrintHouseUsePrintNode,
+    patternSearch,
+    pageSize,
+    currentSortOrder,
   };
 };

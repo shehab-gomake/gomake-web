@@ -48,6 +48,7 @@ const ProductionFloorBoardMissionsViews = ({
   // Use refs to prevent infinite loops
   const hasInitializedRef = useRef(false);
   const lastConnectionIdRef = useRef<string | null>(null);
+  const lastViewRef = useRef<EProductionFloorView | null>(null);
 
   // Memoized effect to prevent unnecessary re-renders
   const shouldFetchData = useMemo(() => {
@@ -55,11 +56,25 @@ const ProductionFloorBoardMissionsViews = ({
   }, [connectionId, isSocketUpdateJobsTable]);
 
   useEffect(() => {
+    // Prevent multiple calls for the same view
+    if (lastViewRef.current === view) {
+      return;
+    }
+    lastViewRef.current = view;
+
     if (view === EProductionFloorView.DONE_JOBS) {
-      getAllBoardMissions();
+      // Default sort by readyDate descending
+      const defaultSortOrder = [
+        {
+          column: 2, // ReadyDate
+          dir: "desc",
+        },
+      ];
+      getAllBoardMissions(undefined, undefined, undefined, defaultSortOrder);
     } else if (view === EProductionFloorView.TABLE) {
       getData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view]);
 
   useEffect(() => {

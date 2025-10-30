@@ -3,14 +3,14 @@ import { useDoneJobsFilters } from "../hooks/use-done-jobs-filters";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { useStyle } from "@/pages-components/board-missions/style";
-import { useRecoilValue } from "recoil";
-import { patternSearchState, pageSizeState } from "../state/filter-group";
+import { JobsTableColumns } from "@/pages-components/quotes/enums/document-table-columns-enum";
 
 interface IDoneJobsFiltersSectionProps {
   getAllData: (
     pageNumber: number,
     pageSize: number,
-    patternSearch?: string
+    patternSearch?: string,
+    sortOrder?: any
   ) => void;
   onChangeMissionsSearch: (value: string) => void;
 }
@@ -21,10 +21,10 @@ const DoneJobsFiltersSection = ({
 }: IDoneJobsFiltersSectionProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const patternSearch = useRecoilValue(patternSearchState);
-  const pageSize = useRecoilValue(pageSizeState);
-
   const {
+    patternSearch,
+    pageSize,
+    currentSortOrder,
     customer,
     agent,
     status,
@@ -65,14 +65,32 @@ const DoneJobsFiltersSection = ({
     [t]
   );
 
+  // Default sort order: Ready Date descending
+  const defaultSortOrder = useMemo(
+    () => [
+      {
+        column: JobsTableColumns.ReadyDate,
+        dir: "desc",
+      },
+    ],
+    []
+  );
+
   const onClickSearchFilter = () => {
-    getAllData(1, pageSize, patternSearch);
+    // Use current sort order (user's choice) or default if none exists
+    getAllData(
+      1,
+      pageSize,
+      patternSearch,
+      currentSortOrder || defaultSortOrder
+    );
   };
 
   const handleClearFilter = () => {
     onClickClearFilter();
     onChangeMissionsSearch("");
-    getAllData(1, pageSize, "");
+    // Use current sort order (user's choice) or default if none exists
+    getAllData(1, pageSize, "", currentSortOrder || defaultSortOrder);
   };
 
   return (

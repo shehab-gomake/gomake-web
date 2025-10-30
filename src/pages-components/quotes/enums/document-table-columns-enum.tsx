@@ -1,6 +1,7 @@
 export enum JobsTableColumns {
   CreationDate = 0,
   DueDate = 1,
+  ReadyDate = 2,
 }
 
 export enum QuotesTableColumns {
