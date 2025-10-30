@@ -136,7 +136,10 @@ const PriceListPageWidget = ({
   const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
   const visibleSections = productTemplate?.sections?.filter(
-    (section) => !section.isHidden
+    (section) => {
+      const shouldHide = section.isHidden || section.hideFromUI;
+      return !shouldHide;
+    }
   );
   const dir: "rtl" | "ltr" = t("direction");
   const theme = createTheme({
@@ -296,7 +299,7 @@ const PriceListPageWidget = ({
       position: "top",
     },
   ];
-  const {} = useGoMakeTour(productSteps, [relatedParameters]);
+  const { } = useGoMakeTour(productSteps, [relatedParameters]);
   const func = () => {
     getSelectedWorkFlow(currentSignalRConnectionId).then();
   };
@@ -355,14 +358,14 @@ const PriceListPageWidget = ({
                 style={
                   !isMobileScreen
                     ? {
-                        height: "calc(100vh - 300px)",
-                        overflow: "scroll",
-                        width: "calc(100% - 330px)",
-                      }
+                      height: "calc(100vh - 300px)",
+                      overflow: "scroll",
+                      width: "calc(100% - 330px)",
+                    }
                     : {
-                        height: "calc(100vh - 260px)",
-                        overflow: "auto",
-                      }
+                      height: "calc(100vh - 260px)",
+                      overflow: "auto",
+                    }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -400,7 +403,10 @@ const PriceListPageWidget = ({
                         );
                       } else {
                         return section?.subSections
-                          ?.filter((x) => !x.isHidden)
+                          ?.filter((x) => {
+                            const shouldHide = x.isHidden || x.hideFromUI;
+                            return !shouldHide;
+                          })
                           .map((subSection, index) => {
                             if (subSection?.isAccordion) {
                               return (
@@ -564,15 +570,15 @@ const PriceListPageWidget = ({
                   ].length -
                     1 !==
                     activeIndex && (
-                    <div data-tour="next-button">
-                      <GomakePrimaryButton
-                        style={clasess.nextBtnStyle}
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </GomakePrimaryButton>
-                    </div>
-                  )}
+                      <div data-tour="next-button">
+                        <GomakePrimaryButton
+                          style={clasess.nextBtnStyle}
+                          onClick={handleNextClick}
+                        >
+                          {t("products.offsetPrice.admin.nextBtn")}
+                        </GomakePrimaryButton>
+                      </div>
+                    )}
                 </div>
               </div>
             )}
@@ -601,7 +607,7 @@ const PriceListPageWidget = ({
 
                       if (
                         DOCUMENT_TYPE.order ===
-                          Number(router.query.documentType) &&
+                        Number(router.query.documentType) &&
                         isFlowChanged &&
                         missionsListForEdit &&
                         missionsListForEdit.length > 0
