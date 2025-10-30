@@ -34,6 +34,8 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
+import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
+import CircularProgress from "@mui/material/CircularProgress";
 
 /**
  * Legacy type exports for backward compatibility
@@ -149,6 +151,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootExpanded, setChatwootExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
+  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
+
+  // Fetch Chatwoot inboxes (channels)
+  const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
 
   const channelItems = [
     { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
@@ -685,30 +691,17 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </Box>
             )}
 
-            {/* Channels */}
-            <Tooltip title="Channels" placement="right" disableHoverListener={!isCollapsed}>
-              <ListItemButton
-                selected={false}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSectionSelect("inbox");
-                  onChannelSelect("chatwoot" as Channel);
-                }}
-                sx={{
-                  py: 1,
-                  px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  pointerEvents: "auto",
-                  "&:hover": {
-                    backgroundColor: theme.palette.action.hover,
-                  },
-                }}
-              >
-                {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                    <ForumIcon />
-                  </Box>
-                ) : (
+            {/* Channels (Inboxes) - Expandable */}
+            {!isCollapsed && (
+              <Box>
+                <ListItemButton
+                  onClick={() => setChatwootChannelsExpanded(!chatwootChannelsExpanded)}
+                  sx={{
+                    py: 0.75,
+                    px: 2,
+                    "&:hover": { backgroundColor: theme.palette.action.hover },
+                  }}
+                >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
                     <Box sx={{ color: theme.palette.text.secondary }}>
                       <ForumIcon fontSize="small" />
@@ -717,13 +710,146 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       primary="Channels"
                       primaryTypographyProps={{
                         variant: "body2",
-                        sx: { fontSize: "0.875rem", fontWeight: 400 },
+                        sx: { fontSize: "0.875rem" },
                       }}
                     />
+                    {inboxesLoading ? (
+                      <CircularProgress size={16} sx={{ color: theme.palette.text.secondary }} />
+                    ) : chatwootChannelsExpanded ? (
+                      <ExpandLessIcon fontSize="small" />
+                    ) : (
+                      <ExpandMoreIcon fontSize="small" />
+                    )}
                   </Box>
-                )}
-              </ListItemButton>
-            </Tooltip>
+                </ListItemButton>
+                <Collapse in={chatwootChannelsExpanded}>
+                  <List disablePadding sx={{ pointerEvents: "auto" }}>
+                    {inboxesLoading ? (
+                      <ListItemButton
+                        sx={{
+                          py: 0.75,
+                          pl: 5,
+                          pr: 2,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <CircularProgress size={16} />
+                      </ListItemButton>
+                    ) : inboxes.length === 0 ? (
+                      <ListItemButton
+                        sx={{
+                          py: 0.75,
+                          pl: 5,
+                          pr: 2,
+                        }}
+                      >
+                        <ListItemText
+                          primary="No channels available"
+                          primaryTypographyProps={{
+                            variant: "body2",
+                            sx: { fontSize: "0.813rem", color: theme.palette.text.secondary, fontStyle: "italic" },
+                          }}
+                        />
+                      </ListItemButton>
+                    ) : (
+                      inboxes.map((inbox: any) => (
+                        <Tooltip key={inbox.id} title={inbox.name} placement="right">
+                          <ListItemButton
+                            selected={selectedInboxId === inbox.id && selectedChannel === "chatwoot"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              selectInbox(inbox.id);
+                              onSectionSelect("inbox");
+                              onChannelSelect("chatwoot" as Channel);
+                            }}
+                            sx={{
+                              py: 0.75,
+                              pl: 5,
+                              pr: 2,
+                              pointerEvents: "auto",
+                              "&.Mui-selected": {
+                                backgroundColor: theme.palette.primary.main + "10",
+                                "&:hover": {
+                                  backgroundColor: theme.palette.primary.main + "20",
+                                },
+                              },
+                              "&:hover": {
+                                backgroundColor: theme.palette.action.hover,
+                              },
+                            }}
+                          >
+                            <ListItemText
+                              primary={inbox.name}
+                              secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
+                              primaryTypographyProps={{
+                                variant: "body2",
+                                sx: {
+                                  fontSize: "0.813rem",
+                                  fontWeight: selectedInboxId === inbox.id ? 600 : 400,
+                                  color: theme.palette.text.primary,
+                                },
+                              }}
+                              secondaryTypographyProps={{
+                                variant: "caption",
+                                sx: {
+                                  fontSize: "0.688rem",
+                                  color: theme.palette.text.secondary,
+                                },
+                              }}
+                            />
+                          </ListItemButton>
+                        </Tooltip>
+                      ))
+                    )}
+                  </List>
+                </Collapse>
+              </Box>
+            )}
+
+            {/* Channels - Collapsed view */}
+            {isCollapsed && (
+              <Tooltip title="Channels" placement="right">
+                <ListItemButton
+                  selected={selectedChannel === "chatwoot" && selectedInboxId !== null}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }}
+                  sx={{
+                    py: 1,
+                    px: 1.5,
+                    justifyContent: "center",
+                    pointerEvents: "auto",
+                    "&.Mui-selected": {
+                      backgroundColor: theme.palette.primary.main + "10",
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main + "20",
+                      },
+                    },
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                  }}
+                >
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex", position: "relative" }}>
+                    <ForumIcon />
+                    {inboxesLoading && (
+                      <CircularProgress
+                        size={12}
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: theme.palette.text.secondary,
+                        }}
+                      />
+                    )}
+                  </Box>
+                </ListItemButton>
+              </Tooltip>
+            )}
           </List>
         </Collapse>
       </Box>

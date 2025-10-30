@@ -43,3 +43,11 @@ export {
   type ConversationDetailResponse,
 } from "./types/conversations.types";
 
+export {
+  ChannelType,
+  type ChatwootInbox,
+  type InboxListResponse,
+  type InboxDetailResponse,
+  type InboxProvider,
+} from "./types/inboxes.types";
+

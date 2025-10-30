@@ -13,5 +13,6 @@ export * from "./profile.types";
 
 // Placeholder exports for future type files
 export * from "./conversations.types";
+export * from "./inboxes.types";
 // export * from "./contacts.types";
 // export * from "./messages.types";

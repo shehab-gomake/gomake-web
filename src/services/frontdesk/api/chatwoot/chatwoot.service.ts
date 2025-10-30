@@ -14,6 +14,9 @@
  * // Conversation operations
  * const conversations = await chatwootService.conversations.listConversations(accountId);
  *
+ * // Inbox operations
+ * const inboxes = await chatwootService.inboxes.listAllInboxes();
+ *
  * // Contact operations
  * const contacts = await chatwootService.contacts.listContacts(accountId);
  *
@@ -24,6 +27,7 @@
 
 import { ChatwootProfileService } from "./services/chatwoot-profile.service";
 import { ChatwootConversationsService } from "./services/chatwoot-conversations.service";
+import { ChatwootInboxesService } from "./services/chatwoot-inboxes.service";
 import { ChatwootContactsService } from "./services/chatwoot-contacts.service";
 import { ChatwootMessagesService } from "./services/chatwoot-messages.service";
 
@@ -45,6 +49,12 @@ export class ChatwootService {
    * Handles all conversation-related endpoints
    */
   public readonly conversations: ChatwootConversationsService;
+
+  /**
+   * Inboxes service
+   * Handles all inbox (channel) related endpoints
+   */
+  public readonly inboxes: ChatwootInboxesService;
 
   /**
    * Contacts service
@@ -69,6 +79,7 @@ export class ChatwootService {
     // Initialize all service instances
     this.profile = new ChatwootProfileService(this.baseUrl);
     this.conversations = new ChatwootConversationsService(this.baseUrl);
+    this.inboxes = new ChatwootInboxesService(this.baseUrl);
     this.contacts = new ChatwootContactsService(this.baseUrl);
     this.messages = new ChatwootMessagesService(this.baseUrl);
   }

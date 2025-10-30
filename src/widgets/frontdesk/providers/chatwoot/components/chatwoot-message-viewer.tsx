@@ -121,7 +121,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         height: "100%",
         border: `1px solid ${neutralColor(200)}`,
         borderRadius: 2,
-        backgroundColor: neutralColor(0), // Light background
       }}
     >
       {/* Header */}
@@ -138,11 +137,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         isStarred={false}
       />
 
-      {/* Resolution Status Bar */}
-      <ChatwootResolutionStatusBar conversation={conversation} />
-
       {/* Messages */}
-      <Box sx={{ flex: 1, overflow: "auto", backgroundColor: neutralColor(0) }}>
+      <Box sx={{ flex: 1, overflow: "auto" }}>
         {loading ? (
           <Box sx={{ p: 3, textAlign: "center" }}>
             <Typography variant="body2" sx={{ color: neutralColor(600) }}>
@@ -162,13 +158,30 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             </Typography>
           </Box>
         ) : (
-          messages.map((message, index) => (
-            <ChatwootMessageItem
-              key={message.id || index}
-              message={message}
-              isLast={index === messages.length - 1}
-            />
-          ))
+          <>
+            {messages.map((message, index) => {
+              // Filter out system messages (message_type 2) from display, but show resolution
+              const isSystemMessage = message.message_type === 2;
+              const isResolutionMessage = isSystemMessage && message.content?.includes("resolved");
+              
+              if (isSystemMessage && !isResolutionMessage) {
+                return null; // Skip non-resolution system messages
+              }
+
+              return (
+                <ChatwootMessageItem
+                  key={message.id || index}
+                  message={message}
+                  isLast={index === messages.length - 1}
+                  isFirst={index === 0}
+                />
+              );
+            })}
+            {/* Resolution Status Bar - show after messages if conversation is resolved */}
+            {conversation.status === "resolved" && (
+              <ChatwootResolutionStatusBar conversation={conversation} />
+            )}
+          </>
         )}
       </Box>
 

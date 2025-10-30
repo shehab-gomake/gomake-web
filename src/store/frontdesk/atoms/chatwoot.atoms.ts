@@ -79,3 +79,24 @@ export const chatwootMessagesErrorAtom = atom<string | null>({
   default: null,
 });
 
+// Inboxes (Channels)
+export const chatwootInboxesAtom = atom<any[]>({
+  key: "frontdesk.chatwoot.inboxes",
+  default: [],
+});
+
+export const chatwootSelectedInboxIdAtom = atom<number | null>({
+  key: "frontdesk.chatwoot.selectedInboxId",
+  default: null,
+});
+
+export const chatwootInboxesLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.inboxesLoading",
+  default: false,
+});
+
+export const chatwootInboxesErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.inboxesError",
+  default: null,
+});
+

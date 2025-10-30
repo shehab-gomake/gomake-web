@@ -5,12 +5,14 @@
  * Each service handles a specific API group:
  * - ProfileService - User profile endpoints
  * - ConversationsService - Conversation management
+ * - InboxesService - Inbox (channel) management
  * - ContactsService - Contact management
  * - MessagesService - Message operations
  */
 
 export * from "./chatwoot-profile.service";
 export * from "./chatwoot-conversations.service";
+export * from "./chatwoot-inboxes.service";
 export * from "./chatwoot-contacts.service";
 export * from "./chatwoot-messages.service";
 
