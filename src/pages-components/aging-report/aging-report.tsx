@@ -9,6 +9,7 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { SendEmailLedgerReportModal } from "../ledger-report/widgets/send-email-modal";
 import { Stack } from "@mui/material";
+import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -32,6 +33,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     onClickBtn2,
     onClickBtn3,
     onClickBtn4,
+    onClickBtn5,
     showTable,
     detailedReport,
     getTableDataRows,
@@ -62,6 +64,8 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     setSelectedContactById,
     onChangeUpdateClientContact,
     sendPaymenttoClient,
+    isWhatsAppModal,
+    whatsappMessage,
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -114,6 +118,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           onClickBtn2={onClickBtn2}
           onClickBtn3={onClickBtn3}
           onClickBtn4={onClickBtn4}
+          onClickBtn5={onClickBtn5}
         />
       </Stack>
       <Divider />
@@ -153,6 +158,13 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         onChangeUpdateClientContact={onChangeUpdateClientContact}
         SendCustomerLedgerToMailApi={sendPaymenttoClient}
         isAgingReport={true}
+      />
+      <WhatsAppWebModal
+        openModal={isWhatsAppModal.isOpen}
+        onClose={() => isWhatsAppModal.close()}
+        whatsappMassage={whatsappMessage}
+        documentType={null}
+        clientContacts={clientContactsValue}
       />
     </div>
   );

@@ -36,6 +36,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isFetching,
   } = useCustomerDropDownList({ clientType });
   const isSendPaymentModal = useModal();
+  const isWhatsAppModal = useModal();
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
@@ -58,6 +59,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
 
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
+  const [whatsappMessage, setWhatsappMessage] = useState<string>("");
 
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
@@ -259,6 +261,68 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     }
   };
 
+  const getWhatsAppMessageForAgingReport = useCallback(async () => {
+    if (!customer?.id) {
+      return;
+    }
+
+    if (!areDatesValid(fromDate, toDate)) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-debit-payment-whats-app-message`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        referDate: selectDate ? selectDate : new Date(),
+        agentId: agent?.id,
+        expendedReport: detailedReport,
+        byCreationDate: agingReportByCreationDate,
+        orderBy,
+        isDescOrder,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+      }
+    );
+    if (res?.success && res?.data) {
+      const message = res?.data?.data?.data || "";
+      setWhatsappMessage(message);
+      isWhatsAppModal.open();
+    } else {
+      alertFault("alerts.failedToGetMessage");
+    }
+  }, [
+    customer,
+    fromDate,
+    toDate,
+    selectDate,
+    agent,
+    detailedReport,
+    agingReportByCreationDate,
+    orderBy,
+    isDescOrder,
+    isPurchaseReport,
+    callApi,
+    isWhatsAppModal,
+    alertFault,
+  ]);
+
+  const onClickBtn5 = () => {
+    if (customer?.id) {
+      getWhatsAppMessageForAgingReport();
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
+
   const getAgingReportFilter = useCallback(
     async (
       expendedReport = false,
@@ -309,7 +373,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       customer,
       selectDate,
       byReferenceDate,
-      agingReportByCreationDate
+      agingReportByCreationDate,
     ]
   );
 
@@ -356,7 +420,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     byReferenceDate,
     orderBy,
     isDescOrder,
-    agingReportByCreationDate
+    agingReportByCreationDate,
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -415,7 +479,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     customer,
     selectDate,
     byReferenceDate,
-    agingReportByCreationDate
+    agingReportByCreationDate,
   ]);
 
   // New function to handle opening customer modal
@@ -525,6 +589,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     onClickBtn2,
     onClickBtn3,
     onClickBtn4,
+    onClickBtn5,
     showTable,
     detailedReport,
     setShowTable,
@@ -559,6 +624,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     setSelectedContactById,
     onChangeUpdateClientContact,
     sendPaymenttoClient,
+    isWhatsAppModal,
+    whatsappMessage,
   };
 };
 
