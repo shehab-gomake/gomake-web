@@ -7580,9 +7580,14 @@ const useDigitalOffsetPrice = ({
       if (!productTemplate?.sections) {
         return true;
       }
-      let sections = productTemplate?.sections.filter((x) => !x.isHidden);
+      // Skip sections that are hidden OR hidden from UI
+      let sections = productTemplate?.sections.filter((x) => !x.isHidden && !x.hideFromUI);
       for (const section of sections) {
         for (const subSection of section.subSections) {
+          // Skip subsections that are hidden from UI
+          if (subSection.hideFromUI) {
+            continue;
+          }
           for (const parameter of subSection.parameters) {
             if (!parameter.isHidden && parameter.isRequired) {
               const index = allParameters.findIndex(
@@ -8208,9 +8213,72 @@ const useDigitalOffsetPrice = ({
     getCurrenciesApi();
   }, []);
   useEffect(() => {
+    if (!productTemplate) return;
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
-    setProductTemplate(updatedProductTemplate);
+    const templateWithUIFlags = markHiddenSectionsForUI(productTemplate);
+    setProductTemplate(templateWithUIFlags);
   }, [subProducts]);
+
+  // Mark sections/subsections that should be hidden from UI only (not from calculation)
+  const markHiddenSectionsForUI = (productTemplate) => {
+    if (
+      !productTemplate ||
+      !productTemplate.sections ||
+      !Array.isArray(productTemplate.sections)
+    ) {
+      return productTemplate;
+    }
+
+    // Don't create a new object - modify the existing one directly to ensure reference is maintained
+    const updatedTemplate = productTemplate;
+
+    updatedTemplate.sections.forEach((section) => {
+      // Reset UI-only hidden flag
+      section.hideFromUI = false;
+
+      if (section.subSections && Array.isArray(section.subSections)) {
+        // First, mark subsections where ALL parameters have both isHidden AND isHiddenInSetting
+        section.subSections.forEach((subSection) => {
+          subSection.hideFromUI = false;
+
+          if (subSection.parameters && Array.isArray(subSection.parameters)) {
+            if (subSection.parameters.length === 0) {
+              // If subsection has no parameters, hide it from UI
+              subSection.hideFromUI = true;
+            } else {
+              // Check if ALL parameters in this subsection have BOTH flags set to true
+              const allParametersHiddenInSettings = subSection.parameters.every(
+                (param) => param.isHidden === true && param.isHiddenInSetting === true
+              );
+
+              if (allParametersHiddenInSettings) {
+                subSection.hideFromUI = true;
+              } else {
+                const hiddenCount = subSection.parameters.filter(p => p.isHidden === true && p.isHiddenInSetting === true).length;
+                const notHiddenParams = subSection.parameters.filter(p => !(p.isHidden === true && p.isHiddenInSetting === true));
+              }
+            }
+          } else {
+            // If subsection has no parameters array, hide it from UI
+            subSection.hideFromUI = true;
+          }
+        });
+
+        // Then, check if ALL subsections should be hidden from UI
+        // (either because they have hideFromUI=true OR isHidden=true)
+        const allSubSectionsHiddenFromUI = section.subSections.every(
+          (subSection) => subSection.hideFromUI === true || subSection.isHidden === true
+        );
+
+        if (allSubSectionsHiddenFromUI && section.subSections.length > 0) {
+          section.hideFromUI = true;
+        } else {
+        }
+      }
+    });
+
+    return updatedTemplate;
+  };
 
   const updateIsHidden = (productTemplate, subProducts) => {
     if (
@@ -8223,34 +8291,6 @@ const useDigitalOffsetPrice = ({
     const allParameters = subProducts.flatMap((product) => product.parameters);
     const updatedTemplate = { ...productTemplate };
     updatedTemplate.sections.forEach((section) => {
-      // First, handle subsection visibility based on parameters
-      if (section.subSections && Array.isArray(section.subSections)) {
-        section.subSections.forEach((subSection) => {
-          if (subSection.parameters && Array.isArray(subSection.parameters)) {
-            // Check if all parameters in this subsection have isHidden = true AND isHiddenInSetting = true
-            const allParametersHidden = subSection.parameters.every(
-              (param) => param.isHidden === true && param.isHiddenInSetting === true
-            );
-
-            // If all parameters are hidden with both flags, hide the subsection
-            if (allParametersHidden && subSection.parameters.length > 0) {
-              subSection.isHidden = true;
-            }
-          }
-        });
-
-        // Check if all subsections in this section are hidden
-        const allSubSectionsHidden = section.subSections.every(
-          (subSection) => subSection.isHidden === true
-        );
-
-        // If all subsections are hidden, hide the section
-        if (allSubSectionsHidden && section.subSections.length > 0) {
-          section.isHidden = true;
-          return; // Skip further processing for this section
-        }
-      }
-
       // Then handle section visibility based on relatedToParameters
       if (
         section.relatedToParameters &&
