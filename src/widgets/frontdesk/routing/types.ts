@@ -9,42 +9,42 @@
  * Main navigation sections in FrontDesk
  */
 export enum FrontDeskSection {
-  INBOX = 'inbox',
-  ASSIGNED = 'assigned',
-  ADMIN = 'admin',
-  SETTINGS = 'settings',
+  INBOX = "inbox",
+  ASSIGNED = "assigned",
+  ADMIN = "admin",
+  SETTINGS = "settings",
 }
 
 /**
  * Communication channels/providers
  */
 export enum FrontDeskChannel {
-  ALL = 'all',          // Unified view
-  EMAIL = 'email',      // Email provider
-  WHATSAPP = 'whatsapp', // WhatsApp provider
-  INTERNAL = 'internal', // Direct Messages
+  ALL = "all", // Unified view
+  EMAIL = "email", // Email provider
+  WHATSAPP = "whatsapp", // WhatsApp provider
+  INTERNAL = "internal", // Direct Messages
 }
 
 /**
  * Ticket view filters
  */
 export enum TicketView {
-  MY_TICKETS = 'my-tickets',
-  UNASSIGNED = 'unassigned',
-  ALL_TICKETS = 'all-tickets',
-  DONE = 'done',
-  ARCHIVED = 'archived',
+  MY_TICKETS = "my-tickets",
+  UNASSIGNED = "unassigned",
+  ALL_TICKETS = "all-tickets",
+  DONE = "done",
+  ARCHIVED = "archived",
 }
 
 /**
  * Route type discriminator for type-safe navigation
  */
 export enum RouteType {
-  INBOX = 'inbox',
-  CHANNEL = 'channel',
-  TICKET_LIST = 'ticket-list',
-  TICKET_DETAIL = 'ticket-detail',
-  SECTION = 'section',
+  INBOX = "inbox",
+  CHANNEL = "channel",
+  TICKET_LIST = "ticket-list",
+  TICKET_DETAIL = "ticket-detail",
+  SECTION = "section",
 }
 
 /**
@@ -68,6 +68,7 @@ export interface ChannelRoute extends BaseRouteParams {
   type: RouteType.CHANNEL;
   channel: FrontDeskChannel;
   conversationId?: string;
+  accountId?: string; // For email provider: which account owns this conversation
 }
 
 /**
@@ -98,12 +99,7 @@ export interface SectionRoute extends BaseRouteParams {
 /**
  * Union type of all possible routes
  */
-export type FrontDeskRoute =
-  | InboxRoute
-  | ChannelRoute
-  | TicketListRoute
-  | TicketDetailRoute
-  | SectionRoute;
+export type FrontDeskRoute = InboxRoute | ChannelRoute | TicketListRoute | TicketDetailRoute | SectionRoute;
 
 /**
  * Query parameters that can be passed via URL
@@ -151,27 +147,22 @@ export interface RouteMetadata {
  * Legacy types for backward compatibility
  * These map to the new enum types
  */
-export type Channel = 'all' | 'email' | 'whatsapp' | 'internal';
-export type Section = 'inbox' | 'assigned' | 'admin' | 'settings';
-export type TicketViewLegacy = 'my-tickets' | 'unassigned' | 'all-tickets' | 'done' | 'archived';
+export type Channel = "all" | "email" | "whatsapp" | "internal";
+export type Section = "inbox" | "assigned" | "admin" | "settings";
+export type TicketViewLegacy = "my-tickets" | "unassigned" | "all-tickets" | "done" | "archived";
 
 /**
  * Type guards for route discrimination
  */
-export const isInboxRoute = (route: FrontDeskRoute): route is InboxRoute =>
-  route.type === RouteType.INBOX;
+export const isInboxRoute = (route: FrontDeskRoute): route is InboxRoute => route.type === RouteType.INBOX;
 
-export const isChannelRoute = (route: FrontDeskRoute): route is ChannelRoute =>
-  route.type === RouteType.CHANNEL;
+export const isChannelRoute = (route: FrontDeskRoute): route is ChannelRoute => route.type === RouteType.CHANNEL;
 
-export const isTicketListRoute = (route: FrontDeskRoute): route is TicketListRoute =>
-  route.type === RouteType.TICKET_LIST;
+export const isTicketListRoute = (route: FrontDeskRoute): route is TicketListRoute => route.type === RouteType.TICKET_LIST;
 
-export const isTicketDetailRoute = (route: FrontDeskRoute): route is TicketDetailRoute =>
-  route.type === RouteType.TICKET_DETAIL;
+export const isTicketDetailRoute = (route: FrontDeskRoute): route is TicketDetailRoute => route.type === RouteType.TICKET_DETAIL;
 
-export const isSectionRoute = (route: FrontDeskRoute): route is SectionRoute =>
-  route.type === RouteType.SECTION;
+export const isSectionRoute = (route: FrontDeskRoute): route is SectionRoute => route.type === RouteType.SECTION;
 
 /**
  * Utility to convert legacy types to new enums
@@ -198,11 +189,11 @@ export const mapLegacySection = (section: Section): FrontDeskSection => {
 
 export const mapLegacyTicketView = (view: TicketViewLegacy): TicketView => {
   const map: Record<TicketViewLegacy, TicketView> = {
-    'my-tickets': TicketView.MY_TICKETS,
-    'unassigned': TicketView.UNASSIGNED,
-    'all-tickets': TicketView.ALL_TICKETS,
-    'done': TicketView.DONE,
-    'archived': TicketView.ARCHIVED,
+    "my-tickets": TicketView.MY_TICKETS,
+    unassigned: TicketView.UNASSIGNED,
+    "all-tickets": TicketView.ALL_TICKETS,
+    done: TicketView.DONE,
+    archived: TicketView.ARCHIVED,
   };
   return map[view];
 };

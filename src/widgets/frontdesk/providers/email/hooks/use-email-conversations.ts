@@ -46,7 +46,12 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
         if (reset) {
           setConversations(response.conversations);
         } else {
-          setConversations((prev) => [...prev, ...response.conversations]);
+          setConversations((prev) => {
+            // Prevent duplicates when appending
+            const existingIds = new Set(prev.map(c => c.id));
+            const newConversations = response.conversations.filter(c => !existingIds.has(c.id));
+            return [...prev, ...newConversations];
+          });
         }
 
         setPageToken(response.nextPageToken || null);
@@ -57,7 +62,7 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
         setLoading(false);
       }
     },
-    [selectedAccountId, options, pageToken, loading]
+    [selectedAccountId, options.query, options.limit, pageToken, loading, setConversations, setLoading, setError]
   );
 
   const loadMore = useCallback(() => {

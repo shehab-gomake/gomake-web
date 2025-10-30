@@ -1,25 +1,19 @@
-import React from 'react';
-import {
-  Menu,
-  MenuProps,
-  Box,
-  Typography,
-  Divider,
-} from '@mui/material';
-import { colorTokens, shadowTokens, spacingTokens } from '@/widgets/frontdesk/design-system';
+import React from "react";
+import { Menu, MenuProps, Box, Typography, Divider } from "@mui/material";
+import { colorTokens, shadowTokens, spacingTokens } from "@/widgets/frontdesk/design-system";
 
 /**
  * A styled subheader for use within DropdownMenu to create sections.
  */
 export const MenuSubheader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Box px={`${spacingTokens[3]}px`} pt={`${spacingTokens[2]}px`} pb={`${spacingTokens[1]}px`}>
-    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase' }}>
+    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: "uppercase" }}>
       {children}
     </Typography>
   </Box>
 );
 
-interface DropdownMenuProps extends Omit<MenuProps, 'open'> {
+interface DropdownMenuProps extends Omit<MenuProps, "open"> {
   open: boolean;
   onClose: () => void;
   title?: string;
@@ -48,20 +42,18 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   const content = disableContentPadding ? (
     children
   ) : (
-    <Box sx={{ px: `${spacingTokens[3]}px`, py: `${spacingTokens[2]}px` }}>
-      {children}
-    </Box>
+    <Box sx={{ px: `${spacingTokens[3]}px`, py: `${spacingTokens[2]}px` }}>{children}</Box>
   );
 
   return (
     <Menu
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
+        vertical: "bottom",
+        horizontal: "right",
       }}
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       open={open}
       onClose={onClose}
@@ -75,16 +67,16 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           sx: {
             width: width,
             mt: 1,
-            borderRadius: '8px',
+            borderRadius: "8px",
             boxShadow: shadowTokens.md,
             border: `1px solid ${colorTokens.semantic.border.default}`,
             // Fix distortion: disable transform animations
-            transform: 'none !important',
-            transformOrigin: 'top right',
-            willChange: 'opacity',
+            transform: "none !important",
+            transformOrigin: "top right",
+            willChange: "opacity",
             // Ensure smooth rendering
-            backfaceVisibility: 'hidden',
-            WebkitFontSmoothing: 'antialiased',
+            backfaceVisibility: "hidden",
+            WebkitFontSmoothing: "antialiased",
           },
         },
       }}
@@ -92,7 +84,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     >
       {title && (
         <Box px={`${spacingTokens[3]}px`} py={`${spacingTokens[2]}px`}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase' }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: "uppercase" }}>
             {title}
           </Typography>
         </Box>
@@ -101,7 +93,9 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
       {actions && (
         <>
           <Divider sx={{ my: `${spacingTokens[1]}px` }} />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, px: `${spacingTokens[3]}px`, pb: `${spacingTokens[2]}px` }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", gap: 1, px: `${spacingTokens[3]}px`, pb: `${spacingTokens[2]}px` }}
+          >
             {actions}
           </Box>
         </>

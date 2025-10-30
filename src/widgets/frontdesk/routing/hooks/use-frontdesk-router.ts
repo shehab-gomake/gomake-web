@@ -5,19 +5,11 @@
  * Integrates with Next.js router and provides a clean API for FrontDesk routing.
  */
 
-import { useRouter } from 'next/router';
-import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
-import {
-  FrontDeskRoute,
-  NavigationOptions,
-  FrontDeskChannel,
-  FrontDeskSection,
-  TicketView,
-  Channel,
-  Section,
-} from '../types';
-import { parseRoute, getSectionFromRoute, getChannelFromRoute, getTicketViewFromRoute, isTicketRoute } from '../route-parser';
-import { buildRoute, buildRoutePath, RouteBuilder, getRouteMetadata, routesEqual } from '../route-builder';
+import { useRouter } from "next/router";
+import { useCallback, useMemo, useEffect, useState, useRef } from "react";
+import { FrontDeskRoute, NavigationOptions, FrontDeskChannel, FrontDeskSection, TicketView, Channel, Section } from "../types";
+import { parseRoute, getSectionFromRoute, getChannelFromRoute, getTicketViewFromRoute, isTicketRoute } from "../route-parser";
+import { buildRoute, buildRoutePath, RouteBuilder, getRouteMetadata, routesEqual } from "../route-builder";
 
 /**
  * FrontDesk Router Hook
@@ -73,7 +65,7 @@ export const useFrontDeskRouter = () => {
       const built = buildRoute(route, options);
 
       if (options.newTab) {
-        window.open(built.path, '_blank');
+        window.open(built.path, "_blank");
         return;
       }
 
@@ -84,7 +76,7 @@ export const useFrontDeskRouter = () => {
           router.push(built.path, undefined, { scroll: options.scroll });
         }
       } catch (error) {
-        console.error('[FrontDesk Router] Navigation error:', error);
+        console.error("[FrontDesk Router] Navigation error:", error);
       }
     },
     [router]
@@ -96,7 +88,7 @@ export const useFrontDeskRouter = () => {
    */
   const navigateSmooth = useCallback((route: FrontDeskRoute) => {
     const path = buildRoutePath(route);
-    window.history.pushState({}, '', path);
+    window.history.pushState({}, "", path);
   }, []);
 
   /**
@@ -150,8 +142,9 @@ export const useFrontDeskRouter = () => {
    * Navigate to a specific email conversation
    */
   const goToEmailConversation = useCallback(
-    (conversationId: string) => {
-      navigate(RouteBuilder.email(conversationId));
+    (conversationId: string, accountId?: string) => {
+      console.log("[FrontDesk Router] Navigating to email conversation:", { conversationId, accountId });
+      navigate(RouteBuilder.email(conversationId, accountId));
     },
     [navigate]
   );
@@ -194,7 +187,7 @@ export const useFrontDeskRouter = () => {
    */
   const handleSectionChange = useCallback(
     (section: Section) => {
-      if (section === 'inbox') {
+      if (section === "inbox") {
         goToInbox();
       } else {
         goToSection(section as any);
@@ -266,15 +259,24 @@ export const useChannelNavigation = () => {
   const { goToChannel } = useFrontDeskRouter();
 
   return {
-    goToEmail: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.EMAIL, conversationId);
-    }, [goToChannel]),
-    goToWhatsApp: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.WHATSAPP, conversationId);
-    }, [goToChannel]),
-    goToInternal: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.INTERNAL, conversationId);
-    }, [goToChannel]),
+    goToEmail: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.EMAIL, conversationId);
+      },
+      [goToChannel]
+    ),
+    goToWhatsApp: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.WHATSAPP, conversationId);
+      },
+      [goToChannel]
+    ),
+    goToInternal: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.INTERNAL, conversationId);
+      },
+      [goToChannel]
+    ),
   };
 };
 
@@ -297,9 +299,12 @@ export const useTicketNavigation = () => {
     goToDoneTickets: useCallback(() => {
       goToTicketList(TicketView.DONE);
     }, [goToTicketList]),
-    goToTicket: useCallback((ticketId: string, options?: NavigationOptions) => {
-      goToTicket(ticketId, undefined, options);
-    }, [goToTicket]),
+    goToTicket: useCallback(
+      (ticketId: string, options?: NavigationOptions) => {
+        goToTicket(ticketId, undefined, options);
+      },
+      [goToTicket]
+    ),
   };
 };
 

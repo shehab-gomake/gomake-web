@@ -23,30 +23,19 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
   useEffect(() => {
     const fetchConversationDetails = async () => {
       if (conversation && accountId) {
-        // Check if the conversation object already has full messages (from fetchConversation)
-        // This happens when navigating from notifications
-        const conversationWithMessages = conversation as any;
-        if (conversationWithMessages.messages && Array.isArray(conversationWithMessages.messages) && conversationWithMessages.messages.length > 0) {
-          console.log('[Message Viewer] Conversation already has full messages, using cached data:', conversation.id);
-          setMessages(conversationWithMessages.messages);
-          setLoading(false);
-          lastFetchedRef.current = conversation.id;
+        // Skip if we just fetched this conversation (deduplication)
+        if (lastFetchedRef.current === conversation.id) {
+          console.log("[Message Viewer] Conversation already fetched, skipping:", conversation.id);
           return;
         }
 
-        // Skip if already fetching this conversation
-        if (fetchInProgressRef.current && lastFetchedRef.current === conversation.id) {
-          console.log('[Message Viewer] Fetch already in progress for:', conversation.id);
+        // Skip if already fetching this conversation (prevent concurrent fetches)
+        if (fetchInProgressRef.current) {
+          console.log("[Message Viewer] Fetch already in progress, skipping:", conversation.id);
           return;
         }
 
-        // Skip if we just fetched this conversation
-        if (lastFetchedRef.current === conversation.id && messages.length > 0) {
-          console.log('[Message Viewer] Conversation already fetched, skipping:', conversation.id);
-          return;
-        }
-
-        console.log('[Message Viewer] Fetching conversation details:', conversation.id);
+        console.log("[Message Viewer] Fetching conversation details:", conversation.id);
 
         // Clear old messages immediately to prevent flash of previous content
         setMessages([]);
@@ -57,7 +46,7 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
         try {
           const conversationDetail = await emailApiClient.getConversationDetail(accountId, conversation.id);
           setMessages(conversationDetail.messages);
-          console.log('[Message Viewer] Successfully fetched', conversationDetail.messages.length, 'messages');
+          console.log("[Message Viewer] Successfully fetched", conversationDetail.messages.length, "messages");
         } catch (error) {
           console.error("[Message Viewer] Failed to fetch conversation details:", error);
           // Fallback to single message display
@@ -90,7 +79,7 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
     };
 
     fetchConversationDetails();
-  }, [conversation?.id, accountId]);  // Only depend on conversation.id, not the whole object
+  }, [conversation?.id, accountId]); // Only depend on conversation.id, not the whole object
 
   const handleInlineReply = useCallback(async () => {
     const text = replyText.trim();

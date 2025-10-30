@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { Stack, Paper, Box, Typography, Fab, Tooltip, CircularProgress, Alert } from "@mui/material";
+import { Stack, Paper, Fab, Tooltip } from "@mui/material";
 import { Edit as ComposeIcon } from "@mui/icons-material";
-import {
-  EmptyState,
-  Panel,
-  PanelContent,
-} from "@/widgets/frontdesk/design-system";
+import { EmptyState, Panel, PanelContent } from "@/widgets/frontdesk/design-system";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailComposer } from "./components/email-composer";
 import { EmailAuthModal } from "./components/email-auth-modal";
@@ -64,9 +60,6 @@ export const EmailProviderView: React.FC = () => {
     onSearch,
     createTicket,
     ticketModal,
-    isFetchingConversation,
-    fetchError,
-    clearFetchError,
   } = useEmailProvider();
 
   const fabPositioning = useFabPositioning({
@@ -153,10 +146,7 @@ export const EmailProviderView: React.FC = () => {
           <div style={{ width: 320, minWidth: 320, height: "100%" }}>
             <Panel elevation={0} border="default">
               <PanelContent padding="lg">
-                <EmptyState
-                  title="Connect an account"
-                  description="Add an email account to view conversations"
-                />
+                <EmptyState title="Connect an account" description="Add an email account to view conversations" />
               </PanelContent>
             </Panel>
           </div>
@@ -195,17 +185,6 @@ export const EmailProviderView: React.FC = () => {
 
   return (
     <Stack sx={{ width: "100%", gap: 2, height: "100%" }}>
-      {/* Error banner for conversation fetch failures */}
-      {fetchError && (
-        <Alert
-          severity="error"
-          onClose={clearFetchError}
-          sx={{ mx: 2 }}
-        >
-          Failed to load conversation: {fetchError}
-        </Alert>
-      )}
-
       <Stack direction="row" gap={2} sx={{ width: "100%", flex: 1, height: "100%" }}>
         {/* Email Sidebar */}
         <div style={{ width: 260, minWidth: 260, height: "100%" }}>
@@ -227,33 +206,7 @@ export const EmailProviderView: React.FC = () => {
         </div>
 
         {/* Conversations List */}
-        <div style={{ width: 320, minWidth: 320, height: "100%", position: "relative" }}>
-          {/* Loading overlay when fetching conversation */}
-          {isFetchingConversation && (
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 10,
-                borderRadius: 2,
-              }}
-            >
-              <Stack alignItems="center" gap={1}>
-                <CircularProgress size={32} />
-                <Typography variant="body2" color="text.secondary">
-                  Loading conversation...
-                </Typography>
-              </Stack>
-            </Box>
-          )}
-
+        <div style={{ width: 320, minWidth: 320, height: "100%" }}>
           {selectedAccountId ? (
             <EmailConversationList
               conversations={conversations}
@@ -272,10 +225,7 @@ export const EmailProviderView: React.FC = () => {
           ) : (
             <Panel elevation={0} border="default" sx={{ height: "100%" }}>
               <PanelContent padding="lg">
-                <EmptyState
-                  title="Select an account"
-                  description="Choose an email account to view conversations"
-                />
+                <EmptyState title="Select an account" description="Choose an email account to view conversations" />
               </PanelContent>
             </Panel>
           )}
@@ -296,7 +246,7 @@ export const EmailProviderView: React.FC = () => {
         >
           {selectedConversation ? (
             <EmailMessageViewer
-              key={selectedConversation.id}  /* Force remount when conversation changes */
+              key={selectedConversation.id} /* Force remount when conversation changes */
               conversation={selectedConversation}
               accountId={selectedAccountId}
               onBack={handleBack}

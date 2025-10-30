@@ -1,12 +1,12 @@
-import React from 'react';
-import { Box, Grid } from '@mui/material';
-import { StatCard } from '@/widgets/frontdesk/design-system';
-import EmailIcon from '@mui/icons-material/Email';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
-import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { DashboardStats } from '../hooks/useDashboardStats';
+import React from "react";
+import { Box, Grid } from "@mui/material";
+import { StatCard } from "@/widgets/frontdesk/design-system";
+import EmailIcon from "@mui/icons-material/Email";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { DashboardStats } from "../hooks/useDashboardStats";
 
 export interface StatsOverviewCardsProps {
   stats: DashboardStats;
@@ -14,11 +14,7 @@ export interface StatsOverviewCardsProps {
   onCardClick?: (cardType: string) => void;
 }
 
-export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({
-  stats,
-  isLoading = false,
-  onCardClick,
-}) => {
+export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({ stats, isLoading = false, onCardClick }) => {
   return (
     <Box sx={{ mb: 3 }}>
       <Grid container spacing={2}>
@@ -26,12 +22,12 @@ export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Unread Messages"
-            value={stats.totalUnreadMessages}
+            value={stats.totalUnreadMessages === 0 ? "All caught up!" : stats.totalUnreadMessages}
             icon={<NotificationsIcon />}
-            variant="error"
-            description="Across all channels"
+            variant={stats.totalUnreadMessages === 0 ? "success" : "error"}
+            description={stats.totalUnreadMessages === 0 ? "No pending messages" : "Across all channels"}
             isLoading={isLoading}
-            onClick={() => onCardClick?.('unread-messages')}
+            onClick={() => onCardClick?.("unread-messages")}
           />
         </Grid>
 
@@ -44,7 +40,7 @@ export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({
             variant="primary"
             description={`${stats.myTickets} assigned to me`}
             isLoading={isLoading}
-            onClick={() => onCardClick?.('open-tickets')}
+            onClick={() => onCardClick?.("open-tickets")}
           />
         </Grid>
 
@@ -57,7 +53,7 @@ export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({
             variant="warning"
             description="Unassigned tickets"
             isLoading={isLoading}
-            onClick={() => onCardClick?.('unassigned-tickets')}
+            onClick={() => onCardClick?.("unassigned-tickets")}
           />
         </Grid>
 
@@ -74,7 +70,7 @@ export const StatsOverviewCards: React.FC<StatsOverviewCardsProps> = ({
               stats.trends.messagesVsYesterday
                 ? {
                     value: stats.trends.messagesVsYesterday,
-                    label: 'vs yesterday',
+                    label: "vs yesterday",
                   }
                 : undefined
             }

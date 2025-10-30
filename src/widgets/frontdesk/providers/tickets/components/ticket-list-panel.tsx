@@ -16,6 +16,8 @@ import { TicketListItem } from "./ticket-list-item";
 import { TicketFiltersMenu } from "./ticket-filters-menu";
 import { TicketSortMenu } from "./ticket-sort-menu";
 import { useTicketsProvider } from "../hooks/use-tickets-provider";
+import { useInfiniteScroll } from "@/widgets/frontdesk/hooks/use-infinite-scroll";
+import { InfiniteScrollLoader } from "@/widgets/frontdesk/components/shared";
 
 interface TicketListPanelProps {
   viewTitle: string;
@@ -58,6 +60,15 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
 
   // Get tickets provider for quick actions (called only once at panel level)
   const ticketsProvider = useTicketsProvider();
+
+  // Infinite scroll setup
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: ticketsProvider.loadMore,
+    hasMore: ticketsProvider.hasMore,
+    loading: isLoading,
+    threshold: 200,
+    enabled: ticketsProvider.hasMore && !isLoading,
+  });
 
   // Quick Action Handlers
   const handleQuickReply = useCallback(
@@ -237,7 +248,7 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
 
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>
-          {isLoading ? (
+          {isLoading && tickets.length === 0 ? (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
               <CircularProgress size={32} />
             </Box>
@@ -249,20 +260,28 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
               description={searchQuery ? "Try adjusting your search" : "No tickets match your filters"}
             />
           ) : (
-            tickets.map((ticket) => (
-              <TicketListItem
-                key={ticket.id}
-                ticket={ticket}
-                selected={selectedTicketId === ticket.id}
-                onSelect={onTicketSelect}
-                onTagClick={onTagClick}
-                onQuickReply={handleQuickReply}
-                onQuickToggleStatus={handleQuickToggleStatus}
-                onQuickAddTag={handleQuickAddTag}
-                onQuickAssign={handleQuickAssign}
-                onQuickMore={handleQuickMore}
-              />
-            ))
+            <>
+              {tickets.map((ticket) => (
+                <TicketListItem
+                  key={ticket.id}
+                  ticket={ticket}
+                  selected={selectedTicketId === ticket.id}
+                  onSelect={onTicketSelect}
+                  onTagClick={onTagClick}
+                  onQuickReply={handleQuickReply}
+                  onQuickToggleStatus={handleQuickToggleStatus}
+                  onQuickAddTag={handleQuickAddTag}
+                  onQuickAssign={handleQuickAssign}
+                  onQuickMore={handleQuickMore}
+                />
+              ))}
+
+              {/* Infinite scroll sentinel element - always render for observer to work */}
+              <div ref={sentinelRef} style={{ height: 1, width: "100%" }} />
+
+              {/* Loading indicator at bottom */}
+              {isLoading && tickets.length > 0 && <InfiniteScrollLoader />}
+            </>
           )}
         </PanelContent>
 

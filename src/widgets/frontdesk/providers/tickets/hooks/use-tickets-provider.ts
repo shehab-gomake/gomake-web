@@ -102,6 +102,10 @@ export interface UseTicketsProviderResult {
   reviewQueueConversations: any[];
   setReviewQueueConversations: (conversations: any[]) => void;
 
+  // Pagination
+  hasMore: boolean;
+  loadMore: () => Promise<void>;
+
   // Actions - Core
   fetchTickets: (filters?: TicketFilters) => Promise<void>;
   refreshTickets: () => Promise<void>;
@@ -302,7 +306,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 8. ticket.message.received - Append inbound message
     ticketSocketService.onTicketMessageReceived((payload) => {
-
       // Refresh ticket to show new message (if currently selected)
       if (selectedTicketId === payload.ticketId) {
         fetchTicketById(payload.ticketId);
@@ -314,10 +317,12 @@ export function useTicketsProvider(): UseTicketsProviderResult {
           if (t.id === payload.ticketId) {
             return {
               ...t,
-              conversation: t.conversation ? {
-                ...t.conversation,
-                lastMessageAt: new Date().toISOString(),
-              } : undefined,
+              conversation: t.conversation
+                ? {
+                    ...t.conversation,
+                    lastMessageAt: new Date().toISOString(),
+                  }
+                : undefined,
               // Optimistically set hasUnread=true (backend confirmed this is correct approach)
               viewStatus: {
                 lastViewedAt: t.viewStatus?.lastViewedAt || null,
@@ -396,7 +401,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 13. message.delivered - Update message delivery status
     ticketSocketService.onMessageDelivered((payload) => {
-
       // Update message status in ticket
       if (selectedTicketId === payload.ticketId) {
         setTickets((prev) =>
@@ -481,7 +485,6 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // 17. ticket.tag.removed - Remove tag from ticket
     ticketSocketService.onTicketTagRemoved((payload) => {
-
       // Remove tag from ticket in state
       setTickets((prev) =>
         prev.map((t) => {
@@ -569,6 +572,37 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     await fetchTickets(filters);
   }, [fetchTickets, filters]);
 
+  // Load more tickets (infinite scroll pagination)
+  const loadMore = useCallback(async () => {
+    if (!pagination || !pagination.hasNext || isLoading) {
+      return;
+    }
+
+    const nextPage = pagination.page + 1;
+    console.log("[TicketsProvider] Loading more tickets, page:", nextPage);
+
+    try {
+      const response = await ticketsService.listTickets({
+        ...filters,
+        page: nextPage,
+      });
+
+      // Append new tickets to existing ones (prevent duplicates)
+      setTickets((prev) => {
+        const existingIds = new Set(prev.map((t) => t.id));
+        const newTickets = (response?.tickets || []).filter((t) => !existingIds.has(t.id));
+        return [...prev, ...newTickets];
+      });
+      setPagination(response?.pagination || null);
+    } catch (err: any) {
+      console.error("[TicketsProvider] Load more error:", err);
+      setError(err.response?.data?.message || err.message || "Failed to load more tickets");
+    }
+  }, [pagination, isLoading, filters, setTickets, setPagination, setError]);
+
+  // Computed: Check if more tickets are available
+  const hasMore = pagination?.hasNext ?? false;
+
   const fetchTicketById = useCallback(
     async (ticketId: string) => {
       try {
@@ -582,9 +616,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
         }
 
         // Validate at least one conversation has messages array
-        const hasValidMessages = ticket.conversations.some(
-          conv => Array.isArray(conv.messages)
-        );
+        const hasValidMessages = ticket.conversations.some((conv) => Array.isArray(conv.messages));
         if (!hasValidMessages) {
           console.error("[TicketsProvider] Ticket conversations have invalid messages:", ticket.id);
           setError(`Ticket #${ticket.ticketNumber} has invalid messages data`);
@@ -593,7 +625,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
         // Update or add ticket to list
         setTickets((prev) => {
-          const existingIndex = prev.findIndex(t => t.id === ticketId);
+          const existingIndex = prev.findIndex((t) => t.id === ticketId);
           if (existingIndex >= 0) {
             // Update existing ticket
             return prev.map((t) => (t.id === ticketId ? ticket : t));
@@ -1102,7 +1134,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
   // ============================================
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const previousSearchRef = useRef<string>('');
+  const previousSearchRef = useRef<string>("");
 
   useEffect(() => {
     // Clear any pending search timeout
@@ -1122,7 +1154,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     if (!trimmedSearch) {
       // If search was cleared, refetch without search param
       if (filters.search && previousSearchRef.current) {
-        previousSearchRef.current = '';
+        previousSearchRef.current = "";
         const { search, ...filtersWithoutSearch } = filters;
         fetchTickets({ ...filtersWithoutSearch, page: 1 });
       }
@@ -1131,7 +1163,7 @@ export function useTicketsProvider(): UseTicketsProviderResult {
 
     // Validate length
     if (trimmedSearch.length > 255) {
-      setError('Search query is too long (max 255 characters)');
+      setError("Search query is too long (max 255 characters)");
       return;
     }
 
@@ -1218,6 +1250,10 @@ export function useTicketsProvider(): UseTicketsProviderResult {
     // Review Queue
     reviewQueueConversations,
     setReviewQueueConversations,
+
+    // Pagination
+    hasMore,
+    loadMore,
 
     // Actions - Core
     fetchTickets,
