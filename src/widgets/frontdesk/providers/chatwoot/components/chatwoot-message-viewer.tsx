@@ -4,8 +4,11 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootMessageViewerHeader } from "./chatwoot-message-viewer-header";
 import { ChatwootMessageItem } from "./chatwoot-message-item";
+import { ChatwootResolutionStatusBar } from "./chatwoot-resolution-status-bar";
+import { ChatwootReplyComposer } from "./chatwoot-reply-composer";
 import { useChatwootMessages } from "../hooks/use-chatwoot-messages";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { chatwootService } from "@/services/frontdesk";
 
 interface ChatwootMessageViewerProps {
   conversation: ChatwootConversation | null;
@@ -19,8 +22,9 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   onBack,
 }) => {
   const { neutralColor } = useGomakeTheme();
+  const [isSending, setIsSending] = React.useState(false);
 
-  const { messages, loading, error } = useChatwootMessages({
+  const { messages, loading, error, refresh } = useChatwootMessages({
     conversation,
     accountId: accountId || null,
   });
@@ -36,14 +40,15 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     );
   }
 
-  const handleReply = () => {
-    // TODO: Implement reply functionality
-    console.log("Reply clicked");
-  };
-
-  const handleReopen = () => {
-    // TODO: Implement reopen functionality
-    console.log("Reopen clicked");
+  const handleReopen = async () => {
+    if (!accountId || !conversation.id) return;
+    try {
+      await chatwootService.conversations.toggleConversationStatus(accountId, conversation.id);
+      // Refresh conversation data
+      refresh();
+    } catch (err) {
+      console.error("Failed to reopen conversation:", err);
+    }
   };
 
   const handleArchive = () => {
@@ -65,6 +70,46 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     window.print();
   };
 
+  const handleSearch = () => {
+    // TODO: Implement search functionality
+    console.log("Search clicked");
+  };
+
+  const handleSendMessage = async (
+    content: string,
+    isPrivate: boolean,
+    recipientEmails?: { to?: string; cc?: string; bcc?: string }
+  ) => {
+    if (!accountId || !conversation.id) return;
+
+    setIsSending(true);
+    try {
+      await chatwootService.messages.createMessage(accountId, conversation.id, {
+        content,
+        message_type: "outgoing",
+        private: isPrivate,
+        // Include email metadata if provided
+        ...(recipientEmails && {
+          content_attributes: {
+            email: {
+              to: recipientEmails.to,
+              cc: recipientEmails.cc,
+              bcc: recipientEmails.bcc,
+            },
+          },
+        }),
+      });
+
+      // Refresh messages after sending
+      await refresh();
+    } catch (err) {
+      console.error("Failed to send message:", err);
+      throw err;
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <Paper
       elevation={0}
@@ -84,14 +129,17 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         conversation={conversation}
         accountId={accountId}
         onBack={onBack}
-        onReply={handleReply}
         onReopen={handleReopen}
         onArchive={handleArchive}
         onDelete={handleDelete}
         onStar={handleStar}
         onPrint={handlePrint}
+        onSearch={handleSearch}
         isStarred={false}
       />
+
+      {/* Resolution Status Bar */}
+      <ChatwootResolutionStatusBar conversation={conversation} />
 
       {/* Messages */}
       <Box sx={{ flex: 1, overflow: "auto", backgroundColor: neutralColor(0) }}>
@@ -123,6 +171,13 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           ))
         )}
       </Box>
+
+      {/* Reply Composer */}
+      <ChatwootReplyComposer
+        conversation={conversation}
+        onSend={handleSendMessage}
+        isSending={isSending}
+      />
     </Paper>
   );
 };

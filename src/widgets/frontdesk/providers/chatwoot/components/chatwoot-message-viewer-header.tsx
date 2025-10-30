@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Tooltip } from "@mui/material";
+import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Tooltip, Button } from "@mui/material";
 import {
   ArrowBack as BackIcon,
   Star as StarIcon,
@@ -9,10 +9,14 @@ import {
   Delete as DeleteIcon,
   Reply as ReplyIcon,
   MoreVert as MoreIcon,
+  Search as SearchIcon,
+  ArrowDropDown as ArrowDropDownIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { formatMessageDate } from "@/widgets/frontdesk/utils";
+import { useRecoilValue } from "recoil";
+import { chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 interface ChatwootMessageViewerHeaderProps {
   conversation: ChatwootConversation | null;
@@ -24,6 +28,7 @@ interface ChatwootMessageViewerHeaderProps {
   onDelete?: () => void;
   onStar?: () => void;
   onPrint?: () => void;
+  onSearch?: () => void;
   isStarred?: boolean;
 }
 
@@ -37,17 +42,30 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   onDelete,
   onStar,
   onPrint,
+  onSearch,
   isStarred = false,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [reopenMenuAnchor, setReopenMenuAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const reopenMenuOpen = Boolean(reopenMenuAnchor);
+  const profile = useRecoilValue(chatwootProfileAtom);
 
   if (!conversation) return null;
 
   const sender = conversation.meta?.sender;
   const senderName = sender?.name || sender?.email || "Unknown";
   const senderEmail = sender?.email || "";
+
+  // Get current user display name (from profile)
+  const currentUserName = profile?.name || profile?.available_name || profile?.email || "";
+  const userNameInitials = currentUserName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   // Format conversation date
   const conversationDate = conversation.updated_at || conversation.created_at || conversation.timestamp
@@ -68,56 +86,103 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
     setAnchorEl(null);
   };
 
+  const handleReopenMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setReopenMenuAnchor(event.currentTarget);
+  };
+
+  const handleReopenMenuClose = () => {
+    setReopenMenuAnchor(null);
+  };
+
   const handleMenuAction = (action: () => void) => {
     action();
     handleMoreActionsClose();
   };
 
+  const handleReopenClick = () => {
+    if (onReopen) {
+      onReopen();
+    }
+    handleReopenMenuClose();
+  };
+
+  const isResolved = conversation.status === "resolved";
+
   return (
     <Box
       sx={{
-        p: 3,
+        p: 2,
         borderBottom: `1px solid ${neutralColor(200)}`,
         backgroundColor: neutralColor(0), // Light background
       }}
     >
-      <Stack spacing={2}>
-        {/* Top Row: Back Button and Subject/Title */}
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Tooltip title="Back">
-            <IconButton
-              onClick={onBack}
-              size="small"
-              sx={{
-                color: neutralColor(600),
-                "&:hover": {
-                  backgroundColor: neutralColor(100),
-                  color: primaryColor(600),
-                },
-              }}
-            >
-              <BackIcon />
-            </IconButton>
-          </Tooltip>
+      <Stack spacing={1.5}>
+        {/* Top Row: User Display and Actions */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          {/* Left: Current User Name */}
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              fontWeight: 500, 
+              color: neutralColor(800),
+              fontSize: "0.875rem",
+            }}
+          >
+            {currentUserName || "User"}
+          </Typography>
 
-          <Stack flex={1} spacing={0.5}>
-            <Typography variant="h6" sx={{ fontWeight: 600, color: neutralColor(800) }}>
-              {senderName}
-            </Typography>
-            {senderEmail && (
-              <Typography variant="body2" sx={{ color: neutralColor(600) }}>
-                {senderEmail}
-              </Typography>
-            )}
-          </Stack>
-
-          {/* Right Side: Action Buttons */}
+          {/* Right: Action Buttons */}
           <Stack direction="row" spacing={0.5} alignItems="center">
-            {onReply && (
-              <Tooltip title="Reply">
+            {/* Reopen Button (only when resolved) */}
+            {isResolved && onReopen && (
+              <>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleReopenMenuClick}
+                  endIcon={<ArrowDropDownIcon />}
+                  sx={{
+                    textTransform: "none",
+                    borderColor: neutralColor(300),
+                    color: neutralColor(700),
+                    fontSize: "0.75rem",
+                    px: 1.5,
+                    py: 0.5,
+                    minWidth: "auto",
+                    "&:hover": {
+                      backgroundColor: neutralColor(50),
+                      borderColor: neutralColor(400),
+                    },
+                  }}
+                >
+                  Reopen
+                </Button>
+                <Menu
+                  anchorEl={reopenMenuAnchor}
+                  open={reopenMenuOpen}
+                  onClose={handleReopenMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem onClick={handleReopenClick}>
+                    <ListItemText>Reopen Conversation</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
+
+            {/* Search Icon */}
+            {onSearch && (
+              <Tooltip title="Search">
                 <IconButton
                   size="small"
-                  onClick={onReply}
+                  onClick={onSearch}
                   sx={{
                     color: neutralColor(600),
                     "&:hover": {
@@ -126,29 +191,12 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                     },
                   }}
                 >
-                  <ReplyIcon />
+                  <SearchIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             )}
 
-            {onStar && (
-              <Tooltip title={isStarred ? "Unstar" : "Star"}>
-                <IconButton
-                  size="small"
-                  onClick={onStar}
-                  sx={{
-                    color: isStarred ? primaryColor(600) : neutralColor(600),
-                    "&:hover": {
-                      backgroundColor: neutralColor(100),
-                      color: primaryColor(600),
-                    },
-                  }}
-                >
-                  {isStarred ? <StarIcon /> : <StarBorderIcon />}
-                </IconButton>
-              </Tooltip>
-            )}
-
+            {/* More Actions */}
             <Tooltip title="More actions">
               <IconButton
                 size="small"
@@ -161,38 +209,30 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                   },
                 }}
               >
-                <MoreIcon />
+                <MoreIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </Stack>
         </Stack>
 
-        {/* Conversation Metadata */}
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-            {conversationDate}
-          </Typography>
-          {conversation.status && (
-            <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-              Status: {conversation.status}
-            </Typography>
-          )}
-          {conversation.priority && (
-            <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-              Priority: {conversation.priority}
-            </Typography>
-          )}
-        </Stack>
       </Stack>
 
       {/* More Actions Dropdown Menu */}
       <Menu anchorEl={anchorEl} open={open} onClose={handleMoreActionsClose}>
-        {onReopen && conversation.status === "resolved" && (
-          <MenuItem onClick={() => handleMenuAction(onReopen)}>
+        {onStar && (
+          <MenuItem onClick={() => handleMenuAction(onStar)}>
             <ListItemIcon>
-              <ArchiveIcon fontSize="small" />
+              {isStarred ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
             </ListItemIcon>
-            <ListItemText>Reopen</ListItemText>
+            <ListItemText>{isStarred ? "Unstar" : "Star"}</ListItemText>
+          </MenuItem>
+        )}
+        {onReply && (
+          <MenuItem onClick={() => handleMenuAction(onReply)}>
+            <ListItemIcon>
+              <ReplyIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Reply</ListItemText>
           </MenuItem>
         )}
         {onArchive && (

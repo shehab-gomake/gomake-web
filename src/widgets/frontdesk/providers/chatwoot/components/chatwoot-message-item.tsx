@@ -59,59 +59,125 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({ messag
     ? sanitizeHtml(rawContent) // Sanitize HTML fragments
     : rawContent; // Plain text
 
+  // Extract email metadata from content_attributes or message structure
+  const emailTo = message.content_attributes?.email?.to || 
+                  message.content_attributes?.to || "";
+  const emailSubject = message.content_attributes?.email?.subject || 
+                       message.content_attributes?.subject || "";
+
   return (
     <Box
       sx={{
-        p: 2,
+        p: 2.5,
         borderBottom: isLast ? "none" : `1px solid ${neutralColor(200)}`,
-        backgroundColor: isOutgoing ? alpha(primaryColor(50), 0.3) : "transparent",
+        backgroundColor: isOutgoing 
+          ? alpha(primaryColor(600), 0.08) // Dark blue background for outgoing
+          : neutralColor(50), // Light gray for incoming
       }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={1.5}>
         {/* Message Header */}
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" spacing={1.5}>
-            <Avatar 
-              sx={{ width: 40, height: 40, backgroundColor: avatarColor, color: "white" }}
-              src={sender.avatar_url}
-            >
-              {!sender.avatar_url && initials}
-            </Avatar>
-            <Stack>
+          <Stack flex={1} spacing={0.5}>
+            {/* For incoming messages, show sender with email */}
+            {!isOutgoing && (
+              <>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    color: neutralColor(800),
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {senderName} {senderEmail && `<${senderEmail}>`}
+                </Typography>
+                {emailTo && (
+                  <Typography variant="body2" sx={{ color: neutralColor(600), fontSize: "0.8125rem" }}>
+                    To: {emailTo}
+                  </Typography>
+                )}
+                {emailSubject && (
+                  <Typography variant="body2" sx={{ color: neutralColor(700), fontSize: "0.8125rem", fontWeight: 500 }}>
+                    Subject: {emailSubject}
+                  </Typography>
+                )}
+              </>
+            )}
+            
+            {/* For outgoing messages, show recipient */}
+            {isOutgoing && (
+              <>
+                {emailTo && (
+                  <Typography variant="body2" sx={{ color: neutralColor(700), fontSize: "0.8125rem" }}>
+                    To: {emailTo}
+                  </Typography>
+                )}
+              </>
+            )}
+          </Stack>
+          
+          {/* Timestamp with checkmark for sent messages */}
+          <Stack direction="row" alignItems="center" spacing={0.5}>
+            {isOutgoing && message.status === "sent" && (
               <Typography
-                variant="body1"
+                variant="caption"
                 sx={{
-                  fontWeight: 600,
-                  color: isOutgoing ? primaryColor(700) : neutralColor(800),
+                  color: neutralColor(600),
+                  fontSize: "0.75rem",
                 }}
               >
-                {senderName}
+                ✓
               </Typography>
-              {senderEmail && (
-                <Typography variant="body2" sx={{ color: neutralColor(500) }}>
-                  {senderEmail}
-                </Typography>
-              )}
-            </Stack>
+            )}
+            <Typography
+              variant="caption"
+              sx={{
+                color: neutralColor(500),
+                fontWeight: 500,
+                fontSize: "0.75rem",
+              }}
+            >
+              {timestamp}
+            </Typography>
           </Stack>
-          <Typography
-            variant="caption"
-            sx={{
-              color: neutralColor(500),
-              fontWeight: 500,
-              pt: 0.5,
-            }}
-          >
-            {timestamp}
-          </Typography>
         </Stack>
 
-        {/* Message Content */}
+        {/* Message Content with Avatar Positioning */}
+        <Box sx={{ position: "relative", display: "flex" }}>
+          {/* Avatar on right for outgoing messages */}
+          {isOutgoing && (
+            <Box
+              sx={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                display: "flex",
+                alignItems: "flex-start",
+                pt: 0.5,
+              }}
+            >
+              <Avatar 
+                sx={{ 
+                  width: 32, 
+                  height: 32, 
+                  backgroundColor: avatarColor, 
+                  color: "white",
+                  fontSize: "0.75rem",
+                }}
+                src={sender.avatar_url}
+              >
+                {!sender.avatar_url && initials}
+              </Avatar>
+            </Box>
+          )}
+
+          {/* Content Area */}
+          <Box sx={{ flex: 1, pr: isOutgoing ? "48px" : 0 }}>
         {isFullHtmlDocument ? (
           // Display full HTML documents as code blocks
           <Box
             sx={{
-              pl: "56px",
               mt: 1,
             }}
           >
@@ -138,7 +204,6 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({ messag
         ) : (
           <Box
             sx={{
-              pl: "56px", // Align with avatar
               "& p": {
                 margin: 0,
                 marginBottom: 1,
@@ -180,10 +245,12 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({ messag
             )}
           </Box>
         )}
+          </Box>
+        </Box>
 
         {/* Message Status (for outgoing messages) */}
         {isOutgoing && message.status && (
-          <Box sx={{ pl: "56px", display: "flex", alignItems: "center", gap: 0.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5 }}>
             <Typography variant="caption" sx={{ color: neutralColor(500), fontSize: 11 }}>
               {message.status === "sent" && "✓"}
               {message.status === "delivered" && "✓✓"}
@@ -200,7 +267,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({ messag
         {message.content_attributes?.attachments && 
          Array.isArray(message.content_attributes.attachments) &&
          message.content_attributes.attachments.length > 0 && (
-          <Box sx={{ pl: "56px" }}>
+          <Box sx={{ mt: 1 }}>
             <Typography variant="body2" sx={{ color: neutralColor(500), fontSize: 12 }}>
               {message.content_attributes.attachments.length} attachment(s)
             </Typography>
