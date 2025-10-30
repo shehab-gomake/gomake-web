@@ -283,34 +283,34 @@ const JobsFiltersSection = ({
     },
     ...(isPrintHouseUsePrintNode
       ? [
-          {
-            id: "isPrinted",
-            label: t("boardMissions.isPrinted"),
-            component: (
-              <GoMakeAutoComplate
-                key={
-                  isPrintedState === null ? "null" : isPrintedState.toString()
-                }
-                options={[
-                  { value: true, text: t("modal.yes") },
-                  { value: false, text: t("modal.no") },
-                ]}
-                getOptionLabel={(option: any) => option.text}
-                placeholder={t("boardMissions.isPrinted")}
-                style={classes.textInputStyle}
-                onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
-                value={
-                  isPrintedState === null
-                    ? null
-                    : isPrintedState === true
+        {
+          id: "isPrinted",
+          label: t("boardMissions.isPrinted"),
+          component: (
+            <GoMakeAutoComplate
+              key={
+                isPrintedState === null ? "null" : isPrintedState.toString()
+              }
+              options={[
+                { value: true, text: t("modal.yes") },
+                { value: false, text: t("modal.no") },
+              ]}
+              getOptionLabel={(option: any) => option.text}
+              placeholder={t("boardMissions.isPrinted")}
+              style={classes.textInputStyle}
+              onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
+              value={
+                isPrintedState === null
+                  ? null
+                  : isPrintedState === true
                     ? { value: true, text: t("modal.yes") }
                     : { value: false, text: t("modal.no") }
-                }
-                withArrow={true}
-              />
-            ),
-          },
-        ]
+              }
+              withArrow={true}
+            />
+          ),
+        },
+      ]
       : []),
     {
       id: "products",
@@ -413,13 +413,11 @@ const JobsFiltersSection = ({
           isPurchaseJobs={isPurchaseJobs}
         />
       )}
-      {!isPurchaseJobs && (
-        <ExcelMenu
-          onGenerateReportClick={onGenerateReportClick}
-          onExportTableClick={ExportJobsTableToExcel}
-          documentType={null}
-        />
-      )}
+      <ExcelMenu
+        onGenerateReportClick={isPurchaseJobs ? undefined : onGenerateReportClick}
+        onExportTableClick={ExportJobsTableToExcel}
+        documentType={null}
+      />
     </>
   );
 
