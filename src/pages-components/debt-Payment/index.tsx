@@ -23,6 +23,8 @@ const DebtPaymentWidget = ({ documentType, isMobile = false }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle(true);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+
+  const columnWidths = ["5%", "25%", "20%", "25%", "25%"];
   const tableHeaders = [
     "#",
     t("payment.documentDate"),
@@ -68,7 +70,7 @@ const DebtPaymentWidget = ({ documentType, isMobile = false }: IProps) => {
                   uiType="updated"
                   value={quoteConfirm?.client?.name}
                   isUpdate={false}
-                  setIsUpdate={() => { }}
+                  setIsUpdate={() => {}}
                   getOptionLabel={(item) => item.text}
                   isFromCartPage={true}
                   options={[]}
@@ -95,6 +97,7 @@ const DebtPaymentWidget = ({ documentType, isMobile = false }: IProps) => {
                 documentItems={debtItems}
                 isPrePaymentPage={true}
                 tableHeaders={tableHeaders}
+                columnWidths={columnWidths}
                 isDebtPayments={true}
               />
               <div style={classes.borderContainer} />
