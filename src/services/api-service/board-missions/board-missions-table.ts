@@ -26,6 +26,8 @@ const EXPORT_JOBS_TABLE_TO_EXCEL_URL =
   "/v1/job-service/board-missions-tables/export-job-table-to-excel";
 const EXPORT_JOBS_TABLE_TO_EXCEL_ASYNC_URL =
   "/v1/job-service/board-missions-tables/export-job-table-to-excel-async";
+const EXPORT_PURCHASE_JOB_TABLE_TO_EXCEL_URL =
+  "/v1/erp-service/board-missions-tables/export-purchase-job-table-to-excel";
 const PRINT_NODE_PRINTING_MODAL_LOG =
   "/v1/job-service/board-missions-tables/print-node-modal-log";
 const PRINT_NODE_PRINTING_CANCEL_LOG =
@@ -199,6 +201,21 @@ const exportJobTableToExcelAsyncApi: ICallAndSetData = async (
     data
   );
 };
+
+const exportPurchaseJobTableToExcelApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: BoardMissionFilters
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_PURCHASE_JOB_TABLE_TO_EXCEL_URL,
+    setState,
+    data
+  );
+};
+
 const printNodeModalShowLog: ICallAndSetData = async (
   callApi,
   setState,
@@ -280,6 +297,7 @@ export {
   addOrderBoardMissionsToFileUploaderApi,
   exportJobTableToExcelApi,
   exportJobTableToExcelAsyncApi,
+  exportPurchaseJobTableToExcelApi,
   printNodeModalShowLog,
   printNodeModalCancelLog,
   getInitialOrderFoldersData,

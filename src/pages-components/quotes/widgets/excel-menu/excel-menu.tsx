@@ -77,26 +77,30 @@ const ExcelMenu = ({
             </MenuItem>
           </PermissionCheck>
         )}
-        {/* <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            onExportTableClick();
-          }}
-        >
-          <div style={classes.rowTextStyle}>
-            {t("sales.list.exportTableExcel")}
-          </div>
-        </MenuItem> */}
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            onExportTablePdfClick();
-          }}
-        >
-          <div style={classes.rowTextStyle}>
-            {t("sales.list.exportTablePdf")}
-          </div>
-        </MenuItem>
+        {onExportTableClick && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTableClick();
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportTableExcel")}
+            </div>
+          </MenuItem>
+        )}
+        {onExportTablePdfClick && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTablePdfClick();
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportTablePdf")}
+            </div>
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );
