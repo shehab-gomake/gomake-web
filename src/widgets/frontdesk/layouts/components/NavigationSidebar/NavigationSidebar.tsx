@@ -17,6 +17,11 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import CommentIcon from '@mui/icons-material/Comment';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import ForumIcon from '@mui/icons-material/Forum';
 
 /**
  * Legacy type exports for backward compatibility
@@ -139,6 +144,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const theme = useTheme();
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
+  const [chatwootExpanded, setChatwootExpanded] = useState(true);
+  const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
 
   const channelItems = [
     { id: 'email' as Channel, icon: <EmailIcon />, label: 'Email' },
@@ -446,6 +453,256 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 </ListItemButton>
               </Tooltip>
             ))}
+          </List>
+        </Collapse>
+      </Box>
+
+      <Divider sx={{ my: 1 }} />
+
+      {/* Chatwoot Section */}
+      <Box sx={{ py: 1 }}>
+        {!isCollapsed && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1,
+              cursor: 'pointer',
+              '&:hover': { backgroundColor: theme.palette.action.hover }
+            }}
+            onClick={() => setChatwootExpanded(!chatwootExpanded)}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontWeight: 600,
+                fontSize: '0.688rem',
+                textTransform: 'uppercase',
+                letterSpacing: 0.5
+              }}
+            >
+              CHATWOOT
+            </Typography>
+            {chatwootExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          </Box>
+        )}
+        <Collapse in={isCollapsed || chatwootExpanded}>
+          <List disablePadding>
+            {/* My Inbox */}
+            <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={selectedChannel === 'chatwoot' && selectedSection === 'inbox'}
+                onClick={() => {
+                  onSectionSelect('inbox');
+                  onChannelSelect('chatwoot' as Channel);
+                }}
+                sx={{
+                  py: 1,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  '&.Mui-selected': {
+                    backgroundColor: theme.palette.primary.main + '10',
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.main + '20'
+                    }
+                  }
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                    <InboxIcon />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <InboxIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="My Inbox"
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontSize: '0.875rem', fontWeight: selectedChannel === 'chatwoot' && selectedSection === 'inbox' ? 600 : 400 }
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+
+            {/* Conversations - Expandable */}
+            {!isCollapsed && (
+              <Box>
+                <ListItemButton
+                  onClick={() => setChatwootConversationsExpanded(!chatwootConversationsExpanded)}
+                  sx={{
+                    py: 0.75,
+                    px: 2,
+                    '&:hover': { backgroundColor: theme.palette.action.hover }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <CommentIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Conversations"
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontSize: '0.875rem' }
+                      }}
+                    />
+                    {chatwootConversationsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                  </Box>
+                </ListItemButton>
+                <Collapse in={chatwootConversationsExpanded}>
+                  <List disablePadding>
+                    {/* All Conversations */}
+                    <Tooltip title="All Conversations" placement="right">
+                      <ListItemButton
+                        selected={false}
+                        onClick={() => {
+                          onSectionSelect('inbox');
+                          onChannelSelect('chatwoot' as Channel);
+                        }}
+                        sx={{
+                          py: 0.75,
+                          pl: isCollapsed ? 1.5 : 5,
+                          pr: isCollapsed ? 1.5 : 2,
+                          justifyContent: isCollapsed ? 'center' : 'flex-start',
+                          '&:hover': {
+                            backgroundColor: theme.palette.action.hover
+                          }
+                        }}
+                      >
+                        {isCollapsed ? (
+                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                            <CommentIcon fontSize="small" />
+                          </Box>
+                        ) : (
+                          <ListItemText
+                            primary="All conversations"
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+
+                    {/* Mentions */}
+                    <Tooltip title="Mentions" placement="right">
+                      <ListItemButton
+                        selected={false}
+                        onClick={() => {
+                          onSectionSelect('inbox');
+                          onChannelSelect('chatwoot' as Channel);
+                        }}
+                        sx={{
+                          py: 0.75,
+                          pl: isCollapsed ? 1.5 : 5,
+                          pr: isCollapsed ? 1.5 : 2,
+                          justifyContent: isCollapsed ? 'center' : 'flex-start',
+                          '&:hover': {
+                            backgroundColor: theme.palette.action.hover
+                          }
+                        }}
+                      >
+                        {isCollapsed ? (
+                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                            <AlternateEmailIcon fontSize="small" />
+                          </Box>
+                        ) : (
+                          <ListItemText
+                            primary="Mentions"
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+
+                    {/* Unattended */}
+                    <Tooltip title="Unattended" placement="right">
+                      <ListItemButton
+                        selected={false}
+                        onClick={() => {
+                          onSectionSelect('inbox');
+                          onChannelSelect('chatwoot' as Channel);
+                        }}
+                        sx={{
+                          py: 0.75,
+                          pl: isCollapsed ? 1.5 : 5,
+                          pr: isCollapsed ? 1.5 : 2,
+                          justifyContent: isCollapsed ? 'center' : 'flex-start',
+                          '&:hover': {
+                            backgroundColor: theme.palette.action.hover
+                          }
+                        }}
+                      >
+                        {isCollapsed ? (
+                          <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                            <NotInterestedIcon fontSize="small" />
+                          </Box>
+                        ) : (
+                          <ListItemText
+                            primary="Unattended"
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              sx: { fontSize: '0.813rem', color: theme.palette.text.secondary }
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+                  </List>
+                </Collapse>
+              </Box>
+            )}
+
+            {/* Channels */}
+            <Tooltip title="Channels" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={false}
+                onClick={() => {
+                  onSectionSelect('inbox');
+                  onChannelSelect('chatwoot' as Channel);
+                }}
+                sx={{
+                  py: 1,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover
+                  }
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}>
+                    <ForumIcon />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <ForumIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Channels"
+                      primaryTypographyProps={{
+                        variant: 'body2',
+                        sx: { fontSize: '0.875rem', fontWeight: 400 }
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
           </List>
         </Collapse>
       </Box>

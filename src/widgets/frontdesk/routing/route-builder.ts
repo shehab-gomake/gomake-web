@@ -5,7 +5,7 @@
  * Handles all route types and query parameters for navigation.
  */
 
-import { FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, NavigationOptions } from "./types";
+import { FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, NavigationOptions, ChatwootView } from "./types";
 
 /**
  * Build URL path from route
@@ -56,6 +56,26 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
       break;
     }
 
+    case RouteType.CHATWOOT: {
+      const viewPath = mapChatwootViewToPath(route.view);
+      path = `/frontdesk/chatwoot/${viewPath}`;
+
+      // Add query params if present
+      const queryParams = new URLSearchParams();
+      if (route.conversationId) {
+        queryParams.append("conversation", route.conversationId);
+      }
+      if (route.channelId) {
+        queryParams.append("channel", route.channelId);
+      }
+
+      const queryString = queryParams.toString();
+      if (queryString) {
+        path += `?${queryString}`;
+      }
+      break;
+    }
+
     default:
       path = "/frontdesk/inbox";
       break;
@@ -74,8 +94,23 @@ const mapChannelToPath = (channel: FrontDeskChannel): string => {
     [FrontDeskChannel.EMAIL]: "email",
     [FrontDeskChannel.WHATSAPP]: "whatsapp",
     [FrontDeskChannel.INTERNAL]: "internal",
+    [FrontDeskChannel.CHATWOOT]: "chatwoot",
   };
   return map[channel];
+};
+
+/**
+ * Map Chatwoot view enum to URL path segment
+ */
+const mapChatwootViewToPath = (view: ChatwootView): string => {
+  const map: Record<ChatwootView, string> = {
+    [ChatwootView.MY_INBOX]: "my-inbox",
+    [ChatwootView.ALL_CONVERSATIONS]: "conversations/all",
+    [ChatwootView.MENTIONS]: "conversations/mentions",
+    [ChatwootView.UNATTENDED]: "conversations/unattended",
+    [ChatwootView.CHANNELS]: "channels",
+  };
+  return map[view];
 };
 
 /**
@@ -212,6 +247,41 @@ export const RouteBuilder = {
    * Build settings section route
    */
   settings: (): FrontDeskRoute => RouteBuilder.section(FrontDeskSection.SETTINGS),
+
+  /**
+   * Build Chatwoot route
+   */
+  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string): FrontDeskRoute => ({
+    type: RouteType.CHATWOOT,
+    view,
+    conversationId,
+    channelId,
+  }),
+
+  /**
+   * Build Chatwoot My Inbox route
+   */
+  chatwootMyInbox: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.MY_INBOX),
+
+  /**
+   * Build Chatwoot All Conversations route
+   */
+  chatwootAllConversations: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.ALL_CONVERSATIONS),
+
+  /**
+   * Build Chatwoot Mentions route
+   */
+  chatwootMentions: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.MENTIONS),
+
+  /**
+   * Build Chatwoot Unattended route
+   */
+  chatwootUnattended: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.UNATTENDED),
+
+  /**
+   * Build Chatwoot Channels route
+   */
+  chatwootChannels: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.CHANNELS),
 };
 
 /**
@@ -270,6 +340,20 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
       };
     }
 
+    case RouteType.CHATWOOT: {
+      const viewNames = {
+        [ChatwootView.MY_INBOX]: "My Inbox",
+        [ChatwootView.ALL_CONVERSATIONS]: "All Conversations",
+        [ChatwootView.MENTIONS]: "Mentions",
+        [ChatwootView.UNATTENDED]: "Unattended",
+        [ChatwootView.CHANNELS]: "Channels",
+      };
+      return {
+        title: viewNames[route.view],
+        breadcrumbs: ["FrontDesk", "Chatwoot", viewNames[route.view]],
+      };
+    }
+
     default:
       return {
         title: "FrontDesk",
@@ -300,6 +384,9 @@ export const routesEqual = (a: FrontDeskRoute, b: FrontDeskRoute): boolean => {
     case RouteType.SECTION:
       return a.section === (b as any).section;
 
+    case RouteType.CHATWOOT:
+      return a.view === (b as any).view && a.conversationId === (b as any).conversationId;
+
     default:
       return false;
   }
@@ -324,6 +411,9 @@ export const describeRoute = (route: FrontDeskRoute): string => {
 
     case RouteType.SECTION:
       return `Section: ${route.section}`;
+
+    case RouteType.CHATWOOT:
+      return `Chatwoot: ${route.view}${route.conversationId ? ` (conversation: ${route.conversationId})` : ""}`;
 
     default:
       return "Unknown route";

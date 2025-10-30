@@ -23,6 +23,7 @@ export enum FrontDeskChannel {
   EMAIL = "email", // Email provider
   WHATSAPP = "whatsapp", // WhatsApp provider
   INTERNAL = "internal", // Direct Messages
+  CHATWOOT = "chatwoot", // Chatwoot integration
 }
 
 /**
@@ -45,6 +46,7 @@ export enum RouteType {
   TICKET_LIST = "ticket-list",
   TICKET_DETAIL = "ticket-detail",
   SECTION = "section",
+  CHATWOOT = "chatwoot",
 }
 
 /**
@@ -97,9 +99,30 @@ export interface SectionRoute extends BaseRouteParams {
 }
 
 /**
+ * Chatwoot view types
+ */
+export enum ChatwootView {
+  MY_INBOX = "my-inbox",
+  ALL_CONVERSATIONS = "all-conversations",
+  MENTIONS = "mentions",
+  UNATTENDED = "unattended",
+  CHANNELS = "channels",
+}
+
+/**
+ * Chatwoot route
+ */
+export interface ChatwootRoute extends BaseRouteParams {
+  type: RouteType.CHATWOOT;
+  view: ChatwootView;
+  conversationId?: string;
+  channelId?: string;
+}
+
+/**
  * Union type of all possible routes
  */
-export type FrontDeskRoute = InboxRoute | ChannelRoute | TicketListRoute | TicketDetailRoute | SectionRoute;
+export type FrontDeskRoute = InboxRoute | ChannelRoute | TicketListRoute | TicketDetailRoute | SectionRoute | ChatwootRoute;
 
 /**
  * Query parameters that can be passed via URL
@@ -147,7 +170,7 @@ export interface RouteMetadata {
  * Legacy types for backward compatibility
  * These map to the new enum types
  */
-export type Channel = "all" | "email" | "whatsapp" | "internal";
+export type Channel = "all" | "email" | "whatsapp" | "internal" | "chatwoot";
 export type Section = "inbox" | "assigned" | "admin" | "settings";
 export type TicketViewLegacy = "my-tickets" | "unassigned" | "all-tickets" | "done" | "archived";
 
@@ -164,6 +187,8 @@ export const isTicketDetailRoute = (route: FrontDeskRoute): route is TicketDetai
 
 export const isSectionRoute = (route: FrontDeskRoute): route is SectionRoute => route.type === RouteType.SECTION;
 
+export const isChatwootRoute = (route: FrontDeskRoute): route is ChatwootRoute => route.type === RouteType.CHATWOOT;
+
 /**
  * Utility to convert legacy types to new enums
  */
@@ -173,6 +198,7 @@ export const mapLegacyChannel = (channel: Channel): FrontDeskChannel => {
     email: FrontDeskChannel.EMAIL,
     whatsapp: FrontDeskChannel.WHATSAPP,
     internal: FrontDeskChannel.INTERNAL,
+    chatwoot: FrontDeskChannel.CHATWOOT,
   };
   return map[channel];
 };
