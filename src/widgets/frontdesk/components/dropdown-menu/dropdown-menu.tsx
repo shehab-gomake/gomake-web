@@ -45,16 +45,25 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     <Box sx={{ px: `${spacingTokens[3]}px`, py: `${spacingTokens[2]}px` }}>{children}</Box>
   );
 
+  // Only set default anchorOrigin/transformOrigin if not using anchorPosition
+  const isUsingAnchorPosition = props.anchorReference === 'anchorPosition';
+  
+  const defaultMenuProps = isUsingAnchorPosition
+    ? {}
+    : {
+        anchorOrigin: {
+          vertical: "bottom" as const,
+          horizontal: "right" as const,
+        },
+        transformOrigin: {
+          vertical: "top" as const,
+          horizontal: "right" as const,
+        },
+      };
+
   return (
     <Menu
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
+      {...defaultMenuProps}
       open={open}
       onClose={onClose}
       disableScrollLock
@@ -66,7 +75,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           elevation: 8,
           sx: {
             width: width,
-            mt: 1,
+            mt: isUsingAnchorPosition ? 0 : 1,
             borderRadius: "8px",
             boxShadow: shadowTokens.md,
             border: `1px solid ${colorTokens.semantic.border.default}`,

@@ -42,6 +42,8 @@ export interface ConversationListItemProps {
   recipient?: string;
   /** Email-style subject (e.g., "Subject: Email subject") */
   subject?: string;
+  /** Context menu handler - called on right-click */
+  onContextMenu?: (event: React.MouseEvent) => void;
 }
 
 /**
@@ -68,6 +70,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   status,
   recipient,
   subject,
+  onContextMenu,
 }) => {
   const participantName = Array.isArray(participants) 
     ? String(participants[0] || '') 
@@ -77,11 +80,20 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   // Email-style layout: Show sender, recipient, subject, snippet
   const showEmailLayout = recipient || subject;
 
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (onContextMenu) {
+      onContextMenu(event);
+    }
+  };
+
   return (
     <ListItem disablePadding>
       <ListItemButton
         selected={isSelected}
         onClick={onClick}
+        onContextMenu={handleContextMenu}
         sx={{
           py: 1.5,
           px: 2,

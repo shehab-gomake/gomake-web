@@ -1,11 +1,14 @@
 import React from "react";
 import { ConversationListItem as DSConversationListItem } from "@/widgets/frontdesk/design-system";
 import { formatConversationDate } from "@/widgets/frontdesk/utils";
+import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
+import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
 
 interface ChatwootConversationListItemProps {
   conversation: any;
   isSelected: boolean;
   onSelect: (conversation: any) => void;
+  onContextMenuAction?: (actionId: string, conversationId: string | number) => void;
 }
 
 /**
@@ -16,7 +19,15 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   conversation,
   isSelected,
   onSelect,
+  onContextMenuAction,
 }) => {
+  const { contextMenuPosition, handleContextMenu, handleCloseContextMenu } = useConversationContextMenu();
+
+  const handleActionClick = (actionId: string, conversationId: string | number) => {
+    if (onContextMenuAction) {
+      onContextMenuAction(actionId, conversationId);
+    }
+  };
   // Transform Chatwoot conversation to design system format
   // Chatwoot conversations have a meta field with sender information
   // The last_non_activity_message contains the latest message content
@@ -67,22 +78,32 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   const unreadCount = conversation.unread_count || 0;
 
   return (
-    <DSConversationListItem
-      id={String(conversation.id)}
-      title={title}
-      participants={participants}
-      snippet={snippet}
-      timestamp={timestamp}
-      isRead={unreadCount === 0}
-      isSelected={isSelected}
-      unreadCount={unreadCount}
-      hasAttachments={false}
-      isStarred={false}
-      avatarSrc={sender?.avatar_url}
-      onClick={() => onSelect(conversation)}
-      subject={subject}
-      recipient={recipient}
-    />
+    <>
+      <DSConversationListItem
+        id={String(conversation.id)}
+        title={title}
+        participants={participants}
+        snippet={snippet}
+        timestamp={timestamp}
+        isRead={unreadCount === 0}
+        isSelected={isSelected}
+        unreadCount={unreadCount}
+        hasAttachments={false}
+        isStarred={false}
+        avatarSrc={sender?.avatar_url}
+        onClick={() => onSelect(conversation)}
+        onContextMenu={handleContextMenu}
+        subject={subject}
+        recipient={recipient}
+      />
+      <ConversationContextMenu
+        anchorPosition={contextMenuPosition}
+        open={Boolean(contextMenuPosition)}
+        onClose={handleCloseContextMenu}
+        conversationId={conversation.id}
+        onActionClick={handleActionClick}
+      />
+    </>
   );
 };
 
