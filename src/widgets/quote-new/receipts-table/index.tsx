@@ -74,18 +74,34 @@ const ReceiptsTable = () => {
 
     setAllocatedSums(() => {
       const updatedSums = {};
-      let remaining = finalTotalPayment;
 
+      // If finalTotalPayment is 0, just use sumApplied for all items
+      if (finalTotalPayment === 0) {
+        tableRows?.forEach((item, index) => {
+          updatedSums[index] = item.sumApplied;
+        });
+        return updatedSums;
+      }
+
+      // First pass: collect all checked credits (negative amounts)
+      let totalCredits = 0;
       tableRows?.forEach((item, index) => {
-        if (checkedItems[index]) {
-          // If finalTotalPayment is 0, allocate full sumApplied
-          let allocatable =
-            finalTotalPayment === 0
-              ? item.sumApplied
-              : Math.min(remaining, item.sumApplied);
+        if (checkedItems[index] && item.sumApplied < 0) {
+          totalCredits += Math.abs(item.sumApplied);
+          updatedSums[index] = item.sumApplied; // Allocate full credit amount
+        }
+      });
+
+      // Calculate total available to allocate (payment + credits)
+      let remaining = finalTotalPayment + totalCredits;
+
+      // Second pass: allocate to positive items (invoices)
+      tableRows?.forEach((item, index) => {
+        if (checkedItems[index] && item.sumApplied > 0) {
+          const allocatable = Math.min(remaining, item.sumApplied);
           updatedSums[index] = allocatable;
-          remaining -= allocatable; // Deduct only if finalTotalPayment is not 0
-        } else {
+          remaining -= allocatable;
+        } else if (!checkedItems[index]) {
           updatedSums[index] = item.sumApplied; // Keep sumApplied for unchecked rows
         }
       });
@@ -201,43 +217,49 @@ const ReceiptsTable = () => {
   const handleAllocationChange = (index, isChecked, sumApplied) => {
     setAllocatedSums((prev) => {
       const updated = { ...prev };
-      let remaining = remainingTotal;
 
-      if (isChecked) {
-        // Allocate sum when checked (allow negative allocation)
-        // const allocatable = Math.min(remaining, sumApplied);
-
-        let allocatable = Math.min(remaining, sumApplied);
-
-        if (finalTotalPayment === 0) {
-          allocatable = sumApplied;
+      if (finalTotalPayment === 0) {
+        // If no payment, just use sumApplied
+        if (isChecked) {
+          updated[index] = sumApplied;
         } else {
-          allocatable = Math.min(remaining, sumApplied);
+          delete updated[index];
         }
-        updated[index] = allocatable;
-        remaining -= allocatable;
-      } else {
-        // Release allocated sum when unchecked (allow negative allocation)
-        const releasedAmount = updated[index] || 0;
-        delete updated[index];
-        remaining += releasedAmount;
-
-        // Reallocate released amount to remaining checked items
-        const sortedCheckedIndexes = tableRows
-          .map((_, i) => i)
-          .filter((i) => i !== index && checkedItems[i]);
-
-        sortedCheckedIndexes.forEach((i) => {
-          const allocatable = Math.min(
-            remaining,
-            tableRows[i].sumApplied - (updated[i] || 0)
-          );
-          if (allocatable > 0) {
-            updated[i] = (updated[i] || 0) + allocatable;
-            remaining -= allocatable;
-          }
-        });
+        setRemainingTotal(0);
+        return updated;
       }
+
+      // Calculate total credits from all checked items (including the one being toggled)
+      let totalCredits = 0;
+      tableRows?.forEach((item, i) => {
+        const willBeChecked = i === index ? isChecked : checkedItems[i];
+        if (willBeChecked && item.sumApplied < 0) {
+          totalCredits += Math.abs(item.sumApplied);
+        }
+      });
+
+      // Calculate total available (payment + credits)
+      let remaining = finalTotalPayment + totalCredits;
+
+      // First, allocate to all negative items (credits)
+      tableRows?.forEach((item, i) => {
+        const willBeChecked = i === index ? isChecked : checkedItems[i];
+        if (willBeChecked && item.sumApplied < 0) {
+          updated[i] = item.sumApplied;
+        }
+      });
+
+      // Then allocate to positive items (invoices)
+      tableRows?.forEach((item, i) => {
+        const willBeChecked = i === index ? isChecked : checkedItems[i];
+        if (willBeChecked && item.sumApplied > 0) {
+          const allocatable = Math.min(remaining, item.sumApplied);
+          updated[i] = allocatable;
+          remaining -= allocatable;
+        } else if (!willBeChecked) {
+          delete updated[i];
+        }
+      });
 
       setRemainingTotal(remaining);
       return updated;
