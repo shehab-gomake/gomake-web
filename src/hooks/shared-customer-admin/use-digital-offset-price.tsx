@@ -4679,7 +4679,7 @@ const useDigitalOffsetPrice = ({
           (x) => x.id === subSection.id
         );
         const param = subSectionCopy.parameters.find(
-          (x) => x.id === relatedParameter.parameterId
+          (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
         );
         if (hasRelatedParams && hasChildParams && isHidden) {
           parameter.childsParameters.forEach((childParam) => {
@@ -4695,8 +4695,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4717,7 +4720,12 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) => p.parameterId != param.id),
+              parameters: x.parameters.filter((p) =>
+                !(p.parameterId === param.id &&
+                  p.actionIndex === actionIndex &&
+                  p.sectionId === section.id &&
+                  p.subSectionId === subSection.id)
+              ),
             };
           }
         });
@@ -4796,7 +4804,12 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) => p.parameterId != param.id),
+              parameters: x.parameters.filter((p) =>
+                !(p.parameterId === param.id &&
+                  p.actionIndex === actionIndex &&
+                  p.sectionId === section.id &&
+                  p.subSectionId === subSection.id)
+              ),
             };
           }
         });
@@ -4852,14 +4865,17 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId
+            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId
+                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -4879,8 +4895,11 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter(
-                  (p) => p.parameterId != param.id
+                parameters: x.parameters.filter((p) =>
+                  !(p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id)
                 ),
               };
             }
@@ -4889,8 +4908,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4947,14 +4969,17 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId
+            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId
+                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -4974,8 +4999,11 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter(
-                  (p) => p.parameterId != param.id
+                parameters: x.parameters.filter((p) =>
+                  !(p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id)
                 ),
               };
             }
@@ -4983,8 +5011,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -5913,7 +5944,12 @@ const useDigitalOffsetPrice = ({
             if (data?.value === null && data?.values === undefined) {
               subSectionParameter.childsParameters?.forEach((childParam) => {
                 temp = temp.filter(
-                  (item) => item.parameterId !== childParam.id
+                  (item) => !(
+                    item.parameterId === childParam.id &&
+                    item.actionIndex === actionIndex &&
+                    item.sectionId === sectionId &&
+                    item.subSectionId === subSectionId
+                  )
                 );
               });
             }
@@ -6310,7 +6346,12 @@ const useDigitalOffsetPrice = ({
           subSectionParameter.settingParameters.length > 0
         ) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
-            temp = temp.filter((x) => x.parameterId != settingParam.id);
+            temp = temp.filter((x) =>
+              !(x.parameterId === settingParam.id &&
+                x.actionIndex === actionIndex &&
+                x.sectionId === sectionId &&
+                x.subSectionId === subSectionId)
+            );
           });
         }
         const parameterValue = subSectionParameter.valuesConfigs.find(
