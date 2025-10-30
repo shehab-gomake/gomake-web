@@ -21,6 +21,7 @@ const CustomerAuthLayout = ({
   className,
   backgroundColor,
   staticPageTitle,
+  customHeaderStyle,
 }: IAuthLayout) => {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
 
@@ -124,7 +125,7 @@ const CustomerAuthLayout = ({
                 }
               }}
             >
-              {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
+              {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget customStyle={customHeaderStyle} />}
 
               {canAccess && (
                 <div style={classes.bodyContainer} className={className}>

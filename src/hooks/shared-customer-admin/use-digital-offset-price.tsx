@@ -802,6 +802,9 @@ const useDigitalOffsetPrice = ({
     let defaultProductTemplateCopy = cloneDeep(productTemplate);
     const productTemplateCopy = cloneDeep(productTemplate);
 
+    // Variable to store the new section ID for later selection
+    let newSectionId = null;
+
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
@@ -847,6 +850,9 @@ const useDigitalOffsetPrice = ({
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
+    // Store the new section ID for later selection
+    newSectionId = sectionCopy.id;
+
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
@@ -870,9 +876,10 @@ const useDigitalOffsetPrice = ({
     productTemplateCopy.sections = sectionsArr;
 
     // Add section to subProducts manually
-    if (subProducts && subProducts.length > 0) {
-      const subProductsCopy = cloneDeep(subProducts);
+    // Declare subProductsCopy outside to use for validation later
+    let subProductsCopy = cloneDeep(subProducts);
 
+    if (subProducts && subProducts.length > 0) {
       // Create a single subProduct entry for the duplicated section
       // Find the original subProduct entry that matches this section
       const originalSubProduct = subProducts.find(
@@ -1050,6 +1057,26 @@ const useDigitalOffsetPrice = ({
 
     // Replace the entire underParameterIds state with the rebuilt array
     setUnderParameterIds(allUnderParameterIdsArray);
+
+    // Automatically select the newly added section
+    // Calculate the index of the new section among visible sections
+    const visibleSections = productTemplateCopy.sections.filter((s) => !s.isHidden);
+    const newSectionIndex = visibleSections.findIndex((s) => s.id === newSectionId);
+
+    if (newSectionIndex !== -1) {
+      // Use setTimeout to ensure state updates have completed before changing active index
+      setTimeout(() => {
+        setActiveIndex(newSectionIndex);
+
+        // Validate parameters and trigger recalculation if all required parameters are filled
+        let checkParameter = validateParameters(subProductsCopy);
+        if (checkParameter) {
+          setCanCalculation(true);
+        } else {
+          setCanCalculation(false);
+        }
+      }, 0);
+    }
   };
 
   const removeSection = (item) => {

@@ -271,7 +271,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
+      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 85 }}>
         {<ActionMenu isAdmin={props.isAdmin} subCategory={props.subCategory} />}
       </Stack>
     </Stack>

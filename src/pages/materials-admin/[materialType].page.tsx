@@ -1,11 +1,11 @@
-import {CustomerAuthLayout} from "@/layouts";
-import {MaterialsWidget} from "@/widgets/materials-widget/materials-widget";
+import { CustomerAuthLayout } from "@/layouts";
+import { MaterialsWidget } from "@/widgets/materials-widget/materials-widget";
 
 export default function MaterialPage() {
 
     return (
-        <CustomerAuthLayout>
-            <MaterialsWidget isAdmin={true}/>
+        <CustomerAuthLayout customHeaderStyle={{ marginBottom: 0 }} >
+            <MaterialsWidget isAdmin={true} />
         </CustomerAuthLayout>
     )
 }

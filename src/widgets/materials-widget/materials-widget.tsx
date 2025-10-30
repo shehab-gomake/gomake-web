@@ -130,7 +130,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   }, [materialType, materialCategory, materialFilter, supplierId, isLoadingMore, hasMoreData, loadMoreData]);
 
   useEffect(() => {
-    if (!materialCategory) {
+    if (!subCategory) {
       // Wait 2 seconds before opening sidebar if no category selected
       const timer = setTimeout(() => {
         setIsSidebarOpen(true);
@@ -141,7 +141,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     else {
       setIsSidebarOpen(false);
     }
-  }, [materialCategory]);
+  }, [subCategory]);
 
   const { callApi } = useGomakeAxios();
   const [listClient, setListClient] = useState([]);
@@ -282,24 +282,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     </Stack>
   );
 
-  // useEffect(() => {
-  //   if (materialType && materialCategories.length > 0) {
-  //     if (
-  //       !materialCategory ||
-  //       !materialCategories.some(
-  //         (category) => category.categoryKey === materialCategory
-  //       )
-  //     ) {
-  //       const defaultCategory = materialCategories[0].categoryKey;
-
-  //       replace({
-  //         pathname: materialType.toString(),
-  //         query: { materialCategory: defaultCategory },
-  //       });
-  //       setSelectedMaterialCategory(defaultCategory);
-  //     }
-  //   }
-  // }, [materialCategories]);
 
   useEffect(() => {
     getCurrenciesApi().then();
@@ -336,18 +318,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialFilter,
   ]);
   return (
-    <div style={{ overflow: "hidden" }}>
-      <div style={classes.headerStyle}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            gap: 5,
-            width: "30%",
-          }}
-        >
+    <>
+      {
+        !!materialName && <div style={{ overflow: "hidden" }}>
           <PrimaryButton
             variant={"text"}
             href={props.isAdmin ? "/materials-admin" : "/materials"}
@@ -356,219 +329,235 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
-          <h1 style={classes.header}>{materialName}</h1>
-          <h4 style={classes.subHeader} onClick={() => setIsSidebarOpen(true)}>/ {materialCategory ?? t("materials.chooseCategory")}</h4>
-          <IconButton
-            size="small"
-            onClick={() => setIsSidebarOpen(true)}
-            sx={{
-              color: '#1976d2',
-              '&:hover': {
-                backgroundColor: '#e3f2fd'
-              }
-            }}
-          >
-            <KeyboardArrowDownIcon fontSize="medium" sx={{ color: '#5759A8', marginTop: "3px" }} />
-            {/* <EditIcon fontSize="small" /> */}
-          </IconButton>
-        </div>
-        <div style={{
-          width: "70%",
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-        }}>
-          <FiltersActionsBar
-            isAdmin={props.isAdmin}
-            subCategory={materialCategory?.toString()}
-            isFetchingSupplier={isFetchingSupplier}
-            renderOptionsSupplier={listSupplier}
-            checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
-            onHeightChange={handleFilterHeightChange}
-          />
-        </div>
-      </div>
-      {/* Absolute positioned sidebar overlay */}
-      {isSidebarOpen && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 120,
-            [dir === 'rtl' ? 'right' : 'left']: sidebarOffset,
-            [dir !== 'rtl' ? 'right' : 'left']: 0,
-            // left: 140,
-            // right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            zIndex: 1300
-          }}
-          onClick={() => setIsSidebarOpen(false)}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              [dir === 'rtl' ? 'right' : 'left']: "0px",
-              width: '380px',
-              backgroundColor: '#fff',
-              height: '100%',
-              overflow: 'auto',
-              boxShadow: dir === 'rtl' ? '-2px 0 8px rgba(0,0,0,0.1)' : '2px 0 8px rgba(0,0,0,0.1)'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {Side()}
-          </Box>
-        </Box>
-      )}
+          <div style={classes.headerStyle}>
 
-      {/* Full width content */}
-      <div style={{ width: '100%', padding: '10px 10px' }}>
-        {
-          isLoadingMaterials ?
-            <div style={{ height: 795, width: "100%" }}>
-              <Skeleton variant="rectangular" height={795} width="100%" />
-            </div> : <>
-              {materialCategory && (
-                <Stack
-                  justifyContent={"space-between"}
-                  gap={2}
-                  display={"flex"}
-                  height={"100%"}
-                >
-                  <div>
-                    {materialCategoryData.length > 0 ? (
-                      <CombinedTable
-                        headers={tableHeadersNew()}
-                        rows={tableRowsNew}
-                        materialType={materialType?.toString()}
-                        materialCategory={materialCategory?.toString()}
-                        renderOptionsCustomer={listClient}
-                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
-                        isFetchingCustomer={isFetchingCustomer}
-                        renderOptionsSupplier={listSupplier}
-                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
-                        isFetchingSupplier={isFetchingSupplier}
-                        onLoadMore={handleLoadMore}
-                        hasMoreData={hasMoreData}
-                        isLoadingMore={isLoadingMore}
-                        filterBarHeight={filterBarHeight}
-                      />
-                    ) : flag &&
-                      materialCategories.find(
-                        (category) => category.categoryKey === materialCategory
-                      ).isDeletable ? (
-                      <CombinedTable
-                        headers={tableHeadersNew()}
-                        rows={tableRowsNew}
-                        materialType={materialType?.toString()}
-                        materialCategory={materialCategory?.toString()}
-                        renderOptionsCustomer={listClient}
-                        checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
-                        isFetchingCustomer={isFetchingCustomer}
-                        renderOptionsSupplier={listSupplier}
-                        checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
-                        isFetchingSupplier={isFetchingSupplier}
-                        onLoadMore={handleLoadMore}
-                        hasMoreData={hasMoreData}
-                        isLoadingMore={isLoadingMore}
-                        filterBarHeight={filterBarHeight}
-                      />
-                    ) : !props.isAdmin ? (
-                      <div style={classes.noData}>
-                        {
-                          activeFilter === EMaterialActiveFilter.INACTIVE ? <h4>
-                            {t("materials.sheetPaper.thereNoInactiveDataFor")} {materialCategory}
-                          </h4> :
-                            <h4>
-                              {t("materials.sheetPaper.noDataFor")} {materialCategory}
-                            </h4>
-                        }
+            <div
+              onClick={() => setIsSidebarOpen(true)}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                gap: 5,
+                width: "30%",
+              }}
+            >
 
-                        <br />
-                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
-                          <GomakePrimaryButton
-                            style={classes.noDataButton} onClick={() => {
-                              setOpenAddRowModal(true);
-                            }}>
-                            {t("materials.sheetPaper.addRowMaterial")}
-                          </GomakePrimaryButton>
-                          <GomakePrimaryButton style={classes.noDataButton} onClick={() => {
-                            elementRef.current.click();
-                          }}>
-                            {t("materials.sheetPaper.uploadForExcel")}
-                          </GomakePrimaryButton>
-                        </div>
+              <h1 style={classes.header}>{materialName}</h1>
+              <h4 style={classes.subHeader} >/ {subCategory ?? t("materials.chooseCategory")}</h4>
+              <IconButton
+                size="small"
+                // onClick={() => setIsSidebarOpen(true)}
+                sx={{
+                  color: '#1976d2',
+                  '&:hover': {
+                    backgroundColor: '#e3f2fd'
+                  }
+                }}
+              >
+                <KeyboardArrowDownIcon fontSize="medium" sx={{ color: '#5759A8', marginTop: "3px" }} />
+                {/* <EditIcon fontSize="small" /> */}
+              </IconButton>
+            </div>
+            <div style={{
+              width: "70%",
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}>
+              <FiltersActionsBar
+                isAdmin={props.isAdmin}
+                subCategory={subCategory}
+                isFetchingSupplier={isFetchingSupplier}
+                renderOptionsSupplier={listSupplier}
+                checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                onHeightChange={handleFilterHeightChange}
+              />
+            </div>
+          </div>
+          {/* Absolute positioned sidebar overlay */}
+          {isSidebarOpen && (
+            <Box
+              sx={{
+                position: 'fixed',
+                top: 120,
+                [dir === 'rtl' ? 'right' : 'left']: sidebarOffset,
+                [dir !== 'rtl' ? 'right' : 'left']: 0,
+                // left: 140,
+                // right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                zIndex: 1300
+              }}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  [dir === 'rtl' ? 'right' : 'left']: "0px",
+                  width: '380px',
+                  backgroundColor: '#fff',
+                  height: '100%',
+                  overflow: 'auto',
+                  boxShadow: dir === 'rtl' ? '-2px 0 8px rgba(0,0,0,0.1)' : '2px 0 8px rgba(0,0,0,0.1)'
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {Side()}
+              </Box>
+            </Box>
+          )}
+
+          {/* Full width content */}
+          <div style={{ width: '100%', padding: '10px 10px' }}>
+            {
+              isLoadingMaterials ?
+                <div style={{ height: 795, width: "100%" }}>
+                  <Skeleton variant="rectangular" height={795} width="100%" />
+                </div> : <>
+                  {materialCategory && (
+                    <Stack
+                      justifyContent={"space-between"}
+                      gap={2}
+                      display={"flex"}
+                      height={"100%"}
+                    >
+                      <div>
+                        {materialCategoryData.length > 0 ? (
+                          <CombinedTable
+                            headers={tableHeadersNew()}
+                            rows={tableRowsNew}
+                            materialType={materialType?.toString()}
+                            materialCategory={materialCategory?.toString()}
+                            renderOptionsCustomer={listClient}
+                            checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                            isFetchingCustomer={isFetchingCustomer}
+                            renderOptionsSupplier={listSupplier}
+                            checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                            isFetchingSupplier={isFetchingSupplier}
+                            onLoadMore={handleLoadMore}
+                            hasMoreData={hasMoreData}
+                            isLoadingMore={isLoadingMore}
+                            filterBarHeight={filterBarHeight}
+                          />
+                        ) : flag &&
+                          materialCategories.find(
+                            (category) => category.categoryKey === materialCategory
+                          ).isDeletable ? (
+                          <CombinedTable
+                            headers={tableHeadersNew()}
+                            rows={tableRowsNew}
+                            materialType={materialType?.toString()}
+                            materialCategory={materialCategory?.toString()}
+                            renderOptionsCustomer={listClient}
+                            checkWhatRenderArrayCustomer={checkWhatRenderArrayCustomer}
+                            isFetchingCustomer={isFetchingCustomer}
+                            renderOptionsSupplier={listSupplier}
+                            checkWhatRenderArraySupplier={checkWhatRenderArraySupplier}
+                            isFetchingSupplier={isFetchingSupplier}
+                            onLoadMore={handleLoadMore}
+                            hasMoreData={hasMoreData}
+                            isLoadingMore={isLoadingMore}
+                            filterBarHeight={filterBarHeight}
+                          />
+                        ) : !props.isAdmin ? (
+                          <div style={classes.noData}>
+                            {
+                              activeFilter === EMaterialActiveFilter.INACTIVE ? <h4>
+                                {t("materials.sheetPaper.thereNoInactiveDataFor")} {materialCategory}
+                              </h4> :
+                                <h4>
+                                  {t("materials.sheetPaper.noDataFor")} {materialCategory}
+                                </h4>
+                            }
+
+                            <br />
+                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                              <GomakePrimaryButton
+                                style={classes.noDataButton} onClick={() => {
+                                  setOpenAddRowModal(true);
+                                }}>
+                                {t("materials.sheetPaper.addRowMaterial")}
+                              </GomakePrimaryButton>
+                              <GomakePrimaryButton style={classes.noDataButton} onClick={() => {
+                                elementRef.current.click();
+                              }}>
+                                {t("materials.sheetPaper.uploadForExcel")}
+                              </GomakePrimaryButton>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </div>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </Stack>
-              )}
-            </>
-        }
-      </div>
-      <AddSupplierModal />
-      <AddCategoryModal isAdmin={props.isAdmin} />
-      <AddRowModal isAdmin={props.isAdmin} />
-      <UpdatedNumburingModal isAdmin={props.isAdmin} />
-      <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
-      <ExtraParametersModal isAdmin={props.isAdmin} />
-      <GoMakeDeleteModal
-        modalType={ModalType.DELETE}
-        openModal={openDeleteRowModal}
-        onClose={onClickCloseDeleteRowModal}
-        onClickDelete={() => onDeleteCategory(selectedCategory?.categoryKey)}
-      />
-      <GoMakeDeleteModal
-        modalType={ModalType.DELETE}
-        openModal={openDeleteTableRowModal}
-        onClose={onClickCloseDeleteTableRowModal}
-        onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
-      />
-      <ThreeOptionsModal
-        hideIcon
-        title={t("materials.modals.deleteModalTitle")}
-        yesBtn={t("navigationButtons.delete")}
-        noBtn={
-          selectedTableRow?.isActive
-            ? t("remainWords.convertToInactive")
-            : t("remainWords.convertToActive")
-        }
-        openModal={openDeleteTableRowWhenHaveMoreSupplierModal}
-        onClose={onClickCloseDeleteTableRowWhenHaveMoreSupplierModal}
-        onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
-        onClickNo={() =>
-          toggleIsActive(
-            selectedTableRow?.id,
-            "Active",
-            selectedTableRow?.isActive
-          )
-        }
-      />
-      <input
-        key={fileInputKey}
-        ref={elementRef}
-        onChange={(e) => {
-          uploadExcelFile(e);
-          setFileInputKey(Date.now());
-        }}
-        type="file"
-        accept=".xlsx"
-        hidden={true}
-      />
+                    </Stack>
+                  )}
+                </>
+            }
+          </div>
+          <AddSupplierModal />
+          <AddCategoryModal isAdmin={props.isAdmin} />
+          <AddRowModal isAdmin={props.isAdmin} />
+          <UpdatedNumburingModal isAdmin={props.isAdmin} />
+          <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
+          <ExtraParametersModal isAdmin={props.isAdmin} />
+          <GoMakeDeleteModal
+            modalType={ModalType.DELETE}
+            openModal={openDeleteRowModal}
+            onClose={onClickCloseDeleteRowModal}
+            onClickDelete={() => onDeleteCategory(selectedCategory?.categoryKey)}
+          />
+          <GoMakeDeleteModal
+            modalType={ModalType.DELETE}
+            openModal={openDeleteTableRowModal}
+            onClose={onClickCloseDeleteTableRowModal}
+            onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
+          />
+          <ThreeOptionsModal
+            hideIcon
+            title={t("materials.modals.deleteModalTitle")}
+            yesBtn={t("navigationButtons.delete")}
+            noBtn={
+              selectedTableRow?.isActive
+                ? t("remainWords.convertToInactive")
+                : t("remainWords.convertToActive")
+            }
+            openModal={openDeleteTableRowWhenHaveMoreSupplierModal}
+            onClose={onClickCloseDeleteTableRowWhenHaveMoreSupplierModal}
+            onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
+            onClickNo={() =>
+              toggleIsActive(
+                selectedTableRow?.id,
+                "Active",
+                selectedTableRow?.isActive
+              )
+            }
+          />
+          <input
+            key={fileInputKey}
+            ref={elementRef}
+            onChange={(e) => {
+              uploadExcelFile(e);
+              setFileInputKey(Date.now());
+            }}
+            type="file"
+            accept=".xlsx"
+            hidden={true}
+          />
 
-      {/* Duplicates/Deleted Materials Modal */}
-      <DuplicatesModal
-        openModal={openDuplicatesModal}
-        onClose={handleCloseDuplicatesModal}
-        data={duplicatesData}
-        onDelete={handleDeleteSelectedMaterials}
-        materialHeaders={materialHeaders}
-        onRefreshData={handleRefreshMaterialData}
-      />
-    </div >
+          {/* Duplicates/Deleted Materials Modal */}
+          <DuplicatesModal
+            openModal={openDuplicatesModal}
+            onClose={handleCloseDuplicatesModal}
+            data={duplicatesData}
+            onDelete={handleDeleteSelectedMaterials}
+            materialHeaders={materialHeaders}
+            onRefreshData={handleRefreshMaterialData}
+          />
+        </div >
+      }
+    </>
   );
 };
 

@@ -9,4 +9,5 @@ export interface IAuthLayout {
   className?: string;
   backgroundColor?: string;
   staticPageTitle?: string;
+  customHeaderStyle?: React.CSSProperties;
 }

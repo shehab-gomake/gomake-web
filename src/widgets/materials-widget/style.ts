@@ -10,6 +10,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(700, 20),
         color: "#000",
         width: "fit-content",
+        cursor: "pointer",
       },
       headerStyle:{
         display: "flex",
@@ -21,10 +22,13 @@ const useStyle = () => {
         paddingLeft: 10,
       },
       backButtonStyle:{
-        height: 30,
+        height: 22,
         background: "#CBCBE5",
         width: 90,
         borderRadius: 8,
+        marginRight: 10,
+        marginLeft: 10,
+        
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
