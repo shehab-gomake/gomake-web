@@ -15,6 +15,16 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 
+interface IWhatsAppWebModalProps {
+  openModal: boolean;
+  onClose: () => void;
+  getWhatsAppMessage?: () => void;
+  whatsappMassage: string;
+  getWhatsAppMessageForReceipt?: () => void;
+  documentType: any;
+  clientContacts?: any[];
+}
+
 const WhatsAppWebModal = ({
   openModal,
   onClose,
@@ -22,7 +32,8 @@ const WhatsAppWebModal = ({
   whatsappMassage,
   getWhatsAppMessageForReceipt,
   documentType,
-}) => {
+  clientContacts = null, // For aging report and other non-quote flows
+}: IWhatsAppWebModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
@@ -31,6 +42,9 @@ const WhatsAppWebModal = ({
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { primaryColor } = useGomakeTheme();
+
+  // Use clientContacts if provided (for aging report), otherwise use quoteItemValue
+  const contacts = clientContacts || quoteItemValue?.documentContacts;
 
   const [selectedMethod, setSelectedMethod] = useState<null | boolean>(null);
   // true = web, false = desktop
@@ -43,21 +57,27 @@ const WhatsAppWebModal = ({
 
   useEffect(() => {
     if (openModal) {
-      if (documentType === DOCUMENT_TYPE.receipt) {
+      if (
+        documentType === DOCUMENT_TYPE.receipt &&
+        getWhatsAppMessageForReceipt
+      ) {
         getWhatsAppMessageForReceipt();
-      } else {
+      } else if (getWhatsAppMessage) {
         getWhatsAppMessage();
       }
+      // If neither function is provided, the message should already be set (e.g., from aging report)
     }
-  }, [openModal]);
+  }, [openModal, documentType]);
 
   useEffect(() => {
-    if (openModal) {
-      const value = quoteItemValue?.documentContacts[0];
+    if (openModal && contacts && contacts.length > 0) {
+      const value = contacts[0];
       setSelectedClient(value);
-      setPhoneNumber(value?.contactPhone);
+      // Handle both contactPhone (quote) and phone (aging report) formats
+      const phone = value?.contactPhone || value?.phone || "";
+      setPhoneNumber(phone);
     }
-  }, [openModal]);
+  }, [openModal, contacts]);
 
   useEffect(() => {
     if (openModal) {
@@ -83,17 +103,20 @@ const WhatsAppWebModal = ({
       >
         <div style={classes.mainContainer}>
           <GoMakeSelect
-            key={`select-client-${
-              quoteItemValue?.documentContacts?.[0]?.id || "none"
-            }`}
-            options={quoteItemValue?.documentContacts}
-            getOptionLabel={(option: any) => `${option.contactName}`}
+            key={`select-client-${contacts?.[0]?.id || "none"}`}
+            options={contacts}
+            getOptionLabel={(option: any) => {
+              // Handle both contactName (quote) and label (aging report) formats
+              return option.contactName || option.label || option.name || "";
+            }}
             placeholder={t("sales.quote.contactName")}
             onChange={(e, value) => {
               setSelectedClient(value);
               setPhoneNumber("");
               setTimeout(() => {
-                setPhoneNumber(value?.contactPhone || "");
+                // Handle both contactPhone (quote) and phone (aging report) formats
+                const phone = value?.contactPhone || value?.phone || "";
+                setPhoneNumber(phone);
               }, 0);
             }}
             value={selectedClient}
