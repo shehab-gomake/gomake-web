@@ -6,18 +6,21 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { Button } from "@mui/material";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 import ForwardToInboxRoundedIcon from "@mui/icons-material/ForwardToInboxRounded";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export interface AgingReportButtonWidgetProps {
   onClickBtn1: () => void;
   onClickBtn2: () => void;
   onClickBtn3: () => void;
   onClickBtn4: () => void;
+  onClickBtn5: () => void;
 }
 const AgingReportButtonWidget = ({
   onClickBtn1,
   onClickBtn2,
   onClickBtn3,
   onClickBtn4,
+  onClickBtn5,
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -48,6 +51,13 @@ const AgingReportButtonWidget = ({
         <ForwardToInboxRoundedIcon
           style={{ color: primaryColor(300), fontSize: "22px" }}
         />
+      ),
+    },
+    {
+      name: t("reports.sendViaWhatsApp"),
+      onclick: onClickBtn5,
+      icon: (
+        <WhatsAppIcon style={{ color: primaryColor(300), fontSize: "22px" }} />
       ),
     },
   ];

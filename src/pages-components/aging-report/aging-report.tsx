@@ -32,6 +32,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     onClickBtn2,
     onClickBtn3,
     onClickBtn4,
+    onClickBtn5,
     showTable,
     detailedReport,
     getTableDataRows,
@@ -114,6 +115,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           onClickBtn2={onClickBtn2}
           onClickBtn3={onClickBtn3}
           onClickBtn4={onClickBtn4}
+          onClickBtn5={onClickBtn5}
         />
       </Stack>
       <Divider />

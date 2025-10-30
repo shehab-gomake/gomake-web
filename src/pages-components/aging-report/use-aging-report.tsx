@@ -259,6 +259,17 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     }
   };
 
+  //!here TODO
+  const onClickBtn5 = () => {
+    if (customer?.id) {
+      // TODO: Implement WhatsApp sending functionality
+      // This will open WhatsApp with aging report details
+      console.log("Send Aging Report via WhatsApp for customer:", customer);
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
+
   const getAgingReportFilter = useCallback(
     async (
       expendedReport = false,
@@ -309,7 +320,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       customer,
       selectDate,
       byReferenceDate,
-      agingReportByCreationDate
+      agingReportByCreationDate,
     ]
   );
 
@@ -356,7 +367,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     byReferenceDate,
     orderBy,
     isDescOrder,
-    agingReportByCreationDate
+    agingReportByCreationDate,
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -415,7 +426,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     customer,
     selectDate,
     byReferenceDate,
-    agingReportByCreationDate
+    agingReportByCreationDate,
   ]);
 
   // New function to handle opening customer modal
@@ -525,6 +536,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     onClickBtn2,
     onClickBtn3,
     onClickBtn4,
+    onClickBtn5,
     showTable,
     detailedReport,
     setShowTable,
