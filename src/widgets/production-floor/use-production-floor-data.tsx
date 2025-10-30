@@ -138,7 +138,19 @@ const useProductionFloorData = () => {
       }
 
       if (view === EProductionFloorView.DONE_JOBS) {
-        return await getAllBoardMissions();
+        // Default sort by readyDate descending
+        const defaultSortOrder = [
+          {
+            column: 2, // ReadyDate
+            dir: "desc",
+          },
+        ];
+        return await getAllBoardMissions(
+          undefined,
+          undefined,
+          undefined,
+          defaultSortOrder
+        );
       }
 
       const callBack = (res) => {
@@ -463,7 +475,8 @@ const useProductionFloorData = () => {
     async (
       pageNumberInput?: number,
       pageSizeInput?: number,
-      patternSearchInput?: string
+      patternSearchInput?: string,
+      sortOrderInput?: any
     ) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -619,6 +632,7 @@ const useProductionFloorData = () => {
         proofTypes: doneJobsProofTypes?.map((pt) => pt.value) || [],
         isPrinted: doneJobsIsPrinted,
         orderStatus: doneJobsOrderStatus?.value || null,
+        ...(sortOrderInput && { order: sortOrderInput }),
       };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     },
@@ -651,12 +665,14 @@ const useProductionFloorData = () => {
     async (
       pageNumber: number,
       pageSize: number,
-      patternSearchInput?: string
+      patternSearchInput?: string,
+      sortOrderInput?: any
     ) => {
       return await getAllBoardMissions(
         pageNumber,
         pageSize,
-        patternSearchInput
+        patternSearchInput,
+        sortOrderInput
       );
     },
     [getAllBoardMissions]
