@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
   ConversationListParams,
@@ -11,13 +11,14 @@ import {
   chatwootConversationsAtom,
   chatwootConversationsLoadingAtom,
   chatwootConversationsErrorAtom,
-  chatwootSelectedConversationAtom,
+  chatwootConversationCountsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const useChatwootConversations = (options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loading, setLoading] = useRecoilState(chatwootConversationsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
+  const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -56,6 +57,13 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
         const meta = responseData.meta || response.meta || {};
         setHasMore(meta?.page ? meta.page < (meta.total_pages || meta.count || 0) : false);
 
+        // Extract counts from API response meta
+        setCounts({
+          mine: meta.mine_count ?? 0,
+          unassigned: meta.unassigned_count ?? 0,
+          all: meta.all_count ?? meta.total_count ?? 0,
+        });
+
         setCurrentPage(page);
       } catch (err: any) {
         setError(err.message || "Failed to load conversations");
@@ -64,7 +72,7 @@ export const useChatwootConversations = (options: Partial<ConversationListParams
         setLoading(false);
       }
     },
-    [options.limit, options.status, options.inbox_id, options.assignee_type, options.sort_by, options.q, options.team_id, options.labels, setConversations, setLoading, setError]
+    [options.limit, options.status, options.inbox_id, options.assignee_type, options.sort_by, options.q, options.team_id, options.labels, setConversations, setLoading, setError, setCounts]
   );
 
   const loadMore = useCallback(() => {

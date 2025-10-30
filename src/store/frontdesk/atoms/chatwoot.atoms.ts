@@ -53,6 +53,16 @@ export const chatwootConversationsErrorAtom = atom<string | null>({
   default: null,
 });
 
+// Conversation counts from API
+export const chatwootConversationCountsAtom = atom<{
+  mine: number;
+  unassigned: number;
+  all: number;
+}>({
+  key: "frontdesk.chatwoot.conversationCounts",
+  default: { mine: 0, unassigned: 0, all: 0 },
+});
+
 // Messages
 export const chatwootMessagesAtom = atom<any[]>({
   key: "frontdesk.chatwoot.messages",

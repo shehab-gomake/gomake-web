@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useRecoilValue } from "recoil";
 import {
   Box,
   Stack,
@@ -24,6 +25,7 @@ import {
   ConversationListParams,
   ConversationSortBy,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -53,20 +55,17 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
+  
+  // Get counts from API response (stored in atom)
+  const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
 
-  // Calculate counts if not provided
+  // Use provided counts if available, otherwise use counts from API
   const counts = useMemo(() => {
     if (mineCount !== undefined && unassignedCount !== undefined && allCount !== undefined) {
       return { mine: mineCount, unassigned: unassignedCount, all: allCount };
     }
-
-    // Calculate from conversations if not provided
-    const mine = conversations.filter((c) => c.meta?.assignee?.id).length;
-    const unassigned = conversations.filter((c) => !c.meta?.assignee?.id).length;
-    const all = conversations.length;
-
-    return { mine, unassigned, all };
-  }, [conversations, mineCount, unassignedCount, allCount]);
+    return apiCounts;
+  }, [mineCount, unassignedCount, allCount, apiCounts]);
 
   // Get current assignee type filter
   const currentAssigneeType = filters.assignee_type;

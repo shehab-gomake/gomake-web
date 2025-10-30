@@ -38,6 +38,10 @@ export interface ConversationListItemProps {
   onClick?: () => void;
   /** Status chip */
   status?: { label: string; color: 'primary' | 'success' | 'warning' | 'error' };
+  /** Email-style recipient (e.g., "To: email@example.com") */
+  recipient?: string;
+  /** Email-style subject (e.g., "Subject: Email subject") */
+  subject?: string;
 }
 
 /**
@@ -62,11 +66,16 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   priority,
   onClick,
   status,
+  recipient,
+  subject,
 }) => {
   const participantName = Array.isArray(participants) 
     ? String(participants[0] || '') 
     : String(participants || '');
   const extraCount = Array.isArray(participants) && participants.length > 1 ? participants.length - 1 : 0;
+
+  // Email-style layout: Show sender, recipient, subject, snippet
+  const showEmailLayout = recipient || subject;
 
   return (
     <ListItem disablePadding>
@@ -74,12 +83,12 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         selected={isSelected}
         onClick={onClick}
         sx={{
-          py: semanticSpacing.listItem.default / 8, // Convert to MUI spacing units
+          py: 1.5,
           px: 2,
           borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
           backgroundColor: isSelected
             ? colorTokens.semantic.interactive.selected
-            : 'transparent',
+            : colorTokens.semantic.background.primary, // Light background (white)
           '&:hover': {
             backgroundColor: isSelected
               ? colorTokens.semantic.interactive.selectedHover
@@ -100,112 +109,196 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
 
           {/* Content */}
           <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-            {/* Title/Subject Row */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: isRead ? 400 : 600,
-                  color: isSelected
-                    ? colorTokens.primary[900]
-                    : colorTokens.semantic.text.primary,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  flex: 1,
-                  fontSize: 13,
-                }}
-              >
-                {title}
-              </Typography>
-
-              {/* Right indicators */}
-              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ ml: 1 }}>
-                {hasAttachments && (
-                  <AttachFileIcon
+            {showEmailLayout ? (
+              // Email-style layout: Sender -> Recipient -> Subject -> Snippet -> Timestamp
+              <>
+                {/* Sender Row */}
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography
+                    variant="body2"
                     sx={{
-                      fontSize: 14,
+                      fontWeight: isRead ? 400 : 600,
+                      color: isSelected
+                        ? colorTokens.primary[900]
+                        : colorTokens.semantic.text.primary,
+                      fontSize: 13,
+                    }}
+                  >
+                    {title}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
                       color: colorTokens.semantic.text.secondary,
+                      fontSize: 11,
+                      ml: 1,
+                      flexShrink: 0,
                     }}
-                  />
-                )}
-                {isStarred && (
-                  <StarIcon
-                    sx={{
-                      fontSize: 14,
-                      color: colorTokens.warning[600],
-                    }}
-                  />
-                )}
-                {status && (
-                  <Chip
-                    label={status.label}
-                    color={status.color}
-                    variant="soft"
-                    size="small"
-                  />
-                )}
-              </Stack>
-            </Stack>
+                  >
+                    {timestamp}
+                  </Typography>
+                </Stack>
 
-            {/* Participants Row */}
-            <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: isRead ? 400 : 600,
-                  color: isSelected
-                    ? colorTokens.primary[800]
-                    : colorTokens.semantic.text.primary,
-                  fontSize: 13,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {participantName}
-              </Typography>
-              {extraCount > 0 && (
+                {/* Recipient Row (if provided) */}
+                {recipient && (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 12,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    To: {recipient}
+                  </Typography>
+                )}
+
+                {/* Subject Row (if provided) */}
+                {subject && (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: isRead ? 400 : 500,
+                      color: isSelected
+                        ? colorTokens.primary[800]
+                        : colorTokens.semantic.text.primary,
+                      fontSize: 12,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    Subject: {subject}
+                  </Typography>
+                )}
+
+                {/* Message Snippet Row */}
                 <Typography
-                  variant="caption"
+                  variant="body2"
                   sx={{
                     color: colorTokens.semantic.text.secondary,
-                    fontSize: 11,
+                    fontSize: 12,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  +{extraCount}
+                  {snippet}
                 </Typography>
-              )}
-            </Stack>
+              </>
+            ) : (
+              // Default layout: Title/Subject -> Participants -> Snippet/Timestamp
+              <>
+                {/* Title/Subject Row */}
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: isRead ? 400 : 600,
+                      color: isSelected
+                        ? colorTokens.primary[900]
+                        : colorTokens.semantic.text.primary,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                      fontSize: 13,
+                    }}
+                  >
+                    {title}
+                  </Typography>
 
-            {/* Snippet and Timestamp Row */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography
-                variant="body2"
-                sx={{
-                  color: colorTokens.semantic.text.secondary,
-                  fontSize: 12,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  flex: 1,
-                }}
-              >
-                {snippet}
-              </Typography>
+                  {/* Right indicators */}
+                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ ml: 1 }}>
+                    {hasAttachments && (
+                      <AttachFileIcon
+                        sx={{
+                          fontSize: 14,
+                          color: colorTokens.semantic.text.secondary,
+                        }}
+                      />
+                    )}
+                    {isStarred && (
+                      <StarIcon
+                        sx={{
+                          fontSize: 14,
+                          color: colorTokens.warning[600],
+                        }}
+                      />
+                    )}
+                    {status && (
+                      <Chip
+                        label={status.label}
+                        color={status.color}
+                        variant="soft"
+                        size="small"
+                      />
+                    )}
+                  </Stack>
+                </Stack>
 
-              <Typography
-                variant="caption"
-                sx={{
-                  color: colorTokens.semantic.text.secondary,
-                  fontSize: 11,
-                  ml: 1,
-                  flexShrink: 0,
-                }}
-              >
-                {timestamp}
-              </Typography>
-            </Stack>
+                {/* Participants Row */}
+                <Stack direction="row" alignItems="center" spacing={0.5}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: isRead ? 400 : 600,
+                      color: isSelected
+                        ? colorTokens.primary[800]
+                        : colorTokens.semantic.text.primary,
+                      fontSize: 13,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {participantName}
+                  </Typography>
+                  {extraCount > 0 && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 11,
+                      }}
+                    >
+                      +{extraCount}
+                    </Typography>
+                  )}
+                </Stack>
+
+                {/* Snippet and Timestamp Row */}
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 12,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                    }}
+                  >
+                    {snippet}
+                  </Typography>
+
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 11,
+                      ml: 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {timestamp}
+                  </Typography>
+                </Stack>
+              </>
+            )}
           </Stack>
         </Stack>
       </ListItemButton>

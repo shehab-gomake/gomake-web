@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Box, Paper, List, Alert } from "@mui/material";
+import { useRecoilValue } from "recoil";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ConversationListEmpty } from "../../email/components/conversation/conversation-list-empty";
 import { ConversationListLoading } from "../../email/components/conversation/conversation-list-loading";
@@ -13,6 +14,7 @@ import {
   ConversationStatus,
   ConversationAssigneeType,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 interface ChatwootConversationListProps {
   conversations: any[];
@@ -46,14 +48,9 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   onFiltersChange = () => {},
 }) => {
   const { neutralColor } = useGomakeTheme();
-
-  // Calculate counts
-  const counts = useMemo(() => {
-    const mine = conversations.filter((c) => c.meta?.assignee?.id).length;
-    const unassigned = conversations.filter((c) => !c.meta?.assignee?.id).length;
-    const all = conversations.length;
-    return { mine, unassigned, all };
-  }, [conversations]);
+  
+  // Get counts from API response (stored in atom)
+  const counts = useRecoilValue(chatwootConversationCountsAtom);
 
   // Get current status from filters
   const currentStatus = filters.status 
@@ -86,8 +83,6 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         status={currentStatus as ConversationStatus}
         filters={filters}
         onFiltersChange={onFiltersChange}
-        onFilterClick={() => setFilterMenuOpen(true)}
-        onSortClick={() => setSortMenuOpen(true)}
         conversations={conversations}
         mineCount={counts.mine}
         unassignedCount={counts.unassigned}

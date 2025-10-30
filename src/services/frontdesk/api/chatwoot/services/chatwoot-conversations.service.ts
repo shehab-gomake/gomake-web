@@ -152,14 +152,14 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Get Conversation Details
-   * GET /api/accounts/{account_id}/conversations/{conversation_id}
+   * GET /api/accounts/conversations/{conversation_id}
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, but kept for API compatibility)
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with conversation details
    */
   async getConversationDetails(accountId: number, conversationId: number): Promise<ConversationDetailResponse> {
-    return await this.get<ConversationDetailResponse>(this.accountScopedUrl(accountId, `conversations/${conversationId}`));
+    return await this.get<ConversationDetailResponse>(this.globalUrl(`accounts/conversations/${conversationId}`));
   }
 
   /**

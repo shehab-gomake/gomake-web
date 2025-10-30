@@ -22,6 +22,7 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   // The last_non_activity_message contains the latest message content
   const sender = conversation.meta?.sender;
   const lastMessage = conversation.last_non_activity_message || conversation.messages?.[0];
+  const firstMessage = conversation.messages?.[0];
   
   const title = String(sender?.name || sender?.email || "Unknown");
   const snippet = lastMessage?.content 
@@ -33,6 +34,23 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   const participants = sender
     ? [String(sender.name || sender.email || "Unknown")]
     : [];
+
+  // Extract email-specific fields (subject, recipient) from various possible locations
+  // Check additional_attributes, custom_attributes, and message content_attributes
+  const subject = 
+    conversation.additional_attributes?.subject ||
+    conversation.custom_attributes?.subject ||
+    firstMessage?.content_attributes?.subject ||
+    firstMessage?.content_attributes?.email?.subject ||
+    null;
+
+  // Extract recipient - could be in email metadata or custom attributes
+  const recipient = 
+    conversation.custom_attributes?.to_email ||
+    conversation.additional_attributes?.to_email ||
+    firstMessage?.content_attributes?.email?.to?.[0]?.email ||
+    firstMessage?.content_attributes?.to_email ||
+    null;
 
   // Format timestamp - Chatwoot uses Unix timestamps (seconds)
   const timestamp = conversation.updated_at || conversation.created_at || conversation.timestamp
@@ -62,6 +80,8 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
       isStarred={false}
       avatarSrc={sender?.avatar_url}
       onClick={() => onSelect(conversation)}
+      subject={subject}
+      recipient={recipient}
     />
   );
 };

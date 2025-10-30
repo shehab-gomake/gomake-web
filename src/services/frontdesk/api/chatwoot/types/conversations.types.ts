@@ -158,6 +158,9 @@ export interface ConversationListResponse {
       total_count?: number;
       count?: number;
       per_page?: number;
+      mine_count?: number;
+      unassigned_count?: number;
+      all_count?: number;
     };
   };
   payload?: ChatwootConversation[];
@@ -167,6 +170,9 @@ export interface ConversationListResponse {
     total_count?: number;
     count?: number;
     per_page?: number;
+    mine_count?: number;
+    unassigned_count?: number;
+    all_count?: number;
   };
 }
 
