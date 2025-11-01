@@ -5,7 +5,7 @@
  * Inboxes represent different communication channels like Email, WhatsApp, Facebook, etc.
  */
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
@@ -16,6 +16,8 @@ import {
   chatwootSelectedAccountAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { useChatwootDataFetch } from "./core/use-chatwoot-data-fetch";
+import { extractPayload } from "../utils/api-response-utils";
 
 export const useChatwootInboxes = () => {
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
@@ -24,33 +26,32 @@ export const useChatwootInboxes = () => {
   const [loading, setLoading] = useRecoilState(chatwootInboxesLoadingAtom);
   const [error, setError] = useRecoilState(chatwootInboxesErrorAtom);
 
-  /**
-   * Fetch inboxes for the selected account
-   */
-  const fetchInboxes = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // Use base data fetch hook with Recoil state synchronization
+  const { data: fetchedInboxes, loading: fetchLoading, error: fetchError, refresh } = useChatwootDataFetch<ChatwootInbox[]>({
+    fetchFn: async () => {
+      return await chatwootService.inboxes.listAllInboxes();
+    },
+    extractData: extractPayload,
+    autoFetch: true,
+    createFilterKey: () => `inboxes-${selectedAccountId}`,
+  });
 
-    try {
-      const response = await chatwootService.inboxes.listAllInboxes();
-      const inboxesList = response.payload || response.data?.payload || [];
-      setInboxes(inboxesList);
-    } catch (err: any) {
-      const errorMessage = err?.message || "Failed to fetch inboxes";
-      setError(errorMessage);
-      console.error("Error fetching inboxes:", err);
-      setInboxes([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [setInboxes, setLoading, setError]);
-
-  /**
-   * Fetch inboxes on mount
-   */
+  // Sync fetched data to Recoil state
   useEffect(() => {
-    fetchInboxes();
-  }, [fetchInboxes]);
+    if (fetchedInboxes.length > 0 || inboxes.length === 0) {
+      setInboxes(fetchedInboxes);
+    }
+  }, [fetchedInboxes, setInboxes, inboxes.length]);
+
+  // Sync loading state from base hook to Recoil
+  useEffect(() => {
+    setLoading(fetchLoading);
+  }, [fetchLoading, setLoading]);
+
+  // Sync error state from base hook to Recoil
+  useEffect(() => {
+    setError(fetchError);
+  }, [fetchError, setError]);
 
   /**
    * Select an inbox by ID
@@ -65,14 +66,9 @@ export const useChatwootInboxes = () => {
   /**
    * Get selected inbox details
    */
-  const selectedInbox = inboxes.find((inbox: ChatwootInbox) => inbox.id === selectedInboxId) || null;
-
-  /**
-   * Refresh inboxes
-   */
-  const refresh = useCallback(() => {
-    fetchInboxes();
-  }, [fetchInboxes]);
+  const selectedInbox = useMemo(() => {
+    return inboxes.find((inbox: ChatwootInbox) => inbox.id === selectedInboxId) || null;
+  }, [inboxes, selectedInboxId]);
 
   return {
     inboxes,

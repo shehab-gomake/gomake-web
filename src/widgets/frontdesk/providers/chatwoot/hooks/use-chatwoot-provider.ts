@@ -10,6 +10,7 @@ import {
   ConversationAssigneeType,
   ConversationSortBy,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -52,24 +53,7 @@ export const useChatwootProvider = () => {
   // Build filters based on selected inbox, status filter, and assignee filter
   // Supports toggling between Mine/Unassigned/All via assignee filter
   const filters = useMemo<Partial<ConversationListParams>>(() => {
-    const baseFilters: Partial<ConversationListParams> = {
-      status: statusFilter === ConversationStatus.ALL ? undefined : statusFilter,
-      assignee_type: assigneeFilter, // Use state instead of hardcoded ME
-      sort_by: ConversationSortBy.LAST_ACTIVITY_AT_DESC,
-      page: 1,
-    };
-
-    // If an inbox is selected, add inbox_id filter to show only that inbox's conversations
-    if (selectedInboxId) {
-      return {
-        ...baseFilters,
-        inbox_id: selectedInboxId,
-      };
-    }
-
-    // For "All Conversations" - return base filters without inbox_id
-    // This will fetch conversations from all channels/inboxes
-    return baseFilters;
+    return buildConversationFilters(selectedInboxId, statusFilter, assigneeFilter);
   }, [selectedInboxId, statusFilter, assigneeFilter]);
 
   // Use conversations hook with accountId and filters
@@ -118,11 +102,7 @@ export const useChatwootProvider = () => {
     [setSelectedAccountId, setSelectedConversation]
   );
 
-  // Filter helper - similar to Vue: filterByStatus(chatStatus, filterStatus)
-  const matchesStatusFilter = useCallback((conversationStatus: string, filterStatus?: ConversationStatus) => {
-    if (!filterStatus || filterStatus === ConversationStatus.ALL) return true;
-    return conversationStatus === filterStatus;
-  }, []);
+  // Use the utility function for status matching (already imported from utils)
 
   // Update conversation in the list after status changes
   // Similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS, { conversationId, status })
@@ -130,7 +110,7 @@ export const useChatwootProvider = () => {
     const newStatus = updatedConversation.status;
     const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
     
-    // Check if updated conversation matches current filter
+    // Check if updated conversation matches current filter using utility function
     const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
     
     setConversationsList((prev) => {
@@ -160,8 +140,15 @@ export const useChatwootProvider = () => {
 
   // Handle filter changes - support status, assignee_type, etc.
   const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
-    if (newFilters.status !== undefined) {
-      setStatusFilter(newFilters.status as ConversationStatus);
+    // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
+    // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
+    if ('status' in newFilters) {
+      // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
+      const statusToSet = 
+        newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
+          ? ConversationStatus.ALL
+          : (newFilters.status as ConversationStatus);
+      setStatusFilter(statusToSet);
     }
     if (newFilters.assignee_type !== undefined) {
       setAssigneeFilter(newFilters.assignee_type);

@@ -18,6 +18,11 @@ import {
   ConversationSortBy,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  getConversationStatusLabel,
+  getAssigneeTypeLabel,
+  getSortByLabel,
+} from "../utils/filter-utils";
 
 interface ChatwootConversationFiltersProps {
   filters: Partial<ConversationListParams>;
@@ -61,36 +66,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
     handleClose();
   };
 
-  const getStatusLabel = (status: ConversationStatus): string => {
-    const labels: Record<ConversationStatus, string> = {
-      [ConversationStatus.ALL]: "All",
-      [ConversationStatus.OPEN]: "Open",
-      [ConversationStatus.RESOLVED]: "Resolved",
-      [ConversationStatus.PENDING]: "Pending",
-      [ConversationStatus.SNOOZED]: "Snoozed",
-    };
-    return labels[status];
-  };
-
-  const getAssigneeTypeLabel = (type: ConversationAssigneeType): string => {
-    const labels: Record<ConversationAssigneeType, string> = {
-      [ConversationAssigneeType.ME]: "Assigned to Me",
-      [ConversationAssigneeType.UNASSIGNED]: "Unassigned",
-      [ConversationAssigneeType.ALL]: "All",
-      [ConversationAssigneeType.ASSIGNED]: "Assigned",
-    };
-    return labels[type];
-  };
-
-  const getSortByLabel = (sortBy: ConversationSortBy | string): string => {
-    const labels: Record<ConversationSortBy | string, string> = {
-      [ConversationSortBy.LAST_ACTIVITY_AT_DESC]: "Last Activity (Newest)",
-      [ConversationSortBy.LAST_ACTIVITY_AT_ASC]: "Last Activity (Oldest)",
-      [ConversationSortBy.CREATED_AT_DESC]: "Created (Newest)",
-      [ConversationSortBy.CREATED_AT_ASC]: "Created (Oldest)",
-    };
-    return labels[sortBy] || sortBy;
-  };
+  // Use utility functions for labels (already imported from utils)
 
   return (
     <>
@@ -146,7 +122,11 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
           </Typography>
         </Box>
         {Object.values(ConversationStatus).map((status) => {
-          const isSelected = filters.status === status;
+          // Handle "All" status selection: when status is ALL, filters.status will be undefined
+          const isSelected = 
+            status === ConversationStatus.ALL 
+              ? (filters.status === undefined || filters.status === ConversationStatus.ALL)
+              : filters.status === status;
           return (
             <MenuItem
               key={status}
@@ -160,7 +140,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               }}
             >
               <ListItemText
-                primary={getStatusLabel(status)}
+                primary={getConversationStatusLabel(status)}
                 primaryTypographyProps={{
                   fontSize: "0.875rem",
                   fontWeight: isSelected ? 600 : 400,
