@@ -4,7 +4,6 @@ import {
   Stack,
   Typography,
   IconButton,
-  Menu,
   MenuItem,
   ListItemText,
   Select,
@@ -16,7 +15,6 @@ import {
   Chip,
   Divider,
   Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -25,6 +23,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootNotifications } from "../hooks/use-chatwoot-notifications";
 import { NotificationSortOrder } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import { buildNotificationFilters } from "../utils/notification-filter-utils";
+import { DropdownMenu, MenuSubheader } from "@/widgets/frontdesk/components/dropdown-menu/dropdown-menu";
 
 export const ChatwootNotificationsView: React.FC = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
@@ -208,7 +207,7 @@ export const ChatwootNotificationsView: React.FC = () => {
         </Stack>
 
         {/* Filter Menu - Dropdown */}
-        <Menu
+        <DropdownMenu
           anchorEl={filterMenuAnchor}
           open={Boolean(filterMenuAnchor)}
           onClose={() => setFilterMenuAnchor(null)}
@@ -220,102 +219,85 @@ export const ChatwootNotificationsView: React.FC = () => {
             vertical: "top",
             horizontal: "left",
           }}
-          PaperProps={{
-            sx: {
-              mt: 1,
-              minWidth: 280,
-              backgroundColor: neutralColor(0),
-              border: `1px solid ${neutralColor(200)}`,
-              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            },
-          }}
+          width={280}
+          disableContentPadding
         >
-          <Box sx={{ px: 2, py: 1.5 }}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: neutralColor(700),
-                mb: 1.5,
-              }}
-            >
-              Display Options
-            </Typography>
+          {/* Display Options Section */}
+          <Box sx={{ mb: 2 }}>
+            <MenuSubheader>DISPLAY OPTIONS</MenuSubheader>
 
             {/* Snoozed Checkbox */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={filters.snoozed || false}
-                  onChange={handleSnoozedChange}
-                  size="small"
-                  sx={{
-                    color: neutralColor(600),
-                    "&.Mui-checked": {
-                      color: primaryColor(600),
-                    },
-                  }}
-                />
-              }
-              label="Snoozed"
-              sx={{
-                mb: 1,
-                "& .MuiFormControlLabel-label": {
-                  fontSize: "0.875rem",
-                  color: neutralColor(900),
-                },
+            <MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                handleSnoozedChange({ target: { checked: !filters.snoozed } } as React.ChangeEvent<HTMLInputElement>);
               }}
-            />
-
-            {/* Read Checkbox */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={filters.read || false}
-                  onChange={handleReadChange}
-                  size="small"
-                  sx={{
-                    color: neutralColor(600),
-                    "&.Mui-checked": {
-                      color: primaryColor(600),
-                    },
-                  }}
-                />
-              }
-              label="Read"
               sx={{
-                mb: 1.5,
-                "& .MuiFormControlLabel-label": {
-                  fontSize: "0.875rem",
-                  color: neutralColor(900),
-                },
-              }}
-            />
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* Sort Order Dropdown */}
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: neutralColor(700),
-                mb: 1,
+                py: 1,
+                px: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
               }}
             >
-              Sort Order
-            </Typography>
-            <FormControl fullWidth size="small">
+              <Checkbox
+                checked={filters.snoozed || false}
+                onChange={handleSnoozedChange}
+                size="small"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <ListItemText
+                primary="Snoozed"
+                primaryTypographyProps={{
+                  fontSize: 13,
+                  fontWeight: filters.snoozed ? 600 : 400,
+                }}
+              />
+            </MenuItem>
+
+            {/* Read Checkbox */}
+            <MenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                handleReadChange({ target: { checked: !filters.read } } as React.ChangeEvent<HTMLInputElement>);
+              }}
+              sx={{
+                py: 1,
+                px: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+              }}
+            >
+              <Checkbox
+                checked={filters.read || false}
+                onChange={handleReadChange}
+                size="small"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <ListItemText
+                primary="Read"
+                primaryTypographyProps={{
+                  fontSize: 13,
+                  fontWeight: filters.read ? 600 : 400,
+                }}
+              />
+            </MenuItem>
+          </Box>
+
+          <Divider sx={{ my: 1 }} />
+
+          {/* Sort Order Section */}
+          <Box>
+            <MenuSubheader>SORT ORDER</MenuSubheader>
+            <FormControl fullWidth size="small" sx={{ px: 2, pb: 1 }}>
               <Select
                 value={currentSortOrder}
                 onChange={handleSortOrderChange}
                 sx={{
-                  fontSize: "0.875rem",
-                  backgroundColor: neutralColor(0),
+                  fontSize: 13,
                   "& .MuiSelect-select": {
-                    py: 0.75,
+                    py: 1,
                   },
                 }}
               >
@@ -324,36 +306,31 @@ export const ChatwootNotificationsView: React.FC = () => {
               </Select>
             </FormControl>
           </Box>
-        </Menu>
+        </DropdownMenu>
 
         {/* Settings Menu */}
-        <Menu
+        <DropdownMenu
           anchorEl={settingsMenuAnchor}
           open={Boolean(settingsMenuAnchor)}
           onClose={() => setSettingsMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          PaperProps={{
-            sx: {
-              mt: 1,
-              minWidth: 200,
-              backgroundColor: neutralColor(0),
-              border: `1px solid ${neutralColor(200)}`,
-              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            },
-          }}
+          width={200}
+          disableContentPadding
         >
           <MenuItem onClick={handleMarkAllAsRead} sx={{ py: 1, px: 2 }}>
-            <ListItemText primary="Mark all as read" />
+            <ListItemText
+              primary="Mark all as read"
+              primaryTypographyProps={{
+                fontSize: 13,
+              }}
+            />
           </MenuItem>
           <MenuItem onClick={handleDeleteAllRead} sx={{ py: 1, px: 2 }}>
-            <ListItemText primary="Delete all read" />
+            <ListItemText
+              primary="Delete all read"
+              primaryTypographyProps={{
+                fontSize: 13,
+              }}
+            />
           </MenuItem>
           <Divider />
           <MenuItem
@@ -368,9 +345,14 @@ export const ChatwootNotificationsView: React.FC = () => {
               },
             }}
           >
-            <ListItemText primary="Delete all" />
+            <ListItemText
+              primary="Delete all"
+              primaryTypographyProps={{
+                fontSize: 13,
+              }}
+            />
           </MenuItem>
-        </Menu>
+        </DropdownMenu>
       </Box>
 
       {/* Content */}
