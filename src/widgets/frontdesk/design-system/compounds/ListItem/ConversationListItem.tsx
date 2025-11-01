@@ -1,11 +1,32 @@
-import React from 'react';
-import { Box, ListItem, ListItemButton, Typography, Stack } from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
+import { Box, ListItem, ListItemButton, Typography, Stack, Tooltip, type SxProps, type Theme } from '@mui/material';
 import { Avatar } from '../../primitives/Avatar';
-import { Badge } from '../../primitives/Badge';
-import { Chip } from '../../primitives/Chip';
-import { colorTokens, semanticSpacing } from '../../tokens';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import StarIcon from '@mui/icons-material/Star';
+import { colorTokens } from '../../tokens';
+import { InboxIcon } from '@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons';
+import { ConversationPriorityIcon } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-priority-icon';
+import { ConversationSLALabel } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-sla-label';
+import { ConversationLabels, ConversationLabel } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-labels';
+
+// ============================================================================
+// Type Definitions
+// ============================================================================
+
+export type PresenceStatus = 'online' | 'away' | 'busy' | 'offline' | null;
+export type PriorityLevel = 'urgent' | 'high' | 'medium' | 'low';
+
+export interface AssigneeInfo {
+  name?: string;
+  avatarSrc?: string;
+  presence?: PresenceStatus;
+}
+
+export interface SLAInfo {
+  id?: number | string;
+  firstResponseThreshold?: number;
+  nextResponseThreshold?: number;
+  resolutionThreshold?: number;
+  [key: string]: any;
+}
 
 export interface ConversationListItemProps {
   /** Unique identifier */
@@ -31,28 +52,136 @@ export interface ConversationListItemProps {
   /** Avatar URL */
   avatarSrc?: string;
   /** Presence status */
-  presence?: 'online' | 'away' | 'busy' | 'offline' | null;
+  presence?: PresenceStatus;
   /** Priority indicator */
-  priority?: 'urgent' | 'high' | 'medium' | 'low';
+  priority?: PriorityLevel;
   /** Click handler */
   onClick?: () => void;
-  /** Status chip */
-  status?: { label: string; color: 'primary' | 'success' | 'warning' | 'error' };
-  /** Email-style recipient (e.g., "To: email@example.com") */
+  /** Email-style recipient */
   recipient?: string;
-  /** Email-style subject (e.g., "Subject: Email subject") */
+  /** Email-style subject */
   subject?: string;
-  /** Context menu handler - called on right-click */
+  /** Context menu handler */
   onContextMenu?: (event: React.MouseEvent) => void;
+  /** Inbox channel type for icon display */
+  inboxChannelType?: string | null;
+  /** Inbox medium (for Twilio channels) */
+  inboxMedium?: string | null;
+  /** Inbox name for tooltip */
+  inboxName?: string;
+  /** Assignee information */
+  assignee?: AssigneeInfo | null;
+  /** Conversation labels */
+  labels?: string[] | ConversationLabel[];
+  /** Account labels with colors (for label matching) */
+  accountLabels?: ConversationLabel[];
+  /** SLA information */
+  appliedSla?: SLAInfo | null;
+  /** Conversation timestamp for SLA calculation */
+  conversationTimestamp?: string | number | null;
+  /** Last activity timestamp for SLA calculation */
+  lastActivityAt?: string | number | null;
 }
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const AVATAR_SIZE = 24;
+const INBOX_ICON_CONTAINER_SIZE = 20;
+const INBOX_ICON_SIZE = 12;
+const PRIORITY_ICON_SIZE = 12;
+const ASSIGNEE_AVATAR_SIZE = 20;
+const UNREAD_BADGE_SIZE = 20;
+const MAX_UNREAD_DISPLAY = 99;
+
+// ============================================================================
+// Styles
+// ============================================================================
+
+const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
+  py: 1.5,
+  px: 2,
+  borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+  backgroundColor: isSelected
+    ? colorTokens.semantic.interactive.selected
+    : colorTokens.semantic.background.primary,
+  '&:hover': {
+    backgroundColor: isSelected
+      ? colorTokens.semantic.interactive.selectedHover
+      : colorTokens.semantic.interactive.hover,
+  },
+  transition: 'background-color 0.15s ease',
+});
+
+const getTitleStyles = (isSelected: boolean, isUnread: boolean): SxProps<Theme> => ({
+  fontWeight: isUnread ? 600 : 400,
+  color: isSelected
+    ? colorTokens.primary[900]
+    : colorTokens.semantic.text.primary,
+  fontSize: 16,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  flex: 1,
+});
+
+const snippetStyles: SxProps<Theme> = {
+  color: colorTokens.semantic.text.secondary,
+  fontSize: 14,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  flex: 1,
+  minWidth: 0,
+};
+
+const timestampStyles: SxProps<Theme> = {
+  color: colorTokens.semantic.text.secondary,
+  fontSize: 14,
+  flexShrink: 0,
+};
+
+const unreadBadgeStyles: SxProps<Theme> = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  bgcolor: colorTokens.primary[600],
+  width: UNREAD_BADGE_SIZE,
+  height: UNREAD_BADGE_SIZE,
+  color: 'white',
+  fontSize: 12,
+  fontWeight: 600,
+  flexShrink: 0,
+  ml: 0.5,
+};
+
+const inboxIconContainerStyles: SxProps<Theme> = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  borderRadius: '50%',
+  bgcolor: colorTokens.semantic.background.secondary,
+  width: INBOX_ICON_CONTAINER_SIZE,
+  height: INBOX_ICON_CONTAINER_SIZE,
+};
+
+// ============================================================================
+// Component
+// ============================================================================
 
 /**
  * ConversationListItem Component
  *
- * Universal list item for conversations across all providers
- * (Email, Direct Messages, WhatsApp, Tickets)
+ * Universal conversation list item following the design guide specifications.
+ * Displays contact avatar, name, message preview, unread count, priority,
+ * SLA status, labels, and assignee information.
+ *
+ * @see CONVERSATION_LIST_ICONS_GUIDE.md for complete specifications
  */
-export const ConversationListItem: React.FC<ConversationListItemProps> = ({
+export const ConversationListItem = React.memo<ConversationListItemProps>(({
   id,
   title,
   participants,
@@ -60,33 +189,62 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   timestamp,
   isRead = true,
   isSelected = false,
-  unreadCount,
-  hasAttachments,
-  isStarred,
+  unreadCount = 0,
   avatarSrc,
   presence,
   priority,
   onClick,
-  status,
-  recipient,
-  subject,
   onContextMenu,
+  inboxChannelType,
+  inboxMedium,
+  inboxName,
+  assignee,
+  labels,
+  accountLabels,
+  appliedSla,
+  conversationTimestamp,
+  lastActivityAt,
 }) => {
-  const participantName = Array.isArray(participants) 
-    ? String(participants[0] || '') 
-    : String(participants || '');
-  const extraCount = Array.isArray(participants) && participants.length > 1 ? participants.length - 1 : 0;
+  // ========================================================================
+  // Memoized Values
+  // ========================================================================
 
-  // Email-style layout: Show sender, recipient, subject, snippet
-  const showEmailLayout = recipient || subject;
+  const participantName = useMemo(
+    () => (Array.isArray(participants) ? String(participants[0] || '') : String(participants || '')),
+    [participants]
+  );
 
-  const handleContextMenu = (event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (onContextMenu) {
-      onContextMenu(event);
-    }
-  };
+  const isUnread = useMemo(
+    () => !isRead || (unreadCount ?? 0) > 0,
+    [isRead, unreadCount]
+  );
+
+  const displayUnreadCount = useMemo(
+    () => (unreadCount && unreadCount > 0 ? (unreadCount > MAX_UNREAD_DISPLAY ? '99+' : unreadCount) : null),
+    [unreadCount]
+  );
+
+  const hasMetadata = useMemo(
+    () => Boolean(appliedSla?.id || (labels && labels.length > 0) || assignee?.name),
+    [appliedSla?.id, labels, assignee?.name]
+  );
+
+  // ========================================================================
+  // Event Handlers
+  // ========================================================================
+
+  const handleContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onContextMenu?.(event);
+    },
+    [onContextMenu]
+  );
+
+  // ========================================================================
+  // Render
+  // ========================================================================
 
   return (
     <ListItem disablePadding>
@@ -94,226 +252,111 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         selected={isSelected}
         onClick={onClick}
         onContextMenu={handleContextMenu}
-        sx={{
-          py: 1.5,
-          px: 2,
-          borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
-          backgroundColor: isSelected
-            ? colorTokens.semantic.interactive.selected
-            : colorTokens.semantic.background.primary, // Light background (white)
-          '&:hover': {
-            backgroundColor: isSelected
-              ? colorTokens.semantic.interactive.selectedHover
-              : colorTokens.semantic.interactive.hover,
-          },
-          transition: 'background-color 0.15s ease',
-        }}
+        sx={getListItemButtonStyles(isSelected)}
       >
         <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ width: '100%' }}>
-          {/* Avatar */}
+          {/* Contact Avatar */}
           <Avatar
-            size="md"
+            size="sm"
             name={participantName}
             src={avatarSrc}
             presence={presence}
-            unreadCount={unreadCount}
+            sx={{
+              width: AVATAR_SIZE,
+              height: AVATAR_SIZE,
+              fontSize: '0.75rem',
+              flexShrink: 0,
+            }}
           />
 
-          {/* Content */}
+          {/* Content Section */}
           <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-            {showEmailLayout ? (
-              // Email-style layout: Sender -> Recipient -> Subject -> Snippet -> Timestamp
-              <>
-                {/* Sender Row */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: isRead ? 400 : 600,
-                      color: isSelected
-                        ? colorTokens.primary[900]
-                        : colorTokens.semantic.text.primary,
-                      fontSize: 13,
-                    }}
-                  >
-                    {title}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: colorTokens.semantic.text.secondary,
-                      fontSize: 11,
-                      ml: 1,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {timestamp}
-                  </Typography>
-                </Stack>
+            {/* Top Row: Contact Name | Priority | Inbox | Timestamp */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+              <Typography variant="body2" sx={getTitleStyles(isSelected, isUnread)}>
+                {title}
+              </Typography>
 
-                {/* Recipient Row (if provided) */}
-                {recipient && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: colorTokens.semantic.text.secondary,
-                      fontSize: 12,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    To: {recipient}
-                  </Typography>
+              {/* Right Indicators */}
+              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
+                {priority && <ConversationPriorityIcon priority={priority} size={PRIORITY_ICON_SIZE} />}
+
+                {inboxChannelType && (
+                  <Tooltip title={inboxName || ''} arrow placement="left">
+                    <Box sx={inboxIconContainerStyles}>
+                      <InboxIcon
+                        channelType={inboxChannelType}
+                        medium={inboxMedium}
+                        size={INBOX_ICON_SIZE}
+                      />
+                    </Box>
+                  </Tooltip>
                 )}
 
-                {/* Subject Row (if provided) */}
-                {subject && (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: isRead ? 400 : 500,
-                      color: isSelected
-                        ? colorTokens.primary[800]
-                        : colorTokens.semantic.text.primary,
-                      fontSize: 12,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    Subject: {subject}
-                  </Typography>
-                )}
-
-                {/* Message Snippet Row */}
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: 12,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {snippet}
+                <Typography variant="caption" sx={timestampStyles}>
+                  {timestamp}
                 </Typography>
-              </>
-            ) : (
-              // Default layout: Title/Subject -> Participants -> Snippet/Timestamp
-              <>
-                {/* Title/Subject Row */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: isRead ? 400 : 600,
-                      color: isSelected
-                        ? colorTokens.primary[900]
-                        : colorTokens.semantic.text.primary,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      flex: 1,
-                      fontSize: 13,
-                    }}
-                  >
-                    {title}
-                  </Typography>
+              </Stack>
+            </Stack>
 
-                  {/* Right indicators */}
-                  <Stack direction="row" alignItems="center" spacing={0.5} sx={{ ml: 1 }}>
-                    {hasAttachments && (
-                      <AttachFileIcon
-                        sx={{
-                          fontSize: 14,
-                          color: colorTokens.semantic.text.secondary,
-                        }}
-                      />
-                    )}
-                    {isStarred && (
-                      <StarIcon
-                        sx={{
-                          fontSize: 14,
-                          color: colorTokens.warning[600],
-                        }}
-                      />
-                    )}
-                    {status && (
-                      <Chip
-                        label={status.label}
-                        color={status.color}
-                        variant="soft"
-                        size="small"
-                      />
-                    )}
-                  </Stack>
-                </Stack>
+            {/* Message Preview Row */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+              <Typography variant="body2" sx={snippetStyles}>
+                {snippet || 'No messages yet'}
+              </Typography>
 
-                {/* Participants Row */}
-                <Stack direction="row" alignItems="center" spacing={0.5}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: isRead ? 400 : 600,
-                      color: isSelected
-                        ? colorTokens.primary[800]
-                        : colorTokens.semantic.text.primary,
-                      fontSize: 13,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {participantName}
-                  </Typography>
-                  {extraCount > 0 && (
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: colorTokens.semantic.text.secondary,
-                        fontSize: 11,
-                      }}
-                    >
-                      +{extraCount}
-                    </Typography>
+              {displayUnreadCount && (
+                <Box sx={unreadBadgeStyles}>
+                  <span>{displayUnreadCount}</span>
+                </Box>
+              )}
+            </Stack>
+
+            {/* Bottom Row: SLA | Labels | Assignee */}
+            {hasMetadata && (
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                {/* Left: SLA & Labels */}
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  sx={{ flexWrap: 'wrap', gap: 0.5, flex: 1, minWidth: 0 }}
+                >
+                  {appliedSla?.id && conversationTimestamp && (
+                    <ConversationSLALabel
+                      appliedSla={appliedSla}
+                      conversationTimestamp={conversationTimestamp}
+                      lastActivityAt={lastActivityAt}
+                    />
+                  )}
+
+                  {labels && labels.length > 0 && (
+                    <ConversationLabels labels={labels} accountLabels={accountLabels} />
                   )}
                 </Stack>
 
-                {/* Snippet and Timestamp Row */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography
-                    variant="body2"
+                {/* Right: Assignee */}
+                {assignee?.name && (
+                  <Avatar
+                    size="xs"
+                    name={assignee.name}
+                    src={assignee.avatarSrc}
+                    presence={assignee.presence}
                     sx={{
-                      color: colorTokens.semantic.text.secondary,
-                      fontSize: 12,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      flex: 1,
-                    }}
-                  >
-                    {snippet}
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: colorTokens.semantic.text.secondary,
-                      fontSize: 11,
-                      ml: 1,
+                      width: ASSIGNEE_AVATAR_SIZE,
+                      height: ASSIGNEE_AVATAR_SIZE,
+                      fontSize: '0.625rem',
                       flexShrink: 0,
                     }}
-                  >
-                    {timestamp}
-                  </Typography>
-                </Stack>
-              </>
+                  />
+                )}
+              </Stack>
             )}
           </Stack>
         </Stack>
       </ListItemButton>
     </ListItem>
   );
-};
+});
+
+ConversationListItem.displayName = 'ConversationListItem';
