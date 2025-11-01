@@ -128,9 +128,17 @@ export const useChatwootConversations = (
     // 1. The filter key has actually changed (not just object reference)
     // 2. We're not currently fetching (to prevent duplicate concurrent requests)
     if (filterKey !== lastFetchedKeyRef.current && !isFetchingRef.current) {
+      // Clear conversations immediately when filters change (e.g., channel switch)
+      // This provides instant visual feedback that a change is happening
+      setConversations([]);
+      setHasMore(true);
+      setCurrentPage(1);
+      setError(null);
+      
+      // Then fetch new conversations
       fetchConversations(1, false);
     }
-  }, [filterKey, fetchConversations]);
+  }, [filterKey, fetchConversations, setConversations]);
 
   return {
     conversations,

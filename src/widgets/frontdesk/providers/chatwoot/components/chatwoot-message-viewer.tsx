@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, Stack } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootMessageViewerHeader } from "./chatwoot-message-viewer-header";
@@ -201,7 +201,15 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       />
 
       {/* Messages */}
-      <Box sx={{ flex: 1, overflow: "auto" }}>
+      <Box 
+        sx={{ 
+          flex: 1, 
+          overflow: "auto",
+          background: `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
+          p: 2,
+        }}
+        className="custom-scrollbar"
+      >
         {loading ? (
           <Box sx={{ p: 3, textAlign: "center" }}>
             <Typography variant="body2" sx={{ color: neutralColor(600) }}>
@@ -221,30 +229,54 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             </Typography>
           </Box>
         ) : (
-          <>
-            {messages.map((message, index) => {
+          <Stack spacing={2}>
+            {(() => {
               // Filter out system messages (message_type 2) from display, but show resolution
-              const isSystemMessage = message.message_type === 2;
-              const isResolutionMessage = isSystemMessage && message.content?.includes("resolved");
-              
-              if (isSystemMessage && !isResolutionMessage) {
-                return null; // Skip non-resolution system messages
+              // Also filter out messages with no content
+              const visibleMessages = messages.filter((message) => {
+                const isSystemMessage = message.message_type === 2;
+                const isResolutionMessage = isSystemMessage && message.content?.includes("resolved");
+                const hasContent = message.content && message.content.trim().length > 0;
+                // Keep resolution messages, filter out other system messages and empty messages
+                return ((!isSystemMessage || isResolutionMessage) && hasContent);
+              });
+
+              if (visibleMessages.length === 0) {
+                return (
+                  <Box sx={{ p: 3, textAlign: "center" }}>
+                    <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+                      No messages to display
+                    </Typography>
+                  </Box>
+                );
               }
 
-              return (
-                <ChatwootMessageItem
-                  key={message.id || index}
-                  message={message}
-                  isLast={index === messages.length - 1}
-                  isFirst={index === 0}
-                />
-              );
-            })}
+              return visibleMessages.map((message, index) => {
+                // Determine if avatar should be shown (sender changed from previous visible message)
+                const previousMessage = index > 0 ? visibleMessages[index - 1] : null;
+                const showAvatar = index === 0 || 
+                  !previousMessage ||
+                  previousMessage.sender?.id !== message.sender?.id ||
+                  previousMessage.message_type !== message.message_type ||
+                  previousMessage.sender_type !== message.sender_type;
+
+                return (
+                  <ChatwootMessageItem
+                    key={message.id || `msg-${index}`}
+                    message={message}
+                    isLast={index === visibleMessages.length - 1}
+                    isFirst={index === 0}
+                    showAvatar={showAvatar}
+                    previousMessage={previousMessage}
+                  />
+                );
+              });
+            })()}
             {/* Resolution Status Bar - show after messages if conversation is resolved */}
             {conversation.status === "resolved" && (
               <ChatwootResolutionStatusBar conversation={conversation} />
             )}
-          </>
+          </Stack>
         )}
       </Box>
 

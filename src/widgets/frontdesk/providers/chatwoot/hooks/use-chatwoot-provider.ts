@@ -66,6 +66,13 @@ export const useChatwootProvider = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccountId, currentAccountId]);
 
+  // Clear selected conversation when channel/inbox changes
+  // This ensures we don't show a conversation from the previous channel
+  useEffect(() => {
+    setSelectedConversation(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedInboxId]);
+
   // Auto-select first conversation only when loading completes and no conversation is selected
   // Add a guard to prevent race conditions
   useEffect(() => {
