@@ -19,11 +19,16 @@ import {
 import TuneIcon from "@mui/icons-material/Tune";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddCommentIcon from "@mui/icons-material/AddComment";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootNotifications } from "../hooks/use-chatwoot-notifications";
 import { NotificationSortOrder } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import { buildNotificationFilters } from "../utils/notification-filter-utils";
 import { DropdownMenu, MenuSubheader } from "@/widgets/frontdesk/components/dropdown-menu/dropdown-menu";
+import { ConversationPriorityIcon } from "./conversation-priority-icon";
+import { ConversationSLALabel } from "./conversation-sla-label";
+import { InboxIcon } from "../utils/inbox-icons";
+import Tooltip from "@mui/material/Tooltip";
 
 export const ChatwootNotificationsView: React.FC = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
@@ -135,6 +140,86 @@ export const ChatwootNotificationsView: React.FC = () => {
   };
 
   const currentSortOrder = filters.sort_order === NotificationSortOrder.ASC ? "oldest" : "newest";
+
+  // Get notification type details
+  const getNotificationTypeDetails = (notificationType?: string) => {
+    if (!notificationType) return { icon: "notifications", label: "Notification", color: neutralColor(600) };
+
+    const typeMap: Record<string, { icon: string; label: string; color: string }> = {
+      "conversation.mention": { icon: "alternate_email", label: "Mention", color: primaryColor(600) },
+      "conversation.assigned": { icon: "person_add", label: "Assignment", color: primaryColor(600) },
+      "conversation.created": { icon: "add_comment", label: "New Conversation", color: primaryColor(600) },
+      "conversation.updated": { icon: "edit", label: "Updated", color: neutralColor(600) },
+      "message.created": { icon: "message", label: "New Message", color: primaryColor(600) },
+    };
+
+    return typeMap[notificationType] || { icon: "notifications", label: notificationType, color: neutralColor(600) };
+  };
+
+  // Get snooze info text
+  const getSnoozeText = (notification: any) => {
+    if (notification.snoozed_until) {
+      const snoozeDate = new Date(notification.snoozed_until);
+      const now = new Date();
+      if (snoozeDate > now) {
+        const diffMs = snoozeDate.getTime() - now.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 60) return `Snoozed until ${diffMins}m`;
+        if (diffHours < 24) return `Snoozed until ${diffHours}h`;
+        return `Snoozed until ${diffDays}d`;
+      }
+      return "Snoozed ends";
+    }
+
+    const lastSnoozedAt = notification.meta?.lastSnoozedAt || notification.primary_actor?.meta?.lastSnoozedAt;
+    if (lastSnoozedAt) {
+      return "Snoozed";
+    }
+
+    return null;
+  };
+
+  // Get message preview from notification
+  const getMessagePreview = (notification: any) => {
+    const pushMessageBody =
+      notification.meta?.pushMessageBody ||
+      notification.primary_actor?.meta?.pushMessageBody ||
+      notification.meta?.message?.content ||
+      "";
+
+    if (!pushMessageBody) {
+      return notification.notification_type || "Notification";
+    }
+
+    // Remove HTML tags and truncate
+    const plainText = pushMessageBody.replace(/<[^>]*>/g, "").trim();
+    return plainText.length > 100 ? plainText.substring(0, 100) + "..." : plainText;
+  };
+
+  // Get conversation status badge text
+  const getStatusLabel = (status?: string) => {
+    if (!status || status === "open") return null;
+    const statusMap: Record<string, string> = {
+      resolved: "Resolved",
+      pending: "Pending",
+      snoozed: "Snoozed",
+    };
+    return statusMap[status] || status;
+  };
+
+  // Get status color
+  const getStatusColor = (status?: string) => {
+    if (!status || status === "open") return null;
+    const colorMap: Record<string, string> = {
+      resolved: neutralColor(600),
+      pending: "#F59E0B",
+      snoozed: neutralColor(500),
+    };
+    return colorMap[status] || neutralColor(600);
+  };
 
   return (
     <Paper
@@ -387,6 +472,30 @@ export const ChatwootNotificationsView: React.FC = () => {
             {notifications.map((notification) => {
               const sender = getNotificationSender(notification);
               const isUnread = !notification.read_at;
+              const primaryActor = notification.primary_actor as any; // Extended type with conversation fields
+              const snoozeText = getSnoozeText(notification);
+              const hasSnooze = !!snoozeText;
+              const notificationDetails = hasSnooze ? null : getNotificationTypeDetails(notification.notification_type);
+              const messagePreview = getMessagePreview(notification);
+              const statusLabel = getStatusLabel(primaryActor?.status);
+              const statusColor = getStatusColor(primaryActor?.status);
+              const lastActivityAt = primaryActor?.last_activity_at || notification.updated_at || notification.created_at;
+
+              // Extract conversation metadata
+              const conversationMeta = primaryActor?.meta || {};
+              const inboxChannelType =
+                conversationMeta.channel?.type || (primaryActor?.inbox_id ? conversationMeta.inbox?.channel_type || null : null);
+              const inboxMedium = conversationMeta.channel?.medium || conversationMeta.inbox?.medium;
+              const inboxName = conversationMeta.inbox?.name || conversationMeta.channel?.name;
+              const priority = primaryActor?.priority;
+              const slaPolicy = primaryActor?.sla_policy_id
+                ? {
+                    id: primaryActor.sla_policy_id,
+                    firstResponseThreshold: conversationMeta.sla?.firstResponseThreshold,
+                    nextResponseThreshold: conversationMeta.sla?.nextResponseThreshold,
+                    resolutionThreshold: conversationMeta.sla?.resolutionThreshold,
+                  }
+                : null;
 
               return (
                 <ListItem
@@ -395,23 +504,26 @@ export const ChatwootNotificationsView: React.FC = () => {
                     px: 2,
                     py: 1.5,
                     cursor: "pointer",
-                    backgroundColor: isUnread ? neutralColor(50) : neutralColor(0),
+                    backgroundColor: isUnread ? primaryColor(50) : neutralColor(0),
                     "&:hover": {
-                      backgroundColor: isUnread ? neutralColor(100) : neutralColor(50),
+                      backgroundColor: isUnread ? primaryColor(100) : neutralColor(50),
                     },
                     borderBottom: `1px solid ${neutralColor(100)}`,
                   }}
                 >
-                  <Stack direction="row" spacing={2} sx={{ width: "100%", alignItems: "flex-start" }}>
-                    {/* Avatar */}
+                  <Stack direction="row" spacing={1.5} sx={{ width: "100%", alignItems: "flex-start" }}>
+                    {/* Avatar (20px) */}
                     <Avatar
+                      src={conversationMeta.sender?.thumbnail || primaryActor?.avatar_url}
                       sx={{
-                        width: 40,
-                        height: 40,
+                        width: 20,
+                        height: 20,
                         bgcolor: sender.color,
                         color: "white",
-                        fontSize: "0.875rem",
+                        fontSize: "0.625rem",
                         fontWeight: 600,
+                        flexShrink: 0,
+                        mt: 0.5,
                       }}
                     >
                       {sender.initials}
@@ -419,74 +531,138 @@ export const ChatwootNotificationsView: React.FC = () => {
 
                     {/* Content */}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: isUnread ? 600 : 400,
-                              color: neutralColor(900),
-                              mb: 0.5,
-                            }}
-                          >
-                            {sender.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              color: neutralColor(700),
-                              fontSize: "0.875rem",
-                            }}
-                          >
-                            {notification.notification_type || "Notification"}
-                          </Typography>
-                        </Box>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          {/* New Message Button */}
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // TODO: Handle new message action
-                            }}
-                            sx={{
-                              color: neutralColor(600),
-                              "&:hover": {
-                                color: primaryColor(600),
-                                backgroundColor: primaryColor(50),
-                              },
-                              width: 28,
-                              height: 28,
-                            }}
-                          >
-                            <AddCommentIcon fontSize="small" />
-                          </IconButton>
+                      {/* Row 1: Primary Message */}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: 13,
+                          fontWeight: isUnread ? 600 : 400,
+                          color: neutralColor(900),
+                          lineHeight: 1.4,
+                          mb: 0.5,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                        title={messagePreview}
+                      >
+                        {messagePreview}
+                      </Typography>
+
+                      {/* Row 2: Secondary Info */}
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                        {/* Left: Square Icon + Notification Type or Snooze */}
+                        <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+                          {hasSnooze ? (
+                            <>
+                              <AccessTimeIcon
+                                sx={{
+                                  fontSize: 14,
+                                  color: isUnread ? primaryColor(600) : neutralColor(500),
+                                  flexShrink: 0,
+                                }}
+                              />
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  fontSize: 12,
+                                  fontWeight: 400,
+                                  color: isUnread ? primaryColor(600) : neutralColor(500),
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {snoozeText}
+                              </Typography>
+                            </>
+                          ) : (
+                            <>
+                              {/* Square Icon */}
+                              <Box
+                                sx={{
+                                  width: 14,
+                                  height: 14,
+                                  borderRadius: "2px",
+                                  backgroundColor: isUnread ? primaryColor(600) : neutralColor(400),
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <AddCommentIcon sx={{ fontSize: 10, color: "white" }} />
+                              </Box>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  fontSize: 12,
+                                  fontWeight: 400,
+                                  color: isUnread ? primaryColor(600) : neutralColor(500),
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {notificationDetails?.label || "New message"}
+                              </Typography>
+                            </>
+                          )}
+
+                          {/* Status Badge */}
+                          {statusLabel && (
+                            <Chip
+                              label={statusLabel}
+                              size="small"
+                              sx={{
+                                height: 18,
+                                fontSize: 11,
+                                backgroundColor: statusColor ? `${statusColor}20` : neutralColor(100),
+                                color: statusColor || neutralColor(700),
+                                border: `1px solid ${statusColor || neutralColor(300)}`,
+                                fontWeight: 400,
+                                flexShrink: 0,
+                                ml: 0.5,
+                              }}
+                            />
+                          )}
+                        </Stack>
+
+                        {/* Right: Priority | Inbox | Timestamp */}
+                        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
+                          {/* Priority Icon */}
+                          {priority && <ConversationPriorityIcon priority={priority} size={12} />}
+
+                          {/* Inbox/Envelope Icon */}
+                          {inboxChannelType && (
+                            <Tooltip title={inboxName || ""} arrow placement="left">
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  color: neutralColor(500),
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <InboxIcon channelType={inboxChannelType} medium={inboxMedium} size={14} />
+                              </Box>
+                            </Tooltip>
+                          )}
+
+                          {/* Timestamp */}
                           <Typography
                             variant="caption"
                             sx={{
+                              fontSize: 12,
                               color: neutralColor(500),
-                              fontSize: "0.75rem",
                               whiteSpace: "nowrap",
                             }}
                           >
-                            {formatTimeAgo(notification.created_at)}
+                            {formatTimeAgo(lastActivityAt)}
                           </Typography>
                         </Stack>
                       </Stack>
-                      {isUnread && (
-                        <Box sx={{ mt: 0.5 }}>
-                          <Chip
-                            label="Unread"
-                            size="small"
-                            sx={{
-                              height: 18,
-                              fontSize: "0.688rem",
-                              backgroundColor: primaryColor(100),
-                              color: primaryColor(700),
-                            }}
-                          />
-                        </Box>
-                      )}
                     </Box>
                   </Stack>
                 </ListItem>
