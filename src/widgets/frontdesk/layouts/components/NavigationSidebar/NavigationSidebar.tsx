@@ -39,6 +39,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useRecoilValue } from "recoil";
+import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
+import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 
 /**
  * Legacy type exports for backward compatibility
@@ -600,23 +602,22 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
-                          
-                          // Clear selected inbox immediately to show ALL conversations
+
+                          // Clear selected inbox to show ALL conversations
                           selectInbox(null);
-                          
-                          // Navigate directly to chatwoot channel with conversations view
-                          // Do NOT call onSectionSelect or onChannelSelect as they trigger navigation
-                          // that conflicts with router.replace. Let router.replace handle everything.
-                          router.replace(
-                            {
-                              pathname: '/frontdesk/inbox/chatwoot',
-                              query: {
-                                view: "conversations",
-                              },
-                            },
-                            '/frontdesk/inbox/chatwoot?view=conversations',
-                            { shallow: true }
-                          );
+
+                          // Use RouteBuilder for type-safe navigation
+                          const route = RouteBuilder.chatwootAllConversations();
+                          const { path, options } = buildRoute(route, { replace: true });
+
+                          // Navigate to Chatwoot channel first if not already there
+                          if (selectedChannel !== "chatwoot") {
+                            onSectionSelect("inbox");
+                            onChannelSelect("chatwoot" as Channel);
+                          }
+
+                          // Then navigate to the specific view
+                          router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
                           py: 0.75,
@@ -651,8 +652,20 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         selected={false}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onSectionSelect("inbox");
-                          onChannelSelect("chatwoot" as Channel);
+                          e.preventDefault();
+
+                          // Use RouteBuilder for type-safe navigation
+                          const route = RouteBuilder.chatwootMentions();
+                          const { path, options } = buildRoute(route, { replace: true });
+
+                          // Navigate to Chatwoot channel first if not already there
+                          if (selectedChannel !== "chatwoot") {
+                            onSectionSelect("inbox");
+                            onChannelSelect("chatwoot" as Channel);
+                          }
+
+                          // Then navigate to the mentions view
+                          router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
                           py: 0.75,
@@ -687,8 +700,20 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         selected={false}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onSectionSelect("inbox");
-                          onChannelSelect("chatwoot" as Channel);
+                          e.preventDefault();
+
+                          // Use RouteBuilder for type-safe navigation
+                          const route = RouteBuilder.chatwootUnattended();
+                          const { path, options } = buildRoute(route, { replace: true });
+
+                          // Navigate to Chatwoot channel first if not already there
+                          if (selectedChannel !== "chatwoot") {
+                            onSectionSelect("inbox");
+                            onChannelSelect("chatwoot" as Channel);
+                          }
+
+                          // Then navigate to the unattended view
+                          router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
                           py: 0.75,
@@ -788,20 +813,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                             selected={selectedInboxId === inbox.id && selectedChannel === "chatwoot"}
                             onClick={(e) => {
                               e.stopPropagation();
-                              
-                              // Update state first - this will trigger conversations view automatically
-                              // ChatwootProviderView checks selectedInboxId to determine if conversations should be shown
+
+                              // Update state first
                               selectInbox(inbox.id);
-                              
-                              // Only navigate if we're not already on the chatwoot channel
-                              // This prevents unnecessary page refreshes
+
+                              // Use RouteBuilder for type-safe navigation
+                              const route = RouteBuilder.chatwoot(
+                                ChatwootView.CHANNELS,
+                                undefined,
+                                inbox.id.toString()
+                              );
+                              const { path, options } = buildRoute(route, { replace: true });
+
+                              // Navigate to Chatwoot channel first if not already there
                               if (selectedChannel !== "chatwoot") {
                                 onSectionSelect("inbox");
                                 onChannelSelect("chatwoot" as Channel);
                               } else if (selectedSection !== "inbox") {
-                                // If channel is already selected but section is wrong, just update section
                                 onSectionSelect("inbox");
                               }
+
+                              // Then navigate to the specific channel view
+                              router.replace(path, undefined, { shallow: options.scroll === false });
                             }}
                             sx={{
                               py: 0.75,

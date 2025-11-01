@@ -13,6 +13,8 @@ import {
   FrontDeskSection,
   TicketView,
   RouteQueryParams,
+  ChatwootView,
+  ChatwootRoute,
 } from "./types";
 
 /**
@@ -24,6 +26,7 @@ export interface NextRouterQuery {
   view?: string | string[];
   ticket?: string | string[];
   conversation?: string | string[];
+  channel?: string | string[];
 }
 
 /**
@@ -69,6 +72,11 @@ const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> =
     return { type: RouteType.TICKET_LIST };
   }
 
+  // Check if it's a Chatwoot route
+  if (frontdeskRoute === "chatwoot") {
+    return { type: RouteType.CHATWOOT };
+  }
+
   // Check if it's a section route
   if (frontdeskRoute === "assigned") {
     return { type: RouteType.SECTION, section: FrontDeskSection.ASSIGNED };
@@ -85,10 +93,36 @@ const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> =
 };
 
 /**
+ * Parse Chatwoot view from query param
+ */
+const parseChatwootView = (viewParam?: string): ChatwootView => {
+  if (!viewParam) {
+    return ChatwootView.MY_INBOX;
+  }
+
+  // Map query param values to ChatwootView enum
+  const viewMap: Record<string, ChatwootView> = {
+    "my-inbox": ChatwootView.MY_INBOX,
+    "all-conversations": ChatwootView.ALL_CONVERSATIONS,
+    "mentions": ChatwootView.MENTIONS,
+    "unattended": ChatwootView.UNATTENDED,
+    "channels": ChatwootView.CHANNELS,
+  };
+
+  return viewMap[viewParam] || ChatwootView.MY_INBOX;
+};
+
+/**
  * Parse provider segment to determine channel or ticket details
  */
 const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): Partial<FrontDeskRoute> => {
   if (!provider) return baseRoute || {};
+
+  // If we're in Chatwoot route context, view is now in query params
+  // So we don't parse from provider segment anymore
+  if (baseRoute?.type === RouteType.CHATWOOT) {
+    return baseRoute; // Return as-is, view will be parsed from query params
+  }
 
   // If we're in ticket route context
   if (baseRoute?.type === RouteType.TICKET_LIST) {
@@ -141,11 +175,12 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 /**
  * Parse query parameters for additional context
  */
-const parseQueryParams = (query: NextRouterQuery): RouteQueryParams => {
+const parseQueryParams = (query: NextRouterQuery): RouteQueryParams & { channel?: string } => {
   return {
     view: normalizeParam(query.view),
     ticket: normalizeParam(query.ticket),
     conversation: normalizeParam(query.conversation),
+    channel: normalizeParam(query.channel),
   };
 };
 
@@ -153,7 +188,21 @@ const parseQueryParams = (query: NextRouterQuery): RouteQueryParams => {
  * Apply query parameter overrides to route
  * Query params (from notifications) take precedence
  */
-const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams): FrontDeskRoute => {
+const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams & { channel?: string }): FrontDeskRoute => {
+  // Handle Chatwoot-specific query params
+  if (route.type === RouteType.CHATWOOT) {
+    const chatwootRoute = route as Partial<ChatwootRoute>;
+    // Parse view from query params, fallback to route view or default
+    const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.MY_INBOX);
+
+    return {
+      type: RouteType.CHATWOOT,
+      view,
+      conversationId: queryParams.conversation || chatwootRoute.conversationId,
+      channelId: queryParams.channel || chatwootRoute.channelId,
+    };
+  }
+
   // Handle view query param (from notifications)
   if (queryParams.view) {
     // Check if it's a channel view
@@ -247,6 +296,15 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
     return {
       type: RouteType.SECTION,
       section: (route as any).section || FrontDeskSection.SETTINGS,
+    };
+  }
+
+  if (route.type === RouteType.CHATWOOT) {
+    return {
+      type: RouteType.CHATWOOT,
+      view: (route as any).view || ChatwootView.MY_INBOX,
+      conversationId: (route as any).conversationId,
+      channelId: (route as any).channelId,
     };
   }
 

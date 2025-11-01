@@ -9,8 +9,10 @@ import {
   Delete as DeleteIcon,
   Reply as ReplyIcon,
   MoreVert as MoreIcon,
-  Search as SearchIcon,
   ArrowDropDown as ArrowDropDownIcon,
+  AccessTime as SnoozeIcon,
+  Pending as PendingIcon,
+  CheckCircle as ResolveIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -24,11 +26,13 @@ interface ChatwootMessageViewerHeaderProps {
   onBack: () => void;
   onReply?: () => void;
   onReopen?: () => void;
+  onResolve?: () => void;
+  onSnooze?: () => void;
+  onMarkAsPending?: () => void;
   onArchive?: () => void;
   onDelete?: () => void;
   onStar?: () => void;
   onPrint?: () => void;
-  onSearch?: () => void;
   isStarred?: boolean;
 }
 
@@ -38,18 +42,22 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   onBack,
   onReply,
   onReopen,
+  onResolve,
+  onSnooze,
+  onMarkAsPending,
   onArchive,
   onDelete,
   onStar,
   onPrint,
-  onSearch,
   isStarred = false,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [reopenMenuAnchor, setReopenMenuAnchor] = useState<null | HTMLElement>(null);
+  const [resolveMenuAnchor, setResolveMenuAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const reopenMenuOpen = Boolean(reopenMenuAnchor);
+  const resolveMenuOpen = Boolean(resolveMenuAnchor);
   const profile = useRecoilValue(chatwootProfileAtom);
 
   if (!conversation) return null;
@@ -106,7 +114,37 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
     handleReopenMenuClose();
   };
 
+  const handleResolveMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setResolveMenuAnchor(event.currentTarget);
+  };
+
+  const handleResolveMenuClose = () => {
+    setResolveMenuAnchor(null);
+  };
+
+  const handleResolveClick = () => {
+    if (onResolve) {
+      onResolve();
+    }
+    handleResolveMenuClose();
+  };
+
+  const handleSnoozeClick = () => {
+    if (onSnooze) {
+      onSnooze();
+    }
+    handleResolveMenuClose();
+  };
+
+  const handleMarkAsPendingClick = () => {
+    if (onMarkAsPending) {
+      onMarkAsPending();
+    }
+    handleResolveMenuClose();
+  };
+
   const isResolved = conversation.status === "resolved";
+  const isOpen = conversation.status === "open";
 
   return (
     <Box
@@ -133,6 +171,65 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
 
           {/* Right: Action Buttons */}
           <Stack direction="row" spacing={0.5} alignItems="center">
+            {/* Resolve Button with Dropdown (only when not resolved) */}
+            {!isResolved && onResolve && (
+              <>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleResolveMenuClick}
+                  endIcon={<ArrowDropDownIcon />}
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: primaryColor(600),
+                    color: "white",
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    px: 1.5,
+                    py: 0.5,
+                    minWidth: "auto",
+                    "&:hover": {
+                      backgroundColor: primaryColor(700),
+                    },
+                  }}
+                >
+                  Resolve
+                </Button>
+                <Menu
+                  anchorEl={resolveMenuAnchor}
+                  open={resolveMenuOpen}
+                  onClose={handleResolveMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem onClick={handleResolveClick}>
+                    <ListItemIcon>
+                      <ResolveIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Resolve</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleSnoozeClick}>
+                    <ListItemIcon>
+                      <SnoozeIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Snooze</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleMarkAsPendingClick}>
+                    <ListItemIcon>
+                      <PendingIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Mark as pending</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
+
             {/* Reopen Button (only when resolved) */}
             {isResolved && onReopen && (
               <>
@@ -145,7 +242,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                     textTransform: "none",
                     borderColor: neutralColor(300),
                     color: neutralColor(700),
-                    fontSize: "0.75rem",
+                    fontSize: "0.8125rem",
                     px: 1.5,
                     py: 0.5,
                     minWidth: "auto",
@@ -175,25 +272,6 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                   </MenuItem>
                 </Menu>
               </>
-            )}
-
-            {/* Search Icon */}
-            {onSearch && (
-              <Tooltip title="Search">
-                <IconButton
-                  size="small"
-                  onClick={onSearch}
-                  sx={{
-                    color: neutralColor(600),
-                    "&:hover": {
-                      backgroundColor: neutralColor(100),
-                      color: primaryColor(600),
-                    },
-                  }}
-                >
-                  <SearchIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
             )}
 
             {/* More Actions */}

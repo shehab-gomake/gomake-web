@@ -4,8 +4,6 @@ import {
   Stack,
   Typography,
   TextField,
-  Tabs,
-  Tab,
   IconButton,
   Tooltip,
   Button,
@@ -13,6 +11,7 @@ import {
   Link,
   InputAdornment,
   TextareaAutosize,
+  ButtonBase,
 } from "@mui/material";
 import {
   FormatBold as BoldIcon,
@@ -66,7 +65,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
     }
   }, [conversation, defaultRecipient, toEmails]);
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: TabValue) => {
+  const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue);
   };
 
@@ -145,33 +144,69 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         backgroundColor: "transparent",
       }}
     >
-      {/* Tabs */}
-      <Tabs
-        value={activeTab}
-        onChange={handleTabChange}
+      {/* Segmented Control (Chatwoot Style) */}
+      <Box
         sx={{
+          px: 2,
+          py: 1.5,
           borderBottom: `1px solid ${borderColor}`,
-          minHeight: 40,
-          "& .MuiTab-root": {
-            minHeight: 40,
-            textTransform: "none",
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            color: lightGrayText,
-            backgroundColor: "transparent",
-            "&.Mui-selected": {
-              color: textColor,
-              backgroundColor: "transparent",
-            },
-          },
-          "& .MuiTabs-indicator": {
-            backgroundColor: primaryColor(600),
-          },
+          display: "flex",
+          alignItems: "center",
         }}
       >
-        <Tab label="Reply" value="reply" />
-        <Tab label="Private Note" value="private" />
-      </Tabs>
+        <Box
+          sx={{
+            display: "inline-flex",
+            borderRadius: "6px",
+            backgroundColor: neutralColor(100),
+            border: `1px solid ${neutralColor(200)}`,
+            overflow: "hidden",
+            gap: 0,
+          }}
+        >
+          <ButtonBase
+            onClick={() => handleTabChange("reply")}
+            sx={{
+              px: 2,
+              py: 0.75,
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              textTransform: "none",
+              color: activeTab === "reply" ? textColor : lightGrayText,
+              backgroundColor: activeTab === "reply" ? "white" : "transparent",
+              borderRadius: activeTab === "reply" ? "5px 0 0 5px" : 0,
+              borderRight: `1px solid ${neutralColor(200)}`,
+              boxShadow: activeTab === "reply" ? `0 1px 2px ${neutralColor(200)}` : "none",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                backgroundColor: activeTab === "reply" ? "white" : neutralColor(50),
+              },
+            }}
+          >
+            Reply
+          </ButtonBase>
+          <ButtonBase
+            onClick={() => handleTabChange("private")}
+            sx={{
+              px: 2,
+              py: 0.75,
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              textTransform: "none",
+              color: activeTab === "private" ? textColor : lightGrayText,
+              backgroundColor: activeTab === "private" ? "white" : "transparent",
+              borderRadius: activeTab === "private" ? "0 5px 5px 0" : 0,
+              boxShadow: activeTab === "private" ? `0 1px 2px ${neutralColor(200)}` : "none",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                backgroundColor: activeTab === "private" ? "white" : neutralColor(50),
+              },
+            }}
+          >
+            Private Note
+          </ButtonBase>
+        </Box>
+      </Box>
 
       {/* Recipient Fields (only for Reply tab) */}
       {activeTab === "reply" && (

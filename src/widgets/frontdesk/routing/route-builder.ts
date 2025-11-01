@@ -57,11 +57,13 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
     }
 
     case RouteType.CHATWOOT: {
-      const viewPath = mapChatwootViewToPath(route.view);
-      path = `/frontdesk/chatwoot/${viewPath}`;
+      // Use query params for view selection instead of nested paths
+      path = `/frontdesk/chatwoot`;
 
-      // Add query params if present
+      // Add query params for view and other options
       const queryParams = new URLSearchParams();
+      queryParams.append("view", mapChatwootViewToQueryParam(route.view));
+
       if (route.conversationId) {
         queryParams.append("conversation", route.conversationId);
       }
@@ -69,10 +71,7 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
         queryParams.append("channel", route.channelId);
       }
 
-      const queryString = queryParams.toString();
-      if (queryString) {
-        path += `?${queryString}`;
-      }
+      path += `?${queryParams.toString()}`;
       break;
     }
 
@@ -100,14 +99,14 @@ const mapChannelToPath = (channel: FrontDeskChannel): string => {
 };
 
 /**
- * Map Chatwoot view enum to URL path segment
+ * Map Chatwoot view enum to URL query parameter value
  */
-const mapChatwootViewToPath = (view: ChatwootView): string => {
+const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
   const map: Record<ChatwootView, string> = {
     [ChatwootView.MY_INBOX]: "my-inbox",
-    [ChatwootView.ALL_CONVERSATIONS]: "conversations/all",
-    [ChatwootView.MENTIONS]: "conversations/mentions",
-    [ChatwootView.UNATTENDED]: "conversations/unattended",
+    [ChatwootView.ALL_CONVERSATIONS]: "all-conversations",
+    [ChatwootView.MENTIONS]: "mentions",
+    [ChatwootView.UNATTENDED]: "unattended",
     [ChatwootView.CHANNELS]: "channels",
   };
   return map[view];
