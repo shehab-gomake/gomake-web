@@ -8,7 +8,7 @@ import { ChatwootConversationListItem } from "./chatwoot-conversation-list-item"
 import { ChatwootConversationListHeader } from "./chatwoot-conversation-list-header";
 import { ChatwootConversationFilters } from "./chatwoot-conversation-filters";
 import { useInfiniteScroll } from "@/widgets/frontdesk/hooks/use-infinite-scroll";
-import { InfiniteScrollLoader } from "@/widgets/frontdesk/components/shared";
+import { LoadingOverlay } from "@/widgets/frontdesk/components/shared";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -48,14 +48,12 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   onFiltersChange = () => {},
 }) => {
   const { neutralColor } = useGomakeTheme();
-  
+
   // Get counts from API response (stored in atom)
   const counts = useRecoilValue(chatwootConversationCountsAtom);
 
   // Get current status from filters
-  const currentStatus = filters.status 
-    ? (Array.isArray(filters.status) ? filters.status[0] : filters.status)
-    : undefined;
+  const currentStatus = filters.status ? (Array.isArray(filters.status) ? filters.status[0] : filters.status) : undefined;
 
   // Infinite scroll setup
   const sentinelRef = useInfiniteScroll({
@@ -96,8 +94,12 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           overflow: "auto",
           backgroundColor: neutralColor(0), // Light background
           px: 1,
+          position: "relative",
         }}
       >
+        {/* Beautiful Loading Overlay - Shows in list area when switching tabs */}
+        <LoadingOverlay loading={loading} message="Loading conversations..." />
+
         {error ? (
           <Box sx={{ p: 2 }}>
             <Alert severity="error">{error}</Alert>
@@ -124,13 +126,9 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
             {/* Infinite scroll sentinel element */}
             <div ref={sentinelRef} style={{ height: 1, width: "100%" }} />
-
-            {/* Loading indicator at bottom */}
-            {loading && conversations.length > 0 && <InfiniteScrollLoader />}
           </List>
         )}
       </Box>
     </Paper>
   );
 };
-

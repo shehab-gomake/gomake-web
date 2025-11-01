@@ -6,8 +6,6 @@ import {
   Tooltip,
   Snackbar,
   Alert,
-  CircularProgress,
-  Typography,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -23,6 +21,7 @@ import {
   ConnectionErrorState,
   ConnectingState,
 } from "@/widgets/frontdesk/design-system";
+import { LoadingOverlay } from "@/widgets/frontdesk/components/shared";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList, GlobalSearch, InConversationSearch } from "./components/direct-messages";
 import { UserPresence } from "./components";
 import { useDirectMessages } from "./hooks";
@@ -310,30 +309,11 @@ const DirectMessagesProviderView: React.FC = () => {
         {/* Left: Conversations sidebar */}
         <Box sx={{ position: "relative", width: 280 }}>
           {/* Loading overlay when fetching conversation */}
-          {isFetchingConversation && (
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 10,
-                borderRadius: 2,
-              }}
-            >
-              <Stack alignItems="center" gap={1}>
-                <CircularProgress size={32} />
-                <Typography variant="body2" color="text.secondary">
-                  Loading conversation...
-                </Typography>
-              </Stack>
-            </Box>
-          )}
+          <LoadingOverlay 
+            loading={isFetchingConversation} 
+            message="Loading conversation..."
+            spinnerSize={32}
+          />
 
           <ConversationSidebar
             title="Conversations"

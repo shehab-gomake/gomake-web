@@ -5,5 +5,6 @@ export { BaseConversationList, type BaseConversationItem } from "./BaseConversat
 export { BaseMessageInput } from "./BaseMessageInput";
 export { BaseProviderSidebar, type BaseSidebarItem } from "./BaseProviderSidebar";
 export { InfiniteScrollLoader } from "./InfiniteScrollLoader";
+export { LoadingOverlay } from "./LoadingOverlay";
 export { ConversationContextMenu, type ConversationContextMenuAction, type ConversationContextMenuProps } from "./ConversationContextMenu";
 export * from "./mentions";

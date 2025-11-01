@@ -427,8 +427,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                     minWidth: 18,
                     fontSize: "0.688rem",
                     fontWeight: 500,
-                  backgroundColor: neutralColor(100),
-                  color: neutralColor(700),
+                    backgroundColor: getTabValue() === "mine" ? primaryColor(100) : neutralColor(100),
+                    color: getTabValue() === "mine" ? primaryColor(700) : neutralColor(700),
                     "& .MuiChip-label": {
                       px: 0.75,
                       py: 0,
@@ -458,8 +458,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                     minWidth: 18,
                     fontSize: "0.688rem",
                     fontWeight: 500,
-                  backgroundColor: neutralColor(100),
-                  color: neutralColor(700),
+                    backgroundColor: getTabValue() === "unassigned" ? primaryColor(100) : neutralColor(100),
+                    color: getTabValue() === "unassigned" ? primaryColor(700) : neutralColor(700),
                     "& .MuiChip-label": {
                       px: 0.75,
                       py: 0,
@@ -489,8 +489,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                     minWidth: 18,
                     fontSize: "0.688rem",
                     fontWeight: 500,
-                    backgroundColor:
-                      getTabValue() === "all" ? primaryColor(100) : neutralColor(100),
+                    backgroundColor: getTabValue() === "all" ? primaryColor(100) : neutralColor(100),
                     color: getTabValue() === "all" ? primaryColor(700) : neutralColor(700),
                     "& .MuiChip-label": {
                       px: 0.75,
