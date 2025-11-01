@@ -3,8 +3,8 @@ import { ConversationListItem as DSConversationListItem } from "@/widgets/frontd
 import { formatConversationDate } from "@/widgets/frontdesk/utils";
 import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
-import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 // ============================================================================
 // Type Definitions
@@ -15,6 +15,8 @@ interface ChatwootConversationListItemProps {
   isSelected: boolean;
   onSelect: (conversation: any) => void;
   onContextMenuAction?: (actionId: string, conversationId: string | number) => void;
+  inboxes?: ChatwootInbox[];
+  inboxesLoading?: boolean;
 }
 
 // ============================================================================
@@ -129,9 +131,10 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   isSelected,
   onSelect,
   onContextMenuAction,
+  inboxes = [],
+  inboxesLoading = false,
 }) => {
   const { contextMenuPosition, handleContextMenu, handleCloseContextMenu } = useConversationContextMenu();
-  const { inboxes } = useChatwootInboxes();
 
   // ========================================================================
   // Memoized Data Extraction

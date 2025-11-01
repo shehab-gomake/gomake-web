@@ -118,6 +118,34 @@ export interface ChatwootConversation {
 }
 
 /**
+ * Chatwoot Email Content Structure
+ * How Chatwoot stores email HTML and plain text versions
+ */
+export interface ChatwootEmailContent {
+  /** HTML version of the email */
+  htmlContent?: {
+    full?: string;
+  };
+  /** Plain text version of the email */
+  textContent?: {
+    full?: string;
+  };
+}
+
+/**
+ * Chatwoot Message Content Attributes
+ * Structured data for different message types
+ */
+export interface ChatwootContentAttributes {
+  /** Email-specific content (for Channel::Email messages) */
+  email?: ChatwootEmailContent;
+  /** Generic HTML content (for backward compatibility) */
+  html?: string;
+  /** Other dynamic attributes */
+  [key: string]: any;
+}
+
+/**
  * Chatwoot Message (simplified)
  * Used within conversations
  */
@@ -134,7 +162,7 @@ export interface ChatwootMessage {
   status?: string;
   source_id?: string;
   content_type?: string;
-  content_attributes?: Record<string, any>;
+  content_attributes?: ChatwootContentAttributes;
   sender_type?: string;
   sender_id?: number;
   sender?: {

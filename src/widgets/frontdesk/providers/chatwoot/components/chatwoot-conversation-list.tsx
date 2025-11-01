@@ -15,6 +15,7 @@ import {
   ConversationAssigneeType,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 interface ChatwootConversationListProps {
   conversations: any[];
@@ -30,6 +31,8 @@ interface ChatwootConversationListProps {
   searchDisabled?: boolean;
   filters?: Partial<ConversationListParams>;
   onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
+  inboxes?: ChatwootInbox[];
+  inboxesLoading?: boolean;
 }
 
 export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = ({
@@ -46,6 +49,8 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   searchDisabled = false,
   filters = {},
   onFiltersChange = () => {},
+  inboxes = [],
+  inboxesLoading = false,
 }) => {
   const { neutralColor } = useGomakeTheme();
 
@@ -121,6 +126,8 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
                 conversation={conversation}
                 isSelected={conversation.id === selectedConversationId}
                 onSelect={onConversationSelect}
+                inboxes={inboxes}
+                inboxesLoading={inboxesLoading}
               />
             ))}
 

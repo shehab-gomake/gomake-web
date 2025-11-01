@@ -44,6 +44,8 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
     selectedConversation,
     handleConversationSelect,
     handleBack,
+    inboxes,
+    inboxesLoading,
   } = useChatwootProvider();
 
   return (
@@ -73,6 +75,8 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
           onRefresh={refresh}
           filters={filters}
           onFiltersChange={handleFiltersChange}
+          inboxes={inboxes}
+          inboxesLoading={inboxesLoading}
         />
       </Panel>
 
@@ -96,6 +100,8 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
             onBack={handleBack}
             onConversationUpdate={updateConversationInList}
             currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
+            inboxes={inboxes}
+            inboxesLoading={inboxesLoading}
             {...messageViewerProps}
           />
         ) : (

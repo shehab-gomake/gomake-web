@@ -7,11 +7,11 @@ import { ChatwootMessageItem } from "./chatwoot-message-item";
 import { ChatwootResolutionStatusBar } from "./chatwoot-resolution-status-bar";
 import { ChatwootReplyComposer } from "./chatwoot-reply-composer";
 import { useChatwootMessages } from "../hooks/use-chatwoot-messages";
-import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import {
   ChatwootConversation,
   ConversationStatus,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
 
 interface ChatwootMessageViewerProps {
@@ -20,6 +20,8 @@ interface ChatwootMessageViewerProps {
   onBack: () => void;
   onConversationUpdate?: (updatedConversation: ChatwootConversation) => void;
   currentStatusFilter?: ConversationStatus;
+  inboxes?: ChatwootInbox[];
+  inboxesLoading?: boolean;
 }
 
 export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
@@ -28,6 +30,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   onBack,
   onConversationUpdate,
   currentStatusFilter,
+  inboxes = [],
+  inboxesLoading = false,
 }) => {
   const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
@@ -37,8 +41,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     accountId: accountId || null,
   });
 
-  // Get inbox for the conversation
-  const { inboxes } = useChatwootInboxes();
+  // Get inbox for the conversation from props
   const inbox = React.useMemo(() => {
     if (!conversation?.inbox_id) return null;
     return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;

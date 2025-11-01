@@ -48,7 +48,38 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
     : "";
 
   // Extract and process content
-  const rawContent = message.content || "";
+  // Chatwoot stores email HTML in a specific structure:
+  // content_attributes.email.htmlContent.full (HTML version)
+  // content_attributes.email.textContent.full (plain text version)
+  const emailHtml = message.content_attributes?.email?.htmlContent?.full;
+  const emailText = message.content_attributes?.email?.textContent?.full;
+
+  // Priority: 1. email HTML, 2. email plain text, 3. regular content field
+  const htmlContent = emailHtml;
+  const rawContent = htmlContent || emailText || message.content || "";
+
+  // DEBUG: Log ALL message data to diagnose HTML rendering
+  React.useEffect(() => {
+    console.log('[ChatwootMessage] Rendering message:', {
+      messageId: message.id,
+      messageType: message.message_type,
+      contentType: message.content_type,
+      hasContentAttributes: !!message.content_attributes,
+      hasEmail: !!message.content_attributes?.email,
+      hasEmailHtml: !!emailHtml,
+      hasEmailText: !!emailText,
+      emailHtmlLength: emailHtml?.length || 0,
+      emailTextLength: emailText?.length || 0,
+      contentLength: message.content?.length || 0,
+      rawContentLength: rawContent.length,
+      isHtml: isHtml,
+      isFullHtmlDocument: isFullHtmlDocument,
+      processedContentLength: processedContent.length,
+      fullMessage: message,
+      rawContentPreview: rawContent.substring(0, 300),
+      processedContentPreview: processedContent.substring(0, 300),
+    });
+  }, [message.id]);
 
   // Determine if content is HTML based on content_type or content detection
   // Check for full HTML documents (like 404 pages) - these should be displayed as code blocks
@@ -56,10 +87,11 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
                             rawContent.trim().startsWith("<!doctype html") ||
                             (rawContent.includes("<html") && rawContent.includes("<head>"));
 
+  // If we have HTML in content_attributes.email, always treat it as HTML
   const isHtml = !isFullHtmlDocument && (
+    !!htmlContent ||  // Explicit HTML content from email attributes
     message.content_type === "text/html" ||
-    isHtmlContent(rawContent) ||
-    message.content_attributes?.html
+    isHtmlContent(rawContent)
   );
 
   // For full HTML documents, treat as code/plain text to display the source
@@ -72,12 +104,15 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
     : rawContent; // Plain text
 
   // Determine if avatar should be shown (show if first message, or sender changed from previous)
-  const shouldShowAvatar = isFirst || showAvatar || 
+  const shouldShowAvatar = isFirst || showAvatar ||
     (previousMessage && (
       previousMessage.sender?.id !== message.sender?.id ||
       previousMessage.message_type !== message.message_type ||
       previousMessage.sender_type !== message.sender_type
     ));
+
+  // Check if this is an email message (has email metadata)
+  const isEmailMessage = !!message.content_attributes?.email;
 
   // Message bubble styles matching WhatsApp
   const getMessageBubbleStyles = (isOutgoing: boolean) => ({
@@ -143,6 +178,25 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
       backgroundColor: neutralColor(50),
       fontWeight: 600,
     },
+    // Email-specific styling
+    "& h1, & h2, & h3, & h4, & h5, & h6": {
+      marginTop: 1,
+      marginBottom: 0.5,
+      lineHeight: 1.3,
+      "&:first-of-type": { marginTop: 0 },
+    },
+    // Preserve email font sizes but ensure readability
+    "& font": {
+      fontSize: "inherit !important",
+    },
+    // Center tag support (common in email HTML)
+    "& center": {
+      textAlign: "center",
+    },
+    // Better spacing for nested divs (common in email templates)
+    "& div": {
+      margin: 0,
+    },
   });
 
   const getAvatarStyles = (isOutgoing: boolean) => ({
@@ -169,7 +223,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
       )}
 
       <Stack
-        maxWidth="70%"
+        maxWidth={isEmailMessage ? "85%" : "70%"}
         alignItems={isMe ? "flex-end" : "flex-start"}
         spacing={0.5}
       >

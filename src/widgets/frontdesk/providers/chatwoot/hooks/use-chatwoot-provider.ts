@@ -3,6 +3,8 @@ import React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
+import { useChatwootProfile } from "./use-chatwoot-profile";
+import { useChatwootInboxes } from "./use-chatwoot-inboxes";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -13,8 +15,6 @@ import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-u
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
-  chatwootProfileAtom,
-  chatwootProfileLoadingAtom,
   chatwootSelectedInboxIdAtom,
   chatwootConversationsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
@@ -24,8 +24,12 @@ export const useChatwootProvider = () => {
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
   const [conversationsList, setConversationsList] = useRecoilState(chatwootConversationsAtom);
   const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
-  const profile = useRecoilValue(chatwootProfileAtom);
-  const profileLoading = useRecoilValue(chatwootProfileLoadingAtom);
+
+  // Use the custom hook to get profile state (prevents multiple API calls)
+  const { profile, loading: profileLoading } = useChatwootProfile();
+
+  // Use the custom hook to get inboxes state (prevents multiple API calls from child components)
+  const { inboxes, loading: inboxesLoading, selectedInbox, selectInbox } = useChatwootInboxes();
 
   // Initialize router
   const router = useChatwootRouter();
@@ -170,6 +174,12 @@ export const useChatwootProvider = () => {
     // Profile
     profile,
     profileLoading,
+
+    // Inboxes
+    inboxes,
+    inboxesLoading,
+    selectedInbox,
+    selectInbox,
 
     // Conversations
     conversations: conversations.conversations,
