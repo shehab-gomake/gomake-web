@@ -10,6 +10,7 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  alpha,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import EmailIcon from "@mui/icons-material/Email";
@@ -33,8 +34,10 @@ import CommentIcon from "@mui/icons-material/Comment";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
+import AddIcon from "@mui/icons-material/Add";
 import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
+import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
@@ -158,6 +161,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatwootExpanded, setChatwootExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
   const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
 
   // Fetch Chatwoot inboxes (channels)
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
@@ -768,13 +772,34 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         sx: { fontSize: "0.875rem" },
                       }}
                     />
-                    {inboxesLoading ? (
-                      <CircularProgress size={16} sx={{ color: theme.palette.text.secondary }} />
-                    ) : chatwootChannelsExpanded ? (
-                      <ExpandLessIcon fontSize="small" />
-                    ) : (
-                      <ExpandMoreIcon fontSize="small" />
-                    )}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: "auto" }}>
+                      <Tooltip title="Add New Channel" placement="right">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowAddChannelModal(true);
+                          }}
+                          sx={{
+                            color: theme.palette.primary.main,
+                            "&:hover": {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                            },
+                            width: 24,
+                            height: 24,
+                          }}
+                        >
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      {inboxesLoading ? (
+                        <CircularProgress size={16} sx={{ color: theme.palette.text.secondary }} />
+                      ) : chatwootChannelsExpanded ? (
+                        <ExpandLessIcon fontSize="small" />
+                      ) : (
+                        <ExpandMoreIcon fontSize="small" />
+                      )}
+                    </Box>
                   </Box>
                 </ListItemButton>
                 <Collapse in={chatwootChannelsExpanded}>
@@ -981,6 +1006,12 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           ))}
         </List>
       </Box>
+
+      {/* Add Channel Modal */}
+      <AddChannelModal
+        open={showAddChannelModal}
+        onClose={() => setShowAddChannelModal(false)}
+      />
     </Box>
   );
 };
