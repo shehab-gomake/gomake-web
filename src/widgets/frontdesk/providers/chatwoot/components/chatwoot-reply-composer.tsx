@@ -3,15 +3,11 @@ import {
   Box,
   Stack,
   Typography,
-  TextField,
   IconButton,
   Tooltip,
   Button,
   Divider,
-  Link,
-  InputAdornment,
   TextareaAutosize,
-  ButtonBase,
 } from "@mui/material";
 import {
   FormatBold as BoldIcon,
@@ -32,20 +28,33 @@ import {
   Fullscreen as FullscreenIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ChatwootConversation, ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { ReplyComposerTabs, ReplyComposerEmailFields } from "./reply-composer";
+import { useChannelFeatures } from "../hooks/use-channel-features";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("ChatwootReplyComposer");
 
 interface ChatwootReplyComposerProps {
   conversation: ChatwootConversation | null;
+  inbox?: ChatwootInbox | null;
   onSend: (content: string, isPrivate: boolean, recipientEmails?: { to?: string; cc?: string; bcc?: string }) => Promise<void>;
   isSending?: boolean;
+  uiSettings?: {
+    display_rich_content_editor?: boolean;
+    quotedEmailReply?: boolean;
+  };
 }
 
 type TabValue = "reply" | "private";
 
 export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   conversation,
+  inbox = null,
   onSend,
   isSending = false,
+  uiSettings = {},
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [activeTab, setActiveTab] = useState<TabValue>("reply");
@@ -55,6 +64,9 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [showBcc, setShowBcc] = useState(false);
   const [bccEmails, setBccEmails] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Use channel features hook (memoized)
+  const channelFeatures = useChannelFeatures(inbox, activeTab === "private", uiSettings);
 
   // Extract recipient email from conversation
   const defaultRecipient = conversation?.meta?.sender?.email || "";
@@ -117,20 +129,40 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   };
 
   const handleSend = async () => {
-    if (!messageContent.trim()) return;
+    if (!messageContent.trim()) {
+      logger.debug("Message content is empty, not sending");
+      return;
+    }
+
+    // Check message length limit
+    const maxLength = channelFeatures.maxMessageLength;
+    if (messageContent.length > maxLength) {
+      logger.warn(`Message exceeds maximum length of ${maxLength} characters`);
+      // TODO: Show user-friendly error toast/snackbar
+      return;
+    }
 
     const isPrivate = activeTab === "private";
-    await onSend(
-      messageContent.trim(),
-      isPrivate,
-      !isPrivate ? { to: toEmails, cc: ccEmails || undefined, bcc: bccEmails || undefined } : undefined
-    );
 
-    // Clear form after successful send
-    setMessageContent("");
+    try {
+      await onSend(
+        messageContent.trim(),
+        isPrivate,
+        !isPrivate && channelFeatures.shouldShowEmailHeader
+          ? { to: toEmails, cc: ccEmails || undefined, bcc: bccEmails || undefined }
+          : undefined
+      );
+
+      // Clear form after successful send
+      setMessageContent("");
+      logger.info(`Message sent successfully (private: ${isPrivate})`);
+    } catch (error) {
+      logger.error("Failed to send message", error);
+      // Error handling is done by parent component
+    }
   };
 
-  const canSend = messageContent.trim().length > 0 && !isSending;
+  const canSend = messageContent.trim().length > 0 && !isSending && messageContent.length <= channelFeatures.maxMessageLength;
 
   // Theme colors - transparent/no background
   const borderColor = neutralColor(200);
@@ -145,393 +177,218 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
       }}
     >
       {/* Segmented Control (Chatwoot Style) */}
-      <Box
-        sx={{
-          px: 2,
-          py: 1.5,
-          borderBottom: `1px solid ${borderColor}`,
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            display: "inline-flex",
-            borderRadius: "6px",
-            backgroundColor: neutralColor(100),
-            border: `1px solid ${neutralColor(200)}`,
-            overflow: "hidden",
-            gap: 0,
-          }}
-        >
-          <ButtonBase
-            onClick={() => handleTabChange("reply")}
-            sx={{
-              px: 2,
-              py: 0.75,
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              textTransform: "none",
-              color: activeTab === "reply" ? textColor : lightGrayText,
-              backgroundColor: activeTab === "reply" ? "white" : "transparent",
-              borderRadius: activeTab === "reply" ? "5px 0 0 5px" : 0,
-              borderRight: `1px solid ${neutralColor(200)}`,
-              boxShadow: activeTab === "reply" ? `0 1px 2px ${neutralColor(200)}` : "none",
-              transition: "all 0.2s ease",
-              "&:hover": {
-                backgroundColor: activeTab === "reply" ? "white" : neutralColor(50),
-              },
-            }}
-          >
-            Reply
-          </ButtonBase>
-          <ButtonBase
-            onClick={() => handleTabChange("private")}
-            sx={{
-              px: 2,
-              py: 0.75,
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              textTransform: "none",
-              color: activeTab === "private" ? textColor : lightGrayText,
-              backgroundColor: activeTab === "private" ? "white" : "transparent",
-              borderRadius: activeTab === "private" ? "0 5px 5px 0" : 0,
-              boxShadow: activeTab === "private" ? `0 1px 2px ${neutralColor(200)}` : "none",
-              transition: "all 0.2s ease",
-              "&:hover": {
-                backgroundColor: activeTab === "private" ? "white" : neutralColor(50),
-              },
-            }}
-          >
-            Private Note
-          </ButtonBase>
-        </Box>
-      </Box>
+      <ReplyComposerTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        borderColor={borderColor}
+        textColor={textColor}
+        lightGrayText={lightGrayText}
+        neutralColor={neutralColor}
+      />
 
-      {/* Recipient Fields (only for Reply tab) */}
-      {activeTab === "reply" && (
-        <Stack spacing={0.5} sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${borderColor}`, backgroundColor: "transparent" }}>
-          {/* TO Field */}
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: lightGrayText,
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                minWidth: 40,
-              }}
-            >
-              TO
-            </Typography>
-            <TextField
-              size="small"
-              value={toEmails}
-              onChange={(e) => setToEmails(e.target.value)}
-              fullWidth
-              variant="standard"
-              placeholder="recipient@email.com"
-              InputProps={{
-                disableUnderline: true,
-              }}
-              sx={{
-                "& .MuiInput-root": {
-                  backgroundColor: "transparent",
-                  color: textColor,
-                  fontSize: "0.875rem",
-                  "&::placeholder": {
-                    color: lightGrayText,
-                    opacity: 1,
-                  },
-                },
-                "& .MuiInputBase-input": {
-                  py: 0.5,
-                  px: 0,
-                },
-              }}
-            />
-          </Stack>
-          
-          {/* CC Field */}
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: lightGrayText,
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                minWidth: 40,
-              }}
-            >
-              CC
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="Emails separated by commas"
-              value={ccEmails}
-              onChange={(e) => setCcEmails(e.target.value)}
-              fullWidth
-              variant="standard"
-              InputProps={{
-                disableUnderline: true,
-                endAdornment: !showBcc ? (
-                  <InputAdornment position="end">
-                    <Link
-                      component="button"
-                      type="button"
-                      onClick={() => setShowBcc(true)}
-                      sx={{
-                        textDecoration: "none",
-                        color: primaryColor(400),
-                        fontSize: "0.75rem",
-                        cursor: "pointer",
-                        ml: 1,
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
-                      }}
-                    >
-                      Add bcc
-                    </Link>
-                  </InputAdornment>
-                ) : null,
-              }}
-              sx={{
-                "& .MuiInput-root": {
-                  backgroundColor: "transparent",
-                  color: textColor,
-                  fontSize: "0.875rem",
-                  "&::placeholder": {
-                    color: lightGrayText,
-                    opacity: 1,
-                  },
-                },
-                "& .MuiInputBase-input": {
-                  py: 0.5,
-                  px: 0,
-                },
-              }}
-            />
-          </Stack>
-
-          {/* BCC Field */}
-          {showBcc && (
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32 }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: lightGrayText,
-                  fontSize: "0.8125rem",
-                  fontWeight: 500,
-                  minWidth: 40,
-                }}
-              >
-                BCC
-              </Typography>
-              <TextField
-                size="small"
-                placeholder="Emails separated by commas"
-                value={bccEmails}
-                onChange={(e) => setBccEmails(e.target.value)}
-                fullWidth
-                variant="standard"
-                InputProps={{
-                  disableUnderline: true,
-                }}
-                sx={{
-                  "& .MuiInput-root": {
-                    backgroundColor: "transparent",
-                    color: textColor,
-                    fontSize: "0.875rem",
-                    "&::placeholder": {
-                      color: lightGrayText,
-                      opacity: 1,
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    py: 0.5,
-                    px: 0,
-                  },
-                }}
-              />
-            </Stack>
-          )}
-        </Stack>
+      {/* Email Header Fields (only for Email channels and Reply tab) */}
+      {activeTab === "reply" && channelFeatures.shouldShowEmailHeader && (
+        <ReplyComposerEmailFields
+          toEmails={toEmails}
+          ccEmails={ccEmails}
+          bccEmails={bccEmails}
+          showBcc={showBcc}
+          onToChange={setToEmails}
+          onCcChange={setCcEmails}
+          onBccChange={setBccEmails}
+          onToggleBcc={() => setShowBcc(!showBcc)}
+          borderColor={borderColor}
+          textColor={textColor}
+          lightGrayText={lightGrayText}
+        />
       )}
 
-      {/* Formatting Toolbar */}
-      <Box
-        sx={{
-          px: 1.5,
-          py: 0.75,
-          borderBottom: `1px solid ${borderColor}`,
-          display: "flex",
-          alignItems: "center",
-          gap: 0.25,
-          backgroundColor: "transparent",
-        }}
-      >
-        <Tooltip title="Bold">
-          <IconButton
-            size="small"
-            onClick={() => handleFormatText("bold")}
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <BoldIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+      {/* Formatting Toolbar (only for rich editor) */}
+      {channelFeatures.shouldUseRichEditor && (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 0.75,
+            borderBottom: `1px solid ${borderColor}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.25,
+            backgroundColor: "transparent",
+          }}
+        >
+          <Tooltip title="Bold">
+            <IconButton
+              size="small"
+              onClick={() => handleFormatText("bold")}
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <BoldIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Italic">
-          <IconButton
-            size="small"
-            onClick={() => handleFormatText("italic")}
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <ItalicIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Italic">
+            <IconButton
+              size="small"
+              onClick={() => handleFormatText("italic")}
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <ItalicIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Underline">
-          <IconButton
-            size="small"
-            onClick={() => handleFormatText("underline")}
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <UnderlineIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Underline">
+            <IconButton
+              size="small"
+              onClick={() => handleFormatText("underline")}
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <UnderlineIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Insert Link">
-          <IconButton
-            size="small"
-            onClick={() => handleFormatText("link")}
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <LinkIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Insert Link">
+            <IconButton
+              size="small"
+              onClick={() => handleFormatText("link")}
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <LinkIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Divider orientation="vertical" flexItem sx={{ mx: 0.25, borderColor: borderColor }} />
+          <Divider orientation="vertical" flexItem sx={{ mx: 0.25, borderColor: borderColor }} />
 
-        <Tooltip title="Undo">
-          <IconButton
-            size="small"
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <UndoIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Undo">
+            <IconButton
+              size="small"
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <UndoIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Redo">
-          <IconButton
-            size="small"
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <RedoIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Redo">
+            <IconButton
+              size="small"
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <RedoIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Bullet List">
-          <IconButton
-            size="small"
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <BulletListIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Bullet List">
+            <IconButton
+              size="small"
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <BulletListIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Numbered List">
-          <IconButton
-            size="small"
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <NumberedListIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Numbered List">
+            <IconButton
+              size="small"
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <NumberedListIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Code Block">
-          <IconButton
-            size="small"
-            onClick={() => handleFormatText("code")}
-            sx={{
-              p: 0.5,
-              color: lightGrayText,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: primaryColor(600),
-              },
-            }}
-          >
-            <CodeIcon sx={{ fontSize: 16 }} />
-          </IconButton>
-        </Tooltip>
-      </Box>
+          <Tooltip title="Code Block">
+            <IconButton
+              size="small"
+              onClick={() => handleFormatText("code")}
+              sx={{
+                p: 0.5,
+                color: lightGrayText,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
+              }}
+            >
+              <CodeIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
 
       {/* Text Input Area */}
       <Box sx={{ position: "relative", px: 2, py: 1.5, backgroundColor: "transparent" }}>
         <TextareaAutosize
           ref={textareaRef}
           value={messageContent}
-          onChange={(e) => setMessageContent(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            // Enforce max length
+            if (newValue.length <= channelFeatures.maxMessageLength) {
+              setMessageContent(newValue);
+            }
+          }}
           onKeyDown={handleKeyDown}
-          placeholder="Shift + enter for new line. Start with '/' to select a Canned Response."
-          minRows={4}
+          placeholder={
+            channelFeatures.shouldUseRichEditor
+              ? "Shift + enter for new line. Start with '/' to select a Canned Response."
+              : "Type your message..."
+          }
+          minRows={channelFeatures.shouldUseRichEditor ? 4 : 3}
+          maxLength={channelFeatures.maxMessageLength}
           disabled={isSending}
           style={{
             width: "100%",
@@ -592,31 +449,34 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
               sx={{
                 color: lightGrayText,
                 p: 0.75,
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: primaryColor(600),
-            },
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
               }}
             >
               <EmojiIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Attach file">
-            <IconButton
-              size="small"
-              sx={{
-                color: lightGrayText,
-                p: 0.75,
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: primaryColor(600),
-            },
-              }}
-            >
-              <AttachIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
+          {/* File upload - only if supported */}
+          {channelFeatures.supportsFileUpload && (
+            <Tooltip title={channelFeatures.supportsMultipleFileUpload ? "Attach files" : "Attach file"}>
+              <IconButton
+                size="small"
+                sx={{
+                  color: lightGrayText,
+                  p: 0.75,
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <AttachIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
 
           <Tooltip title="Voice input">
             <IconButton
@@ -624,10 +484,10 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
               sx={{
                 color: lightGrayText,
                 p: 0.75,
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: primaryColor(600),
-            },
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
               }}
             >
               <MicIcon sx={{ fontSize: 18 }} />
@@ -640,10 +500,10 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
               sx={{
                 color: lightGrayText,
                 p: 0.75,
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: primaryColor(600),
-            },
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                  color: primaryColor(600),
+                },
               }}
             >
               <CalendarIcon sx={{ fontSize: 18 }} />
@@ -665,35 +525,109 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
               <AIAssistIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
+
+          {/* WhatsApp Templates Button - only for WhatsApp Cloud */}
+          {channelFeatures.shouldShowWhatsAppTemplates && (
+            <Tooltip title="WhatsApp Templates">
+              <IconButton
+                size="small"
+                sx={{
+                  color: lightGrayText,
+                  p: 0.75,
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <CalendarIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Content Templates Button - only for Twilio WhatsApp */}
+          {channelFeatures.shouldShowContentTemplates && (
+            <Tooltip title="Content Templates">
+              <IconButton
+                size="small"
+                sx={{
+                  color: lightGrayText,
+                  p: 0.75,
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <CalendarIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Editor Toggle - only for API inbox */}
+          {channelFeatures.shouldShowEditorToggle && (
+            <Tooltip title="Toggle Rich Editor">
+              <IconButton
+                size="small"
+                sx={{
+                  color: lightGrayText,
+                  p: 0.75,
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <CodeIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
 
-        {/* Right Side: Send Button */}
-        <Button
-          variant="contained"
-          onClick={handleSend}
-          disabled={!canSend}
-          startIcon={<SendIcon sx={{ fontSize: 16 }} />}
-          sx={{
-            backgroundColor: primaryColor(600),
-            color: "white",
-            textTransform: "none",
-            fontSize: "0.8125rem",
-            px: 1.5,
-            py: 0.5,
-            minHeight: 32,
-            "&:hover": {
-              backgroundColor: primaryColor(700),
-            },
-            "&:disabled": {
-              backgroundColor: neutralColor(200),
-              color: neutralColor(500),
-            },
-          }}
-        >
-          Send (⌘ + ←)
-        </Button>
+        {/* Right Side: Send Button and Character Count */}
+        <Stack direction="row" spacing={1} alignItems="center">
+          {messageContent.length > 0 && (
+            <Typography
+              variant="caption"
+              sx={{
+                color:
+                  messageContent.length > channelFeatures.maxMessageLength
+                    ? "error.main"
+                    : messageContent.length > channelFeatures.maxMessageLength * 0.9
+                    ? "warning.main"
+                    : lightGrayText,
+                fontSize: "0.75rem",
+              }}
+            >
+              {messageContent.length} / {channelFeatures.maxMessageLength}
+            </Typography>
+          )}
+          <Button
+            variant="contained"
+            onClick={handleSend}
+            disabled={!canSend}
+            startIcon={<SendIcon sx={{ fontSize: 16 }} />}
+            sx={{
+              backgroundColor: primaryColor(600),
+              color: "white",
+              textTransform: "none",
+              fontSize: "0.8125rem",
+              px: 1.5,
+              py: 0.5,
+              minHeight: 32,
+              "&:hover": {
+                backgroundColor: primaryColor(700),
+              },
+              "&:disabled": {
+                backgroundColor: neutralColor(200),
+                color: neutralColor(500),
+              },
+            }}
+          >
+            Send (⌘ + ←)
+          </Button>
+        </Stack>
       </Box>
     </Box>
   );
 };
-

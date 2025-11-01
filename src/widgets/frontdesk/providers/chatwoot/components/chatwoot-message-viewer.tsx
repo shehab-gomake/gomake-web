@@ -7,6 +7,7 @@ import { ChatwootMessageItem } from "./chatwoot-message-item";
 import { ChatwootResolutionStatusBar } from "./chatwoot-resolution-status-bar";
 import { ChatwootReplyComposer } from "./chatwoot-reply-composer";
 import { useChatwootMessages } from "../hooks/use-chatwoot-messages";
+import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import {
   ChatwootConversation,
   ConversationStatus,
@@ -35,6 +36,13 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     conversation,
     accountId: accountId || null,
   });
+
+  // Get inbox for the conversation
+  const { inboxes } = useChatwootInboxes();
+  const inbox = React.useMemo(() => {
+    if (!conversation?.inbox_id) return null;
+    return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
+  }, [conversation?.inbox_id, inboxes]);
 
   if (!conversation) {
     return (
@@ -283,6 +291,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       {/* Reply Composer */}
       <ChatwootReplyComposer
         conversation={conversation}
+        inbox={inbox}
         onSend={handleSendMessage}
         isSending={isSending}
       />
