@@ -1,14 +1,13 @@
 import { useCallback, useMemo, useEffect } from "react";
 import React from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { chatwootService } from "@/services/frontdesk";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
 import {
   ConversationListParams,
   ConversationStatus,
   ConversationAssigneeType,
-  ConversationSortBy,
+  ChatwootConversation,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
 import {
@@ -19,7 +18,6 @@ import {
   chatwootSelectedInboxIdAtom,
   chatwootConversationsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 
 export const useChatwootProvider = () => {
   const [selectedAccountId, setSelectedAccountId] = useRecoilState(chatwootSelectedAccountAtom);
@@ -91,7 +89,7 @@ export const useChatwootProvider = () => {
   }, [selectedInboxId, conversations.conversations, selectedConversation, conversations.loading]);
 
   const handleConversationSelect = useCallback(
-    (conversation: any) => {
+    (conversation: ChatwootConversation) => {
       setSelectedConversation(conversation);
     },
     [setSelectedConversation]
@@ -113,13 +111,13 @@ export const useChatwootProvider = () => {
 
   // Update conversation in the list after status changes
   // Similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS, { conversationId, status })
-  const updateConversationInList = useCallback((updatedConversation: any) => {
+  const updateConversationInList = useCallback((updatedConversation: ChatwootConversation) => {
     const newStatus = updatedConversation.status;
     const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
-    
+
     // Check if updated conversation matches current filter using utility function
     const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
-    
+
     setConversationsList((prev) => {
       if (!matchesFilter) {
         // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
@@ -133,7 +131,7 @@ export const useChatwootProvider = () => {
         );
       }
     });
-    
+
     // Update selected conversation
     if (selectedConversation?.id === updatedConversation.id) {
       if (!matchesFilter) {
@@ -143,7 +141,7 @@ export const useChatwootProvider = () => {
         setSelectedConversation((prev) => prev ? { ...prev, ...updatedConversation } : prev);
       }
     }
-  }, [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, matchesStatusFilter]);
+  }, [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]);
 
   // Handle filter changes - support status, assignee_type, etc.
   const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {

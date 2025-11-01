@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootConversations");
 import {
   ConversationListParams,
   ConversationStatus,
@@ -103,7 +106,7 @@ export const useChatwootConversations = (
         }
       } catch (err: any) {
         setError(err.message || "Failed to load conversations");
-        console.error("Failed to fetch Chatwoot conversations:", err);
+        logger.error("Failed to fetch conversations", err);
       } finally {
         setLoading(false);
         isFetchingRef.current = false;

@@ -9,6 +9,9 @@
  */
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootDataFetch");
 
 export interface UseDataFetchOptions<TFilters> {
   /**
@@ -103,7 +106,7 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
       } catch (err: any) {
         const errorMessage = err?.message || "Failed to fetch data";
         setError(errorMessage);
-        console.error("Error fetching data:", err);
+        logger.error("Failed to fetch data", err);
         setData([] as any);
       } finally {
         setLoading(false);

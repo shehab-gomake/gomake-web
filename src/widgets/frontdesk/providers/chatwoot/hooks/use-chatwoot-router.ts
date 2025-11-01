@@ -8,6 +8,9 @@
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
 import { useRecoilState } from "recoil";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootRouter");
 import {
   ChatwootView,
   ChatwootRoute,
@@ -47,13 +50,13 @@ export const useChatwootRouter = () => {
     (route: FrontDeskRoute, options?: NavigationOptions) => {
       // Type guard to ensure it's a Chatwoot route
       if (!isChatwootRoute(route)) {
-        console.error("[useChatwootRouter] Invalid route type:", route);
+        logger.error("Invalid route type", route);
         return;
       }
 
       const { path, options: routeOptions } = buildRoute(route, options);
 
-      console.log("[useChatwootRouter] Navigating to:", path, route);
+      logger.debug(`Navigating to: ${path}`, route);
 
       // Sync state atoms with route before navigation
       if (route.channelId) {

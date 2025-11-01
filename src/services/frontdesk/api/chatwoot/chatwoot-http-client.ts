@@ -1,11 +1,14 @@
 import { getUserToken } from "@/services/storage-data";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("ChatwootHttpClient");
 
 /**
  * Base HTTP client for Chatwoot API integration.
- * 
+ *
  * Base URL: http://localhost:8080
  * Authentication: GoMake bearer token (same as other FrontDesk services)
- * 
+ *
  * This client handles authentication, error handling, and response parsing
  * for all Chatwoot API endpoints.
  */
@@ -50,12 +53,11 @@ export class ChatwootHttpClient {
         (typeof errorData === "string" ? errorData : null) ||
         `HTTP error! status: ${response.status}`;
 
-      console.error("Chatwoot API Error:", {
+      logger.error(`API request failed: ${errorMessage}`, {
         status: response.status,
         statusText: response.statusText,
         url: response.url,
         errorData,
-        errorMessage,
       });
 
       throw new Error(errorMessage);

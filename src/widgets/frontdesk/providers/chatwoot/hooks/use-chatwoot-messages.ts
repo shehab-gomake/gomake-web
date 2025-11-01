@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { chatwootService } from "@/services/frontdesk";
 import { ChatwootConversation, ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootMessages");
 
 interface UseChatwootMessagesProps {
   conversation: ChatwootConversation | null;
@@ -129,7 +132,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
       setMessages(sortedMessages);
     } catch (err: any) {
-      console.error("Failed to load Chatwoot messages:", err);
+      logger.error("Failed to load messages", err);
       setError(err?.message || "Failed to load messages");
       setMessages([]);
     } finally {

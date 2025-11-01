@@ -7,6 +7,9 @@
 import { useEffect, useCallback } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootNotifications");
 import {
   chatwootNotificationsAtom,
   chatwootNotificationsLoadingAtom,
@@ -43,7 +46,7 @@ export const useChatwootNotifications = () => {
     } catch (err: any) {
       const errorMessage = err?.message || "Failed to fetch notifications";
       setError(errorMessage);
-      console.error("Error fetching notifications:", err);
+      logger.error("Failed to fetch notifications", err);
       setNotifications([]);
     } finally {
       setLoading(false);

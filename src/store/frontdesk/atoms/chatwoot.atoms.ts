@@ -1,12 +1,26 @@
 import { atom } from "recoil";
+import type {
+  ChatwootUser,
+  ChatwootUserAccount,
+} from "@/services/frontdesk/api/chatwoot/types/profile.types";
+import type {
+  ChatwootConversation,
+  ChatwootMessage,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import type {
+  ChatwootNotification,
+  NotificationListParams,
+} from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 
 /**
  * Chatwoot State Atoms
  * Manages all state for Chatwoot integration
+ * All atoms are properly typed for type safety
  */
 
 // Profile
-export const chatwootProfileAtom = atom<any | null>({
+export const chatwootProfileAtom = atom<ChatwootUser | null>({
   key: "frontdesk.chatwoot.profile",
   default: null,
 });
@@ -17,7 +31,7 @@ export const chatwootProfileLoadingAtom = atom<boolean>({
 });
 
 // Accounts (from profile)
-export const chatwootAccountsAtom = atom<any[]>({
+export const chatwootAccountsAtom = atom<ChatwootUserAccount[]>({
   key: "frontdesk.chatwoot.accounts",
   default: [],
 });
@@ -33,12 +47,12 @@ export const chatwootAccountsLoadingAtom = atom<boolean>({
 });
 
 // Conversations
-export const chatwootConversationsAtom = atom<any[]>({
+export const chatwootConversationsAtom = atom<ChatwootConversation[]>({
   key: "frontdesk.chatwoot.conversations",
   default: [],
 });
 
-export const chatwootSelectedConversationAtom = atom<any | null>({
+export const chatwootSelectedConversationAtom = atom<ChatwootConversation | null>({
   key: "frontdesk.chatwoot.selectedConversation",
   default: null,
 });
@@ -64,7 +78,7 @@ export const chatwootConversationCountsAtom = atom<{
 });
 
 // Messages
-export const chatwootMessagesAtom = atom<any[]>({
+export const chatwootMessagesAtom = atom<ChatwootMessage[]>({
   key: "frontdesk.chatwoot.messages",
   default: [],
 });
@@ -80,7 +94,7 @@ export const chatwootMessagesErrorAtom = atom<string | null>({
 });
 
 // Inboxes (Channels)
-export const chatwootInboxesAtom = atom<any[]>({
+export const chatwootInboxesAtom = atom<ChatwootInbox[]>({
   key: "frontdesk.chatwoot.inboxes",
   default: [],
 });
@@ -101,7 +115,7 @@ export const chatwootInboxesErrorAtom = atom<string | null>({
 });
 
 // Notifications
-export const chatwootNotificationsAtom = atom<any[]>({
+export const chatwootNotificationsAtom = atom<ChatwootNotification[]>({
   key: "frontdesk.chatwoot.notifications",
   default: [],
 });
@@ -116,13 +130,7 @@ export const chatwootNotificationsErrorAtom = atom<string | null>({
   default: null,
 });
 
-export const chatwootNotificationsFiltersAtom = atom<{
-  includes?: string[];
-  snoozed?: boolean;
-  read?: boolean;
-  page?: number;
-  sort_order?: string;
-}>({
+export const chatwootNotificationsFiltersAtom = atom<NotificationListParams>({
   key: "frontdesk.chatwoot.notificationsFilters",
   default: {
     page: 1,
