@@ -15,23 +15,29 @@ import {
   Avatar,
   Chip,
   Divider,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import TuneIcon from "@mui/icons-material/Tune";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootNotifications } from "../hooks/use-chatwoot-notifications";
+import { NotificationSortOrder } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { buildNotificationFilters } from "../utils/notification-filter-utils";
 
 export const ChatwootNotificationsView: React.FC = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const { notifications, loading, error, filters, updateFilters } = useChatwootNotifications();
+  const { notifications, loading, error, filters, updateFilters, markAllAsRead, deleteAll, deleteAllRead } =
+    useChatwootNotifications();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
-  const [displayValue, setDisplayValue] = useState<string>("unread");
+  const [settingsMenuAnchor, setSettingsMenuAnchor] = useState<null | HTMLElement>(null);
 
   // Get notification sender info
   const getNotificationSender = (notification: any) => {
     const primaryActor = notification.primary_actor;
     if (!primaryActor) return { name: "System", initials: "S", color: neutralColor(400) };
-    
+
     const name = primaryActor.name || primaryActor.email || "Unknown";
     const initials = name
       .split(" ")
@@ -39,18 +45,11 @@ export const ChatwootNotificationsView: React.FC = () => {
       .join("")
       .toUpperCase()
       .slice(0, 2);
-    
+
     // Generate color based on name
-    const colors = [
-      primaryColor(500),
-      "#3B82F6",
-      "#10B981",
-      "#F59E0B",
-      "#EF4444",
-      "#8B5CF6",
-    ];
+    const colors = [primaryColor(500), "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
     const colorIndex = name.charCodeAt(0) % colors.length;
-    
+
     return { name, initials, color: colors[colorIndex] };
   };
 
@@ -71,21 +70,72 @@ export const ChatwootNotificationsView: React.FC = () => {
     return date.toLocaleDateString();
   };
 
-  const handleDisplayChange = (event: any) => {
+  // Handle sort order change
+  const handleSortOrderChange = (event: any) => {
     const value = event.target.value;
-    setDisplayValue(value);
-    
-    // Update filters based on display selection
-    if (value === "unread") {
-      updateFilters({ snoozed: false, read: false, includes: undefined });
-    } else if (value === "all") {
-      updateFilters({ snoozed: true, read: true, includes: ["snoozed", "read"] });
-    } else if (value === "read") {
-      updateFilters({ read: true, snoozed: false, includes: ["read"] });
-    } else if (value === "snoozed") {
-      updateFilters({ snoozed: true, read: false, includes: ["snoozed"] });
+    const sortOrder = value === "newest" ? NotificationSortOrder.DESC : NotificationSortOrder.ASC;
+    const updatedFilters = buildNotificationFilters({
+      snoozed: filters.snoozed,
+      read: filters.read,
+      sortOrder,
+    });
+    updateFilters(updatedFilters);
+  };
+
+  // Handle checkbox changes
+  const handleSnoozedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    const updatedFilters = buildNotificationFilters({
+      snoozed: checked,
+      read: filters.read,
+      sortOrder: filters.sort_order as NotificationSortOrder,
+    });
+    updateFilters(updatedFilters);
+  };
+
+  const handleReadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    const updatedFilters = buildNotificationFilters({
+      snoozed: filters.snoozed,
+      read: checked,
+      sortOrder: filters.sort_order as NotificationSortOrder,
+    });
+    updateFilters(updatedFilters);
+  };
+
+  // Handle settings menu actions
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead();
+      setSettingsMenuAnchor(null);
+    } catch (err) {
+      // Error is handled by the hook
     }
   };
+
+  const handleDeleteAll = async () => {
+    if (window.confirm("Are you sure you want to delete all notifications?")) {
+      try {
+        await deleteAll();
+        setSettingsMenuAnchor(null);
+      } catch (err) {
+        // Error is handled by the hook
+      }
+    }
+  };
+
+  const handleDeleteAllRead = async () => {
+    if (window.confirm("Are you sure you want to delete all read notifications?")) {
+      try {
+        await deleteAllRead();
+        setSettingsMenuAnchor(null);
+      } catch (err) {
+        // Error is handled by the hook
+      }
+    }
+  };
+
+  const currentSortOrder = filters.sort_order === NotificationSortOrder.ASC ? "oldest" : "newest";
 
   return (
     <Paper
@@ -110,48 +160,38 @@ export const ChatwootNotificationsView: React.FC = () => {
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1rem",
-              color: neutralColor(900),
-            }}
-          >
-            My Inbox
-          </Typography>
-
-          <Stack direction="row" spacing={1} alignItems="center">
-            {/* Display Dropdown */}
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <Select
-                value={displayValue}
-                onChange={handleDisplayChange}
-                sx={{
-                  fontSize: "0.875rem",
-                  backgroundColor: neutralColor(0),
-                  "& .MuiSelect-select": {
-                    py: 0.75,
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: neutralColor(300),
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: neutralColor(400),
-                  },
-                }}
-              >
-                <MenuItem value="unread">Unread</MenuItem>
-                <MenuItem value="read">Read</MenuItem>
-                <MenuItem value="snoozed">Snoozed</MenuItem>
-                <MenuItem value="all">All</MenuItem>
-              </Select>
-            </FormControl>
-
-            {/* Filter Icon */}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                fontSize: "1rem",
+                color: neutralColor(900),
+              }}
+            >
+              Inbox
+            </Typography>
+            {/* Filter Dropdown */}
             <IconButton
               size="small"
               onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
+              sx={{
+                color: neutralColor(600),
+                p: 0.5,
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                },
+              }}
+            >
+              <ExpandMoreIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+
+          <Stack direction="row" spacing={1} alignItems="center">
+            {/* Settings Icon */}
+            <IconButton
+              size="small"
+              onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
               sx={{
                 color: neutralColor(600),
                 backgroundColor: neutralColor(100),
@@ -162,16 +202,135 @@ export const ChatwootNotificationsView: React.FC = () => {
                 height: 32,
               }}
             >
-              <FilterListIcon fontSize="small" />
+              <TuneIcon fontSize="small" />
             </IconButton>
           </Stack>
         </Stack>
 
-        {/* Filter Menu */}
+        {/* Filter Menu - Dropdown */}
         <Menu
           anchorEl={filterMenuAnchor}
           open={Boolean(filterMenuAnchor)}
           onClose={() => setFilterMenuAnchor(null)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 280,
+              backgroundColor: neutralColor(0),
+              border: `1px solid ${neutralColor(200)}`,
+              boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+            },
+          }}
+        >
+          <Box sx={{ px: 2, py: 1.5 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: neutralColor(700),
+                mb: 1.5,
+              }}
+            >
+              Display Options
+            </Typography>
+
+            {/* Snoozed Checkbox */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filters.snoozed || false}
+                  onChange={handleSnoozedChange}
+                  size="small"
+                  sx={{
+                    color: neutralColor(600),
+                    "&.Mui-checked": {
+                      color: primaryColor(600),
+                    },
+                  }}
+                />
+              }
+              label="Snoozed"
+              sx={{
+                mb: 1,
+                "& .MuiFormControlLabel-label": {
+                  fontSize: "0.875rem",
+                  color: neutralColor(900),
+                },
+              }}
+            />
+
+            {/* Read Checkbox */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filters.read || false}
+                  onChange={handleReadChange}
+                  size="small"
+                  sx={{
+                    color: neutralColor(600),
+                    "&.Mui-checked": {
+                      color: primaryColor(600),
+                    },
+                  }}
+                />
+              }
+              label="Read"
+              sx={{
+                mb: 1.5,
+                "& .MuiFormControlLabel-label": {
+                  fontSize: "0.875rem",
+                  color: neutralColor(900),
+                },
+              }}
+            />
+
+            <Divider sx={{ my: 1 }} />
+
+            {/* Sort Order Dropdown */}
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: neutralColor(700),
+                mb: 1,
+              }}
+            >
+              Sort Order
+            </Typography>
+            <FormControl fullWidth size="small">
+              <Select
+                value={currentSortOrder}
+                onChange={handleSortOrderChange}
+                sx={{
+                  fontSize: "0.875rem",
+                  backgroundColor: neutralColor(0),
+                  "& .MuiSelect-select": {
+                    py: 0.75,
+                  },
+                }}
+              >
+                <MenuItem value="newest">Newest</MenuItem>
+                <MenuItem value="oldest">Oldest</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Menu>
+
+        {/* Settings Menu */}
+        <Menu
+          anchorEl={settingsMenuAnchor}
+          open={Boolean(settingsMenuAnchor)}
+          onClose={() => setSettingsMenuAnchor(null)}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "right",
@@ -183,50 +342,33 @@ export const ChatwootNotificationsView: React.FC = () => {
           PaperProps={{
             sx: {
               mt: 1,
-              minWidth: 250,
+              minWidth: 200,
               backgroundColor: neutralColor(0),
               border: `1px solid ${neutralColor(200)}`,
               boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
             },
           }}
         >
-          <Box sx={{ px: 2, py: 1 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                fontSize: "0.688rem",
-                fontWeight: 600,
-                color: neutralColor(500),
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
-              Filter Options
-            </Typography>
-          </Box>
-          <MenuItem
-            onClick={() => {
-              updateFilters({ snoozed: !filters.snoozed });
-              setFilterMenuAnchor(null);
-            }}
-            sx={{ py: 1, px: 2 }}
-          >
-            <ListItemText
-              primary="Include Snoozed"
-              secondary={filters.snoozed ? "Enabled" : "Disabled"}
-            />
+          <MenuItem onClick={handleMarkAllAsRead} sx={{ py: 1, px: 2 }}>
+            <ListItemText primary="Mark all as read" />
           </MenuItem>
+          <MenuItem onClick={handleDeleteAllRead} sx={{ py: 1, px: 2 }}>
+            <ListItemText primary="Delete all read" />
+          </MenuItem>
+          <Divider />
           <MenuItem
-            onClick={() => {
-              updateFilters({ read: !filters.read });
-              setFilterMenuAnchor(null);
+            onClick={handleDeleteAll}
+            sx={{
+              py: 1,
+              px: 2,
+              color: "error.main",
+              "&:hover": {
+                backgroundColor: "error.light",
+                color: "error.dark",
+              },
             }}
-            sx={{ py: 1, px: 2 }}
           >
-            <ListItemText
-              primary="Include Read"
-              secondary={filters.read ? "Enabled" : "Disabled"}
-            />
+            <ListItemText primary="Delete all" />
           </MenuItem>
         </Menu>
       </Box>
@@ -263,7 +405,7 @@ export const ChatwootNotificationsView: React.FC = () => {
             {notifications.map((notification) => {
               const sender = getNotificationSender(notification);
               const isUnread = !notification.read_at;
-              
+
               return (
                 <ListItem
                   key={notification.id}
@@ -328,9 +470,9 @@ export const ChatwootNotificationsView: React.FC = () => {
                             sx={{
                               color: neutralColor(600),
                               "&:hover": {
-                              color: primaryColor(600),
-                              backgroundColor: primaryColor(50),
-                            },
+                                color: primaryColor(600),
+                                backgroundColor: primaryColor(50),
+                              },
                               width: 28,
                               height: 28,
                             }}
@@ -374,4 +516,3 @@ export const ChatwootNotificationsView: React.FC = () => {
     </Paper>
   );
 };
-

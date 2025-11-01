@@ -106,5 +106,38 @@ export class ChatwootNotificationsService extends BaseChatwootService {
     const url = `/api/accounts/notifications${queryString ? `?${queryString}` : ""}`;
     return await this.get<NotificationListResponse>(url);
   }
+
+  /**
+   * Mark all notifications as read
+   * POST /api/accounts/notifications/mark_all_as_read
+   *
+   * @returns Promise with count of marked notifications
+   */
+  async markAllAsRead(): Promise<{ count: number }> {
+    const url = `/api/accounts/notifications/mark_all_as_read`;
+    return await this.post<{ count: number }>(url);
+  }
+
+  /**
+   * Delete all notifications
+   * DELETE /api/accounts/notifications/destroy_all
+   *
+   * @returns Promise with success status
+   */
+  async deleteAll(): Promise<{ success: boolean; message?: string }> {
+    const url = `/api/accounts/notifications/destroy_all`;
+    return await this.delete<{ success: boolean; message?: string }>(url);
+  }
+
+  /**
+   * Delete all read notifications
+   * DELETE /api/accounts/notifications/destroy_all_read
+   *
+   * @returns Promise with success status and count
+   */
+  async deleteAllRead(): Promise<{ success: boolean; count?: number; message?: string }> {
+    const url = `/api/accounts/notifications/destroy_all_read`;
+    return await this.delete<{ success: boolean; count?: number; message?: string }>(url);
+  }
 }
 
