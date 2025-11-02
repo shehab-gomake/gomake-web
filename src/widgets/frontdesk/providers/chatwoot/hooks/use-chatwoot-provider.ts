@@ -84,12 +84,7 @@ export const useChatwootProvider = () => {
     // - Conversations have loaded
     // - No conversation is currently selected
     // - We have conversations to select from
-    if (
-      selectedInboxId &&
-      conversations.conversations.length > 0 &&
-      !selectedConversation &&
-      !conversations.loading
-    ) {
+    if (selectedInboxId && conversations.conversations.length > 0 && !selectedConversation && !conversations.loading) {
       const firstConversation = conversations.conversations[0];
       if (firstConversation) {
         setSelectedConversation(firstConversation);
@@ -128,45 +123,44 @@ export const useChatwootProvider = () => {
 
   // Update conversation in the list after status changes
   // Similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS, { conversationId, status })
-  const updateConversationInList = useCallback((updatedConversation: ChatwootConversation) => {
-    const newStatus = updatedConversation.status;
-    const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
+  const updateConversationInList = useCallback(
+    (updatedConversation: ChatwootConversation) => {
+      const newStatus = updatedConversation.status;
+      const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
 
-    // Check if updated conversation matches current filter using utility function
-    const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
+      // Check if updated conversation matches current filter using utility function
+      const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
 
-    setConversationsList((prev) => {
-      if (!matchesFilter) {
-        // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
-        return prev.filter((conv) => conv.id !== updatedConversation.id);
-      } else {
-        // Update conversation in list if it matches filter
-        return prev.map((conv) =>
-          conv.id === updatedConversation.id
-            ? { ...conv, ...updatedConversation }
-            : conv
-        );
+      setConversationsList((prev) => {
+        if (!matchesFilter) {
+          // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
+          return prev.filter((conv) => conv.id !== updatedConversation.id);
+        } else {
+          // Update conversation in list if it matches filter
+          return prev.map((conv) => (conv.id === updatedConversation.id ? { ...conv, ...updatedConversation } : conv));
+        }
+      });
+
+      // Update selected conversation
+      if (selectedConversation?.id === updatedConversation.id) {
+        if (!matchesFilter) {
+          // If conversation no longer matches filter, deselect it (similar to how it disappears from list)
+          setSelectedConversation(null);
+        } else {
+          setSelectedConversation((prev) => (prev ? { ...prev, ...updatedConversation } : prev));
+        }
       }
-    });
-
-    // Update selected conversation
-    if (selectedConversation?.id === updatedConversation.id) {
-      if (!matchesFilter) {
-        // If conversation no longer matches filter, deselect it (similar to how it disappears from list)
-        setSelectedConversation(null);
-      } else {
-        setSelectedConversation((prev) => prev ? { ...prev, ...updatedConversation } : prev);
-      }
-    }
-  }, [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]);
+    },
+    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]
+  );
 
   // Handle filter changes - support status, assignee_type, etc.
   const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
     // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
     // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
-    if ('status' in newFilters) {
+    if ("status" in newFilters) {
       // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
-      const statusToSet = 
+      const statusToSet =
         newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
           ? ConversationStatus.ALL
           : (newFilters.status as ConversationStatus);

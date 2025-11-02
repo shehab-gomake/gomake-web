@@ -103,13 +103,13 @@ export const CHANNEL_FEATURES_CONFIG: Record<string, ChannelConfig> = {
     splitMessages: true,
     templates: {
       type: "whatsapp_cloud",
-      enabled: (inbox) => inbox.provider === "whatsapp_cloud",
+      enabled: (inbox) => (inbox.provider as string) === "whatsapp_cloud",
     },
     conditions: {
       // 360Dialog (default provider) doesn't support reply-to
       excludeProviders: ["default"],
       customCheck: (inbox) => {
-        if (inbox.provider === "default" || !inbox.provider) {
+        if ((inbox.provider as string) === "default" || !inbox.provider) {
           return {
             supportsReplyTo: false,
             templates: {

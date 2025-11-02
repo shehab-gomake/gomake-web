@@ -96,8 +96,7 @@ export const useChatwootNotifications = (
       const response = await chatwootService.notifications.listNotifications(listParams);
 
       // Handle nested response structure (same as conversations)
-      const responseData = response.data || response;
-      const notificationsList = responseData.payload || responseData.data || responseData || [];
+      const notificationsList = response.payload || [];
 
       setNotifications(notificationsList);
 

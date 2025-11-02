@@ -71,7 +71,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       });
       
       // Get updated conversation from response
-      const updatedConversation = response.data?.payload || response.data || conversation;
+      const updatedConversation = response.payload || response.data || conversation;
       const finalConversation = {
         ...conversation,
         ...updatedConversation,

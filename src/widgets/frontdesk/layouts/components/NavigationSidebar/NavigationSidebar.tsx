@@ -35,6 +35,7 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
+import HistoryIcon from "@mui/icons-material/History";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
@@ -156,6 +157,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const [oldFrontdeskExpanded, setOldFrontdeskExpanded] = useState(false);
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootExpanded, setChatwootExpanded] = useState(true);
@@ -225,266 +227,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           </Tooltip>
         </Box>
       )}
-
-      {/* Dashboard - Top Item */}
-      <Box sx={{ py: 1 }}>
-        <List disablePadding>
-          <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
-            <ListItemButton
-              selected={selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView}
-              onClick={() => {
-                onSectionSelect("inbox");
-                onChannelSelect("all");
-              }}
-              sx={{
-                py: 1,
-                px: isCollapsed ? 1.5 : 2,
-                justifyContent: isCollapsed ? "center" : "flex-start",
-                "&.Mui-selected": {
-                  backgroundColor: theme.palette.primary.main + "10",
-                  borderLeft: `3px solid ${theme.palette.primary.main}`,
-                  "&:hover": {
-                    backgroundColor: theme.palette.primary.main + "20",
-                  },
-                },
-              }}
-            >
-              {isCollapsed ? (
-                <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                  <DashboardIcon />
-                </Box>
-              ) : (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                  <Box sx={{ color: theme.palette.text.secondary }}>
-                    <DashboardIcon />
-                  </Box>
-                  <ListItemText
-                    primary="Dashboard"
-                    primaryTypographyProps={{
-                      variant: "body2",
-                      sx: {
-                        fontSize: "0.875rem",
-                        fontWeight: selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
-                      },
-                    }}
-                  />
-                </Box>
-              )}
-            </ListItemButton>
-          </Tooltip>
-        </List>
-      </Box>
-
-      <Divider sx={{ my: 1 }} />
-
-      {/* Ticket Views Section */}
-      <Box sx={{ py: 1 }}>
-        {!isCollapsed && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 2,
-              py: 1,
-              cursor: "pointer",
-              "&:hover": { backgroundColor: theme.palette.action.hover },
-            }}
-            onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontWeight: 600,
-                fontSize: "0.688rem",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
-              TICKET VIEWS
-            </Typography>
-            {ticketViewsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-          </Box>
-        )}
-        <Collapse in={isCollapsed || ticketViewsExpanded}>
-          <List disablePadding>
-            {ticketViewItems.map((item) => (
-              <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
-                <ListItemButton
-                  selected={selectedTicketView === item.id}
-                  onClick={() => onTicketViewSelect?.(item.id)}
-                  sx={{
-                    py: 1,
-                    px: isCollapsed ? 1.5 : 2,
-                    justifyContent: isCollapsed ? "center" : "flex-start",
-                    "&.Mui-selected": {
-                      backgroundColor: theme.palette.primary.main + "10",
-                      borderLeft: `3px solid ${theme.palette.primary.main}`,
-                      "&:hover": {
-                        backgroundColor: theme.palette.primary.main + "20",
-                      },
-                    },
-                  }}
-                >
-                  {isCollapsed ? (
-                    <Badge
-                      badgeContent={ticketCounts[item.id] || 0}
-                      color="default"
-                      sx={{
-                        "& .MuiBadge-badge": {
-                          fontSize: "0.625rem",
-                          height: 16,
-                          minWidth: 16,
-                          backgroundColor: theme.palette.grey[200],
-                          color: theme.palette.text.primary,
-                        },
-                      }}
-                      invisible={!ticketCounts[item.id] || ticketCounts[item.id]! <= 0}
-                    >
-                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
-                    </Badge>
-                  ) : (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                      <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                      <ListItemText
-                        primary={item.label}
-                        primaryTypographyProps={{
-                          variant: "body2",
-                          sx: { fontSize: "0.875rem", fontWeight: selectedTicketView === item.id ? 600 : 400 },
-                        }}
-                      />
-                      {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
-                        <Badge
-                          badgeContent={ticketCounts[item.id]}
-                          color="default"
-                          sx={{
-                            "& .MuiBadge-badge": {
-                              fontSize: "0.688rem",
-                              height: 18,
-                              minWidth: 18,
-                              backgroundColor: theme.palette.grey[200],
-                              color: theme.palette.text.primary,
-                            },
-                          }}
-                        />
-                      )}
-                    </Box>
-                  )}
-                </ListItemButton>
-              </Tooltip>
-            ))}
-          </List>
-        </Collapse>
-      </Box>
-
-      <Divider sx={{ my: 1 }} />
-
-      {/* Live Chats Section */}
-      <Box sx={{ py: 1 }}>
-        {!isCollapsed && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 2,
-              py: 1,
-              cursor: "pointer",
-              "&:hover": { backgroundColor: theme.palette.action.hover },
-            }}
-            onClick={() => setChatsExpanded(!chatsExpanded)}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontWeight: 600,
-                fontSize: "0.688rem",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
-              LIVE CHATS
-            </Typography>
-            {chatsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-          </Box>
-        )}
-        <Collapse in={isCollapsed || chatsExpanded}>
-          <List disablePadding>
-            {channelItems.map((item) => (
-              <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
-                <ListItemButton
-                  selected={selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView}
-                  onClick={() => {
-                    onSectionSelect("inbox");
-                    onChannelSelect(item.id);
-                  }}
-                  sx={{
-                    py: 1,
-                    px: isCollapsed ? 1.5 : 2,
-                    justifyContent: isCollapsed ? "center" : "flex-start",
-                    "&.Mui-selected": {
-                      backgroundColor: theme.palette.primary.main + "10",
-                      borderLeft: `3px solid ${theme.palette.primary.main}`,
-                      "&:hover": {
-                        backgroundColor: theme.palette.primary.main + "20",
-                      },
-                    },
-                  }}
-                >
-                  {isCollapsed ? (
-                    <Badge
-                      badgeContent={channelBadges[item.id] || 0}
-                      color="error"
-                      sx={{
-                        "& .MuiBadge-badge": {
-                          fontSize: "0.625rem",
-                          height: 16,
-                          minWidth: 16,
-                        },
-                      }}
-                      invisible={!channelBadges[item.id] || channelBadges[item.id]! <= 0}
-                    >
-                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
-                    </Badge>
-                  ) : (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                      <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                      <ListItemText
-                        primary={item.label}
-                        primaryTypographyProps={{
-                          variant: "body2",
-                          sx: {
-                            fontSize: "0.875rem",
-                            fontWeight:
-                              selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView ? 600 : 400,
-                          },
-                        }}
-                      />
-                      {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
-                        <Badge
-                          badgeContent={channelBadges[item.id]}
-                          color="error"
-                          sx={{
-                            "& .MuiBadge-badge": {
-                              fontSize: "0.688rem",
-                              height: 18,
-                              minWidth: 18,
-                            },
-                          }}
-                        />
-                      )}
-                    </Box>
-                  )}
-                </ListItemButton>
-              </Tooltip>
-            ))}
-          </List>
-        </Collapse>
-      </Box>
-
-      <Divider sx={{ my: 1 }} />
 
       {/* Chatwoot Section */}
       <Box sx={{ py: 0.5 }}>
@@ -1021,6 +763,313 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Spacer */}
       <Box sx={{ flex: 1 }} />
+
+      <Divider sx={{ my: 1 }} />
+
+      {/* Old FrontDesk Section - Collapsible wrapper for legacy features */}
+      <Box sx={{ py: 1 }}>
+        {!isCollapsed && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 2,
+              py: 1,
+              cursor: "pointer",
+              backgroundColor: oldFrontdeskExpanded ? alpha(theme.palette.warning.main, 0.05) : "transparent",
+              "&:hover": {
+                backgroundColor: oldFrontdeskExpanded
+                  ? alpha(theme.palette.warning.main, 0.1)
+                  : theme.palette.action.hover
+              },
+              transition: "background-color 0.2s ease",
+            }}
+            onClick={() => setOldFrontdeskExpanded(!oldFrontdeskExpanded)}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <HistoryIcon
+                fontSize="small"
+                sx={{ color: theme.palette.text.secondary }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  fontWeight: 600,
+                  fontSize: "0.688rem",
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
+              >
+                Old FrontDesk
+              </Typography>
+            </Box>
+            {oldFrontdeskExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          </Box>
+        )}
+        <Collapse in={isCollapsed || oldFrontdeskExpanded}>
+          <Box>
+            {/* Dashboard - Top Item */}
+            <Box sx={{ py: 1 }}>
+              <List disablePadding>
+                <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
+                  <ListItemButton
+                    selected={selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView}
+                    onClick={() => {
+                      onSectionSelect("inbox");
+                      onChannelSelect("all");
+                    }}
+                    sx={{
+                      py: 1,
+                      px: isCollapsed ? 1.5 : 2,
+                      justifyContent: isCollapsed ? "center" : "flex-start",
+                      "&.Mui-selected": {
+                        backgroundColor: theme.palette.primary.main + "10",
+                        borderLeft: `3px solid ${theme.palette.primary.main}`,
+                        "&:hover": {
+                          backgroundColor: theme.palette.primary.main + "20",
+                        },
+                      },
+                    }}
+                  >
+                    {isCollapsed ? (
+                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                        <DashboardIcon />
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                        <Box sx={{ color: theme.palette.text.secondary }}>
+                          <DashboardIcon />
+                        </Box>
+                        <ListItemText
+                          primary="Dashboard"
+                          primaryTypographyProps={{
+                            variant: "body2",
+                            sx: {
+                              fontSize: "0.875rem",
+                              fontWeight: selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
+                            },
+                          }}
+                        />
+                      </Box>
+                    )}
+                  </ListItemButton>
+                </Tooltip>
+              </List>
+            </Box>
+
+            <Divider sx={{ my: 1 }} />
+
+            {/* Ticket Views Section */}
+            <Box sx={{ py: 1 }}>
+              {!isCollapsed && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    px: 2,
+                    py: 1,
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: theme.palette.action.hover },
+                  }}
+                  onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: theme.palette.text.secondary,
+                      fontWeight: 600,
+                      fontSize: "0.688rem",
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    TICKET VIEWS
+                  </Typography>
+                  {ticketViewsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                </Box>
+              )}
+              <Collapse in={isCollapsed || ticketViewsExpanded}>
+                <List disablePadding>
+                  {ticketViewItems.map((item) => (
+                    <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+                      <ListItemButton
+                        selected={selectedTicketView === item.id}
+                        onClick={() => onTicketViewSelect?.(item.id)}
+                        sx={{
+                          py: 1,
+                          px: isCollapsed ? 1.5 : 2,
+                          justifyContent: isCollapsed ? "center" : "flex-start",
+                          "&.Mui-selected": {
+                            backgroundColor: theme.palette.primary.main + "10",
+                            borderLeft: `3px solid ${theme.palette.primary.main}`,
+                            "&:hover": {
+                              backgroundColor: theme.palette.primary.main + "20",
+                            },
+                          },
+                        }}
+                      >
+                        {isCollapsed ? (
+                          <Badge
+                            badgeContent={ticketCounts[item.id] || 0}
+                            color="default"
+                            sx={{
+                              "& .MuiBadge-badge": {
+                                fontSize: "0.625rem",
+                                height: 16,
+                                minWidth: 16,
+                                backgroundColor: theme.palette.grey[200],
+                                color: theme.palette.text.primary,
+                              },
+                            }}
+                            invisible={!ticketCounts[item.id] || ticketCounts[item.id]! <= 0}
+                          >
+                            <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
+                          </Badge>
+                        ) : (
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                            <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
+                            <ListItemText
+                              primary={item.label}
+                              primaryTypographyProps={{
+                                variant: "body2",
+                                sx: { fontSize: "0.875rem", fontWeight: selectedTicketView === item.id ? 600 : 400 },
+                              }}
+                            />
+                            {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
+                              <Badge
+                                badgeContent={ticketCounts[item.id]}
+                                color="default"
+                                sx={{
+                                  "& .MuiBadge-badge": {
+                                    fontSize: "0.688rem",
+                                    height: 18,
+                                    minWidth: 18,
+                                    backgroundColor: theme.palette.grey[200],
+                                    color: theme.palette.text.primary,
+                                  },
+                                }}
+                              />
+                            )}
+                          </Box>
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+                  ))}
+                </List>
+              </Collapse>
+            </Box>
+
+            <Divider sx={{ my: 1 }} />
+
+            {/* Live Chats Section */}
+            <Box sx={{ py: 1 }}>
+              {!isCollapsed && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    px: 2,
+                    py: 1,
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: theme.palette.action.hover },
+                  }}
+                  onClick={() => setChatsExpanded(!chatsExpanded)}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: theme.palette.text.secondary,
+                      fontWeight: 600,
+                      fontSize: "0.688rem",
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    LIVE CHATS
+                  </Typography>
+                  {chatsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                </Box>
+              )}
+              <Collapse in={isCollapsed || chatsExpanded}>
+                <List disablePadding>
+                  {channelItems.map((item) => (
+                    <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
+                      <ListItemButton
+                        selected={selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView}
+                        onClick={() => {
+                          onSectionSelect("inbox");
+                          onChannelSelect(item.id);
+                        }}
+                        sx={{
+                          py: 1,
+                          px: isCollapsed ? 1.5 : 2,
+                          justifyContent: isCollapsed ? "center" : "flex-start",
+                          "&.Mui-selected": {
+                            backgroundColor: theme.palette.primary.main + "10",
+                            borderLeft: `3px solid ${theme.palette.primary.main}`,
+                            "&:hover": {
+                              backgroundColor: theme.palette.primary.main + "20",
+                            },
+                          },
+                        }}
+                      >
+                        {isCollapsed ? (
+                          <Badge
+                            badgeContent={channelBadges[item.id] || 0}
+                            color="error"
+                            sx={{
+                              "& .MuiBadge-badge": {
+                                fontSize: "0.625rem",
+                                height: 16,
+                                minWidth: 16,
+                              },
+                            }}
+                            invisible={!channelBadges[item.id] || channelBadges[item.id]! <= 0}
+                          >
+                            <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
+                          </Badge>
+                        ) : (
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                            <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
+                            <ListItemText
+                              primary={item.label}
+                              primaryTypographyProps={{
+                                variant: "body2",
+                                sx: {
+                                  fontSize: "0.875rem",
+                                  fontWeight:
+                                    selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView ? 600 : 400,
+                                },
+                              }}
+                            />
+                            {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
+                              <Badge
+                                badgeContent={channelBadges[item.id]}
+                                color="error"
+                                sx={{
+                                  "& .MuiBadge-badge": {
+                                    fontSize: "0.688rem",
+                                    height: 18,
+                                    minWidth: 18,
+                                  },
+                                }}
+                              />
+                            )}
+                          </Box>
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+                  ))}
+                </List>
+              </Collapse>
+            </Box>
+          </Box>
+        </Collapse>
+      </Box>
 
       {/* Footer/System Items */}
       <Box

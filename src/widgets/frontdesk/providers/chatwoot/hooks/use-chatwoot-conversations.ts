@@ -63,8 +63,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
-        const responseData = response.data || response;
-        const conversationsList = responseData.payload || responseData.data || responseData || [];
+        const conversationsList = response.data?.payload || response.payload || [];
 
         if (append) {
           setConversations((prev) => [...prev, ...conversationsList]);
@@ -73,7 +72,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         }
 
         // Check if there are more pages
-        const meta = responseData.meta || response.meta || {};
+        const meta = response.data?.meta || response.meta || {};
         setHasMore(meta?.page ? meta.page < (meta.total_pages || meta.count || 0) : false);
 
         // Extract counts from API response meta
