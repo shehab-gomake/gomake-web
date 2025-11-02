@@ -8386,7 +8386,7 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              if(matchingParameter && matchingParameter.values && matchingParameter.values[0].length > 0) {
+              if(matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
                 section.isHidden = !parameter.selectedValueIds.includes(
                     matchingParameter?.valueIds[0]
                 );
