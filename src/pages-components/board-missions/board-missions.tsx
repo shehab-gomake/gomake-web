@@ -5,30 +5,18 @@ import { useBoardMissions } from "./use-board-missions";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-  SecondSwitch,
   ThreeOptionsModal,
 } from "@/components";
-import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect, useState } from "react";
-import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
-import { IconButton } from "@mui/material";
-import { GoMakeMenu } from "@/components";
-import { InputAdornment } from "@mui/material";
-import TuneIcon from "@mui/icons-material/Tune";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { DateRangePicker } from "rsuite";
 import { useRecoilState } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
-import { DotIcon } from "@/icons";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -41,14 +29,11 @@ import {
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
-import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
-import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 import { useStorageList } from "@/hooks/use-storage-list";
 import axios from "axios";
 import { getUserToken } from "@/services/storage-data";
-import { predefinedRanges } from "@/utils/dateRanges";
 import QrCodeReader from "@/components/qr-code-reader";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import { DocumentPrimaryTable } from "@/components/tables/document-primary-table";
@@ -57,13 +42,10 @@ import {
   jobsColumnKeys,
   parseSavedColumnSettings,
 } from "./states/board-missions-columns-settings-state";
-import { BoardMissionsColumnSettingsMenu } from "./widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ColumnSetting } from "@/widgets/production-floor/state/production-floor-coulmns-table-settings";
-import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
-import { PrimaryButton } from "@/components/button/primary-button";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -214,12 +196,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
-    // Email export modal
-    showEmailModal,
-    exportEmail,
-    setExportEmail,
-    handleEmailModalClose,
-    handleExportWithEmail,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -826,48 +802,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onPageChange={handleScheduledReportsPageChange}
         onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
-
-      {/* Email Export Modal */}
-      <GoMakeModal
-        openModal={showEmailModal}
-        onClose={handleEmailModalClose}
-        modalTitle={t("boardMissions.exportToExcel")}
-        insideStyle={{ width: "400px", height: "fit-content" }}
-      >
-        <div
-          style={{
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          <div>
-            <h4>{t("boardMissions.enterEmailForExport")}</h4>
-            <GomakeTextInput
-              placeholder={t("boardMissions.emailPlaceholder")}
-              value={exportEmail}
-              onChange={(e) => setExportEmail(e.target.value)}
-              type="email"
-              style={{ width: "100%" }}
-            />
-          </div>
-          <div
-            style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}
-          >
-            <PrimaryButton variant="outlined" onClick={handleEmailModalClose}>
-              {t("modal.cancel")}
-            </PrimaryButton>
-            <PrimaryButton
-              variant="contained"
-              onClick={handleExportWithEmail}
-              disabled={!exportEmail || !exportEmail.includes("@")}
-            >
-              {t("boardMissions.sendToEmail")}
-            </PrimaryButton>
-          </div>
-        </div>
-      </GoMakeModal>
     </>
   );
 };
