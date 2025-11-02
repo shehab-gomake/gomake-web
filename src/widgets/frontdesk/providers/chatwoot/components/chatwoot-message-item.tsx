@@ -6,6 +6,18 @@ import { alpha } from "@mui/material";
 import { ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
 import { sanitizeHtml, isHtmlContent } from "@/widgets/frontdesk/utils/html-sanitizer";
+import { ActivityBubble } from "@/widgets/frontdesk/components/shared/ActivityBubble";
+
+/**
+ * Chatwoot message types
+ * Reference: Chatwoot backend enum
+ */
+const MESSAGE_TYPES = {
+  INCOMING: 0,    // Message from contact
+  OUTGOING: 1,    // Message from agent
+  ACTIVITY: 2,    // System activity message (status changes, assignments, etc.)
+  TEMPLATE: 3,    // Template message
+} as const;
 
 interface ChatwootMessageItemProps {
   message: ChatwootMessage;
@@ -15,15 +27,31 @@ interface ChatwootMessageItemProps {
   previousMessage?: ChatwootMessage | null; // Previous message for grouping logic
 }
 
-export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({ 
-  message, 
-  isLast = false, 
+export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
+  message,
+  isLast = false,
   isFirst = false,
   showAvatar = true,
   previousMessage = null,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
+
+  // Early return for ACTIVITY messages - render as centered activity bubble
+  if (message.message_type === MESSAGE_TYPES.ACTIVITY) {
+    const activityContent = message.content || "";
+    const timestamp = message.created_at
+      ? new Date(message.created_at * 1000).toISOString()
+      : undefined;
+
+    return (
+      <ActivityBubble
+        content={activityContent}
+        timestamp={timestamp}
+        isHtml={isHtmlContent(activityContent)}
+      />
+    );
+  }
 
   // Determine if message is outgoing (from agent) or incoming (from contact)
   // message_type: 0 = incoming, 1 = outgoing (or check sender_type)

@@ -49,10 +49,24 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // Use full conversation for metadata (additional_attributes, meta, etc.)
       const conversationToUse = fullConversation || conversation;
 
-      // Filter out system messages (message_type 2) - we handle resolution separately
-      let sortedMessages = Array.isArray(apiMessages)
-        ? apiMessages.filter((msg: any) => msg.message_type !== 2)
-        : [];
+      // Keep ALL messages including activity messages (message_type 2)
+      // Activity messages show status changes, priority changes, assignments, etc.
+      // They are rendered as centered ActivityBubbles by ChatwootMessageItem
+      let sortedMessages = Array.isArray(apiMessages) ? apiMessages : [];
+
+      // Debug: Log message types received from API
+      console.log('[use-chatwoot-messages] Messages from API:', {
+        total: apiMessages?.length || 0,
+        byType: apiMessages?.reduce((acc: any, msg: any) => {
+          const type = msg.message_type ?? 'unknown';
+          acc[type] = (acc[type] || 0) + 1;
+          return acc;
+        }, {}),
+        activityMessages: apiMessages?.filter((m: any) => m.message_type === 2).map((m: any) => ({
+          id: m.id,
+          content: m.content?.substring(0, 80),
+        })),
+      });
 
       // Sort by created_at timestamp
       sortedMessages = [...sortedMessages].sort((a, b) => (a.created_at || 0) - (b.created_at || 0));

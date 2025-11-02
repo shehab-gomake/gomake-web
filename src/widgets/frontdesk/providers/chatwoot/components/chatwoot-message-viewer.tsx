@@ -242,14 +242,46 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         ) : (
           <Stack spacing={2}>
             {(() => {
-              // Filter out system messages (message_type 2) from display, but show resolution
-              // Also filter out messages with no content
+              // DEBUG: Log ALL messages received from hook before any filtering
+              console.log('[MessageViewer] Messages received from hook:', {
+                total: messages.length,
+                byType: messages.reduce((acc: any, msg: any) => {
+                  const type = msg.message_type ?? 'unknown';
+                  acc[type] = (acc[type] || 0) + 1;
+                  return acc;
+                }, {}),
+                allMessages: messages.map(m => ({
+                  id: m.id,
+                  type: m.message_type,
+                  content: m.content?.substring(0, 80),
+                  hasContent: !!(m.content && m.content.trim().length > 0),
+                })),
+                activityMessages: messages.filter(m => m.message_type === 2).map(m => ({
+                  id: m.id,
+                  content: m.content,
+                  sender: m.sender?.name,
+                })),
+              });
+
+              // Filter messages: Keep ALL activity messages, filter empty content for others
               const visibleMessages = messages.filter((message) => {
-                const isSystemMessage = message.message_type === 2;
-                const isResolutionMessage = isSystemMessage && message.content?.includes("resolved");
+                // Activity messages (message_type 2) should ALWAYS be shown
+                // even if content is empty - they may use metadata or other fields
+                // (e.g., resolved/reopened messages may not have content but should still display)
+                if (message.message_type === 2) {
+                  return true; // Keep all activity messages
+                }
+
+                // For regular messages (incoming/outgoing), filter out empty content
                 const hasContent = message.content && message.content.trim().length > 0;
-                // Keep resolution messages, filter out other system messages and empty messages
-                return ((!isSystemMessage || isResolutionMessage) && hasContent);
+                return hasContent;
+              });
+
+              // DEBUG: Log what remains after filtering
+              console.log('[MessageViewer] After filtering:', {
+                visible: visibleMessages.length,
+                filtered: messages.length - visibleMessages.length,
+                visibleActivityCount: visibleMessages.filter(m => m.message_type === 2).length,
               });
 
               if (visibleMessages.length === 0) {
