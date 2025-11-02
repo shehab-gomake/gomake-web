@@ -101,6 +101,58 @@ const ExcelMenu = ({
             </div>
           </MenuItem>
         )}
+          {(documentType == DOCUMENT_TYPE.invoice ||
+              documentType == DOCUMENT_TYPE.invoiceRefund) && (
+              <MenuItem
+                  onClick={() => {
+                      handleMenuClose();
+                      onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedExcel);
+                  }}
+              >
+                  <div style={classes.rowTextStyle}>
+                      {t("sales.list.exportExtendedTableExcel")}
+                  </div>
+              </MenuItem>
+          )}
+          {(documentType == DOCUMENT_TYPE.invoice ||
+              documentType == DOCUMENT_TYPE.invoiceRefund) && (
+              <MenuItem
+                  onClick={() => {
+                      handleMenuClose();
+                      onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedTxt);
+                  }}
+              >
+                  <div style={classes.rowTextStyle}>
+                      {t("sales.list.exportExtendedTableTxt")}
+                  </div>
+              </MenuItem>
+          )}
+          {(documentType == DOCUMENT_TYPE.invoice ||
+              documentType == DOCUMENT_TYPE.invoiceRefund) && (
+              <MenuItem
+                  onClick={() => {
+                      handleMenuClose();
+                      onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithVat);
+                  }}
+              >
+                  <div style={classes.rowTextStyle}>
+                      {t("sales.list.exportSummeryExcelWithVat")}
+                  </div>
+              </MenuItem>
+          )}
+          {(documentType == DOCUMENT_TYPE.invoice ||
+              documentType == DOCUMENT_TYPE.invoiceRefund) && (
+              <MenuItem
+                  onClick={() => {
+                      handleMenuClose();
+                      onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat);
+                  }}
+              >
+                  <div style={classes.rowTextStyle}>
+                      {t("sales.list.exportSummeryExcelWithoutVat")}
+                  </div>
+              </MenuItem>
+          )}
       </Menu>
     </div>
   );

@@ -311,6 +311,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const productionStatuses = [
     {
+      label: t("boardMissions.NoStations"),
+      value: BoardMissionStatusForFilter.NoStations,
+    },
+    {
       label: t("boardMissions.NotReady"),
       value: BoardMissionStatusForFilter.NotReady,
     },
