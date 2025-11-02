@@ -2335,6 +2335,36 @@ const useDigitalOffsetPrice = ({
             ...removedParams,
           }));
         }
+
+        // Calculate Quantity when Sets is enabled by default
+        filteredSubProductsArray.forEach((subProduct) => {
+          if (!subProduct.type) { // General parameters
+            const setsParam = subProduct.parameters.find(
+              (p) => p.parameterCode === "Sets" && p.values && p.values[0] === "true"
+            );
+
+            if (setsParam) {
+              const setQuantityParam = subProduct.parameters.find(
+                (p) => p.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+              );
+              const setUnitsParam = subProduct.parameters.find(
+                (p) => p.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+              );
+              const quantityParam = subProduct.parameters.find(
+                (p) => p.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              );
+
+              if (setQuantityParam && setUnitsParam && quantityParam) {
+                const setQuantityValue = Number(setQuantityParam.values[0]) || 0;
+                const setUnitsValue = Number(setUnitsParam.values[0]) || 0;
+                const calculatedQuantity = setQuantityValue * setUnitsValue;
+
+                quantityParam.values = [calculatedQuantity.toString()];
+              }
+            }
+          }
+        });
+
         setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
@@ -6284,8 +6314,15 @@ const useDigitalOffsetPrice = ({
           }
         }
         if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
-          if (!quantity) {
-            temp.push({
+          // Set Quantity parameter changed
+          // Check if quantity exists in temp array (not memoized value)
+          let quantityParam = temp.find(
+            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+          );
+
+          if (!quantityParam) {
+            // Create quantity parameter if it doesn't exist
+            const newQuantityParam = {
               parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
               sectionId: sectionId,
               subSectionId: subSectionId,
@@ -6301,19 +6338,35 @@ const useDigitalOffsetPrice = ({
               defaultUnit: null,
               unitType: 0,
               factor: subSectionParameter?.factor,
-            });
+            };
+            temp.push(newQuantityParam);
+            quantityParam = newQuantityParam;
           }
-          //setQuantity
-          const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
+
+          // Get Set Units value from temp array
+          const setUnitsParam = temp.find(
+            (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+          );
+          const setUnits = setUnitsParam ? Number(setUnitsParam.values[0]) : 0;
+
+          // Calculate and update Quantity = Set Quantity * Set Units
+          const calculatedQuantity = Number(data.values) * setUnits;
           temp = temp.map((x) =>
-            x.parameterId === quantity?.parameterId
-              ? { ...x, values: [(setUnits * data.values).toString()] }
+            x.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              ? { ...x, values: [calculatedQuantity.toString()] }
               : x
           );
         }
         if (subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78") {
-          if (!quantity) {
-            temp.push({
+          // Set Units parameter changed
+          // Check if quantity exists in temp array (not memoized value)
+          let quantityParam = temp.find(
+            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+          );
+
+          if (!quantityParam) {
+            // Create quantity parameter if it doesn't exist
+            const newQuantityParam = {
               parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
               sectionId: sectionId,
               subSectionId: subSectionId,
@@ -6329,15 +6382,22 @@ const useDigitalOffsetPrice = ({
               defaultUnit: null,
               unitType: 0,
               factor: subSectionParameter?.factor,
-            });
+            };
+            temp.push(newQuantityParam);
+            quantityParam = newQuantityParam;
           }
-          // SetUnits
-          const setQuantity = setQuantityParameter
-            ? setQuantityParameter.values[0]
-            : 0;
+
+          // Get Set Quantity value from temp array
+          const setQuantityParam = temp.find(
+            (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+          );
+          const setQuantity = setQuantityParam ? Number(setQuantityParam.values[0]) : 0;
+
+          // Calculate and update Quantity = Set Units * Set Quantity
+          const calculatedQuantity = Number(data.values) * setQuantity;
           temp = temp.map((x) =>
-            x.parameterId === quantity?.parameterId
-              ? { ...x, values: [(data.values * setQuantity).toString()] }
+            x.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              ? { ...x, values: [calculatedQuantity.toString()] }
               : x
           );
         }
