@@ -622,6 +622,8 @@ const useAddRuleModal = ({
   //   setToDate(toDate);
   // };
   const createForQuoteWidget = useCallback(async () => {
+
+   
     // Filter out empty/invalid rules
     const validRules = rules.filter((item) => {
       return (
@@ -650,6 +652,10 @@ const useAddRuleModal = ({
       : [];
 
     try {
+      if (!filterData?.fromDate && !filterData?.toDate) {
+        alertFault(t("boardMissions.dateFilterRequired"));
+        return;
+      }
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/generate-document-report`,
