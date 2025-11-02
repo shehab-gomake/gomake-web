@@ -8386,9 +8386,13 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              section.isHidden = !parameter.selectedValueIds.includes(
-                matchingParameter?.valueIds[0]
-              );
+              if(matchingParameter && matchingParameter.values && matchingParameter.values[0].length > 0) {
+                section.isHidden = !parameter.selectedValueIds.includes(
+                    matchingParameter?.valueIds[0]
+                );
+              }else{
+                section.isHidden = true;
+              }
             }
           } else {
             section.isHidden = true;
